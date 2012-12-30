@@ -14,14 +14,12 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class EssentializerContainer extends Container
 {
-    protected EssentializerTile worker;
-    protected int lastPowerAcc = 0;
-    protected int lastX = 0;
-    protected int lastY = 0;
+    protected EssentializerTile tile;
+    //protected int lastPowerAcc = 0;
 
     public EssentializerContainer(EssentializerTile tileEntity, InventoryPlayer playerInventory)
     {
-        this.worker = tileEntity;
+        this.tile = tileEntity;
 
         for (int i = 0; i < 3; i++)
         {
@@ -86,15 +84,13 @@ public class EssentializerContainer extends Container
     @Override
     public boolean canInteractWith(EntityPlayer player)
     {
-        return worker.isUseableByPlayer(player);
+        return tile.isUseableByPlayer(player);
     }
 
     public void addCraftingToCrafters(ICrafting crafter)
     {
         super.addCraftingToCrafters(crafter);
-        crafter.sendProgressBarUpdate(this, 0, this.worker.powerAccum);
-        crafter.sendProgressBarUpdate(this, 1, this.worker.currentX);
-        crafter.sendProgressBarUpdate(this, 2, this.worker.currentZ);
+        //crafter.sendProgressBarUpdate(this, 0, this.worker.powerAccum);
     }
 
     public void updateCraftingResults()
@@ -105,31 +101,20 @@ public class EssentializerContainer extends Container
         {
             ICrafting crafter = (ICrafting)this.crafters.get(i);
 
-            if (this.lastPowerAcc != this.worker.powerAccum)
+            /*if (this.lastPowerAcc != this.worker.powerAccum)
             {
                 crafter.sendProgressBarUpdate(this, 0, this.worker.powerAccum);
-            }
+            }*/
 
-            if (this.lastX != this.worker.currentX)
-            {
-                crafter.sendProgressBarUpdate(this, 1, this.worker.currentX);
-            }
-
-            if (this.lastY != this.worker.currentZ)
-            {
-                crafter.sendProgressBarUpdate(this, 2, this.worker.currentZ);
-            }
         }
 
-        this.lastPowerAcc = this.worker.powerAccum;
-        this.lastX = this.worker.currentX;
-        this.lastY = this.worker.currentZ;
+        //this.lastPowerAcc = this.worker.powerAccum;
     }
 
     @SideOnly(Side.CLIENT)
     public void updateProgressBar(int bar, int value)
     {
-        this.worker.updateProgressBar(bar, value);
+        this.tile.updateProgressBar(bar, value);
     }
 
     /**

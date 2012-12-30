@@ -1,7 +1,5 @@
 package gigaherz.elementsofpower;
 
-import gigaherz.elementsofpower.client.ClientPacketHandler;
-
 import java.io.File;
 
 import net.minecraft.block.Block;
@@ -28,19 +26,20 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
-@Mod(modid = "WorkerCommand", name = "WorkerCommand", version = "0.1.0")
+@Mod(modid = "ElementsOfPower", name = "ElementsOfPower", version = "0.1.0")
 @NetworkMod(clientSideRequired = true, serverSideRequired = false,
-        clientPacketHandlerSpec = @SidedPacketHandler(channels = {"WorkerCommand" }, packetHandler = ClientPacketHandler.class),
-        serverPacketHandlerSpec = @SidedPacketHandler(channels = {"WorkerCommand" }, packetHandler = ServerPacketHandler.class))
+        clientPacketHandlerSpec = @SidedPacketHandler(channels = { ElementsOfPower.ChannelName }, packetHandler = CommonPacketHandler.class),
+        serverPacketHandlerSpec = @SidedPacketHandler(channels = { ElementsOfPower.ChannelName }, packetHandler = CommonPacketHandler.class))
 public class ElementsOfPower
 {
+	public final static String ChannelName = "ElementsOfPower";
+	
     private final static int firstItemId = 24400;
     private final static int firstBlockId = 2450;
 
     private final static int defaultWorkerBlockId = firstBlockId + 1;
     private final static int defaultCommandCircuitId = firstItemId + 1;
 
-    public static final Configuration Config = new Configuration(new File(Loader.instance().getConfigDir(), "WorkerCommand/WorkerCommand.cfg"));
 
     // Item templates
     private static CommandCircuit circuit;
@@ -62,7 +61,7 @@ public class ElementsOfPower
     public static ItemStack filler;
 
     // The instance of your mod that Forge uses.
-    @Instance("WorkerCommand")
+    @Instance("ElementsOfPower")
     public static ElementsOfPower instance;
 
     // Says where the client and server 'proxy' code is loaded.
@@ -74,13 +73,19 @@ public class ElementsOfPower
     @PreInit
     public void preInit(FMLPreInitializationEvent event)
     {
-        Config.load();
+        Configuration config;
         Property prop;
-        prop = Config.getItem("gigaherz.workercommand.CommandCircuit", defaultCommandCircuitId);
+        
+    	config = new Configuration(event.getSuggestedConfigurationFile());    	
+        config.load();
+        
+        prop = config.getItem("gigaherz.workercommand.CommandCircuit", defaultCommandCircuitId);
         circuit = new CommandCircuit(prop.getInt());
-        prop = Config.getBlock("gigaherz.workercommand.Worker", defaultWorkerBlockId);
+        
+        prop = config.getBlock("gigaherz.workercommand.Worker", defaultWorkerBlockId);
         worker = new Essentializer("worker", prop.getInt(), Material.iron, CreativeTabs.tabRedstone)
-        .setHardness(0.5F).setStepSound(Block.soundMetalFootstep);
+        			.setHardness(0.5F).setStepSound(Block.soundMetalFootstep);
+        
         planter = circuit.getStack(1, 1);
         harvester = circuit.getStack(1, 2);
         woodcutter = circuit.getStack(1, 3);
@@ -88,7 +93,8 @@ public class ElementsOfPower
         tiller = circuit.getStack(1, 5);
         miner = circuit.getStack(1, 6);
         filler = circuit.getStack(1, 7);
-        Config.save();
+        
+        config.save();
     }
 
     @Init
