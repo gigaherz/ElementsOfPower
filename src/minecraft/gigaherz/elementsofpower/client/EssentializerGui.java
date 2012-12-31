@@ -47,21 +47,20 @@ public class EssentializerGui extends GuiContainer
     @Override
     protected void drawSlotInventory(Slot slot)
     {
-    	super.drawSlotInventory(slot);
-    	
-    	return;
-    	/*
-    	if(!(slot instanceof SlotMagic))
-    		return;
-    	
+        super.drawSlotInventory(slot);
+
+        if (!(slot instanceof SlotMagic))
+        {
+            return;
+        }
+
         int x = slot.xDisplayPosition;
         int y = slot.yDisplayPosition;
         ItemStack stack = slot.getStack();
-
         this.zLevel = 102.0F;
         itemRenderer.zLevel = 102.0F;
-        
-        int num = tile.getInputEssencesOfType(slot.slotNumber);        
+        int num = tile.getInputEssencesOfType(slot.slotNumber);
+
         if (num > 0)
         {
             String text = "" + num;
@@ -71,47 +70,45 @@ public class EssentializerGui extends GuiContainer
             GL11.glEnable(GL11.GL_LIGHTING);
             GL11.glEnable(GL11.GL_DEPTH_TEST);
         }
-        
+
         itemRenderer.zLevel = 0.0F;
         this.zLevel = 0.0F;
-        */
     }
 
     /**
      * Called when the mouse is clicked.
      */
     protected void mouseClicked(int x, int y, int button)
-    {        
+    {
         if (button != 0 && button != 1)
         {
             super.mouseClicked(x, y, button);
-        	return;
+            return;
         }
-        
+
         Slot slot = null;
+
         for (int i = 0; i < this.inventorySlots.inventorySlots.size(); ++i)
         {
             Slot s = (Slot)this.inventorySlots.inventorySlots.get(i);
 
-            // bounds check
-            if (this.func_74188_c(s.xDisplayPosition, s.yDisplayPosition, 16, 16, x, y))
+            if (this.isPointInRegion(s.xDisplayPosition, s.yDisplayPosition, 16, 16, x, y))
             {
-            	if(s instanceof SlotMagic)
-            	{
-	                slot = s;
-	                break;
-            	}
+                if (s instanceof SlotMagic)
+                {
+                    slot = s;
+                    break;
+                }
             }
         }
 
-        if(slot == null)
+        if (slot == null)
         {
             super.mouseClicked(x, y, button);
-        	return;
+            return;
         }
-                
+
         EssentializerContainer container = (EssentializerContainer) this.inventorySlots;
-        
         container.clickedMagic(slot, button);
     }
 }

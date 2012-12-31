@@ -36,8 +36,11 @@ public class MagicOrb extends Item
     @SideOnly(Side.CLIENT)
     public int getIconFromDamage(int par1)
     {
-    	if(par1 < 8)
-    		return par1;
+        if (par1 < 8)
+        {
+            return par1;
+        }
+
         return this.iconIndex;
     }
 

@@ -2,6 +2,7 @@ package gigaherz.elementsofpower;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.text.ParseException;
 import java.util.EnumSet;
 
 import net.minecraft.block.material.Material;
@@ -11,6 +12,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.packet.Packet;
@@ -23,20 +25,18 @@ import cpw.mods.fml.common.network.PacketDispatcher;
 
 public class EssentializerTile extends TileEntity implements IInventory, ISidedInventory
 {
-	public static final int MaxEssentializerMagic = 1000;
-	
+    public static final int MaxEssentializerMagic = 1000;
+
     private ItemStack[] inventory;
 
     boolean stateChanged = false;
-    
+
     public EssentializerTile()
-    {    	
+    {
         super();
-        
         // 0..7: magics
         // 8: input
         // 9: output
-        
         this.inventory = new ItemStack[10];
     }
 
@@ -129,9 +129,7 @@ public class EssentializerTile extends TileEntity implements IInventory, ISidedI
     public void readFromNBT(NBTTagCompound tagCompound)
     {
         super.readFromNBT(tagCompound);
-
         // TODO: Save other variables ?
-        
         NBTTagList tagList = tagCompound.getTagList("Inventory");
 
         for (int i = 0; i < tagList.tagCount(); i++)
@@ -150,9 +148,7 @@ public class EssentializerTile extends TileEntity implements IInventory, ISidedI
     public void writeToNBT(NBTTagCompound tagCompound)
     {
         super.writeToNBT(tagCompound);
-        
         // TODO: Save other variables ?
-        
         NBTTagList itemList = new NBTTagList();
 
         for (int i = 0; i < inventory.length; i++)
@@ -174,7 +170,7 @@ public class EssentializerTile extends TileEntity implements IInventory, ISidedI
     @Override
     public Packet getDescriptionPacket()
     {
-    	NBTTagCompound var1 = new NBTTagCompound();
+        NBTTagCompound var1 = new NBTTagCompound();
         this.writeToNBT(var1);
         return new Packet132TileEntityData(this.xCoord, this.yCoord, this.zCoord, 3, var1);
     }
@@ -189,10 +185,10 @@ public class EssentializerTile extends TileEntity implements IInventory, ISidedI
     public void updateEntity()
     {
         super.updateEntity();
-        
+
         if (this.stateChanged)
         {
-        	this.stateChanged = false;
+            this.stateChanged = false;
             this.onInventoryChanged();
         }
     }
@@ -200,99 +196,221 @@ public class EssentializerTile extends TileEntity implements IInventory, ISidedI
     @Override
     public int getStartInventorySide(ForgeDirection side)
     {
-    	if(ForgeDirection.UP == side || ForgeDirection.DOWN == side)
-    		return 9;
+        if (ForgeDirection.UP == side || ForgeDirection.DOWN == side)
+        {
+            return 9;
+        }
+
         return 8;
     }
 
     @Override
     public int getSizeInventorySide(ForgeDirection side)
-    {        
+    {
         return 1;
     }
 
     public void updateProgressBar(int bar, int value)
     {
-    	if (bar == 0)
-		{
-			convertInput();
-		}
-		else if (bar == 1)
-		{
-			addMagicToOutput(value);
-		}
+        if (bar == 0)
+        {
+            convertInput();
+        }
+        else if (bar == 1)
+        {
+            addMagicToOutput(value);
+        }
     }
 
-	public int getInputEssencesOfType(int type) 
-	{
-		ItemStack inputItem = inventory[8];
-		
-		if(inputItem == null)
-			return 0;
-		
-		MagicAmounts amounts = MagicDatabase.getEssences(inputItem);
-		
-		if(amounts == null)
-			return 0;
-		
-		return amounts.getAmountOfType(type);
-	}
+    public int getInputEssencesOfType(int type)
+    {
+        ItemStack inputItem = inventory[8];
 
-	public void convertInput()
-	{
-		ItemStack inputItem = inventory[8];
-		
-		if(inputItem == null)
-			return;
-		
-		MagicAmounts amounts = MagicDatabase.getEssences(inputItem);
-		
-		if(amounts == null)
-			return;
-
-		for(int i=0;i<8;i++)
-		{
-			ItemStack magic = inventory[i];
-			int amount = amounts.getAmountOfType(i);
-			
-			if(magic == null)
-				continue;
-			
-			if(magic.stackSize + amount > MaxEssentializerMagic)
-				return;
-		}
-		
-		// everything is ok, we can destroy the item and add the amounts
-
-		for(int i=0;i<8;i++)
-		{
-			int amount = amounts.getAmountOfType(i);
-			
-			if(amount == 0)
-				continue;
-			
-			ItemStack magic = inventory[i];
-			if(magic == null)
-			{
-				inventory[i] = new ItemStack(ElementsOfPower.magicOrb, amount, i);
-			}
-			else
-			{
-				magic.stackSize += amount;
-			}
-		}
-		    
-		inputItem.stackSize --;
-        if (inputItem.stackSize <= 0)
+        if (inputItem == null)
         {
-            inventory[8] = null;
+            return 0;
         }
 
-    	this.stateChanged = true;
-	}
+        MagicAmounts amounts = MagicDatabase.getEssences(inputItem);
 
-	public void addMagicToOutput(int slot) {
-		// TODO Auto-generated method stub
-		
-	}
+        if (amounts == null)
+        {
+            return 0;
+        }
+
+        return amounts.getAmountOfType(type);
+    }
+
+    public void convertInput()
+    {
+        ItemStack input = inventory[8];
+
+        if (input == null)
+        {
+            return;
+        }
+
+        if (MagicDatabase.itemContainsMagic(input))
+        {
+            MagicAmounts amounts = MagicDatabase.getContainedMagic(input);
+
+            if (amounts == null)
+            {
+                return;
+            }
+
+            if (!tryAddAmountsToTile(amounts))
+            {
+                return;
+            }
+
+            inventory[8] = MagicDatabase.setContainedMagic(input, null);
+        }
+        else
+        {
+            MagicAmounts amounts = MagicDatabase.getEssences(input);
+
+            if (amounts == null)
+            {
+                return;
+            }
+
+            if (!tryAddAmountsToTile(amounts))
+            {
+                return;
+            }
+
+            input.stackSize --;
+
+            if (input.stackSize <= 0)
+            {
+                inventory[8] = null;
+            }
+        }
+
+        this.stateChanged = true;
+    }
+
+    private boolean tryAddAmountsToTile(MagicAmounts amounts)
+    {
+        int[] am = amounts.amounts;
+
+        // test if we can truly add the magic
+        for (int i = 0; i < 8; i++)
+        {
+            int amount = am[i];
+
+            if (amount > 0)
+            {
+                continue;
+            }
+
+            ItemStack magic = inventory[i];
+
+            if (magic == null)
+            {
+                continue;
+            }
+
+            if (magic.stackSize + amount > MaxEssentializerMagic)
+            {
+                return false;
+            }
+        }
+
+        // we can, add it
+        for (int i = 0; i < 8; i++)
+        {
+            int amount = am[i];
+
+            if (amount == 0)
+            {
+                continue;
+            }
+
+            addMagicOfType(i, amount);
+        }
+
+        return true;
+    }
+
+    private void addMagicOfType(int type, int amount)
+    {
+        ItemStack magic = inventory[type];
+
+        if (magic == null)
+        {
+            inventory[type] = new ItemStack(ElementsOfPower.magicOrb, amount, type);
+        }
+        else
+        {
+            magic.stackSize += amount;
+        }
+    }
+
+    public void addMagicToOutput(int slot)
+    {
+        ItemStack output = inventory[9];
+        
+        if (output == null)
+        	return;
+        
+        if (output.stackSize != 1)
+        	return;
+        	
+        MagicAmounts amounts = MagicDatabase.getContainedMagic(output);
+        int max = 0;
+        if(amounts == null)
+        {
+        	amounts = new MagicAmounts();
+        }
+        else
+        {
+	        for (int i = 0; i < 8; i++)
+	        {
+	    		int amount = amounts.amounts[i];
+	    		if(amount > max)
+	    			max = amount;
+	        }
+        }
+
+        int goal = max + 1;
+
+        for (int i = 0; i < 8; i++)
+        {
+    		int amount = amounts.amounts[i];
+    		int required = goal - amount;
+    		
+    		if(required == 0 || (amount == 0 && i != slot))
+    			continue;
+
+            ItemStack magic = inventory[i];
+    		
+            if(magic == null)
+            	return;
+            
+            if(magic.stackSize < required)
+            	return;
+        }
+
+        for (int i = 0; i < 8; i++)
+        {
+    		int amount = amounts.amounts[i];
+    		int required = goal - amount;
+
+    		if(required == 0 || (amount == 0 && i != slot))
+    			continue;
+
+            ItemStack magic = inventory[i];
+            
+            magic.stackSize -= required;
+
+            if(magic.stackSize <= 0)
+            	inventory[i] = null;
+            
+            amounts.amounts[i] = goal;
+        }
+        
+        inventory[9] = MagicDatabase.setContainedMagic(output, amounts);
+    }
 }

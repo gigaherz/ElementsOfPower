@@ -28,11 +28,11 @@ public class CommonProxy implements IPacketHandler
     {
         // Nothing here as this is the server side proxy
     }
-    
+
     @Override
     public void onPacketData(INetworkManager manager, Packet250CustomPayload payload, Player player)
     {
-    	if (payload.channel.equals(ElementsOfPower.ChannelName))
+        if (payload.channel.equals(ElementsOfPower.ChannelName))
         {
             this.handleMachineUpdate(payload, (EntityPlayer)player);
         }
@@ -68,7 +68,7 @@ public class CommonProxy implements IPacketHandler
             e.printStackTrace();
         }
     }
-    
+
     public void sendProgressBarUpdate(TileEntity entity, int bar, int value)
     {
         ByteArrayOutputStream bos = new ByteArrayOutputStream(8);
@@ -92,14 +92,14 @@ public class CommonProxy implements IPacketHandler
         packet.channel = ElementsOfPower.ChannelName;
         packet.data = bos.toByteArray();
         packet.length = bos.size();
-        
-        if(this instanceof ClientProxy)
+
+        if (this instanceof ClientProxy)
         {
-        	PacketDispatcher.sendPacketToServer(packet);
+            PacketDispatcher.sendPacketToServer(packet);
         }
         else
         {
-        	PacketDispatcher.sendPacketToAllAround(entity.xCoord, entity.yCoord, entity.zCoord, 12, entity.worldObj.provider.dimensionId, packet);
+            PacketDispatcher.sendPacketToAllAround(entity.xCoord, entity.yCoord, entity.zCoord, 12, entity.worldObj.provider.dimensionId, packet);
         }
-    }    
+    }
 }

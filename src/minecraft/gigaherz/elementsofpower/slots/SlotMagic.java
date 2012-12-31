@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower.slots;
 
+import gigaherz.elementsofpower.CommonProxy;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,10 +14,10 @@ import net.minecraft.util.MathHelper;
 
 public class SlotMagic extends Slot
 {
-	public SlotMagic(IInventory par1iInventory, int par2, int par3, int par4)
-	{
-		super(par1iInventory, par2, par3, par4);		
-	}
+    public SlotMagic(IInventory par1iInventory, int par2, int par3, int par4)
+    {
+        super(par1iInventory, par2, par3, par4);
+    }
 
     @Override
     public boolean isItemValid(ItemStack par1ItemStack)
@@ -28,5 +29,17 @@ public class SlotMagic extends Slot
     public boolean canTakeStack(EntityPlayer par1EntityPlayer)
     {
         return false;
+    }
+
+    @Override
+    public int getBackgroundIconIndex()
+    {
+        return 16;
+    }
+
+    @Override
+    public String getBackgroundIconTexture()
+    {
+        return CommonProxy.ITEMS_PNG;
     }
 }

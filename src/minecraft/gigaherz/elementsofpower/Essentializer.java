@@ -37,9 +37,9 @@ public class Essentializer extends Block
     @Override
     public int getBlockTextureFromSide(int i)
     {
-        int topBottom = 3; 
+        int topBottom = 3;
         int sideTexture = 19;
-        
+
         switch (i)
         {
             case 0: // bottom
