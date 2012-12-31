@@ -1,11 +1,15 @@
 package gigaherz.elementsofpower;
 
+import gigaherz.elementsofpower.slots.SlotContainer;
+import gigaherz.elementsofpower.slots.SlotMagic;
+import gigaherz.elementsofpower.slots.SlotSource;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.inventory.SlotFurnace;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.tileentity.TileEntityFurnace;
@@ -15,49 +19,24 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class EssentializerContainer extends Container
 {
     protected EssentializerTile tile;
-    //protected int lastPowerAcc = 0;
 
     public EssentializerContainer(EssentializerTile tileEntity, InventoryPlayer playerInventory)
     {
         this.tile = tileEntity;
 
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 4; i++)
         {
-            for (int j = 0; j < 3; j++)
+            for (int j = 0; j < 2; j++)
             {
-                addSlotToContainer(new Slot(tileEntity,
-                        j + i * 3,
-                        8 + j * 18,
-                        17 + i * 18));
+                addSlotToContainer(new SlotMagic(tileEntity,
+                        j + i * 2,
+                        71 + j * 18, 8 + i * 18));
             }
         }
 
-        for (int i = 0; i < 3; i++)
-        {
-            addSlotToContainer(new Slot(tileEntity,
-                    i + 18,
-                    68,
-                    17 + i * 18));
-        }
+        addSlotToContainer(new SlotSource(tileEntity, 8, 26, 35));
 
-        for (int i = 0; i < 3; i++)
-        {
-            addSlotToContainer(new Slot(tileEntity,
-                    i + 21,
-                    92,
-                    17 + i * 18));
-        }
-
-        for (int i = 0; i < 3; i++)
-        {
-            for (int j = 0; j < 3; j++)
-            {
-                addSlotToContainer(new SlotFurnace(playerInventory.player, tileEntity,
-                        j + i * 3 + 9,
-                        116 + j * 18,
-                        17 + i * 18));
-            }
-        }
+        addSlotToContainer(new SlotContainer(tileEntity, 9, 134, 35));
 
         bindPlayerInventory(playerInventory);
     }
@@ -70,8 +49,7 @@ public class EssentializerContainer extends Container
             {
                 addSlotToContainer(new Slot(playerInventory,
                         j + i * 9 + 9,
-                        8 + j * 18,
-                        84 + i * 18));
+                        8 + j * 18, 84 + i * 18));
             }
         }
 
@@ -82,113 +60,129 @@ public class EssentializerContainer extends Container
     }
 
     @Override
+    public void onCraftGuiClosed(EntityPlayer player)
+    {
+        super.onCraftGuiClosed(player);
+
+        if (!this.tile.worldObj.isRemote)
+        {
+        	for(int i=8;i<10;i++)
+        	{
+	            ItemStack stack = this.tile.getStackInSlotOnClosing(i);
+	
+	            if (stack != null)
+	            {
+	                player.dropPlayerItem(stack);
+	            }
+        	}
+        }
+    }
+    
+    @Override
     public boolean canInteractWith(EntityPlayer player)
     {
         return tile.isUseableByPlayer(player);
     }
 
-    public void addCraftingToCrafters(ICrafting crafter)
-    {
-        super.addCraftingToCrafters(crafter);
-        //crafter.sendProgressBarUpdate(this, 0, this.worker.powerAccum);
-    }
-
-    public void updateCraftingResults()
-    {
-        super.updateCraftingResults();
-
-        for (int i = 0; i < this.crafters.size(); ++i)
-        {
-            ICrafting crafter = (ICrafting)this.crafters.get(i);
-
-            /*if (this.lastPowerAcc != this.worker.powerAccum)
-            {
-                crafter.sendProgressBarUpdate(this, 0, this.worker.powerAccum);
-            }*/
-
-        }
-
-        //this.lastPowerAcc = this.worker.powerAccum;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void updateProgressBar(int bar, int value)
-    {
-        this.tile.updateProgressBar(bar, value);
-    }
-
     /**
      * Called when a player shift-clicks on a slot. You must override this or you will crash when someone does that.
      */
-    public ItemStack transferStackInSlot(EntityPlayer par1EntityPlayer, int par2)
+    public ItemStack transferStackInSlot(EntityPlayer player, int slotIndex)
     {
-        ItemStack var3 = null;
-        Slot var4 = (Slot)this.inventorySlots.get(par2);
+    	if(slotIndex < 8)
+    		return null;
+    	
+        ItemStack stackCopy = null;
+        Slot slot = (Slot)this.inventorySlots.get(slotIndex);
 
-        if (var4 != null && var4.getHasStack())
+        if (slot == null || !slot.getHasStack())
+        	return null;
+    
+        ItemStack stack = slot.getStack();
+        stackCopy = stack.copy();
+        
+        if(slotIndex >= 10)
         {
-            ItemStack var5 = var4.getStack();
-            var3 = var5.copy();
-
-            if (par2 == 2)
+        	Item item = stack.getItem();
+        	
+        	boolean itemIsContainer = MagicDatabase.canItemContainMagic(stack);
+        	boolean itemContainsMagic = itemIsContainer && MagicDatabase.itemContainsMagic(stack);
+        	boolean itemHasEssence = MagicDatabase.itemHasEssence(stack);
+        	
+            if (itemIsContainer)
             {
-                if (!this.mergeItemStack(var5, 3, 39, true))
-                {
+            	if(itemContainsMagic)
+            	{
+	                if (!this.mergeItemStack(stack, 8, 9, false))
+	                {
+	                	ItemStack dest = ((Slot)this.inventorySlots.get(9)).getStack();
+	                	
+	                	if (dest != null && dest.stackSize > 0)
+	                		return null;
+	                	
+	                	if (!this.mergeItemStack(stack, 9, 10, false))
+	                        return null;
+	                }
+            	}
+            	else
+            	{
+            		ItemStack dest = ((Slot)this.inventorySlots.get(9)).getStack();
+            	
+	            	if (dest != null && dest.stackSize > 0)
+	            	{
+		                if (!itemHasEssence)
+	                        return null;
+		                
+		                if (!this.mergeItemStack(stack, 8, 9, false))
+	                        return null;
+	            	}
+	            	else if (!this.mergeItemStack(stack, 9, 10, false))
+	                {
+		                if (!itemHasEssence)
+	                        return null;
+		                
+		                if (!this.mergeItemStack(stack, 8, 9, false))
+	                        return null;
+	                }
+            	}
+            }
+            else if(itemHasEssence)
+            {
+                if (!this.mergeItemStack(stack, 8, 9, false))
                     return null;
-                }
-
-                var4.onSlotChange(var5, var3);
             }
-            else if (par2 != 1 && par2 != 0)
+            else if (slotIndex >= 10 && slotIndex < 37)
             {
-                if (FurnaceRecipes.smelting().getSmeltingResult(var5) != null)
-                {
-                    if (!this.mergeItemStack(var5, 0, 1, false))
-                    {
-                        return null;
-                    }
-                }
-                else if (TileEntityFurnace.isItemFuel(var5))
-                {
-                    if (!this.mergeItemStack(var5, 1, 2, false))
-                    {
-                        return null;
-                    }
-                }
-                else if (par2 >= 3 && par2 < 30)
-                {
-                    if (!this.mergeItemStack(var5, 30, 39, false))
-                    {
-                        return null;
-                    }
-                }
-                else if (par2 >= 30 && par2 < 39 && !this.mergeItemStack(var5, 3, 30, false))
-                {
+                if (!this.mergeItemStack(stack, 37, 46, false))
                     return null;
-                }
             }
-            else if (!this.mergeItemStack(var5, 3, 39, false))
+            else if (slotIndex >= 37 && slotIndex < 39)
             {
-                return null;
+            	if(!this.mergeItemStack(stack, 10, 37, false))
+                    return null;
             }
-
-            if (var5.stackSize == 0)
-            {
-                var4.putStack((ItemStack)null);
-            }
-            else
-            {
-                var4.onSlotChanged();
-            }
-
-            if (var5.stackSize == var3.stackSize)
-            {
-                return null;
-            }
-
-            var4.onPickupFromSlot(par1EntityPlayer, var5);
+        }
+        else 
+        {
+        	if (!this.mergeItemStack(stack, 10, 46, false))
+        		return null;
         }
 
-        return var3;
+        if (stack.stackSize == 0)
+            slot.putStack((ItemStack)null);
+        else
+            slot.onSlotChanged();
+
+        if (stack.stackSize == stackCopy.stackSize)
+            return null;
+
+        slot.onPickupFromSlot(player, stack);
+
+        return stackCopy;
     }
+
+	public void clickedMagic(Slot slot, int button) 
+	{
+		ElementsOfPower.proxy.sendProgressBarUpdate(tile, button, slot.slotNumber);
+	}
 }

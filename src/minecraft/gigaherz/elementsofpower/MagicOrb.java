@@ -13,55 +13,31 @@ import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class CommandCircuit extends Item
+public class MagicOrb extends Item
 {
     private final static String[] subNames =
     {
-        "unprogrammed",
-
-        // Tier 1
-        "planter", "harvester", "woodcutter",
-
-        // Tier 2
-        "fertilizer", "tiller",
-
-        // Tier 3
-        "miner", "filler",
+        "fire", "water",
+        "air", "earth",
+        "light", "darkness",
+        "life", "death",
     };
 
-    public CommandCircuit(int id)
+    public MagicOrb(int id)
     {
         super(id);
         // Constructor Configuration
-        setMaxStackSize(64);
-        setCreativeTab(CreativeTabs.tabMisc);
+        setMaxStackSize(1000);
         setIconIndex(0);
-        setItemName("commandCircuit");
+        setItemName("magicOrb");
         setHasSubtypes(true);
     }
 
     @SideOnly(Side.CLIENT)
     public int getIconFromDamage(int par1)
     {
-    	switch(par1)
-    	{
-    	case 1:
-    		return 0;
-    	case 2:
-    		return 1;
-    	case 3:
-    		return 2;
-
-    	case 4:
-    		return 17;
-    	case 5:
-    		return 16;
-
-    	case 6:
-    		return 32;
-    	case 7:
-    		return 33;
-    	}
+    	if(par1 < 8)
+    		return par1;
         return this.iconIndex;
     }
 

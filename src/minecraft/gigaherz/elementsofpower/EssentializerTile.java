@@ -7,11 +7,14 @@ import java.util.EnumSet;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
@@ -20,17 +23,21 @@ import cpw.mods.fml.common.network.PacketDispatcher;
 
 public class EssentializerTile extends TileEntity implements IInventory, ISidedInventory
 {
+	public static final int MaxEssentializerMagic = 1000;
+	
     private ItemStack[] inventory;
-	private int ticks;
 
+    boolean stateChanged = false;
+    
     public EssentializerTile()
     {    	
         super();
-        this.inventory = new ItemStack[24];
-    }
-
-    public void initialize()
-    {
+        
+        // 0..7: magics
+        // 8: input
+        // 9: output
+        
+        this.inventory = new ItemStack[10];
     }
 
     @Override
@@ -103,7 +110,7 @@ public class EssentializerTile extends TileEntity implements IInventory, ISidedI
     @Override
     public int getInventoryStackLimit()
     {
-        return 64;
+        return MaxEssentializerMagic;
     }
 
     @Override
@@ -165,9 +172,17 @@ public class EssentializerTile extends TileEntity implements IInventory, ISidedI
     }
 
     @Override
+    public Packet getDescriptionPacket()
+    {
+    	NBTTagCompound var1 = new NBTTagCompound();
+        this.writeToNBT(var1);
+        return new Packet132TileEntityData(this.xCoord, this.yCoord, this.zCoord, 3, var1);
+    }
+
+    @Override
     public String getInvName()
     {
-        return "GrinderInventory";
+        return "EssentializerInventory";
     }
 
     @Override
@@ -175,27 +190,9 @@ public class EssentializerTile extends TileEntity implements IInventory, ISidedI
     {
         super.updateEntity();
         
-        if(this.ticks++ == 0)
+        if (this.stateChanged)
         {
-        	initialize();
-        }
-
-        if (this.worldObj.isRemote)
-        {
-            return;
-        }
-
-        boolean stateChanged = false;
-
-        if (this.ticks == 1)
-        {
-            this.worldObj.setBlockMetadataWithNotify(this.xCoord, this.yCoord, this.zCoord, this.blockMetadata);
-        }
-        
-        ForgeDirection inputDirection = ForgeDirection.getOrientation(this.getBlockMetadata() & 7);
-
-        if (stateChanged)
-        {
+        	this.stateChanged = false;
             this.onInventoryChanged();
         }
     }
@@ -203,107 +200,99 @@ public class EssentializerTile extends TileEntity implements IInventory, ISidedI
     @Override
     public int getStartInventorySide(ForgeDirection side)
     {
-        ForgeDirection left, right;
-
-        switch (this.getBlockMetadata() & 7)
-        {
-            case 2: // North
-                left = ForgeDirection.WEST;
-                right = ForgeDirection.EAST;
-                break;
-
-            case 3: // South
-                left = ForgeDirection.EAST;
-                right = ForgeDirection.WEST;
-                break;
-
-            case 4: // West
-                left = ForgeDirection.NORTH;
-                right = ForgeDirection.SOUTH;
-                break;
-
-            case 5: // East
-                left = ForgeDirection.SOUTH;
-                right = ForgeDirection.NORTH;
-                break;
-
-            default:
-                left = ForgeDirection.WEST;
-                right = ForgeDirection.EAST;
-                break;
-        }
-
-        if (side == left)
-        {
-            return 0;
-        }
-
-        if (side == right)
-        {
-            return 9;
-        }
-
-        if (side == ForgeDirection.UP)
-        {
-            return 18;
-        }
-
-        return 0;
+    	if(ForgeDirection.UP == side || ForgeDirection.DOWN == side)
+    		return 9;
+        return 8;
     }
 
     @Override
     public int getSizeInventorySide(ForgeDirection side)
-    {
-        ForgeDirection left, right;
-
-        switch (this.getBlockMetadata() & 7)
-        {
-            case 2: // North
-                left = ForgeDirection.WEST;
-                right = ForgeDirection.EAST;
-                break;
-
-            case 3: // South
-                left = ForgeDirection.EAST;
-                right = ForgeDirection.WEST;
-                break;
-
-            case 4: // West
-                left = ForgeDirection.NORTH;
-                right = ForgeDirection.SOUTH;
-                break;
-
-            case 5: // East
-                left = ForgeDirection.SOUTH;
-                right = ForgeDirection.NORTH;
-                break;
-
-            default:
-                left = ForgeDirection.WEST;
-                right = ForgeDirection.EAST;
-                break;
-        }
-
-        if (side == left)
-        {
-            return 9;
-        }
-
-        if (side == right)
-        {
-            return 9;
-        }
-
-        if (side == ForgeDirection.UP)
-        {
-            return 3;
-        }
-
-        return 0;
+    {        
+        return 1;
     }
 
     public void updateProgressBar(int bar, int value)
     {
-        
+    	if (bar == 0)
+		{
+			convertInput();
+		}
+		else if (bar == 1)
+		{
+			addMagicToOutput(value);
+		}
     }
+
+	public int getInputEssencesOfType(int type) 
+	{
+		ItemStack inputItem = inventory[8];
+		
+		if(inputItem == null)
+			return 0;
+		
+		MagicAmounts amounts = MagicDatabase.getEssences(inputItem);
+		
+		if(amounts == null)
+			return 0;
+		
+		return amounts.getAmountOfType(type);
+	}
+
+	public void convertInput()
+	{
+		ItemStack inputItem = inventory[8];
+		
+		if(inputItem == null)
+			return;
+		
+		MagicAmounts amounts = MagicDatabase.getEssences(inputItem);
+		
+		if(amounts == null)
+			return;
+
+		for(int i=0;i<8;i++)
+		{
+			ItemStack magic = inventory[i];
+			int amount = amounts.getAmountOfType(i);
+			
+			if(magic == null)
+				continue;
+			
+			if(magic.stackSize + amount > MaxEssentializerMagic)
+				return;
+		}
+		
+		// everything is ok, we can destroy the item and add the amounts
+
+		for(int i=0;i<8;i++)
+		{
+			int amount = amounts.getAmountOfType(i);
+			
+			if(amount == 0)
+				continue;
+			
+			ItemStack magic = inventory[i];
+			if(magic == null)
+			{
+				inventory[i] = new ItemStack(ElementsOfPower.magicOrb, amount, i);
+			}
+			else
+			{
+				magic.stackSize += amount;
+			}
+		}
+		    
+		inputItem.stackSize --;
+        if (inputItem.stackSize <= 0)
+        {
+            inventory[8] = null;
+        }
+
+    	this.stateChanged = true;
+	}
+
+	public void addMagicToOutput(int slot) {
+		// TODO Auto-generated method stub
+		
+	}
 }

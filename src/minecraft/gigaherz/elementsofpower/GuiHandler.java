@@ -1,6 +1,6 @@
 package gigaherz.elementsofpower;
 
-import gigaherz.elementsofpower.client.WorkerGui;
+import gigaherz.elementsofpower.client.EssentializerGui;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -28,7 +28,7 @@ public class GuiHandler implements IGuiHandler
 
         if (tileEntity instanceof EssentializerTile)
         {
-            return new WorkerGui(player.inventory, (EssentializerTile) tileEntity);
+            return new EssentializerGui(player.inventory, (EssentializerTile) tileEntity);
         }
 
         return null;
