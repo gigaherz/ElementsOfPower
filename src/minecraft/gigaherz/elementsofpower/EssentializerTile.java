@@ -1,27 +1,15 @@
 package gigaherz.elementsofpower;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.text.ParseException;
-import java.util.EnumSet;
-
-import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Slot;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet132TileEntityData;
-import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.ISidedInventory;
-import cpw.mods.fml.common.network.PacketDispatcher;
 
 public class EssentializerTile extends TileEntity implements IInventory, ISidedInventory
 {
@@ -231,11 +219,16 @@ public class EssentializerTile extends TileEntity implements IInventory, ISidedI
             return 0;
         }
 
-        MagicAmounts amounts = MagicDatabase.getEssences(inputItem);
+        MagicAmounts amounts = MagicDatabase.getContainedMagic(inputItem);
 
         if (amounts == null)
         {
-            return 0;
+            amounts = MagicDatabase.getEssences(inputItem);
+
+            if (amounts == null)
+            {
+                return 0;
+            }
         }
 
         return amounts.getAmountOfType(type);
@@ -351,66 +344,96 @@ public class EssentializerTile extends TileEntity implements IInventory, ISidedI
     public void addMagicToOutput(int slot)
     {
         ItemStack output = inventory[9];
-        
+
         if (output == null)
-        	return;
-        
+        {
+            return;
+        }
+
         if (output.stackSize != 1)
-        	return;
-        	
+        {
+            return;
+        }
+
         MagicAmounts amounts = MagicDatabase.getContainedMagic(output);
         int max = 0;
-        if(amounts == null)
+        int goal = 0;
+
+        if (amounts == null)
         {
-        	amounts = new MagicAmounts();
+            amounts = new MagicAmounts();
         }
         else
         {
-	        for (int i = 0; i < 8; i++)
-	        {
-	    		int amount = amounts.amounts[i];
-	    		if(amount > max)
-	    			max = amount;
-	        }
+            for (int i = 0; i < 8; i++)
+            {
+                int amount = amounts.amounts[i];
+
+                if (i == slot)
+                {
+                    goal = amount;
+                }
+
+                if (amount > max)
+                {
+                    max = amount;
+                }
+            }
         }
 
-        int goal = max + 1;
+        if (goal < max)
+        {
+            goal = max;
+        }
+        else if (goal == max)
+        {
+            goal = max + 1;
+        }
 
         for (int i = 0; i < 8; i++)
         {
-    		int amount = amounts.amounts[i];
-    		int required = goal - amount;
-    		
-    		if(required == 0 || (amount == 0 && i != slot))
-    			continue;
+            int amount = amounts.amounts[i];
+            int required = goal - amount;
+
+            if (required == 0 || (amount == 0 && i != slot))
+            {
+                continue;
+            }
 
             ItemStack magic = inventory[i];
-    		
-            if(magic == null)
-            	return;
-            
-            if(magic.stackSize < required)
-            	return;
+
+            if (magic == null)
+            {
+                return;
+            }
+
+            if (magic.stackSize < required)
+            {
+                return;
+            }
         }
 
         for (int i = 0; i < 8; i++)
         {
-    		int amount = amounts.amounts[i];
-    		int required = goal - amount;
+            int amount = amounts.amounts[i];
+            int required = goal - amount;
 
-    		if(required == 0 || (amount == 0 && i != slot))
-    			continue;
+            if (required == 0 || (amount == 0 && i != slot))
+            {
+                continue;
+            }
 
             ItemStack magic = inventory[i];
-            
             magic.stackSize -= required;
 
-            if(magic.stackSize <= 0)
-            	inventory[i] = null;
-            
+            if (magic.stackSize <= 0)
+            {
+                inventory[i] = null;
+            }
+
             amounts.amounts[i] = goal;
         }
-        
+
         inventory[9] = MagicDatabase.setContainedMagic(output, amounts);
     }
 }

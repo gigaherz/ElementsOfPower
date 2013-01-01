@@ -32,15 +32,18 @@ public class MagicAmounts
     {
         return amounts[type];
     }
-    
+
     public boolean isEmpty()
     {
-    	for(int i=0;i<amounts.length;i++)
-    	{
-    		if(amounts[i] > 0)
-    			return false;
-    	}
-    	return true;
+        for (int i = 0; i < amounts.length; i++)
+        {
+            if (amounts[i] > 0)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public void setAmountOfType(int type, int amount)

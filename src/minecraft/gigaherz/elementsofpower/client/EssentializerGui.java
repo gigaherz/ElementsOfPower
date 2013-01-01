@@ -3,18 +3,13 @@ package gigaherz.elementsofpower.client;
 import gigaherz.elementsofpower.EssentializerContainer;
 import gigaherz.elementsofpower.EssentializerTile;
 import gigaherz.elementsofpower.slots.SlotMagic;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.StatCollector;
 
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
-
-import cpw.mods.fml.common.registry.LanguageRegistry;
 
 public class EssentializerGui extends GuiContainer
 {
