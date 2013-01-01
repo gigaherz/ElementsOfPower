@@ -54,7 +54,6 @@ public class StaffItemRenderer implements IItemRenderer
     	RenderEngine engine = FMLClientHandler.instance().getClient().renderEngine;
     	
     	GL11.glPushMatrix();
-    	GL11.glScalef(0.1F, 4F, 0.1F);
 
     	bindTextureByName(engine, "/terrain.png");
     	
