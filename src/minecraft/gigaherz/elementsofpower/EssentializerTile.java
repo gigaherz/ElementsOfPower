@@ -355,6 +355,7 @@ public class EssentializerTile extends TileEntity implements IInventory, ISidedI
             return;
         }
 
+        MagicAmounts limits = MagicDatabase.getMagicLimits(output);
         MagicAmounts amounts = MagicDatabase.getContainedMagic(output);
         int max = 0;
         int goal = 0;
@@ -392,6 +393,7 @@ public class EssentializerTile extends TileEntity implements IInventory, ISidedI
 
         for (int i = 0; i < 8; i++)
         {
+        	int limit = limits.amounts[i];
             int amount = amounts.amounts[i];
             int required = goal - amount;
 
@@ -400,6 +402,9 @@ public class EssentializerTile extends TileEntity implements IInventory, ISidedI
                 continue;
             }
 
+            if(amount + required > limit)
+            	return;
+            
             ItemStack magic = inventory[i];
 
             if (magic == null)

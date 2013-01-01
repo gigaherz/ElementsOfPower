@@ -367,7 +367,17 @@ public class MagicDatabase
 
         return stackIsInMap(containerCapacity, stack);
     }
+    
+	public static MagicAmounts getMagicLimits(ItemStack stack)
+	{
+		if (stack.stackSize > 1)
+        {
+            return null;
+        }
 
+        return getFromMap(containerCapacity, stack);
+	}
+	
     public static boolean itemHasEssence(ItemStack stack)
     {
         return stackIsInMap(itemEssences, stack);

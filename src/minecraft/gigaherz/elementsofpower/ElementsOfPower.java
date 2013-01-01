@@ -135,7 +135,7 @@ public class ElementsOfPower
         GameRegistry.registerBlock(essentializer, essentializer.getBlockName());
         LanguageRegistry.addName(essentializer, "Essentializer");
         // Containers
-        LanguageRegistry.addName(lapisContainer, "Magic-imbued Lapis Azuli");
+        LanguageRegistry.addName(lapisContainer, "Magic-imbued Lapis Lazuli");
         LanguageRegistry.addName(emeraldContainer, "Magic-imbued Emerald");
         LanguageRegistry.addName(diamondContainer, "Magic-imbued Diamond");
         LanguageRegistry.addName(wandLapis, "Lapis Wand");

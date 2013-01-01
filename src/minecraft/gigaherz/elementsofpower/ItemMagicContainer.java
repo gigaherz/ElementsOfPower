@@ -3,6 +3,7 @@ package gigaherz.elementsofpower;
 import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import cpw.mods.fml.relauncher.Side;
@@ -29,6 +30,14 @@ public class ItemMagicContainer extends Item
         return !amounts.isEmpty();
     }
 
+    @SideOnly(Side.CLIENT)
+    public EnumRarity getRarity(ItemStack stack)
+    {
+    	if(hasEffect(stack))
+    		return EnumRarity.rare;
+        return EnumRarity.uncommon;
+    }
+    
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, EntityPlayer player, List tooltipList, boolean showAdvancedInfo)
     {
