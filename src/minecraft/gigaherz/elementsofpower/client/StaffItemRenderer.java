@@ -1,5 +1,10 @@
 package gigaherz.elementsofpower.client;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 import gigaherz.elementsofpower.CommonProxy;
 
 import org.lwjgl.opengl.GL11;
@@ -14,7 +19,9 @@ import net.minecraftforge.client.IItemRenderer;
 
 public class StaffItemRenderer implements IItemRenderer
 {
-	final StaffModel model = new StaffModel();
+	Map<Integer, StaffModel> models = new HashMap<Integer, StaffModel>();
+	
+	long lDate = 0;
 	
     @Override
     public boolean handleRenderType(ItemStack item, ItemRenderType type)
@@ -31,36 +38,53 @@ public class StaffItemRenderer implements IItemRenderer
     public boolean shouldUseRenderHelper(ItemRenderType type, ItemStack item,
             ItemRendererHelper helper)
     {
-    	if(type == ItemRenderType.EQUIPPED && helper == ItemRendererHelper.EQUIPPED_BLOCK)
-    		return true;
-    	if(type == ItemRenderType.EQUIPPED && helper == ItemRendererHelper.BLOCK_3D)
-    		return true;
-    	if(type == ItemRenderType.EQUIPPED && helper == ItemRendererHelper.ENTITY_BOBBING)
-    		return true;
-    	if(type == ItemRenderType.EQUIPPED && helper == ItemRendererHelper.ENTITY_ROTATION)
-    		return true;
-        return false;
+    	return true;
     }
     
     protected void bindTextureByName(RenderEngine engine, String texturePath)
     {
         engine.bindTexture(engine.getTexture(texturePath));
     }
-    
+
+	float cc = -20;
+
     @Override
     public void renderItem(ItemRenderType type, ItemStack item, Object... data)
     {
     	//RenderBlocks rb = (RenderBlocks)data[0];
     	//EntityItem entity = (EntityItem)data[1];
     	
-    	RenderEngine engine = FMLClientHandler.instance().getClient().renderEngine;
+    	int dmg = item.getItemDamage();
+    	StaffModel model;
     	
-    	GL11.glPushMatrix();
+    	if(models.containsKey(dmg))
+    	{
+    		model = models.get(dmg);
+    	}
+    	else
+    	{
+    		model = new StaffModel(dmg);
+    		models.put(dmg, model);
+    	}
+    	
+    	RenderEngine engine = FMLClientHandler.instance().getClient().renderEngine;
 
     	bindTextureByName(engine, CommonProxy.STAFF_PNG);
     	
-    	model.render();
+    	long cDate = new Date().getTime();
+    	long elapsed = cDate - lDate;
+    	lDate = cDate;
+    	if(elapsed > 50)
+    		elapsed = 50;
     	
+    	GL11.glPushMatrix();
+    	GL11.glTranslatef(0.2f, 0.1f, 0.9f);    	    
+    	GL11.glRotatef(cc, 0.5f, 0, 1);
+    	GL11.glPushMatrix();
+
+    	model.render(elapsed);
+
+    	GL11.glPopMatrix();
     	GL11.glPopMatrix();
     }
 }
