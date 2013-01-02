@@ -14,6 +14,7 @@ public class ClientProxy extends CommonProxy
     {
         MinecraftForgeClient.preloadTexture(ITEMS_PNG);
         MinecraftForgeClient.preloadTexture(BLOCK_PNG);
+        MinecraftForgeClient.preloadTexture(STAFF_PNG);
         
         MinecraftForgeClient.registerItemRenderer(ElementsOfPower.magicStaff.itemID, staffRenderer);
     }

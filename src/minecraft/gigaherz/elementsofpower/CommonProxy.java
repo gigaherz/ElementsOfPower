@@ -22,6 +22,7 @@ public class CommonProxy implements IPacketHandler
 {
     public static String ITEMS_PNG = "/gigaherz/elementsofpower/items.png";
     public static String BLOCK_PNG = "/gigaherz/elementsofpower/block.png";
+    public static String STAFF_PNG = "/gigaherz/elementsofpower/modeltest.png";
 
     // Client stuff
     public void registerRenderers()

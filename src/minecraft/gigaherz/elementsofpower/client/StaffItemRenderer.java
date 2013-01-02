@@ -1,5 +1,7 @@
 package gigaherz.elementsofpower.client;
 
+import gigaherz.elementsofpower.CommonProxy;
+
 import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.client.FMLClientHandler;
@@ -55,7 +57,7 @@ public class StaffItemRenderer implements IItemRenderer
     	
     	GL11.glPushMatrix();
 
-    	bindTextureByName(engine, "/terrain.png");
+    	bindTextureByName(engine, CommonProxy.STAFF_PNG);
     	
     	model.render();
     	

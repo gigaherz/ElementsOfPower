@@ -10,13 +10,13 @@ public class StaffModel extends ModelBase
 
 	public StaffModel()
 	{
-		staff = new ModelRenderer(this, 4*16, 1*16)
-			.addBox(0, 0f, 5.0f, 1, 40, 1)
-			.setTextureSize(256, 256);
+		staff = new ModelRenderer(this, 0, 0)
+			.addBox(0, 0f, 5.0f, 1, 32, 1)
+			.setTextureSize(64, 128);
 		staff.setRotationPoint(0.5f, -16f, 5.5f);
 	}
 	
-	private static final float f5 = 1.0f/10.0f;
+	private static final float f5 = 1.0f/8.0f;
 	
 	public void render() 
 	{		
