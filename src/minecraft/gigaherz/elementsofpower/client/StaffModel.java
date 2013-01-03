@@ -16,10 +16,6 @@ public class StaffModel extends ModelBase
 
 	public StaffModel(int dmgValue)
 	{
-		float xf = -0.5f;
-		float yf = -16.0f;
-		float zf = -0.5f;
-		
 		int xOffset = 0;
 		
 		switch(dmgValue)
@@ -35,21 +31,26 @@ public class StaffModel extends ModelBase
 			break;
 		}
 		
-		staff = new ModelRenderer(this, 0, 0)
-			.addBox(xf, yf, zf, 1, 32, 1)
-			.setTextureSize(64, 64);
+		staff = new ModelRenderer(this, 0, 0);
+		staff.addBox(-0.5f, -16.0f, -0.5f, 1, 32, 1);
+		staff.setTextureSize(64, 64);
+		
 		orb1 = new ModelRenderer(this, xOffset, 0);
-		orb1.addBox(xf+0.9f, yf+20, zf+0.9f, 2, 2, 2, -0.20f);
+		orb1.addBox(-6f, -16.0f+20, -6f, 8, 8, 8, -3f);
 		orb1.setTextureSize(64, 64);
+		
 		orb2 = new ModelRenderer(this, xOffset, 0);
-		orb2.addBox(xf+0.9f, yf+20, zf+0.9f, 2, 2, 2, -0.20f);
+		orb2.addBox(-6f, -16.0f+20, -6f, 8, 8, 8, -3f);
 		orb2.setTextureSize(64, 64);
-		orb3 = new ModelRenderer(this, xOffset, 0);
-		orb3.addBox(xf-0.5f, yf+30.5f, zf-0.5f, 2, 2, 2, -0.20f);
-		orb3.setTextureSize(64, 64);
+
 		orb4 = new ModelRenderer(this, -8, -8);
-		orb4.addBox(xf-0.5f, yf+20.0f, zf-0.5f, 2, 2, 2, -0.35f);
+		orb4.addBox(-4f, -16.0f+20f, -4f, 8, 8, 8, -3.4f);
 		orb4.setTextureSize(64, 64);
+		
+		orb3 = new ModelRenderer(this, xOffset, 0);
+		orb3.addBox(-4f, -16.0f+28.5f, -4f, 8, 8, 8, -3.25f);
+		orb3.setTextureSize(64, 64);
+		
 		staff.setRotationPoint(0, 0, 0);
 		//staff.rotateAngleX = -0.2f;
 	}
