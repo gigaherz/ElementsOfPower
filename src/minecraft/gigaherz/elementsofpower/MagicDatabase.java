@@ -65,14 +65,14 @@ public class MagicDatabase
 
     public static void postInitialize()
     {
-        //dumpAllRecipes();
+        dumpAllRecipes();
     }
 
     private static void dumpAllRecipes()
     {
         try
         {
-            FileOutputStream fos = new FileOutputStream("sources.txt");
+            FileOutputStream fos = new FileOutputStream("sources.csv");
             OutputStreamWriter out = new OutputStreamWriter(fos, "UTF-8");
             List<IRecipe> recipeList = CraftingManager.getInstance().getRecipeList();
             List<ItemStack> craftables = new ArrayList<ItemStack>();
@@ -216,23 +216,18 @@ public class MagicDatabase
             List<ItemStack> items) throws IOException
     {
         out.write(output.getDisplayName());
-        out.write(" (" + output.stackSize + ")");
+        out.write(";" + output.stackSize);
+        out.write(";" + output.itemID);
+        out.write(";" + output.getItemDamage());
 
         if (items != null)
         {
-            out.write("\t=\t");
-            boolean first = true;
-
             for (ItemStack is : items)
             {
-                if (!first)
-                {
-                    out.write(", ");
-                }
-
-                out.write(is.getDisplayName());
-                out.write(" (" + is.stackSize + ")");
-                first = false;;
+                out.write(";" + is.getDisplayName());
+                out.write(";" + is.stackSize);
+                out.write(";" + is.itemID);
+                out.write(";" + is.getItemDamage());
             }
         }
 

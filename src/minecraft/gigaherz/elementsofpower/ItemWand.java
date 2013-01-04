@@ -3,8 +3,10 @@ package gigaherz.elementsofpower;
 import java.util.List;
 
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -64,5 +66,14 @@ public class ItemWand extends ItemMagicContainer
         {
             subItems.add(new ItemStack(this, 1, meta));
         }
+    }
+    
+    /**
+     * Called whenever this item is equipped and the right mouse button is pressed. Args: itemStack, world, entityPlayer
+     */
+    public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player)
+    {
+        player.setItemInUse(stack, this.getMaxItemUseDuration(stack));
+        return stack;
     }
 }
