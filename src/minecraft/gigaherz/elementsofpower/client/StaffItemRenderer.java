@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import gigaherz.elementsofpower.CommonProxy;
+import gigaherz.elementsofpower.models.ModelStaff;
 
 import org.lwjgl.opengl.GL11;
 
@@ -19,7 +20,7 @@ import net.minecraftforge.client.IItemRenderer;
 
 public class StaffItemRenderer implements IItemRenderer
 {
-	Map<Integer, StaffModel> models = new HashMap<Integer, StaffModel>();
+	Map<Integer, ModelStaff> models = new HashMap<Integer, ModelStaff>();
 	
 	long lDate = 0;
 	
@@ -51,11 +52,8 @@ public class StaffItemRenderer implements IItemRenderer
     @Override
     public void renderItem(ItemRenderType type, ItemStack item, Object... data)
     {
-    	//RenderBlocks rb = (RenderBlocks)data[0];
-    	//EntityItem entity = (EntityItem)data[1];
-    	
     	int dmg = item.getItemDamage();
-    	StaffModel model;
+    	ModelStaff model;
     	
     	if(models.containsKey(dmg))
     	{
@@ -63,13 +61,13 @@ public class StaffItemRenderer implements IItemRenderer
     	}
     	else
     	{
-    		model = new StaffModel(dmg);
+    		model = new ModelStaff(dmg);
     		models.put(dmg, model);
     	}
     	
     	RenderEngine engine = FMLClientHandler.instance().getClient().renderEngine;
 
-    	bindTextureByName(engine, CommonProxy.STAFF_PNG);
+    	//bindTextureByName(engine, CommonProxy.STAFF_PNG);
     	
     	long cDate = new Date().getTime();
     	long elapsed = cDate - lDate;
@@ -77,12 +75,15 @@ public class StaffItemRenderer implements IItemRenderer
     	if(elapsed > 50)
     		elapsed = 50;
     	
-    	GL11.glPushMatrix();
-    	GL11.glTranslatef(0.2f, 0.1f, 0.9f);    	    
+    	GL11.glDisable(GL11.GL_CULL_FACE);
+    	
+    	GL11.glPushMatrix();	    
+    	GL11.glTranslatef(-0.3f, 0.1f-1.5f, 1.3f);	    
     	GL11.glRotatef(cc, 0.5f, 0, 1);
+    	GL11.glScalef(2.0f, 2.0f, 2.0f);
     	GL11.glPushMatrix();
 
-    	model.render(elapsed);
+    	model.render(engine, elapsed);
 
     	GL11.glPopMatrix();
     	GL11.glPopMatrix();
