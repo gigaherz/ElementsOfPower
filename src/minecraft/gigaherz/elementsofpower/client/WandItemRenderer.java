@@ -15,7 +15,9 @@ import cpw.mods.fml.client.FMLClientHandler;
 
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.RenderEngine;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.IItemRenderer;
 
@@ -53,8 +55,19 @@ public class WandItemRenderer implements IItemRenderer
     @Override
     public void renderItem(ItemRenderType type, ItemStack item, Object... data)
     {
+        RenderBlocks render = (RenderBlocks)data[0];
+        EntityLiving entity = (EntityLiving)data[1];
+        
     	int dmg = item.getItemDamage();
     	ModelWandImpl model;
+
+        boolean inUse = false;
+        
+        if(entity instanceof EntityPlayer)
+        {
+        	EntityPlayer player = (EntityPlayer)entity;
+        	inUse = player.isUsingItem();
+        }
     	
     	if(models.containsKey(dmg))
     	{
@@ -76,8 +89,14 @@ public class WandItemRenderer implements IItemRenderer
     	
     	GL11.glDisable(GL11.GL_CULL_FACE);
     	
-    	GL11.glPushMatrix();	    
-    	GL11.glTranslatef(0.0f, 0.1f, 0.8f);	    
+    	GL11.glPushMatrix();
+    	GL11.glTranslatef(0.0f, 0.1f, 0.8f);
+
+    	if(inUse)
+    	{
+    		GL11.glRotatef(-60f, 1.0f, 0.0f, -0.4f);
+    	}
+    
     	GL11.glRotatef(cc, 0.5f, 0, 1);
     	GL11.glScalef(0.2f, 0.2f, 0.2f);
     	GL11.glPushMatrix();
