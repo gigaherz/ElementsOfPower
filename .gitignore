@@ -35,3 +35,5 @@ CHANGELOG
 /src/minecraft/railcraft/common/api/core/items/ICrowbar.java
 /nbproject/private/
 /build/
+/src/minecraft/gigaherz/elementsofpower/models/*.bak
+/src/minecraft/gigaherz/elementsofpower/models/*.rhl

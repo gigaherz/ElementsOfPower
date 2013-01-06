@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.minecraft.block.Block;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
@@ -65,7 +66,112 @@ public class MagicDatabase
 
     public static void postInitialize()
     {
-        dumpAllRecipes();
+        //dumpAllRecipes();
+    	dumpAllItems();
+    }
+
+    private static void dumpAllItems()
+    {
+        try
+        {
+            FileOutputStream fos = new FileOutputStream("items.csv");
+            OutputStreamWriter out = new OutputStreamWriter(fos, "UTF-8");
+
+            for (Block block : Block.blocksList)
+            {
+            	if(block == null)
+            		continue;
+
+            	String bn = block.getBlockName();
+            	if(bn == null)
+            	{
+            		bn = "UNNAMED (" + block.getClass().getName() + ")";
+            	}
+            	
+        		List<ItemStack> subBlocks = new ArrayList<ItemStack>();
+        		
+        		block.getSubBlocks(0, CreativeTabs.tabAllSearch, subBlocks);
+        		
+        		if(subBlocks.size() == 0)
+        			continue;
+        		
+        		ItemStack sb0 = subBlocks.get(0);
+        		if(sb0.itemID != 0)
+        		{
+	            	for(int i=0;i<subBlocks.size(); i++)
+	        		{
+	                	ItemStack is = new ItemStack(block, 1, i);
+	                	
+	                	Item itemBlock = is.getItem();
+	                	    	
+	                	String disp = null;
+	                	
+	                	if(itemBlock != null) 
+	                		disp = itemBlock.getItemDisplayName(is);
+	                	
+	                	
+	                	if(disp == null || disp.length() == 0)
+	                		disp = "UNNAMED (" + bn + ")";
+	                	
+	                	
+	                	out.write(disp);
+	                    out.write(";" + is.itemID);
+	                    out.write(";" + is.getItemDamage());    
+	                    out.write("\r\n");                	                    	
+	        		}
+        		}
+            }
+
+            for (Item item : Item.itemsList)
+            {
+            	if(item == null)
+            		continue;
+            	
+            	if(item.getHasSubtypes())
+            	{
+            		List subItems = new ArrayList();
+            		
+            		item.getSubItems(0, CreativeTabs.tabAllSearch, subItems);
+            		
+            		for(int i=0;i<subItems.size(); i++)
+            		{
+                    	ItemStack is = new ItemStack(item, 1, i);
+
+                    	String disp = null;
+                    	disp = is.getDisplayName();
+                    	
+                    	if(disp == null || disp.length() == 0)
+                    		disp = "UNNAMED (" + is.getItemName() + ")";
+                    	
+                    	out.write(disp);
+                        out.write(";" + is.itemID);
+                        out.write(";" + is.getItemDamage());    
+                        out.write("\r\n");                	                    	
+            		}
+            	}
+            	else
+        		{
+                	ItemStack is = new ItemStack(item, 1);
+
+                	String disp = null;
+                	disp = is.getDisplayName();
+                	
+                	if(disp == null || disp.length() == 0)
+                		disp = "UNNAMED (" + is.getItemName() + ")";
+                	
+                	out.write(disp);
+                    out.write(";" + is.itemID);
+                    out.write(";" + is.getItemDamage());    
+                    out.write("\r\n");                	                    	
+        		}
+            }
+
+            out.close();
+        }
+        catch (IOException e)
+        {
+            return;
+        }
     }
 
     private static void dumpAllRecipes()

@@ -7,6 +7,7 @@ import java.util.Map;
 
 import gigaherz.elementsofpower.CommonProxy;
 import gigaherz.elementsofpower.models.ModelStaffImpl;
+import gigaherz.elementsofpower.models.ModelWandImpl;
 
 import org.lwjgl.opengl.GL11;
 
@@ -18,9 +19,9 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.IItemRenderer;
 
-public class StaffItemRenderer implements IItemRenderer
+public class WandItemRenderer implements IItemRenderer
 {
-	Map<Integer, ModelStaffImpl> models = new HashMap<Integer, ModelStaffImpl>();
+	Map<Integer, ModelWandImpl> models = new HashMap<Integer, ModelWandImpl>();
 	
 	long lDate = 0;
 	
@@ -53,7 +54,7 @@ public class StaffItemRenderer implements IItemRenderer
     public void renderItem(ItemRenderType type, ItemStack item, Object... data)
     {
     	int dmg = item.getItemDamage();
-    	ModelStaffImpl model;
+    	ModelWandImpl model;
     	
     	if(models.containsKey(dmg))
     	{
@@ -61,12 +62,12 @@ public class StaffItemRenderer implements IItemRenderer
     	}
     	else
     	{
-    		model = new ModelStaffImpl(dmg);
+    		model = new ModelWandImpl(dmg);
     		models.put(dmg, model);
     	}
     	
     	RenderEngine engine = FMLClientHandler.instance().getClient().renderEngine;
-
+    	
     	long cDate = new Date().getTime();
     	long elapsed = cDate - lDate;
     	lDate = cDate;
@@ -76,7 +77,7 @@ public class StaffItemRenderer implements IItemRenderer
     	GL11.glDisable(GL11.GL_CULL_FACE);
     	
     	GL11.glPushMatrix();	    
-    	GL11.glTranslatef(-0.3f, 0.1f-1.5f, 1.3f);	    
+    	GL11.glTranslatef(0.0f, 0.1f, 0.8f);	    
     	GL11.glRotatef(cc, 0.5f, 0, 1);
     	GL11.glScalef(0.2f, 0.2f, 0.2f);
     	GL11.glPushMatrix();

@@ -1,5 +1,5 @@
 # Rhino
-newmtl material1
+newmtl material2
 Ka 0.0000 0.0000 0.0000
 Kd 1.0000 1.0000 1.0000
 Ks 1.0000 1.0000 1.0000
@@ -8,7 +8,7 @@ d 1.0000
 Ns 0
 map_Kd iron1.png
 
-newmtl material2
+newmtl material1
 Ka 0.0000 0.0000 0.0000
 Kd 1.0000 1.0000 1.0000
 Ks 1.0000 1.0000 1.0000
@@ -18,24 +18,6 @@ Ns 0
 map_Kd diamond1.png
 
 newmtl material3
-Ka 0.0000 0.0000 0.0000
-Kd 1.0000 1.0000 1.0000
-Ks 1.0000 1.0000 1.0000
-Tf 0.0000 0.0000 0.0000
-d 1.0000
-Ns 0
-map_Kd diamond1.png
-
-newmtl material4
-Ka 0.0000 0.0000 0.0000
-Kd 1.0000 1.0000 1.0000
-Ks 1.0000 1.0000 1.0000
-Tf 0.0000 0.0000 0.0000
-d 1.0000
-Ns 0
-map_Kd diamond1.png
-
-newmtl material5
 Ka 0.0000 0.0000 0.0000
 Kd 1.0000 1.0000 1.0000
 Ks 1.0000 1.0000 1.0000
