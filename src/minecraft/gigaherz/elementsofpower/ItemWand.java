@@ -6,6 +6,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityLargeFireball;
 import net.minecraft.entity.projectile.EntitySmallFireball;
+import net.minecraft.item.EnumAction;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Vec3;
@@ -82,22 +83,47 @@ public class ItemWand extends ItemMagicContainer
     
     public void onPlayerStoppedUsing(ItemStack stack, World world, EntityPlayer player, int remaining)
     {
-    	ElementsOfPower.instance.proxy.sendMagicItemPacket(stack, world, player, remaining);
+    	//ElementsOfPower.instance.proxy.sendMagicItemPacket(stack, world, player, Math.max(0, remaining));
+    	if(!world.isRemote)
+    	{
+    		onMagicItemReleased(stack, world, player, remaining);
+    	}
     }
-    
+
+    public ItemStack onFoodEaten(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
+    {
+        return par1ItemStack;
+    }
+
+    /**
+     * How long it takes to use or consume an item
+     */
+    public int getMaxItemUseDuration(ItemStack par1ItemStack)
+    {
+        return 72000;
+    }
+
+    /**
+     * returns the action that specifies what animation to play when the items is being used
+     */
+    public EnumAction getItemUseAction(ItemStack par1ItemStack)
+    {
+        return EnumAction.bow;
+    }
+
     @Override
 	public void onMagicItemReleased(ItemStack stack, World world,
 			EntityPlayer player, int remaining) 
     {
     	int charge = this.getMaxItemUseDuration(stack) - remaining;
+        int power = Math.min(3, charge / 5);
 
-        Vec3 var20 = player.getLook(1.0F);
+        Vec3 var20 = player.getLook(1.0F);        
         
-        int power = charge / 5;
+        System.out.println("BOOM! " + charge + " / " + power);
         
 		if (power > 0)
-	    {
-	        
+	    {	        
 	        EntityLargeFireball var17 = new EntityLargeFireball(world, player, var20.xCoord * 10, var20.yCoord * 10, var20.zCoord * 10);
 	
 	        // explosion power
