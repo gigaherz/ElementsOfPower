@@ -90,15 +90,28 @@ public class ItemWand extends ItemMagicContainer
 			EntityPlayer player, int remaining) 
     {
     	int charge = this.getMaxItemUseDuration(stack) - remaining;
-		
-		if (charge > 5)
+
+        Vec3 var20 = player.getLook(1.0F);
+        
+        int power = charge / 5;
+        
+		if (power > 0)
 	    {
-	        Vec3 var20 = player.getLook(1.0F);
 	        
 	        EntityLargeFireball var17 = new EntityLargeFireball(world, player, var20.xCoord * 10, var20.yCoord * 10, var20.zCoord * 10);
 	
 	        // explosion power
-	        var17.field_92012_e = 1;
+	        var17.field_92012_e = power;
+	        
+	        var17.posX = player.posX + var20.xCoord * player.width * 0.75f;
+	        var17.posY = player.posY;
+	        var17.posZ = player.posZ + var20.zCoord * player.width * 0.75f;
+	        
+	        world.spawnEntityInWorld(var17);
+	    }
+		else 
+	    {	        
+	        EntitySmallFireball var17 = new EntitySmallFireball(world, player, var20.xCoord * 10, var20.yCoord * 10, var20.zCoord * 10);
 	        
 	        var17.posX = player.posX + var20.xCoord * player.width * 0.75f;
 	        var17.posY = player.posY;
