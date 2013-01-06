@@ -104,7 +104,7 @@ public class ItemWand extends ItemMagicContainer
 	        var17.field_92012_e = power;
 	        
 	        var17.posX = player.posX + var20.xCoord * player.width * 0.75f;
-	        var17.posY = player.posY;
+	        var17.posY = player.posY + 1.0f;
 	        var17.posZ = player.posZ + var20.zCoord * player.width * 0.75f;
 	        
 	        world.spawnEntityInWorld(var17);
@@ -113,9 +113,9 @@ public class ItemWand extends ItemMagicContainer
 	    {	        
 	        EntitySmallFireball var17 = new EntitySmallFireball(world, player, var20.xCoord * 10, var20.yCoord * 10, var20.zCoord * 10);
 	        
-	        var17.posX = player.posX + var20.xCoord * player.width * 0.75f;
-	        var17.posY = player.posY;
-	        var17.posZ = player.posZ + var20.zCoord * player.width * 0.75f;
+	        var17.posX = player.posX + var20.xCoord * 2;
+	        var17.posY = player.posY + 1.0f;
+	        var17.posZ = player.posZ + var20.zCoord * 2;
 	        
 	        world.spawnEntityInWorld(var17);
 	    }
