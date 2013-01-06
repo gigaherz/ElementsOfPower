@@ -6,6 +6,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -60,4 +61,8 @@ public class ItemMagicContainer extends Item
             tooltipList.add(str);
         }
     }
+
+	public void onMagicItemReleased(ItemStack stack, World world,
+			EntityPlayer sender, int charge) {
+	}
 }

@@ -9,6 +9,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.tileentity.TileEntity;
@@ -23,6 +25,9 @@ public class CommonProxy implements IPacketHandler
     public static String ITEMS_PNG = "/gigaherz/elementsofpower/items.png";
     public static String BLOCK_PNG = "/gigaherz/elementsofpower/block.png";
     public static String STAFF_PNG = "/gigaherz/elementsofpower/modeltest.png";
+    
+    public static final int MSGID_PROGRESS = 0;
+    public static final int MSGID_MAGIC = 1;
 
     // Client stuff
     public void registerRenderers()
@@ -35,17 +40,21 @@ public class CommonProxy implements IPacketHandler
     {
         if (payload.channel.equals(ElementsOfPower.ChannelName))
         {
-            this.handleMachineUpdate(payload, (EntityPlayer)player);
+        	if(payload.data[0] == MSGID_PROGRESS)
+        		this.handleProgressPacket(payload, (EntityPlayer)player);
+        	else if(payload.data[0] == MSGID_MAGIC)
+        		this.handleMagicPacket(payload, (EntityPlayer)player);
         }
     }
 
-    private void handleMachineUpdate(Packet250CustomPayload payload, EntityPlayer sender)
+    private void handleProgressPacket(Packet250CustomPayload payload, EntityPlayer sender)
     {
         ByteArrayInputStream bis = new ByteArrayInputStream(payload.data);
         DataInputStream ird = new DataInputStream(bis);
-
+        
         try
         {
+            ird.skip(1);
             int dim = ird.readInt();
             int x = ird.readInt();
             int y = ird.readInt();
@@ -77,6 +86,7 @@ public class CommonProxy implements IPacketHandler
 
         try
         {
+        	outputStream.writeByte(MSGID_PROGRESS);
             outputStream.writeInt(entity.worldObj.getWorldInfo().getDimension());
             outputStream.writeInt(entity.xCoord);
             outputStream.writeInt(entity.yCoord);
@@ -103,4 +113,64 @@ public class CommonProxy implements IPacketHandler
             PacketDispatcher.sendPacketToAllAround(entity.xCoord, entity.yCoord, entity.zCoord, 12, entity.worldObj.provider.dimensionId, packet);
         }
     }
+
+    private void handleMagicPacket(Packet250CustomPayload payload, EntityPlayer sender)
+    {
+        ByteArrayInputStream bis = new ByteArrayInputStream(payload.data);
+        DataInputStream ird = new DataInputStream(bis);
+        
+        try
+        {
+            ird.skip(1);
+            int dim = ird.readInt();
+            int charge = ird.readInt();
+            World world = DimensionManager.getWorld(dim);
+
+            ItemStack stack = sender.inventory.getCurrentItem();
+            
+            Item item = stack.getItem();
+            
+            if (!(item instanceof ItemMagicContainer))
+            {
+                return;
+            }
+
+            ItemMagicContainer magic = (ItemMagicContainer)item;
+            
+
+            magic.onMagicItemReleased(stack, world, sender, charge);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+	public void sendMagicItemPacket(ItemStack stack, World world,
+			EntityPlayer player, int remaining)
+	{
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(8);
+        DataOutputStream outputStream = new DataOutputStream(bos);
+
+        try
+        {
+        	outputStream.writeByte(MSGID_MAGIC);
+            outputStream.writeInt(world.getWorldInfo().getDimension());
+            outputStream.writeInt(remaining);
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+
+        Packet250CustomPayload packet = new Packet250CustomPayload();
+        packet.channel = ElementsOfPower.ChannelName;
+        packet.data = bos.toByteArray();
+        packet.length = bos.size();
+
+        if (this instanceof ClientProxy)
+        {
+            PacketDispatcher.sendPacketToServer(packet);
+        }
+	}
 }
