@@ -101,9 +101,9 @@ public class ElementsOfPower
         prop = config.getItem("diamondContainer", defaultDiamondContainerId);
         diamondContainer = new ItemMagicContainer(prop.getInt()).setItemName("magicDiamondContainer").setIconCoord(7, 3);
         prop = config.getItem("magicWand", defaultWandId);
-        magicWand = (ItemWand)new ItemWand(prop.getInt()).setItemName("magicWand").setIconCoord(0, 3);
+        magicWand = (ItemWand)new ItemWand(prop.getInt()).setItemName("magicWand").setIconCoord(0, 3).setCreativeTab(CreativeTabs.tabTools);
         prop = config.getItem("magicStaff", defaultStaffId);
-        magicStaff = (ItemWand)new ItemWand(prop.getInt()).setItemName("magicStaff").setIconCoord(1, 3);
+        magicStaff = (ItemWand)new ItemWand(prop.getInt()).setItemName("magicStaff").setIconCoord(1, 3).setCreativeTab(CreativeTabs.tabTools);
         prop = config.getBlock("essentializer", defaultEssentializerId);
         essentializer = new Essentializer("essentializer", prop.getInt(), Material.iron, CreativeTabs.tabMisc)
         .setHardness(15.0F).setStepSound(Block.soundMetalFootstep);
