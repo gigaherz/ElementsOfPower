@@ -1,0 +1,11 @@
+{
+    "parent": "block/cube",
+    "textures": {
+        "up": "ElementsOfPower:blocks/sideObsidianWithDiamond",
+        "east": "ElementsOfPower:blocks/sideObsidian",
+        "west": "ElementsOfPower:blocks/sideObsidian",
+        "north": "ElementsOfPower:blocks/sideObsidian",
+        "south": "ElementsOfPower:blocks/sideObsidian",
+        "down": "ElementsOfPower:blocks/sideObsidian"
+    }
+}
