@@ -21,6 +21,7 @@ public class ItemMagicOrb extends Item {
         // Constructor Configuration
         setMaxStackSize(1000);
         setHasSubtypes(true);
+        setUnlocalizedName("magicOrb");
     }
 
     @Override

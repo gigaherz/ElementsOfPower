@@ -5,8 +5,10 @@ import gigaherz.elementsofpower.ElementsOfPower;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
 public class ClientProxy extends CommonProxy {
     //public static final StaffItemRenderer staffRenderer = new StaffItemRenderer();
@@ -54,5 +56,6 @@ public class ClientProxy extends CommonProxy {
     public void registerItemTexture(final Item item, int meta, final String itemName) {
         RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
         renderItem.getItemModelMesher().register(item, meta, new ModelResourceLocation(ElementsOfPower.MODID + ":" + itemName,"inventory"));
+        ModelBakery.addVariantName(item, ElementsOfPower.MODID + ":" + itemName);
     }
 }

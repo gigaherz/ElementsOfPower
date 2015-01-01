@@ -120,10 +120,12 @@ public class ElementsOfPower {
         death = magicOrb.getStack(1, 7);
 
         MagicDatabase.preInitialize();
+
     }
 
     @EventHandler
     public void init(FMLInitializationEvent event) {
+
         proxy.registerRenderers();
 
         // Recipes
