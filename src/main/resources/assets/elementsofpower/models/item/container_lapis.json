@@ -1,0 +1,6 @@
+{
+    "parent": "elementsofpower:item/magicContainer",
+    "textures": {
+        "layer0": "items/diamond"
+    }
+}

@@ -1,8 +1,5 @@
 {
     "parent": "builtin/generated",
-    "textures": {
-        "layer0": "elementsofpower:items/orbAir"
-    },
     "display": {
         "thirdperson": {
             "rotation": [ -90, 0, 0 ],

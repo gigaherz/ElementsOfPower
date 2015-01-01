@@ -1,5 +1,8 @@
 {
-    "parent": "builtin/generated",
+    "parent": "elementsofpower:item/magicOrb",
+    "textures": {
+        "layer0": "elementsofpower:items/orbWater"
+    },
     "display": {
         "thirdperson": {
             "rotation": [ -90, 0, 0 ],

@@ -1,0 +1,6 @@
+{
+    "parent": "elementsofpower:item/magicWand",
+    "textures": {
+        "layer0": "elementsofpower:items/wandLapis"
+    }
+}
