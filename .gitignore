@@ -51,6 +51,5 @@ CHANGELOG
 /gradle/wrapper/gradle-wrapper.properties
 /gradlew
 /src/main/java/com/example/examplemod/ExampleMod.java
-/src/main/resources/mcmod.info
 *.bak
 *.rhl

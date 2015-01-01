@@ -1,0 +1,16 @@
+[
+{
+  "modid": "ElementsOfPower",
+  "name": "Elements of Power",
+  "description": "Magic for Minecraft",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["gigaherz"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
