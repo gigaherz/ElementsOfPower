@@ -16,6 +16,7 @@ public class GuiHandler implements IGuiHandler {
             return new ContainerEssentializer((TileEssentializer) tileEntity, player.inventory);
         }
 
+        //Minecraft.displayGuiScreen();
         return null;
     }
 

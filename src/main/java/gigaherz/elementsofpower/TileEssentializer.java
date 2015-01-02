@@ -108,7 +108,9 @@ public class TileEssentializer
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
-        return this.worldObj.getTileEntity(this.pos) == this && player.getDistanceSq(getPos().getX() + 0.5, getPos().getX() + 0.5, getPos().getX() + 0.5) < 64;
+        boolean a = this.worldObj.getTileEntity(this.pos) == this;
+        boolean b = player.getDistanceSq(getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5) < 64;
+        return a && b;
     }
 
     @Override

@@ -1,16 +1,17 @@
 package gigaherz.elementsofpower;
 
 public class CommonProxy {
-    public static final int MSGID_PROGRESS = 0;
-    public static final int MSGID_MAGIC = 1;
 
     // Client stuff
     public void registerRenderers() {
         // Nothing here as this is the server side proxy
     }
 
-    /*@Override
-    public void onPacketData(INetworkManager manager, Packet250CustomPayload payload, Player player)
+/*
+    public static final int MSGID_PROGRESS = 0;
+    public static final int MSGID_MAGIC = 1;
+
+    public void onPacketData(INetworkManager manager, Packet250CustomPayload payload, EntityPlayer player)
     {
         if (payload.channel.equals(ElementsOfPower.ChannelName))
         {
@@ -20,7 +21,6 @@ public class CommonProxy {
         		this.handleMagicPacket(payload, (EntityPlayer)player);
         }
     }
-
     private void handleProgressPacket(Packet250CustomPayload payload, EntityPlayer sender)
     {
         ByteArrayInputStream bis = new ByteArrayInputStream(payload.data);

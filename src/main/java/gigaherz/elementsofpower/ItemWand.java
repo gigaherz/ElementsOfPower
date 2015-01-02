@@ -4,7 +4,10 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityLargeFireball;
 import net.minecraft.entity.projectile.EntitySmallFireball;
-import net.minecraft.item.*;
+import net.minecraft.item.EnumAction;
+import net.minecraft.item.EnumRarity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -19,8 +22,8 @@ public class ItemWand extends ItemMagicContainer {
     };
 
     private static final EnumRarity rarities[] = {
-            EnumRarity.UNCOMMON,EnumRarity.RARE,EnumRarity.EPIC,EnumRarity.COMMON,
-            EnumRarity.UNCOMMON,EnumRarity.RARE,EnumRarity.EPIC,EnumRarity.COMMON
+            EnumRarity.UNCOMMON, EnumRarity.RARE, EnumRarity.EPIC, EnumRarity.COMMON,
+            EnumRarity.UNCOMMON, EnumRarity.RARE, EnumRarity.EPIC, EnumRarity.COMMON
     };
 
 

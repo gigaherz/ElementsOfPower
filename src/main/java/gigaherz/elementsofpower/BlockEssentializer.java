@@ -1,6 +1,5 @@
 package gigaherz.elementsofpower;
 
-import gigaherz.elementsofpower.client.GuiEssentializer;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -10,8 +9,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-
-import java.util.Random;
 
 public class BlockEssentializer
         extends Block
@@ -25,8 +22,7 @@ public class BlockEssentializer
     }
 
     @Override
-    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ)
-    {
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ) {
         TileEntity tileEntity = worldIn.getTileEntity(pos);
 
         if (tileEntity == null || playerIn.isSneaking()) {

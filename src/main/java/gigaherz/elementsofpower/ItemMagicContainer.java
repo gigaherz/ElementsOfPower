@@ -11,8 +11,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
-public class ItemMagicContainer extends Item
-{
+public class ItemMagicContainer extends Item {
     private static final String[] subNames = {
             "lapisContainer", "emeraldContainer", "diamondContainer"
     };

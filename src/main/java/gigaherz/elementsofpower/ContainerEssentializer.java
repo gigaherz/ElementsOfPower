@@ -11,7 +11,8 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-public class ContainerEssentializer extends Container {
+public class ContainerEssentializer
+        extends Container {
     protected TileEssentializer tile;
 
     public ContainerEssentializer(TileEssentializer tileEntity, InventoryPlayer playerInventory) {
