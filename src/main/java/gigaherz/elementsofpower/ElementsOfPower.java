@@ -1,11 +1,13 @@
 package gigaherz.elementsofpower;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -87,6 +89,8 @@ public class ElementsOfPower {
         //config = new Configuration(event.getSuggestedConfigurationFile());
         //config.load();
         //config.save();
+
+        MinecraftForge.EVENT_BUS.register(new RenderHookHandler());
 
         magicOrb = new ItemMagicOrb();
         GameRegistry.registerItem(magicOrb, "magicOrb");

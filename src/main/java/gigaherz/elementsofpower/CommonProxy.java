@@ -1,10 +1,19 @@
 package gigaherz.elementsofpower;
 
+import gigaherz.elementsofpower.models.IModelRegistrationHelper;
+import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelManager;
+import net.minecraft.util.IRegistry;
+
 public class CommonProxy {
 
     // Client stuff
     public void registerRenderers() {
         // Nothing here as this is the server side proxy
+    }
+
+    public void registerCustomBakedModels(IModelRegistrationHelper helper, ModelManager modelManager, IRegistry modelRegistry, ModelBakery modelBakery) {
+        // Nothing here, client-only
     }
 
 /*

@@ -2,21 +2,40 @@ package gigaherz.elementsofpower.client;
 
 import gigaherz.elementsofpower.CommonProxy;
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.models.CustomMeshModel;
+import gigaherz.elementsofpower.models.IModelRegistrationHelper;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.item.Item;
+import net.minecraft.util.IRegistry;
+import net.minecraft.util.ResourceLocation;
 
 public class ClientProxy extends CommonProxy {
     //public static final StaffItemRenderer staffRenderer = new StaffItemRenderer();
     //public static final WandItemRenderer wandRenderer = new WandItemRenderer();
 
+    public void registerCustomBakedModels(IModelRegistrationHelper registrationHelper, ModelManager modelManager, IRegistry modelRegistry, ModelBakery modelBakery) {
+        registerCustomModel(registrationHelper, ElementsOfPower.magicWand, 0, "wand_lapis", "wand", "lapis");
+        registerCustomModel(registrationHelper, ElementsOfPower.magicWand, 1, "wand_emerald","wand", "emerald");
+        registerCustomModel(registrationHelper, ElementsOfPower.magicWand, 2, "wand_diamond", "wand", "diamond");
+        registerCustomModel(registrationHelper, ElementsOfPower.magicWand, 3, "wand_creative", "wand", "creative");
+        registerCustomModel(registrationHelper, ElementsOfPower.magicWand, 4, "staff_lapis", "staff", "lapis");
+        registerCustomModel(registrationHelper, ElementsOfPower.magicWand, 5, "staff_emerald", "staff", "emerald");
+        registerCustomModel(registrationHelper, ElementsOfPower.magicWand, 6, "staff_diamond", "staff", "diamond");
+        registerCustomModel(registrationHelper, ElementsOfPower.magicWand, 7, "staff_creative", "staff", "creative");
+    }
+
+    public void registerCustomModel(IModelRegistrationHelper registrationHelper, final Item item, int meta, final String itemName, final String itemType, final String itemVariant) {
+        registrationHelper.registerCustomModel(new ModelResourceLocation(ElementsOfPower.MODID + ":" + itemName, "inventory"), new CustomMeshModel(itemType, itemVariant));
+        ModelBakery.addVariantName(item, ElementsOfPower.MODID + ":" + itemName);
+    }
+
     @Override
     public void registerRenderers() {
-        //MinecraftForgeClient.registerItemRenderer(ElementsOfPower.magicWand, wandRenderer);
-
         registerBlockTexture(ElementsOfPower.essentializer, "essentializer");
         registerItemTexture(ElementsOfPower.magicOrb, 0, "orb_fire");
         registerItemTexture(ElementsOfPower.magicOrb, 1, "orb_water");
