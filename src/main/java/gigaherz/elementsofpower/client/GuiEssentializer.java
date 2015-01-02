@@ -14,12 +14,14 @@ import org.lwjgl.opengl.GL11;
 
 public class GuiEssentializer extends GuiContainer
 {
+    protected InventoryPlayer player;
     protected TileEssentializer tile;
     protected ResourceLocation guiTextureLocation;
 
     public GuiEssentializer(InventoryPlayer playerInventory, TileEssentializer tileEntity)
     {
         super(new ContainerEssentializer(tileEntity, playerInventory));
+        this.player = playerInventory;
         this.tile = tileEntity;
         guiTextureLocation = new ResourceLocation(ElementsOfPower.MODID, "textures/gui/essentializer.png");
     }
@@ -27,8 +29,9 @@ public class GuiEssentializer extends GuiContainer
     @Override
     protected void drawGuiContainerForegroundLayer(int i, int j)
     {
-        fontRendererObj.drawString("Essentializer", 8, 6, 4210752);
-        fontRendererObj.drawString(StatCollector.translateToLocal("container.inventory"), 8, ySize - 96 + 2 , 4210752);
+        System.out.println("Shoudl translate " + this.tile.getName());
+        mc.fontRendererObj.drawString(StatCollector.translateToLocal(this.tile.getName()), 8, 6, 0x404040);
+        mc.fontRendererObj.drawString(StatCollector.translateToLocal(this.player.getName()), 8, ySize - 96 + 2, 0x404040);
     }
 
     @Override

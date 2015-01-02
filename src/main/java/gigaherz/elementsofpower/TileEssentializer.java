@@ -5,7 +5,9 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
@@ -27,13 +29,14 @@ public class TileEssentializer
         this.inventory = new ItemStack[10];
     }
 
-    public boolean hasCustomName() {
-        return false;
+    @Override
+    public String getName() {
+        return "essentializer";
     }
 
     @Override
-    public String getName() {
-        return null;
+    public boolean hasCustomName() {
+        return false;
     }
 
     @Override
@@ -87,6 +90,9 @@ public class TileEssentializer
     @Override
     public ItemStack getStackInSlotOnClosing(int slotIndex) {
         ItemStack stack = getStackInSlot(slotIndex);
+
+        if (slotIndex < 8)
+            return null;
 
         if (stack != null) {
             setInventorySlotContents(slotIndex, null);
@@ -172,10 +178,16 @@ public class TileEssentializer
 
     @Override
     public Packet getDescriptionPacket() {
-        NBTTagCompound var1 = new NBTTagCompound();
-        this.writeToNBT(var1);
-        //return new Packet132TileEntityData(this.xCoord, this.yCoord, this.zCoord, 3, var1);
-        return null;
+        NBTTagCompound tag = new NBTTagCompound();
+        this.writeToNBT(tag);
+        return new S35PacketUpdateTileEntity(this.pos, 0, tag);
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet) {
+        super.onDataPacket(net, packet);
+        readFromNBT(packet.getNbtCompound());
+        this.worldObj.markBlockForUpdate(this.pos);
     }
 
     @Override
