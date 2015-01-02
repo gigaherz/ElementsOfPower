@@ -10,7 +10,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
 
-public class EssentializerTile
+public class TileEssentializer
         extends TileEntity
         implements ISidedInventory {
     public static final int MaxEssentializerMagic = 1000;
@@ -19,7 +19,7 @@ public class EssentializerTile
 
     boolean stateChanged = false;
 
-    public EssentializerTile() {
+    public TileEssentializer() {
         super();
         // 0..7: magics
         // 8: input

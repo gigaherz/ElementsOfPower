@@ -97,10 +97,10 @@ public class ElementsOfPower {
         magicWand = new ItemWand();
         GameRegistry.registerItem(magicWand, "magicWand");
 
-        essentializer = new Essentializer();
+        essentializer = new BlockEssentializer();
         GameRegistry.registerBlock(essentializer, "essentializer");
 
-        GameRegistry.registerTileEntity(EssentializerTile.class, "essentializerTile");
+        GameRegistry.registerTileEntity(TileEssentializer.class, "essentializerTile");
 
         wandLapis = magicWand.getStack(1, 0);
         wandEmerald = magicWand.getStack(1, 1);

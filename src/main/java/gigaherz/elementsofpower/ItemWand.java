@@ -103,7 +103,7 @@ public class ItemWand extends ItemMagicContainer {
 
         Vec3 var20 = player.getLook(1.0F);
 
-        System.out.println("BOOM! " + charge + " / " + power);
+        //System.out.println("BOOM! " + charge + " / " + power);
 
         if (power > 0) {
             EntityLargeFireball var17 = new EntityLargeFireball(world, player, var20.xCoord * 10, var20.yCoord * 10, var20.zCoord * 10);

@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower;
 
+import gigaherz.elementsofpower.client.GuiEssentializer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
@@ -11,8 +12,8 @@ public class GuiHandler implements IGuiHandler {
     public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
         TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
 
-        if (tileEntity instanceof EssentializerTile) {
-            return new EssentializerContainer((EssentializerTile) tileEntity, player.inventory);
+        if (tileEntity instanceof TileEssentializer) {
+            return new ContainerEssentializer((TileEssentializer) tileEntity, player.inventory);
         }
 
         return null;
@@ -22,8 +23,8 @@ public class GuiHandler implements IGuiHandler {
     public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
         TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
 
-        if (tileEntity instanceof EssentializerTile) {
-            //return new EssentializerGui(player.inventory, (EssentializerTile) tileEntity);
+        if (tileEntity instanceof TileEssentializer) {
+            return new GuiEssentializer(player.inventory, (TileEssentializer) tileEntity);
         }
 
         return null;

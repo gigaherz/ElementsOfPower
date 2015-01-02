@@ -1,9 +1,10 @@
 package gigaherz.elementsofpower;
 
+import gigaherz.elementsofpower.client.GuiEssentializer;
 import net.minecraft.block.Block;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
@@ -12,8 +13,10 @@ import net.minecraft.world.World;
 
 import java.util.Random;
 
-public class Essentializer extends Block {
-    public Essentializer() {
+public class BlockEssentializer
+        extends Block
+        implements ITileEntityProvider {
+    public BlockEssentializer() {
         super(Material.iron);
         setUnlocalizedName("essentializer");
         setCreativeTab(ElementsOfPower.tabMagic);
@@ -22,7 +25,8 @@ public class Essentializer extends Block {
     }
 
     @Override
-    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ)
+    {
         TileEntity tileEntity = worldIn.getTileEntity(pos);
 
         if (tileEntity == null || playerIn.isSneaking()) {
@@ -33,15 +37,11 @@ public class Essentializer extends Block {
         return true;
     }
 
+    public TileEntity createNewTileEntity(World world, int metadata) {
+        return new TileEssentializer();
+    }
+
     // TODO: OLD STUFF THAT NEEDS REPLACING
-    public boolean hasTileEntity(int metadata) {
-        return true;
-    }
-
-    public TileEntity createTileEntity(World world, int metadata) {
-        return new EssentializerTile();
-    }
-
     public static void updateBlockState(boolean powered, World world, int x, int y, int z) {
         int metadata = 0; // world.getBlockMetadata(x, y, z);
 
@@ -52,24 +52,5 @@ public class Essentializer extends Block {
         }
 
         //world.setBlockMetadataWithNotify(x, y, z, metadata);
-    }
-
-    public int idDropped(int par1, Random par2Random, int par3) {
-        return 0;
-        //return ElementsOfPower.essentializer.blockID;
-    }
-
-    public int getBlockTextureFromSide(int i) {
-        int topBottom = 3;
-        int sideTexture = 19;
-
-        switch (i) {
-            case 0: // bottom
-            case 1: // top
-                return topBottom;
-
-            default: // sides
-                return sideTexture;
-        }
     }
 }

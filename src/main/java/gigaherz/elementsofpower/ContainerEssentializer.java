@@ -3,6 +3,7 @@ package gigaherz.elementsofpower;
 import gigaherz.elementsofpower.slots.SlotContainer;
 import gigaherz.elementsofpower.slots.SlotMagic;
 import gigaherz.elementsofpower.slots.SlotSource;
+import net.minecraft.block.BlockWorkbench;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -10,10 +11,10 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-public class EssentializerContainer extends Container {
-    protected EssentializerTile tile;
+public class ContainerEssentializer extends Container {
+    protected TileEssentializer tile;
 
-    public EssentializerContainer(EssentializerTile tileEntity, InventoryPlayer playerInventory) {
+    public ContainerEssentializer(TileEssentializer tileEntity, InventoryPlayer playerInventory) {
         this.tile = tileEntity;
 
         for (int i = 0; i < 4; i++) {
@@ -23,6 +24,8 @@ public class EssentializerContainer extends Container {
                         71 + j * 18, 8 + i * 18));
             }
         }
+
+        BlockWorkbench wb;
 
         addSlotToContainer(new SlotSource(tileEntity, 8, 26, 35));
         addSlotToContainer(new SlotContainer(tileEntity, 9, 134, 35));
