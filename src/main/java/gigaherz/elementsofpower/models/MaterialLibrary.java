@@ -64,43 +64,41 @@ class MaterialLibrary
         IResource res = Minecraft.getMinecraft().getResourceManager().getResource(loc);
         InputStreamReader lineStream = new InputStreamReader(res.getInputStream(), Charsets.UTF_8);
         BufferedReader lineReader = new BufferedReader(lineStream);
+        for(;;)
         {
-            for(;;)
+            String currentLine = lineReader.readLine();
+            if (currentLine == null)
+                break;
+
+            if (currentLine.length() == 0 || currentLine.startsWith("#"))
             {
-                String currentLine = lineReader.readLine();
-                if (currentLine == null)
-                    break;
+                continue;
+            }
 
-                if (currentLine.length() == 0 || currentLine.startsWith("#"))
-                {
-                    continue;
-                }
+            String[] fields = currentLine.split(" ", 2);
+            String keyword = fields[0];
+            String data = fields[1];
 
-                String[] fields = currentLine.split(" ", 2);
-                String keyword = fields[0];
-                String data = fields[1];
-
-                if (keyword.equalsIgnoreCase("newmtl")) { pushMaterial(data); }
-                else if (keyword.equalsIgnoreCase("Ka")) { currentMaterial.AmbientColor = parseVector3f(data); }
-                else if (keyword.equalsIgnoreCase("Kd")) { currentMaterial.DiffuseColor = parseVector3f(data); }
-                else if (keyword.equalsIgnoreCase("Ks")) { currentMaterial.SpecularColor = parseVector3f(data); }
-                else if (keyword.equalsIgnoreCase("Ns")) { currentMaterial.SpecularCoefficient = parseInt(data); }
-                else if (keyword.equalsIgnoreCase("Tr")) { currentMaterial.Transparency = parseFloat(data); }
-                else if (keyword.equalsIgnoreCase("illum")) { currentMaterial.IlluminationModel = parseInt(data); }
-                else if (keyword.equalsIgnoreCase("map_Ka")) { currentMaterial.AmbientTextureMap = data; }
-                else if (keyword.equalsIgnoreCase("map_Kd")) { currentMaterial.DiffuseTextureMap = data; }
-                else if (keyword.equalsIgnoreCase("map_Ks")) { currentMaterial.SpecularTextureMap = data; }
-                else if (keyword.equalsIgnoreCase("map_Ns")) { currentMaterial.SpecularHighlightTextureMap = data; }
-                else if (keyword.equalsIgnoreCase("map_d")) { currentMaterial.AlphaTextureMap = data; }
-                else if (keyword.equalsIgnoreCase("map_bump")) { currentMaterial.BumpMap = data; }
-                else if (keyword.equalsIgnoreCase("bump")) { currentMaterial.BumpMap = data; }
-                else if (keyword.equalsIgnoreCase("disp")) { currentMaterial.DisplacementMap = data; }
-                else if (keyword.equalsIgnoreCase("decal")) { currentMaterial.StencilDecalMap = data; }
-                else
-                {
-                    System.out.println("Unrecognized command: " + currentLine);
-                    continue;
-                }
+            if (keyword.equalsIgnoreCase("newmtl")) { pushMaterial(data); }
+            else if (keyword.equalsIgnoreCase("Ka")) { currentMaterial.AmbientColor = parseVector3f(data); }
+            else if (keyword.equalsIgnoreCase("Kd")) { currentMaterial.DiffuseColor = parseVector3f(data); }
+            else if (keyword.equalsIgnoreCase("Ks")) { currentMaterial.SpecularColor = parseVector3f(data); }
+            else if (keyword.equalsIgnoreCase("Ns")) { currentMaterial.SpecularCoefficient = parseInt(data); }
+            else if (keyword.equalsIgnoreCase("Tr")) { currentMaterial.Transparency = parseFloat(data); }
+            else if (keyword.equalsIgnoreCase("illum")) { currentMaterial.IlluminationModel = parseInt(data); }
+            else if (keyword.equalsIgnoreCase("map_Ka")) { currentMaterial.AmbientTextureMap = data; }
+            else if (keyword.equalsIgnoreCase("map_Kd")) { currentMaterial.DiffuseTextureMap = data; }
+            else if (keyword.equalsIgnoreCase("map_Ks")) { currentMaterial.SpecularTextureMap = data; }
+            else if (keyword.equalsIgnoreCase("map_Ns")) { currentMaterial.SpecularHighlightTextureMap = data; }
+            else if (keyword.equalsIgnoreCase("map_d")) { currentMaterial.AlphaTextureMap = data; }
+            else if (keyword.equalsIgnoreCase("map_bump")) { currentMaterial.BumpMap = data; }
+            else if (keyword.equalsIgnoreCase("bump")) { currentMaterial.BumpMap = data; }
+            else if (keyword.equalsIgnoreCase("disp")) { currentMaterial.DisplacementMap = data; }
+            else if (keyword.equalsIgnoreCase("decal")) { currentMaterial.StencilDecalMap = data; }
+            else
+            {
+                System.out.println("Unrecognized command: " + currentLine);
+                continue;
             }
         }
     }

@@ -90,7 +90,7 @@ public class MeshLoader
     private int[] parseIndices(String[] p1) {
         int[] indices = new int[p1.length];
         for(int i=0;i<p1.length;i++) {
-            indices[i] = Integer.parseInt(p1[0])-1;
+            indices[i] = Integer.parseInt(p1[i])-1;
         }
         return indices;
     }
@@ -123,35 +123,33 @@ public class MeshLoader
         currentModel = new MeshModel(modelManager);
         currentMatLib = new MaterialLibrary();
 
+        for(;;)
         {
-            for(;;)
+            String currentLine = lineReader.readLine();
+            if (currentLine == null)
+                break;
+
+            if (currentLine.length() == 0 || currentLine.startsWith("#"))
             {
-                String currentLine = lineReader.readLine();
-                if (currentLine == null)
-                    break;
+                continue;
+            }
 
-                if (currentLine.length() == 0 || currentLine.startsWith("#"))
-                {
-                    continue;
-                }
+            String[] fields = currentLine.split(" ", 2);
+            String keyword = fields[0];
+            String data = fields[1];
 
-                String[] fields = currentLine.split(" ", 2);
-                String keyword = fields[0];
-                String data = fields[1];
-
-                if (keyword.equalsIgnoreCase("o")) { newGroup(data); }
-                else if (keyword.equalsIgnoreCase("g")) { newGroup(data); }
-                else if (keyword.equalsIgnoreCase("mtllib")) { loadMaterialLibrary(loc, data); }
-                else if (keyword.equalsIgnoreCase("usemtl")) { useMaterial(data); }
-                else if (keyword.equalsIgnoreCase("v")) { addPosition(data); }
-                else if (keyword.equalsIgnoreCase("vn")) { addNormal(data); }
-                else if (keyword.equalsIgnoreCase("vt")) { addTexCoord(data); }
-                else if (keyword.equalsIgnoreCase("f")) { addFace(data); }
-                else
-                {
-                    System.out.println("Unrecognized command: " + currentLine);
-                    continue;
-                }
+            if (keyword.equalsIgnoreCase("o")) { newGroup(data); }
+            else if (keyword.equalsIgnoreCase("g")) { newGroup(data); }
+            else if (keyword.equalsIgnoreCase("mtllib")) { loadMaterialLibrary(loc, data); }
+            else if (keyword.equalsIgnoreCase("usemtl")) { useMaterial(data); }
+            else if (keyword.equalsIgnoreCase("v")) { addPosition(data); }
+            else if (keyword.equalsIgnoreCase("vn")) { addNormal(data); }
+            else if (keyword.equalsIgnoreCase("vt")) { addTexCoord(data); }
+            else if (keyword.equalsIgnoreCase("f")) { addFace(data); }
+            else
+            {
+                System.out.println("Unrecognized command: " + currentLine);
+                continue;
             }
         }
 
