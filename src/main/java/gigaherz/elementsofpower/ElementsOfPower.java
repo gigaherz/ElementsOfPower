@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower;
 
+import gigaherz.elementsofpower.network.ProgressUpdatePacket;
 import net.minecraft.block.Block;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.creativetab.CreativeTabs;
@@ -8,6 +9,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -15,7 +17,11 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+
+import java.nio.channels.NetworkChannel;
 
 
 @Mod(modid = ElementsOfPower.MODID, name = ElementsOfPower.MODNAME, version = ElementsOfPower.VERSION)
@@ -23,6 +29,8 @@ public class ElementsOfPower {
     public static final String MODID = "ElementsOfPower";
     public static final String MODNAME = "Elements Of Power";
     public static final String VERSION = "1.0";
+
+    public static final String CHANNEL = "ElementsOfPower";
 
     private final static int firstItemId = 24400;
     private final static int firstBlockId = 2450;
@@ -74,6 +82,8 @@ public class ElementsOfPower {
     @SidedProxy(clientSide = "gigaherz.elementsofpower.client.ClientProxy", serverSide = "gigaherz.elementsofpower.CommonProxy")
     public static CommonProxy proxy;
 
+    public static SimpleNetworkWrapper channel;
+
     private GuiHandler guiHandler = new GuiHandler();
 
     public static final CreativeTabs tabMagic = new CreativeTabs(MODID.toLowerCase()) {
@@ -82,6 +92,11 @@ public class ElementsOfPower {
             return magicWand;
         }
     };
+
+    private void registerNetworkStuff() {
+        channel = NetworkRegistry.INSTANCE.newSimpleChannel(CHANNEL);
+        //channel.registerMessage(CommonProxy.class, ProgressUpdatePacket.class, 0, Side.CLIENT);
+    }
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
@@ -92,6 +107,7 @@ public class ElementsOfPower {
 
         MinecraftForge.EVENT_BUS.register(new RenderHookHandler());
 
+        // Block and Item registration
         magicOrb = new ItemMagicOrb();
         GameRegistry.registerItem(magicOrb, "magicOrb");
 
@@ -106,6 +122,7 @@ public class ElementsOfPower {
 
         GameRegistry.registerTileEntity(TileEssentializer.class, "essentializerTile");
 
+        // Template stacks
         wandLapis = magicWand.getStack(1, 0);
         wandEmerald = magicWand.getStack(1, 1);
         wandDiamond = magicWand.getStack(1, 2);
@@ -123,6 +140,7 @@ public class ElementsOfPower {
         life = magicOrb.getStack(1, 6);
         death = magicOrb.getStack(1, 7);
 
+        // Item decomposing database
         MagicDatabase.preInitialize();
 
     }

@@ -1,11 +1,16 @@
 package gigaherz.elementsofpower;
 
 import gigaherz.elementsofpower.models.IModelRegistrationHelper;
-import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.client.resources.model.ModelManager;
-import net.minecraft.util.IRegistry;
+import gigaherz.elementsofpower.network.ProgressUpdatePacket;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class CommonProxy {
+public class CommonProxy
+        implements IMessageHandler {
 
     // Client stuff
     public void registerRenderers() {
@@ -14,6 +19,24 @@ public class CommonProxy {
 
     public void registerCustomBakedModels(IModelRegistrationHelper helper) {
         // Nothing here, client-only
+    }
+
+    @Override
+    public IMessage onMessage(IMessage message, MessageContext ctx) {
+        if (message instanceof ProgressUpdatePacket) {
+            ProgressUpdatePacket packet = (ProgressUpdatePacket)message;
+
+            TileEntity tile = packet.getTileEntityTarget();
+
+            if (!(tile instanceof TileEssentializer))
+            {
+                return null;
+            }
+
+            TileEssentializer essentializer = (TileEssentializer)tile;
+            essentializer.updateProgressBar(packet.barIndex, packet.barValue);
+        }
+        return null;
     }
 
 /*
