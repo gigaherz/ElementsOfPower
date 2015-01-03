@@ -6,13 +6,13 @@ import java.util.List;
 public class MeshPart {
     public String name;
     public Material material;
-    public List<Integer> indices;
+    public List<int[]> indices;
 
     public MeshPart() {
-        indices = new ArrayList<Integer>();
+        indices = new ArrayList<int[]>();
     }
 
-    public void addTriangleFace(int a, int b, int c) {
+    public void addTriangleFace(int[] a, int[] b, int[] c) {
         // Degenerate quad
         indices.add(a);
         indices.add(b);
@@ -20,7 +20,7 @@ public class MeshPart {
         indices.add(c);
     }
 
-    public void addQuadFace(int a, int b, int c, int d) {
+    public void addQuadFace(int[] a, int[] b, int[] c, int[] d) {
         indices.add(a);
         indices.add(b);
         indices.add(c);

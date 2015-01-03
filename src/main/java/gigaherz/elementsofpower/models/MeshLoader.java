@@ -70,9 +70,9 @@ public class MeshLoader
         String[] p2 = args[1].split("/");
         String[] p3 = args[2].split("/");
 
-        int v1 = Integer.parseInt(p1[0])-1;
-        int v2 = Integer.parseInt(p2[0])-1;
-        int v3 = Integer.parseInt(p3[0])-1;
+        int[] v1 = parseIndices(p1);
+        int[] v2 = parseIndices(p2);
+        int[] v3 = parseIndices(p3);
 
         if (args.length == 3)
         {
@@ -81,10 +81,18 @@ public class MeshLoader
         else if (args.length == 4)
         {
             String[] p4 = args[3].split("/");
-            int v4 = Integer.parseInt(p4[0])-1;
+            int[] v4 = parseIndices(p4);;
 
             currentPart.addQuadFace(v1, v2, v3, v4);
         }
+    }
+
+    private int[] parseIndices(String[] p1) {
+        int[] indices = new int[p1.length];
+        for(int i=0;i<p1.length;i++) {
+            indices[i] = Integer.parseInt(p1[0])-1;
+        }
+        return indices;
     }
 
     private void useMaterial(String matName)

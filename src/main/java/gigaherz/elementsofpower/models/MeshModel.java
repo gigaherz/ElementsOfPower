@@ -24,21 +24,24 @@ public class MeshModel {
 
     public MeshModel(ModelManager modelManager) {
         manager = modelManager;
-        positions = new ArrayList<Vector3f>();
-        normals = new ArrayList<Vector3f>();
-        texCoords = new ArrayList<Vector2f>();
         parts = new ArrayList<MeshPart>();
     }
 
     public void addPosition(float x, float y, float z) {
+        if(positions == null)
+            positions = new ArrayList<Vector3f>();
         positions.add(new Vector3f(x, y, z));
     }
 
     public void addNormal(float x, float y, float z) {
+        if(normals == null)
+            normals = new ArrayList<Vector3f>();
         normals.add(new Vector3f(x, y, z));
     }
 
     public void addTexCoords(float x, float y) {
+        if (texCoords == null)
+            texCoords = new ArrayList<Vector2f>();
         texCoords.add(new Vector2f(x, y));
     }
 
@@ -85,10 +88,22 @@ public class MeshModel {
     {
         int[] faceData = new int[28];
         for(int i=0;i<4;i++) {
-            storeVertexData(faceData, i,
-                    positions.get(part.indices.get(startIndex+i)),
-                    texCoords.get(part.indices.get(startIndex+i)),
-                    sprite, color);
+
+            Vector3f position = new Vector3f(0,0,0);
+            Vector2f texCoord = new Vector2f(0,0);
+            int p = 0;
+            int[] indices = part.indices.get(startIndex+i);
+
+            if(positions != null)
+                position = positions.get(indices[p++]);
+
+            if(normals != null)
+                p++; // normals not used by minecraft
+
+            if (texCoords != null)
+                texCoord = texCoords.get(indices[p++]);
+
+            storeVertexData(faceData, i, position, texCoord, sprite, color);
         }
         return new BakedQuad(faceData, -1, FaceBakery.getFacingFromVertexData(faceData));
     }
