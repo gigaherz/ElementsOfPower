@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.client.resources.model.ModelManager;
+import net.minecraft.client.resources.model.WeightedBakedModel;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -36,6 +37,9 @@ public class CustomMeshModel
         this.generalQuads = new ArrayList<BakedQuad>();
         this.iconSprite = modelManager.getTextureMap().getAtlasSprite(icon.toString());
 
+        //ItemCameraTransforms.TransformType
+        //WeightedBakedModel
+
         try {
             generalQuads.clear();
             sourceMesh = new MeshLoader().loadFromResource(modelManager, model);
@@ -49,6 +53,7 @@ public class CustomMeshModel
     @Override
     public IBakedModel handleItemState(ItemStack stack)
     {
+        // TODO: Handle GUI rendering separately
         return this;
     }
 

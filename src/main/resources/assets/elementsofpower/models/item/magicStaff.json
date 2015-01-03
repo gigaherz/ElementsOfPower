@@ -2,19 +2,19 @@
     "parent": "builtin/generated",
     "display": {
         "thirdperson": {
-            "rotation": [ -100, 0, 0 ],
-            "translation": [ 0, 1, -2.5],
+            "rotation": [ -150, 0, 0 ],
+            "translation": [ 0, 4, 0 ],
             "scale": [ 1.0, 1.0, 1.0 ]
         },
         "firstperson": {
             "rotation": [ -30, 0, -20 ],
-            "translation": [ 8, 0, 0 ],
+            "translation": [ 10, -10, 10 ],
             "scale": [ 2.5, 2.5, 2.5 ]
         },
         "gui": {
             "rotation": [ 0, 0, -45 ],
-            "translation": [ -0.5, -0.5, -0.5 ],
-            "scale": [ 1.2, 1.2, 1.2 ]
+            "translation": [ -2, -2, -2 ],
+            "scale": [ 0.6, 0.6, 0.6 ]
         }
     }
 }

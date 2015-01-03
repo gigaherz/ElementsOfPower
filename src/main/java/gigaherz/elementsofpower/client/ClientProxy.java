@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower.client;
 
+import com.google.common.base.Charsets;
 import gigaherz.elementsofpower.CommonProxy;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.models.CustomMeshModel;
@@ -8,8 +9,10 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemTransformVec3f;
+import net.minecraft.client.renderer.block.model.ModelBlock;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.client.resources.model.ModelResourceLocation;
@@ -18,6 +21,9 @@ import net.minecraft.util.IRegistry;
 import net.minecraft.util.ResourceLocation;
 
 import javax.vecmath.Vector3f;
+import java.io.*;
+import java.util.Hashtable;
+import java.util.Map;
 
 public class ClientProxy extends CommonProxy {
 
@@ -33,19 +39,70 @@ public class ClientProxy extends CommonProxy {
         registerCustomModel(registrationHelper, ElementsOfPower.magicWand, 7, "staff_creative");
     }
 
-    public void registerCustomModel(IModelRegistrationHelper registrationHelper, final Item item, int meta, final String itemName) {
+    private ResourceLocation getModelLocation(ResourceLocation loc)
+    {
+        return new ResourceLocation(loc.getResourceDomain(), "models/" + loc.getResourcePath() + ".json");
+    }
+
+    private ModelBlock loadModelResource(Map<ResourceLocation, ModelBlock> map, final ResourceLocation loc)
+    {
+        Reader reader = null;
+        ModelBlock modelblock = map.get(loc);
+
+        if(modelblock != null)
+            return modelblock;
+
+        if(loc.getResourcePath().startsWith("builtin/"))
+            return null;
+
+        try
+        {
+            IResource iresource = Minecraft.getMinecraft().getResourceManager().getResource(getModelLocation(loc));
+            if(iresource != null) {
+                reader = new InputStreamReader(iresource.getInputStream(), Charsets.UTF_8);
+
+                modelblock = ModelBlock.deserialize(reader);
+                modelblock.name = loc.toString();
+                map.put(loc, modelblock);
+
+                ResourceLocation parentLoc = modelblock.getParentLocation();
+                if(parentLoc != null) {
+
+                    ModelBlock parentModel = loadModelResource(map, parentLoc);
+                    if(parentModel != null) {
+                        modelblock.getParentFromMap(map);
+                    }
+                }
+            }
+        }
+        catch(IOException e) {
+            e.printStackTrace();
+        }
+
+        return modelblock;
+    }
+    private ModelBlock loadModelResource(final ResourceLocation loc)
+    {
+        return loadModelResource(new Hashtable<ResourceLocation, ModelBlock>(), loc);
+    }
+
+    private void registerCustomModel(IModelRegistrationHelper registrationHelper, final Item item, int meta, final String itemName) {
 
         ItemCameraTransforms transforms = ItemCameraTransforms.DEFAULT;
 
-        ItemTransformVec3f firstPerson = new ItemTransformVec3f(new Vector3f(-30f,0,-20f), new Vector3f(0,0,0), new Vector3f(2.5f,2.5f,2.5f));
-        ItemTransformVec3f thirdPerson = new ItemTransformVec3f(new Vector3f(-30f,0,-20f), new Vector3f(0,0,0), new Vector3f(1.5f,1.5f,1.5f));
-        ItemTransformVec3f gui = new ItemTransformVec3f(new Vector3f(0,0,-45f), new Vector3f(0,0,0), new Vector3f(1.2f,1.2f,1.2f));
+        ResourceLocation icon = new ResourceLocation(ElementsOfPower.MODID, "item/" + itemName);
+        ModelBlock modelblock = loadModelResource(icon);
+        if(modelblock != null) {
+            transforms = new ItemCameraTransforms(
+                    modelblock.getThirdPersonTransform(),
+                    modelblock.getFirstPersonTransform(),
+                    modelblock.getHeadTransform(),
+                    modelblock.getInGuiTransform());
+        }
 
-        transforms = new ItemCameraTransforms(thirdPerson, firstPerson, transforms.head, gui);
-
-        ResourceLocation icon = new ModelResourceLocation(ElementsOfPower.MODID + ":" + itemName, "inventory");
-        registrationHelper.registerCustomModel(icon,
-                new CustomMeshModel(itemName, transforms, icon, registrationHelper.getModelManager()));
+        ResourceLocation loc = new ModelResourceLocation(ElementsOfPower.MODID + ":" + itemName, "inventory");
+        registrationHelper.registerCustomModel(loc,
+                new CustomMeshModel(itemName, transforms, loc, registrationHelper.getModelManager()));
         ModelBakery.addVariantName(item, ElementsOfPower.MODID + ":" + itemName);
     }
 

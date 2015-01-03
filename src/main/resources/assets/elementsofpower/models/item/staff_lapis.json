@@ -1,5 +1,5 @@
 {
-    "parent": "elementsofpower:item/magicWand",
+    "parent": "elementsofpower:item/magicStaff",
     "textures": {
         "layer0": "elementsofpower:items/staffLapis"
     }
