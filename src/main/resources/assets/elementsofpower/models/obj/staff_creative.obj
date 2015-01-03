@@ -1,6 +1,6 @@
 # Rhino
 
-mtllib staff1.mtl
+mtllib models/obj/staff1.mtl
 o Iron
 usemtl material1
 v 3.13984955769247e-17 1 0.4000000059604645

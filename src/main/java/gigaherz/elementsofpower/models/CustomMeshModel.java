@@ -1,23 +1,49 @@
 package gigaherz.elementsofpower.models;
 
+import gigaherz.elementsofpower.ElementsOfPower;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.FaceBakery;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.IBakedModel;
+import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ISmartItemModel;
 
-import java.util.List;
+import javax.vecmath.Vector2f;
+import javax.vecmath.Vector3f;
+import java.io.IOException;
+import java.util.*;
 
 public class CustomMeshModel
         implements ISmartItemModel {
 
-    String model;
-    String variant;
+    ResourceLocation model;
+    ItemCameraTransforms transforms;
 
-    public CustomMeshModel(String modelType, String variantType) {
-        this.model = modelType;
-        this.variant = variantType;
+    List<BakedQuad> faceQuads;
+    List<BakedQuad> generalQuads;
+    MeshModel sourceMesh;
+
+    TextureAtlasSprite iconSprite;
+
+    public CustomMeshModel(String variant, ItemCameraTransforms cameraTransforms, ResourceLocation icon, ModelManager modelManager) {
+        this.model = new ResourceLocation(ElementsOfPower.MODID, "models/obj/" + variant + ".obj");
+        this.transforms = cameraTransforms;
+        this.faceQuads = new ArrayList<BakedQuad>();
+        this.generalQuads = new ArrayList<BakedQuad>();
+        this.iconSprite = modelManager.getTextureMap().getAtlasSprite(icon.toString());
+
+        try {
+            generalQuads.clear();
+            sourceMesh = new MeshLoader().loadFromResource(modelManager, model);
+            generalQuads = sourceMesh.bakeModel();
+        }catch(IOException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -29,13 +55,13 @@ public class CustomMeshModel
     @Override
     public List getFaceQuads(EnumFacing face)
     {
-        return null;
+        return faceQuads;
     }
 
     @Override
     public List getGeneralQuads()
     {
-        return null;
+        return generalQuads;
     }
 
     @Override
@@ -59,12 +85,13 @@ public class CustomMeshModel
     @Override
     public TextureAtlasSprite getTexture()
     {
-        return null;
+        return iconSprite;
     }
 
     @Override
     public ItemCameraTransforms getItemCameraTransforms()
     {
-        return null;
+        return transforms;
     }
+
 }

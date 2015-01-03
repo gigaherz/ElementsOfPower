@@ -23,8 +23,12 @@ public class RenderHookHandler {
             public void registerCustomModel(ResourceLocation location, IBakedModel bakedModel) {
                 modelRegistry.putObject(location, bakedModel);
             }
+
+            public ModelManager getModelManager() { return modelManager; }
+            public IRegistry getModelRegistry() { return modelRegistry; }
+            public ModelBakery getModelBakery() { return modelBakery; }
         };
 
-        ElementsOfPower.instance.proxy.registerCustomBakedModels(helper, modelManager, modelRegistry, modelBakery);
+        ElementsOfPower.instance.proxy.registerCustomBakedModels(helper);
     }
 }

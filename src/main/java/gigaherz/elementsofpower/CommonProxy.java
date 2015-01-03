@@ -12,7 +12,7 @@ public class CommonProxy {
         // Nothing here as this is the server side proxy
     }
 
-    public void registerCustomBakedModels(IModelRegistrationHelper helper, ModelManager modelManager, IRegistry modelRegistry, ModelBakery modelBakery) {
+    public void registerCustomBakedModels(IModelRegistrationHelper helper) {
         // Nothing here, client-only
     }
 

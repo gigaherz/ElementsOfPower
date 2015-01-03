@@ -6,7 +6,10 @@ import gigaherz.elementsofpower.models.CustomMeshModel;
 import gigaherz.elementsofpower.models.IModelRegistrationHelper;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.block.model.ItemTransformVec3f;
 import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.client.resources.model.ModelResourceLocation;
@@ -14,23 +17,35 @@ import net.minecraft.item.Item;
 import net.minecraft.util.IRegistry;
 import net.minecraft.util.ResourceLocation;
 
-public class ClientProxy extends CommonProxy {
-    //public static final StaffItemRenderer staffRenderer = new StaffItemRenderer();
-    //public static final WandItemRenderer wandRenderer = new WandItemRenderer();
+import javax.vecmath.Vector3f;
 
-    public void registerCustomBakedModels(IModelRegistrationHelper registrationHelper, ModelManager modelManager, IRegistry modelRegistry, ModelBakery modelBakery) {
-        registerCustomModel(registrationHelper, ElementsOfPower.magicWand, 0, "wand_lapis", "wand", "lapis");
-        registerCustomModel(registrationHelper, ElementsOfPower.magicWand, 1, "wand_emerald","wand", "emerald");
-        registerCustomModel(registrationHelper, ElementsOfPower.magicWand, 2, "wand_diamond", "wand", "diamond");
-        registerCustomModel(registrationHelper, ElementsOfPower.magicWand, 3, "wand_creative", "wand", "creative");
-        registerCustomModel(registrationHelper, ElementsOfPower.magicWand, 4, "staff_lapis", "staff", "lapis");
-        registerCustomModel(registrationHelper, ElementsOfPower.magicWand, 5, "staff_emerald", "staff", "emerald");
-        registerCustomModel(registrationHelper, ElementsOfPower.magicWand, 6, "staff_diamond", "staff", "diamond");
-        registerCustomModel(registrationHelper, ElementsOfPower.magicWand, 7, "staff_creative", "staff", "creative");
+public class ClientProxy extends CommonProxy {
+
+    @Override
+    public void registerCustomBakedModels(IModelRegistrationHelper registrationHelper) {
+        registerCustomModel(registrationHelper, ElementsOfPower.magicWand, 0, "wand_lapis");
+        registerCustomModel(registrationHelper, ElementsOfPower.magicWand, 1, "wand_emerald");
+        registerCustomModel(registrationHelper, ElementsOfPower.magicWand, 2, "wand_diamond");
+        registerCustomModel(registrationHelper, ElementsOfPower.magicWand, 3, "wand_creative");
+        registerCustomModel(registrationHelper, ElementsOfPower.magicWand, 4, "staff_lapis");
+        registerCustomModel(registrationHelper, ElementsOfPower.magicWand, 5, "staff_emerald");
+        registerCustomModel(registrationHelper, ElementsOfPower.magicWand, 6, "staff_diamond");
+        registerCustomModel(registrationHelper, ElementsOfPower.magicWand, 7, "staff_creative");
     }
 
-    public void registerCustomModel(IModelRegistrationHelper registrationHelper, final Item item, int meta, final String itemName, final String itemType, final String itemVariant) {
-        registrationHelper.registerCustomModel(new ModelResourceLocation(ElementsOfPower.MODID + ":" + itemName, "inventory"), new CustomMeshModel(itemType, itemVariant));
+    public void registerCustomModel(IModelRegistrationHelper registrationHelper, final Item item, int meta, final String itemName) {
+
+        ItemCameraTransforms transforms = ItemCameraTransforms.DEFAULT;
+
+        ItemTransformVec3f firstPerson = new ItemTransformVec3f(new Vector3f(-30f,0,-20f), new Vector3f(0,0,0), new Vector3f(2.5f,2.5f,2.5f));
+        ItemTransformVec3f thirdPerson = new ItemTransformVec3f(new Vector3f(-30f,0,-20f), new Vector3f(0,0,0), new Vector3f(1.5f,1.5f,1.5f));
+        ItemTransformVec3f gui = new ItemTransformVec3f(new Vector3f(0,0,-45f), new Vector3f(0,0,0), new Vector3f(1.2f,1.2f,1.2f));
+
+        transforms = new ItemCameraTransforms(thirdPerson, firstPerson, transforms.head, gui);
+
+        ResourceLocation icon = new ModelResourceLocation(ElementsOfPower.MODID + ":" + itemName, "inventory");
+        registrationHelper.registerCustomModel(icon,
+                new CustomMeshModel(itemName, transforms, icon, registrationHelper.getModelManager()));
         ModelBakery.addVariantName(item, ElementsOfPower.MODID + ":" + itemName);
     }
 
