@@ -4,8 +4,6 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.FaceBakery;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.ModelManager;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.ResourceLocation;
 
 import javax.vecmath.Vector2f;
 import javax.vecmath.Vector3f;
@@ -28,13 +26,13 @@ public class MeshModel {
     }
 
     public void addPosition(float x, float y, float z) {
-        if(positions == null)
+        if (positions == null)
             positions = new ArrayList<Vector3f>();
         positions.add(new Vector3f(x, y, z));
     }
 
     public void addNormal(float x, float y, float z) {
-        if(normals == null)
+        if (normals == null)
             normals = new ArrayList<Vector3f>();
         normals.add(new Vector3f(x, y, z));
     }
@@ -49,29 +47,28 @@ public class MeshModel {
         parts.add(part);
     }
 
-    private int getColorValue(Vector3f color)
-    {
-        int r = (int)color.x;
-        int g = (int)color.y;
-        int b = (int)color.z;
-        return 0xFF000000 | (b<<16) | (g << 8) | r;
+    private int getColorValue(Vector3f color) {
+        int r = (int) color.x;
+        int g = (int) color.y;
+        int b = (int) color.z;
+        return 0xFF000000 | (b << 16) | (g << 8) | r;
     }
 
     public List<BakedQuad> bakeModel() {
         List<BakedQuad> bakeList = new ArrayList<BakedQuad>();
 
-        for(int j=0;j<parts.size();j++) {
+        for (int j = 0; j < parts.size(); j++) {
 
             MeshPart part = parts.get(j);
 
             TextureAtlasSprite sprite = null;
-            int color = (int)0xFFFFFFFF;
+            int color = (int) 0xFFFFFFFF;
 
-            if(part.material != null) {
+            if (part.material != null) {
                 if (part.material.DiffuseTextureMap != null) {
                     sprite = manager.getTextureMap().getAtlasSprite(part.material.DiffuseTextureMap);
                 }
-                if(part.material.DiffuseColor != null) {
+                if (part.material.DiffuseColor != null) {
                     color = getColorValue(part.material.DiffuseColor);
                 }
             }
@@ -84,20 +81,19 @@ public class MeshModel {
         return bakeList;
     }
 
-    private BakedQuad bakeQuad(MeshPart part, int startIndex, TextureAtlasSprite sprite, int color)
-    {
+    private BakedQuad bakeQuad(MeshPart part, int startIndex, TextureAtlasSprite sprite, int color) {
         int[] faceData = new int[28];
-        for(int i=0;i<4;i++) {
+        for (int i = 0; i < 4; i++) {
 
-            Vector3f position = new Vector3f(0,0,0);
-            Vector2f texCoord = new Vector2f(0,0);
+            Vector3f position = new Vector3f(0, 0, 0);
+            Vector2f texCoord = new Vector2f(0, 0);
             int p = 0;
-            int[] indices = part.indices.get(startIndex+i);
+            int[] indices = part.indices.get(startIndex + i);
 
-            if(positions != null)
+            if (positions != null)
                 position = positions.get(indices[p++]);
 
-            if(normals != null)
+            if (normals != null)
                 p++; // normals not used by minecraft
 
             if (texCoords != null)
@@ -108,14 +104,13 @@ public class MeshModel {
         return new BakedQuad(faceData, -1, FaceBakery.getFacingFromVertexData(faceData));
     }
 
-    private static void storeVertexData(int[] faceData, int storeIndex, Vector3f position, Vector2f faceUV, TextureAtlasSprite sprite, int shadeColor)
-    {
+    private static void storeVertexData(int[] faceData, int storeIndex, Vector3f position, Vector2f faceUV, TextureAtlasSprite sprite, int shadeColor) {
         int l = storeIndex * 7;
         faceData[l + 0] = Float.floatToRawIntBits(position.x);
         faceData[l + 1] = Float.floatToRawIntBits(position.y);
         faceData[l + 2] = Float.floatToRawIntBits(position.z);
         faceData[l + 3] = shadeColor;
-        if(sprite != null) {
+        if (sprite != null) {
             faceData[l + 4] = Float.floatToRawIntBits(sprite.getInterpolatedU(faceUV.x));
             faceData[l + 5] = Float.floatToRawIntBits(sprite.getInterpolatedV(faceUV.y));
         } else {

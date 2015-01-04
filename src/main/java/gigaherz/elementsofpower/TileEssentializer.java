@@ -8,13 +8,15 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
+import net.minecraftforge.common.util.Constants;
 
 public class TileEssentializer
         extends TileEntity
-        implements ISidedInventory {
+        implements ISidedInventory, IUpdatePlayerListBox {
     public static final int MaxEssentializerMagic = 1000;
 
     private ItemStack[] inventory;
@@ -109,22 +111,36 @@ public class TileEssentializer
     @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
         boolean a = this.worldObj.getTileEntity(this.pos) == this;
-        boolean b = player.getDistanceSq(getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5) < 64;
+        boolean b = player.getDistanceSq(
+                getPos().getX() + 0.5,
+                getPos().getY() + 0.5,
+                getPos().getZ() + 0.5) < 64;
         return a && b;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        // TODO: Save other variables ?
-        NBTTagList tagList = tagCompound.getTagList("Inventory", 0);
+
+        NBTTagList tagList = tagCompound.getTagList("Inventory", Constants.NBT.TAG_COMPOUND);
 
         for (int i = 0; i < tagList.tagCount(); i++) {
             NBTTagCompound tag = (NBTTagCompound) tagList.get(i);
             byte slot = tag.getByte("Slot");
 
-            if (slot >= 0 && slot < inventory.length) {
+            if (slot >= 8 && slot < inventory.length) {
                 inventory[slot] = ItemStack.loadItemStackFromNBT(tag);
+            }
+        }
+
+        tagList = tagCompound.getTagList("Essences", Constants.NBT.TAG_COMPOUND);
+
+        for (int i = 0; i < tagList.tagCount(); i++) {
+            NBTTagCompound tag = (NBTTagCompound) tagList.get(i);
+            byte slot = tag.getByte("Type");
+
+            if (slot >= 0 && slot < 8) {
+                inventory[slot] = new ItemStack(ElementsOfPower.magicOrb, tag.getInteger("Count"), slot);
             }
         }
     }
@@ -132,10 +148,10 @@ public class TileEssentializer
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        // TODO: Save other variables ?
+
         NBTTagList itemList = new NBTTagList();
 
-        for (int i = 0; i < inventory.length; i++) {
+        for (int i = 8; i < inventory.length; i++) {
             ItemStack stack = inventory[i];
 
             if (stack != null) {
@@ -147,6 +163,21 @@ public class TileEssentializer
         }
 
         tagCompound.setTag("Inventory", itemList);
+
+        itemList = new NBTTagList();
+
+        for (int i = 0; i < 8; i++) {
+            ItemStack stack = inventory[i];
+
+            if (stack != null) {
+                NBTTagCompound tag = new NBTTagCompound();
+                tag.setByte("Type", (byte) i);
+                tag.setInteger("Count", stack.stackSize);
+                itemList.appendTag(tag);
+            }
+        }
+
+        tagCompound.setTag("Essences", itemList);
     }
 
     @Override
@@ -165,7 +196,6 @@ public class TileEssentializer
 
     @Override
     public void clear() {
-
     }
 
     @Override
@@ -222,6 +252,12 @@ public class TileEssentializer
         } else if (bar == 1) {
             addMagicToOutput(value);
         }
+    }
+
+    @Override
+    public void update() {
+        convertInput();
+        addMagicToOutput(1);
     }
 
     public int getInputEssencesOfType(int type) {
@@ -343,72 +379,39 @@ public class TileEssentializer
 
         MagicAmounts limits = MagicDatabase.getMagicLimits(output);
         MagicAmounts amounts = MagicDatabase.getContainedMagic(output);
-        int max = 0;
-        int goal = 0;
+
+        if (limits == null)
+            return;
 
         if (amounts == null) {
             amounts = new MagicAmounts();
-        } else {
-            for (int i = 0; i < 8; i++) {
-                int amount = amounts.amounts[i];
-
-                if (i == slot) {
-                    goal = amount;
-                }
-
-                if (amount > max) {
-                    max = amount;
-                }
-            }
-        }
-
-        if (goal < max) {
-            goal = max;
-        } else if (goal == max) {
-            goal = max + 1;
         }
 
         for (int i = 0; i < 8; i++) {
-            int limit = limits.amounts[i];
-            int amount = amounts.amounts[i];
-            int required = goal - amount;
+            ItemStack magic = inventory[i];
 
-            if (required == 0 || (amount == 0 && i != slot)) {
+            if (magic == null)
+                continue;
+
+            int transfer = Math.min(limits.amounts[i] - amounts.amounts[i], magic.stackSize);
+
+            if (transfer == 0) {
                 continue;
             }
 
-            if (amount + required > limit)
-                return;
+            if (transfer > 1)
+                transfer = 1;
 
-            ItemStack magic = inventory[i];
-
-            if (magic == null) {
-                return;
-            }
-
-            if (magic.stackSize < required) {
-                return;
-            }
-        }
-
-        for (int i = 0; i < 8; i++) {
-            int amount = amounts.amounts[i];
-            int required = goal - amount;
-
-            if (required == 0 || (amount == 0 && i != slot)) {
-                continue;
-            }
-
-            ItemStack magic = inventory[i];
-            magic.stackSize -= required;
+            magic.stackSize -= transfer;
 
             if (magic.stackSize <= 0) {
                 inventory[i] = null;
             }
 
-            amounts.amounts[i] = goal;
+            amounts.amounts[i] += transfer;
         }
 
         inventory[9] = MagicDatabase.setContainedMagic(output, amounts);
     }
+
 }

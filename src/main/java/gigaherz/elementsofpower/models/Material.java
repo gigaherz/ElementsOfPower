@@ -30,8 +30,7 @@ public class Material {
 
     public String AlphaTextureMap;
 
-    public Material(String materialName)
-    {
+    public Material(String materialName) {
         Name = materialName;
     }
 

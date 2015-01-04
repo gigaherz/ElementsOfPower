@@ -9,19 +9,17 @@ import javax.vecmath.Vector3f;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Dictionary;
 
 class MaterialLibrary
-        extends Dictionary<String, Material>
-{
+        extends Dictionary<String, Material> {
     private final Dictionary<String, Material> materialLibrary = new Hashtable<String, Material>();
 
     private Material currentMaterial;
 
-    public MaterialLibrary()
-    {
+    public MaterialLibrary() {
     }
 
     @Override
@@ -59,19 +57,16 @@ class MaterialLibrary
         return materialLibrary.remove(key);
     }
 
-    public void loadFromStream(ResourceLocation loc) throws IOException
-    {
+    public void loadFromStream(ResourceLocation loc) throws IOException {
         IResource res = Minecraft.getMinecraft().getResourceManager().getResource(loc);
         InputStreamReader lineStream = new InputStreamReader(res.getInputStream(), Charsets.UTF_8);
         BufferedReader lineReader = new BufferedReader(lineStream);
-        for(;;)
-        {
+        for (; ; ) {
             String currentLine = lineReader.readLine();
             if (currentLine == null)
                 break;
 
-            if (currentLine.length() == 0 || currentLine.startsWith("#"))
-            {
+            if (currentLine.length() == 0 || currentLine.startsWith("#")) {
                 continue;
             }
 
@@ -79,24 +74,39 @@ class MaterialLibrary
             String keyword = fields[0];
             String data = fields[1];
 
-            if (keyword.equalsIgnoreCase("newmtl")) { pushMaterial(data); }
-            else if (keyword.equalsIgnoreCase("Ka")) { currentMaterial.AmbientColor = parseVector3f(data); }
-            else if (keyword.equalsIgnoreCase("Kd")) { currentMaterial.DiffuseColor = parseVector3f(data); }
-            else if (keyword.equalsIgnoreCase("Ks")) { currentMaterial.SpecularColor = parseVector3f(data); }
-            else if (keyword.equalsIgnoreCase("Ns")) { currentMaterial.SpecularCoefficient = parseInt(data); }
-            else if (keyword.equalsIgnoreCase("Tr")) { currentMaterial.Transparency = parseFloat(data); }
-            else if (keyword.equalsIgnoreCase("illum")) { currentMaterial.IlluminationModel = parseInt(data); }
-            else if (keyword.equalsIgnoreCase("map_Ka")) { currentMaterial.AmbientTextureMap = data; }
-            else if (keyword.equalsIgnoreCase("map_Kd")) { currentMaterial.DiffuseTextureMap = data; }
-            else if (keyword.equalsIgnoreCase("map_Ks")) { currentMaterial.SpecularTextureMap = data; }
-            else if (keyword.equalsIgnoreCase("map_Ns")) { currentMaterial.SpecularHighlightTextureMap = data; }
-            else if (keyword.equalsIgnoreCase("map_d")) { currentMaterial.AlphaTextureMap = data; }
-            else if (keyword.equalsIgnoreCase("map_bump")) { currentMaterial.BumpMap = data; }
-            else if (keyword.equalsIgnoreCase("bump")) { currentMaterial.BumpMap = data; }
-            else if (keyword.equalsIgnoreCase("disp")) { currentMaterial.DisplacementMap = data; }
-            else if (keyword.equalsIgnoreCase("decal")) { currentMaterial.StencilDecalMap = data; }
-            else
-            {
+            if (keyword.equalsIgnoreCase("newmtl")) {
+                pushMaterial(data);
+            } else if (keyword.equalsIgnoreCase("Ka")) {
+                currentMaterial.AmbientColor = parseVector3f(data);
+            } else if (keyword.equalsIgnoreCase("Kd")) {
+                currentMaterial.DiffuseColor = parseVector3f(data);
+            } else if (keyword.equalsIgnoreCase("Ks")) {
+                currentMaterial.SpecularColor = parseVector3f(data);
+            } else if (keyword.equalsIgnoreCase("Ns")) {
+                currentMaterial.SpecularCoefficient = parseInt(data);
+            } else if (keyword.equalsIgnoreCase("Tr")) {
+                currentMaterial.Transparency = parseFloat(data);
+            } else if (keyword.equalsIgnoreCase("illum")) {
+                currentMaterial.IlluminationModel = parseInt(data);
+            } else if (keyword.equalsIgnoreCase("map_Ka")) {
+                currentMaterial.AmbientTextureMap = data;
+            } else if (keyword.equalsIgnoreCase("map_Kd")) {
+                currentMaterial.DiffuseTextureMap = data;
+            } else if (keyword.equalsIgnoreCase("map_Ks")) {
+                currentMaterial.SpecularTextureMap = data;
+            } else if (keyword.equalsIgnoreCase("map_Ns")) {
+                currentMaterial.SpecularHighlightTextureMap = data;
+            } else if (keyword.equalsIgnoreCase("map_d")) {
+                currentMaterial.AlphaTextureMap = data;
+            } else if (keyword.equalsIgnoreCase("map_bump")) {
+                currentMaterial.BumpMap = data;
+            } else if (keyword.equalsIgnoreCase("bump")) {
+                currentMaterial.BumpMap = data;
+            } else if (keyword.equalsIgnoreCase("disp")) {
+                currentMaterial.DisplacementMap = data;
+            } else if (keyword.equalsIgnoreCase("decal")) {
+                currentMaterial.StencilDecalMap = data;
+            } else {
                 System.out.println("Unrecognized command: " + currentLine);
                 continue;
             }
@@ -114,14 +124,13 @@ class MaterialLibrary
     private Vector3f parseVector3f(String data) {
         String[] parts = data.split(" ");
         return new Vector3f(
-            Float.parseFloat(parts[0]),
-            Float.parseFloat(parts[1]),
-            Float.parseFloat(parts[2])
+                Float.parseFloat(parts[0]),
+                Float.parseFloat(parts[1]),
+                Float.parseFloat(parts[2])
         );
     }
 
-    private void pushMaterial(String materialName)
-    {
+    private void pushMaterial(String materialName) {
         currentMaterial = new Material(materialName);
         materialLibrary.put(currentMaterial.Name, currentMaterial);
     }

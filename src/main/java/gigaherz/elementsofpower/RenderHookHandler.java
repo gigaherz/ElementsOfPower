@@ -12,8 +12,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class RenderHookHandler {
 
     @SubscribeEvent
-    public void onModelBake(ModelBakeEvent event)
-    {
+    public void onModelBake(ModelBakeEvent event) {
         final ModelManager modelManager = event.modelManager;
         final IRegistry modelRegistry = event.modelRegistry;
         final ModelBakery modelBakery = event.modelBakery;
@@ -24,9 +23,17 @@ public class RenderHookHandler {
                 modelRegistry.putObject(location, bakedModel);
             }
 
-            public ModelManager getModelManager() { return modelManager; }
-            public IRegistry getModelRegistry() { return modelRegistry; }
-            public ModelBakery getModelBakery() { return modelBakery; }
+            public ModelManager getModelManager() {
+                return modelManager;
+            }
+
+            public IRegistry getModelRegistry() {
+                return modelRegistry;
+            }
+
+            public ModelBakery getModelBakery() {
+                return modelBakery;
+            }
         };
 
         ElementsOfPower.instance.proxy.registerCustomBakedModels(helper);

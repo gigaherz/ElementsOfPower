@@ -3,8 +3,6 @@ package gigaherz.elementsofpower.network;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
-import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 /**
@@ -22,9 +20,9 @@ public class ProgressUpdatePacket
     public void fromBytes(ByteBuf buf) {
 
         pos = new BlockPos(
-            buf.readInt(),
-            buf.readInt(),
-            buf.readInt());
+                buf.readInt(),
+                buf.readInt(),
+                buf.readInt());
         barIndex = buf.readInt();
         barValue = buf.readInt();
     }

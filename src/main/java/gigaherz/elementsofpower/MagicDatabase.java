@@ -1,21 +1,108 @@
 package gigaherz.elementsofpower;
 
+import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.ShapedRecipes;
-import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 
-import java.util.*;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MagicDatabase {
+    private static class ItemEssenceEntry {
+        ItemStack item;
+        MagicAmounts amounts;
+
+        public ItemEssenceEntry(ItemStack item, MagicAmounts amounts) {
+            this.item = item;
+            this.amounts = amounts;
+        }
+
+        public ItemEssenceEntry all(int amount) {
+            amounts.all(amount);
+            return this;
+        }
+
+        public ItemEssenceEntry fire(int amount) {
+            amounts.fire(amount);
+            return this;
+        }
+
+        public ItemEssenceEntry water(int amount) {
+            amounts.water(amount);
+            return this;
+        }
+
+        public ItemEssenceEntry air(int amount) {
+            amounts.air(amount);
+            return this;
+        }
+
+        public ItemEssenceEntry earth(int amount) {
+            amounts.earth(amount);
+            return this;
+        }
+
+        public ItemEssenceEntry light(int amount) {
+            amounts.light(amount);
+            return this;
+        }
+
+        public ItemEssenceEntry darkness(int amount) {
+            amounts.darkness(amount);
+            return this;
+        }
+
+        public ItemEssenceEntry life(int amount) {
+            amounts.life(amount);
+            return this;
+        }
+
+        public ItemEssenceEntry death(int amount) {
+            amounts.death(amount);
+            return this;
+        }
+    }
+
     public static Map<ItemStack, ItemStack> containerConversion = new HashMap<ItemStack, ItemStack>();
     public static Map<ItemStack, MagicAmounts> containerCapacity = new HashMap<ItemStack, MagicAmounts>();
     public static Map<ItemStack, MagicAmounts> itemEssences = new HashMap<ItemStack, MagicAmounts>();
 
     public static final Map<Integer, String> magicNames = new HashMap<Integer, String>();
+
+    static final ItemEssenceEntry[] stockEntries = {
+
+            essences(Blocks.dirt).earth(3).life(1),
+            essences(Blocks.grass).earth(2).life(2),
+            essences(Blocks.cobblestone).earth(5),
+            essences(Blocks.stone).earth(10),
+            essences(Blocks.sand).earth(2).air(2),
+            essences(Blocks.gravel).earth(3).air(1),
+            essences(Blocks.clay).earth(3).water(1),
+            essences(Blocks.hardened_clay).earth(5).fire(1),
+            essences(Blocks.stained_hardened_clay).earth(5).fire(1),
+            essences(Blocks.log).life(16),
+            essences(Blocks.log2).life(16),
+            essences(Blocks.planks).life(4),
+            essences(Items.stick).life(1),
+            essences(Items.coal).fire(8),
+
+    };
+
+    private static ItemEssenceEntry essences(Item item) {
+        return new ItemEssenceEntry(new ItemStack(item), new MagicAmounts());
+    }
+
+    private static ItemEssenceEntry essences(Block block) {
+        return new ItemEssenceEntry(new ItemStack(block), new MagicAmounts());
+    }
+
+    private static ItemEssenceEntry essences(Item item, int meta) {
+        return new ItemEssenceEntry(new ItemStack(item, 1, meta), new MagicAmounts());
+    }
 
     public static void preInitialize() {
         magicNames.put(1 << 0, "Fire");
@@ -29,144 +116,43 @@ public class MagicDatabase {
     }
 
     public static void initialize() {
-        containerConversion.put(new ItemStack(Items.dye, 1, 4), new ItemStack(ElementsOfPower.magicContainer, 1, 0));
-        containerConversion.put(new ItemStack(Items.emerald, 1), new ItemStack(ElementsOfPower.magicContainer, 1, 1));
-        containerConversion.put(new ItemStack(Items.diamond, 1), new ItemStack(ElementsOfPower.magicContainer, 1, 2));
+        registerContainerConversions();
+        registerContainerCapacity();
+        registerEssenceSources();
+    }
+
+    private static void registerContainerCapacity() {
         containerCapacity.put(new ItemStack(Items.dye, 1, 4), new MagicAmounts().all(10));
         containerCapacity.put(new ItemStack(Items.emerald, 1), new MagicAmounts().all(50));
         containerCapacity.put(new ItemStack(Items.diamond, 1), new MagicAmounts().all(100));
+
         containerCapacity.put(new ItemStack(ElementsOfPower.magicContainer, 1, 0), new MagicAmounts().all(10));
         containerCapacity.put(new ItemStack(ElementsOfPower.magicContainer, 1, 1), new MagicAmounts().all(50));
         containerCapacity.put(new ItemStack(ElementsOfPower.magicContainer, 1, 2), new MagicAmounts().all(100));
+
         containerCapacity.put(ElementsOfPower.wandLapis, new MagicAmounts().all(10));
         containerCapacity.put(ElementsOfPower.wandEmerald, new MagicAmounts().all(50));
         containerCapacity.put(ElementsOfPower.wandDiamond, new MagicAmounts().all(100));
         containerCapacity.put(ElementsOfPower.staffLapis, new MagicAmounts().all(50));
         containerCapacity.put(ElementsOfPower.staffEmerald, new MagicAmounts().all(250));
         containerCapacity.put(ElementsOfPower.staffDiamond, new MagicAmounts().all(500));
-        itemEssences.put(new ItemStack(Blocks.dirt, 1), new MagicAmounts().earth(1));
-        itemEssences.put(new ItemStack(Blocks.grass, 1), new MagicAmounts().earth(1).life(1));
-        itemEssences.put(new ItemStack(Blocks.cobblestone, 1), new MagicAmounts().earth(5));
-        itemEssences.put(new ItemStack(Blocks.stone, 1), new MagicAmounts().earth(10));
+    }
+
+    private static void registerContainerConversions() {
+        containerConversion.put(new ItemStack(Items.dye, 1, 4), new ItemStack(ElementsOfPower.magicContainer, 1, 0));
+        containerConversion.put(new ItemStack(Items.emerald, 1), new ItemStack(ElementsOfPower.magicContainer, 1, 1));
+        containerConversion.put(new ItemStack(Items.diamond, 1), new ItemStack(ElementsOfPower.magicContainer, 1, 2));
+    }
+
+    private static void registerEssenceSources() {
+        for (ItemEssenceEntry source : stockEntries) {
+            itemEssences.put(source.item, source.amounts);
+        }
     }
 
     public static void postInitialize() {
-    }
-
-    private static boolean reduceItemsList(List<ItemStack> craftables,
-                                           List<ItemStack> nonCraftables, List<ItemStack> items,
-                                           List<ItemStack> itemsResolved) {
-        boolean foundAll = true;
-
-        for (ItemStack is : items) {
-            if (is == null) {
-                continue;
-            }
-
-            if (!listContains(craftables, is))
-                if (!listContains(nonCraftables, is)) {
-                    nonCraftables.add(is);
-                }
-
-            ItemStack existing = getExistingInList(itemsResolved, is);
-
-            if (existing != null) {
-                if (existing != is) {
-                    existing.stackSize++;
-                }
-            } else {
-                ItemStack isc = is.copy();
-                isc.stackSize = 1;
-                itemsResolved.add(isc);
-            }
-        }
-
-        return foundAll;
-    }
-
-    private static List<ItemStack> getInputsListForRecipe(IRecipe recipe) {
-        if (recipe instanceof ShapelessRecipes) {
-            ShapelessRecipes sr = (ShapelessRecipes) recipe;
-            return sr.recipeItems;
-        } else if (recipe instanceof ShapedRecipes) {
-            ShapedRecipes sr = (ShapedRecipes) recipe;
-            return Arrays.asList(sr.recipeItems);
-        }
-
-        return null;
-    }
-
-    private static boolean compareItemStacks(ItemStack test, ItemStack stack) {
-        int dmg = test.getItemDamage();
-        return test.getItem() == stack.getItem() && (dmg < 0 || dmg == stack.getItemDamage());
-    }
-
-    private static ItemStack findKeyForValue(Map<ItemStack, ItemStack> map, ItemStack stack) {
-        if (stack == null) {
-            return null;
-        }
-
-        for (ItemStack k : map.keySet()) {
-            ItemStack v = map.get(k);
-
-            if (compareItemStacks(v, stack)) {
-                return k;
-            }
-        }
-
-        return null;
-    }
-
-    private static boolean listContains(List<ItemStack> list, ItemStack stack) {
-        if (stack == null) {
-            return false;
-        }
-
-        for (ItemStack k : list) {
-            if (compareItemStacks(k, stack)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private static ItemStack getExistingInList(List<ItemStack> list, ItemStack stack) {
-        if (stack == null) {
-            return null;
-        }
-
-        for (ItemStack k : list) {
-            if (compareItemStacks(k, stack)) {
-                return k;
-            }
-        }
-
-        return null;
-    }
-
-    private static <OType> OType getFromMap(Map<ItemStack, OType> map, ItemStack stack) {
-        if (stack == null) {
-            return null;
-        }
-
-        for (ItemStack k : map.keySet()) {
-            int dmg = k.getItemDamage();
-
-            if (compareItemStacks(k, stack)) {
-                return map.get(k);
-            }
-        }
-
-        return null;
-    }
-
-    private static <OType> boolean stackIsInMap(Map<ItemStack, OType> map, ItemStack stack) {
-        if (stack == null) {
-            return false;
-        }
-
-        return getFromMap(map, stack) != null;
+        Utils.dumpAllRecipes();
+        Utils.dumpAllItems();
     }
 
     public static boolean itemContainsMagic(ItemStack stack) {
@@ -184,7 +170,7 @@ public class MagicDatabase {
             return false;
         }
 
-        return stackIsInMap(containerCapacity, stack);
+        return Utils.stackIsInMap(containerCapacity, stack);
     }
 
     public static MagicAmounts getMagicLimits(ItemStack stack) {
@@ -192,15 +178,15 @@ public class MagicDatabase {
             return null;
         }
 
-        return getFromMap(containerCapacity, stack);
+        return Utils.getFromMap(containerCapacity, stack);
     }
 
     public static boolean itemHasEssence(ItemStack stack) {
-        return stackIsInMap(itemEssences, stack);
+        return Utils.stackIsInMap(itemEssences, stack);
     }
 
     public static MagicAmounts getEssences(ItemStack stack) {
-        return getFromMap(itemEssences, stack);
+        return Utils.getFromMap(itemEssences, stack);
     }
 
     public static MagicAmounts getContainedMagic(ItemStack output) {
@@ -218,7 +204,6 @@ public class MagicDatabase {
             return null;
         }
 
-        NBTTagCompound tag = nbt.getCompoundTag("magicContained");
         MagicAmounts amounts = new MagicAmounts();
         int max = 0;
 
@@ -262,17 +247,14 @@ public class MagicDatabase {
             NBTTagCompound nbt = output.getTagCompound();
 
             if (nbt == null) {
-                if (stackIsInMap(containerConversion, output)) {
-                    output = getFromMap(containerConversion, output).copy();
+                if (Utils.stackIsInMap(containerConversion, output)) {
+                    output = Utils.getFromMap(containerConversion, output).copy();
                 }
 
                 // output.setItemName(par1Str)
                 nbt = new NBTTagCompound();
                 output.setTagCompound(nbt);
             }
-
-            NBTTagCompound tag = nbt.getCompoundTag("magicContained");
-            int max = 0;
 
             for (int i = 0; i < 8; i++) {
                 nbt.setInteger("" + i, amounts.amounts[i]);
@@ -281,7 +263,7 @@ public class MagicDatabase {
             return output;
         } else {
             output.setTagCompound(null);
-            ItemStack is = findKeyForValue(containerConversion, output);
+            ItemStack is = Utils.findKeyForValue(containerConversion, output);
 
             if (is != null) {
                 output = is.copy();
@@ -310,4 +292,5 @@ public class MagicDatabase {
     public static String getMagicNameCombined(int i) {
         return magicNames.get(i);
     }
+
 }

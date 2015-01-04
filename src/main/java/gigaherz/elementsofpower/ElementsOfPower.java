@@ -1,15 +1,12 @@
 package gigaherz.elementsofpower;
 
-import gigaherz.elementsofpower.network.ProgressUpdatePacket;
 import net.minecraft.block.Block;
-import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -19,9 +16,8 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.relauncher.Side;
 
-import java.nio.channels.NetworkChannel;
+import java.io.File;
 
 
 @Mod(modid = ElementsOfPower.MODID, name = ElementsOfPower.MODNAME, version = ElementsOfPower.VERSION)
@@ -84,6 +80,8 @@ public class ElementsOfPower {
 
     public static SimpleNetworkWrapper channel;
 
+    public static File configFile;
+
     private GuiHandler guiHandler = new GuiHandler();
 
     public static final CreativeTabs tabMagic = new CreativeTabs(MODID.toLowerCase()) {
@@ -100,10 +98,8 @@ public class ElementsOfPower {
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        //Configuration config;
-        //config = new Configuration(event.getSuggestedConfigurationFile());
-        //config.load();
-        //config.save();
+
+        configFile = event.getSuggestedConfigurationFile();
 
         MinecraftForge.EVENT_BUS.register(new RenderHookHandler());
 
@@ -178,21 +174,21 @@ public class ElementsOfPower {
                 " SG",
                 "S  ",
                 'W', wandLapis,
-                'G', new ItemStack(Items.dye, 1, 4),
+                'G', Blocks.quartz_block,
                 'S', Items.stick);
         GameRegistry.addRecipe(staffEmerald,
                 " GW",
                 " SG",
                 "S  ",
                 'W', wandEmerald,
-                'G', Items.emerald,
+                'G', Blocks.quartz_block,
                 'S', Items.stick);
         GameRegistry.addRecipe(staffDiamond,
                 " GW",
                 " SG",
                 "S  ",
                 'W', wandDiamond,
-                'G', Items.diamond,
+                'G', Blocks.quartz_block,
                 'S', Items.stick);
         // Gui
         NetworkRegistry.INSTANCE.registerGuiHandler(this, guiHandler);

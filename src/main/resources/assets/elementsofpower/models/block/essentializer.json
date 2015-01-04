@@ -6,6 +6,7 @@
         "west": "ElementsOfPower:blocks/sideObsidian",
         "north": "ElementsOfPower:blocks/sideObsidian",
         "south": "ElementsOfPower:blocks/sideObsidian",
-        "down": "ElementsOfPower:blocks/sideObsidian"
+        "down": "ElementsOfPower:blocks/sideObsidian",
+        "particle": "elementsofpower:blocks/sideObsidian"
     }
 }

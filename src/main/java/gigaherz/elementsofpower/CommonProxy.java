@@ -3,8 +3,6 @@ package gigaherz.elementsofpower;
 import gigaherz.elementsofpower.models.IModelRegistrationHelper;
 import gigaherz.elementsofpower.network.ProgressUpdatePacket;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -24,16 +22,15 @@ public class CommonProxy
     @Override
     public IMessage onMessage(IMessage message, MessageContext ctx) {
         if (message instanceof ProgressUpdatePacket) {
-            ProgressUpdatePacket packet = (ProgressUpdatePacket)message;
+            ProgressUpdatePacket packet = (ProgressUpdatePacket) message;
 
             TileEntity tile = packet.getTileEntityTarget();
 
-            if (!(tile instanceof TileEssentializer))
-            {
+            if (!(tile instanceof TileEssentializer)) {
                 return null;
             }
 
-            TileEssentializer essentializer = (TileEssentializer)tile;
+            TileEssentializer essentializer = (TileEssentializer) tile;
             essentializer.updateProgressBar(packet.barIndex, packet.barValue);
         }
         return null;
