@@ -8,20 +8,17 @@ import gigaherz.elementsofpower.models.IModelRegistrationHelper;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.block.model.ItemTransformVec3f;
 import net.minecraft.client.renderer.block.model.ModelBlock;
 import net.minecraft.client.renderer.entity.RenderItem;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.item.Item;
-import net.minecraft.util.IRegistry;
 import net.minecraft.util.ResourceLocation;
 
-import javax.vecmath.Vector3f;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.Hashtable;
 import java.util.Map;
 
@@ -29,36 +26,35 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void registerCustomBakedModels(IModelRegistrationHelper registrationHelper) {
-        registerCustomModel(registrationHelper, ElementsOfPower.magicWand, 0, "wand_lapis");
-        registerCustomModel(registrationHelper, ElementsOfPower.magicWand, 1, "wand_emerald");
-        registerCustomModel(registrationHelper, ElementsOfPower.magicWand, 2, "wand_diamond");
-        registerCustomModel(registrationHelper, ElementsOfPower.magicWand, 3, "wand_creative");
-        registerCustomModel(registrationHelper, ElementsOfPower.magicWand, 4, "staff_lapis");
-        registerCustomModel(registrationHelper, ElementsOfPower.magicWand, 5, "staff_emerald");
-        registerCustomModel(registrationHelper, ElementsOfPower.magicWand, 6, "staff_diamond");
-        registerCustomModel(registrationHelper, ElementsOfPower.magicWand, 7, "staff_creative");
+        registerCustomItemModel(registrationHelper, ElementsOfPower.magicWand, 0, "wand_lapis");
+        registerCustomItemModel(registrationHelper, ElementsOfPower.magicWand, 1, "wand_emerald");
+        registerCustomItemModel(registrationHelper, ElementsOfPower.magicWand, 2, "wand_diamond");
+        registerCustomItemModel(registrationHelper, ElementsOfPower.magicWand, 3, "wand_creative");
+        registerCustomItemModel(registrationHelper, ElementsOfPower.magicWand, 4, "staff_lapis");
+        registerCustomItemModel(registrationHelper, ElementsOfPower.magicWand, 5, "staff_emerald");
+        registerCustomItemModel(registrationHelper, ElementsOfPower.magicWand, 6, "staff_diamond");
+        registerCustomItemModel(registrationHelper, ElementsOfPower.magicWand, 7, "staff_creative");
+        //registerCustomBlockModel(registrationHelper, "essentializer", "normal");
+        //registerCustomBlockModel(registrationHelper, "essentializer", "inventory");
     }
 
-    private ResourceLocation getModelLocation(ResourceLocation loc)
-    {
+    private ResourceLocation getModelLocation(ResourceLocation loc) {
         return new ResourceLocation(loc.getResourceDomain(), "models/" + loc.getResourcePath() + ".json");
     }
 
-    private ModelBlock loadModelResource(Map<ResourceLocation, ModelBlock> map, final ResourceLocation loc)
-    {
+    private ModelBlock loadModelResource(Map<ResourceLocation, ModelBlock> map, final ResourceLocation loc) {
         Reader reader = null;
         ModelBlock modelblock = map.get(loc);
 
-        if(modelblock != null)
+        if (modelblock != null)
             return modelblock;
 
-        if(loc.getResourcePath().startsWith("builtin/"))
+        if (loc.getResourcePath().startsWith("builtin/"))
             return null;
 
-        try
-        {
+        try {
             IResource iresource = Minecraft.getMinecraft().getResourceManager().getResource(getModelLocation(loc));
-            if(iresource != null) {
+            if (iresource != null) {
                 reader = new InputStreamReader(iresource.getInputStream(), Charsets.UTF_8);
 
                 modelblock = ModelBlock.deserialize(reader);
@@ -66,33 +62,32 @@ public class ClientProxy extends CommonProxy {
                 map.put(loc, modelblock);
 
                 ResourceLocation parentLoc = modelblock.getParentLocation();
-                if(parentLoc != null) {
+                if (parentLoc != null) {
 
                     ModelBlock parentModel = loadModelResource(map, parentLoc);
-                    if(parentModel != null) {
+                    if (parentModel != null) {
                         modelblock.getParentFromMap(map);
                     }
                 }
             }
-        }
-        catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
         return modelblock;
     }
-    private ModelBlock loadModelResource(final ResourceLocation loc)
-    {
+
+    private ModelBlock loadModelResource(final ResourceLocation loc) {
         return loadModelResource(new Hashtable<ResourceLocation, ModelBlock>(), loc);
     }
 
-    private void registerCustomModel(IModelRegistrationHelper registrationHelper, final Item item, int meta, final String itemName) {
+    private void registerCustomItemModel(IModelRegistrationHelper registrationHelper, final Item item, int meta, final String itemName) {
 
         ItemCameraTransforms transforms = ItemCameraTransforms.DEFAULT;
 
         ResourceLocation icon = new ResourceLocation(ElementsOfPower.MODID, "item/" + itemName);
         ModelBlock modelblock = loadModelResource(icon);
-        if(modelblock != null) {
+        if (modelblock != null) {
             transforms = new ItemCameraTransforms(
                     modelblock.getThirdPersonTransform(),
                     modelblock.getFirstPersonTransform(),
@@ -104,6 +99,25 @@ public class ClientProxy extends CommonProxy {
         registrationHelper.registerCustomModel(loc,
                 new CustomMeshModel(itemName, transforms, loc, registrationHelper.getModelManager()));
         ModelBakery.addVariantName(item, ElementsOfPower.MODID + ":" + itemName);
+    }
+
+    private void registerCustomBlockModel(IModelRegistrationHelper registrationHelper, final String itemName, final String stateName) {
+
+        ItemCameraTransforms transforms = ItemCameraTransforms.DEFAULT;
+
+        ResourceLocation icon = new ResourceLocation(ElementsOfPower.MODID, "block/" + itemName);
+        ModelBlock modelblock = loadModelResource(icon);
+        if (modelblock != null) {
+            transforms = new ItemCameraTransforms(
+                    modelblock.getThirdPersonTransform(),
+                    modelblock.getFirstPersonTransform(),
+                    modelblock.getHeadTransform(),
+                    modelblock.getInGuiTransform());
+        }
+
+        ResourceLocation loc = new ModelResourceLocation(ElementsOfPower.MODID + ":" + itemName, stateName);
+        registrationHelper.registerCustomModel(loc,
+                new CustomMeshModel(itemName, transforms, loc, registrationHelper.getModelManager()));
     }
 
     @Override
