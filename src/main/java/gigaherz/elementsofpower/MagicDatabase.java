@@ -151,8 +151,8 @@ public class MagicDatabase {
     }
 
     public static void postInitialize() {
-        Utils.dumpAllRecipes();
-        Utils.dumpAllItems();
+        //Utils.dumpAllRecipes();
+        //Utils.dumpAllItems();
     }
 
     public static boolean itemContainsMagic(ItemStack stack) {

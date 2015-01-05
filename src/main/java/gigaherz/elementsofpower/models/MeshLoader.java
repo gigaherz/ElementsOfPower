@@ -10,8 +10,13 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashSet;
+import java.util.Set;
 
 public class MeshLoader {
+
+    static final Set<String> unknownCommands = new HashSet<String>();
+
     private MeshModel currentModel;
     private MeshPart currentPart;
     private MaterialLibrary currentMatLib;
@@ -20,6 +25,7 @@ public class MeshLoader {
     int lastIndex;
 
     private String filePath;
+    private String lastObjectName;
 
     private void addTexCoord(String line) {
         String[] args = line.split(" ");
@@ -88,12 +94,19 @@ public class MeshLoader {
 
     private void useMaterial(String matName) {
         Material mat = currentMatLib.get(matName);
+
+        currentPart = new MeshPart();
+        currentPart.name = lastObjectName;
         currentPart.material = mat;
+        currentModel.addPart(currentPart);
+    }
+
+    private void newObject(String line) {
+        lastObjectName = line;
     }
 
     private void newGroup(String line) {
-        currentPart = new MeshPart();
-        currentModel.addPart(currentPart);
+        lastObjectName = line;;
     }
 
     private void loadMaterialLibrary(ResourceLocation locOfParent, String path) throws IOException {
@@ -124,7 +137,7 @@ public class MeshLoader {
             String data = fields[1];
 
             if (keyword.equalsIgnoreCase("o")) {
-                newGroup(data);
+                newObject(data);
             } else if (keyword.equalsIgnoreCase("g")) {
                 newGroup(data);
             } else if (keyword.equalsIgnoreCase("mtllib")) {
@@ -140,7 +153,10 @@ public class MeshLoader {
             } else if (keyword.equalsIgnoreCase("f")) {
                 addFace(data);
             } else {
-                System.out.println("Unrecognized command: " + currentLine);
+                if(!unknownCommands.contains(keyword)) {
+                    System.out.println("Unrecognized command: " + currentLine);
+                    unknownCommands.add(keyword);
+                }
                 continue;
             }
         }

@@ -10,12 +10,13 @@ import javax.vecmath.Vector3f;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Dictionary;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.*;
 
 class MaterialLibrary
         extends Dictionary<String, Material> {
+
+    static final Set<String> unknownCommands = new HashSet<String>();
+
     private final Dictionary<String, Material> materialLibrary = new Hashtable<String, Material>();
 
     private Material currentMaterial;
@@ -59,9 +60,11 @@ class MaterialLibrary
     }
 
     public void loadFromStream(ResourceLocation loc) throws IOException {
+
         IResource res = Minecraft.getMinecraft().getResourceManager().getResource(loc);
         InputStreamReader lineStream = new InputStreamReader(res.getInputStream(), Charsets.UTF_8);
         BufferedReader lineReader = new BufferedReader(lineStream);
+
         for (; ; ) {
             String currentLine = lineReader.readLine();
             if (currentLine == null)
@@ -109,7 +112,10 @@ class MaterialLibrary
             } else if (keyword.equalsIgnoreCase("decal")) {
                 currentMaterial.StencilDecalMap = data;
             } else {
-                System.out.println("Unrecognized command: " + currentLine);
+                if(!unknownCommands.contains(keyword)) {
+                    System.out.println("Unrecognized command: " + currentLine);
+                    unknownCommands.add(keyword);
+                }
                 continue;
             }
         }
