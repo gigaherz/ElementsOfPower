@@ -1,123 +1,29 @@
 package gigaherz.elementsofpower.client;
 
-import com.google.common.base.Charsets;
 import gigaherz.elementsofpower.CommonProxy;
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.models.CustomMeshModel;
-import gigaherz.elementsofpower.models.IModelRegistrationHelper;
+import gigaherz.elementsofpower.models.ModelRegistrationHelper;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.block.model.ModelBlock;
 import net.minecraft.client.renderer.entity.RenderItem;
-import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.item.Item;
-import net.minecraft.util.ResourceLocation;
-
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.Hashtable;
-import java.util.Map;
 
 public class ClientProxy extends CommonProxy {
 
     @Override
-    public void registerCustomBakedModels(IModelRegistrationHelper registrationHelper) {
-        registerCustomItemModel(registrationHelper, ElementsOfPower.magicWand, 0, "wand_lapis");
-        registerCustomItemModel(registrationHelper, ElementsOfPower.magicWand, 1, "wand_emerald");
-        registerCustomItemModel(registrationHelper, ElementsOfPower.magicWand, 2, "wand_diamond");
-        registerCustomItemModel(registrationHelper, ElementsOfPower.magicWand, 3, "wand_creative");
-        registerCustomItemModel(registrationHelper, ElementsOfPower.magicWand, 4, "staff_lapis");
-        registerCustomItemModel(registrationHelper, ElementsOfPower.magicWand, 5, "staff_emerald");
-        registerCustomItemModel(registrationHelper, ElementsOfPower.magicWand, 6, "staff_diamond");
-        registerCustomItemModel(registrationHelper, ElementsOfPower.magicWand, 7, "staff_creative");
-        //registerCustomBlockModel(registrationHelper, "essentializer", "normal");
-        //registerCustomBlockModel(registrationHelper, "essentializer", "inventory");
-    }
-
-    private ResourceLocation getModelLocation(ResourceLocation loc) {
-        return new ResourceLocation(loc.getResourceDomain(), "models/" + loc.getResourcePath() + ".json");
-    }
-
-    private ModelBlock loadModelResource(Map<ResourceLocation, ModelBlock> map, final ResourceLocation loc) {
-        Reader reader = null;
-        ModelBlock modelblock = map.get(loc);
-
-        if (modelblock != null)
-            return modelblock;
-
-        if (loc.getResourcePath().startsWith("builtin/"))
-            return null;
-
-        try {
-            IResource iresource = Minecraft.getMinecraft().getResourceManager().getResource(getModelLocation(loc));
-            if (iresource != null) {
-                reader = new InputStreamReader(iresource.getInputStream(), Charsets.UTF_8);
-
-                modelblock = ModelBlock.deserialize(reader);
-                modelblock.name = loc.toString();
-                map.put(loc, modelblock);
-
-                ResourceLocation parentLoc = modelblock.getParentLocation();
-                if (parentLoc != null) {
-
-                    ModelBlock parentModel = loadModelResource(map, parentLoc);
-                    if (parentModel != null) {
-                        modelblock.getParentFromMap(map);
-                    }
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return modelblock;
-    }
-
-    private ModelBlock loadModelResource(final ResourceLocation loc) {
-        return loadModelResource(new Hashtable<ResourceLocation, ModelBlock>(), loc);
-    }
-
-    private void registerCustomItemModel(IModelRegistrationHelper registrationHelper, final Item item, int meta, final String itemName) {
-
-        ItemCameraTransforms transforms = ItemCameraTransforms.DEFAULT;
-
-        ResourceLocation icon = new ResourceLocation(ElementsOfPower.MODID, "item/" + itemName);
-        ModelBlock modelblock = loadModelResource(icon);
-        if (modelblock != null) {
-            transforms = new ItemCameraTransforms(
-                    modelblock.getThirdPersonTransform(),
-                    modelblock.getFirstPersonTransform(),
-                    modelblock.getHeadTransform(),
-                    modelblock.getInGuiTransform());
-        }
-
-        ResourceLocation loc = new ModelResourceLocation(ElementsOfPower.MODID + ":" + itemName, "inventory");
-        registrationHelper.registerCustomModel(loc,
-                new CustomMeshModel(itemName, transforms, loc, registrationHelper.getModelManager()));
-        ModelBakery.addVariantName(item, ElementsOfPower.MODID + ":" + itemName);
-    }
-
-    private void registerCustomBlockModel(IModelRegistrationHelper registrationHelper, final String itemName, final String stateName) {
-
-        ItemCameraTransforms transforms = ItemCameraTransforms.DEFAULT;
-
-        ResourceLocation icon = new ResourceLocation(ElementsOfPower.MODID, "block/" + itemName);
-        ModelBlock modelblock = loadModelResource(icon);
-        if (modelblock != null) {
-            transforms = new ItemCameraTransforms(
-                    modelblock.getThirdPersonTransform(),
-                    modelblock.getFirstPersonTransform(),
-                    modelblock.getHeadTransform(),
-                    modelblock.getInGuiTransform());
-        }
-
-        ResourceLocation loc = new ModelResourceLocation(ElementsOfPower.MODID + ":" + itemName, stateName);
-        registrationHelper.registerCustomModel(loc,
-                new CustomMeshModel(itemName, transforms, loc, registrationHelper.getModelManager()));
+    public void registerCustomBakedModels(ModelRegistrationHelper registrationHelper) {
+        registrationHelper.registerCustomItemModel(ElementsOfPower.magicWand, 0, "wand_lapis");
+        registrationHelper.registerCustomItemModel(ElementsOfPower.magicWand, 1, "wand_emerald");
+        registrationHelper.registerCustomItemModel(ElementsOfPower.magicWand, 2, "wand_diamond");
+        registrationHelper.registerCustomItemModel(ElementsOfPower.magicWand, 3, "wand_creative");
+        registrationHelper.registerCustomItemModel(ElementsOfPower.magicWand, 4, "staff_lapis");
+        registrationHelper.registerCustomItemModel(ElementsOfPower.magicWand, 5, "staff_emerald");
+        registrationHelper.registerCustomItemModel(ElementsOfPower.magicWand, 6, "staff_diamond");
+        registrationHelper.registerCustomItemModel(ElementsOfPower.magicWand, 7, "staff_creative");
+        //registrationHelper.registerCustomBlockModel("essentializer", "normal");
+        //registrationHelper.registerCustomBlockModel("essentializer", "inventory");
     }
 
     @Override

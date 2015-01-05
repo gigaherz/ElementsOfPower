@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower;
 
+import gigaherz.elementsofpower.models.ModelRegistrationHelper;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
@@ -101,7 +102,7 @@ public class ElementsOfPower {
 
         configFile = event.getSuggestedConfigurationFile();
 
-        MinecraftForge.EVENT_BUS.register(new RenderHookHandler());
+        MinecraftForge.EVENT_BUS.register(new ModelRegistrationHelper());
 
         // Block and Item registration
         magicOrb = new ItemMagicOrb();
@@ -135,6 +136,8 @@ public class ElementsOfPower {
         darkness = magicOrb.getStack(1, 5);
         life = magicOrb.getStack(1, 6);
         death = magicOrb.getStack(1, 7);
+
+        // InputStreamHook
 
         // Item decomposing database
         MagicDatabase.preInitialize();
