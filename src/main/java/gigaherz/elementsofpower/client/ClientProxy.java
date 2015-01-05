@@ -19,8 +19,6 @@ public class ClientProxy extends CommonProxy {
     public void registerCustomBakedModels() {
         ModelRegistrationHelper helper = ElementsOfPower.modelRegistrationHelper;
 
-        helper.registerSprite(new ResourceLocation(ElementsOfPower.MODID + ":items/orbDisabled"));
-
         registerCustomItemModel(helper, "wand_lapis");
         registerCustomItemModel(helper, "wand_emerald");
         registerCustomItemModel(helper, "wand_diamond");

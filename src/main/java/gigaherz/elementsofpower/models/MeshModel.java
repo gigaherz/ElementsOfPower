@@ -48,7 +48,7 @@ public class MeshModel {
         int r = (int) color.x;
         int g = (int) color.y;
         int b = (int) color.z;
-        return 0xFF000000 | (b << 16) | (g << 8) | r;
+        return 0xFF000000 | (r << 16) | (g << 8) | b;
     }
 
     public List<BakedQuad> bakeModel(ModelManager manager) {
@@ -111,8 +111,8 @@ public class MeshModel {
         faceData[l + 2] = Float.floatToRawIntBits(position.z);
         faceData[l + 3] = shadeColor;
         if (sprite != null) {
-            faceData[l + 4] = Float.floatToRawIntBits(sprite.getInterpolatedU(faceUV.x));
-            faceData[l + 5] = Float.floatToRawIntBits(sprite.getInterpolatedV(faceUV.y));
+            faceData[l + 4] = Float.floatToRawIntBits(sprite.getInterpolatedU(faceUV.x * 16));
+            faceData[l + 5] = Float.floatToRawIntBits(sprite.getInterpolatedV(faceUV.y * 16));
         } else {
             faceData[l + 4] = Float.floatToRawIntBits(faceUV.x);
             faceData[l + 5] = Float.floatToRawIntBits(faceUV.y);

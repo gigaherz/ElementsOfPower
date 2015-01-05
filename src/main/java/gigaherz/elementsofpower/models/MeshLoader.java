@@ -110,7 +110,12 @@ public class MeshLoader {
     }
 
     private void loadMaterialLibrary(ResourceLocation locOfParent, String path) throws IOException {
-        ResourceLocation loc = new ResourceLocation(locOfParent.getResourceDomain(), path);
+
+        String prefix = locOfParent.getResourcePath();
+        int pp = prefix.lastIndexOf('/');
+        prefix = (pp >= 0) ? prefix.substring(0, pp+1) : "";
+
+        ResourceLocation loc = new ResourceLocation(locOfParent.getResourceDomain(), prefix + path);
 
         currentMatLib.loadFromStream(loc);
     }
