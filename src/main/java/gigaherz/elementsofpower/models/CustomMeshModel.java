@@ -35,6 +35,13 @@ public class CustomMeshModel
         this.model = new ResourceLocation(ElementsOfPower.MODID, "models/obj/" + variant + ".obj");
         this.faceQuads = new ArrayList<BakedQuad>();
         this.generalQuads = new ArrayList<BakedQuad>();
+
+        try {
+            generalQuads.clear();
+            sourceMesh = new MeshLoader().loadFromResource(model);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -43,13 +50,7 @@ public class CustomMeshModel
         this.transforms = cameraTransforms;
         this.iconSprite = modelManager.getTextureMap().getAtlasSprite(icon.toString());
 
-        try {
-            generalQuads.clear();
-            sourceMesh = new MeshLoader().loadFromResource(modelManager, model);
-            generalQuads = sourceMesh.bakeModel();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        generalQuads = sourceMesh.bakeModel(modelManager);
     }
 
     @Override

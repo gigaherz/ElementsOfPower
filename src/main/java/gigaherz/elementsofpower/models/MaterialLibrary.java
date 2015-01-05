@@ -1,6 +1,7 @@
 package gigaherz.elementsofpower.models;
 
 import com.google.common.base.Charsets;
+import gigaherz.elementsofpower.ElementsOfPower;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.util.ResourceLocation;
@@ -92,6 +93,7 @@ class MaterialLibrary
                 currentMaterial.AmbientTextureMap = data;
             } else if (keyword.equalsIgnoreCase("map_Kd")) {
                 currentMaterial.DiffuseTextureMap = data;
+                ElementsOfPower.modelRegistrationHelper.registerSprite(new ResourceLocation(data));
             } else if (keyword.equalsIgnoreCase("map_Ks")) {
                 currentMaterial.SpecularTextureMap = data;
             } else if (keyword.equalsIgnoreCase("map_Ns")) {

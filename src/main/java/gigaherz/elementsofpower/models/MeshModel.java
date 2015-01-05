@@ -18,10 +18,7 @@ public class MeshModel {
 
     public List<MeshPart> parts;
 
-    private ModelManager manager;
-
-    public MeshModel(ModelManager modelManager) {
-        manager = modelManager;
+    public MeshModel() {
         parts = new ArrayList<MeshPart>();
     }
 
@@ -54,7 +51,7 @@ public class MeshModel {
         return 0xFF000000 | (b << 16) | (g << 8) | r;
     }
 
-    public List<BakedQuad> bakeModel() {
+    public List<BakedQuad> bakeModel(ModelManager manager) {
         List<BakedQuad> bakeList = new ArrayList<BakedQuad>();
 
         for (int j = 0; j < parts.size(); j++) {

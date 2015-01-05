@@ -102,12 +102,12 @@ public class MeshLoader {
         currentMatLib.loadFromStream(loc);
     }
 
-    public MeshModel loadFromResource(ModelManager modelManager, ResourceLocation loc) throws IOException {
+    public MeshModel loadFromResource(ResourceLocation loc) throws IOException {
         IResource res = Minecraft.getMinecraft().getResourceManager().getResource(loc);
         InputStreamReader lineStream = new InputStreamReader(res.getInputStream(), Charsets.UTF_8);
         BufferedReader lineReader = new BufferedReader(lineStream);
 
-        currentModel = new MeshModel(modelManager);
+        currentModel = new MeshModel();
         currentMatLib = new MaterialLibrary();
 
         for (; ; ) {
