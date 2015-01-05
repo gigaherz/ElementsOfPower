@@ -2,28 +2,52 @@ package gigaherz.elementsofpower.client;
 
 import gigaherz.elementsofpower.CommonProxy;
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.models.CustomMeshModel;
 import gigaherz.elementsofpower.models.ModelRegistrationHelper;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
 
 public class ClientProxy extends CommonProxy {
 
     @Override
-    public void registerCustomBakedModels(ModelRegistrationHelper registrationHelper) {
-        registrationHelper.registerCustomItemModel(ElementsOfPower.magicWand, 0, "wand_lapis");
-        registrationHelper.registerCustomItemModel(ElementsOfPower.magicWand, 1, "wand_emerald");
-        registrationHelper.registerCustomItemModel(ElementsOfPower.magicWand, 2, "wand_diamond");
-        registrationHelper.registerCustomItemModel(ElementsOfPower.magicWand, 3, "wand_creative");
-        registrationHelper.registerCustomItemModel(ElementsOfPower.magicWand, 4, "staff_lapis");
-        registrationHelper.registerCustomItemModel(ElementsOfPower.magicWand, 5, "staff_emerald");
-        registrationHelper.registerCustomItemModel(ElementsOfPower.magicWand, 6, "staff_diamond");
-        registrationHelper.registerCustomItemModel(ElementsOfPower.magicWand, 7, "staff_creative");
-        //registrationHelper.registerCustomBlockModel("essentializer", "normal");
-        //registrationHelper.registerCustomBlockModel("essentializer", "inventory");
+    public void registerCustomBakedModels() {
+        ModelRegistrationHelper helper = ElementsOfPower.modelRegistrationHelper;
+
+        helper.registerSprite(new ResourceLocation(ElementsOfPower.MODID + ":items/orbDisabled"));
+
+        registerCustomItemModel(helper, "wand_lapis");
+        registerCustomItemModel(helper, "wand_emerald");
+        registerCustomItemModel(helper, "wand_diamond");
+        registerCustomItemModel(helper, "wand_creative");
+        registerCustomItemModel(helper, "staff_lapis");
+        registerCustomItemModel(helper, "staff_emerald");
+        registerCustomItemModel(helper, "staff_diamond");
+        registerCustomItemModel(helper, "staff_creative");
+
+        //registerCustomBlockModel(helper, "essentializer", "normal");
+        //registerCustomBlockModel(helper, "essentializer", "inventory");
+    }
+
+    public void registerCustomItemModel(ModelRegistrationHelper helper, final String itemName) {
+
+        ResourceLocation loc = new ModelResourceLocation(ElementsOfPower.MODID + ":" + itemName, "inventory");
+        IBakedModel model = new CustomMeshModel(itemName);
+
+        helper.registerCustomItemModel(loc, model, itemName);
+    }
+
+    public void registerCustomBlockModel(ModelRegistrationHelper helper, final String blockName, final String stateName) {
+
+        ResourceLocation loc = new ModelResourceLocation(ElementsOfPower.MODID + ":" + blockName, stateName);
+        IBakedModel model = new CustomMeshModel(blockName);
+
+        helper.registerCustomBlockModel(loc, model, blockName);
     }
 
     @Override

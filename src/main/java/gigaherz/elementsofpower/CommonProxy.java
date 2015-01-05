@@ -1,6 +1,5 @@
 package gigaherz.elementsofpower;
 
-import gigaherz.elementsofpower.models.ModelRegistrationHelper;
 import gigaherz.elementsofpower.network.ProgressUpdatePacket;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -15,7 +14,7 @@ public class CommonProxy
         // Nothing here as this is the server side proxy
     }
 
-    public void registerCustomBakedModels(ModelRegistrationHelper helper) {
+    public void registerCustomBakedModels() {
         // Nothing here, client-only
     }
 

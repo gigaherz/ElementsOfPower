@@ -1,6 +1,7 @@
 package gigaherz.elementsofpower.models;
 
 import gigaherz.elementsofpower.ElementsOfPower;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -9,6 +10,7 @@ import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.ISmartBlockModel;
 import net.minecraftforge.client.model.ISmartItemModel;
 
 import java.io.IOException;
@@ -16,8 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CustomMeshModel
-        implements ISmartItemModel {
+        implements ISmartItemModel, ISmartBlockModel, IInitializeBakedModel {
 
+    String variant;
     ResourceLocation model;
     ItemCameraTransforms transforms;
 
@@ -27,15 +30,18 @@ public class CustomMeshModel
 
     TextureAtlasSprite iconSprite;
 
-    public CustomMeshModel(String variant, ItemCameraTransforms cameraTransforms, ResourceLocation icon, ModelManager modelManager) {
+    public CustomMeshModel(String variant) {
+        this.variant = variant;
         this.model = new ResourceLocation(ElementsOfPower.MODID, "models/obj/" + variant + ".obj");
-        this.transforms = cameraTransforms;
         this.faceQuads = new ArrayList<BakedQuad>();
         this.generalQuads = new ArrayList<BakedQuad>();
-        this.iconSprite = modelManager.getTextureMap().getAtlasSprite(icon.toString());
+    }
 
-        //ItemCameraTransforms.TransformType
-        //WeightedBakedModel
+    @Override
+    public void initialize(ItemCameraTransforms cameraTransforms, ResourceLocation icon, ModelManager modelManager) {
+
+        this.transforms = cameraTransforms;
+        this.iconSprite = modelManager.getTextureMap().getAtlasSprite(icon.toString());
 
         try {
             generalQuads.clear();
@@ -48,7 +54,11 @@ public class CustomMeshModel
 
     @Override
     public IBakedModel handleItemState(ItemStack stack) {
-        // TODO: Handle GUI rendering separately
+        return this;
+    }
+
+    @Override
+    public IBakedModel handleBlockState(IBlockState state) {
         return this;
     }
 
