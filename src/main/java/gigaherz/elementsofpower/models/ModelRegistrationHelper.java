@@ -16,6 +16,7 @@ import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -26,13 +27,15 @@ import java.util.Map;
 
 public class ModelRegistrationHelper {
 
-    protected List<ResourceLocation> texturesToRegister;
+    protected List<ResourceLocation> itemTextures;
+    protected List<ResourceLocation> blockTextures;
 
     protected Map<ResourceLocation, IBakedModel> itemsToInject;
     protected Map<ResourceLocation, IBakedModel> blocksToInject;
 
     public ModelRegistrationHelper() {
-        texturesToRegister = new ArrayList<ResourceLocation>();
+        itemTextures = new ArrayList<ResourceLocation>();
+        blockTextures = new ArrayList<ResourceLocation>();
         itemsToInject = new Hashtable<ResourceLocation, IBakedModel>();
         blocksToInject = new Hashtable<ResourceLocation, IBakedModel>();
         MinecraftForge.EVENT_BUS.register(this);
@@ -46,14 +49,24 @@ public class ModelRegistrationHelper {
         blocksToInject.put(resourceLocation, bakedModel);
     }
 
-    public void registerSprite(ResourceLocation resourceLocation) {
-        if (!texturesToRegister.contains(resourceLocation))
-            texturesToRegister.add(resourceLocation);
+    public void registerItemSprite(ResourceLocation resourceLocation) {
+        if (!itemTextures.contains(resourceLocation))
+            itemTextures.add(resourceLocation);
+    }
+
+    public void registerBlockSprite(ResourceLocation resourceLocation) {
+        if (!blockTextures.contains(resourceLocation))
+            blockTextures.add(resourceLocation);
     }
 
     @SubscribeEvent
     public void onTextureStitch(TextureStitchEvent event) {
-        registerSprites(event.map);
+        if(event.map == Minecraft.getMinecraft().getTextureMapBlocks()) {
+            registerSprites(event.map, blockTextures);
+        }
+        else {
+            registerSprites(event.map, itemTextures);
+        }
     }
 
     @SubscribeEvent
@@ -120,7 +133,7 @@ public class ModelRegistrationHelper {
         }
     }
 
-    protected void registerSprites(TextureMap map) {
+    protected void registerSprites(TextureMap map, List<ResourceLocation> texturesToRegister) {
         for (ResourceLocation loc : texturesToRegister) {
             map.registerSprite(loc);
         }
