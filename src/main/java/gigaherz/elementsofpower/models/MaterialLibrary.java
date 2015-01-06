@@ -95,12 +95,12 @@ class MaterialLibrary
             } else if (keyword.equalsIgnoreCase("map_Ka")) {
                 currentMaterial.AmbientTextureMap = data;
                 ResourceLocation texture = new ResourceLocation(data);
-                if(!loc.getResourceDomain().equalsIgnoreCase("minecraft"))
+                if(!texture.getResourceDomain().equalsIgnoreCase("minecraft"))
                     ElementsOfPower.modelRegistrationHelper.registerSprite(texture);
             } else if (keyword.equalsIgnoreCase("map_Kd")) {
                 currentMaterial.DiffuseTextureMap = data;
                 ResourceLocation texture = new ResourceLocation(data);
-                if(!loc.getResourceDomain().equalsIgnoreCase("minecraft"))
+                if(!texture.getResourceDomain().equalsIgnoreCase("minecraft"))
                     ElementsOfPower.modelRegistrationHelper.registerSprite(texture);
             } else if (keyword.equalsIgnoreCase("map_Ks")) {
                 currentMaterial.SpecularTextureMap = data;

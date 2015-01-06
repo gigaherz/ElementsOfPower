@@ -51,7 +51,7 @@ Ks 1.0000 1.0000 1.0000
 Tf 0.0000 0.0000 0.0000
 d 1.0000
 Ns 0
-map_Kd elementsofpower:blocks/sideDiamond
+map_Kd minecraft:blocks/quartz_block_chiseled
 
 newmtl rod
 Ka 0.0000 0.0000 0.0000
