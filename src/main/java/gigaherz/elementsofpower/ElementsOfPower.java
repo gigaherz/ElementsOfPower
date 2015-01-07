@@ -1,12 +1,15 @@
 package gigaherz.elementsofpower;
 
+import gigaherz.elementsofpower.client.GuiOverlayMagicContainer;
 import gigaherz.elementsofpower.models.ModelRegistrationHelper;
+import gigaherz.elementsofpower.network.SpellSequenceUpdate;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -16,6 +19,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 
 
 @Mod(modid = ElementsOfPower.MODID, name = ElementsOfPower.MODNAME, version = ElementsOfPower.VERSION)
@@ -91,13 +95,15 @@ public class ElementsOfPower {
 
     private void registerNetworkStuff() {
         channel = NetworkRegistry.INSTANCE.newSimpleChannel(CHANNEL);
-        //channel.registerMessage(CommonProxy.class, ProgressUpdatePacket.class, 0, Side.CLIENT);
+        channel.registerMessage(SpellSequenceUpdate.Handler.class, SpellSequenceUpdate.class, 0, Side.SERVER);
     }
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
 
         modelRegistrationHelper = new ModelRegistrationHelper();
+
+        proxy.registerGuiOverlay();
 
         proxy.registerCustomBakedModels();
 
@@ -134,11 +140,10 @@ public class ElementsOfPower {
         life = magicOrb.getStack(1, 6);
         death = magicOrb.getStack(1, 7);
 
-        // InputStreamHook
+        registerNetworkStuff();
 
         // Item decomposing database
         MagicDatabase.preInitialize();
-
     }
 
     @EventHandler

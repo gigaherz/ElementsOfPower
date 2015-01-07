@@ -1,13 +1,12 @@
 package gigaherz.elementsofpower;
 
-import gigaherz.elementsofpower.network.ProgressUpdatePacket;
+import gigaherz.elementsofpower.network.ProgressUpdate;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class CommonProxy
-        implements IMessageHandler {
+public class CommonProxy {
 
     // Client stuff
     public void registerRenderers() {
@@ -18,21 +17,8 @@ public class CommonProxy
         // Nothing here, client-only
     }
 
-    @Override
-    public IMessage onMessage(IMessage message, MessageContext ctx) {
-        if (message instanceof ProgressUpdatePacket) {
-            ProgressUpdatePacket packet = (ProgressUpdatePacket) message;
+    public void registerGuiOverlay() {
 
-            TileEntity tile = packet.getTileEntityTarget();
-
-            if (!(tile instanceof TileEssentializer)) {
-                return null;
-            }
-
-            TileEssentializer essentializer = (TileEssentializer) tile;
-            essentializer.updateProgressBar(packet.barIndex, packet.barValue);
-        }
-        return null;
     }
 
 /*

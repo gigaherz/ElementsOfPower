@@ -1,14 +1,14 @@
 package gigaherz.elementsofpower.network;
 
+import gigaherz.elementsofpower.TileEssentializer;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-/**
- * Created by gigaherz on 03/01/2015.
- */
-public class ProgressUpdatePacket
+public class ProgressUpdate
         implements IMessage {
 
     BlockPos pos;
@@ -45,5 +45,23 @@ public class ProgressUpdatePacket
         //World world = DimensionManager.getWorld(dim);
         //return world.getTileEntity(pos);
         return null;
+    }
+
+    public static class Handler implements IMessageHandler<ProgressUpdate, IMessage> {
+
+        @Override
+        public IMessage onMessage(ProgressUpdate message, MessageContext ctx) {
+
+            TileEntity tile = message.getTileEntityTarget();
+
+            if (!(tile instanceof TileEssentializer)) {
+                return null;
+            }
+
+            TileEssentializer essentializer = (TileEssentializer) tile;
+            essentializer.updateProgressBar(message.barIndex, message.barValue);
+
+            return null; // no response in this case
+        }
     }
 }

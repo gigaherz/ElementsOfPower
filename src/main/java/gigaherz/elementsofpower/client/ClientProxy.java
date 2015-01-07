@@ -12,8 +12,14 @@ import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.MinecraftForge;
 
 public class ClientProxy extends CommonProxy {
+
+    @Override
+    public void registerGuiOverlay() {
+        MinecraftForge.EVENT_BUS.register(new GuiOverlayMagicContainer());
+    }
 
     @Override
     public void registerCustomBakedModels() {

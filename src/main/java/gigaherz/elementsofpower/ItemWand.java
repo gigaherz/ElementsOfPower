@@ -1,5 +1,9 @@
 package gigaherz.elementsofpower;
 
+import gigaherz.elementsofpower.client.GuiOverlayMagicContainer;
+import gigaherz.elementsofpower.network.SpellSequenceUpdate;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityLargeFireball;
@@ -8,11 +12,15 @@ import net.minecraft.item.EnumAction;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.swing.text.JTextComponent;
+import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.List;
 
 public class ItemWand extends ItemMagicContainer {
@@ -26,6 +34,7 @@ public class ItemWand extends ItemMagicContainer {
             EnumRarity.UNCOMMON, EnumRarity.RARE, EnumRarity.EPIC, EnumRarity.COMMON
     };
 
+    private final static Hashtable<ItemStack, byte[]> spellBackup = new Hashtable<ItemStack, byte[]>();
 
     public ItemWand() {
         setMaxStackSize(1);
@@ -73,14 +82,19 @@ public class ItemWand extends ItemMagicContainer {
     @Override
     public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
         player.setItemInUse(stack, this.getMaxItemUseDuration(stack));
+        if(world.isRemote) {
+            int slot = Minecraft.getMinecraft().thePlayer.inventory.currentItem;
+            GuiOverlayMagicContainer.instance.beginHoldingRightButton(slot, stack);
+        }
         return stack;
     }
 
     @Override
     public void onPlayerStoppedUsing(ItemStack stack, World world, EntityPlayer player, int remaining) {
-        //ElementsOfPower.instance.proxy.sendMagicItemPacket(stack, world, player, Math.max(0, remaining));
         if (!world.isRemote) {
             onMagicItemReleased(stack, world, player, remaining);
+        } else {
+            GuiOverlayMagicContainer.instance.endHoldingRightButton(false);
         }
     }
 
@@ -101,39 +115,108 @@ public class ItemWand extends ItemMagicContainer {
     @Override
     public void onMagicItemReleased(ItemStack stack, World world,
                                     EntityPlayer player, int remaining) {
-        int charge = this.getMaxItemUseDuration(stack) - remaining;
-        int power = Math.min(3, charge / 5);
 
-        Vec3 var20 = player.getLook(1.0F);
+        Vec3 lookAt = player.getLook(1.0F);
 
-        //System.out.println("BOOM! " + charge + " / " + power);
+        byte[] sequence = stack.getTagCompound().getByteArray("SpellSequence");
+        if(sequence.length == 0)
+            return;
 
-        if (power > 0) {
-            EntityLargeFireball var17 = new EntityLargeFireball(world, player, var20.xCoord * 10, var20.yCoord * 10, var20.zCoord * 10);
+        switch(getSequenceItem(sequence, 0))
+        {
+            case -1:
+                return;
+            case 0:
+                // fire1
+                switch(getSequenceItem(sequence, 1))
+                {
+                    case -1:
+                        doLittleFireball(world, player, lookAt);
+                        return;
+                    case 0:
+                        // fire2
+                        switch(getSequenceItem(sequence, 2))
+                        {
+                            case -1:
+                                doExplodingFireball(world, player, 1, lookAt);
+                                return;
+                            case 0:
+                                // fire3
+                                switch(getSequenceItem(sequence, 3))
+                                {
+                                    case -1:
+                                        doExplodingFireball(world, player, 2, lookAt);
+                                        return;
+                                    default:
+                                        // fire2
+                                        return;
+                                    // TODO: more
+                                }
 
-            var17.explosionPower = power;
+                            // TODO: more
+                        }
 
-            var17.posX = player.posX + var20.xCoord * player.width * 0.75f;
-            var17.posY = player.posY + 1.0f;
-            var17.posZ = player.posZ + var20.zCoord * player.width * 0.75f;
+                        break;
+                    // TODO: more
+                }
 
-            world.spawnEntityInWorld(var17);
+                break;
+            // TODO: more
+        }
+
+    }
+
+    private int getSequenceItem(byte[] sequence, int i) {
+        if(sequence.length <= i)
+            return -1;
+        return sequence[i];
+    }
+
+    private void doExplodingFireball(World world, EntityPlayer player, int power, Vec3 lookAt) {
+        EntityLargeFireball var17 = new EntityLargeFireball(world, player, lookAt.xCoord * 10, lookAt.yCoord * 10, lookAt.zCoord * 10);
+
+        var17.explosionPower = power;
+
+        var17.posX = player.posX + lookAt.xCoord * player.width * 0.75f;
+        var17.posY = player.posY + 1.0f;
+        var17.posZ = player.posZ + lookAt.zCoord * player.width * 0.75f;
+
+        world.spawnEntityInWorld(var17);
+    }
+
+    private void doLittleFireball(World world, EntityPlayer player, Vec3 lookAt) {
+        EntitySmallFireball var17 = new EntitySmallFireball(world, player, lookAt.xCoord * 10, lookAt.yCoord * 10, lookAt.zCoord * 10);
+
+        var17.posX = player.posX + lookAt.xCoord * 2;
+        var17.posY = player.posY + 1.0f;
+        var17.posZ = player.posZ + lookAt.zCoord * 2;
+
+        world.spawnEntityInWorld(var17);
+    }
+
+    public void processSequenceUpdate(SpellSequenceUpdate message, ItemStack stack) {
+        byte[] sequence;
+
+        NBTTagCompound nbt = stack.getTagCompound();
+        if (nbt == null)
+            nbt = new NBTTagCompound();
+
+        if(message.changeMode == SpellSequenceUpdate.ChangeMode.BEGIN) {
+            sequence = nbt.getByteArray("SpellSequence");
+            spellBackup.put(stack, sequence);
+        } else if(message.changeMode == SpellSequenceUpdate.ChangeMode.CANCEL) {
+            sequence = spellBackup.get(stack);
+            nbt.setByteArray("SpellSequence", sequence);
+            stack.setTagCompound(nbt);
+        } else if(message.changeMode == SpellSequenceUpdate.ChangeMode.COMMIT) {
+            spellBackup.remove(stack);
         } else {
-            EntitySmallFireball var17 = new EntitySmallFireball(world, player, var20.xCoord * 10, var20.yCoord * 10, var20.zCoord * 10);
-
-            var17.posX = player.posX + var20.xCoord * 2;
-            var17.posY = player.posY + 1.0f;
-            var17.posZ = player.posZ + var20.zCoord * 2;
-
-            world.spawnEntityInWorld(var17);
+            sequence = new byte[message.sequence.size()];
+            for(int i=0;i<sequence.length;i++)
+                sequence[i] = message.sequence.get(i);
+            nbt.setByteArray("SpellSequence", sequence);
+            stack.setTagCompound(nbt);
+            System.out.println("Sequence stored: length=" + sequence.length);
         }
     }
-
-    // TODO: OLD STUFF THAT NEEDS REPLACING
-    @SideOnly(Side.CLIENT)
-    public int getIconFromDamage(int par1) {
-        return 0;
-        //return this.iconIndex + par1 * 16;
-    }
-
 }
