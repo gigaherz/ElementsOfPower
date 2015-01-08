@@ -14,9 +14,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.*;
 
-/**
- * Created by gigaherz on 04/01/2015.
- */
 public class Utils {
     public static void dumpAllItems() {
         try {

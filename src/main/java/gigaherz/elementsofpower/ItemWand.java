@@ -24,6 +24,8 @@ import java.util.Hashtable;
 import java.util.List;
 
 public class ItemWand extends ItemMagicContainer {
+    public static final String SPELL_SEQUENCE_TAG = "SpellSequence";
+
     private static final String[] subNames = {
             "lapisWand", "emeraldWand", "diamondWand", "creativeWand",
             "lapisStaff", "emeraldStaff", "diamondStaff", "creativeStaff"
@@ -34,7 +36,7 @@ public class ItemWand extends ItemMagicContainer {
             EnumRarity.UNCOMMON, EnumRarity.RARE, EnumRarity.EPIC, EnumRarity.COMMON
     };
 
-    private final static Hashtable<ItemStack, byte[]> spellBackup = new Hashtable<ItemStack, byte[]>();
+    //private final static Hashtable<ItemStack, byte[]> spellTemp = new Hashtable<ItemStack, byte[]>();
 
     public ItemWand() {
         setMaxStackSize(1);
@@ -92,7 +94,7 @@ public class ItemWand extends ItemMagicContainer {
     @Override
     public void onPlayerStoppedUsing(ItemStack stack, World world, EntityPlayer player, int remaining) {
         if (!world.isRemote) {
-            onMagicItemReleased(stack, world, player, remaining);
+            //onMagicItemReleased(stack, world, player, remaining);
         } else {
             GuiOverlayMagicContainer.instance.endHoldingRightButton(false);
         }
@@ -118,7 +120,11 @@ public class ItemWand extends ItemMagicContainer {
 
         Vec3 lookAt = player.getLook(1.0F);
 
-        byte[] sequence = stack.getTagCompound().getByteArray("SpellSequence");
+        byte[] sequence = stack.getTagCompound().getByteArray(SPELL_SEQUENCE_TAG);
+
+        if(sequence != null)
+            System.out.println("CAST " + sequence.length);
+
         if(sequence.length == 0)
             return;
 
@@ -197,26 +203,21 @@ public class ItemWand extends ItemMagicContainer {
     public void processSequenceUpdate(SpellSequenceUpdate message, ItemStack stack) {
         byte[] sequence;
 
-        NBTTagCompound nbt = stack.getTagCompound();
-        if (nbt == null)
-            nbt = new NBTTagCompound();
+        if(message.changeMode == SpellSequenceUpdate.ChangeMode.COMMIT) {
 
-        if(message.changeMode == SpellSequenceUpdate.ChangeMode.BEGIN) {
-            sequence = nbt.getByteArray("SpellSequence");
-            spellBackup.put(stack, sequence);
-        } else if(message.changeMode == SpellSequenceUpdate.ChangeMode.CANCEL) {
-            sequence = spellBackup.get(stack);
-            nbt.setByteArray("SpellSequence", sequence);
-            stack.setTagCompound(nbt);
-        } else if(message.changeMode == SpellSequenceUpdate.ChangeMode.COMMIT) {
-            spellBackup.remove(stack);
-        } else {
-            sequence = new byte[message.sequence.size()];
-            for(int i=0;i<sequence.length;i++)
-                sequence[i] = message.sequence.get(i);
-            nbt.setByteArray("SpellSequence", sequence);
-            stack.setTagCompound(nbt);
-            System.out.println("Sequence stored: length=" + sequence.length);
+            NBTTagCompound nbt = stack.getTagCompound();
+            if (nbt == null)
+                return;
+
+            if (message.sequence != null) {
+                sequence = new byte[message.sequence.size()];
+                for (int i = 0; i < sequence.length; i++)
+                    sequence[i] = message.sequence.get(i);
+
+                nbt.setByteArray(SPELL_SEQUENCE_TAG, sequence);
+            }
+
+            onMagicItemReleased(stack, message.entity.worldObj, message.entity, 0);
         }
     }
 }

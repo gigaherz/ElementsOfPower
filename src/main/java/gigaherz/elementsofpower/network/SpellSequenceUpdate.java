@@ -51,6 +51,7 @@ public class SpellSequenceUpdate
         dimension = buf.readInt();
         changeMode = ChangeMode.values[buf.readInt()];
         entity = (EntityPlayer)MinecraftServer.getServer().worldServerForDimension(dimension).getEntityByID(buf.readInt());
+        slotNumber = buf.readByte();
         int seqSize = buf.readInt();
         if(seqSize > 0) {
             sequence = new ArrayList<Byte>();
@@ -68,6 +69,7 @@ public class SpellSequenceUpdate
         buf.writeInt(dimension);
         buf.writeInt(changeMode.ordinal());
         buf.writeInt(entity.getEntityId());
+        buf.writeByte(slotNumber);
         if(sequence != null) {
             int seqSize = sequence.size();
             buf.writeInt(seqSize);
@@ -84,6 +86,7 @@ public class SpellSequenceUpdate
         @Override
         public IMessage onMessage(SpellSequenceUpdate message, MessageContext ctx) {
 
+            System.out.println("message.slotNumber = " + message.slotNumber);
             ItemStack stack = message.entity.inventory.mainInventory[message.slotNumber];
 
             if(stack != null && stack.getItem() instanceof ItemWand) {

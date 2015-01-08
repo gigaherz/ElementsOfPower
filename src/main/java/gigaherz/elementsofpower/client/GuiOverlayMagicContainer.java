@@ -1,9 +1,6 @@
 package gigaherz.elementsofpower.client;
 
-import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.KeyBindingInterceptor;
-import gigaherz.elementsofpower.MagicAmounts;
-import gigaherz.elementsofpower.MagicDatabase;
+import gigaherz.elementsofpower.*;
 import gigaherz.elementsofpower.network.SpellSequenceUpdate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -15,6 +12,7 @@ import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
@@ -65,7 +63,7 @@ public class GuiOverlayMagicContainer extends Gui {
             endHoldingRightButton(true);
         }
 
-        // Starting position for the buff bar - 2 pixels from the top left corner.
+        // Contained essences
         int xPos = 2 + 10;
         int yPos = 2;
 
@@ -106,14 +104,24 @@ public class GuiOverlayMagicContainer extends Gui {
             xPos += 22;
         }
 
+        // Saved spell sequence
+        xPos = 2 + 10;
+        yPos = 40;
+
+        NBTTagCompound nbt = heldItem.getTagCompound();
+        if(nbt != null) {
+            byte[] savedSequence = nbt.getByteArray(ItemWand.SPELL_SEQUENCE_TAG);
+            for (int i : savedSequence) {
+                renderItem.renderItemAndEffectIntoGUI(new ItemStack(ElementsOfPower.magicOrb, amounts.amounts[i], i), xPos, yPos);
+
+                xPos += 6;
+            }
+        }
+
         if(itemInUse != null) {
             for(int i=0;i<8;i++) {
                 if (interceptKeys[i].retrieveClick() && amounts.amounts[i] > 0) {
-
-                    System.out.println("ADDSEQUENCE "+i);
-                    sequence.add((byte)i);
-
-                    ElementsOfPower.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.PARTIAL, player, slotInUse, sequence));
+                    sequence.add((byte) i);
                 }
             }
         }
@@ -121,9 +129,9 @@ public class GuiOverlayMagicContainer extends Gui {
         if (sequence == null)
             return;
 
-        // Starting position for the buff bar - 2 pixels from the top left corner.
+        // New spell sequence
         xPos = 2 + 10;
-        yPos = 40;
+        yPos = 60;
         for (int i : sequence)
         {
             renderItem.renderItemAndEffectIntoGUI(new ItemStack(ElementsOfPower.magicOrb, amounts.amounts[i], i), xPos, yPos);
@@ -149,7 +157,7 @@ public class GuiOverlayMagicContainer extends Gui {
         if (cancelMagicSetting) {
             ElementsOfPower.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.CANCEL, player, slotInUse, null));
         } else {
-            ElementsOfPower.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.COMMIT, player, slotInUse, null));
+            ElementsOfPower.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.COMMIT, player, slotInUse, sequence));
         }
         itemInUse = null;
         sequence.clear();
