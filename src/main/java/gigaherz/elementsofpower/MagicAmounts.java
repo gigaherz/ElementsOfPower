@@ -1,6 +1,7 @@
 package gigaherz.elementsofpower;
 
 public class MagicAmounts {
+
     public enum MagicTypes {fire, water, air, earth, light, darkness, life, death}
 
     public int[] amounts;
@@ -25,6 +26,20 @@ public class MagicAmounts {
 
     public int getAmountOfType(int type) {
         return amounts[type];
+    }
+
+
+    public boolean hasEnough(MagicAmounts cost) {
+        for(int i=0;i<8;i++) {
+            if (amounts[i] < cost.amounts[i])
+                return false;
+        }
+        return true;
+    }
+
+    public void subtract(MagicAmounts cost) {
+        for(int i=0;i<8;i++)
+            amounts[i] -= cost.amounts[i];
     }
 
     public boolean isEmpty() {

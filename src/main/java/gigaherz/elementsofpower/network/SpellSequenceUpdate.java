@@ -8,6 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -32,12 +33,12 @@ public class SpellSequenceUpdate
     public int slotNumber;
 
     public ChangeMode changeMode;
-    public List<Byte> sequence;
+    public String sequence;
 
     public SpellSequenceUpdate() {
     }
 
-    public SpellSequenceUpdate(ChangeMode mode, EntityPlayer entity, int slotNumber, List<Byte> sequence) {
+    public SpellSequenceUpdate(ChangeMode mode, EntityPlayer entity, int slotNumber, String sequence) {
         changeMode = mode;
         this.entity = entity;
         this.dimension = entity.dimension;
@@ -52,13 +53,8 @@ public class SpellSequenceUpdate
         changeMode = ChangeMode.values[buf.readInt()];
         entity = (EntityPlayer)MinecraftServer.getServer().worldServerForDimension(dimension).getEntityByID(buf.readInt());
         slotNumber = buf.readByte();
-        int seqSize = buf.readInt();
-        if(seqSize > 0) {
-            sequence = new ArrayList<Byte>();
-            for (int i = 0; i < seqSize; i++) {
-                sequence.add(buf.readByte());
-            }
-        } else {
+        sequence = ByteBufUtils.readUTF8String(buf);
+        if(sequence.length() == 0) {
             sequence = null;
         }
     }
@@ -71,13 +67,9 @@ public class SpellSequenceUpdate
         buf.writeInt(entity.getEntityId());
         buf.writeByte(slotNumber);
         if(sequence != null) {
-            int seqSize = sequence.size();
-            buf.writeInt(seqSize);
-            for (int i = 0; i < seqSize; i++) {
-                buf.writeByte(sequence.get(i));
-            }
+            ByteBufUtils.writeUTF8String(buf, sequence);
         } else {
-            buf.writeInt(0);
+            ByteBufUtils.writeUTF8String(buf, "");
         }
     }
 
@@ -86,7 +78,6 @@ public class SpellSequenceUpdate
         @Override
         public IMessage onMessage(SpellSequenceUpdate message, MessageContext ctx) {
 
-            System.out.println("message.slotNumber = " + message.slotNumber);
             ItemStack stack = message.entity.inventory.mainInventory[message.slotNumber];
 
             if(stack != null && stack.getItem() instanceof ItemWand) {

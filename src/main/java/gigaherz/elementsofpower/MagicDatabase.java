@@ -198,6 +198,12 @@ public class MagicDatabase {
             return null;
         }
 
+        if (output.getItem() instanceof ItemWand) {
+            int meta = output.getMetadata();
+            if(meta == 3 ||meta == 7)
+                return new MagicAmounts().all(999);
+        }
+
         NBTTagCompound nbt = output.getTagCompound();
 
         if (nbt == null) {
@@ -235,6 +241,12 @@ public class MagicDatabase {
 
         if (output.stackSize != 1) {
             return null;
+        }
+
+        if (output.getItem() instanceof ItemWand) {
+            int meta = output.getMetadata();
+            if(meta == 3 ||meta == 7)
+                return null;
         }
 
         if (amounts != null) {

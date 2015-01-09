@@ -77,8 +77,4 @@ public class ItemMagicContainer extends Item {
             tooltipList.add(str);
         }
     }
-
-    public void onMagicItemReleased(ItemStack stack, World world,
-                                    EntityPlayer sender, int charge) {
-    }
 }

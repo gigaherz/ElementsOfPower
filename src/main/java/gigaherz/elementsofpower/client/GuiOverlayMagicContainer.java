@@ -27,8 +27,7 @@ public class GuiOverlayMagicContainer extends Gui {
     Minecraft mc;
     ItemStack itemInUse = null;
     int slotInUse;
-    List<Byte> sequence = new ArrayList<Byte>();
-
+    StringBuilder sequence = new StringBuilder();
 
     final KeyBindingInterceptor[] interceptKeys = new KeyBindingInterceptor[8];
 
@@ -110,10 +109,10 @@ public class GuiOverlayMagicContainer extends Gui {
 
         NBTTagCompound nbt = heldItem.getTagCompound();
         if(nbt != null) {
-            byte[] savedSequence = nbt.getByteArray(ItemWand.SPELL_SEQUENCE_TAG);
-            for (int i : savedSequence) {
+            String savedSequence = nbt.getString(ItemWand.SPELL_SEQUENCE_TAG);
+            for (char c : savedSequence.toCharArray()) {
+                int i = SpellUtils.elementIndices.get(c);
                 renderItem.renderItemAndEffectIntoGUI(new ItemStack(ElementsOfPower.magicOrb, amounts.amounts[i], i), xPos, yPos);
-
                 xPos += 6;
             }
         }
@@ -121,7 +120,7 @@ public class GuiOverlayMagicContainer extends Gui {
         if(itemInUse != null) {
             for(int i=0;i<8;i++) {
                 if (interceptKeys[i].retrieveClick() && amounts.amounts[i] > 0) {
-                    sequence.add((byte) i);
+                    sequence.append(SpellUtils.elementChars[i]);
                 }
             }
         }
@@ -132,10 +131,9 @@ public class GuiOverlayMagicContainer extends Gui {
         // New spell sequence
         xPos = 2 + 10;
         yPos = 60;
-        for (int i : sequence)
-        {
+        for (char c : sequence.toString().toCharArray()) {
+            int i = SpellUtils.elementIndices.get(c);
             renderItem.renderItemAndEffectIntoGUI(new ItemStack(ElementsOfPower.magicOrb, amounts.amounts[i], i), xPos, yPos);
-
             xPos += 6;
         }
 
@@ -145,7 +143,7 @@ public class GuiOverlayMagicContainer extends Gui {
         EntityPlayer player = Minecraft.getMinecraft().thePlayer;
         itemInUse = itemUsing;
         slotInUse = slotNumber;
-        sequence.clear();
+        sequence = new StringBuilder();
         ElementsOfPower.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.BEGIN, player, slotInUse, null));
 
         for(int i=0;i<8;i++)
@@ -157,10 +155,10 @@ public class GuiOverlayMagicContainer extends Gui {
         if (cancelMagicSetting) {
             ElementsOfPower.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.CANCEL, player, slotInUse, null));
         } else {
-            ElementsOfPower.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.COMMIT, player, slotInUse, sequence));
+            ElementsOfPower.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.COMMIT, player, slotInUse, sequence.toString()));
         }
         itemInUse = null;
-        sequence.clear();
+        sequence = new StringBuilder();
         for(int i=0;i<8;i++)
             interceptKeys[i].setInterceptionActive(false);
     }

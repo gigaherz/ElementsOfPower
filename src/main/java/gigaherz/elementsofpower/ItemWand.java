@@ -2,25 +2,19 @@ package gigaherz.elementsofpower;
 
 import gigaherz.elementsofpower.client.GuiOverlayMagicContainer;
 import gigaherz.elementsofpower.network.SpellSequenceUpdate;
+import gigaherz.elementsofpower.spells.ISpellEffect;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.projectile.EntityLargeFireball;
-import net.minecraft.entity.projectile.EntitySmallFireball;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.swing.text.JTextComponent;
-import java.util.Arrays;
-import java.util.Hashtable;
 import java.util.List;
 
 public class ItemWand extends ItemMagicContainer {
@@ -114,94 +108,32 @@ public class ItemWand extends ItemMagicContainer {
         return EnumAction.BOW;
     }
 
-    @Override
-    public void onMagicItemReleased(ItemStack stack, World world,
-                                    EntityPlayer player, int remaining) {
+    public void onMagicItemReleased(ItemStack stack, EntityPlayer player) {
 
-        Vec3 lookAt = player.getLook(1.0F);
+        String sequence = stack.getTagCompound().getString(SPELL_SEQUENCE_TAG);
 
-        byte[] sequence = stack.getTagCompound().getByteArray(SPELL_SEQUENCE_TAG);
-
-        if(sequence != null)
-            System.out.println("CAST " + sequence.length);
-
-        if(sequence.length == 0)
+        if(sequence.length() == 0)
             return;
 
-        switch(getSequenceItem(sequence, 0))
-        {
-            case -1:
-                return;
-            case 0:
-                // fire1
-                switch(getSequenceItem(sequence, 1))
-                {
-                    case -1:
-                        doLittleFireball(world, player, lookAt);
-                        return;
-                    case 0:
-                        // fire2
-                        switch(getSequenceItem(sequence, 2))
-                        {
-                            case -1:
-                                doExplodingFireball(world, player, 1, lookAt);
-                                return;
-                            case 0:
-                                // fire3
-                                switch(getSequenceItem(sequence, 3))
-                                {
-                                    case -1:
-                                        doExplodingFireball(world, player, 2, lookAt);
-                                        return;
-                                    default:
-                                        // fire2
-                                        return;
-                                    // TODO: more
-                                }
+        ISpellEffect effect = SpellUtils.spellRegistration.get(sequence);
 
-                            // TODO: more
-                        }
+        if(effect == null)
+            return;
 
-                        break;
-                    // TODO: more
-                }
+        MagicAmounts amounts = MagicDatabase.getContainedMagic(stack);
+        MagicAmounts cost = effect.getSpellCost();
 
-                break;
-            // TODO: more
-        }
+        if (!amounts.hasEnough(cost))
+            return;
 
-    }
+        effect.castSpell(stack, player);
 
-    private int getSequenceItem(byte[] sequence, int i) {
-        if(sequence.length <= i)
-            return -1;
-        return sequence[i];
-    }
+        amounts.subtract(cost);
 
-    private void doExplodingFireball(World world, EntityPlayer player, int power, Vec3 lookAt) {
-        EntityLargeFireball var17 = new EntityLargeFireball(world, player, lookAt.xCoord * 10, lookAt.yCoord * 10, lookAt.zCoord * 10);
-
-        var17.explosionPower = power;
-
-        var17.posX = player.posX + lookAt.xCoord * player.width * 0.75f;
-        var17.posY = player.posY + 1.0f;
-        var17.posZ = player.posZ + lookAt.zCoord * player.width * 0.75f;
-
-        world.spawnEntityInWorld(var17);
-    }
-
-    private void doLittleFireball(World world, EntityPlayer player, Vec3 lookAt) {
-        EntitySmallFireball var17 = new EntitySmallFireball(world, player, lookAt.xCoord * 10, lookAt.yCoord * 10, lookAt.zCoord * 10);
-
-        var17.posX = player.posX + lookAt.xCoord * 2;
-        var17.posY = player.posY + 1.0f;
-        var17.posZ = player.posZ + lookAt.zCoord * 2;
-
-        world.spawnEntityInWorld(var17);
+        MagicDatabase.setContainedMagic(stack, amounts);
     }
 
     public void processSequenceUpdate(SpellSequenceUpdate message, ItemStack stack) {
-        byte[] sequence;
 
         if(message.changeMode == SpellSequenceUpdate.ChangeMode.COMMIT) {
 
@@ -209,15 +141,10 @@ public class ItemWand extends ItemMagicContainer {
             if (nbt == null)
                 return;
 
-            if (message.sequence != null) {
-                sequence = new byte[message.sequence.size()];
-                for (int i = 0; i < sequence.length; i++)
-                    sequence[i] = message.sequence.get(i);
+            if (message.sequence != null)
+                nbt.setString(SPELL_SEQUENCE_TAG, message.sequence);
 
-                nbt.setByteArray(SPELL_SEQUENCE_TAG, sequence);
-            }
-
-            onMagicItemReleased(stack, message.entity.worldObj, message.entity, 0);
+            onMagicItemReleased(stack, message.entity);
         }
     }
 }
