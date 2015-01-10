@@ -89,7 +89,8 @@ public class MagicDatabase {
             essences(Blocks.planks).life(4),
             essences(Items.stick).life(1),
             essences(Items.coal).fire(8),
-
+            essences(Blocks.coal_ore).fire(8).earth(2),
+            essences(Blocks.coal_block).fire(72).earth(8)
     };
 
     private static ItemEssenceEntry essences(Item item) {

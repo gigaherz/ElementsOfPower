@@ -153,12 +153,13 @@ public class ElementsOfPower {
 
         // Recipes
         GameRegistry.addRecipe(new ItemStack(essentializer, 1),
-                "IOI",
-                "ODO",
+                "IQI",
+                "ONO",
                 "IOI",
                 'I', Items.iron_ingot,
                 'O', Blocks.obsidian,
-                'D', Items.diamond);
+                'Q', Items.quartz,
+                'N', Items.nether_star);
         GameRegistry.addRecipe(wandLapis,
                 " G",
                 "S ",
