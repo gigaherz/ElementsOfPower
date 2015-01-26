@@ -1,5 +1,7 @@
 package gigaherz.elementsofpower.spells;
 
+import net.minecraft.block.BlockPistonMoving;
+import net.minecraft.block.BlockSlime;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.entity.projectile.EntityLargeFireball;
@@ -19,17 +21,18 @@ public class SpellFireball extends SpellBase {
     }
 
     @Override
-    public void castSpell(ItemStack stack, EntityPlayer player) { World world = player.worldObj;
+    public void castSpell(ItemStack stack, EntityPlayer player) {
+        World world = player.worldObj;
         Vec3 lookAt = player.getLook(1.0F);
 
         EntityFireball fireball;
 
-        if(explode) {
+        if (explode) {
             EntityLargeFireball largeFb = new EntityLargeFireball(world, player, lookAt.xCoord * 10, lookAt.yCoord * 10, lookAt.zCoord * 10);
             largeFb.explosionPower = power;
             fireball = largeFb;
         } else {
-            fireball  = new EntitySmallFireball(world, player, lookAt.xCoord * 10, lookAt.yCoord * 10, lookAt.zCoord * 10);
+            fireball = new EntitySmallFireball(world, player, lookAt.xCoord * 10, lookAt.yCoord * 10, lookAt.zCoord * 10);
         }
 
         fireball.posX = player.posX + lookAt.xCoord * player.width * 0.75f;

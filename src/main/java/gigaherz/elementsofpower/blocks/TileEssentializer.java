@@ -1,5 +1,8 @@
-package gigaherz.elementsofpower;
+package gigaherz.elementsofpower.blocks;
 
+import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.MagicAmounts;
+import gigaherz.elementsofpower.MagicDatabase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;

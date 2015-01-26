@@ -61,10 +61,9 @@ public class ModelRegistrationHelper {
 
     @SubscribeEvent
     public void onTextureStitch(TextureStitchEvent event) {
-        if(event.map == Minecraft.getMinecraft().getTextureMapBlocks()) {
+        if (event.map == Minecraft.getMinecraft().getTextureMapBlocks()) {
             registerSprites(event.map, blockTextures);
-        }
-        else {
+        } else {
             registerSprites(event.map, itemTextures);
         }
     }

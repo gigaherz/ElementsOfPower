@@ -30,7 +30,7 @@ public class MagicAmounts {
 
 
     public boolean hasEnough(MagicAmounts cost) {
-        for(int i=0;i<8;i++) {
+        for (int i = 0; i < 8; i++) {
             if (amounts[i] < cost.amounts[i])
                 return false;
         }
@@ -38,7 +38,7 @@ public class MagicAmounts {
     }
 
     public void subtract(MagicAmounts cost) {
-        for(int i=0;i<8;i++)
+        for (int i = 0; i < 8; i++)
             amounts[i] -= cost.amounts[i];
     }
 

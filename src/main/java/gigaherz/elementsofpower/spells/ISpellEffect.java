@@ -6,5 +6,6 @@ import net.minecraft.item.ItemStack;
 
 public interface ISpellEffect {
     void castSpell(ItemStack stack, EntityPlayer player);
+
     MagicAmounts getSpellCost();
 }

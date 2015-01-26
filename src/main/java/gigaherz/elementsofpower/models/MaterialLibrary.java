@@ -95,14 +95,14 @@ class MaterialLibrary
             } else if (keyword.equalsIgnoreCase("map_Ka")) {
                 currentMaterial.AmbientTextureMap = data;
                 ResourceLocation texture = new ResourceLocation(data);
-                if(!texture.getResourcePath().contains("item"))
+                if (!texture.getResourcePath().contains("item"))
                     ElementsOfPower.modelRegistrationHelper.registerItemSprite(texture);
                 else
                     ElementsOfPower.modelRegistrationHelper.registerBlockSprite(texture);
             } else if (keyword.equalsIgnoreCase("map_Kd")) {
                 currentMaterial.DiffuseTextureMap = data;
                 ResourceLocation texture = new ResourceLocation(data);
-                if(!texture.getResourcePath().contains("item"))
+                if (!texture.getResourcePath().contains("item"))
                     ElementsOfPower.modelRegistrationHelper.registerItemSprite(texture);
                 else
                     ElementsOfPower.modelRegistrationHelper.registerBlockSprite(texture);
@@ -121,7 +121,7 @@ class MaterialLibrary
             } else if (keyword.equalsIgnoreCase("decal")) {
                 currentMaterial.StencilDecalMap = data;
             } else {
-                if(!unknownCommands.contains(keyword)) {
+                if (!unknownCommands.contains(keyword)) {
                     System.out.println("Unrecognized command: " + currentLine);
                     unknownCommands.add(keyword);
                 }

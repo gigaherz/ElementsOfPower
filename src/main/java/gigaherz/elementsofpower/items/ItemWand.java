@@ -1,5 +1,9 @@
-package gigaherz.elementsofpower;
+package gigaherz.elementsofpower.items;
 
+import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.MagicAmounts;
+import gigaherz.elementsofpower.MagicDatabase;
+import gigaherz.elementsofpower.SpellManager;
 import gigaherz.elementsofpower.client.GuiOverlayMagicContainer;
 import gigaherz.elementsofpower.network.SpellSequenceUpdate;
 import gigaherz.elementsofpower.spells.ISpellEffect;
@@ -78,7 +82,7 @@ public class ItemWand extends ItemMagicContainer {
     @Override
     public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
         player.setItemInUse(stack, this.getMaxItemUseDuration(stack));
-        if(world.isRemote) {
+        if (world.isRemote) {
             int slot = Minecraft.getMinecraft().thePlayer.inventory.currentItem;
             GuiOverlayMagicContainer.instance.beginHoldingRightButton(slot, stack);
         }
@@ -112,12 +116,12 @@ public class ItemWand extends ItemMagicContainer {
 
         String sequence = stack.getTagCompound().getString(SPELL_SEQUENCE_TAG);
 
-        if(sequence.length() == 0)
+        if (sequence.length() == 0)
             return;
 
-        ISpellEffect effect = SpellUtils.spellRegistration.get(sequence);
+        ISpellEffect effect = SpellManager.spellRegistration.get(sequence);
 
-        if(effect == null)
+        if (effect == null)
             return;
 
         MagicAmounts amounts = MagicDatabase.getContainedMagic(stack);
@@ -135,7 +139,7 @@ public class ItemWand extends ItemMagicContainer {
 
     public void processSequenceUpdate(SpellSequenceUpdate message, ItemStack stack) {
 
-        if(message.changeMode == SpellSequenceUpdate.ChangeMode.COMMIT) {
+        if (message.changeMode == SpellSequenceUpdate.ChangeMode.COMMIT) {
 
             NBTTagCompound nbt = stack.getTagCompound();
             if (nbt == null)

@@ -106,14 +106,15 @@ public class MeshLoader {
     }
 
     private void newGroup(String line) {
-        lastObjectName = line;;
+        lastObjectName = line;
+        ;
     }
 
     private void loadMaterialLibrary(ResourceLocation locOfParent, String path) throws IOException {
 
         String prefix = locOfParent.getResourcePath();
         int pp = prefix.lastIndexOf('/');
-        prefix = (pp >= 0) ? prefix.substring(0, pp+1) : "";
+        prefix = (pp >= 0) ? prefix.substring(0, pp + 1) : "";
 
         ResourceLocation loc = new ResourceLocation(locOfParent.getResourceDomain(), prefix + path);
 
@@ -158,7 +159,7 @@ public class MeshLoader {
             } else if (keyword.equalsIgnoreCase("f")) {
                 addFace(data);
             } else {
-                if(!unknownCommands.contains(keyword)) {
+                if (!unknownCommands.contains(keyword)) {
                     System.out.println("Unrecognized command: " + currentLine);
                     unknownCommands.add(keyword);
                 }

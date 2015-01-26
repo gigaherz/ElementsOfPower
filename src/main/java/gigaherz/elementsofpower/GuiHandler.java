@@ -1,5 +1,7 @@
 package gigaherz.elementsofpower;
 
+import gigaherz.elementsofpower.blocks.ContainerEssentializer;
+import gigaherz.elementsofpower.blocks.TileEssentializer;
 import gigaherz.elementsofpower.client.GuiEssentializer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -16,7 +18,6 @@ public class GuiHandler implements IGuiHandler {
             return new ContainerEssentializer((TileEssentializer) tileEntity, player.inventory);
         }
 
-        //Minecraft.displayGuiScreen();
         return null;
     }
 

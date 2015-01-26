@@ -1,5 +1,7 @@
-package gigaherz.elementsofpower;
+package gigaherz.elementsofpower.items;
 
+import gigaherz.elementsofpower.MagicAmounts;
+import gigaherz.elementsofpower.MagicDatabase;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumRarity;

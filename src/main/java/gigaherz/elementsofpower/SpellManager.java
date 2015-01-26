@@ -13,16 +13,16 @@ import net.minecraft.world.World;
 import java.util.Hashtable;
 import java.util.Map;
 
-public class SpellUtils {
+public class SpellManager {
 
-    public final static char[] elementChars = { 'F', 'W', 'A', 'E', 'G', 'K', 'L', 'D' };
+    public final static char[] elementChars = {'F', 'W', 'A', 'E', 'G', 'K', 'L', 'D'};
     public final static Map<Character, Integer> elementIndices = new Hashtable<Character, Integer>();
 
     public static final Map<String, ISpellEffect> spellRegistration = new Hashtable<String, ISpellEffect>();
 
     static {
 
-        for(int i=0;i<8;i++) {
+        for (int i = 0; i < 8; i++) {
             elementIndices.put(elementChars[i], i);
         }
 

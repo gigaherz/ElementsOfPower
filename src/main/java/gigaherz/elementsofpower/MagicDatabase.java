@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower;
 
+import gigaherz.elementsofpower.items.ItemWand;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -201,7 +202,7 @@ public class MagicDatabase {
 
         if (output.getItem() instanceof ItemWand) {
             int meta = output.getMetadata();
-            if(meta == 3 ||meta == 7)
+            if (meta == 3 || meta == 7)
                 return new MagicAmounts().all(999);
         }
 
@@ -246,7 +247,7 @@ public class MagicDatabase {
 
         if (output.getItem() instanceof ItemWand) {
             int meta = output.getMetadata();
-            if(meta == 3 ||meta == 7)
+            if (meta == 3 || meta == 7)
                 return null;
         }
 

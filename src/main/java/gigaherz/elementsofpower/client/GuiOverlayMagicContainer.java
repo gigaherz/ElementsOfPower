@@ -1,25 +1,19 @@
 package gigaherz.elementsofpower.client;
 
 import gigaherz.elementsofpower.*;
+import gigaherz.elementsofpower.items.ItemWand;
 import gigaherz.elementsofpower.network.SpellSequenceUpdate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.renderer.ItemRenderer;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.InputEvent;
 import org.lwjgl.opengl.GL11;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class GuiOverlayMagicContainer extends Gui {
     public static GuiOverlayMagicContainer instance;
@@ -35,23 +29,21 @@ public class GuiOverlayMagicContainer extends Gui {
         instance = this;
         mc = Minecraft.getMinecraft();
 
-        for(int i=0;i<8;i++) {
+        for (int i = 0; i < 8; i++) {
             interceptKeys[i] = new KeyBindingInterceptor(Minecraft.getMinecraft().gameSettings.keyBindsHotbar[i]);
             Minecraft.getMinecraft().gameSettings.keyBindsHotbar[i] = interceptKeys[i];
         }
     }
 
     @SubscribeEvent
-    public void onRenderGameOverlay(RenderGameOverlayEvent event)
-    {
+    public void onRenderGameOverlay(RenderGameOverlayEvent event) {
         //
         // We draw after the ExperienceBar has drawn.  The event raised by GuiIngameForge.pre()
         // will return true from isCancelable.  If you call event.setCanceled(true) in
         // that case, the portion of rendering which this event represents will be canceled.
         // We want to draw *after* the experience bar is drawn, so we make sure isCancelable() returns
         // false and that the eventType represents the ExperienceBar event.
-        if(event.isCancelable() || event.type != RenderGameOverlayEvent.ElementType.EXPERIENCE)
-        {
+        if (event.isCancelable() || event.type != RenderGameOverlayEvent.ElementType.EXPERIENCE) {
             return;
         }
 
@@ -71,12 +63,12 @@ public class GuiOverlayMagicContainer extends Gui {
             return;
 
         int totalIcons = 0;
-        for(int amount : amounts.amounts) {
-            if(amount > 0)
+        for (int amount : amounts.amounts) {
+            if (amount > 0)
                 totalIcons++;
         }
 
-        if(totalIcons == 0)
+        if (totalIcons == 0)
             return;
 
         RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
@@ -89,16 +81,15 @@ public class GuiOverlayMagicContainer extends Gui {
         // TODO: Figure out viewport size to adjust the initial xPos
         //Minecraft.getMinecraft().getRenderManager().vi
 
-        for (int i=0; i < 8; i++)
-        {
-            if(amounts.amounts[i] == 0)
+        for (int i = 0; i < 8; i++) {
+            if (amounts.amounts[i] == 0)
                 continue;
 
             renderItem.renderItemAndEffectIntoGUI(new ItemStack(ElementsOfPower.magicOrb, amounts.amounts[i], i), xPos, yPos);
 
             this.drawCenteredString(font, "" + amounts.amounts[i], xPos + 8, yPos + 16, (int) 0xFFC0C0C0);
-            if(itemInUse != null)
-                this.drawCenteredString(font, "K:" + (i+1), xPos + 8, yPos + 28, (int) 0xFFC0C0C0);
+            if (itemInUse != null)
+                this.drawCenteredString(font, "K:" + (i + 1), xPos + 8, yPos + 28, (int) 0xFFC0C0C0);
 
             xPos += 22;
         }
@@ -108,19 +99,19 @@ public class GuiOverlayMagicContainer extends Gui {
         yPos = 40;
 
         NBTTagCompound nbt = heldItem.getTagCompound();
-        if(nbt != null) {
+        if (nbt != null) {
             String savedSequence = nbt.getString(ItemWand.SPELL_SEQUENCE_TAG);
             for (char c : savedSequence.toCharArray()) {
-                int i = SpellUtils.elementIndices.get(c);
+                int i = SpellManager.elementIndices.get(c);
                 renderItem.renderItemAndEffectIntoGUI(new ItemStack(ElementsOfPower.magicOrb, amounts.amounts[i], i), xPos, yPos);
                 xPos += 6;
             }
         }
 
-        if(itemInUse != null) {
-            for(int i=0;i<8;i++) {
+        if (itemInUse != null) {
+            for (int i = 0; i < 8; i++) {
                 if (interceptKeys[i].retrieveClick() && amounts.amounts[i] > 0) {
-                    sequence.append(SpellUtils.elementChars[i]);
+                    sequence.append(SpellManager.elementChars[i]);
                 }
             }
         }
@@ -132,7 +123,7 @@ public class GuiOverlayMagicContainer extends Gui {
         xPos = 2 + 10;
         yPos = 60;
         for (char c : sequence.toString().toCharArray()) {
-            int i = SpellUtils.elementIndices.get(c);
+            int i = SpellManager.elementIndices.get(c);
             renderItem.renderItemAndEffectIntoGUI(new ItemStack(ElementsOfPower.magicOrb, amounts.amounts[i], i), xPos, yPos);
             xPos += 6;
         }
@@ -146,7 +137,7 @@ public class GuiOverlayMagicContainer extends Gui {
         sequence = new StringBuilder();
         ElementsOfPower.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.BEGIN, player, slotInUse, null));
 
-        for(int i=0;i<8;i++)
+        for (int i = 0; i < 8; i++)
             interceptKeys[i].setInterceptionActive(true);
     }
 
@@ -159,7 +150,7 @@ public class GuiOverlayMagicContainer extends Gui {
         }
         itemInUse = null;
         sequence = new StringBuilder();
-        for(int i=0;i<8;i++)
+        for (int i = 0; i < 8; i++)
             interceptKeys[i].setInterceptionActive(false);
     }
 }

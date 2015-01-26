@@ -1,5 +1,6 @@
-package gigaherz.elementsofpower;
+package gigaherz.elementsofpower.blocks;
 
+import gigaherz.elementsofpower.MagicDatabase;
 import gigaherz.elementsofpower.slots.SlotContainer;
 import gigaherz.elementsofpower.slots.SlotMagic;
 import gigaherz.elementsofpower.slots.SlotSource;

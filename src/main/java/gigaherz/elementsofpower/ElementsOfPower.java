@@ -1,6 +1,10 @@
 package gigaherz.elementsofpower;
 
-import gigaherz.elementsofpower.client.GuiOverlayMagicContainer;
+import gigaherz.elementsofpower.blocks.BlockEssentializer;
+import gigaherz.elementsofpower.blocks.TileEssentializer;
+import gigaherz.elementsofpower.items.ItemMagicContainer;
+import gigaherz.elementsofpower.items.ItemMagicOrb;
+import gigaherz.elementsofpower.items.ItemWand;
 import gigaherz.elementsofpower.models.ModelRegistrationHelper;
 import gigaherz.elementsofpower.network.SpellSequenceUpdate;
 import net.minecraft.block.Block;
@@ -9,7 +13,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;

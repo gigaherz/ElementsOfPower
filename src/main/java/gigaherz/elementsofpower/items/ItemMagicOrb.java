@@ -1,4 +1,4 @@
-package gigaherz.elementsofpower;
+package gigaherz.elementsofpower.items;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;

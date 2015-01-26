@@ -1,14 +1,14 @@
 package gigaherz.elementsofpower.spells;
 
 import gigaherz.elementsofpower.MagicAmounts;
-import gigaherz.elementsofpower.SpellUtils;
+import gigaherz.elementsofpower.SpellManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
 public abstract class SpellBase
         implements ISpellEffect {
 
-    public static final int[] spellCostLevel = { 1, 3, 9, 27, 81, 243, 635 };
+    public static final int[] spellCostLevel = {1, 3, 9, 27, 81, 243, 635};
 
     protected MagicAmounts spellCost = new MagicAmounts();
     protected StringBuilder spellSequence = new StringBuilder();
@@ -31,21 +31,44 @@ public abstract class SpellBase
     }
 
     protected SpellBase amount(int which) {
-        if(spellSequence == null) {
+        if (spellSequence == null) {
             spellSequence = new StringBuilder();
             finalSequence = null;
         }
         spellCost.amounts[which] += spellCostLevel[spellSequence.length()];
-        spellSequence.append(SpellUtils.elementChars[which]);
+        spellSequence.append(SpellManager.elementChars[which]);
         return this;
     }
 
-    public SpellBase fire() { return amount(0); }
-    public SpellBase water() { return amount(1); }
-    public SpellBase air() { return amount(2); }
-    public SpellBase earth() { return amount(3); }
-    public SpellBase light() { return amount(4); }
-    public SpellBase darkness() { return amount(5); }
-    public SpellBase life() { return amount(6); }
-    public SpellBase death() { return amount(7); }
+    public SpellBase fire() {
+        return amount(0);
+    }
+
+    public SpellBase water() {
+        return amount(1);
+    }
+
+    public SpellBase air() {
+        return amount(2);
+    }
+
+    public SpellBase earth() {
+        return amount(3);
+    }
+
+    public SpellBase light() {
+        return amount(4);
+    }
+
+    public SpellBase darkness() {
+        return amount(5);
+    }
+
+    public SpellBase life() {
+        return amount(6);
+    }
+
+    public SpellBase death() {
+        return amount(7);
+    }
 }

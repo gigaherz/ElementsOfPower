@@ -1,8 +1,8 @@
 package gigaherz.elementsofpower.client;
 
-import gigaherz.elementsofpower.ContainerEssentializer;
+import gigaherz.elementsofpower.blocks.ContainerEssentializer;
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.TileEssentializer;
+import gigaherz.elementsofpower.blocks.TileEssentializer;
 import gigaherz.elementsofpower.slots.SlotMagic;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;

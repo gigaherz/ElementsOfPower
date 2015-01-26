@@ -1,5 +1,6 @@
-package gigaherz.elementsofpower;
+package gigaherz.elementsofpower.blocks;
 
+import gigaherz.elementsofpower.ElementsOfPower;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;

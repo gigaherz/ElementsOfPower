@@ -64,8 +64,7 @@ public class MeshModel {
             if (part.material != null) {
                 if (part.material.DiffuseTextureMap != null) {
                     sprite = manager.getTextureMap().getAtlasSprite(part.material.DiffuseTextureMap);
-                }
-                else if (part.material.AmbientTextureMap != null) {
+                } else if (part.material.AmbientTextureMap != null) {
                     sprite = manager.getTextureMap().getAtlasSprite(part.material.AmbientTextureMap);
                 }
                 if (part.material.DiffuseColor != null) {

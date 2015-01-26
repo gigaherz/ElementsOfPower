@@ -1,6 +1,6 @@
 package gigaherz.elementsofpower.network;
 
-import gigaherz.elementsofpower.TileEssentializer;
+import gigaherz.elementsofpower.blocks.TileEssentializer;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
