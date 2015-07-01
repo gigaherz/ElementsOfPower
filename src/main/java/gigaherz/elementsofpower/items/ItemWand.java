@@ -16,8 +16,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
@@ -34,7 +32,18 @@ public class ItemWand extends ItemMagicContainer {
             EnumRarity.UNCOMMON, EnumRarity.RARE, EnumRarity.EPIC, EnumRarity.COMMON
     };
 
-    //private final static Hashtable<ItemStack, byte[]> spellTemp = new Hashtable<ItemStack, byte[]>();
+    private static final boolean areCreative[] = {
+            false, false, false, true,
+            false, false, false, true
+    };
+
+    private boolean isCreative(ItemStack stack)
+    {
+        int dmg = stack.getItemDamage();
+        if (dmg > areCreative.length)
+            return false;
+        return  areCreative[dmg];
+    }
 
     public ItemWand() {
         setMaxStackSize(1);
@@ -43,7 +52,7 @@ public class ItemWand extends ItemMagicContainer {
         setCreativeTab(ElementsOfPower.tabMagic);
     }
 
-    @SideOnly(Side.CLIENT)
+    @Override
     public EnumRarity getRarity(ItemStack stack) {
         return rarities[stack.getItemDamage()];
     }
@@ -64,11 +73,11 @@ public class ItemWand extends ItemMagicContainer {
         return getUnlocalizedName() + "." + subNames[sub];
     }
 
+    @Override
     public ItemStack getStack(int count, int damageValue) {
         return new ItemStack(this, count, damageValue);
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
     public void getSubItems(Item itemIn, CreativeTabs tab, List subItems) {
         for (int meta = 0; meta < subNames.length; meta++) {
@@ -76,9 +85,6 @@ public class ItemWand extends ItemMagicContainer {
         }
     }
 
-    /**
-     * Called whenever this item is equipped and the right mouse button is pressed. Args: itemStack, world, entityPlayer
-     */
     @Override
     public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
         player.setItemInUse(stack, this.getMaxItemUseDuration(stack));
@@ -91,28 +97,22 @@ public class ItemWand extends ItemMagicContainer {
 
     @Override
     public void onPlayerStoppedUsing(ItemStack stack, World world, EntityPlayer player, int remaining) {
-        if (!world.isRemote) {
-            //onMagicItemReleased(stack, world, player, remaining);
-        } else {
+        if (world.isRemote) {
             GuiOverlayMagicContainer.instance.endHoldingRightButton(false);
         }
     }
 
-    /**
-     * How long it takes to use or consume an item
-     */
+    @Override
     public int getMaxItemUseDuration(ItemStack par1ItemStack) {
         return 72000;
     }
 
-    /**
-     * returns the action that specifies what animation to play when the items is being used
-     */
+    @Override
     public EnumAction getItemUseAction(ItemStack par1ItemStack) {
         return EnumAction.BOW;
     }
 
-    public void onMagicItemReleased(ItemStack stack, EntityPlayer player) {
+    public void onSpellCommit(ItemStack stack, EntityPlayer player) {
 
         String sequence = stack.getTagCompound().getString(SPELL_SEQUENCE_TAG);
 
@@ -154,11 +154,7 @@ public class ItemWand extends ItemMagicContainer {
             if (message.sequence != null)
                 nbt.setString(SPELL_SEQUENCE_TAG, message.sequence);
 
-            onMagicItemReleased(stack, message.entity);
+            onSpellCommit(stack, message.entity);
         }
-    }
-
-    private boolean isCreative(ItemStack stack) {
-        return stack.getItemDamage() % 4 == 3;
     }
 }

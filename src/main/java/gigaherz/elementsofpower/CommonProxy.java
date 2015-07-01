@@ -120,7 +120,7 @@ public class CommonProxy {
             ItemMagicContainer magic = (ItemMagicContainer)item;
             
 
-            magic.onMagicItemReleased(stack, world, sender, charge);
+            magic.onSpellCommit(stack, world, sender, charge);
         }
         catch (IOException e)
         {

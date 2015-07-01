@@ -1,11 +1,9 @@
 package gigaherz.elementsofpower;
 
+import gigaherz.elementsofpower.blocks.BlockDust;
 import gigaherz.elementsofpower.blocks.BlockEssentializer;
 import gigaherz.elementsofpower.blocks.TileEssentializer;
-import gigaherz.elementsofpower.entities.EntityAirball;
-import gigaherz.elementsofpower.entities.EntityFlameball;
-import gigaherz.elementsofpower.entities.EntityFrostball;
-import gigaherz.elementsofpower.entities.EntityWaterball;
+import gigaherz.elementsofpower.entities.*;
 import gigaherz.elementsofpower.items.ItemMagicContainer;
 import gigaherz.elementsofpower.items.ItemMagicOrb;
 import gigaherz.elementsofpower.items.ItemWand;
@@ -51,6 +49,7 @@ public class ElementsOfPower {
 
     // Block templates
     public static Block essentializer;
+    public static Block dust;
 
     // Item templates
     public static ItemMagicOrb magicOrb;
@@ -130,6 +129,9 @@ public class ElementsOfPower {
 
         GameRegistry.registerTileEntity(TileEssentializer.class, "essentializerTile");
 
+        dust = new BlockDust();
+        GameRegistry.registerBlock(dust, "dust");
+
         // Template stacks
         wandLapis = magicWand.getStack(1, 0);
         wandEmerald = magicWand.getStack(1, 1);
@@ -157,10 +159,12 @@ public class ElementsOfPower {
     @EventHandler
     public void init(FMLInitializationEvent event) {
 
-        EntityRegistry.registerModEntity(EntityFrostball.class, "Frostball", 1, this, 80, 3, true);
-        EntityRegistry.registerModEntity(EntityWaterball.class, "Waterball", 2, this, 80, 3, true);
-        EntityRegistry.registerModEntity(EntityFlameball.class, "Flameball", 3, this, 80, 3, true);
-        EntityRegistry.registerModEntity(EntityAirball.class, "Airball", 4, this, 80, 3, true);
+        int entityId = 1;
+        EntityRegistry.registerModEntity(EntityFrostball.class, "Frostball", entityId++, this, 80, 3, true);
+        EntityRegistry.registerModEntity(EntityWaterball.class, "Waterball", entityId++, this, 80, 3, true);
+        EntityRegistry.registerModEntity(EntityFlameball.class, "Flameball", entityId++, this, 80, 3, true);
+        EntityRegistry.registerModEntity(EntityAirball.class, "Airball", entityId++, this, 80, 3, true);
+        EntityRegistry.registerModEntity(EntityEarthball.class, "Earthball", entityId, this, 80, 3, true);
 
         proxy.registerRenderers();
 

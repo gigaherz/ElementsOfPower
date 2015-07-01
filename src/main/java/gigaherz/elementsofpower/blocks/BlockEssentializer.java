@@ -14,6 +14,7 @@ import net.minecraft.world.World;
 public class BlockEssentializer
         extends Block
         implements ITileEntityProvider {
+
     public BlockEssentializer() {
         super(Material.iron);
         setUnlocalizedName("essentializer");
@@ -36,18 +37,5 @@ public class BlockEssentializer
 
     public TileEntity createNewTileEntity(World world, int metadata) {
         return new TileEssentializer();
-    }
-
-    // TODO: OLD STUFF THAT NEEDS REPLACING
-    public static void updateBlockState(boolean powered, World world, int x, int y, int z) {
-        int metadata = 0; // world.getBlockMetadata(x, y, z);
-
-        if (powered) {
-            metadata |= 8;
-        } else {
-            metadata &= 7;
-        }
-
-        //world.setBlockMetadataWithNotify(x, y, z, metadata);
     }
 }

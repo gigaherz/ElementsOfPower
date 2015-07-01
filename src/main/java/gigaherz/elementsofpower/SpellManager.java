@@ -46,13 +46,20 @@ public class SpellManager {
         registerSpell(new SpellFireball(4).fire().fire().fire().fire());
         registerSpell(new SpellFireball(5).fire().fire().fire().fire().fire());
         registerSpell(new SpellFireball(6).fire().fire().fire().fire().fire().fire());
-
+                
         registerSpell(new SpellAirball(1).air());
         registerSpell(new SpellAirball(2).air().air());
         registerSpell(new SpellAirball(3).air().air().air());
         registerSpell(new SpellAirball(4).air().air().air().air());
         registerSpell(new SpellAirball(5).air().air().air().air().air());
         registerSpell(new SpellAirball(6).air().air().air().air().air().air());
+
+        registerSpell(new SpellEarthball(1).earth());
+        registerSpell(new SpellEarthball(2).earth().earth());
+        registerSpell(new SpellEarthball(3).earth().earth().earth());
+        registerSpell(new SpellEarthball(4).earth().earth().earth().earth());
+        registerSpell(new SpellEarthball(5).earth().earth().earth().earth().earth());
+        registerSpell(new SpellEarthball(6).earth().earth().earth().earth().earth().earth());
     }
 
     public static void registerSpell(SpellBase spell) {

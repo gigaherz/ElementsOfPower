@@ -3,8 +3,6 @@ package gigaherz.elementsofpower.items;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
@@ -40,7 +38,6 @@ public class ItemMagicOrb extends Item {
         return getUnlocalizedName() + "." + subNames[sub];
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
     public void getSubItems(Item itemIn, CreativeTabs tab, List subItems) {
         for (int meta = 1; meta < subNames.length; meta++) {
@@ -53,15 +50,5 @@ public class ItemMagicOrb extends Item {
         ItemStack stack = new ItemStack(this, count);
         stack.setItemDamage(damageValue);
         return stack;
-    }
-
-    // TODO: OLD STUFF THAT NEEDS REPLACING
-    @SideOnly(Side.CLIENT)
-    public int getIconFromDamage(int par1) {
-        if (par1 < 8) {
-            return par1;
-        }
-
-        return 0; //this.iconIndex;
     }
 }

@@ -4,7 +4,10 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockDynamicLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntityBlaze;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.init.Blocks;
@@ -15,118 +18,102 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.BlockFluidFinite;
 
-public class EntityAirball extends EntityThrowable implements IVariableSize {
+import java.util.List;
 
-    public int damageForce;
+public class EntityAirball extends EntityBallBase {
 
     public EntityAirball(World worldIn)
     {
         super(worldIn);
     }
-
     public EntityAirball(World worldIn, EntityLivingBase p_i1774_2_)
     {
         super(worldIn, p_i1774_2_);
     }
-
     public EntityAirball(World worldIn, double x, double y, double z)
     {
         super(worldIn, x, y, z);
     }
-
     public EntityAirball(World worldIn, int force, EntityLivingBase p_i1774_2_)
     {
-        super(worldIn, p_i1774_2_);
-        damageForce = force;
+        super(worldIn, force, p_i1774_2_);
     }
 
     @Override
-    protected float getGravityVelocity()
-    {
-        return 0.0F;
+    protected void processEntitiesAround(Vec3 hitVec) {
+
+        AxisAlignedBB aabb = new AxisAlignedBB(
+                hitVec.xCoord-damageForce,
+                hitVec.yCoord-damageForce,
+                hitVec.zCoord-damageForce,
+                hitVec.xCoord+damageForce,
+                hitVec.yCoord+damageForce,
+                hitVec.zCoord+damageForce);
+
+        List<EntityLivingBase> living = (List<EntityLivingBase>)worldObj.getEntitiesWithinAABB(EntityLivingBase.class, aabb);
+        pushEntities(hitVec, living);
+
+        List<EntityItem> items = (List<EntityItem>)worldObj.getEntitiesWithinAABB(EntityItem.class, aabb);
+        pushEntities(hitVec, items);
     }
 
-    @Override
-    protected void onImpact(MovingObjectPosition p_70184_1_)
-    {
-        if (p_70184_1_.entityHit != null)
+    private void pushEntities(Vec3 hitVec, List<? extends Entity> living) {
+        for(Entity e : living)
         {
-            int b0 = damageForce;
+            if(!e.isEntityAlive())
+                continue;
 
-            if (p_70184_1_.entityHit instanceof EntityBlaze)
-            {
-                b0 = 3 + damageForce;
-            }
+            double dx = e.posX - hitVec.xCoord;
+            double dy = e.posY - hitVec.yCoord;
+            double dz = e.posZ - hitVec.zCoord;
 
-            p_70184_1_.entityHit.attackEntityFrom(DamageSource.causeThrownDamage(this, this.getThrower()), (float) b0);
+            double ll = Math.sqrt(dx*dx+dy*dy+dz*dz);
+
+            if(ll < 0.0001f)
+                continue;
+
+            double lv = Math.max(0, damageForce-ll);
+
+            double vx = dx * lv / ll;
+            double vy = dy * lv / ll;
+            double vz = dz * lv / ll;
+            e.addVelocity(vx, vy, vz);
         }
+    }
 
+    @Override
+    protected void spawnBallParticles()
+    {
         if(damageForce >= 5)
         {
-            this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_HUGE, this.posX, this.posY, this.posZ, 1.0D, 0.0D, 0.0D);
+            this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_HUGE, this.posX, this.posY, this.posZ,
+                    getRandomForParticle(), getRandomForParticle(), getRandomForParticle());
         }
         else if(damageForce >= 2)
         {
-            this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE, this.posX, this.posY, this.posZ, 1.0D, 0.0D, 0.0D);
+            this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE, this.posX, this.posY, this.posZ,
+                    getRandomForParticle(), getRandomForParticle(), getRandomForParticle());
         }
         else
         {
-            this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, this.posX, this.posY, this.posZ, 1.0D, 0.0D, 0.0D);
+            this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, this.posX, this.posY, this.posZ,
+                    getRandomForParticle(), getRandomForParticle(), getRandomForParticle());
         }
 
-        if(p_70184_1_.entityHit == null && !worldObj.isRemote && damageForce > 0) {
-            BlockPos bp = p_70184_1_.getBlockPos();
-
-            if(p_70184_1_.sideHit == EnumFacing.UP) bp=bp.up();
-            else if(p_70184_1_.sideHit == EnumFacing.DOWN) bp=bp.down();
-            else if(p_70184_1_.sideHit == EnumFacing.EAST) bp=bp.east();
-            else if(p_70184_1_.sideHit == EnumFacing.WEST) bp=bp.west();
-            else if(p_70184_1_.sideHit == EnumFacing.NORTH) bp=bp.north();
-            else if(p_70184_1_.sideHit == EnumFacing.SOUTH) bp=bp.south();
-
-            int px = bp.getX();
-            int py = bp.getY();
-            int pz = bp.getZ();
-            for (int z = pz - damageForce; z <= pz + damageForce; z++) {
-                for (int x = px - damageForce; x <= px + damageForce; x++) {
-                    for (int y = py - damageForce; y <= py + damageForce; y++) {
-                        float dx = Math.abs(px - x);
-                        float dy = Math.abs(py - y);
-                        float dz = Math.abs(pz - z);
-                        float r2 = (dx * dx + dy * dy + dz * dz);
-                        boolean in_sphere = r2 <= (damageForce * damageForce);
-                        if (!in_sphere)
-                            continue;
-
-                        float r = (float) Math.sqrt(r2);
-
-                        BlockPos np = new BlockPos(x, y, z);
-
-
-                        IBlockState currentState = worldObj.getBlockState(np);
-                        Block block = currentState.getBlock();
-
-                        if (block == Blocks.fire) {
-                            worldObj.setBlockToAir(np);
-                        }
-                        else if (block == Blocks.flowing_water || block == Blocks.water) {
-                            if((Integer)currentState.getValue(BlockDynamicLiquid.LEVEL) > 0) {
-                                worldObj.setBlockToAir(np);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        if (!this.worldObj.isRemote)
-        {
-            this.setDead();
-        }
     }
 
     @Override
-    public float getScale() {
-        return 0.25f * (1+damageForce);
+    protected void processBlockWithinRadius(BlockPos blockPos, IBlockState currentState, int layers)
+    {
+        Block block = currentState.getBlock();
+
+        if (block == Blocks.fire) {
+            worldObj.setBlockToAir(blockPos);
+        }
+        else if (block == Blocks.flowing_water || block == Blocks.water) {
+            if((Integer)currentState.getValue(BlockDynamicLiquid.LEVEL) > 0) {
+                worldObj.setBlockToAir(blockPos);
+            }
+        }
     }
 }

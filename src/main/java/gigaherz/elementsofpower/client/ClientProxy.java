@@ -2,10 +2,7 @@ package gigaherz.elementsofpower.client;
 
 import gigaherz.elementsofpower.CommonProxy;
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.entities.EntityAirball;
-import gigaherz.elementsofpower.entities.EntityFlameball;
-import gigaherz.elementsofpower.entities.EntityFrostball;
-import gigaherz.elementsofpower.entities.EntityWaterball;
+import gigaherz.elementsofpower.entities.*;
 import gigaherz.elementsofpower.models.CustomMeshModel;
 import gigaherz.elementsofpower.models.ModelRegistrationHelper;
 import gigaherz.elementsofpower.render.RenderStack;
@@ -68,6 +65,8 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void registerRenderers() {
         registerBlockTexture(ElementsOfPower.essentializer, "essentializer");
+        registerBlockTexture(ElementsOfPower.dust, "dust");
+
         registerItemTexture(ElementsOfPower.magicOrb, 0, "orb_fire");
         registerItemTexture(ElementsOfPower.magicOrb, 1, "orb_water");
         registerItemTexture(ElementsOfPower.magicOrb, 2, "orb_air");
@@ -92,6 +91,7 @@ public class ClientProxy extends CommonProxy {
         registerEntityRenderingHandler(EntityWaterball.class, ElementsOfPower.water);
         registerEntityRenderingHandler(EntityFlameball.class, ElementsOfPower.fire);
         registerEntityRenderingHandler(EntityAirball.class, ElementsOfPower.air);
+        registerEntityRenderingHandler(EntityEarthball.class, ElementsOfPower.earth);
     }
 
     public void registerBlockTexture(final Block block, final String blockName) {

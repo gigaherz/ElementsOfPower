@@ -7,8 +7,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
@@ -32,7 +30,6 @@ public class ItemMagicContainer extends Item {
         return getUnlocalizedName() + "." + subNames[sub];
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
     public void getSubItems(Item itemIn, CreativeTabs tab, List subItems) {
         for (int meta = 0; meta < subNames.length; meta++) {
@@ -40,19 +37,14 @@ public class ItemMagicContainer extends Item {
         }
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
     public boolean hasEffect(ItemStack stack) {
         MagicAmounts amounts = MagicDatabase.getContainedMagic(stack);
 
-        if (amounts == null) {
-            return false;
-        }
-
-        return !amounts.isEmpty();
+        return amounts != null && !amounts.isEmpty();
     }
 
-    @SideOnly(Side.CLIENT)
+    @Override
     public EnumRarity getRarity(ItemStack stack) {
 
         if (hasEffect(stack))
@@ -60,7 +52,7 @@ public class ItemMagicContainer extends Item {
         return EnumRarity.UNCOMMON;
     }
 
-    @SideOnly(Side.CLIENT)
+    @Override
     public void addInformation(ItemStack stack, EntityPlayer player, List tooltipList, boolean showAdvancedInfo) {
         MagicAmounts amounts = MagicDatabase.getContainedMagic(stack);
 
