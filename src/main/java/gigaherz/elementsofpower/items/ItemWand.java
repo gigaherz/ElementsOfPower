@@ -142,13 +142,23 @@ public class ItemWand extends ItemMagicContainer {
         if (message.changeMode == SpellSequenceUpdate.ChangeMode.COMMIT) {
 
             NBTTagCompound nbt = stack.getTagCompound();
-            if (nbt == null)
-                return;
+            if(nbt == null)
+            {
+                if (!((ItemWand) stack.getItem()).isCreative(stack))
+                    return;
+
+                nbt = new NBTTagCompound();
+                stack.setTagCompound(nbt);
+            }
 
             if (message.sequence != null)
                 nbt.setString(SPELL_SEQUENCE_TAG, message.sequence);
 
             onMagicItemReleased(stack, message.entity);
         }
+    }
+
+    private boolean isCreative(ItemStack stack) {
+        return stack.getItemDamage() % 4 == 3;
     }
 }

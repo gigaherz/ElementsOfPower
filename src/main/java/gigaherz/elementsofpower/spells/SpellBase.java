@@ -35,6 +35,11 @@ public abstract class SpellBase
             spellSequence = new StringBuilder();
             finalSequence = null;
         }
+        if(spellSequence.length() >= spellCostLevel.length)
+        {
+            System.out.println("ERROR: Spell too long, truncating...");
+            return this;
+        }
         spellCost.amounts[which] += spellCostLevel[spellSequence.length()];
         spellSequence.append(SpellManager.elementChars[which]);
         return this;

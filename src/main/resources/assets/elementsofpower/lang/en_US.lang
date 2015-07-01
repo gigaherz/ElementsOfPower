@@ -19,3 +19,4 @@ item.magicOrb.light.name=Light
 item.magicOrb.darkness.name=Darkness
 item.magicOrb.life.name=Life
 item.magicOrb.death.name=Death
+itemGroup.elementsofpower=Elements Of Power

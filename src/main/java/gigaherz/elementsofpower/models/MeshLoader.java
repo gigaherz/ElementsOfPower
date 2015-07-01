@@ -3,7 +3,6 @@ package gigaherz.elementsofpower.models;
 import com.google.common.base.Charsets;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResource;
-import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.util.ResourceLocation;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 

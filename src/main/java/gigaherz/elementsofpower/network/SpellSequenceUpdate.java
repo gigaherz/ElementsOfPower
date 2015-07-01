@@ -5,6 +5,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -73,12 +74,22 @@ public class SpellSequenceUpdate
         @Override
         public IMessage onMessage(SpellSequenceUpdate message, MessageContext ctx) {
 
-            ItemStack stack = message.entity.inventory.mainInventory[message.slotNumber];
+            final SpellSequenceUpdate msg = message;
 
-            if (stack != null && stack.getItem() instanceof ItemWand) {
-                ItemWand wand = (ItemWand) stack.getItem();
-                wand.processSequenceUpdate(message, stack);
-            }
+            WorldServer ws = (WorldServer)message.entity.worldObj;
+            ws.addScheduledTask(new Runnable() {
+                @Override
+                public void run() {
+
+                    ItemStack stack = msg.entity.inventory.mainInventory[msg.slotNumber];
+
+                    if (stack != null && stack.getItem() instanceof ItemWand) {
+                        ItemWand wand = (ItemWand) stack.getItem();
+                        wand.processSequenceUpdate(msg, stack);
+                    }
+                }
+            });
+
 
             return null; // no response in this case
         }

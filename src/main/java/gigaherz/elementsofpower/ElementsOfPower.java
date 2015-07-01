@@ -2,6 +2,10 @@ package gigaherz.elementsofpower;
 
 import gigaherz.elementsofpower.blocks.BlockEssentializer;
 import gigaherz.elementsofpower.blocks.TileEssentializer;
+import gigaherz.elementsofpower.entities.EntityAirball;
+import gigaherz.elementsofpower.entities.EntityFlameball;
+import gigaherz.elementsofpower.entities.EntityFrostball;
+import gigaherz.elementsofpower.entities.EntityWaterball;
 import gigaherz.elementsofpower.items.ItemMagicContainer;
 import gigaherz.elementsofpower.items.ItemMagicOrb;
 import gigaherz.elementsofpower.items.ItemWand;
@@ -21,6 +25,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -151,6 +156,11 @@ public class ElementsOfPower {
 
     @EventHandler
     public void init(FMLInitializationEvent event) {
+
+        EntityRegistry.registerModEntity(EntityFrostball.class, "Frostball", 1, this, 80, 3, true);
+        EntityRegistry.registerModEntity(EntityWaterball.class, "Waterball", 2, this, 80, 3, true);
+        EntityRegistry.registerModEntity(EntityFlameball.class, "Flameball", 3, this, 80, 3, true);
+        EntityRegistry.registerModEntity(EntityAirball.class, "Airball", 4, this, 80, 3, true);
 
         proxy.registerRenderers();
 

@@ -5,24 +5,30 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.ISmartBlockModel;
-import net.minecraftforge.client.model.ISmartItemModel;
+import net.minecraftforge.client.model.*;
+import org.apache.commons.lang3.tuple.Pair;
 
+import javax.vecmath.Matrix4f;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CustomMeshModel
-        implements ISmartItemModel, ISmartBlockModel, IInitializeBakedModel {
+        implements IFlexibleBakedModel, ISmartItemModel, ISmartBlockModel, IInitializeBakedModel , IPerspectiveAwareModel {
 
     String variant;
     ResourceLocation model;
-    ItemCameraTransforms transforms;
+
+    TRSRTransformation thirdPerson;
+    TRSRTransformation firstPerson;
+    TRSRTransformation head;
+    TRSRTransformation gui;
 
     List<BakedQuad> faceQuads;
     List<BakedQuad> generalQuads;
@@ -45,21 +51,30 @@ public class CustomMeshModel
     }
 
     @Override
-    public void initialize(ItemCameraTransforms cameraTransforms, ResourceLocation icon, ModelManager modelManager) {
+    public void initialize(
+            TRSRTransformation thirdPerson,
+            TRSRTransformation firstPerson,
+            TRSRTransformation head,
+            TRSRTransformation gui,
+            ResourceLocation icon, ModelManager modelManager) {
 
-        this.transforms = cameraTransforms;
+        this.thirdPerson = thirdPerson;
+        this.firstPerson = firstPerson;
+        this.head = head;
+        this.gui = gui;
+
         this.iconSprite = modelManager.getTextureMap().getAtlasSprite(icon.toString());
 
         generalQuads = sourceMesh.bakeModel(modelManager);
     }
 
     @Override
-    public IBakedModel handleItemState(ItemStack stack) {
+    public IFlexibleBakedModel handleItemState(ItemStack stack) {
         return this;
     }
 
     @Override
-    public IBakedModel handleBlockState(IBlockState state) {
+    public IFlexibleBakedModel handleBlockState(IBlockState state) {
         return this;
     }
 
@@ -71,6 +86,11 @@ public class CustomMeshModel
     @Override
     public List getGeneralQuads() {
         return generalQuads;
+    }
+
+    @Override
+    public VertexFormat getFormat() {
+        return Attributes.DEFAULT_BAKED_FORMAT;
     }
 
     @Override
@@ -95,7 +115,23 @@ public class CustomMeshModel
 
     @Override
     public ItemCameraTransforms getItemCameraTransforms() {
-        return transforms;
+        return null;
     }
 
+    @Override
+    public Pair<IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType) {
+        switch(cameraTransformType)
+        {
+            case FIRST_PERSON:
+                return Pair.of((IBakedModel)this, firstPerson.getMatrix());
+            case THIRD_PERSON:
+                return Pair.of((IBakedModel)this, thirdPerson.getMatrix());
+            case GUI:
+                return Pair.of((IBakedModel)this, gui.getMatrix());
+            case HEAD:
+                return Pair.of((IBakedModel)this, head.getMatrix());
+
+        }
+        return null;
+    }
 }

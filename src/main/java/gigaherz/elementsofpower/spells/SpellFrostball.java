@@ -1,16 +1,15 @@
 package gigaherz.elementsofpower.spells;
 
-import gigaherz.elementsofpower.entities.EntityFlameball;
+import gigaherz.elementsofpower.entities.EntityFrostball;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
-public class SpellFireball extends SpellBase {
+public class SpellFrostball extends SpellBase {
 
     int power;
 
-    public SpellFireball(int power) {
+    public SpellFrostball(int power) {
         this.power = power;
     }
 
@@ -18,6 +17,6 @@ public class SpellFireball extends SpellBase {
     public void castSpell(ItemStack stack, EntityPlayer player) {
         World world = player.worldObj;
 
-        world.spawnEntityInWorld(new EntityFlameball(world, power, player));
+        world.spawnEntityInWorld(new EntityFrostball(world, power, player));
     }
 }
