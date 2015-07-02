@@ -3,6 +3,7 @@ package gigaherz.elementsofpower;
 import gigaherz.elementsofpower.blocks.BlockDust;
 import gigaherz.elementsofpower.blocks.BlockEssentializer;
 import gigaherz.elementsofpower.blocks.TileEssentializer;
+import gigaherz.elementsofpower.database.MagicDatabase;
 import gigaherz.elementsofpower.entities.*;
 import gigaherz.elementsofpower.items.ItemMagicContainer;
 import gigaherz.elementsofpower.items.ItemMagicOrb;
@@ -151,9 +152,6 @@ public class ElementsOfPower {
         death = magicOrb.getStack(1, 7);
 
         registerNetworkStuff();
-
-        // Item decomposing database
-        MagicDatabase.preInitialize();
     }
 
     @EventHandler

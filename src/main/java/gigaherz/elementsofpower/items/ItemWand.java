@@ -1,9 +1,9 @@
 package gigaherz.elementsofpower.items;
 
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.MagicAmounts;
-import gigaherz.elementsofpower.MagicDatabase;
-import gigaherz.elementsofpower.SpellManager;
+import gigaherz.elementsofpower.database.MagicAmounts;
+import gigaherz.elementsofpower.database.MagicDatabase;
+import gigaherz.elementsofpower.database.SpellManager;
 import gigaherz.elementsofpower.client.GuiOverlayMagicContainer;
 import gigaherz.elementsofpower.network.SpellSequenceUpdate;
 import gigaherz.elementsofpower.spells.ISpellEffect;

@@ -1,6 +1,6 @@
 package gigaherz.elementsofpower.slots;
 
-import gigaherz.elementsofpower.MagicDatabase;
+import gigaherz.elementsofpower.database.MagicDatabase;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;

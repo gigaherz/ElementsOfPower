@@ -111,7 +111,7 @@ public class EntityFlameball extends EntityBallBase {
         Block block = currentState.getBlock();
 
         if (block == Blocks.air) {
-            worldObj.setBlockState(blockPos, Blocks.fire.getDefaultState(), 2);
+            worldObj.setBlockState(blockPos, Blocks.fire.getDefaultState());
         }
     }
 }

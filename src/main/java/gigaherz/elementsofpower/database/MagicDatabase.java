@@ -1,5 +1,7 @@
-package gigaherz.elementsofpower;
+package gigaherz.elementsofpower.database;
 
+import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.Utils;
 import gigaherz.elementsofpower.items.ItemWand;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -7,8 +9,8 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.StatCollector;
 
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -72,7 +74,16 @@ public class MagicDatabase {
     public static Map<ItemStack, MagicAmounts> containerCapacity = new HashMap<ItemStack, MagicAmounts>();
     public static Map<ItemStack, MagicAmounts> itemEssences = new HashMap<ItemStack, MagicAmounts>();
 
-    public static final Map<Integer, String> magicNames = new HashMap<Integer, String>();
+    public final static String[] magicNames = {
+            "element.fire",
+            "element.water",
+            "element.air",
+            "element.earth",
+            "element.light",
+            "element.darkness",
+            "element.life",
+            "element.death",
+    };
 
     static final ItemEssenceEntry[] stockEntries = {
 
@@ -104,17 +115,6 @@ public class MagicDatabase {
 
     private static ItemEssenceEntry essences(Item item, int meta) {
         return new ItemEssenceEntry(new ItemStack(item, 1, meta), new MagicAmounts());
-    }
-
-    public static void preInitialize() {
-        magicNames.put(1 << 0, "Fire");
-        magicNames.put(1 << 1, "Water");
-        magicNames.put(1 << 2, "Air");
-        magicNames.put(1 << 3, "Earth");
-        magicNames.put(1 << 4, "Light");
-        magicNames.put(1 << 5, "Darkness");
-        magicNames.put(1 << 6, "Life");
-        magicNames.put(1 << 7, "Death");
     }
 
     public static void initialize() {
@@ -153,8 +153,8 @@ public class MagicDatabase {
     }
 
     public static void postInitialize() {
-        //Utils.dumpAllRecipes();
-        //Utils.dumpAllItems();
+        Utils.dumpAllRecipes();
+        Utils.dumpAllItems();
     }
 
     public static boolean itemContainsMagic(ItemStack stack) {
@@ -288,23 +288,7 @@ public class MagicDatabase {
     }
 
     public static String getMagicName(int i) {
-        return magicNames.get(1 << i);
-    }
-
-    public static String getMagicName(EnumSet<MagicEssences> bits) {
-        int n = 0;
-
-        for (int i = 0; i < 8; i++) {
-            if (bits.contains(MagicEssences.values()[i])) {
-                n |= 1 << i;
-            }
-        }
-
-        return magicNames.get(n);
-    }
-
-    public static String getMagicNameCombined(int i) {
-        return magicNames.get(i);
+        return StatCollector.translateToLocal(magicNames[i]);
     }
 
 }

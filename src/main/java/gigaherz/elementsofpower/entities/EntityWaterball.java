@@ -47,7 +47,7 @@ public class EntityWaterball extends EntityBallBase {
         Block block = currentState.getBlock();
 
         if (block == Blocks.air) {
-            worldObj.setBlockState(blockPos, Blocks.flowing_water.getDefaultState().withProperty(BlockDynamicLiquid.LEVEL, 15), 2);
+            worldObj.setBlockState(blockPos, Blocks.flowing_water.getDefaultState().withProperty(BlockDynamicLiquid.LEVEL, 15));
         }
     }
 }

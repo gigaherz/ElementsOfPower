@@ -1,6 +1,9 @@
 package gigaherz.elementsofpower.client;
 
 import gigaherz.elementsofpower.*;
+import gigaherz.elementsofpower.database.MagicAmounts;
+import gigaherz.elementsofpower.database.MagicDatabase;
+import gigaherz.elementsofpower.database.SpellManager;
 import gigaherz.elementsofpower.items.ItemWand;
 import gigaherz.elementsofpower.network.SpellSequenceUpdate;
 import net.minecraft.client.Minecraft;

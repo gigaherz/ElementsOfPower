@@ -1,8 +1,12 @@
 essentializer=Essentializer
+
 tile.essentializer.name=Essentializer
+tile.dust.name=Dust Block (disperses quickly)
+
 item.magicContainer.lapisContainer.name=Magic-imbued Lapis Lazuli
 item.magicContainer.emeraldContainer.name=Magic-imbued Emerald
 item.magicContainer.diamondContainer.name=Magic-imbued Diamond
+
 item.magicWand.lapisWand.name=Lapis Wand
 item.magicWand.emeraldWand.name=Emerald Wand
 item.magicWand.diamondWand.name=Diamond Wand
@@ -11,6 +15,7 @@ item.magicWand.lapisStaff.name=Lapis Staff
 item.magicWand.emeraldStaff.name=Emerald Staff
 item.magicWand.diamondStaff.name=Diamond Staff
 item.magicWand.creativeStaff.name=Creative Staff
+
 item.magicOrb.water.name=Fire
 item.magicOrb.water.name=Water
 item.magicOrb.air.name=Air
@@ -19,4 +24,14 @@ item.magicOrb.light.name=Light
 item.magicOrb.darkness.name=Darkness
 item.magicOrb.life.name=Life
 item.magicOrb.death.name=Death
+
 itemGroup.elementsofpower=Elements Of Power
+
+element.fire=Fire
+element.water=Water
+element.air=Air
+element.earth=Earth
+element.light=Light
+element.darkness=Darkness
+element.life=Life
+element.death=Death

@@ -1,4 +1,4 @@
-package gigaherz.elementsofpower;
+package gigaherz.elementsofpower.database;
 
 import gigaherz.elementsofpower.spells.*;
 

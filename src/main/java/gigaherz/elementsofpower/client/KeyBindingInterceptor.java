@@ -1,13 +1,10 @@
-package gigaherz.elementsofpower;
+package gigaherz.elementsofpower.client;
 
 import net.minecraft.client.settings.KeyBinding;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.lang.reflect.Field;
 import java.util.List;
 
-@SideOnly(Side.CLIENT)
 public class KeyBindingInterceptor extends KeyBinding {
     static List keybindArray = null;
 

@@ -54,23 +54,23 @@ public class EntityFrostball extends EntityBallBase {
         }
         else if (layers > 0)
         {
-            if(block == Blocks.lava)
+            if(block == Blocks.flowing_lava || block == Blocks.lava)
             {
-                worldObj.setBlockState(blockPos,Blocks.obsidian.getDefaultState(), 2);
-                return;
-            }
-            else if(block == Blocks.flowing_lava)
-            {
-                worldObj.setBlockState(blockPos,Blocks.cobblestone.getDefaultState(), 2);
+                if((Integer)currentState.getValue(BlockDynamicLiquid.LEVEL) > 0) {
+                    worldObj.setBlockState(blockPos, Blocks.cobblestone.getDefaultState());
+                } else
+                {
+                    worldObj.setBlockState(blockPos, Blocks.obsidian.getDefaultState());
+                }
                 return;
             }
             else if (block == Blocks.flowing_water || block == Blocks.water)
             {
                 if((Integer)currentState.getValue(BlockDynamicLiquid.LEVEL) > 0) {
-                    worldObj.setBlockState(blockPos, Blocks.ice.getDefaultState(), 2);
+                    worldObj.setBlockState(blockPos, Blocks.ice.getDefaultState());
                 } else
                 {
-                    worldObj.setBlockState(blockPos, Blocks.packed_ice.getDefaultState(), 2);
+                    worldObj.setBlockState(blockPos, Blocks.packed_ice.getDefaultState());
                 }
                 return;
             }
@@ -90,11 +90,11 @@ public class EntityFrostball extends EntityBallBase {
                         break;
                     int add = Math.min(8 - l, layers);
                     l += add;
-                    worldObj.setBlockState(blockPos, currentState.withProperty(BlockSnow.LAYERS, l), 2);
+                    worldObj.setBlockState(blockPos, currentState.withProperty(BlockSnow.LAYERS, l));
                     layers -= add;
                 } else if (block == Blocks.air) {
                     int add = Math.min(8, layers);
-                    worldObj.setBlockState(blockPos, Blocks.snow_layer.getDefaultState().withProperty(BlockSnow.LAYERS, add), 2);
+                    worldObj.setBlockState(blockPos, Blocks.snow_layer.getDefaultState().withProperty(BlockSnow.LAYERS, add));
                     layers -= add;
                 } else {
                     break;

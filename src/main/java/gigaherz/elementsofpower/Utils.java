@@ -31,13 +31,22 @@ public class Utils {
 
                 List<ItemStack> subBlocks = new ArrayList<ItemStack>();
 
-                block.getSubBlocks(Item.getItemFromBlock(block), CreativeTabs.tabAllSearch, subBlocks);
+                Item it = Item.getItemFromBlock(block);
+                if (it == null)
+                    continue;
+
+                block.getSubBlocks(it, CreativeTabs.tabAllSearch, subBlocks);
 
                 if (subBlocks.size() == 0)
                     continue;
 
 
                 for (ItemStack is : subBlocks) {
+                    if(is.getItem() == null)
+                    {
+                        System.out.println("WTF NULL ITEM?!");
+                        continue;
+                    }
                     out.write(is.getUnlocalizedName());
                     out.write(";" + is.getItemDamage());
                     out.write("\r\n");

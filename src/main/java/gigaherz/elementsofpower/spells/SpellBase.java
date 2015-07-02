@@ -1,14 +1,14 @@
 package gigaherz.elementsofpower.spells;
 
-import gigaherz.elementsofpower.MagicAmounts;
-import gigaherz.elementsofpower.SpellManager;
+import gigaherz.elementsofpower.database.MagicAmounts;
+import gigaherz.elementsofpower.database.SpellManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
 public abstract class SpellBase
         implements ISpellEffect {
 
-    public static final int[] spellCostLevel = {1, 3, 9, 27, 81, 243, 635};
+    public static final int[] spellCostLevel = {5, 8, 12, 25, 50, 250, 500, 750};
 
     protected MagicAmounts spellCost = new MagicAmounts();
     protected StringBuilder spellSequence = new StringBuilder();

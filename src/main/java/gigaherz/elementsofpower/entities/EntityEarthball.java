@@ -49,7 +49,7 @@ public class EntityEarthball extends EntityBallBase {
         Block block = currentState.getBlock();
 
         if (block == Blocks.air) {
-            worldObj.setBlockState(blockPos, ElementsOfPower.dust.getDefaultState().withProperty(BlockDust.DENSITY, 16), 2);
+            worldObj.setBlockState(blockPos, ElementsOfPower.dust.getDefaultState().withProperty(BlockDust.DENSITY, 16));
         }
     }
 }

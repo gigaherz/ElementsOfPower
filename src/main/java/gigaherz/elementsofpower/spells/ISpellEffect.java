@@ -1,6 +1,6 @@
 package gigaherz.elementsofpower.spells;
 
-import gigaherz.elementsofpower.MagicAmounts;
+import gigaherz.elementsofpower.database.MagicAmounts;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
