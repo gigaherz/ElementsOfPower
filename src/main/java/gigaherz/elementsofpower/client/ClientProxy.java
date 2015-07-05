@@ -2,9 +2,10 @@ package gigaherz.elementsofpower.client;
 
 import gigaherz.elementsofpower.CommonProxy;
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.entities.*;
+import gigaherz.elementsofpower.entities.EntityBallBase;
 import gigaherz.elementsofpower.models.CustomMeshModel;
 import gigaherz.elementsofpower.models.ModelRegistrationHelper;
+import gigaherz.elementsofpower.render.RenderEntityProvidedStack;
 import gigaherz.elementsofpower.render.RenderStack;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -14,7 +15,6 @@ import net.minecraft.client.renderer.entity.RenderSnowball;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -41,9 +41,6 @@ public class ClientProxy extends CommonProxy {
         registerCustomItemModel(helper, "staff_emerald");
         registerCustomItemModel(helper, "staff_diamond");
         registerCustomItemModel(helper, "staff_creative");
-
-        //registerCustomBlockModel(helper, "essentializer", "normal");
-        //registerCustomBlockModel(helper, "essentializer", "inventory");
     }
 
     public void registerCustomItemModel(ModelRegistrationHelper helper, final String itemName) {
@@ -64,6 +61,7 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void registerRenderers() {
+
         registerBlockTexture(ElementsOfPower.essentializer, "essentializer");
         registerBlockTexture(ElementsOfPower.dust, "dust");
 
@@ -87,11 +85,7 @@ public class ClientProxy extends CommonProxy {
         registerItemTexture(ElementsOfPower.magicContainer, 1, "container_emerald");
         registerItemTexture(ElementsOfPower.magicContainer, 2, "container_diamond");
 
-        registerEntityRenderingHandler(EntityFrostball.class, Items.snowball);
-        registerEntityRenderingHandler(EntityWaterball.class, ElementsOfPower.water);
-        registerEntityRenderingHandler(EntityFlameball.class, ElementsOfPower.fire);
-        registerEntityRenderingHandler(EntityAirball.class, ElementsOfPower.air);
-        registerEntityRenderingHandler(EntityEarthball.class, ElementsOfPower.earth);
+        registerEntityRenderingHandler(EntityBallBase.class);
     }
 
     public void registerBlockTexture(final Block block, final String blockName) {
@@ -111,6 +105,14 @@ public class ClientProxy extends CommonProxy {
         RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
         renderItem.getItemModelMesher().register(item, meta, new ModelResourceLocation(ElementsOfPower.MODID + ":" + itemName, "inventory"));
         ModelBakery.addVariantName(item, ElementsOfPower.MODID + ":" + itemName);
+    }
+
+    public void registerEntityRenderingHandler(Class<? extends Entity> entityClass)
+    {
+        registerEntityRenderingHandler(entityClass,
+                new RenderEntityProvidedStack(
+                        Minecraft.getMinecraft().getRenderManager(),
+                        Minecraft.getMinecraft().getRenderItem()));
     }
 
     public void registerEntityRenderingHandler(Class<? extends Entity> entityClass, Item itemTexture)

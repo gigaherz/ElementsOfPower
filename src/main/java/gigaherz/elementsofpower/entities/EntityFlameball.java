@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower.entities;
 
+import gigaherz.elementsofpower.ElementsOfPower;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -18,19 +19,19 @@ public class EntityFlameball extends EntityBallBase {
 
     public EntityFlameball(World worldIn)
     {
-        super(worldIn);
+        super(ElementsOfPower.fire, worldIn);
     }
     public EntityFlameball(World worldIn, EntityLivingBase p_i1774_2_)
     {
-        super(worldIn, p_i1774_2_);
+        super(ElementsOfPower.fire, worldIn, p_i1774_2_);
     }
     public EntityFlameball(World worldIn, double x, double y, double z)
     {
-        super(worldIn, x, y, z);
+        super(ElementsOfPower.fire, worldIn, x, y, z);
     }
     public EntityFlameball(World worldIn, int force, EntityLivingBase p_i1774_2_)
     {
-        super(worldIn, force, p_i1774_2_);
+        super(ElementsOfPower.fire, worldIn, force, p_i1774_2_);
     }
 
     @Override
@@ -47,7 +48,7 @@ public class EntityFlameball extends EntityBallBase {
     }
 
     @Override
-    protected void processEntitiesAround(Vec3 hitVec) {
+    protected void processEntitiesAroundAfter(Vec3 hitVec) {
 
         AxisAlignedBB aabb = new AxisAlignedBB(
                 hitVec.xCoord-damageForce,
@@ -78,9 +79,6 @@ public class EntityFlameball extends EntityBallBase {
             double dz = e.posZ - hitVec.zCoord;
 
             double ll = Math.sqrt(dx*dx+dy*dy+dz*dz);
-
-            if(ll < 0.0001f)
-                continue;
 
             double lv = Math.max(0, damageForce-ll);
 

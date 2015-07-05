@@ -1,6 +1,8 @@
 package gigaherz.elementsofpower.client;
 
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -48,12 +50,35 @@ public class KeyBindingInterceptor extends KeyBinding {
         KeyBinding.resetKeyBindingArrayAndHash();
     }
 
+    private static Field findObfuscatedField(Class<?> clazz, String... names)
+    {
+        return ReflectionHelper.findField(KeyBinding.class, ObfuscationReflectionHelper.remapFieldNames(clazz.getName(), names));
+    }
+
+    private void ensureHaveKeybindArray() throws NoSuchFieldException {
+        if (fieldKeybindArray == null) {
+            fieldKeybindArray = findObfuscatedField(KeyBinding.class, "keybindArray", "field_74516_a");
+            fieldKeybindArray.setAccessible(true);
+        }
+    }
+
+    private static void ensureHavePressed() throws NoSuchFieldException {
+        if (fieldPressed == null) {
+            fieldPressed = findObfuscatedField(KeyBinding.class, "pressed", "field_74513_e");
+            fieldPressed.setAccessible(true);
+        }
+    }
+
+    private static void ensureHavePressTime() throws NoSuchFieldException {
+        if (fieldPressTime == null) {
+            fieldPressTime = findObfuscatedField(KeyBinding.class, "pressTime", "field_151474_i");
+            fieldPressTime.setAccessible(true);
+        }
+    }
+
     private void getKeybindArrayFromSuper() {
         try {
-            if (fieldKeybindArray == null) {
-                fieldKeybindArray = KeyBinding.class.getDeclaredField("keybindArray");
-                fieldKeybindArray.setAccessible(true);
-            }
+            ensureHaveKeybindArray();
             keybindArray = (List) fieldKeybindArray.get(null);
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
@@ -64,16 +89,10 @@ public class KeyBindingInterceptor extends KeyBinding {
 
     private static void setPressedAndTime(KeyBinding binding, boolean pressed, int time) {
         try {
-            if (fieldPressed == null) {
-                fieldPressed = KeyBinding.class.getDeclaredField("pressed");
-                fieldPressed.setAccessible(true);
-            }
+            ensureHavePressed();
             fieldPressed.set(binding, pressed);
 
-            if (fieldPressTime == null) {
-                fieldPressTime = KeyBinding.class.getDeclaredField("pressTime");
-                fieldPressTime.setAccessible(true);
-            }
+            ensureHavePressTime();
             fieldPressTime.set(binding, time);
 
         } catch (NoSuchFieldException e) {
@@ -85,10 +104,7 @@ public class KeyBindingInterceptor extends KeyBinding {
 
     private static void setPressTime(KeyBinding binding, int time) {
         try {
-            if (fieldPressTime == null) {
-                fieldPressTime = KeyBinding.class.getDeclaredField("pressTime");
-                fieldPressTime.setAccessible(true);
-            }
+            ensureHavePressTime();
             fieldPressTime.set(binding, time);
 
         } catch (NoSuchFieldException e) {
@@ -100,10 +116,7 @@ public class KeyBindingInterceptor extends KeyBinding {
 
     private static boolean getPressed(KeyBinding binding) {
         try {
-            if (fieldPressed == null) {
-                fieldPressed = KeyBinding.class.getDeclaredField("pressed");
-                fieldPressed.setAccessible(true);
-            }
+            ensureHavePressed();
             return (Boolean) fieldPressed.get(binding);
 
         } catch (NoSuchFieldException e) {
@@ -116,10 +129,7 @@ public class KeyBindingInterceptor extends KeyBinding {
 
     private static int getPressTime(KeyBinding binding) {
         try {
-            if (fieldPressTime == null) {
-                fieldPressTime = KeyBinding.class.getDeclaredField("pressTime");
-                fieldPressTime.setAccessible(true);
-            }
+            ensureHavePressTime();
             return (Integer) fieldPressTime.get(binding);
 
         } catch (NoSuchFieldException e) {

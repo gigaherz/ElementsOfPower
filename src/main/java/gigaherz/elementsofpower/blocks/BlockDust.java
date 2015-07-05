@@ -1,13 +1,12 @@
 package gigaherz.elementsofpower.blocks;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockGrass;
-import net.minecraft.block.BlockTallGrass;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
@@ -71,14 +70,48 @@ public class BlockDust extends Block {
     @Override
     public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
     {
-        int density = (Integer)state.getValue(DENSITY);
-        if(density == 1)
+        int density = (Integer)state.getValue(DENSITY) - 1;
+        int maxGive = (int)Math.sqrt(density);
+
+        for(EnumFacing f : EnumFacing.VALUES) {
+            BlockPos bp = pos.offset(f);
+            IBlockState neighbour = worldIn.getBlockState(bp);
+            if (neighbour.getBlock() == Blocks.air
+                    || neighbour.getBlock() == Blocks.fire) {
+                boolean given = false;
+                if (density > maxGive) {
+                    int d = rand.nextInt(maxGive);
+                    if(d > 0) {
+                        worldIn.setBlockState(bp, getDefaultState().withProperty(DENSITY, d));
+                        density-=d;
+                        given = true;
+                    }
+                }
+
+                if(!given)
+                    worldIn.setBlockToAir(bp);
+            }
+            else  if (neighbour.getBlock() == this) {
+                if (density > maxGive) {
+                    int od = (Integer)neighbour.getValue(DENSITY);
+                    if(od < 16) {
+                        int d = rand.nextInt(Math.min(16 - od, maxGive));
+                        if (d > 0) {
+                            worldIn.setBlockState(bp, getDefaultState().withProperty(DENSITY, od + d));
+                            density -= d;
+                        }
+                    }
+                }
+            }
+        }
+
+        if(density <= 0)
         {
             worldIn.setBlockToAir(pos);
         }
         else
         {
-            worldIn.setBlockState(pos, state.withProperty(DENSITY, density - 1));
+            worldIn.setBlockState(pos, state.withProperty(DENSITY, density));
         }
 
         worldIn.scheduleUpdate(pos, this, rand.nextInt(10));

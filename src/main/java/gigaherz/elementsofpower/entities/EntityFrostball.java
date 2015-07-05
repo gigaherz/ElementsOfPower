@@ -1,35 +1,34 @@
 package gigaherz.elementsofpower.entities;
 
+import gigaherz.elementsofpower.ElementsOfPower;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDynamicLiquid;
-import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.BlockSnow;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.monster.EntityBlaze;
-import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemSnow;
-import net.minecraft.util.*;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.world.World;
 
 public class EntityFrostball extends EntityBallBase {
 
     public EntityFrostball(World worldIn)
     {
-        super(worldIn);
+        super(ElementsOfPower.air, worldIn);
     }
     public EntityFrostball(World worldIn, EntityLivingBase p_i1774_2_)
     {
-        super(worldIn, p_i1774_2_);
+        super(ElementsOfPower.air, worldIn, p_i1774_2_);
     }
     public EntityFrostball(World worldIn, double x, double y, double z)
     {
-        super(worldIn, x, y, z);
+        super(ElementsOfPower.air, worldIn, x, y, z);
     }
     public EntityFrostball(World worldIn, int force, EntityLivingBase p_i1774_2_)
     {
-        super(worldIn, force, p_i1774_2_);
+        super(ElementsOfPower.air, worldIn, force, p_i1774_2_);
     }
 
     @Override

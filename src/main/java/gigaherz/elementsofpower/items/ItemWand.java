@@ -1,10 +1,10 @@
 package gigaherz.elementsofpower.items;
 
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.client.GuiOverlayMagicContainer;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.database.MagicDatabase;
 import gigaherz.elementsofpower.database.SpellManager;
-import gigaherz.elementsofpower.client.GuiOverlayMagicContainer;
 import gigaherz.elementsofpower.network.SpellSequenceUpdate;
 import gigaherz.elementsofpower.spells.ISpellEffect;
 import net.minecraft.client.Minecraft;
@@ -16,6 +16,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
@@ -37,7 +38,7 @@ public class ItemWand extends ItemMagicContainer {
             false, false, false, true
     };
 
-    private boolean isCreative(ItemStack stack)
+    public boolean isCreative(ItemStack stack)
     {
         int dmg = stack.getItemDamage();
         if (dmg > areCreative.length)
@@ -87,6 +88,10 @@ public class ItemWand extends ItemMagicContainer {
 
     @Override
     public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
+        if (player.isSneaking())
+        {
+            stack.getTagCompound().removeTag(SPELL_SEQUENCE_TAG);
+        }
         player.setItemInUse(stack, this.getMaxItemUseDuration(stack));
         if (world.isRemote) {
             int slot = Minecraft.getMinecraft().thePlayer.inventory.currentItem;

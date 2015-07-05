@@ -3,34 +3,30 @@ package gigaherz.elementsofpower.entities;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.blocks.BlockDust;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockDynamicLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.monster.EntityBlaze;
-import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemSnow;
-import net.minecraft.util.*;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.BlockFluidBase;
 
-public class EntityEarthball extends EntityBallBase {
+public class EntityDustball extends EntityBallBase {
 
-    public EntityEarthball(World worldIn)
+    public EntityDustball(World worldIn)
     {
-        super(worldIn);
+        super(ElementsOfPower.earth, worldIn);
     }
-    public EntityEarthball(World worldIn, EntityLivingBase p_i1774_2_)
+    public EntityDustball(World worldIn, EntityLivingBase p_i1774_2_)
     {
-        super(worldIn, p_i1774_2_);
+        super(ElementsOfPower.earth, worldIn, p_i1774_2_);
     }
-    public EntityEarthball(World worldIn, double x, double y, double z)
+    public EntityDustball(World worldIn, double x, double y, double z)
     {
-        super(worldIn, x, y, z);
+        super(ElementsOfPower.earth, worldIn, x, y, z);
     }
-    public EntityEarthball(World worldIn, int force, EntityLivingBase p_i1774_2_)
+    public EntityDustball(World worldIn, int force, EntityLivingBase p_i1774_2_)
     {
-        super(worldIn, force, p_i1774_2_);
+        super(ElementsOfPower.earth, worldIn, force, p_i1774_2_);
     }
 
     @Override

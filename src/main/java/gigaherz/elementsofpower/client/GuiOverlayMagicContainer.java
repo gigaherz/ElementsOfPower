@@ -1,6 +1,6 @@
 package gigaherz.elementsofpower.client;
 
-import gigaherz.elementsofpower.*;
+import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.database.MagicDatabase;
 import gigaherz.elementsofpower.database.SpellManager;

@@ -245,10 +245,10 @@ public class MagicDatabase {
             return null;
         }
 
-        if (output.getItem() instanceof ItemWand) {
-            int meta = output.getMetadata();
-            if (meta == 3 || meta == 7)
-                return null;
+        Item item = output.getItem();
+        if (item instanceof ItemWand) {
+            if(((ItemWand)item).isCreative(output))
+                return output;
         }
 
         if (amounts != null) {

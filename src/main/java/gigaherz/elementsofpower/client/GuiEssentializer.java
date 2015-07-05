@@ -38,37 +38,6 @@ public class GuiEssentializer extends GuiContainer {
         this.drawTexturedModalRect(x, y, 0, 0, xSize, ySize);
     }
 
-    /*@Override
-    protected void drawSlotInventory(Slot slot)
-    {
-        super.drawSlotInventory(slot);
-
-        if (!(slot instanceof SlotMagic))
-        {
-            return;
-        }
-
-        int x = slot.xDisplayPosition;
-        int y = slot.yDisplayPosition;
-        ItemStack stack = slot.getStack();
-        this.zLevel = 102.0F;
-        itemRenderer.zLevel = 102.0F;
-        int num = tile.getInputEssencesOfType(slot.slotNumber);
-
-        if (num > 0)
-        {
-            String text = "" + num;
-            GL11.glDisable(GL11.GL_LIGHTING);
-            GL11.glDisable(GL11.GL_DEPTH_TEST);
-            this.fontRenderer.drawStringWithShadow(text, x - 2, y - 2, 0xFFEE66);
-            GL11.glEnable(GL11.GL_LIGHTING);
-            GL11.glEnable(GL11.GL_DEPTH_TEST);
-        }
-
-        itemRenderer.zLevel = 0.0F;
-        this.zLevel = 0.0F;
-    }*/
-
     /**
      * Called when the mouse is clicked.
      */

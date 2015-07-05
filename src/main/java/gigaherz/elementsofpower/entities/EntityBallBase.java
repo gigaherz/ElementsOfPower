@@ -1,48 +1,55 @@
 package gigaherz.elementsofpower.entities;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockDynamicLiquid;
-import net.minecraft.block.BlockLiquid;
-import net.minecraft.block.BlockSnow;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.monster.EntityBlaze;
 import net.minecraft.entity.projectile.EntityThrowable;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemSnow;
-import net.minecraft.util.*;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
-public abstract class EntityBallBase extends EntityThrowable implements IVariableSize {
+public abstract class EntityBallBase extends EntityThrowable implements IVariableSize, IRenderStackProvider {
 
     public int damageForce;
+    private ItemStack stackForRendering;
 
-    public EntityBallBase(World worldIn)
+    public EntityBallBase(ItemStack stack, World worldIn)
     {
         super(worldIn);
+        stackForRendering = stack;
     }
 
-    public EntityBallBase(World worldIn, EntityLivingBase p_i1774_2_)
+    public EntityBallBase(ItemStack stack, World worldIn, EntityLivingBase p_i1774_2_)
     {
         super(worldIn, p_i1774_2_);
+        stackForRendering = stack;
     }
 
-    public EntityBallBase(World worldIn, double x, double y, double z)
+    public EntityBallBase(ItemStack stack, World worldIn, double x, double y, double z)
     {
         super(worldIn, x, y, z);
+        stackForRendering = stack;
     }
 
-    public EntityBallBase(World worldIn, int force, EntityLivingBase p_i1774_2_)
+    public EntityBallBase(ItemStack stack, World worldIn, int force, EntityLivingBase p_i1774_2_)
     {
         super(worldIn, p_i1774_2_);
         damageForce = force;
+        stackForRendering = stack;
+    }
+
+    public ItemStack getStackForRendering()
+    {
+        return stackForRendering;
     }
 
     @Override
     protected float getGravityVelocity()
     {
-        return 0.0F;
+        return 0.001F;
     }
 
     protected float getRandomForParticle()
@@ -53,6 +60,8 @@ public abstract class EntityBallBase extends EntityThrowable implements IVariabl
     @Override
     protected void onImpact(MovingObjectPosition pos)
     {
+        int force = getDamageForce();
+
         if (pos.entityHit != null)
         {
             processDirectHit(pos.entityHit);
@@ -60,7 +69,9 @@ public abstract class EntityBallBase extends EntityThrowable implements IVariabl
 
         spawnBallParticles();
 
-        if(!worldObj.isRemote && damageForce > 0) {
+        processEntitiesAroundBefore(pos.hitVec);
+
+        if(!worldObj.isRemote && force > 0) {
             BlockPos bp = pos.getBlockPos();
 
             if(bp != null) {
@@ -82,20 +93,20 @@ public abstract class EntityBallBase extends EntityThrowable implements IVariabl
             int px = bp.getX();
             int py = bp.getY();
             int pz = bp.getZ();
-            for (int z = pz - damageForce; z <= pz + damageForce; z++) {
-                for (int x = px - damageForce; x <= px + damageForce; x++) {
-                    for (int y = py - damageForce; y <= py + damageForce; y++) {
+            for (int z = pz - force; z <= pz + force; z++) {
+                for (int x = px - force; x <= px + force; x++) {
+                    for (int y = py - force; y <= py + force; y++) {
                         float dx = Math.abs(px - x);
                         float dy = Math.abs(py - y);
                         float dz = Math.abs(pz - z);
                         float r2 = (dx * dx + dy * dy + dz * dz);
-                        boolean in_sphere = r2 <= (damageForce * damageForce);
+                        boolean in_sphere = r2 <= (force * force);
                         if (!in_sphere)
                             continue;
 
                         float r = (float) Math.sqrt(r2);
 
-                        int layers = (int)Math.min(damageForce - r, 7);
+                        int layers = (int)Math.min(force - r, 7);
 
                         BlockPos np = new BlockPos(x, y, z);
 
@@ -107,7 +118,7 @@ public abstract class EntityBallBase extends EntityThrowable implements IVariabl
             }
         }
 
-        processEntitiesAround(pos.hitVec);
+        processEntitiesAroundAfter(pos.hitVec);
 
         if (!this.worldObj.isRemote)
         {
@@ -117,7 +128,8 @@ public abstract class EntityBallBase extends EntityThrowable implements IVariabl
 
     protected void processDirectHit(Entity entityHit) {}
 
-    protected void processEntitiesAround(Vec3 hitVec) {}
+    protected void processEntitiesAroundBefore(Vec3 hitVec) {}
+    protected void processEntitiesAroundAfter(Vec3 hitVec) {}
 
     protected abstract void processBlockWithinRadius(BlockPos blockPos, IBlockState currentState, int layers);
 
@@ -126,5 +138,9 @@ public abstract class EntityBallBase extends EntityThrowable implements IVariabl
     @Override
     public float getScale() {
         return 0.25f * (1+damageForce);
+    }
+
+    public int getDamageForce() {
+        return damageForce;
     }
 }

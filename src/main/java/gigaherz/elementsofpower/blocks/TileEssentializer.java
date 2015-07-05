@@ -24,8 +24,6 @@ public class TileEssentializer
 
     private ItemStack[] inventory;
 
-    boolean stateChanged = false;
-
     public TileEssentializer() {
         super();
         // 0..7: magics
@@ -249,147 +247,91 @@ public class TileEssentializer
         return index == 9;
     }
 
-    public void updateProgressBar(int bar, int value) {
-        if (bar == 0) {
-            convertInput();
-        } else if (bar == 1) {
-            addMagicToOutput(value);
-        }
-    }
-
     @Override
     public void update() {
-        convertInput();
-        addMagicToOutput(1);
+        if(!worldObj.isRemote) {
+            boolean b1 = convertInput();
+            boolean b2 = addMagicToOutput();
+            if(b1 || b2)
+                worldObj.markBlockForUpdate(getPos());
+        }
     }
 
-    public int getInputEssencesOfType(int type) {
-        ItemStack inputItem = inventory[8];
-
-        if (inputItem == null) {
-            return 0;
-        }
-
-        MagicAmounts amounts = MagicDatabase.getContainedMagic(inputItem);
-
-        if (amounts == null) {
-            amounts = MagicDatabase.getEssences(inputItem);
-
-            if (amounts == null) {
-                return 0;
-            }
-        }
-
-        return amounts.getAmountOfType(type);
-    }
-
-    public void convertInput() {
+    public boolean convertInput() {
         ItemStack input = inventory[8];
 
         if (input == null) {
-            return;
+            return false;
         }
 
         if (MagicDatabase.itemContainsMagic(input)) {
             MagicAmounts amounts = MagicDatabase.getContainedMagic(input);
 
-            if (amounts == null) {
-                return;
+            if (amounts == null)
+                return false;
+
+            boolean inserted = false;
+            for(int i=0;i<8;i++)
+            {
+                if(amounts.amounts[i] > 0
+                        && getMagicContainedOfType(i) < MaxEssentializerMagic) {
+                    addMagicOfType(i, 1);
+                    amounts.amounts[i]--;
+                    inserted = true;
+                }
             }
 
-            if (!tryAddAmountsToTile(amounts)) {
-                return;
-            }
+            if(!inserted)
+                return false;
 
-            inventory[8] = MagicDatabase.setContainedMagic(input, null);
+            if(amounts.getTotalMagic() == 0)
+                amounts = null;
+
+            inventory[8] = MagicDatabase.setContainedMagic(input, amounts);
+
         } else {
             MagicAmounts amounts = MagicDatabase.getEssences(input);
 
-            if (amounts == null) {
-                return;
-            }
+            if (amounts == null)
+                return false;
 
-            if (!tryAddAmountsToTile(amounts)) {
-                return;
-            }
+            if(amounts.isEmpty())
+                return false;
+
+            if (!tryAddAllToTile(amounts))
+                return false;
 
             input.stackSize--;
 
-            if (input.stackSize <= 0) {
+            if (input.stackSize <= 0)
                 inventory[8] = null;
-            }
-        }
-
-        this.stateChanged = true;
-    }
-
-    private boolean tryAddAmountsToTile(MagicAmounts amounts) {
-        int[] am = amounts.amounts;
-
-        // test if we can truly add the magic
-        for (int i = 0; i < 8; i++) {
-            int amount = am[i];
-
-            if (amount > 0) {
-                continue;
-            }
-
-            ItemStack magic = inventory[i];
-
-            if (magic == null) {
-                continue;
-            }
-
-            if (magic.stackSize + amount > MaxEssentializerMagic) {
-                return false;
-            }
-        }
-
-        // we can, add it
-        for (int i = 0; i < 8; i++) {
-            int amount = am[i];
-
-            if (amount == 0) {
-                continue;
-            }
-
-            addMagicOfType(i, amount);
         }
 
         return true;
     }
 
-    private void addMagicOfType(int type, int amount) {
-        ItemStack magic = inventory[type];
-
-        if (magic == null) {
-            inventory[type] = new ItemStack(ElementsOfPower.magicOrb, amount, type);
-        } else {
-            magic.stackSize += amount;
-        }
-    }
-
-    public void addMagicToOutput(int slot) {
+    public boolean addMagicToOutput() {
         ItemStack output = inventory[9];
 
         if (output == null) {
-            return;
+            return false ;
         }
 
         if (output.stackSize != 1) {
-            return;
+            return false;
         }
 
         MagicAmounts limits = MagicDatabase.getMagicLimits(output);
         MagicAmounts amounts = MagicDatabase.getContainedMagic(output);
 
         if (limits == null)
-            return;
+            return false;
 
         if (amounts == null) {
             amounts = new MagicAmounts();
         }
 
+        int added = 0;
         for (int i = 0; i < 8; i++) {
             ItemStack magic = inventory[i];
 
@@ -412,9 +354,55 @@ public class TileEssentializer
             }
 
             amounts.amounts[i] += transfer;
+            added += transfer;
         }
 
+        if(added == 0)
+            return false;
+
         inventory[9] = MagicDatabase.setContainedMagic(output, amounts);
+        return true;
     }
 
+    private boolean tryAddAllToTile(MagicAmounts amounts) {
+        int[] am = amounts.amounts;
+
+        // test if we can truly add the magic
+        for (int i = 0; i < 8; i++) {
+            int amount = am[i];
+
+            if (amount == 0)
+                continue;
+
+            if (getMagicContainedOfType(i) + amount > MaxEssentializerMagic) {
+                return false;
+            }
+        }
+
+        // we can, add it
+        for (int i = 0; i < 8; i++) {
+            int amount = am[i];
+
+            if (amount == 0)
+                continue;
+
+            addMagicOfType(i, amount);
+        }
+
+        return true;
+    }
+
+    private int getMagicContainedOfType(int i) {
+        return inventory[i] != null ? inventory[i].stackSize : 0;
+    }
+
+    private void addMagicOfType(int type, int amount) {
+        ItemStack magic = inventory[type];
+
+        if (magic == null) {
+            inventory[type] = new ItemStack(ElementsOfPower.magicOrb, amount, type);
+        } else {
+            magic.stackSize += amount;
+        }
+    }
 }

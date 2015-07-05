@@ -1,22 +1,18 @@
 package gigaherz.elementsofpower.entities;
 
+import gigaherz.elementsofpower.ElementsOfPower;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDynamicLiquid;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.monster.EntityBlaze;
-import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemBucket;
-import net.minecraft.item.ItemSnow;
-import net.minecraft.util.*;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.BlockFluidBase;
-import net.minecraftforge.fluids.BlockFluidFinite;
 
 import java.util.List;
 
@@ -24,23 +20,23 @@ public class EntityAirball extends EntityBallBase {
 
     public EntityAirball(World worldIn)
     {
-        super(worldIn);
+        super(ElementsOfPower.air, worldIn);
     }
     public EntityAirball(World worldIn, EntityLivingBase p_i1774_2_)
     {
-        super(worldIn, p_i1774_2_);
+        super(ElementsOfPower.air, worldIn, p_i1774_2_);
     }
     public EntityAirball(World worldIn, double x, double y, double z)
     {
-        super(worldIn, x, y, z);
+        super(ElementsOfPower.air, worldIn, x, y, z);
     }
     public EntityAirball(World worldIn, int force, EntityLivingBase p_i1774_2_)
     {
-        super(worldIn, force, p_i1774_2_);
+        super(ElementsOfPower.air, worldIn, force, p_i1774_2_);
     }
 
     @Override
-    protected void processEntitiesAround(Vec3 hitVec) {
+    protected void processEntitiesAroundBefore(Vec3 hitVec) {
 
         AxisAlignedBB aabb = new AxisAlignedBB(
                 hitVec.xCoord-damageForce,
@@ -114,6 +110,11 @@ public class EntityAirball extends EntityBallBase {
             if((Integer)currentState.getValue(BlockDynamicLiquid.LEVEL) > 0) {
                 worldObj.setBlockToAir(blockPos);
             }
+        }
+        else if(!block.getMaterial().blocksMovement() && !block.getMaterial().isLiquid())
+        {
+            block.dropBlockAsItem(worldObj, blockPos, currentState, 0);
+            worldObj.setBlockToAir(blockPos);
         }
     }
 }

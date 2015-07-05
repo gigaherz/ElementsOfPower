@@ -9,7 +9,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 public class ContainerEssentializer
@@ -91,7 +90,6 @@ public class ContainerEssentializer
         stackCopy = stack.copy();
 
         if (slotIndex >= 10) {
-            Item item = stack.getItem();
             boolean itemIsContainer = MagicDatabase.canItemContainMagic(stack);
             boolean itemContainsMagic = itemIsContainer && MagicDatabase.itemContainsMagic(stack);
             boolean itemHasEssence = MagicDatabase.itemHasEssence(stack);

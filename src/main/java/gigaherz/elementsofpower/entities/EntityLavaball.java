@@ -6,30 +6,29 @@ import net.minecraft.block.BlockDynamicLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemBucket;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.world.World;
 
-public class EntityWaterball extends EntityBallBase {
-
+public class EntityLavaball extends EntityBallBase
+{
     boolean spawnSourceBlocks;
 
-    public EntityWaterball(World worldIn)
+    public EntityLavaball(World worldIn)
     {
-        super(ElementsOfPower.water, worldIn);
+        super(ElementsOfPower.fire, worldIn);
     }
-    public EntityWaterball(World worldIn, EntityLivingBase p_i1774_2_)
+    public EntityLavaball(World worldIn, EntityLivingBase p_i1774_2_)
     {
-        super(ElementsOfPower.water, worldIn, p_i1774_2_);
+        super(ElementsOfPower.fire, worldIn, p_i1774_2_);
     }
-    public EntityWaterball(World worldIn, double x, double y, double z)
+    public EntityLavaball(World worldIn, double x, double y, double z)
     {
-        super(ElementsOfPower.water, worldIn, x, y, z);
+        super(ElementsOfPower.fire, worldIn, x, y, z);
     }
-    public EntityWaterball(World worldIn, int force, boolean spawnSourceBlocks, EntityLivingBase p_i1774_2_)
+    public EntityLavaball(World worldIn, int force, boolean spawnSourceBlocks, EntityLivingBase p_i1774_2_)
     {
-        super(ElementsOfPower.water, worldIn, force, p_i1774_2_);
+        super(ElementsOfPower.fire, worldIn, force, p_i1774_2_);
         this.spawnSourceBlocks = spawnSourceBlocks;
     }
 
@@ -50,11 +49,11 @@ public class EntityWaterball extends EntityBallBase {
 
         if (block == Blocks.air) {
             if(spawnSourceBlocks) {
-                worldObj.setBlockState(blockPos, Blocks.flowing_water.getDefaultState().withProperty(BlockDynamicLiquid.LEVEL, 0));
+                worldObj.setBlockState(blockPos, Blocks.flowing_lava.getDefaultState().withProperty(BlockDynamicLiquid.LEVEL, 0));
             }
             else
             {
-                worldObj.setBlockState(blockPos, Blocks.flowing_water.getDefaultState().withProperty(BlockDynamicLiquid.LEVEL, 15));
+                worldObj.setBlockState(blockPos, Blocks.flowing_lava.getDefaultState().withProperty(BlockDynamicLiquid.LEVEL, 15));
             }
         }
     }
@@ -63,7 +62,7 @@ public class EntityWaterball extends EntityBallBase {
         int sub = 0;
         if (worldObj.provider.doesWaterVaporize())
         {
-            sub = 3;
+            sub = -1;
         }
         return Math.max(super.getDamageForce() - sub, 0);
     }

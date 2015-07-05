@@ -37,17 +37,6 @@ public class ElementsOfPower {
 
     public static final String CHANNEL = "ElementsOfPower";
 
-    private final static int firstItemId = 24400;
-    private final static int firstBlockId = 2450;
-
-    private final static int defaultEssentializerId = firstBlockId + 1;
-    private final static int defaultMagicOrbId = firstItemId + 1;
-    private static final int defaultLapisContainerId = firstItemId + 2;
-    private static final int defaultEmeraldContainerId = firstItemId + 3;
-    private static final int defaultDiamondContainerId = firstItemId + 4;
-    private static final int defaultWandId = firstItemId + 5;
-    private static final int defaultStaffId = firstItemId + 6;
-
     // Block templates
     public static Block essentializer;
     public static Block dust;
@@ -158,11 +147,13 @@ public class ElementsOfPower {
     public void init(FMLInitializationEvent event) {
 
         int entityId = 1;
+        EntityRegistry.registerModEntity(EntityAirball.class, "Airball", entityId++, this, 80, 3, true);
+        EntityRegistry.registerModEntity(EntityDustball.class, "Earthball", entityId++, this, 80, 3, true);
+        EntityRegistry.registerModEntity(EntityLavaball.class, "Lavaball", entityId++, this, 80, 3, true);
+        EntityRegistry.registerModEntity(EntityLifeball.class, "Lifeball", entityId++, this, 80, 3, true);
         EntityRegistry.registerModEntity(EntityFrostball.class, "Frostball", entityId++, this, 80, 3, true);
         EntityRegistry.registerModEntity(EntityWaterball.class, "Waterball", entityId++, this, 80, 3, true);
         EntityRegistry.registerModEntity(EntityFlameball.class, "Flameball", entityId++, this, 80, 3, true);
-        EntityRegistry.registerModEntity(EntityAirball.class, "Airball", entityId++, this, 80, 3, true);
-        EntityRegistry.registerModEntity(EntityEarthball.class, "Earthball", entityId, this, 80, 3, true);
 
         proxy.registerRenderers();
 
