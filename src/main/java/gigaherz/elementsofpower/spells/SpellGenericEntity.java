@@ -3,9 +3,11 @@ package gigaherz.elementsofpower.spells;
 
 import gigaherz.elementsofpower.entities.EntityBallBase;
 import gigaherz.elementsofpower.entities.EntityWaterball;
+import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ReportedException;
 import net.minecraft.world.World;
 
 public class SpellGenericEntity
@@ -29,7 +31,7 @@ public class SpellGenericEntity
         }
         catch(ReflectiveOperationException e)
         {
-            e.printStackTrace();
+            throw new ReportedException(new CrashReport("Exception spawning Spell Entity", e));
         }
     }
 }

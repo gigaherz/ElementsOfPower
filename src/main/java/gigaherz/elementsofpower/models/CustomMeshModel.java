@@ -8,8 +8,10 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.client.resources.model.ModelManager;
+import net.minecraft.crash.CrashReport;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.*;
 import org.apache.commons.lang3.tuple.Pair;
@@ -46,7 +48,7 @@ public class CustomMeshModel
             generalQuads.clear();
             sourceMesh = new MeshLoader().loadFromResource(model);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new ReportedException(new CrashReport("Exception loading custom Model", e));
         }
     }
 

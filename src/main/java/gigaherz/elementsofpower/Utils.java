@@ -40,11 +40,9 @@ public class Utils {
                 if (subBlocks.size() == 0)
                     continue;
 
-
                 for (ItemStack is : subBlocks) {
                     if(is.getItem() == null)
                     {
-                        System.out.println("WTF NULL ITEM?!");
                         continue;
                     }
                     out.write(is.getUnlocalizedName());

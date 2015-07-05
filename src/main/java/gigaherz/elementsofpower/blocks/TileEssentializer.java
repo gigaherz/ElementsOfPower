@@ -55,7 +55,7 @@ public class TileEssentializer
     @Override
     public ItemStack getStackInSlot(int slotIndex) {
         if (slotIndex >= this.inventory.length) {
-            System.out.println("Tried to access slot " + slotIndex);
+            ElementsOfPower.logger.debug("Tried to access slot " + slotIndex);
             return null;
         }
 

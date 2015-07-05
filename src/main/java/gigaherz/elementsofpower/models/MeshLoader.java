@@ -1,6 +1,7 @@
 package gigaherz.elementsofpower.models;
 
 import com.google.common.base.Charsets;
+import gigaherz.elementsofpower.ElementsOfPower;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.util.ResourceLocation;
@@ -159,10 +160,9 @@ public class MeshLoader {
                 addFace(data);
             } else {
                 if (!unknownCommands.contains(keyword)) {
-                    System.out.println("Unrecognized command: " + currentLine);
+                    ElementsOfPower.logger.warn("Unrecognized command: " + currentLine);
                     unknownCommands.add(keyword);
                 }
-                continue;
             }
         }
 

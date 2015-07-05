@@ -120,9 +120,13 @@ class MaterialLibrary
                 currentMaterial.DisplacementMap = data;
             } else if (keyword.equalsIgnoreCase("decal")) {
                 currentMaterial.StencilDecalMap = data;
+            } else if (keyword.equalsIgnoreCase("Tf")) {
+                // Unhandled
+            } else if (keyword.equalsIgnoreCase("d")) {
+                // Unhandled
             } else {
                 if (!unknownCommands.contains(keyword)) {
-                    System.out.println("Unrecognized command: " + currentLine);
+                    ElementsOfPower.logger.warn("Unrecognized command: " + currentLine);
                     unknownCommands.add(keyword);
                 }
                 continue;

@@ -6,7 +6,9 @@ import net.minecraft.client.renderer.block.model.ModelBlock;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.model.ModelManager;
+import net.minecraft.crash.CrashReport;
 import net.minecraft.util.IRegistry;
+import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -172,7 +174,7 @@ public class ModelRegistrationHelper {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new ReportedException(new CrashReport("Exception loading custom Model", e));
         }
 
         return modelblock;

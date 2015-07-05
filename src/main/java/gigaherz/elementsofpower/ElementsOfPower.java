@@ -27,6 +27,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
+import org.apache.logging.log4j.Logger;
 
 
 @Mod(modid = ElementsOfPower.MODID, name = ElementsOfPower.MODNAME, version = ElementsOfPower.VERSION)
@@ -83,6 +84,8 @@ public class ElementsOfPower {
 
     private GuiHandler guiHandler = new GuiHandler();
 
+    public static Logger logger;
+
     public static final CreativeTabs tabMagic = new CreativeTabs(MODID.toLowerCase()) {
         @Override
         public Item getTabIconItem() {
@@ -97,6 +100,7 @@ public class ElementsOfPower {
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
+        logger = event.getModLog();
 
         modelRegistrationHelper = new ModelRegistrationHelper();
 
