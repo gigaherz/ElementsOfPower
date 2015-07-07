@@ -1,4 +1,4 @@
-package gigaherz.elementsofpower.render;
+package gigaherz.elementsofpower.client.render;
 
 import gigaherz.elementsofpower.entities.IVariableSize;
 import net.minecraft.client.renderer.GlStateManager;

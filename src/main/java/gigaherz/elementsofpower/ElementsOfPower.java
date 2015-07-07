@@ -214,7 +214,6 @@ public class ElementsOfPower {
 
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) {
-        // Stub Method
         MagicDatabase.postInitialize();
     }
 }

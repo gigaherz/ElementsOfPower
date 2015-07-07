@@ -1,6 +1,7 @@
 package gigaherz.elementsofpower.models;
 
 import com.google.common.base.Charsets;
+import gigaherz.elementsofpower.ElementsOfPower;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelBlock;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -77,62 +78,41 @@ public class ModelRegistrationHelper {
             ModelManager modelManager,
             IRegistry modelRegistry) {
 
-        for (Map.Entry<ResourceLocation, IFlexibleBakedModel> entry : itemsToInject.entrySet()) {
+        processModelSet(modelManager, modelRegistry, "item/", itemsToInject);
+        processModelSet(modelManager, modelRegistry, "block/", blocksToInject);
+    }
+
+    private void processModelSet(ModelManager modelManager, IRegistry modelRegistry, String prefix, Map<ResourceLocation, IFlexibleBakedModel> map) {
+        for (Map.Entry<ResourceLocation, IFlexibleBakedModel> entry : map.entrySet()) {
 
             ResourceLocation loc = entry.getKey();
             IFlexibleBakedModel model = entry.getValue();
 
             if (model instanceof IInitializeBakedModel) {
+                ResourceLocation icon = new ResourceLocation(loc.getResourceDomain(), prefix + loc.getResourcePath());
 
-                IInitializeBakedModel initializeModel = (IInitializeBakedModel) model;
-
-                TRSRTransformation thirdPerson = TRSRTransformation.identity();
-                TRSRTransformation firstPerson = TRSRTransformation.identity();
-                TRSRTransformation head = TRSRTransformation.identity();
-                TRSRTransformation gui = TRSRTransformation.identity();
-
-                ResourceLocation icon = new ResourceLocation(loc.getResourceDomain(), "item/" + loc.getResourcePath());
-                ModelBlock modelblock = loadModelResource(icon);
-                if (modelblock != null) {
-                    thirdPerson = new net.minecraftforge.client.model.TRSRTransformation(modelblock.getThirdPersonTransform());
-                    firstPerson = new net.minecraftforge.client.model.TRSRTransformation(modelblock.getFirstPersonTransform());
-                    head = new net.minecraftforge.client.model.TRSRTransformation(modelblock.getHeadTransform());
-                    gui = new net.minecraftforge.client.model.TRSRTransformation(modelblock.getInGuiTransform());
-                }
-
-                initializeModel.initialize(thirdPerson, firstPerson, head, gui, icon, modelManager);
+                initializeTransforms(modelManager, (IInitializeBakedModel) model, icon);
             }
 
             modelRegistry.putObject(loc, model);
         }
+    }
 
-        for (Map.Entry<ResourceLocation, IFlexibleBakedModel> entry : blocksToInject.entrySet()) {
+    private void initializeTransforms(ModelManager modelManager, IInitializeBakedModel initializeModel, ResourceLocation modelTransformLocation) {
+        TRSRTransformation thirdPerson = TRSRTransformation.identity();
+        TRSRTransformation firstPerson = TRSRTransformation.identity();
+        TRSRTransformation head = TRSRTransformation.identity();
+        TRSRTransformation gui = TRSRTransformation.identity();
 
-            ResourceLocation loc = entry.getKey();
-            IFlexibleBakedModel model = entry.getValue();
-
-            if (model instanceof IInitializeBakedModel) {
-                IInitializeBakedModel initializeModel = (IInitializeBakedModel) model;
-
-                TRSRTransformation thirdPerson = TRSRTransformation.identity();
-                TRSRTransformation firstPerson = TRSRTransformation.identity();
-                TRSRTransformation head = TRSRTransformation.identity();
-                TRSRTransformation gui = TRSRTransformation.identity();
-
-                ResourceLocation icon = new ResourceLocation(loc.getResourceDomain(), "block/" + loc.getResourcePath());
-                ModelBlock modelblock = loadModelResource(icon);
-                if (modelblock != null) {
-                    thirdPerson = new net.minecraftforge.client.model.TRSRTransformation(modelblock.getThirdPersonTransform());
-                    firstPerson = new net.minecraftforge.client.model.TRSRTransformation(modelblock.getFirstPersonTransform());
-                    head = new net.minecraftforge.client.model.TRSRTransformation(modelblock.getHeadTransform());
-                    gui = new net.minecraftforge.client.model.TRSRTransformation(modelblock.getInGuiTransform());
-                }
-
-                initializeModel.initialize(thirdPerson, firstPerson, head, gui, icon, modelManager);
-            }
-
-            modelRegistry.putObject(loc, model);
+        ModelBlock modelblock = loadModelResource(modelTransformLocation);
+        if (modelblock != null) {
+            thirdPerson = new TRSRTransformation(modelblock.getThirdPersonTransform());
+            firstPerson = new TRSRTransformation(modelblock.getFirstPersonTransform());
+            head = new TRSRTransformation(modelblock.getHeadTransform());
+            gui = new TRSRTransformation(modelblock.getInGuiTransform());
         }
+
+        initializeModel.initialize(thirdPerson, firstPerson, head, gui, modelTransformLocation, modelManager);
     }
 
     protected void registerSprites(TextureMap map, List<ResourceLocation> texturesToRegister) {
@@ -141,8 +121,8 @@ public class ModelRegistrationHelper {
         }
     }
 
-    protected ResourceLocation getModelLocation(ResourceLocation loc) {
-        return new ResourceLocation(loc.getResourceDomain(), "models/" + loc.getResourcePath() + ".json");
+    protected ModelBlock loadModelResource(final ResourceLocation loc) {
+        return loadModelResource(new Hashtable<ResourceLocation, ModelBlock>(), loc);
     }
 
     protected ModelBlock loadModelResource(Map<ResourceLocation, ModelBlock> map, final ResourceLocation loc) {
@@ -180,8 +160,7 @@ public class ModelRegistrationHelper {
         return modelblock;
     }
 
-    protected ModelBlock loadModelResource(final ResourceLocation loc) {
-        return loadModelResource(new Hashtable<ResourceLocation, ModelBlock>(), loc);
+    protected ResourceLocation getModelLocation(ResourceLocation loc) {
+        return new ResourceLocation(loc.getResourceDomain(), "models/" + loc.getResourcePath() + ".json");
     }
-
 }

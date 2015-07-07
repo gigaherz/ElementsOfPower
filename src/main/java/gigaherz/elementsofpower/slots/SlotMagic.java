@@ -1,5 +1,7 @@
 package gigaherz.elementsofpower.slots;
 
+import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RenderEntity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
@@ -19,5 +21,4 @@ public class SlotMagic extends Slot {
     public boolean canTakeStack(EntityPlayer par1EntityPlayer) {
         return false;
     }
-
 }
