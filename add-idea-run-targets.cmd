@@ -1,6 +1,6 @@
 @echo off
 
-set PATH=%PATH%;"C:\Program Files\Java\jdk1.7.0_71\bin"
+set PATH=%PATH%;"C:\Program Files\Java\jdk1.8.0_45\bin"
 
 gradlew genIntellijRuns
 

@@ -37,6 +37,7 @@ public abstract class EntityBallBase extends EntityThrowable implements IVariabl
     public EntityBallBase(ItemStack stack, World worldIn, int force, EntityLivingBase p_i1774_2_)
     {
         super(worldIn, p_i1774_2_);
+        this.addVelocity(0, p_i1774_2_.motionY, 0);
         damageForce = force;
         stackForRendering = stack;
     }
@@ -84,10 +85,7 @@ public abstract class EntityBallBase extends EntityThrowable implements IVariabl
             }
             else
             {
-                bp = new BlockPos(
-                        pos.hitVec.xCoord,
-                        pos.hitVec.yCoord,
-                        pos.hitVec.zCoord);
+                bp = new BlockPos(pos.hitVec);
             }
 
             int px = bp.getX();

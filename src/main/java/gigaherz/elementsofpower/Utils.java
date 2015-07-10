@@ -1,5 +1,7 @@
 package gigaherz.elementsofpower;
 
+import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.model.ModelSheep1;
 import net.minecraft.item.ItemStack;
 
 import java.util.*;

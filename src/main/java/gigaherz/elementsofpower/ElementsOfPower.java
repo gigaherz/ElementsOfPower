@@ -1,8 +1,10 @@
 package gigaherz.elementsofpower;
 
+import gigaherz.elementsofpower.blocks.BlockCushion;
 import gigaherz.elementsofpower.blocks.BlockDust;
 import gigaherz.elementsofpower.blocks.BlockEssentializer;
 import gigaherz.elementsofpower.blocks.TileEssentializer;
+import gigaherz.elementsofpower.blocks.materials.MaterialCushion;
 import gigaherz.elementsofpower.database.MagicDatabase;
 import gigaherz.elementsofpower.entities.*;
 import gigaherz.elementsofpower.items.ItemMagicContainer;
@@ -11,6 +13,9 @@ import gigaherz.elementsofpower.items.ItemWand;
 import gigaherz.elementsofpower.models.ModelRegistrationHelper;
 import gigaherz.elementsofpower.network.SpellSequenceUpdate;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockWeb;
+import net.minecraft.block.material.MapColor;
+import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -32,7 +37,7 @@ import org.apache.logging.log4j.Logger;
 
 @Mod(modid = ElementsOfPower.MODID, name = ElementsOfPower.MODNAME, version = ElementsOfPower.VERSION)
 public class ElementsOfPower {
-    public static final String MODID = "ElementsOfPower";
+    public static final String MODID = "elementsofpower";
     public static final String MODNAME = "Elements Of Power";
     public static final String VERSION = "1.0";
 
@@ -41,6 +46,10 @@ public class ElementsOfPower {
     // Block templates
     public static Block essentializer;
     public static Block dust;
+    public static Block cushion;
+
+    // Block Materials
+    public static Material materialCushion;
 
     // Item templates
     public static ItemMagicOrb magicOrb;
@@ -104,9 +113,8 @@ public class ElementsOfPower {
 
         modelRegistrationHelper = new ModelRegistrationHelper();
 
-        proxy.registerGuiOverlay();
-
-        proxy.registerCustomBakedModels();
+        // Initialize Block Materials
+        materialCushion = new MaterialCushion(MapColor.blackColor);
 
         // Block and Item registration
         magicOrb = new ItemMagicOrb();
@@ -125,6 +133,9 @@ public class ElementsOfPower {
 
         dust = new BlockDust();
         GameRegistry.registerBlock(dust, "dust");
+
+        cushion = new BlockCushion();
+        GameRegistry.registerBlock(cushion, "cushion");
 
         // Template stacks
         wandLapis = magicWand.getStack(1, 0);
@@ -145,10 +156,15 @@ public class ElementsOfPower {
         death = magicOrb.getStack(1, 7);
 
         registerNetworkStuff();
+
+        proxy.registerGuiOverlay();
+        proxy.registerCustomBakedModels();
+        proxy.registerRenderers();
     }
 
     @EventHandler
     public void init(FMLInitializationEvent event) {
+
 
         int entityId = 1;
         EntityRegistry.registerModEntity(EntityAirball.class, "Airball", entityId++, this, 80, 3, true);
@@ -158,8 +174,6 @@ public class ElementsOfPower {
         EntityRegistry.registerModEntity(EntityFrostball.class, "Frostball", entityId++, this, 80, 3, true);
         EntityRegistry.registerModEntity(EntityWaterball.class, "Waterball", entityId++, this, 80, 3, true);
         EntityRegistry.registerModEntity(EntityFlameball.class, "Flameball", entityId++, this, 80, 3, true);
-
-        proxy.registerRenderers();
 
         // Recipes
         GameRegistry.addRecipe(new ItemStack(essentializer, 1),

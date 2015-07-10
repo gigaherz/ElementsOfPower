@@ -14,6 +14,35 @@ public class MagicAmounts {
         amounts = new int[]{fire, water, air, earth, light, darkness, life, death};
     }
 
+    @Override
+    public String toString() {
+
+        if(isEmpty())
+            return "{Empty}";
+
+        StringBuilder b = new StringBuilder();
+        boolean first = true;
+        for (int i = 0; i < 8; i++) {
+            if(amounts[i] == 0)
+                continue;
+
+            if(first)
+                b.append("{");
+            else
+                b.append(", ");
+
+            String magicName = MagicDatabase.getMagicName(i);
+            String str = String.format("%s: %d", magicName, amounts[i]);
+            b.append(str);
+
+            first=false;
+        }
+        b.append("}");
+
+        return b.toString();
+    }
+
+
     public int getTotalMagic() {
         int acc = 0;
 
@@ -102,5 +131,12 @@ public class MagicAmounts {
         }
 
         return this;
+    }
+
+    public void add(MagicAmounts other) {
+        for(int i=0;i<amounts.length;i++)
+        {
+            amounts[i] += other.amounts[i];
+        }
     }
 }

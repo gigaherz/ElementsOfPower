@@ -12,8 +12,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
 public class BlockEssentializer
-        extends Block
-        implements ITileEntityProvider {
+        extends Block {
 
     public BlockEssentializer() {
         super(Material.iron);
@@ -35,7 +34,13 @@ public class BlockEssentializer
         return true;
     }
 
-    public TileEntity createNewTileEntity(World world, int metadata) {
+    @Override
+    public boolean hasTileEntity(IBlockState state) {
+        return true;
+    }
+
+    @Override
+    public TileEntity createTileEntity(World world, IBlockState state) {
         return new TileEssentializer();
     }
 }

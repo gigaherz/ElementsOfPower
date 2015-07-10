@@ -1,11 +1,18 @@
 package gigaherz.elementsofpower.blocks;
 
+import gigaherz.elementsofpower.ElementsOfPower;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockWeb;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.util.AxisAlignedBB;
@@ -17,12 +24,18 @@ import net.minecraft.world.World;
 
 import java.util.Random;
 
-public class BlockDust extends Block {
+public class BlockCushion extends Block {
 
     public static final PropertyInteger DENSITY = PropertyInteger.create("density", 1, 16);
 
-    public BlockDust() {
-        super(Material.clay);
+    public static final double[] slowDown = {
+            1.0, 0.95, 0.9, 0.85,
+            0.8, 0.775, 0.75, 0.725,
+            0.7, 0.6875, 0.675, 0.6625,
+            0.65, 0.6375, 0.625, 0.6125 };
+
+    public BlockCushion() {
+        super(ElementsOfPower.materialCushion);
         setUnlocalizedName("dust");
         setCreativeTab(CreativeTabs.tabMisc);
         setHardness(0.1F);
@@ -38,6 +51,22 @@ public class BlockDust extends Block {
         if(state.getBlock() != this)
             return 16;
         return (Integer)state.getValue(DENSITY);
+    }
+
+    public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn)
+    {
+        double factor = 0.9; //slowDown[(Integer)state.getValue(DENSITY) - 1];
+        entityIn.motionX *= factor;
+        entityIn.motionY *= factor;
+        entityIn.motionZ *= factor;
+
+        double gravity = 0.6;
+
+        // dv = g * t ==> t = dv / g
+        double t = entityIn.motionY / gravity;
+
+        // dx = v0*t + 1/2 * g * t^2
+        entityIn.fallDistance = (float)(0.5 * gravity * t*t);
     }
 
     @Override

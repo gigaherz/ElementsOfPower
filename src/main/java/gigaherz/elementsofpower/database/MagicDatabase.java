@@ -5,18 +5,17 @@ import gigaherz.elementsofpower.Utils;
 import gigaherz.elementsofpower.items.ItemWand;
 import gigaherz.elementsofpower.recipes.RecipeTools;
 import net.minecraft.block.Block;
+import net.minecraft.crash.CrashReport;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ReportedException;
 import net.minecraft.util.StatCollector;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class MagicDatabase {
     private static class ItemEssenceEntry {
@@ -131,6 +130,8 @@ public class MagicDatabase {
         }
     }
 
+    static final List<ItemEssenceEntry> stockEntries = new ArrayList<ItemEssenceEntry>();
+
     public static Map<ItemStack, ItemStack> containerConversion = new HashMap<ItemStack, ItemStack>();
     public static Map<ItemStack, MagicAmounts> containerCapacity = new HashMap<ItemStack, MagicAmounts>();
     public static Map<ItemStack, MagicAmounts> itemEssences = new HashMap<ItemStack, MagicAmounts>();
@@ -145,10 +146,51 @@ public class MagicDatabase {
             "element.life",
             "element.death",
     };
+    public static String getMagicName(int i) {
+        return StatCollector.translateToLocal(magicNames[i]);
+    }
 
-    static final List<ItemEssenceEntry> stockEntries = new ArrayList<ItemEssenceEntry>();
-    
-    static void registerEntries()
+
+    public static void initialize() {
+        registerContainerConversions();
+        registerContainerCapacity();
+        registerEssenceSources();
+    }
+
+    public static void postInitialize() {
+        RecipeTools.gatherRecipes();
+        registerEssencesForRecipes();
+    }
+
+    private static void registerEssencesForRecipes() {
+        for(Map.Entry<ItemStack, List<ItemStack>> it : RecipeTools.itemSources.entrySet())
+        {
+            MagicAmounts ma = getEssences(it.getKey());
+            if(ma != null && !ma.isEmpty())
+                continue;
+
+            boolean allFound = true;
+            MagicAmounts am = new MagicAmounts();
+            for(ItemStack b : it.getValue())
+            {
+                MagicAmounts m = getEssences(b);
+                if(m == null || m.isEmpty())
+                {
+                    allFound = false;
+                    break;
+                }
+
+                am.add(m);
+            }
+
+            if(!allFound)
+                continue;
+
+            itemEssences.put(it.getKey(), am);
+        }
+    }
+
+    static void registerEssenceSources()
     {
         //essences(Blocks.dirt).earth(3).life(1);
         //essences(Blocks.grass).earth(2).life(2);
@@ -270,15 +312,16 @@ public class MagicDatabase {
         //essences(Items.gunpowder,0);
         //essences(Items.wheat,0);
         //essences(Items.glowstone_dust,0);
+
+        for (ItemEssenceEntry source : stockEntries)
+            itemEssences.put(source.item, source.amounts);
     }
 
     private static ItemEssenceCollection collection(ItemEssenceEntry... entries)
     {
         ItemEssenceCollection collection = new ItemEssenceCollection();
-        for(ItemEssenceEntry ee : entries)
-        {
-            collection.add(ee);
-        }
+
+        Collections.addAll(collection, entries);
 
         return collection;
     }
@@ -286,8 +329,8 @@ public class MagicDatabase {
     private static ItemEssenceCollection essences(Item item)
     {
         List<ItemStack> subItems = new ArrayList<ItemStack>();
-                
-        item.getSubItems(item, CreativeTabs.tabAllSearch,subItems);
+
+        item.getSubItems(item, CreativeTabs.tabAllSearch, subItems);
 
         ItemEssenceCollection collection = new ItemEssenceCollection();
         for(ItemStack is : subItems)
@@ -318,12 +361,6 @@ public class MagicDatabase {
         return ee;
     }
 
-    public static void initialize() {
-        registerContainerConversions();
-        registerContainerCapacity();
-        registerEssenceSources();
-    }
-
     private static void registerContainerCapacity() {
         containerCapacity.put(new ItemStack(Items.dye, 1, 4), new MagicAmounts().all(10));
         containerCapacity.put(new ItemStack(Items.emerald, 1), new MagicAmounts().all(50));
@@ -347,33 +384,15 @@ public class MagicDatabase {
         containerConversion.put(new ItemStack(Items.diamond, 1), new ItemStack(ElementsOfPower.magicContainer, 1, 2));
     }
 
-    private static void registerEssenceSources() {
-        for (ItemEssenceEntry source : stockEntries) {
-            itemEssences.put(source.item, source.amounts);
-        }
-    }
-
-    public static void postInitialize() {
-        registerEntries();
-        RecipeTools.gatherRecipes();
-    }
-
     public static boolean itemContainsMagic(ItemStack stack) {
         MagicAmounts amounts = getContainedMagic(stack);
 
-        if (amounts == null) {
-            return false;
-        }
-
-        return !amounts.isEmpty();
+        return amounts != null && !amounts.isEmpty();
     }
 
     public static boolean canItemContainMagic(ItemStack stack) {
-        if (stack.stackSize > 1) {
-            return false;
-        }
+        return stack.stackSize <= 1 && Utils.stackIsInMap(containerCapacity, stack);
 
-        return Utils.stackIsInMap(containerCapacity, stack);
     }
 
     public static MagicAmounts getMagicLimits(ItemStack stack) {
@@ -426,7 +445,7 @@ public class MagicDatabase {
 
                 amounts.amounts[i] = amount;
             } catch (NumberFormatException ex) {
-                continue;
+                throw new ReportedException(new CrashReport("Exception while parsing NBT magic infromation", ex));
             }
         }
 
@@ -466,7 +485,6 @@ public class MagicDatabase {
                     output = Utils.getFromMap(containerConversion, output).copy();
                 }
 
-                // output.setItemName(par1Str)
                 nbt = new NBTTagCompound();
                 output.setTagCompound(nbt);
             }
@@ -487,9 +505,4 @@ public class MagicDatabase {
             return output;
         }
     }
-
-    public static String getMagicName(int i) {
-        return StatCollector.translateToLocal(magicNames[i]);
-    }
-
 }

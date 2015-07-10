@@ -19,6 +19,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
@@ -62,6 +63,8 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void registerRenderers() {
 
+        MinecraftForge.EVENT_BUS.register(new MagicTooltips());
+
         registerBlockTexture(ElementsOfPower.essentializer, "essentializer");
         registerBlockTexture(ElementsOfPower.dust, "dust");
 
@@ -93,17 +96,11 @@ public class ClientProxy extends CommonProxy {
     }
 
     public void registerBlockTexture(final Block block, int meta, final String blockName) {
-        RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
-        renderItem.getItemModelMesher().register(Item.getItemFromBlock(block), meta, new ModelResourceLocation(ElementsOfPower.MODID + ":" + blockName, "inventory"));
-    }
-
-    public void registerItemTexture(final Item item, final String itemName) {
-        registerItemTexture(item, 0, itemName);
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block), meta, new ModelResourceLocation(ElementsOfPower.MODID + ":" + blockName, "inventory"));
     }
 
     public void registerItemTexture(final Item item, int meta, final String itemName) {
-        RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
-        renderItem.getItemModelMesher().register(item, meta, new ModelResourceLocation(ElementsOfPower.MODID + ":" + itemName, "inventory"));
+        ModelLoader.setCustomModelResourceLocation(item, meta, new ModelResourceLocation(ElementsOfPower.MODID + ":" + itemName, "inventory"));
         ModelBakery.addVariantName(item, ElementsOfPower.MODID + ":" + itemName);
     }
 
@@ -115,27 +112,8 @@ public class ClientProxy extends CommonProxy {
                         Minecraft.getMinecraft().getRenderItem()));
     }
 
-    public void registerEntityRenderingHandler(Class<? extends Entity> entityClass, Item itemTexture)
-    {
-        registerEntityRenderingHandler(entityClass,
-                new RenderSnowball(
-                        Minecraft.getMinecraft().getRenderManager(),
-                        itemTexture,
-                        Minecraft.getMinecraft().getRenderItem()));
-    }
-
-    public void registerEntityRenderingHandler(Class<? extends Entity> entityClass, ItemStack itemTexture)
-    {
-        registerEntityRenderingHandler(entityClass,
-                new RenderStack(
-                        Minecraft.getMinecraft().getRenderManager(),
-                        itemTexture,
-                        Minecraft.getMinecraft().getRenderItem()));
-    }
-
     public void registerEntityRenderingHandler(Class<? extends Entity> entityClass, Render render)
     {
-        RenderingRegistry.registerEntityRenderingHandler(entityClass,
-                render);
+        RenderingRegistry.registerEntityRenderingHandler(entityClass, render);
     }
 }

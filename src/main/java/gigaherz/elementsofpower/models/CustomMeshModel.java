@@ -132,7 +132,8 @@ public class CustomMeshModel
                 return Pair.of((IBakedModel)this, gui.getMatrix());
             case HEAD:
                 return Pair.of((IBakedModel)this, head.getMatrix());
-
+            case NONE:
+                return Pair.of((IBakedModel)this, TRSRTransformation.identity().getMatrix());
         }
         return null;
     }

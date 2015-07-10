@@ -2,8 +2,11 @@ package gigaherz.elementsofpower.models;
 
 import com.google.common.base.Charsets;
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.items.ItemMagicContainer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelBlock;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureCompass;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.model.ModelManager;
@@ -12,10 +15,12 @@ import net.minecraft.util.IRegistry;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.event.RenderItemInFrameEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.TRSRTransformation;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.io.IOException;

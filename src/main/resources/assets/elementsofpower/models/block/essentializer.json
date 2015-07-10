@@ -1,12 +1,12 @@
 {
     "parent": "block/cube",
     "textures": {
-        "up": "ElementsOfPower:blocks/sideObsidianWithDiamond",
-        "east": "ElementsOfPower:blocks/sideObsidian",
-        "west": "ElementsOfPower:blocks/sideObsidian",
-        "north": "ElementsOfPower:blocks/sideObsidian",
-        "south": "ElementsOfPower:blocks/sideObsidian",
-        "down": "ElementsOfPower:blocks/sideObsidian",
+        "up": "elementsofpower:blocks/sideObsidianWithDiamond",
+        "east": "elementsofpower:blocks/sideObsidian",
+        "west": "elementsofpower:blocks/sideObsidian",
+        "north": "elementsofpower:blocks/sideObsidian",
+        "south": "elementsofpower:blocks/sideObsidian",
+        "down": "elementsofpower:blocks/sideObsidian",
         "particle": "elementsofpower:blocks/sideObsidian"
     }
 }

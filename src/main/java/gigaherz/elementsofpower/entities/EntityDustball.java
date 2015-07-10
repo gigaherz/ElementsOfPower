@@ -1,6 +1,7 @@
 package gigaherz.elementsofpower.entities;
 
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.blocks.BlockCushion;
 import gigaherz.elementsofpower.blocks.BlockDust;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -45,7 +46,7 @@ public class EntityDustball extends EntityBallBase {
         Block block = currentState.getBlock();
 
         if (block == Blocks.air) {
-            worldObj.setBlockState(blockPos, ElementsOfPower.dust.getDefaultState().withProperty(BlockDust.DENSITY, 16));
+            worldObj.setBlockState(blockPos, ElementsOfPower.cushion.getDefaultState().withProperty(BlockCushion.DENSITY, 16));
         }
     }
 }
