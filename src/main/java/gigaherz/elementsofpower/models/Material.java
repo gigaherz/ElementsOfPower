@@ -5,7 +5,8 @@ import javax.vecmath.Vector3f;
 /**
  * Created by gigaherz on 02/01/2015.
  */
-public class Material {
+public class Material
+{
 
     public String Name;
 
@@ -30,7 +31,8 @@ public class Material {
 
     public String AlphaTextureMap;
 
-    public Material(String materialName) {
+    public Material(String materialName)
+    {
         Name = materialName;
     }
 

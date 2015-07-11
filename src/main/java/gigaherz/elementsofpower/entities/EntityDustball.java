@@ -2,7 +2,6 @@ package gigaherz.elementsofpower.entities;
 
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.blocks.BlockCushion;
-import gigaherz.elementsofpower.blocks.BlockDust;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -11,20 +10,24 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.world.World;
 
-public class EntityDustball extends EntityBallBase {
+public class EntityDustball extends EntityBallBase
+{
 
     public EntityDustball(World worldIn)
     {
         super(ElementsOfPower.earth, worldIn);
     }
+
     public EntityDustball(World worldIn, EntityLivingBase p_i1774_2_)
     {
         super(ElementsOfPower.earth, worldIn, p_i1774_2_);
     }
+
     public EntityDustball(World worldIn, double x, double y, double z)
     {
         super(ElementsOfPower.earth, worldIn, x, y, z);
     }
+
     public EntityDustball(World worldIn, int force, EntityLivingBase p_i1774_2_)
     {
         super(ElementsOfPower.earth, worldIn, force, p_i1774_2_);
@@ -45,7 +48,8 @@ public class EntityDustball extends EntityBallBase {
     {
         Block block = currentState.getBlock();
 
-        if (block == Blocks.air) {
+        if (block == Blocks.air)
+        {
             worldObj.setBlockState(blockPos, ElementsOfPower.cushion.getDefaultState().withProperty(BlockCushion.DENSITY, 16));
         }
     }

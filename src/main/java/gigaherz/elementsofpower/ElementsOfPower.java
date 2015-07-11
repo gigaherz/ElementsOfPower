@@ -13,7 +13,6 @@ import gigaherz.elementsofpower.items.ItemWand;
 import gigaherz.elementsofpower.models.ModelRegistrationHelper;
 import gigaherz.elementsofpower.network.SpellSequenceUpdate;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockWeb;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
@@ -36,7 +35,8 @@ import org.apache.logging.log4j.Logger;
 
 
 @Mod(modid = ElementsOfPower.MODID, name = ElementsOfPower.MODNAME, version = ElementsOfPower.VERSION)
-public class ElementsOfPower {
+public class ElementsOfPower
+{
     public static final String MODID = "elementsofpower";
     public static final String MODNAME = "Elements Of Power";
     public static final String VERSION = "1.0";
@@ -95,20 +95,24 @@ public class ElementsOfPower {
 
     public static Logger logger;
 
-    public static final CreativeTabs tabMagic = new CreativeTabs(MODID.toLowerCase()) {
+    public static final CreativeTabs tabMagic = new CreativeTabs(MODID.toLowerCase())
+    {
         @Override
-        public Item getTabIconItem() {
+        public Item getTabIconItem()
+        {
             return magicWand;
         }
     };
 
-    private void registerNetworkStuff() {
+    private void registerNetworkStuff()
+    {
         channel = NetworkRegistry.INSTANCE.newSimpleChannel(CHANNEL);
         channel.registerMessage(SpellSequenceUpdate.Handler.class, SpellSequenceUpdate.class, 0, Side.SERVER);
     }
 
     @EventHandler
-    public void preInit(FMLPreInitializationEvent event) {
+    public void preInit(FMLPreInitializationEvent event)
+    {
         logger = event.getModLog();
 
         modelRegistrationHelper = new ModelRegistrationHelper();
@@ -163,9 +167,8 @@ public class ElementsOfPower {
     }
 
     @EventHandler
-    public void init(FMLInitializationEvent event) {
-
-
+    public void init(FMLInitializationEvent event)
+    {
         int entityId = 1;
         EntityRegistry.registerModEntity(EntityAirball.class, "Airball", entityId++, this, 80, 3, true);
         EntityRegistry.registerModEntity(EntityDustball.class, "Earthball", entityId++, this, 80, 3, true);
@@ -227,7 +230,8 @@ public class ElementsOfPower {
     }
 
     @EventHandler
-    public void postInit(FMLPostInitializationEvent event) {
+    public void postInit(FMLPostInitializationEvent event)
+    {
         MagicDatabase.postInitialize();
     }
 }

@@ -16,59 +16,65 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
-public class EntityAirball extends EntityBallBase {
+public class EntityAirball extends EntityBallBase
+{
 
     public EntityAirball(World worldIn)
     {
         super(ElementsOfPower.air, worldIn);
     }
+
     public EntityAirball(World worldIn, EntityLivingBase p_i1774_2_)
     {
         super(ElementsOfPower.air, worldIn, p_i1774_2_);
     }
+
     public EntityAirball(World worldIn, double x, double y, double z)
     {
         super(ElementsOfPower.air, worldIn, x, y, z);
     }
+
     public EntityAirball(World worldIn, int force, EntityLivingBase p_i1774_2_)
     {
         super(ElementsOfPower.air, worldIn, force, p_i1774_2_);
     }
 
     @Override
-    protected void processEntitiesAroundBefore(Vec3 hitVec) {
+    protected void processEntitiesAroundBefore(Vec3 hitVec)
+    {
 
         AxisAlignedBB aabb = new AxisAlignedBB(
-                hitVec.xCoord-damageForce,
-                hitVec.yCoord-damageForce,
-                hitVec.zCoord-damageForce,
-                hitVec.xCoord+damageForce,
-                hitVec.yCoord+damageForce,
-                hitVec.zCoord+damageForce);
+                hitVec.xCoord - damageForce,
+                hitVec.yCoord - damageForce,
+                hitVec.zCoord - damageForce,
+                hitVec.xCoord + damageForce,
+                hitVec.yCoord + damageForce,
+                hitVec.zCoord + damageForce);
 
-        List<EntityLivingBase> living = (List<EntityLivingBase>)worldObj.getEntitiesWithinAABB(EntityLivingBase.class, aabb);
+        List<EntityLivingBase> living = (List<EntityLivingBase>) worldObj.getEntitiesWithinAABB(EntityLivingBase.class, aabb);
         pushEntities(hitVec, living);
 
-        List<EntityItem> items = (List<EntityItem>)worldObj.getEntitiesWithinAABB(EntityItem.class, aabb);
+        List<EntityItem> items = (List<EntityItem>) worldObj.getEntitiesWithinAABB(EntityItem.class, aabb);
         pushEntities(hitVec, items);
     }
 
-    private void pushEntities(Vec3 hitVec, List<? extends Entity> living) {
-        for(Entity e : living)
+    private void pushEntities(Vec3 hitVec, List<? extends Entity> living)
+    {
+        for (Entity e : living)
         {
-            if(!e.isEntityAlive())
+            if (!e.isEntityAlive())
                 continue;
 
             double dx = e.posX - hitVec.xCoord;
             double dy = e.posY - hitVec.yCoord;
             double dz = e.posZ - hitVec.zCoord;
 
-            double ll = Math.sqrt(dx*dx+dy*dy+dz*dz);
+            double ll = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-            if(ll < 0.0001f)
+            if (ll < 0.0001f)
                 continue;
 
-            double lv = Math.max(0, damageForce-ll);
+            double lv = Math.max(0, damageForce - ll);
 
             double vx = dx * lv / ll;
             double vy = dy * lv / ll;
@@ -80,17 +86,15 @@ public class EntityAirball extends EntityBallBase {
     @Override
     protected void spawnBallParticles()
     {
-        if(damageForce >= 5)
+        if (damageForce >= 5)
         {
             this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_HUGE, this.posX, this.posY, this.posZ,
                     getRandomForParticle(), getRandomForParticle(), getRandomForParticle());
-        }
-        else if(damageForce >= 2)
+        } else if (damageForce >= 2)
         {
             this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE, this.posX, this.posY, this.posZ,
                     getRandomForParticle(), getRandomForParticle(), getRandomForParticle());
-        }
-        else
+        } else
         {
             this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, this.posX, this.posY, this.posZ,
                     getRandomForParticle(), getRandomForParticle(), getRandomForParticle());
@@ -103,15 +107,16 @@ public class EntityAirball extends EntityBallBase {
     {
         Block block = currentState.getBlock();
 
-        if (block == Blocks.fire) {
+        if (block == Blocks.fire)
+        {
             worldObj.setBlockToAir(blockPos);
-        }
-        else if (block == Blocks.flowing_water || block == Blocks.water) {
-            if((Integer)currentState.getValue(BlockDynamicLiquid.LEVEL) > 0) {
+        } else if (block == Blocks.flowing_water || block == Blocks.water)
+        {
+            if ((Integer) currentState.getValue(BlockDynamicLiquid.LEVEL) > 0)
+            {
                 worldObj.setBlockToAir(blockPos);
             }
-        }
-        else if(!block.getMaterial().blocksMovement() && !block.getMaterial().isLiquid())
+        } else if (!block.getMaterial().blocksMovement() && !block.getMaterial().isLiquid())
         {
             block.dropBlockAsItem(worldObj, blockPos, currentState, 0);
             worldObj.setBlockToAir(blockPos);

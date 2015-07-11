@@ -18,7 +18,8 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
 
-public class GuiOverlayMagicContainer extends Gui {
+public class GuiOverlayMagicContainer extends Gui
+{
     public static GuiOverlayMagicContainer instance;
 
     Minecraft mc;
@@ -28,32 +29,37 @@ public class GuiOverlayMagicContainer extends Gui {
 
     final KeyBindingInterceptor[] interceptKeys = new KeyBindingInterceptor[8];
 
-    public GuiOverlayMagicContainer() {
+    public GuiOverlayMagicContainer()
+    {
         instance = this;
         mc = Minecraft.getMinecraft();
 
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 8; i++)
+        {
             interceptKeys[i] = new KeyBindingInterceptor(Minecraft.getMinecraft().gameSettings.keyBindsHotbar[i]);
             Minecraft.getMinecraft().gameSettings.keyBindsHotbar[i] = interceptKeys[i];
         }
     }
 
     @SubscribeEvent
-    public void onRenderGameOverlay(RenderGameOverlayEvent event) {
+    public void onRenderGameOverlay(RenderGameOverlayEvent event)
+    {
         //
         // We draw after the ExperienceBar has drawn.  The event raised by GuiIngameForge.pre()
         // will return true from isCancelable.  If you call event.setCanceled(true) in
         // that case, the portion of rendering which this event represents will be canceled.
         // We want to draw *after* the experience bar is drawn, so we make sure isCancelable() returns
         // false and that the eventType represents the ExperienceBar event.
-        if (event.isCancelable() || event.type != RenderGameOverlayEvent.ElementType.EXPERIENCE) {
+        if (event.isCancelable() || event.type != RenderGameOverlayEvent.ElementType.EXPERIENCE)
+        {
             return;
         }
 
         EntityPlayerSP player = mc.thePlayer;
         ItemStack heldItem = player.inventory.getCurrentItem();
 
-        if (itemInUse != null && (heldItem != itemInUse || !player.isUsingItem())) {
+        if (itemInUse != null && (heldItem != itemInUse || !player.isUsingItem()))
+        {
             endHoldingRightButton(true);
         }
 
@@ -66,7 +72,8 @@ public class GuiOverlayMagicContainer extends Gui {
             return;
 
         int totalIcons = 0;
-        for (int amount : amounts.amounts) {
+        for (int amount : amounts.amounts)
+        {
             if (amount > 0)
                 totalIcons++;
         }
@@ -84,7 +91,8 @@ public class GuiOverlayMagicContainer extends Gui {
         // TODO: Figure out viewport size to adjust the initial xPos
         //Minecraft.getMinecraft().getRenderManager().vi
 
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 8; i++)
+        {
             if (amounts.amounts[i] == 0)
                 continue;
 
@@ -102,18 +110,23 @@ public class GuiOverlayMagicContainer extends Gui {
         yPos = 40;
 
         NBTTagCompound nbt = heldItem.getTagCompound();
-        if (nbt != null) {
+        if (nbt != null)
+        {
             String savedSequence = nbt.getString(ItemWand.SPELL_SEQUENCE_TAG);
-            for (char c : savedSequence.toCharArray()) {
+            for (char c : savedSequence.toCharArray())
+            {
                 int i = SpellManager.elementIndices.get(c);
                 renderItem.renderItemAndEffectIntoGUI(new ItemStack(ElementsOfPower.magicOrb, amounts.amounts[i], i), xPos, yPos);
                 xPos += 6;
             }
         }
 
-        if (itemInUse != null) {
-            for (int i = 0; i < 8; i++) {
-                if (interceptKeys[i].retrieveClick() && amounts.amounts[i] > 0) {
+        if (itemInUse != null)
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                if (interceptKeys[i].retrieveClick() && amounts.amounts[i] > 0)
+                {
                     sequence.append(SpellManager.elementChars[i]);
                 }
             }
@@ -125,7 +138,8 @@ public class GuiOverlayMagicContainer extends Gui {
         // New spell sequence
         xPos = 2 + 10;
         yPos = 60;
-        for (char c : sequence.toString().toCharArray()) {
+        for (char c : sequence.toString().toCharArray())
+        {
             int i = SpellManager.elementIndices.get(c);
             renderItem.renderItemAndEffectIntoGUI(new ItemStack(ElementsOfPower.magicOrb, amounts.amounts[i], i), xPos, yPos);
             xPos += 6;
@@ -133,7 +147,8 @@ public class GuiOverlayMagicContainer extends Gui {
 
     }
 
-    public void beginHoldingRightButton(int slotNumber, ItemStack itemUsing) {
+    public void beginHoldingRightButton(int slotNumber, ItemStack itemUsing)
+    {
         EntityPlayer player = Minecraft.getMinecraft().thePlayer;
         itemInUse = itemUsing;
         slotInUse = slotNumber;
@@ -144,11 +159,14 @@ public class GuiOverlayMagicContainer extends Gui {
             interceptKeys[i].setInterceptionActive(true);
     }
 
-    public void endHoldingRightButton(boolean cancelMagicSetting) {
+    public void endHoldingRightButton(boolean cancelMagicSetting)
+    {
         EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-        if (cancelMagicSetting) {
+        if (cancelMagicSetting)
+        {
             ElementsOfPower.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.CANCEL, player, slotInUse, null));
-        } else {
+        } else
+        {
             ElementsOfPower.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.COMMIT, player, slotInUse, sequence.toString()));
         }
         itemInUse = null;

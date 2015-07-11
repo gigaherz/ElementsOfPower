@@ -15,20 +15,24 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
-public class EntityFlameball extends EntityBallBase {
+public class EntityFlameball extends EntityBallBase
+{
 
     public EntityFlameball(World worldIn)
     {
         super(ElementsOfPower.fire, worldIn);
     }
+
     public EntityFlameball(World worldIn, EntityLivingBase p_i1774_2_)
     {
         super(ElementsOfPower.fire, worldIn, p_i1774_2_);
     }
+
     public EntityFlameball(World worldIn, double x, double y, double z)
     {
         super(ElementsOfPower.fire, worldIn, x, y, z);
     }
+
     public EntityFlameball(World worldIn, int force, EntityLivingBase p_i1774_2_)
     {
         super(ElementsOfPower.fire, worldIn, force, p_i1774_2_);
@@ -48,39 +52,41 @@ public class EntityFlameball extends EntityBallBase {
     }
 
     @Override
-    protected void processEntitiesAroundAfter(Vec3 hitVec) {
+    protected void processEntitiesAroundAfter(Vec3 hitVec)
+    {
 
         AxisAlignedBB aabb = new AxisAlignedBB(
-                hitVec.xCoord-damageForce,
-                hitVec.yCoord-damageForce,
-                hitVec.zCoord-damageForce,
-                hitVec.xCoord+damageForce,
-                hitVec.yCoord+damageForce,
-                hitVec.zCoord+damageForce);
+                hitVec.xCoord - damageForce,
+                hitVec.yCoord - damageForce,
+                hitVec.zCoord - damageForce,
+                hitVec.xCoord + damageForce,
+                hitVec.yCoord + damageForce,
+                hitVec.zCoord + damageForce);
 
-        List<EntityLivingBase> living = (List<EntityLivingBase>)worldObj.getEntitiesWithinAABB(EntityLivingBase.class, aabb);
+        List<EntityLivingBase> living = (List<EntityLivingBase>) worldObj.getEntitiesWithinAABB(EntityLivingBase.class, aabb);
         burnEntities(hitVec, living);
 
-        List<EntityItem> items = (List<EntityItem>)worldObj.getEntitiesWithinAABB(EntityItem.class, aabb);
+        List<EntityItem> items = (List<EntityItem>) worldObj.getEntitiesWithinAABB(EntityItem.class, aabb);
         burnEntities(hitVec, items);
     }
 
-    private void burnEntities(Vec3 hitVec, List<? extends Entity> living) {
+    private void burnEntities(Vec3 hitVec, List<? extends Entity> living)
+    {
 
         EntityFireball ef = new EntitySmallFireball(worldObj);
 
-        for(Entity e : living)
+        for (Entity e : living)
         {
-            if(!e.isEntityAlive())
+            if (!e.isEntityAlive())
                 continue;
 
             double dx = e.posX - hitVec.xCoord;
             double dy = e.posY - hitVec.yCoord;
             double dz = e.posZ - hitVec.zCoord;
 
-            double ll = Math.sqrt(dx*dx+dy*dy+dz*dz);
+            double ll = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-            double lv = Math.max(0, damageForce-ll);
+            double lv = Math.max(0, damageForce - ll);
 
             boolean flag = e.attackEntityFrom(DamageSource.causeFireballDamage(ef, this.getThrower()), 5.0F);
 
@@ -90,7 +96,7 @@ public class EntityFlameball extends EntityBallBase {
 
                 if (!e.isImmuneToFire())
                 {
-                    e.setFire((int)lv);
+                    e.setFire((int) lv);
                 }
             }
         }
@@ -108,7 +114,8 @@ public class EntityFlameball extends EntityBallBase {
     {
         Block block = currentState.getBlock();
 
-        if (block == Blocks.air) {
+        if (block == Blocks.air)
+        {
             worldObj.setBlockState(blockPos, Blocks.fire.getDefaultState());
         }
     }

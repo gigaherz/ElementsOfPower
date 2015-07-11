@@ -12,9 +12,11 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class SpellSequenceUpdate
-        implements IMessage {
+        implements IMessage
+{
 
-    public enum ChangeMode {
+    public enum ChangeMode
+    {
         BEGIN,
         PARTIAL,
         COMMIT,
@@ -31,10 +33,12 @@ public class SpellSequenceUpdate
     public ChangeMode changeMode;
     public String sequence;
 
-    public SpellSequenceUpdate() {
+    public SpellSequenceUpdate()
+    {
     }
 
-    public SpellSequenceUpdate(ChangeMode mode, EntityPlayer entity, int slotNumber, String sequence) {
+    public SpellSequenceUpdate(ChangeMode mode, EntityPlayer entity, int slotNumber, String sequence)
+    {
         changeMode = mode;
         this.entity = entity;
         this.dimension = entity.dimension;
@@ -43,47 +47,57 @@ public class SpellSequenceUpdate
     }
 
     @Override
-    public void fromBytes(ByteBuf buf) {
+    public void fromBytes(ByteBuf buf)
+    {
 
         dimension = buf.readInt();
         changeMode = ChangeMode.values[buf.readInt()];
         entity = (EntityPlayer) MinecraftServer.getServer().worldServerForDimension(dimension).getEntityByID(buf.readInt());
         slotNumber = buf.readByte();
         sequence = ByteBufUtils.readUTF8String(buf);
-        if (sequence.length() == 0) {
+        if (sequence.length() == 0)
+        {
             sequence = null;
         }
     }
 
     @Override
-    public void toBytes(ByteBuf buf) {
+    public void toBytes(ByteBuf buf)
+    {
 
         buf.writeInt(dimension);
         buf.writeInt(changeMode.ordinal());
         buf.writeInt(entity.getEntityId());
         buf.writeByte(slotNumber);
-        if (sequence != null) {
+        if (sequence != null)
+        {
             ByteBufUtils.writeUTF8String(buf, sequence);
-        } else {
+        } else
+        {
             ByteBufUtils.writeUTF8String(buf, "");
         }
     }
 
-    public static class Handler implements IMessageHandler<SpellSequenceUpdate, IMessage> {
+    public static class Handler implements IMessageHandler<SpellSequenceUpdate, IMessage>
+    {
 
         @Override
-        public IMessage onMessage(SpellSequenceUpdate message, MessageContext ctx) {
+        public IMessage onMessage(SpellSequenceUpdate message, MessageContext ctx)
+        {
 
             final SpellSequenceUpdate msg = message;
 
-            WorldServer ws = (WorldServer)message.entity.worldObj;
-            ws.addScheduledTask(new Runnable() {
+            WorldServer ws = (WorldServer) message.entity.worldObj;
+            ws.addScheduledTask(new Runnable()
+            {
                 @Override
-                public void run() {
+                public void run()
+                {
 
                     ItemStack stack = msg.entity.inventory.mainInventory[msg.slotNumber];
 
-                    if (stack != null && stack.getItem() instanceof ItemWand) {
+                    if (stack != null && stack.getItem() instanceof ItemWand)
+                    {
                         ItemWand wand = (ItemWand) stack.getItem();
                         wand.processSequenceUpdate(msg, stack);
                     }

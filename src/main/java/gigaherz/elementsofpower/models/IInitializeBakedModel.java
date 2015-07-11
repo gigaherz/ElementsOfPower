@@ -4,7 +4,8 @@ import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.TRSRTransformation;
 
-public interface IInitializeBakedModel {
+public interface IInitializeBakedModel
+{
     void initialize(
             TRSRTransformation thirdPerson,
             TRSRTransformation firstPerson,

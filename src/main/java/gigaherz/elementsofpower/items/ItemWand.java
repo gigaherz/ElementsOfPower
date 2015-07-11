@@ -16,11 +16,11 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
-import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class ItemWand extends ItemMagicContainer {
+public class ItemWand extends ItemMagicContainer
+{
     public static final String SPELL_SEQUENCE_TAG = "SpellSequence";
 
     private static final String[] subNames = {
@@ -43,10 +43,11 @@ public class ItemWand extends ItemMagicContainer {
         int dmg = stack.getItemDamage();
         if (dmg > areCreative.length)
             return false;
-        return  areCreative[dmg];
+        return areCreative[dmg];
     }
 
-    public ItemWand() {
+    public ItemWand()
+    {
         setMaxStackSize(1);
         setHasSubtypes(true);
         setUnlocalizedName("magicWand");
@@ -54,20 +55,24 @@ public class ItemWand extends ItemMagicContainer {
     }
 
     @Override
-    public EnumRarity getRarity(ItemStack stack) {
+    public EnumRarity getRarity(ItemStack stack)
+    {
         return rarities[stack.getItemDamage()];
     }
 
     @Override
-    public int getMetadata(int damageValue) {
+    public int getMetadata(int damageValue)
+    {
         return damageValue;
     }
 
     @Override
-    public String getUnlocalizedName(ItemStack stack) {
+    public String getUnlocalizedName(ItemStack stack)
+    {
         int sub = stack.getItemDamage();
 
-        if (sub >= subNames.length) {
+        if (sub >= subNames.length)
+        {
             sub = 0;
         }
 
@@ -75,25 +80,30 @@ public class ItemWand extends ItemMagicContainer {
     }
 
     @Override
-    public ItemStack getStack(int count, int damageValue) {
+    public ItemStack getStack(int count, int damageValue)
+    {
         return new ItemStack(this, count, damageValue);
     }
 
     @Override
-    public void getSubItems(Item itemIn, CreativeTabs tab, List subItems) {
-        for (int meta = 0; meta < subNames.length; meta++) {
+    public void getSubItems(Item itemIn, CreativeTabs tab, List subItems)
+    {
+        for (int meta = 0; meta < subNames.length; meta++)
+        {
             subItems.add(new ItemStack(itemIn, 1, meta));
         }
     }
 
     @Override
-    public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
+    public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player)
+    {
         if (player.isSneaking())
         {
             stack.getTagCompound().removeTag(SPELL_SEQUENCE_TAG);
         }
         player.setItemInUse(stack, this.getMaxItemUseDuration(stack));
-        if (world.isRemote) {
+        if (world.isRemote)
+        {
             int slot = Minecraft.getMinecraft().thePlayer.inventory.currentItem;
             GuiOverlayMagicContainer.instance.beginHoldingRightButton(slot, stack);
         }
@@ -101,23 +111,28 @@ public class ItemWand extends ItemMagicContainer {
     }
 
     @Override
-    public void onPlayerStoppedUsing(ItemStack stack, World world, EntityPlayer player, int remaining) {
-        if (world.isRemote) {
+    public void onPlayerStoppedUsing(ItemStack stack, World world, EntityPlayer player, int remaining)
+    {
+        if (world.isRemote)
+        {
             GuiOverlayMagicContainer.instance.endHoldingRightButton(false);
         }
     }
 
     @Override
-    public int getMaxItemUseDuration(ItemStack par1ItemStack) {
+    public int getMaxItemUseDuration(ItemStack par1ItemStack)
+    {
         return 72000;
     }
 
     @Override
-    public EnumAction getItemUseAction(ItemStack par1ItemStack) {
+    public EnumAction getItemUseAction(ItemStack par1ItemStack)
+    {
         return EnumAction.BOW;
     }
 
-    public void onSpellCommit(ItemStack stack, EntityPlayer player) {
+    public void onSpellCommit(ItemStack stack, EntityPlayer player)
+    {
 
         String sequence = stack.getTagCompound().getString(SPELL_SEQUENCE_TAG);
 
@@ -142,12 +157,14 @@ public class ItemWand extends ItemMagicContainer {
         MagicDatabase.setContainedMagic(stack, amounts);
     }
 
-    public void processSequenceUpdate(SpellSequenceUpdate message, ItemStack stack) {
+    public void processSequenceUpdate(SpellSequenceUpdate message, ItemStack stack)
+    {
 
-        if (message.changeMode == SpellSequenceUpdate.ChangeMode.COMMIT) {
+        if (message.changeMode == SpellSequenceUpdate.ChangeMode.COMMIT)
+        {
 
             NBTTagCompound nbt = stack.getTagCompound();
-            if(nbt == null)
+            if (nbt == null)
             {
                 if (!((ItemWand) stack.getItem()).isCreative(stack))
                     return;

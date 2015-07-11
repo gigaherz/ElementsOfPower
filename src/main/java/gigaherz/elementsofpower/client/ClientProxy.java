@@ -2,36 +2,35 @@ package gigaherz.elementsofpower.client;
 
 import gigaherz.elementsofpower.CommonProxy;
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.client.render.RenderEntityProvidedStack;
 import gigaherz.elementsofpower.entities.EntityBallBase;
 import gigaherz.elementsofpower.models.CustomMeshModel;
 import gigaherz.elementsofpower.models.ModelRegistrationHelper;
-import gigaherz.elementsofpower.client.render.RenderEntityProvidedStack;
-import gigaherz.elementsofpower.client.render.RenderStack;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderItem;
-import net.minecraft.client.renderer.entity.RenderSnowball;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
-public class ClientProxy extends CommonProxy {
+public class ClientProxy extends CommonProxy
+{
 
     @Override
-    public void registerGuiOverlay() {
+    public void registerGuiOverlay()
+    {
         MinecraftForge.EVENT_BUS.register(new GuiOverlayMagicContainer());
     }
 
     @Override
-    public void registerCustomBakedModels() {
+    public void registerCustomBakedModels()
+    {
         ModelRegistrationHelper helper = ElementsOfPower.modelRegistrationHelper;
 
         registerCustomItemModel(helper, "wand_lapis");
@@ -44,7 +43,8 @@ public class ClientProxy extends CommonProxy {
         registerCustomItemModel(helper, "staff_creative");
     }
 
-    public void registerCustomItemModel(ModelRegistrationHelper helper, final String itemName) {
+    public void registerCustomItemModel(ModelRegistrationHelper helper, final String itemName)
+    {
 
         ResourceLocation loc = new ModelResourceLocation(ElementsOfPower.MODID + ":" + itemName, "inventory");
         IFlexibleBakedModel model = new CustomMeshModel(itemName);
@@ -52,7 +52,8 @@ public class ClientProxy extends CommonProxy {
         helper.registerCustomItemModel(loc, model, itemName);
     }
 
-    public void registerCustomBlockModel(ModelRegistrationHelper helper, final String blockName, final String stateName) {
+    public void registerCustomBlockModel(ModelRegistrationHelper helper, final String blockName, final String stateName)
+    {
 
         ResourceLocation loc = new ModelResourceLocation(ElementsOfPower.MODID + ":" + blockName, stateName);
         IFlexibleBakedModel model = new CustomMeshModel(blockName);
@@ -61,7 +62,8 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override
-    public void registerRenderers() {
+    public void registerRenderers()
+    {
 
         MinecraftForge.EVENT_BUS.register(new MagicTooltips());
 
@@ -91,15 +93,18 @@ public class ClientProxy extends CommonProxy {
         registerEntityRenderingHandler(EntityBallBase.class);
     }
 
-    public void registerBlockTexture(final Block block, final String blockName) {
+    public void registerBlockTexture(final Block block, final String blockName)
+    {
         registerBlockTexture(block, 0, blockName);
     }
 
-    public void registerBlockTexture(final Block block, int meta, final String blockName) {
+    public void registerBlockTexture(final Block block, int meta, final String blockName)
+    {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block), meta, new ModelResourceLocation(ElementsOfPower.MODID + ":" + blockName, "inventory"));
     }
 
-    public void registerItemTexture(final Item item, int meta, final String itemName) {
+    public void registerItemTexture(final Item item, int meta, final String itemName)
+    {
         ModelLoader.setCustomModelResourceLocation(item, meta, new ModelResourceLocation(ElementsOfPower.MODID + ":" + itemName, "inventory"));
         ModelBakery.addVariantName(item, ElementsOfPower.MODID + ":" + itemName);
     }

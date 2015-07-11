@@ -3,8 +3,10 @@ package gigaherz.elementsofpower.blocks.materials;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 
-public class MaterialCushion extends Material {
-    public MaterialCushion(MapColor color) {
+public class MaterialCushion extends Material
+{
+    public MaterialCushion(MapColor color)
+    {
         super(color);
     }
 

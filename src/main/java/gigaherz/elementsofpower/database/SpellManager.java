@@ -2,12 +2,12 @@ package gigaherz.elementsofpower.database;
 
 import gigaherz.elementsofpower.entities.*;
 import gigaherz.elementsofpower.spells.*;
-import net.minecraft.entity.projectile.EntityFireball;
 
 import java.util.Hashtable;
 import java.util.Map;
 
-public class SpellManager {
+public class SpellManager
+{
 
     public final static char[] elementChars = {'F', 'W', 'A', 'E', 'G', 'K', 'L', 'D'};
     public final static Map<Character, Integer> elementIndices = new Hashtable<Character, Integer>();
@@ -21,23 +21,25 @@ public class SpellManager {
     public static final int COST_EXTREME = 648;
     public static final float COMBO_COEF = 1.2f;
 
-    static {
+    static
+    {
 
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 8; i++)
+        {
             elementIndices.put(elementChars[i], i);
         }
 
-        registerSpell(new SpellBlastball(1, true).fire().earth().cost(COST_ELEMENTARY*COMBO_COEF));
-        registerSpell(new SpellBlastball(2, true).fire().fire().earth().cost(COST_SIMPLE*COMBO_COEF));
-        registerSpell(new SpellBlastball(4, true).fire().fire().fire().earth().cost(COST_AVERAGE*COMBO_COEF));
-        registerSpell(new SpellBlastball(6, true).fire().fire().fire().fire().earth().cost(COST_COMPLEX*COMBO_COEF));
-        registerSpell(new SpellBlastball(8, true).fire().fire().fire().fire().fire().earth().cost(COST_EXTREME*COMBO_COEF));
+        registerSpell(new SpellBlastball(1, true).fire().earth().cost(COST_ELEMENTARY * COMBO_COEF));
+        registerSpell(new SpellBlastball(2, true).fire().fire().earth().cost(COST_SIMPLE * COMBO_COEF));
+        registerSpell(new SpellBlastball(4, true).fire().fire().fire().earth().cost(COST_AVERAGE * COMBO_COEF));
+        registerSpell(new SpellBlastball(6, true).fire().fire().fire().fire().earth().cost(COST_COMPLEX * COMBO_COEF));
+        registerSpell(new SpellBlastball(8, true).fire().fire().fire().fire().fire().earth().cost(COST_EXTREME * COMBO_COEF));
 
         registerSpell(new SpellGenericEntity(EntityFrostball.class, 1).water().air().cost(COST_ELEMENTARY * COMBO_COEF));
-        registerSpell(new SpellGenericEntity(EntityFrostball.class, 2).water().water().air().cost(COST_SIMPLE*COMBO_COEF));
-        registerSpell(new SpellGenericEntity(EntityFrostball.class, 3).water().water().water().air().cost(COST_AVERAGE*COMBO_COEF));
-        registerSpell(new SpellGenericEntity(EntityFrostball.class, 4).water().water().water().water().air().cost(COST_COMPLEX*COMBO_COEF));
-        registerSpell(new SpellGenericEntity(EntityFrostball.class, 6).water().water().water().water().water().air().cost(COST_EXTREME*COMBO_COEF));
+        registerSpell(new SpellGenericEntity(EntityFrostball.class, 2).water().water().air().cost(COST_SIMPLE * COMBO_COEF));
+        registerSpell(new SpellGenericEntity(EntityFrostball.class, 3).water().water().water().air().cost(COST_AVERAGE * COMBO_COEF));
+        registerSpell(new SpellGenericEntity(EntityFrostball.class, 4).water().water().water().water().air().cost(COST_COMPLEX * COMBO_COEF));
+        registerSpell(new SpellGenericEntity(EntityFrostball.class, 6).water().water().water().water().water().air().cost(COST_EXTREME * COMBO_COEF));
 
         registerSpell(new SpellGenericEntity2(EntityWaterball.class, 1, false).water().cost(COST_ELEMENTARY));
         registerSpell(new SpellGenericEntity2(EntityWaterball.class, 2, false).water().water().cost(COST_SIMPLE));
@@ -63,9 +65,9 @@ public class SpellManager {
         registerSpell(new SpellGenericEntity(EntityAirball.class, 5).air().air().air().air().air().cost(COST_EXTREME));
 
         registerSpell(new SpellGenericEntity(EntityDustball.class, 1).earth().cost(COST_ELEMENTARY * COMBO_COEF));
-        registerSpell(new SpellGenericEntity(EntityDustball.class, 2).earth().earth().cost(COST_SIMPLE*COMBO_COEF));
+        registerSpell(new SpellGenericEntity(EntityDustball.class, 2).earth().earth().cost(COST_SIMPLE * COMBO_COEF));
         registerSpell(new SpellGenericEntity(EntityDustball.class, 3).earth().earth().earth().cost(COST_AVERAGE * COMBO_COEF));
-        registerSpell(new SpellGenericEntity(EntityDustball.class, 4).earth().earth().earth().earth().cost(COST_COMPLEX*COMBO_COEF));
+        registerSpell(new SpellGenericEntity(EntityDustball.class, 4).earth().earth().earth().earth().cost(COST_COMPLEX * COMBO_COEF));
         registerSpell(new SpellGenericEntity(EntityDustball.class, 5).earth().earth().earth().earth().earth().cost(COST_EXTREME * COMBO_COEF));
 
         registerSpell(new SpellGenericEntity2(EntityLavaball.class, 2, false).earth().earth().fire().fire().cost(COST_COMPLEX * COMBO_COEF));
@@ -81,11 +83,13 @@ public class SpellManager {
         registerSpell(new SpellGenericEntity(EntityLifeball.class, 5).life().life().life().life().life().cost(COST_EXTREME));
     }
 
-    public static void registerSpell(SpellBase spell) {
+    public static void registerSpell(SpellBase spell)
+    {
         spellRegistration.put(spell.getSequence(), spell);
     }
 
-    public static void registerSpell(String sequence, ISpellEffect spell) {
+    public static void registerSpell(String sequence, ISpellEffect spell)
+    {
         spellRegistration.put(sequence, spell);
     }
 }

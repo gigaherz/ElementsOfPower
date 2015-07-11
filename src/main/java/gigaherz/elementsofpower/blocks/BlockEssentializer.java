@@ -2,7 +2,6 @@ package gigaherz.elementsofpower.blocks;
 
 import gigaherz.elementsofpower.ElementsOfPower;
 import net.minecraft.block.Block;
-import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,9 +11,11 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
 public class BlockEssentializer
-        extends Block {
+        extends Block
+{
 
-    public BlockEssentializer() {
+    public BlockEssentializer()
+    {
         super(Material.iron);
         setUnlocalizedName("essentializer");
         setCreativeTab(ElementsOfPower.tabMagic);
@@ -23,10 +24,12 @@ public class BlockEssentializer
     }
 
     @Override
-    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ)
+    {
         TileEntity tileEntity = worldIn.getTileEntity(pos);
 
-        if (tileEntity == null || playerIn.isSneaking()) {
+        if (tileEntity == null || playerIn.isSneaking())
+        {
             return false;
         }
 
@@ -35,12 +38,14 @@ public class BlockEssentializer
     }
 
     @Override
-    public boolean hasTileEntity(IBlockState state) {
+    public boolean hasTileEntity(IBlockState state)
+    {
         return true;
     }
 
     @Override
-    public TileEntity createTileEntity(World world, IBlockState state) {
+    public TileEntity createTileEntity(World world, IBlockState state)
+    {
         return new TileEssentializer();
     }
 }

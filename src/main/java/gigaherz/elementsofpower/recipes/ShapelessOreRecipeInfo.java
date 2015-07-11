@@ -2,14 +2,13 @@ package gigaherz.elementsofpower.recipes;
 
 import gigaherz.elementsofpower.ElementsOfPower;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-public class ShapelessOreRecipeInfo implements IRecipeInfoProvider {
+public class ShapelessOreRecipeInfo implements IRecipeInfoProvider
+{
 
     ArrayList<ItemStack> recipeItems = new ArrayList<ItemStack>();
     ShapelessOreRecipe recipe;
@@ -19,14 +18,15 @@ public class ShapelessOreRecipeInfo implements IRecipeInfoProvider {
         this.recipe = recipe;
 
         ArrayList<Object> input = recipe.getInput();
-        for(Object o : input)
+        for (Object o : input)
         {
             Object oo = o;
-            if (oo instanceof List) {
+            if (oo instanceof List)
+            {
                 oo = ((List) o).get(0);
             }
 
-            if(oo == null)
+            if (oo == null)
                 continue;
 
             if (oo instanceof ItemStack)
@@ -34,8 +34,7 @@ public class ShapelessOreRecipeInfo implements IRecipeInfoProvider {
                 ItemStack c = ((ItemStack) oo).copy();
                 c.stackSize = 1;
                 recipeItems.add(c);
-            }
-            else
+            } else
             {
                 ElementsOfPower.logger.warn("Unknown type of item in ShapedOreRecipe: " + o.getClass().getName());
             }
@@ -43,12 +42,14 @@ public class ShapelessOreRecipeInfo implements IRecipeInfoProvider {
     }
 
     @Override
-    public ItemStack getRecipeOutput() {
+    public ItemStack getRecipeOutput()
+    {
         return recipe.getRecipeOutput();
     }
 
     @Override
-    public List<ItemStack> getRecipeInputs() {
+    public List<ItemStack> getRecipeInputs()
+    {
         return recipeItems;
     }
 }

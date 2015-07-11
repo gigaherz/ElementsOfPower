@@ -17,11 +17,13 @@ import net.minecraft.world.World;
 
 import java.util.Random;
 
-public class BlockDust extends Block {
+public class BlockDust extends Block
+{
 
     public static final PropertyInteger DENSITY = PropertyInteger.create("density", 1, 16);
 
-    public BlockDust() {
+    public BlockDust()
+    {
         super(Material.clay);
         setUnlocalizedName("dust");
         setCreativeTab(CreativeTabs.tabMisc);
@@ -33,11 +35,12 @@ public class BlockDust extends Block {
     }
 
     @Override
-    public int getLightOpacity(IBlockAccess world, BlockPos pos) {
+    public int getLightOpacity(IBlockAccess world, BlockPos pos)
+    {
         IBlockState state = world.getBlockState(pos);
-        if(state.getBlock() != this)
+        if (state.getBlock() != this)
             return 16;
-        return (Integer)state.getValue(DENSITY);
+        return (Integer) state.getValue(DENSITY);
     }
 
     @Override
@@ -70,33 +73,40 @@ public class BlockDust extends Block {
     @Override
     public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
     {
-        int density = (Integer)state.getValue(DENSITY) - 1;
-        int maxGive = (int)Math.sqrt(density);
+        int density = (Integer) state.getValue(DENSITY) - 1;
+        int maxGive = (int) Math.sqrt(density);
 
-        for(EnumFacing f : EnumFacing.VALUES) {
+        for (EnumFacing f : EnumFacing.VALUES)
+        {
             BlockPos bp = pos.offset(f);
             IBlockState neighbour = worldIn.getBlockState(bp);
             if (neighbour.getBlock() == Blocks.air
-                    || neighbour.getBlock() == Blocks.fire) {
+                    || neighbour.getBlock() == Blocks.fire)
+            {
                 boolean given = false;
-                if (density > maxGive) {
+                if (density > maxGive)
+                {
                     int d = rand.nextInt(maxGive);
-                    if(d > 0) {
+                    if (d > 0)
+                    {
                         worldIn.setBlockState(bp, getDefaultState().withProperty(DENSITY, d));
-                        density-=d;
+                        density -= d;
                         given = true;
                     }
                 }
 
-                if(!given)
+                if (!given)
                     worldIn.setBlockToAir(bp);
-            }
-            else  if (neighbour.getBlock() == this) {
-                if (density > maxGive) {
-                    int od = (Integer)neighbour.getValue(DENSITY);
-                    if(od < 16) {
+            } else if (neighbour.getBlock() == this)
+            {
+                if (density > maxGive)
+                {
+                    int od = (Integer) neighbour.getValue(DENSITY);
+                    if (od < 16)
+                    {
                         int d = rand.nextInt(Math.min(16 - od, maxGive));
-                        if (d > 0) {
+                        if (d > 0)
+                        {
                             worldIn.setBlockState(bp, getDefaultState().withProperty(DENSITY, od + d));
                             density -= d;
                         }
@@ -105,11 +115,10 @@ public class BlockDust extends Block {
             }
         }
 
-        if(density <= 0)
+        if (density <= 0)
         {
             worldIn.setBlockToAir(pos);
-        }
-        else
+        } else
         {
             worldIn.setBlockState(pos, state.withProperty(DENSITY, density));
         }
@@ -124,24 +133,28 @@ public class BlockDust extends Block {
     }
 
     @Override
-    public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
+    public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state)
+    {
         super.onBlockAdded(worldIn, pos, state);
 
         worldIn.scheduleUpdate(pos, this, worldIn.rand.nextInt(10));
     }
 
     @Override
-    public IBlockState getStateFromMeta(int meta) {
-        return this.getDefaultState().withProperty(DENSITY, 16-meta);
+    public IBlockState getStateFromMeta(int meta)
+    {
+        return this.getDefaultState().withProperty(DENSITY, 16 - meta);
     }
 
     @Override
-    public int getMetaFromState(IBlockState state) {
-        return 16-(Integer) state.getValue(DENSITY);
+    public int getMetaFromState(IBlockState state)
+    {
+        return 16 - (Integer) state.getValue(DENSITY);
     }
 
     @Override
-    protected BlockState createBlockState() {
+    protected BlockState createBlockState()
+    {
         return new BlockState(this, DENSITY);
     }
 

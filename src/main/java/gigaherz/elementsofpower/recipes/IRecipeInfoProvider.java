@@ -4,7 +4,9 @@ import net.minecraft.item.ItemStack;
 
 import java.util.List;
 
-public interface IRecipeInfoProvider {
+public interface IRecipeInfoProvider
+{
     ItemStack getRecipeOutput();
+
     List<ItemStack> getRecipeInputs();
 }

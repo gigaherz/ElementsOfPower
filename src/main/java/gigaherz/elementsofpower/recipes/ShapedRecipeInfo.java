@@ -1,14 +1,13 @@
 package gigaherz.elementsofpower.recipes;
 
-import gigaherz.elementsofpower.ElementsOfPower;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ShapedRecipes;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-public class ShapedRecipeInfo implements IRecipeInfoProvider {
+public class ShapedRecipeInfo implements IRecipeInfoProvider
+{
 
     ArrayList<ItemStack> recipeItems = new ArrayList<ItemStack>();
     ShapedRecipes recipe;
@@ -18,9 +17,9 @@ public class ShapedRecipeInfo implements IRecipeInfoProvider {
         this.recipe = recipe;
 
         ItemStack[] input = recipe.recipeItems;
-        for(ItemStack o : input)
+        for (ItemStack o : input)
         {
-            if(o == null)
+            if (o == null)
                 continue;
 
             ItemStack c = o.copy();
@@ -30,12 +29,14 @@ public class ShapedRecipeInfo implements IRecipeInfoProvider {
     }
 
     @Override
-    public ItemStack getRecipeOutput() {
+    public ItemStack getRecipeOutput()
+    {
         return recipe.getRecipeOutput();
     }
 
     @Override
-    public List<ItemStack> getRecipeInputs() {
+    public List<ItemStack> getRecipeInputs()
+    {
         return recipeItems;
     }
 }

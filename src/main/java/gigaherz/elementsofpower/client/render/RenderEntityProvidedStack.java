@@ -32,17 +32,17 @@ public class RenderEntityProvidedStack extends Render
     {
         ItemStack stack;
         float scale = 0.5f;
-        if(!(entity instanceof IRenderStackProvider))
+        if (!(entity instanceof IRenderStackProvider))
             return;
-        if(entity instanceof IVariableSize)
+        if (entity instanceof IVariableSize)
         {
-            scale = ((IVariableSize)entity).getScale();
+            scale = ((IVariableSize) entity).getScale();
         }
-        stack = ((IRenderStackProvider)entity).getStackForRendering();
+        stack = ((IRenderStackProvider) entity).getStackForRendering();
         GlStateManager.pushMatrix();
-        GlStateManager.translate((float)x, (float)y, (float)z);
+        GlStateManager.translate((float) x, (float) y, (float) z);
         GlStateManager.enableRescaleNormal();
-        GlStateManager.scale(scale,scale,scale);
+        GlStateManager.scale(scale, scale, scale);
         GlStateManager.rotate(-this.renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
         GlStateManager.rotate(this.renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
         this.bindTexture(TextureMap.locationBlocksTexture);

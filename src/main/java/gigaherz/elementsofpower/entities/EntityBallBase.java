@@ -11,7 +11,8 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
-public abstract class EntityBallBase extends EntityThrowable implements IVariableSize, IRenderStackProvider {
+public abstract class EntityBallBase extends EntityThrowable implements IVariableSize, IRenderStackProvider
+{
 
     public int damageForce;
     private ItemStack stackForRendering;
@@ -55,7 +56,7 @@ public abstract class EntityBallBase extends EntityThrowable implements IVariabl
 
     protected float getRandomForParticle()
     {
-        return (rand.nextFloat()-0.5f) * damageForce / 8;
+        return (rand.nextFloat() - 0.5f) * damageForce / 8;
     }
 
     @Override
@@ -72,18 +73,19 @@ public abstract class EntityBallBase extends EntityThrowable implements IVariabl
 
         processEntitiesAroundBefore(pos.hitVec);
 
-        if(!worldObj.isRemote && force > 0) {
+        if (!worldObj.isRemote && force > 0)
+        {
             BlockPos bp = pos.getBlockPos();
 
-            if(bp != null) {
+            if (bp != null)
+            {
                 if (pos.sideHit == EnumFacing.UP) bp = bp.up();
                 else if (pos.sideHit == EnumFacing.DOWN) bp = bp.down();
                 else if (pos.sideHit == EnumFacing.EAST) bp = bp.east();
                 else if (pos.sideHit == EnumFacing.WEST) bp = bp.west();
                 else if (pos.sideHit == EnumFacing.NORTH) bp = bp.north();
                 else if (pos.sideHit == EnumFacing.SOUTH) bp = bp.south();
-            }
-            else
+            } else
             {
                 bp = new BlockPos(pos.hitVec);
             }
@@ -91,9 +93,12 @@ public abstract class EntityBallBase extends EntityThrowable implements IVariabl
             int px = bp.getX();
             int py = bp.getY();
             int pz = bp.getZ();
-            for (int z = pz - force; z <= pz + force; z++) {
-                for (int x = px - force; x <= px + force; x++) {
-                    for (int y = py - force; y <= py + force; y++) {
+            for (int z = pz - force; z <= pz + force; z++)
+            {
+                for (int x = px - force; x <= px + force; x++)
+                {
+                    for (int y = py - force; y <= py + force; y++)
+                    {
                         float dx = Math.abs(px - x);
                         float dy = Math.abs(py - y);
                         float dz = Math.abs(pz - z);
@@ -104,7 +109,7 @@ public abstract class EntityBallBase extends EntityThrowable implements IVariabl
 
                         float r = (float) Math.sqrt(r2);
 
-                        int layers = (int)Math.min(force - r, 7);
+                        int layers = (int) Math.min(force - r, 7);
 
                         BlockPos np = new BlockPos(x, y, z);
 
@@ -124,21 +129,30 @@ public abstract class EntityBallBase extends EntityThrowable implements IVariabl
         }
     }
 
-    protected void processDirectHit(Entity entityHit) {}
+    protected void processDirectHit(Entity entityHit)
+    {
+    }
 
-    protected void processEntitiesAroundBefore(Vec3 hitVec) {}
-    protected void processEntitiesAroundAfter(Vec3 hitVec) {}
+    protected void processEntitiesAroundBefore(Vec3 hitVec)
+    {
+    }
+
+    protected void processEntitiesAroundAfter(Vec3 hitVec)
+    {
+    }
 
     protected abstract void processBlockWithinRadius(BlockPos blockPos, IBlockState currentState, int layers);
 
     protected abstract void spawnBallParticles();
 
     @Override
-    public float getScale() {
-        return 0.25f * (1+damageForce);
+    public float getScale()
+    {
+        return 0.25f * (1 + damageForce);
     }
 
-    public int getDamageForce() {
+    public int getDamageForce()
+    {
         return damageForce;
     }
 }

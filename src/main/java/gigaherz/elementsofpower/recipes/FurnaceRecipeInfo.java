@@ -6,7 +6,8 @@ import net.minecraft.item.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FurnaceRecipeInfo implements IRecipeInfoProvider {
+public class FurnaceRecipeInfo implements IRecipeInfoProvider
+{
 
     ArrayList<ItemStack> recipeItems;
     ItemStack recipeOutput;
@@ -27,12 +28,14 @@ public class FurnaceRecipeInfo implements IRecipeInfoProvider {
     }
 
     @Override
-    public ItemStack getRecipeOutput() {
+    public ItemStack getRecipeOutput()
+    {
         return recipeOutput;
     }
 
     @Override
-    public List<ItemStack> getRecipeInputs() {
+    public List<ItemStack> getRecipeInputs()
+    {
         return recipeItems;
     }
 }

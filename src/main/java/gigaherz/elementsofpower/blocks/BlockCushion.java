@@ -2,17 +2,11 @@ package gigaherz.elementsofpower.blocks;
 
 import gigaherz.elementsofpower.ElementsOfPower;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockWeb;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.util.AxisAlignedBB;
@@ -24,7 +18,8 @@ import net.minecraft.world.World;
 
 import java.util.Random;
 
-public class BlockCushion extends Block {
+public class BlockCushion extends Block
+{
 
     public static final PropertyInteger DENSITY = PropertyInteger.create("density", 1, 16);
 
@@ -32,9 +27,10 @@ public class BlockCushion extends Block {
             1.0, 0.95, 0.9, 0.85,
             0.8, 0.775, 0.75, 0.725,
             0.7, 0.6875, 0.675, 0.6625,
-            0.65, 0.6375, 0.625, 0.6125 };
+            0.65, 0.6375, 0.625, 0.6125};
 
-    public BlockCushion() {
+    public BlockCushion()
+    {
         super(ElementsOfPower.materialCushion);
         setUnlocalizedName("dust");
         setCreativeTab(CreativeTabs.tabMisc);
@@ -46,11 +42,12 @@ public class BlockCushion extends Block {
     }
 
     @Override
-    public int getLightOpacity(IBlockAccess world, BlockPos pos) {
+    public int getLightOpacity(IBlockAccess world, BlockPos pos)
+    {
         IBlockState state = world.getBlockState(pos);
-        if(state.getBlock() != this)
+        if (state.getBlock() != this)
             return 16;
-        return (Integer)state.getValue(DENSITY);
+        return (Integer) state.getValue(DENSITY);
     }
 
     public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn)
@@ -66,7 +63,7 @@ public class BlockCushion extends Block {
         double t = entityIn.motionY / gravity;
 
         // dx = v0*t + 1/2 * g * t^2
-        entityIn.fallDistance = (float)(0.5 * gravity * t*t);
+        entityIn.fallDistance = (float) (0.5 * gravity * t * t);
     }
 
     @Override
@@ -99,33 +96,40 @@ public class BlockCushion extends Block {
     @Override
     public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
     {
-        int density = (Integer)state.getValue(DENSITY) - 1;
-        int maxGive = (int)Math.sqrt(density);
+        int density = (Integer) state.getValue(DENSITY) - 1;
+        int maxGive = (int) Math.sqrt(density);
 
-        for(EnumFacing f : EnumFacing.VALUES) {
+        for (EnumFacing f : EnumFacing.VALUES)
+        {
             BlockPos bp = pos.offset(f);
             IBlockState neighbour = worldIn.getBlockState(bp);
             if (neighbour.getBlock() == Blocks.air
-                    || neighbour.getBlock() == Blocks.fire) {
+                    || neighbour.getBlock() == Blocks.fire)
+            {
                 boolean given = false;
-                if (density > maxGive) {
+                if (density > maxGive)
+                {
                     int d = rand.nextInt(maxGive);
-                    if(d > 0) {
+                    if (d > 0)
+                    {
                         worldIn.setBlockState(bp, getDefaultState().withProperty(DENSITY, d));
-                        density-=d;
+                        density -= d;
                         given = true;
                     }
                 }
 
-                if(!given)
+                if (!given)
                     worldIn.setBlockToAir(bp);
-            }
-            else  if (neighbour.getBlock() == this) {
-                if (density > maxGive) {
-                    int od = (Integer)neighbour.getValue(DENSITY);
-                    if(od < 16) {
+            } else if (neighbour.getBlock() == this)
+            {
+                if (density > maxGive)
+                {
+                    int od = (Integer) neighbour.getValue(DENSITY);
+                    if (od < 16)
+                    {
                         int d = rand.nextInt(Math.min(16 - od, maxGive));
-                        if (d > 0) {
+                        if (d > 0)
+                        {
                             worldIn.setBlockState(bp, getDefaultState().withProperty(DENSITY, od + d));
                             density -= d;
                         }
@@ -134,11 +138,10 @@ public class BlockCushion extends Block {
             }
         }
 
-        if(density <= 0)
+        if (density <= 0)
         {
             worldIn.setBlockToAir(pos);
-        }
-        else
+        } else
         {
             worldIn.setBlockState(pos, state.withProperty(DENSITY, density));
         }
@@ -153,24 +156,28 @@ public class BlockCushion extends Block {
     }
 
     @Override
-    public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
+    public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state)
+    {
         super.onBlockAdded(worldIn, pos, state);
 
         worldIn.scheduleUpdate(pos, this, worldIn.rand.nextInt(10));
     }
 
     @Override
-    public IBlockState getStateFromMeta(int meta) {
-        return this.getDefaultState().withProperty(DENSITY, 16-meta);
+    public IBlockState getStateFromMeta(int meta)
+    {
+        return this.getDefaultState().withProperty(DENSITY, 16 - meta);
     }
 
     @Override
-    public int getMetaFromState(IBlockState state) {
-        return 16-(Integer) state.getValue(DENSITY);
+    public int getMetaFromState(IBlockState state)
+    {
+        return 16 - (Integer) state.getValue(DENSITY);
     }
 
     @Override
-    protected BlockState createBlockState() {
+    protected BlockState createBlockState()
+    {
         return new BlockState(this, DENSITY);
     }
 

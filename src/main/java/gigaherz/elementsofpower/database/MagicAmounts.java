@@ -1,32 +1,40 @@
 package gigaherz.elementsofpower.database;
 
-public class MagicAmounts {
+public class MagicAmounts
+{
 
-    public enum MagicTypes {fire, water, air, earth, light, darkness, life, death}
+    public enum MagicTypes
+    {
+        fire, water, air, earth, light, darkness, life, death
+    }
 
     public int[] amounts;
 
-    public MagicAmounts() {
+    public MagicAmounts()
+    {
         amounts = new int[8];
     }
 
-    public MagicAmounts(int fire, int water, int air, int earth, int light, int darkness, int life, int death) {
+    public MagicAmounts(int fire, int water, int air, int earth, int light, int darkness, int life, int death)
+    {
         amounts = new int[]{fire, water, air, earth, light, darkness, life, death};
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
 
-        if(isEmpty())
+        if (isEmpty())
             return "{Empty}";
 
         StringBuilder b = new StringBuilder();
         boolean first = true;
-        for (int i = 0; i < 8; i++) {
-            if(amounts[i] == 0)
+        for (int i = 0; i < 8; i++)
+        {
+            if (amounts[i] == 0)
                 continue;
 
-            if(first)
+            if (first)
                 b.append("{");
             else
                 b.append(", ");
@@ -35,7 +43,7 @@ public class MagicAmounts {
             String str = String.format("%s: %d", magicName, amounts[i]);
             b.append(str);
 
-            first=false;
+            first = false;
         }
         b.append("}");
 
@@ -43,37 +51,46 @@ public class MagicAmounts {
     }
 
 
-    public int getTotalMagic() {
+    public int getTotalMagic()
+    {
         int acc = 0;
 
-        for (int i = 0; i < amounts.length; i++) {
+        for (int i = 0; i < amounts.length; i++)
+        {
             acc += amounts[i];
         }
 
         return acc;
     }
 
-    public int getAmountOfType(int type) {
+    public int getAmountOfType(int type)
+    {
         return amounts[type];
     }
 
 
-    public boolean hasEnough(MagicAmounts cost) {
-        for (int i = 0; i < 8; i++) {
+    public boolean hasEnough(MagicAmounts cost)
+    {
+        for (int i = 0; i < 8; i++)
+        {
             if (amounts[i] < cost.amounts[i])
                 return false;
         }
         return true;
     }
 
-    public void subtract(MagicAmounts cost) {
+    public void subtract(MagicAmounts cost)
+    {
         for (int i = 0; i < 8; i++)
             amounts[i] -= cost.amounts[i];
     }
 
-    public boolean isEmpty() {
-        for (int i = 0; i < amounts.length; i++) {
-            if (amounts[i] > 0) {
+    public boolean isEmpty()
+    {
+        for (int i = 0; i < amounts.length; i++)
+        {
+            if (amounts[i] > 0)
+            {
                 return false;
             }
         }
@@ -81,60 +98,72 @@ public class MagicAmounts {
         return true;
     }
 
-    public void setAmountOfType(int type, int amount) {
+    public void setAmountOfType(int type, int amount)
+    {
         amounts[type] = amount;
     }
 
-    public MagicAmounts fire(int amount) {
+    public MagicAmounts fire(int amount)
+    {
         amounts[0] += amount;
         return this;
     }
 
-    public MagicAmounts water(int amount) {
+    public MagicAmounts water(int amount)
+    {
         amounts[1] += amount;
         return this;
     }
 
-    public MagicAmounts air(int amount) {
+    public MagicAmounts air(int amount)
+    {
         amounts[2] += amount;
         return this;
     }
 
-    public MagicAmounts earth(int amount) {
+    public MagicAmounts earth(int amount)
+    {
         amounts[3] += amount;
         return this;
     }
 
-    public MagicAmounts light(int amount) {
+    public MagicAmounts light(int amount)
+    {
         amounts[4] += amount;
         return this;
     }
 
-    public MagicAmounts darkness(int amount) {
+    public MagicAmounts darkness(int amount)
+    {
         amounts[5] += amount;
         return this;
     }
 
-    public MagicAmounts life(int amount) {
+    public MagicAmounts life(int amount)
+    {
         amounts[6] += amount;
         return this;
     }
 
-    public MagicAmounts death(int amount) {
+    public MagicAmounts death(int amount)
+    {
         amounts[7] += amount;
         return this;
     }
 
-    public MagicAmounts all(int amount) {
-        for (int i = 0; i < amounts.length; i++) {
+    public MagicAmounts all(int amount)
+    {
+        for (int i = 0; i < amounts.length; i++)
+        {
             amounts[i] += amount;
         }
 
         return this;
     }
 
-    public void add(MagicAmounts other) {
-        for(int i=0;i<amounts.length;i++)
+    public void add(MagicAmounts other)
+    {
+        for (int i = 0; i < amounts.length; i++)
         {
             amounts[i] += other.amounts[i];
         }

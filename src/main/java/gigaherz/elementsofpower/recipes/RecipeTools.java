@@ -10,16 +10,20 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public class RecipeTools {
+public class RecipeTools
+{
 
     public static Map<ItemStack, List<ItemStack>> itemSources = new HashMap<ItemStack, List<ItemStack>>();
     public static List<ItemStack> itemRoots = new ArrayList<ItemStack>();
 
     static int gcd(int a, int b)
     {
-        for (;;)
+        for (; ; )
         {
             if (a == 0) return b;
             b %= a;
@@ -34,13 +38,16 @@ public class RecipeTools {
         return temp > 0 ? (a / temp * b) : 0;
     }
 
-    public static void dumpItemRoots() {
-        try {
+    public static void dumpItemRoots()
+    {
+        try
+        {
             FileOutputStream fos = new FileOutputStream("itemRoots.csv");
             OutputStreamWriter out = new OutputStreamWriter(fos, "UTF-8");
 
-            for (ItemStack is : itemRoots) {
-                if(is.getItem() == null)
+            for (ItemStack is : itemRoots)
+            {
+                if (is.getItem() == null)
                 {
                     continue;
                 }
@@ -50,34 +57,32 @@ public class RecipeTools {
             }
 
             out.close();
-        } catch (IOException e) {
+        } catch (IOException e)
+        {
             return;
         }
     }
 
 
-    public static void gatherRecipes() {
+    public static void gatherRecipes()
+    {
 
-        for(IRecipe recipe : (List<IRecipe>) CraftingManager.getInstance().getRecipeList())
+        for (IRecipe recipe : (List<IRecipe>) CraftingManager.getInstance().getRecipeList())
         {
             IRecipeInfoProvider provider;
-            if(recipe instanceof ShapedRecipes)
+            if (recipe instanceof ShapedRecipes)
             {
-                provider = new ShapedRecipeInfo((ShapedRecipes)recipe);
-            }
-            else if(recipe instanceof ShapelessRecipes)
+                provider = new ShapedRecipeInfo((ShapedRecipes) recipe);
+            } else if (recipe instanceof ShapelessRecipes)
             {
-                provider = new ShapelessRecipeInfo((ShapelessRecipes)recipe);
-            }
-            else if(recipe instanceof ShapedOreRecipe)
+                provider = new ShapelessRecipeInfo((ShapelessRecipes) recipe);
+            } else if (recipe instanceof ShapedOreRecipe)
             {
-                provider = new ShapedOreRecipeInfo((ShapedOreRecipe)recipe);
-            }
-            else if(recipe instanceof ShapelessOreRecipe)
+                provider = new ShapedOreRecipeInfo((ShapedOreRecipe) recipe);
+            } else if (recipe instanceof ShapelessOreRecipe)
             {
-                provider = new ShapelessOreRecipeInfo((ShapelessOreRecipe)recipe);
-            }
-            else
+                provider = new ShapelessOreRecipeInfo((ShapelessOreRecipe) recipe);
+            } else
             {
                 // TODO: Allow registration of more recipe providers.
                 ElementsOfPower.logger.warn("Recipe class unknown: " + recipe.getClass().getName());
@@ -87,28 +92,30 @@ public class RecipeTools {
             processRecipe(provider);
         }
 
-        for(Map.Entry<ItemStack,ItemStack> entry : ((Map<ItemStack,ItemStack>) FurnaceRecipes.instance().getSmeltingList()).entrySet())
+        for (Map.Entry<ItemStack, ItemStack> entry : ((Map<ItemStack, ItemStack>) FurnaceRecipes.instance().getSmeltingList()).entrySet())
         {
             processRecipe(new FurnaceRecipeInfo(entry.getKey(), entry.getValue()));
         }
 
-        for(Map.Entry<ItemStack, List<ItemStack>> entry : itemSources.entrySet()) {
-            for(ItemStack s : entry.getValue())
+        for (Map.Entry<ItemStack, List<ItemStack>> entry : itemSources.entrySet())
+        {
+            for (ItemStack s : entry.getValue())
             {
                 boolean found = false;
-                for(ItemStack l : itemRoots)
+                for (ItemStack l : itemRoots)
                 {
-                    if(Utils.compareItemStacksStrict(s, l))
+                    if (Utils.compareItemStacksStrict(s, l))
                     {
                         found = true;
                         break;
                     }
                 }
-                if(!found) {
+                if (!found)
+                {
                     ItemStack t = s.copy();
                     t.stackSize = 1;
                     int d = t.getItemDamage();
-                    if(d < 0 || d >= 32767)
+                    if (d < 0 || d >= 32767)
                         t.setItemDamage(0);
                     itemRoots.add(t);
                 }
@@ -116,14 +123,17 @@ public class RecipeTools {
         }
     }
 
-    private static void processRecipe(IRecipeInfoProvider recipe) {
+    private static void processRecipe(IRecipeInfoProvider recipe)
+    {
         ItemStack output = recipe.getRecipeOutput();
 
-        if (output == null) {
+        if (output == null)
+        {
             return;
         }
 
-        if (Utils.stackIsInMap(itemSources, output)) {
+        if (Utils.stackIsInMap(itemSources, output))
+        {
             return;
         }
 
@@ -137,45 +147,49 @@ public class RecipeTools {
         applied = reduceItemsList(applied);
 
         boolean aggregates = false;
-        if(applied.size() == 1)
+        if (applied.size() == 1)
         {
-            if(applied.get(0).stackSize < output.stackSize)
+            if (applied.get(0).stackSize < output.stackSize)
             {
                 aggregates = true;
             }
         }
 
-        if(!aggregates) {
+        if (!aggregates)
+        {
             replaceExistingSources(output, applied);
         }
 
         itemSources.put(output, applied);
     }
 
-    private static void replaceExistingSources(ItemStack output, List<ItemStack> items) {
+    private static void replaceExistingSources(ItemStack output, List<ItemStack> items)
+    {
 
         List<ItemStack> stacksToRemove = new ArrayList<ItemStack>();
         Map<ItemStack, List<ItemStack>> stacksToAdd = new HashMap<ItemStack, List<ItemStack>>();
 
-        for(Map.Entry<ItemStack, List<ItemStack>> entry : itemSources.entrySet())
+        for (Map.Entry<ItemStack, List<ItemStack>> entry : itemSources.entrySet())
         {
             ItemStack result = entry.getKey().copy();
             List<ItemStack> stacks = new ArrayList<ItemStack>();
             int totalMult = 1;
             boolean anythingChanged = false;
 
-            for(ItemStack s : entry.getValue()) {
+            for (ItemStack s : entry.getValue())
+            {
 
-                if (Utils.stackFitsInSlot(s, output)) {
+                if (Utils.stackFitsInSlot(s, output))
+                {
 
                     int numNeeded = s.stackSize;
                     int numProduced = output.stackSize;
                     int num = lcm(numNeeded, numProduced);
 
-                    int mult = num/numNeeded;
+                    int mult = num / numNeeded;
 
                     result.stackSize *= mult;
-                    for(ItemStack t : stacks)
+                    for (ItemStack t : stacks)
                     {
                         t.stackSize *= mult;
                     }
@@ -183,7 +197,7 @@ public class RecipeTools {
                     totalMult *= mult;
 
                     int mult2 = num / numProduced;
-                    for(ItemStack t : items)
+                    for (ItemStack t : items)
                     {
                         ItemStack r = t.copy();
                         r.stackSize *= mult2;
@@ -191,8 +205,7 @@ public class RecipeTools {
                     }
 
                     anythingChanged = true;
-                }
-                else
+                } else
                 {
                     ItemStack r = s.copy();
                     r.stackSize *= totalMult;
@@ -200,14 +213,14 @@ public class RecipeTools {
                 }
             }
 
-            if(anythingChanged)
+            if (anythingChanged)
             {
                 stacksToRemove.add(entry.getKey());
                 stacksToAdd.put(result, stacks);
             }
         }
 
-        for(ItemStack s : stacksToRemove)
+        for (ItemStack s : stacksToRemove)
         {
             itemSources.remove(s);
         }
@@ -220,30 +233,34 @@ public class RecipeTools {
         ItemStack result = output.copy();
         int totalMult = 1;
 
-        for (ItemStack is : items) {
+        for (ItemStack is : items)
+        {
 
             Map.Entry<ItemStack, List<ItemStack>> r = findSources(is);
 
-            if(r != null) {
+            if (r != null)
+            {
                 List<ItemStack> ss = r.getValue();
 
-                if (ss.size() == 1) {
-                    if (ss.get(0).stackSize < r.getKey().stackSize) {
+                if (ss.size() == 1)
+                {
+                    if (ss.get(0).stackSize < r.getKey().stackSize)
+                    {
                         r = null;
                     }
                 }
             }
 
-            if(r != null)
+            if (r != null)
             {
                 int numNeeded = is.stackSize;
                 int numProduced = output.stackSize;
                 int num = lcm(numNeeded, numProduced);
 
-                int mult = num/numNeeded;
+                int mult = num / numNeeded;
 
                 result.stackSize *= mult;
-                for(ItemStack t : applied)
+                for (ItemStack t : applied)
                 {
                     t.stackSize *= mult;
                 }
@@ -251,14 +268,13 @@ public class RecipeTools {
                 totalMult *= mult;
 
                 int mult2 = num / numProduced;
-                for(ItemStack t : r.getValue())
+                for (ItemStack t : r.getValue())
                 {
                     ItemStack q = t.copy();
                     q.stackSize *= mult2;
                     applied.add(q);
                 }
-            }
-            else
+            } else
             {
                 ItemStack q = is.copy();
                 q.stackSize *= totalMult;
@@ -266,14 +282,18 @@ public class RecipeTools {
             }
         }
 
-        if(result.stackSize > 1) {
+        if (result.stackSize > 1)
+        {
             int cd = result.stackSize;
-            for (ItemStack is : applied) {
+            for (ItemStack is : applied)
+            {
                 cd = gcd(cd, is.stackSize);
             }
 
-            if (cd > 1) {
-                for (ItemStack is : applied) {
+            if (cd > 1)
+            {
+                for (ItemStack is : applied)
+                {
                     is.stackSize /= cd;
                 }
                 result.stackSize /= cd;
@@ -287,8 +307,10 @@ public class RecipeTools {
     {
         List<ItemStack> itemsResolved = new ArrayList<ItemStack>();
 
-        for (ItemStack is : items) {
-            if (is == null) {
+        for (ItemStack is : items)
+        {
+            if (is == null)
+            {
                 continue;
             }
 
@@ -298,22 +320,28 @@ public class RecipeTools {
         return itemsResolved;
     }
 
-    private static void aggregateExisting(List<ItemStack> itemsResolved, ItemStack is) {
+    private static void aggregateExisting(List<ItemStack> itemsResolved, ItemStack is)
+    {
         ItemStack existing = Utils.getExistingInList(itemsResolved, is);
 
-        if (existing != null) {
-            if (existing != is) {
-                existing.stackSize+=is.stackSize;
+        if (existing != null)
+        {
+            if (existing != is)
+            {
+                existing.stackSize += is.stackSize;
             }
-        } else {
+        } else
+        {
             ItemStack isc = is.copy();
             itemsResolved.add(isc);
         }
     }
 
-    private static Map.Entry<ItemStack, List<ItemStack>> findSources(ItemStack is) {
-        for(Map.Entry<ItemStack, List<ItemStack>> entry : itemSources.entrySet()) {
-            if(Utils.compareItemStacksStrict(is, entry.getKey()))
+    private static Map.Entry<ItemStack, List<ItemStack>> findSources(ItemStack is)
+    {
+        for (Map.Entry<ItemStack, List<ItemStack>> entry : itemSources.entrySet())
+        {
+            if (Utils.compareItemStacksStrict(is, entry.getKey()))
                 return entry;
         }
 

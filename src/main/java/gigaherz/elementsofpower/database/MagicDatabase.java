@@ -17,114 +17,136 @@ import net.minecraft.util.StatCollector;
 
 import java.util.*;
 
-public class MagicDatabase {
-    private static class ItemEssenceEntry {
+public class MagicDatabase
+{
+    private static class ItemEssenceEntry
+    {
         ItemStack item;
         MagicAmounts amounts;
 
-        public ItemEssenceEntry(ItemStack item, MagicAmounts amounts) {
+        public ItemEssenceEntry(ItemStack item, MagicAmounts amounts)
+        {
             this.item = item;
             this.amounts = amounts;
         }
 
-        public ItemEssenceEntry all(int amount) {
+        public ItemEssenceEntry all(int amount)
+        {
             amounts.all(amount);
             return this;
         }
 
-        public ItemEssenceEntry fire(int amount) {
+        public ItemEssenceEntry fire(int amount)
+        {
             amounts.fire(amount);
             return this;
         }
 
-        public ItemEssenceEntry water(int amount) {
+        public ItemEssenceEntry water(int amount)
+        {
             amounts.water(amount);
             return this;
         }
 
-        public ItemEssenceEntry air(int amount) {
+        public ItemEssenceEntry air(int amount)
+        {
             amounts.air(amount);
             return this;
         }
 
-        public ItemEssenceEntry earth(int amount) {
+        public ItemEssenceEntry earth(int amount)
+        {
             amounts.earth(amount);
             return this;
         }
 
-        public ItemEssenceEntry light(int amount) {
+        public ItemEssenceEntry light(int amount)
+        {
             amounts.light(amount);
             return this;
         }
 
-        public ItemEssenceEntry darkness(int amount) {
+        public ItemEssenceEntry darkness(int amount)
+        {
             amounts.darkness(amount);
             return this;
         }
 
-        public ItemEssenceEntry life(int amount) {
+        public ItemEssenceEntry life(int amount)
+        {
             amounts.life(amount);
             return this;
         }
 
-        public ItemEssenceEntry death(int amount) {
+        public ItemEssenceEntry death(int amount)
+        {
             amounts.death(amount);
             return this;
         }
     }
 
-    private static class ItemEssenceCollection extends ArrayList<ItemEssenceEntry> {
+    private static class ItemEssenceCollection extends ArrayList<ItemEssenceEntry>
+    {
 
-        public ItemEssenceCollection all(int amount) {
-            for(ItemEssenceEntry e : this)
+        public ItemEssenceCollection all(int amount)
+        {
+            for (ItemEssenceEntry e : this)
                 e.all(amount);
             return this;
         }
 
-        public ItemEssenceCollection fire(int amount) {
-            for(ItemEssenceEntry e : this)
+        public ItemEssenceCollection fire(int amount)
+        {
+            for (ItemEssenceEntry e : this)
                 e.fire(amount);
             return this;
         }
 
-        public ItemEssenceCollection water(int amount) {
-            for(ItemEssenceEntry e : this)
+        public ItemEssenceCollection water(int amount)
+        {
+            for (ItemEssenceEntry e : this)
                 e.water(amount);
             return this;
         }
 
-        public ItemEssenceCollection air(int amount) {
-            for(ItemEssenceEntry e : this)
+        public ItemEssenceCollection air(int amount)
+        {
+            for (ItemEssenceEntry e : this)
                 e.air(amount);
             return this;
         }
 
-        public ItemEssenceCollection earth(int amount) {
-            for(ItemEssenceEntry e : this)
+        public ItemEssenceCollection earth(int amount)
+        {
+            for (ItemEssenceEntry e : this)
                 e.earth(amount);
             return this;
         }
 
-        public ItemEssenceCollection light(int amount) {
-            for(ItemEssenceEntry e : this)
+        public ItemEssenceCollection light(int amount)
+        {
+            for (ItemEssenceEntry e : this)
                 e.light(amount);
             return this;
         }
 
-        public ItemEssenceCollection darkness(int amount) {
-            for(ItemEssenceEntry e : this)
+        public ItemEssenceCollection darkness(int amount)
+        {
+            for (ItemEssenceEntry e : this)
                 e.darkness(amount);
             return this;
         }
 
-        public ItemEssenceCollection life(int amount) {
-            for(ItemEssenceEntry e : this)
+        public ItemEssenceCollection life(int amount)
+        {
+            for (ItemEssenceEntry e : this)
                 e.life(amount);
             return this;
         }
 
-        public ItemEssenceCollection death(int amount) {
-            for(ItemEssenceEntry e : this)
+        public ItemEssenceCollection death(int amount)
+        {
+            for (ItemEssenceEntry e : this)
                 e.death(amount);
             return this;
         }
@@ -146,35 +168,40 @@ public class MagicDatabase {
             "element.life",
             "element.death",
     };
-    public static String getMagicName(int i) {
+
+    public static String getMagicName(int i)
+    {
         return StatCollector.translateToLocal(magicNames[i]);
     }
 
 
-    public static void initialize() {
+    public static void initialize()
+    {
         registerContainerConversions();
         registerContainerCapacity();
         registerEssenceSources();
     }
 
-    public static void postInitialize() {
+    public static void postInitialize()
+    {
         RecipeTools.gatherRecipes();
         registerEssencesForRecipes();
     }
 
-    private static void registerEssencesForRecipes() {
-        for(Map.Entry<ItemStack, List<ItemStack>> it : RecipeTools.itemSources.entrySet())
+    private static void registerEssencesForRecipes()
+    {
+        for (Map.Entry<ItemStack, List<ItemStack>> it : RecipeTools.itemSources.entrySet())
         {
             MagicAmounts ma = getEssences(it.getKey());
-            if(ma != null && !ma.isEmpty())
+            if (ma != null && !ma.isEmpty())
                 continue;
 
             boolean allFound = true;
             MagicAmounts am = new MagicAmounts();
-            for(ItemStack b : it.getValue())
+            for (ItemStack b : it.getValue())
             {
                 MagicAmounts m = getEssences(b);
-                if(m == null || m.isEmpty())
+                if (m == null || m.isEmpty())
                 {
                     allFound = false;
                     break;
@@ -183,7 +210,7 @@ public class MagicDatabase {
                 am.add(m);
             }
 
-            if(!allFound)
+            if (!allFound)
                 continue;
 
             itemEssences.put(it.getKey(), am);
@@ -237,12 +264,12 @@ public class MagicDatabase {
                 essences(Blocks.red_flower, 7)).life(1);
 
         collection(
-            essences(Blocks.log, 0),
-            essences(Blocks.log, 1),
-            essences(Blocks.log, 2),
-            essences(Blocks.log, 3),
-            essences(Blocks.log, 4),
-            essences(Blocks.log, 5)).life(4);
+                essences(Blocks.log, 0),
+                essences(Blocks.log, 1),
+                essences(Blocks.log, 2),
+                essences(Blocks.log, 3),
+                essences(Blocks.log, 4),
+                essences(Blocks.log, 5)).life(4);
 
         //essences(Blocks.stone_slab, 0);
         //essences(Blocks.stone_slab, 1);
@@ -251,12 +278,12 @@ public class MagicDatabase {
         //essences(Blocks.stone_slab2, 0);
         //essences(Blocks.wooden_slab,0);
 
-        essences(Blocks.hay_block,0).earth(1).life(9).air(1);
+        essences(Blocks.hay_block, 0).earth(1).life(9).air(1);
 
-        essences(Blocks.red_mushroom,0).earth(2).life(2);
+        essences(Blocks.red_mushroom, 0).earth(2).life(2);
         essences(Blocks.brown_mushroom, 0).earth(2).life(2);
-        essences(Blocks.pumpkin,0).earth(1).life(3);
-        essences(Blocks.sponge,1).water(4).life(2);
+        essences(Blocks.pumpkin, 0).earth(1).life(3);
+        essences(Blocks.sponge, 1).water(4).life(2);
         essences(Blocks.vine, 0).life(2);
 
         //essences(Blocks.netherrack, 0);
@@ -333,7 +360,7 @@ public class MagicDatabase {
         item.getSubItems(item, CreativeTabs.tabAllSearch, subItems);
 
         ItemEssenceCollection collection = new ItemEssenceCollection();
-        for(ItemStack is : subItems)
+        for (ItemStack is : subItems)
         {
             ItemEssenceEntry ee = new ItemEssenceEntry(is, new MagicAmounts());
             collection.add(ee);
@@ -343,25 +370,29 @@ public class MagicDatabase {
         return collection;
     }
 
-    private static ItemEssenceEntry essences(Block block) {
+    private static ItemEssenceEntry essences(Block block)
+    {
         ItemEssenceEntry ee = new ItemEssenceEntry(new ItemStack(block), new MagicAmounts());
         stockEntries.add(ee);
         return ee;
     }
 
-    private static ItemEssenceEntry essences(Item item, int meta) {
+    private static ItemEssenceEntry essences(Item item, int meta)
+    {
         ItemEssenceEntry ee = new ItemEssenceEntry(new ItemStack(item, 1, meta), new MagicAmounts());
         stockEntries.add(ee);
         return ee;
     }
 
-    private static ItemEssenceEntry essences(Block block, int meta) {
+    private static ItemEssenceEntry essences(Block block, int meta)
+    {
         ItemEssenceEntry ee = new ItemEssenceEntry(new ItemStack(block, 1, meta), new MagicAmounts());
         stockEntries.add(ee);
         return ee;
     }
 
-    private static void registerContainerCapacity() {
+    private static void registerContainerCapacity()
+    {
         containerCapacity.put(new ItemStack(Items.dye, 1, 4), new MagicAmounts().all(10));
         containerCapacity.put(new ItemStack(Items.emerald, 1), new MagicAmounts().all(50));
         containerCapacity.put(new ItemStack(Items.diamond, 1), new MagicAmounts().all(100));
@@ -378,49 +409,60 @@ public class MagicDatabase {
         containerCapacity.put(ElementsOfPower.staffDiamond, new MagicAmounts().all(500));
     }
 
-    private static void registerContainerConversions() {
+    private static void registerContainerConversions()
+    {
         containerConversion.put(new ItemStack(Items.dye, 1, 4), new ItemStack(ElementsOfPower.magicContainer, 1, 0));
         containerConversion.put(new ItemStack(Items.emerald, 1), new ItemStack(ElementsOfPower.magicContainer, 1, 1));
         containerConversion.put(new ItemStack(Items.diamond, 1), new ItemStack(ElementsOfPower.magicContainer, 1, 2));
     }
 
-    public static boolean itemContainsMagic(ItemStack stack) {
+    public static boolean itemContainsMagic(ItemStack stack)
+    {
         MagicAmounts amounts = getContainedMagic(stack);
 
         return amounts != null && !amounts.isEmpty();
     }
 
-    public static boolean canItemContainMagic(ItemStack stack) {
+    public static boolean canItemContainMagic(ItemStack stack)
+    {
         return stack.stackSize <= 1 && Utils.stackIsInMap(containerCapacity, stack);
 
     }
 
-    public static MagicAmounts getMagicLimits(ItemStack stack) {
-        if (stack.stackSize > 1) {
+    public static MagicAmounts getMagicLimits(ItemStack stack)
+    {
+        if (stack.stackSize > 1)
+        {
             return null;
         }
 
         return Utils.getFromMap(containerCapacity, stack);
     }
 
-    public static boolean itemHasEssence(ItemStack stack) {
+    public static boolean itemHasEssence(ItemStack stack)
+    {
         return Utils.stackIsInMap(itemEssences, stack);
     }
 
-    public static MagicAmounts getEssences(ItemStack stack) {
+    public static MagicAmounts getEssences(ItemStack stack)
+    {
         return Utils.getFromMap(itemEssences, stack);
     }
 
-    public static MagicAmounts getContainedMagic(ItemStack output) {
-        if (output == null) {
+    public static MagicAmounts getContainedMagic(ItemStack output)
+    {
+        if (output == null)
+        {
             return null;
         }
 
-        if (output.stackSize != 1) {
+        if (output.stackSize != 1)
+        {
             return null;
         }
 
-        if (output.getItem() instanceof ItemWand) {
+        if (output.getItem() instanceof ItemWand)
+        {
             int meta = output.getMetadata();
             if (meta == 3 || meta == 7)
                 return new MagicAmounts().all(999);
@@ -428,60 +470,75 @@ public class MagicDatabase {
 
         NBTTagCompound nbt = output.getTagCompound();
 
-        if (nbt == null) {
+        if (nbt == null)
+        {
             return null;
         }
 
         MagicAmounts amounts = new MagicAmounts();
         int max = 0;
 
-        for (int i = 0; i < 8; i++) {
-            try {
+        for (int i = 0; i < 8; i++)
+        {
+            try
+            {
                 int amount = nbt.getInteger("" + i);
 
-                if (amount > max) {
+                if (amount > max)
+                {
                     max = amount;
                 }
 
                 amounts.amounts[i] = amount;
-            } catch (NumberFormatException ex) {
+            } catch (NumberFormatException ex)
+            {
                 throw new ReportedException(new CrashReport("Exception while parsing NBT magic infromation", ex));
             }
         }
 
-        if (max > 0) {
+        if (max > 0)
+        {
             return amounts;
         }
 
         return null;
     }
 
-    public static ItemStack setContainedMagic(ItemStack output, MagicAmounts amounts) {
-        if (output == null) {
+    public static ItemStack setContainedMagic(ItemStack output, MagicAmounts amounts)
+    {
+        if (output == null)
+        {
             return null;
         }
 
-        if (output.stackSize != 1) {
+        if (output.stackSize != 1)
+        {
             return null;
         }
 
         Item item = output.getItem();
-        if (item instanceof ItemWand) {
-            if(((ItemWand)item).isCreative(output))
+        if (item instanceof ItemWand)
+        {
+            if (((ItemWand) item).isCreative(output))
                 return output;
         }
 
-        if (amounts != null) {
-            if (amounts.isEmpty()) {
+        if (amounts != null)
+        {
+            if (amounts.isEmpty())
+            {
                 amounts = null;
             }
         }
 
-        if (amounts != null) {
+        if (amounts != null)
+        {
             NBTTagCompound nbt = output.getTagCompound();
 
-            if (nbt == null) {
-                if (Utils.stackIsInMap(containerConversion, output)) {
+            if (nbt == null)
+            {
+                if (Utils.stackIsInMap(containerConversion, output))
+                {
                     output = Utils.getFromMap(containerConversion, output).copy();
                 }
 
@@ -489,16 +546,19 @@ public class MagicDatabase {
                 output.setTagCompound(nbt);
             }
 
-            for (int i = 0; i < 8; i++) {
+            for (int i = 0; i < 8; i++)
+            {
                 nbt.setInteger("" + i, amounts.amounts[i]);
             }
 
             return output;
-        } else {
+        } else
+        {
             output.setTagCompound(null);
             ItemStack is = Utils.findKeyForValue(containerConversion, output);
 
-            if (is != null) {
+            if (is != null)
+            {
                 output = is.copy();
             }
 

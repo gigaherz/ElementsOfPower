@@ -12,7 +12,8 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class ItemMagicContainer extends Item {
+public class ItemMagicContainer extends Item
+{
     private static final String[] subNames = {
             "lapisContainer", "emeraldContainer", "diamondContainer"
     };
@@ -22,15 +23,18 @@ public class ItemMagicContainer extends Item {
         setUnlocalizedName("magicContainer");
     }
 
-    public ItemStack getStack(int count, int damageValue) {
+    public ItemStack getStack(int count, int damageValue)
+    {
         return new ItemStack(this, count, damageValue);
     }
 
     @Override
-    public String getUnlocalizedName(ItemStack stack) {
+    public String getUnlocalizedName(ItemStack stack)
+    {
         int sub = stack.getItemDamage();
 
-        if (sub >= subNames.length) {
+        if (sub >= subNames.length)
+        {
             sub = 0;
         }
 
@@ -38,21 +42,25 @@ public class ItemMagicContainer extends Item {
     }
 
     @Override
-    public void getSubItems(Item itemIn, CreativeTabs tab, List subItems) {
-        for (int meta = 0; meta < subNames.length; meta++) {
+    public void getSubItems(Item itemIn, CreativeTabs tab, List subItems)
+    {
+        for (int meta = 0; meta < subNames.length; meta++)
+        {
             subItems.add(new ItemStack(itemIn, 1, meta));
         }
     }
 
     @Override
-    public boolean hasEffect(ItemStack stack) {
+    public boolean hasEffect(ItemStack stack)
+    {
         MagicAmounts amounts = MagicDatabase.getContainedMagic(stack);
 
         return amounts != null && !amounts.isEmpty();
     }
 
     @Override
-    public EnumRarity getRarity(ItemStack stack) {
+    public EnumRarity getRarity(ItemStack stack)
+    {
 
         if (hasEffect(stack))
             return EnumRarity.RARE;
@@ -60,23 +68,27 @@ public class ItemMagicContainer extends Item {
     }
 
     @Override
-    public void addInformation(ItemStack stack, EntityPlayer player, List tooltipList, boolean showAdvancedInfo) {
+    public void addInformation(ItemStack stack, EntityPlayer player, List tooltipList, boolean showAdvancedInfo)
+    {
         MagicAmounts amounts = MagicDatabase.getContainedMagic(stack);
 
-        if (amounts == null) {
+        if (amounts == null)
+        {
             return;
         }
 
 
         tooltipList.add(EnumChatFormatting.YELLOW + "Contains magic:");
-        if(!Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) && !Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
+        if (!Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) && !Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
         {
             tooltipList.add(EnumChatFormatting.GRAY + "  (Hold SHIFT)");
             return;
         }
 
-        for (int i = 0; i < 8; i++) {
-            if (amounts.amounts[i] == 0) {
+        for (int i = 0; i < 8; i++)
+        {
+            if (amounts.amounts[i] == 0)
+            {
                 continue;
             }
 

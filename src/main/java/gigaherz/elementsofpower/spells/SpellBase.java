@@ -6,7 +6,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
 public abstract class SpellBase
-        implements ISpellEffect {
+        implements ISpellEffect
+{
 
     protected MagicAmounts spellCost = new MagicAmounts();
     protected StringBuilder spellSequence = new StringBuilder();
@@ -16,30 +17,36 @@ public abstract class SpellBase
     public abstract void castSpell(ItemStack stack, EntityPlayer player);
 
     @Override
-    public MagicAmounts getSpellCost() {
+    public MagicAmounts getSpellCost()
+    {
         return spellCost;
     }
 
-    public String getSequence() {
-        if (finalSequence == null) {
+    public String getSequence()
+    {
+        if (finalSequence == null)
+        {
             finalSequence = spellSequence.toString();
             spellSequence = null;
         }
         return finalSequence;
     }
 
-    protected SpellBase amount(int which) {
-        if (spellSequence == null) {
+    protected SpellBase amount(int which)
+    {
+        if (spellSequence == null)
+        {
             spellSequence = new StringBuilder();
             finalSequence = null;
         }
-        spellCost.amounts[which] ++;
+        spellCost.amounts[which]++;
         spellSequence.append(SpellManager.elementChars[which]);
         return this;
     }
 
-    protected SpellBase amountMultiple(int which, int count) {
-        while(count > 0)
+    protected SpellBase amountMultiple(int which, int count)
+    {
+        while (count > 0)
         {
             amount(which);
             count--;
@@ -49,61 +56,91 @@ public abstract class SpellBase
 
     public SpellBase cost(float totalCost)
     {
-        double totalAmounts= spellCost.getTotalMagic();
-        for(int i=0;i<spellCost.amounts.length;i++)
+        double totalAmounts = spellCost.getTotalMagic();
+        for (int i = 0; i < spellCost.amounts.length; i++)
         {
-            spellCost.amounts[i] = (int)Math.ceil(spellCost.amounts[i] * totalCost / totalAmounts);
+            spellCost.amounts[i] = (int) Math.ceil(spellCost.amounts[i] * totalCost / totalAmounts);
         }
         return this;
     }
 
-    public SpellBase fire() {
+    public SpellBase fire()
+    {
         return amount(0);
     }
-    public SpellBase water() {
+
+    public SpellBase water()
+    {
         return amount(1);
     }
-    public SpellBase air() {
+
+    public SpellBase air()
+    {
         return amount(2);
     }
-    public SpellBase earth() {
+
+    public SpellBase earth()
+    {
         return amount(3);
     }
-    public SpellBase light() {
+
+    public SpellBase light()
+    {
         return amount(4);
     }
-    public SpellBase darkness() {
+
+    public SpellBase darkness()
+    {
         return amount(5);
     }
-    public SpellBase life() {
+
+    public SpellBase life()
+    {
         return amount(6);
     }
-    public SpellBase death() {
+
+    public SpellBase death()
+    {
         return amount(7);
     }
 
-    public SpellBase fire(int count) {
+    public SpellBase fire(int count)
+    {
         return amountMultiple(0, count);
     }
-    public SpellBase water(int count) {
+
+    public SpellBase water(int count)
+    {
         return amountMultiple(1, count);
     }
-    public SpellBase air(int count) {
+
+    public SpellBase air(int count)
+    {
         return amountMultiple(2, count);
     }
-    public SpellBase earth(int count) {
+
+    public SpellBase earth(int count)
+    {
         return amountMultiple(3, count);
     }
-    public SpellBase light(int count) {
+
+    public SpellBase light(int count)
+    {
         return amountMultiple(4, count);
     }
-    public SpellBase darkness(int count) {
+
+    public SpellBase darkness(int count)
+    {
         return amountMultiple(5, count);
     }
-    public SpellBase life(int count) {
+
+    public SpellBase life(int count)
+    {
         return amountMultiple(6, count);
     }
-    public SpellBase death(int count) {
+
+    public SpellBase death(int count)
+    {
         return amountMultiple(7, count);
     }
 

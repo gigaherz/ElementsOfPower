@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower.entities;
 
-public interface IVariableSize {
+public interface IVariableSize
+{
     float getScale();
 }

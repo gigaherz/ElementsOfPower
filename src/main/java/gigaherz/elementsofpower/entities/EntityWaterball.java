@@ -6,12 +6,12 @@ import net.minecraft.block.BlockDynamicLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemBucket;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.world.World;
 
-public class EntityWaterball extends EntityBallBase {
+public class EntityWaterball extends EntityBallBase
+{
 
     boolean spawnSourceBlocks;
 
@@ -19,14 +19,17 @@ public class EntityWaterball extends EntityBallBase {
     {
         super(ElementsOfPower.water, worldIn);
     }
+
     public EntityWaterball(World worldIn, EntityLivingBase p_i1774_2_)
     {
         super(ElementsOfPower.water, worldIn, p_i1774_2_);
     }
+
     public EntityWaterball(World worldIn, double x, double y, double z)
     {
         super(ElementsOfPower.water, worldIn, x, y, z);
     }
+
     public EntityWaterball(World worldIn, int force, boolean spawnSourceBlocks, EntityLivingBase p_i1774_2_)
     {
         super(ElementsOfPower.water, worldIn, force, p_i1774_2_);
@@ -48,18 +51,20 @@ public class EntityWaterball extends EntityBallBase {
     {
         Block block = currentState.getBlock();
 
-        if (block == Blocks.air) {
-            if(spawnSourceBlocks) {
+        if (block == Blocks.air)
+        {
+            if (spawnSourceBlocks)
+            {
                 worldObj.setBlockState(blockPos, Blocks.flowing_water.getDefaultState().withProperty(BlockDynamicLiquid.LEVEL, 0));
-            }
-            else
+            } else
             {
                 worldObj.setBlockState(blockPos, Blocks.flowing_water.getDefaultState().withProperty(BlockDynamicLiquid.LEVEL, 15));
             }
         }
     }
 
-    public int getDamageForce() {
+    public int getDamageForce()
+    {
         int sub = 0;
         if (worldObj.provider.doesWaterVaporize())
         {

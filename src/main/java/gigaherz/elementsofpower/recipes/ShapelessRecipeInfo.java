@@ -6,7 +6,8 @@ import net.minecraft.item.crafting.ShapelessRecipes;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShapelessRecipeInfo implements IRecipeInfoProvider {
+public class ShapelessRecipeInfo implements IRecipeInfoProvider
+{
 
     ArrayList<ItemStack> recipeItems = new ArrayList<ItemStack>();
     ShapelessRecipes recipe;
@@ -16,9 +17,9 @@ public class ShapelessRecipeInfo implements IRecipeInfoProvider {
         this.recipe = recipe;
 
         List<ItemStack> input = recipe.recipeItems;
-        for(ItemStack o : input)
+        for (ItemStack o : input)
         {
-            if(o == null)
+            if (o == null)
                 continue;
 
             ItemStack c = o.copy();
@@ -28,12 +29,14 @@ public class ShapelessRecipeInfo implements IRecipeInfoProvider {
     }
 
     @Override
-    public ItemStack getRecipeOutput() {
+    public ItemStack getRecipeOutput()
+    {
         return recipe.getRecipeOutput();
     }
 
     @Override
-    public List<ItemStack> getRecipeInputs() {
+    public List<ItemStack> getRecipeInputs()
+    {
         return recipeItems;
     }
 }

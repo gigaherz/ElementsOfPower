@@ -13,7 +13,8 @@ import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.Set;
 
-public class MeshLoader {
+public class MeshLoader
+{
 
     static final Set<String> unknownCommands = new HashSet<String>();
 
@@ -27,7 +28,8 @@ public class MeshLoader {
     private String filePath;
     private String lastObjectName;
 
-    private void addTexCoord(String line) {
+    private void addTexCoord(String line)
+    {
         String[] args = line.split(" ");
 
         float x = Float.parseFloat(args[0]);
@@ -36,7 +38,8 @@ public class MeshLoader {
         currentModel.addTexCoords(x, y);
     }
 
-    private void addNormal(String line) {
+    private void addNormal(String line)
+    {
         String[] args = line.split(" ");
 
         float x = Float.parseFloat(args[0]);
@@ -49,7 +52,8 @@ public class MeshLoader {
         currentModel.addNormal(x, y, z);
     }
 
-    private void addPosition(String line) {
+    private void addPosition(String line)
+    {
         String[] args = line.split(" ");
 
         float x = Float.parseFloat(args[0]);
@@ -59,7 +63,8 @@ public class MeshLoader {
         currentModel.addPosition(x, y, z);
     }
 
-    private void addFace(String line) {
+    private void addFace(String line)
+    {
         String[] args = line.split(" ");
 
         if (args.length < 3 || args.length > 4)
@@ -73,9 +78,11 @@ public class MeshLoader {
         int[] v2 = parseIndices(p2);
         int[] v3 = parseIndices(p3);
 
-        if (args.length == 3) {
+        if (args.length == 3)
+        {
             currentPart.addTriangleFace(v1, v2, v3);
-        } else if (args.length == 4) {
+        } else if (args.length == 4)
+        {
             String[] p4 = args[3].split("/");
             int[] v4 = parseIndices(p4);
             ;
@@ -84,15 +91,18 @@ public class MeshLoader {
         }
     }
 
-    private int[] parseIndices(String[] p1) {
+    private int[] parseIndices(String[] p1)
+    {
         int[] indices = new int[p1.length];
-        for (int i = 0; i < p1.length; i++) {
+        for (int i = 0; i < p1.length; i++)
+        {
             indices[i] = Integer.parseInt(p1[i]) - 1;
         }
         return indices;
     }
 
-    private void useMaterial(String matName) {
+    private void useMaterial(String matName)
+    {
         Material mat = currentMatLib.get(matName);
 
         currentPart = new MeshPart();
@@ -101,16 +111,19 @@ public class MeshLoader {
         currentModel.addPart(currentPart);
     }
 
-    private void newObject(String line) {
+    private void newObject(String line)
+    {
         lastObjectName = line;
     }
 
-    private void newGroup(String line) {
+    private void newGroup(String line)
+    {
         lastObjectName = line;
         ;
     }
 
-    private void loadMaterialLibrary(ResourceLocation locOfParent, String path) throws IOException {
+    private void loadMaterialLibrary(ResourceLocation locOfParent, String path) throws IOException
+    {
 
         String prefix = locOfParent.getResourcePath();
         int pp = prefix.lastIndexOf('/');
@@ -121,7 +134,8 @@ public class MeshLoader {
         currentMatLib.loadFromStream(loc);
     }
 
-    public MeshModel loadFromResource(ResourceLocation loc) throws IOException {
+    public MeshModel loadFromResource(ResourceLocation loc) throws IOException
+    {
         IResource res = Minecraft.getMinecraft().getResourceManager().getResource(loc);
         InputStreamReader lineStream = new InputStreamReader(res.getInputStream(), Charsets.UTF_8);
         BufferedReader lineReader = new BufferedReader(lineStream);
@@ -129,12 +143,14 @@ public class MeshLoader {
         currentModel = new MeshModel();
         currentMatLib = new MaterialLibrary();
 
-        for (; ; ) {
+        for (; ; )
+        {
             String currentLine = lineReader.readLine();
             if (currentLine == null)
                 break;
 
-            if (currentLine.length() == 0 || currentLine.startsWith("#")) {
+            if (currentLine.length() == 0 || currentLine.startsWith("#"))
+            {
                 continue;
             }
 
@@ -142,24 +158,34 @@ public class MeshLoader {
             String keyword = fields[0];
             String data = fields[1];
 
-            if (keyword.equalsIgnoreCase("o")) {
+            if (keyword.equalsIgnoreCase("o"))
+            {
                 newObject(data);
-            } else if (keyword.equalsIgnoreCase("g")) {
+            } else if (keyword.equalsIgnoreCase("g"))
+            {
                 newGroup(data);
-            } else if (keyword.equalsIgnoreCase("mtllib")) {
+            } else if (keyword.equalsIgnoreCase("mtllib"))
+            {
                 loadMaterialLibrary(loc, data);
-            } else if (keyword.equalsIgnoreCase("usemtl")) {
+            } else if (keyword.equalsIgnoreCase("usemtl"))
+            {
                 useMaterial(data);
-            } else if (keyword.equalsIgnoreCase("v")) {
+            } else if (keyword.equalsIgnoreCase("v"))
+            {
                 addPosition(data);
-            } else if (keyword.equalsIgnoreCase("vn")) {
+            } else if (keyword.equalsIgnoreCase("vn"))
+            {
                 addNormal(data);
-            } else if (keyword.equalsIgnoreCase("vt")) {
+            } else if (keyword.equalsIgnoreCase("vt"))
+            {
                 addTexCoord(data);
-            } else if (keyword.equalsIgnoreCase("f")) {
+            } else if (keyword.equalsIgnoreCase("f"))
+            {
                 addFace(data);
-            } else {
-                if (!unknownCommands.contains(keyword)) {
+            } else
+            {
+                if (!unknownCommands.contains(keyword))
+                {
                     ElementsOfPower.logger.warn("Unrecognized command: " + currentLine);
                     unknownCommands.add(keyword);
                 }

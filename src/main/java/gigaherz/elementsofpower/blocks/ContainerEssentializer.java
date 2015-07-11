@@ -12,14 +12,18 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
 public class ContainerEssentializer
-        extends Container {
+        extends Container
+{
     protected TileEssentializer tile;
 
-    public ContainerEssentializer(TileEssentializer tileEntity, InventoryPlayer playerInventory) {
+    public ContainerEssentializer(TileEssentializer tileEntity, InventoryPlayer playerInventory)
+    {
         this.tile = tileEntity;
 
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 2; j++) {
+        for (int i = 0; i < 4; i++)
+        {
+            for (int j = 0; j < 2; j++)
+            {
                 addSlotToContainer(new SlotMagic(tileEntity,
                         j + i * 2,
                         71 + j * 18, 8 + i * 18));
@@ -33,16 +37,20 @@ public class ContainerEssentializer
         bindPlayerInventory(playerInventory);
     }
 
-    protected void bindPlayerInventory(InventoryPlayer playerInventory) {
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 9; j++) {
+    protected void bindPlayerInventory(InventoryPlayer playerInventory)
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 9; j++)
+            {
                 addSlotToContainer(new Slot(playerInventory,
                         j + i * 9 + 9,
                         8 + j * 18, 84 + i * 18));
             }
         }
 
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < 9; i++)
+        {
             addSlotToContainer(new Slot(playerInventory, i, 8 + i * 18, 142));
         }
     }
@@ -67,93 +75,121 @@ public class ContainerEssentializer
     }*/
 
     @Override
-    public boolean canInteractWith(EntityPlayer player) {
+    public boolean canInteractWith(EntityPlayer player)
+    {
         return tile.isUseableByPlayer(player);
     }
 
     /**
      * Called when a player shift-clicks on a slot. You must override this or you will crash when someone does that.
      */
-    public ItemStack transferStackInSlot(EntityPlayer player, int slotIndex) {
-        if (slotIndex < 8) {
+    public ItemStack transferStackInSlot(EntityPlayer player, int slotIndex)
+    {
+        if (slotIndex < 8)
+        {
             return null;
         }
 
         ItemStack stackCopy = null;
         Slot slot = (Slot) this.inventorySlots.get(slotIndex);
 
-        if (slot == null || !slot.getHasStack()) {
+        if (slot == null || !slot.getHasStack())
+        {
             return null;
         }
 
         ItemStack stack = slot.getStack();
         stackCopy = stack.copy();
 
-        if (slotIndex >= 10) {
+        if (slotIndex >= 10)
+        {
             boolean itemIsContainer = MagicDatabase.canItemContainMagic(stack);
             boolean itemContainsMagic = itemIsContainer && MagicDatabase.itemContainsMagic(stack);
             boolean itemHasEssence = MagicDatabase.itemHasEssence(stack);
 
-            if (itemIsContainer) {
-                if (itemContainsMagic) {
-                    if (!this.mergeItemStack(stack, 8, 9, false)) {
+            if (itemIsContainer)
+            {
+                if (itemContainsMagic)
+                {
+                    if (!this.mergeItemStack(stack, 8, 9, false))
+                    {
                         ItemStack dest = ((Slot) this.inventorySlots.get(9)).getStack();
 
-                        if (dest != null && dest.stackSize > 0) {
+                        if (dest != null && dest.stackSize > 0)
+                        {
                             return null;
                         }
 
-                        if (!this.mergeItemStack(stack, 9, 10, false)) {
+                        if (!this.mergeItemStack(stack, 9, 10, false))
+                        {
                             return null;
                         }
                     }
-                } else {
+                } else
+                {
                     ItemStack dest = ((Slot) this.inventorySlots.get(9)).getStack();
 
-                    if (dest != null && dest.stackSize > 0) {
-                        if (!itemHasEssence) {
+                    if (dest != null && dest.stackSize > 0)
+                    {
+                        if (!itemHasEssence)
+                        {
                             return null;
                         }
 
-                        if (!this.mergeItemStack(stack, 8, 9, false)) {
+                        if (!this.mergeItemStack(stack, 8, 9, false))
+                        {
                             return null;
                         }
-                    } else if (!this.mergeItemStack(stack, 9, 10, false)) {
-                        if (!itemHasEssence) {
+                    } else if (!this.mergeItemStack(stack, 9, 10, false))
+                    {
+                        if (!itemHasEssence)
+                        {
                             return null;
                         }
 
-                        if (!this.mergeItemStack(stack, 8, 9, false)) {
+                        if (!this.mergeItemStack(stack, 8, 9, false))
+                        {
                             return null;
                         }
                     }
                 }
-            } else if (itemHasEssence) {
-                if (!this.mergeItemStack(stack, 8, 9, false)) {
+            } else if (itemHasEssence)
+            {
+                if (!this.mergeItemStack(stack, 8, 9, false))
+                {
                     return null;
                 }
-            } else if (slotIndex >= 10 && slotIndex < 37) {
-                if (!this.mergeItemStack(stack, 37, 46, false)) {
+            } else if (slotIndex >= 10 && slotIndex < 37)
+            {
+                if (!this.mergeItemStack(stack, 37, 46, false))
+                {
                     return null;
                 }
-            } else if (slotIndex >= 37 && slotIndex < 39) {
-                if (!this.mergeItemStack(stack, 10, 37, false)) {
+            } else if (slotIndex >= 37 && slotIndex < 39)
+            {
+                if (!this.mergeItemStack(stack, 10, 37, false))
+                {
                     return null;
                 }
             }
-        } else {
-            if (!this.mergeItemStack(stack, 10, 46, false)) {
+        } else
+        {
+            if (!this.mergeItemStack(stack, 10, 46, false))
+            {
                 return null;
             }
         }
 
-        if (stack.stackSize == 0) {
+        if (stack.stackSize == 0)
+        {
             slot.putStack((ItemStack) null);
-        } else {
+        } else
+        {
             slot.onSlotChanged();
         }
 
-        if (stack.stackSize == stackCopy.stackSize) {
+        if (stack.stackSize == stackCopy.stackSize)
+        {
             return null;
         }
 
@@ -161,7 +197,8 @@ public class ContainerEssentializer
         return stackCopy;
     }
 
-    public void clickedMagic(Slot slot, int button) {
+    public void clickedMagic(Slot slot, int button)
+    {
         //ElementsOfPower.proxy.sendProgressBarUpdate(tile, button, slot.slotNumber);
     }
 }
