@@ -1,7 +1,6 @@
 package gigaherz.elementsofpower.models;
 
 import com.google.common.base.Charsets;
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import gigaherz.elementsofpower.ElementsOfPower;
 import net.minecraft.client.Minecraft;
@@ -14,13 +13,8 @@ import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.Attributes;
-import net.minecraftforge.client.model.IFlexibleBakedModel;
-import net.minecraftforge.client.model.IModel;
-import net.minecraftforge.client.model.IModelState;
-import org.lwjgl.opengl.EXTTextureArray;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import javax.annotation.Resource;
 import javax.vecmath.Vector2f;
 import javax.vecmath.Vector3f;
 import java.io.BufferedReader;
@@ -212,7 +206,7 @@ public class ObjModel
 
         public ObjModel getModel() throws IOException
         {
-            if(currentModel != null)
+            if (currentModel != null)
                 return currentModel;
 
             return loadFromResource();
@@ -222,11 +216,11 @@ public class ObjModel
         {
             ModelBlock modelblock = objModelRegistrationHelper.loadModel(baseLocation);
 
-            while(modelblock != null)
+            while (modelblock != null)
             {
-                for(Map.Entry<String, String> e : ((Map<String, String>)modelblock.textures).entrySet())
+                for (Map.Entry<String, String> e : ((Map<String, String>) modelblock.textures).entrySet())
                 {
-                    if(!textures.containsKey(e.getKey()))
+                    if (!textures.containsKey(e.getKey()))
                         textures.put(e.getKey(), e.getValue());
                 }
                 modelblock = modelblock.parent;
@@ -234,7 +228,7 @@ public class ObjModel
 
             ObjModel model = getModel();
 
-            for(MeshPart p : model.parts)
+            for (MeshPart p : model.parts)
             {
                 Material m = p.material;
 
@@ -251,7 +245,7 @@ public class ObjModel
                 }
             }
 
-            if(textures.containsKey("particle"))
+            if (textures.containsKey("particle"))
                 usedTextures.add(textures.get("particle"));
 
             return usedTextures;

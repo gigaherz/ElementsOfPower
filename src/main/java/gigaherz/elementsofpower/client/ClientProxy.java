@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.client;
 
-import gigaherz.elementsofpower.ISideProxy;
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.ISideProxy;
 import gigaherz.elementsofpower.client.render.RenderEntityProvidedStack;
 import gigaherz.elementsofpower.entities.EntityBallBase;
 import gigaherz.elementsofpower.models.ObjModelRegistrationHelper;

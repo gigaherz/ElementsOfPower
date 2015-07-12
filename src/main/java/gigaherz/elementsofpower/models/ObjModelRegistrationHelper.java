@@ -58,12 +58,12 @@ public class ObjModelRegistrationHelper
         {
             try
             {
-                for(Map.Entry<ResourceLocation, ObjModel.Loader> e : modelsToInject.entrySet())
+                for (Map.Entry<ResourceLocation, ObjModel.Loader> e : modelsToInject.entrySet())
                 {
                     for (String loc : e.getValue().getTextures(this))
                     {
                         // Workaround for a MC/Deobf bug
-                        if(event.map.getTextureExtry(loc) != null)
+                        if (event.map.getTextureExtry(loc) != null)
                             continue;
                         event.map.registerSprite(new ResourceLocation(loc));
                     }
@@ -200,7 +200,8 @@ public class ObjModelRegistrationHelper
     {
         final static Matrix4f identity;
 
-        static {
+        static
+        {
             identity = new Matrix4f();
             identity.setIdentity();
         }
