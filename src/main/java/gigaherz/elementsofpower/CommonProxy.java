@@ -2,20 +2,13 @@ package gigaherz.elementsofpower;
 
 public class CommonProxy
 {
-
-    // Client stuff
-    public void registerRenderers()
+    public void preInit()
     {
-        // Nothing here as this is the server side proxy
+        // Nothing here
     }
 
-    public void registerCustomBakedModels()
+    public void init()
     {
-        // Nothing here, client-only
-    }
-
-    public void registerGuiOverlay()
-    {
-
+        // Nothing here
     }
 }

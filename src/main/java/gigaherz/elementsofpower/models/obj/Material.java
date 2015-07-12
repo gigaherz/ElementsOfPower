@@ -1,13 +1,9 @@
-package gigaherz.elementsofpower.models;
+package gigaherz.elementsofpower.models.obj;
 
 import javax.vecmath.Vector3f;
 
-/**
- * Created by gigaherz on 02/01/2015.
- */
 public class Material
 {
-
     public String Name;
 
     public Vector3f AmbientColor;

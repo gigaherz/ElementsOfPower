@@ -1,6 +1,7 @@
 package gigaherz.elementsofpower.models;
 
-import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.models.obj.MeshLoader;
+import gigaherz.elementsofpower.models.obj.MeshModel;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -21,17 +22,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CustomMeshModel
-        implements IFlexibleBakedModel, ISmartItemModel, ISmartBlockModel, IInitializeBakedModel, IPerspectiveAwareModel
+public class ObjBakedModel
+        implements IFlexibleBakedModel, ISmartItemModel, ISmartBlockModel, IPerspectiveAwareModel
 {
-
-    String variant;
-    ResourceLocation model;
-
-    TRSRTransformation thirdPerson;
-    TRSRTransformation firstPerson;
-    TRSRTransformation head;
-    TRSRTransformation gui;
+    Matrix4f thirdPerson;
+    Matrix4f firstPerson;
+    Matrix4f head;
+    Matrix4f gui;
 
     List<BakedQuad> faceQuads;
     List<BakedQuad> generalQuads;
@@ -39,38 +36,28 @@ public class CustomMeshModel
 
     TextureAtlasSprite iconSprite;
 
-    public CustomMeshModel(String variant)
+    public ObjBakedModel(ResourceLocation modelLocation,
+                         Matrix4f[] transformations,
+                         TextureAtlasSprite sprite, ModelManager modelManager)
     {
-        this.variant = variant;
-        this.model = new ResourceLocation(ElementsOfPower.MODID, "models/obj/" + variant + ".obj");
         this.faceQuads = new ArrayList<BakedQuad>();
         this.generalQuads = new ArrayList<BakedQuad>();
+
+        this.thirdPerson = (transformations[0]);
+        this.firstPerson = (transformations[1]);
+        this.head = (transformations[2]);
+        this.gui = (transformations[3]);
+
+        this.iconSprite = sprite;
 
         try
         {
             generalQuads.clear();
-            sourceMesh = new MeshLoader().loadFromResource(model);
+            sourceMesh = new MeshLoader().loadFromResource(modelLocation);
         } catch (IOException e)
         {
             throw new ReportedException(new CrashReport("Exception loading custom Model", e));
         }
-    }
-
-    @Override
-    public void initialize(
-            TRSRTransformation thirdPerson,
-            TRSRTransformation firstPerson,
-            TRSRTransformation head,
-            TRSRTransformation gui,
-            ResourceLocation icon, ModelManager modelManager)
-    {
-
-        this.thirdPerson = thirdPerson;
-        this.firstPerson = firstPerson;
-        this.head = head;
-        this.gui = gui;
-
-        this.iconSprite = modelManager.getTextureMap().getAtlasSprite(icon.toString());
 
         generalQuads = sourceMesh.bakeModel(modelManager);
     }
@@ -88,13 +75,13 @@ public class CustomMeshModel
     }
 
     @Override
-    public List getFaceQuads(EnumFacing face)
+    public List<BakedQuad> getFaceQuads(EnumFacing face)
     {
         return faceQuads;
     }
 
     @Override
-    public List getGeneralQuads()
+    public List<BakedQuad> getGeneralQuads()
     {
         return generalQuads;
     }
@@ -141,13 +128,13 @@ public class CustomMeshModel
         switch (cameraTransformType)
         {
             case FIRST_PERSON:
-                return Pair.of((IBakedModel) this, firstPerson.getMatrix());
+                return Pair.of((IBakedModel) this, firstPerson);
             case THIRD_PERSON:
-                return Pair.of((IBakedModel) this, thirdPerson.getMatrix());
+                return Pair.of((IBakedModel) this, thirdPerson);
             case GUI:
-                return Pair.of((IBakedModel) this, gui.getMatrix());
+                return Pair.of((IBakedModel) this, gui);
             case HEAD:
-                return Pair.of((IBakedModel) this, head.getMatrix());
+                return Pair.of((IBakedModel) this, head);
             case NONE:
                 return Pair.of((IBakedModel) this, TRSRTransformation.identity().getMatrix());
         }

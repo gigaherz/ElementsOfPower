@@ -1,4 +1,4 @@
-package gigaherz.elementsofpower.models;
+package gigaherz.elementsofpower.models.obj;
 
 import com.google.common.base.Charsets;
 import gigaherz.elementsofpower.ElementsOfPower;
@@ -15,17 +15,12 @@ import java.util.Set;
 
 public class MeshLoader
 {
-
     static final Set<String> unknownCommands = new HashSet<String>();
 
     private MeshModel currentModel;
     private MeshPart currentPart;
     private MaterialLibrary currentMatLib;
 
-    int firstIndex;
-    int lastIndex;
-
-    private String filePath;
     private String lastObjectName;
 
     private void addTexCoord(String line)
@@ -81,11 +76,11 @@ public class MeshLoader
         if (args.length == 3)
         {
             currentPart.addTriangleFace(v1, v2, v3);
-        } else if (args.length == 4)
+        }
+        else if (args.length == 4)
         {
             String[] p4 = args[3].split("/");
             int[] v4 = parseIndices(p4);
-            ;
 
             currentPart.addQuadFace(v1, v2, v3, v4);
         }
@@ -119,7 +114,6 @@ public class MeshLoader
     private void newGroup(String line)
     {
         lastObjectName = line;
-        ;
     }
 
     private void loadMaterialLibrary(ResourceLocation locOfParent, String path) throws IOException

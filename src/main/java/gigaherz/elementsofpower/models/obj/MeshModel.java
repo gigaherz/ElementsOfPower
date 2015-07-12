@@ -1,18 +1,25 @@
-package gigaherz.elementsofpower.models;
+package gigaherz.elementsofpower.models.obj;
 
+import com.google.common.base.Function;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.FaceBakery;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.model.ModelManager;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.IFlexibleBakedModel;
+import net.minecraftforge.client.model.IModel;
+import net.minecraftforge.client.model.IModelState;
 
 import javax.vecmath.Vector2f;
 import javax.vecmath.Vector3f;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class MeshModel
 {
-
     public List<Vector3f> positions;
     public List<Vector3f> normals;
     public List<Vector2f> texCoords;
@@ -62,20 +69,18 @@ public class MeshModel
     {
         List<BakedQuad> bakeList = new ArrayList<BakedQuad>();
 
-        for (int j = 0; j < parts.size(); j++)
+        for (MeshPart part : parts)
         {
-
-            MeshPart part = parts.get(j);
-
             TextureAtlasSprite sprite = null;
-            int color = (int) 0xFFFFFFFF;
+            int color = 0xFFFFFFFF;
 
             if (part.material != null)
             {
                 if (part.material.DiffuseTextureMap != null)
                 {
                     sprite = manager.getTextureMap().getAtlasSprite(part.material.DiffuseTextureMap);
-                } else if (part.material.AmbientTextureMap != null)
+                }
+                else if (part.material.AmbientTextureMap != null)
                 {
                     sprite = manager.getTextureMap().getAtlasSprite(part.material.AmbientTextureMap);
                 }
@@ -112,7 +117,7 @@ public class MeshModel
                 p++; // normals not used by minecraft
 
             if (texCoords != null)
-                texCoord = texCoords.get(indices[p++]);
+                texCoord = texCoords.get(indices[p]);
 
             storeVertexData(faceData, i, position, texCoord, sprite, color);
         }
@@ -121,20 +126,20 @@ public class MeshModel
 
     private static void storeVertexData(int[] faceData, int storeIndex, Vector3f position, Vector2f faceUV, TextureAtlasSprite sprite, int shadeColor)
     {
-        int l = storeIndex * 7;
-        faceData[l + 0] = Float.floatToRawIntBits(position.x);
-        faceData[l + 1] = Float.floatToRawIntBits(position.y);
-        faceData[l + 2] = Float.floatToRawIntBits(position.z);
-        faceData[l + 3] = shadeColor;
         if (sprite != null)
         {
-            faceData[l + 4] = Float.floatToRawIntBits(sprite.getInterpolatedU(faceUV.x * 16));
-            faceData[l + 5] = Float.floatToRawIntBits(sprite.getInterpolatedV(faceUV.y * 16));
-        } else
-        {
-            faceData[l + 4] = Float.floatToRawIntBits(faceUV.x);
-            faceData[l + 5] = Float.floatToRawIntBits(faceUV.y);
+            faceUV = new Vector2f(
+                    sprite.getInterpolatedU(faceUV.x * 16),
+                    sprite.getInterpolatedV(faceUV.y * 16));
         }
-        faceData[l + 6] = 0;
+
+        int l = storeIndex * 7;
+        faceData[l++] = Float.floatToRawIntBits(position.x);
+        faceData[l++] = Float.floatToRawIntBits(position.y);
+        faceData[l++] = Float.floatToRawIntBits(position.z);
+        faceData[l++] = shadeColor;
+        faceData[l++] = Float.floatToRawIntBits(faceUV.x);
+        faceData[l++] = Float.floatToRawIntBits(faceUV.y);
+        faceData[l] = 0;
     }
 }

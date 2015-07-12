@@ -10,7 +10,6 @@ import gigaherz.elementsofpower.entities.*;
 import gigaherz.elementsofpower.items.ItemMagicContainer;
 import gigaherz.elementsofpower.items.ItemMagicOrb;
 import gigaherz.elementsofpower.items.ItemWand;
-import gigaherz.elementsofpower.models.ModelRegistrationHelper;
 import gigaherz.elementsofpower.network.SpellSequenceUpdate;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
@@ -89,8 +88,6 @@ public class ElementsOfPower
 
     public static SimpleNetworkWrapper channel;
 
-    public static ModelRegistrationHelper modelRegistrationHelper;
-
     private GuiHandler guiHandler = new GuiHandler();
 
     public static Logger logger;
@@ -114,8 +111,6 @@ public class ElementsOfPower
     public void preInit(FMLPreInitializationEvent event)
     {
         logger = event.getModLog();
-
-        modelRegistrationHelper = new ModelRegistrationHelper();
 
         // Initialize Block Materials
         materialCushion = new MaterialCushion(MapColor.blackColor);
@@ -161,14 +156,14 @@ public class ElementsOfPower
 
         registerNetworkStuff();
 
-        proxy.registerGuiOverlay();
-        proxy.registerCustomBakedModels();
-        proxy.registerRenderers();
+        proxy.preInit();
     }
 
     @EventHandler
     public void init(FMLInitializationEvent event)
     {
+        proxy.init();
+
         int entityId = 1;
         EntityRegistry.registerModEntity(EntityAirball.class, "Airball", entityId++, this, 80, 3, true);
         EntityRegistry.registerModEntity(EntityDustball.class, "Earthball", entityId++, this, 80, 3, true);

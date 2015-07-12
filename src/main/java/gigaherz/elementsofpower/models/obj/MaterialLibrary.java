@@ -1,7 +1,8 @@
-package gigaherz.elementsofpower.models;
+package gigaherz.elementsofpower.models.obj;
 
 import com.google.common.base.Charsets;
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.models.ObjResourceLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.util.ResourceLocation;
@@ -116,17 +117,17 @@ class MaterialLibrary
                 currentMaterial.AmbientTextureMap = data;
                 ResourceLocation texture = new ResourceLocation(data);
                 if (!texture.getResourcePath().contains("item"))
-                    ElementsOfPower.modelRegistrationHelper.registerItemSprite(texture);
+                    ObjResourceLoader.instance.registerItemSprite(texture);
                 else
-                    ElementsOfPower.modelRegistrationHelper.registerBlockSprite(texture);
+                    ObjResourceLoader.instance.registerBlockSprite(texture);
             } else if (keyword.equalsIgnoreCase("map_Kd"))
             {
                 currentMaterial.DiffuseTextureMap = data;
                 ResourceLocation texture = new ResourceLocation(data);
                 if (!texture.getResourcePath().contains("item"))
-                    ElementsOfPower.modelRegistrationHelper.registerItemSprite(texture);
+                    ObjResourceLoader.instance.registerItemSprite(texture);
                 else
-                    ElementsOfPower.modelRegistrationHelper.registerBlockSprite(texture);
+                    ObjResourceLoader.instance.registerBlockSprite(texture);
             } else if (keyword.equalsIgnoreCase("map_Ks"))
             {
                 currentMaterial.SpecularTextureMap = data;

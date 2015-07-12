@@ -1,4 +1,4 @@
-package gigaherz.elementsofpower.models;
+package gigaherz.elementsofpower.models.obj;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +30,4 @@ public class MeshPart
         indices.add(c);
         indices.add(d);
     }
-
-
 }

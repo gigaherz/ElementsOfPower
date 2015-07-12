@@ -4,8 +4,7 @@ import gigaherz.elementsofpower.CommonProxy;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.client.render.RenderEntityProvidedStack;
 import gigaherz.elementsofpower.entities.EntityBallBase;
-import gigaherz.elementsofpower.models.CustomMeshModel;
-import gigaherz.elementsofpower.models.ModelRegistrationHelper;
+import gigaherz.elementsofpower.models.ObjResourceLoader;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.Render;
@@ -13,9 +12,8 @@ import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.b3d.B3DLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
@@ -23,46 +21,53 @@ public class ClientProxy extends CommonProxy
 {
 
     @Override
-    public void registerGuiOverlay()
+    public void preInit()
+    {
+        registerClientEvents();
+        registerCustomBakedModels();
+        registerModels();
+
+        B3DLoader l;
+    }
+
+    @Override
+    public void init()
+    {
+        registerEntityRenderers();
+    }
+
+    public void registerClientEvents()
     {
         MinecraftForge.EVENT_BUS.register(new GuiOverlayMagicContainer());
     }
 
-    @Override
+    // ----------------------------------------------------------- Item/Block Custom OBJ Models
     public void registerCustomBakedModels()
     {
-        ModelRegistrationHelper helper = ElementsOfPower.modelRegistrationHelper;
-
-        registerCustomItemModel(helper, "wand_lapis");
-        registerCustomItemModel(helper, "wand_emerald");
-        registerCustomItemModel(helper, "wand_diamond");
-        registerCustomItemModel(helper, "wand_creative");
-        registerCustomItemModel(helper, "staff_lapis");
-        registerCustomItemModel(helper, "staff_emerald");
-        registerCustomItemModel(helper, "staff_diamond");
-        registerCustomItemModel(helper, "staff_creative");
+        registerCustomItemModel("wand_lapis");
+        registerCustomItemModel("wand_emerald");
+        registerCustomItemModel("wand_diamond");
+        registerCustomItemModel("wand_creative");
+        registerCustomItemModel("staff_lapis");
+        registerCustomItemModel("staff_emerald");
+        registerCustomItemModel("staff_diamond");
+        registerCustomItemModel("staff_creative");
     }
 
-    public void registerCustomItemModel(ModelRegistrationHelper helper, final String itemName)
+    public void registerCustomItemModel(final String itemName)
     {
-
-        ResourceLocation loc = new ModelResourceLocation(ElementsOfPower.MODID + ":" + itemName, "inventory");
-        IFlexibleBakedModel model = new CustomMeshModel(itemName);
-
-        helper.registerCustomItemModel(loc, model, itemName);
+        ObjResourceLoader.instance.registerCustomItemModel(
+                new ModelResourceLocation(ElementsOfPower.MODID + ":" + itemName, "inventory"), itemName);
     }
 
-    public void registerCustomBlockModel(ModelRegistrationHelper helper, final String blockName, final String stateName)
+    public void registerCustomBlockModel(final String blockName, final String stateName)
     {
-
-        ResourceLocation loc = new ModelResourceLocation(ElementsOfPower.MODID + ":" + blockName, stateName);
-        IFlexibleBakedModel model = new CustomMeshModel(blockName);
-
-        helper.registerCustomBlockModel(loc, model, blockName);
+        ObjResourceLoader.instance.registerCustomBlockModel(
+                new ModelResourceLocation(ElementsOfPower.MODID + ":" + blockName, stateName), blockName);
     }
 
-    @Override
-    public void registerRenderers()
+    // ----------------------------------------------------------- Item/Block Models
+    public void registerModels()
     {
 
         MinecraftForge.EVENT_BUS.register(new MagicTooltips());
@@ -89,8 +94,6 @@ public class ClientProxy extends CommonProxy
         registerItemTexture(ElementsOfPower.magicContainer, 0, "container_lapis");
         registerItemTexture(ElementsOfPower.magicContainer, 1, "container_emerald");
         registerItemTexture(ElementsOfPower.magicContainer, 2, "container_diamond");
-
-        registerEntityRenderingHandler(EntityBallBase.class);
     }
 
     public void registerBlockTexture(final Block block, final String blockName)
@@ -107,6 +110,12 @@ public class ClientProxy extends CommonProxy
     {
         ModelLoader.setCustomModelResourceLocation(item, meta, new ModelResourceLocation(ElementsOfPower.MODID + ":" + itemName, "inventory"));
         ModelBakery.addVariantName(item, ElementsOfPower.MODID + ":" + itemName);
+    }
+
+    // ----------------------------------------------------------- Entity Renderers
+    public void registerEntityRenderers()
+    {
+        registerEntityRenderingHandler(EntityBallBase.class);
     }
 
     public void registerEntityRenderingHandler(Class<? extends Entity> entityClass)
