@@ -72,7 +72,8 @@ public class SpellSequenceUpdate
         if (sequence != null)
         {
             ByteBufUtils.writeUTF8String(buf, sequence);
-        } else
+        }
+        else
         {
             ByteBufUtils.writeUTF8String(buf, "");
         }

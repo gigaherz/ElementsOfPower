@@ -34,7 +34,8 @@ public class ShapelessOreRecipeInfo implements IRecipeInfoProvider
                 ItemStack c = ((ItemStack) oo).copy();
                 c.stackSize = 1;
                 recipeItems.add(c);
-            } else
+            }
+            else
             {
                 ElementsOfPower.logger.warn("Unknown type of item in ShapedOreRecipe: " + o.getClass().getName());
             }

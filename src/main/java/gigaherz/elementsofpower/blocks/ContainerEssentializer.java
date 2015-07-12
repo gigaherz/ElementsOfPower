@@ -125,7 +125,8 @@ public class ContainerEssentializer
                             return null;
                         }
                     }
-                } else
+                }
+                else
                 {
                     ItemStack dest = ((Slot) this.inventorySlots.get(9)).getStack();
 
@@ -140,7 +141,8 @@ public class ContainerEssentializer
                         {
                             return null;
                         }
-                    } else if (!this.mergeItemStack(stack, 9, 10, false))
+                    }
+                    else if (!this.mergeItemStack(stack, 9, 10, false))
                     {
                         if (!itemHasEssence)
                         {
@@ -153,26 +155,30 @@ public class ContainerEssentializer
                         }
                     }
                 }
-            } else if (itemHasEssence)
+            }
+            else if (itemHasEssence)
             {
                 if (!this.mergeItemStack(stack, 8, 9, false))
                 {
                     return null;
                 }
-            } else if (slotIndex >= 10 && slotIndex < 37)
+            }
+            else if (slotIndex >= 10 && slotIndex < 37)
             {
                 if (!this.mergeItemStack(stack, 37, 46, false))
                 {
                     return null;
                 }
-            } else if (slotIndex >= 37 && slotIndex < 39)
+            }
+            else if (slotIndex >= 37 && slotIndex < 39)
             {
                 if (!this.mergeItemStack(stack, 10, 37, false))
                 {
                     return null;
                 }
             }
-        } else
+        }
+        else
         {
             if (!this.mergeItemStack(stack, 10, 46, false))
             {
@@ -183,7 +189,8 @@ public class ContainerEssentializer
         if (stack.stackSize == 0)
         {
             slot.putStack((ItemStack) null);
-        } else
+        }
+        else
         {
             slot.onSlotChanged();
         }

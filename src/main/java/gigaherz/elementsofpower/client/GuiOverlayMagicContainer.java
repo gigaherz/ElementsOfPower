@@ -165,7 +165,8 @@ public class GuiOverlayMagicContainer extends Gui
         if (cancelMagicSetting)
         {
             ElementsOfPower.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.CANCEL, player, slotInUse, null));
-        } else
+        }
+        else
         {
             ElementsOfPower.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.COMMIT, player, slotInUse, sequence.toString()));
         }

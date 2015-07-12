@@ -1,10 +1,10 @@
 package gigaherz.elementsofpower.client;
 
-import gigaherz.elementsofpower.CommonProxy;
+import gigaherz.elementsofpower.ISideProxy;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.client.render.RenderEntityProvidedStack;
 import gigaherz.elementsofpower.entities.EntityBallBase;
-import gigaherz.elementsofpower.models.ObjResourceLoader;
+import gigaherz.elementsofpower.models.ObjModelRegistrationHelper;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.Render;
@@ -12,15 +12,14 @@ import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.b3d.B3DLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
-public class ClientProxy extends CommonProxy
+public class ClientProxy implements ISideProxy
 {
-
-    @Override
     public void preInit()
     {
         registerClientEvents();
@@ -30,7 +29,6 @@ public class ClientProxy extends CommonProxy
         B3DLoader l;
     }
 
-    @Override
     public void init()
     {
         registerEntityRenderers();
@@ -56,14 +54,16 @@ public class ClientProxy extends CommonProxy
 
     public void registerCustomItemModel(final String itemName)
     {
-        ObjResourceLoader.instance.registerCustomItemModel(
-                new ModelResourceLocation(ElementsOfPower.MODID + ":" + itemName, "inventory"), itemName);
+        ObjModelRegistrationHelper.instance.registerCustomModel(
+                new ModelResourceLocation(ElementsOfPower.MODID + ":" + itemName, "inventory"),
+                new ResourceLocation(ElementsOfPower.MODID + ":item/" + itemName));
     }
 
     public void registerCustomBlockModel(final String blockName, final String stateName)
     {
-        ObjResourceLoader.instance.registerCustomBlockModel(
-                new ModelResourceLocation(ElementsOfPower.MODID + ":" + blockName, stateName), blockName);
+        ObjModelRegistrationHelper.instance.registerCustomModel(
+                new ModelResourceLocation(ElementsOfPower.MODID + ":" + blockName, stateName),
+                new ResourceLocation(ElementsOfPower.MODID + ":block/" + blockName));
     }
 
     // ----------------------------------------------------------- Item/Block Models

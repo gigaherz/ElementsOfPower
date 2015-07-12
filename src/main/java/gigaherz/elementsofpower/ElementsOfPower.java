@@ -11,6 +11,7 @@ import gigaherz.elementsofpower.items.ItemMagicContainer;
 import gigaherz.elementsofpower.items.ItemMagicOrb;
 import gigaherz.elementsofpower.items.ItemWand;
 import gigaherz.elementsofpower.network.SpellSequenceUpdate;
+import gigaherz.elementsofpower.server.ServerProxy;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
@@ -83,8 +84,8 @@ public class ElementsOfPower
     public static ElementsOfPower instance;
 
     // Says where the client and server 'proxy' code is loaded.
-    @SidedProxy(clientSide = "gigaherz.elementsofpower.client.ClientProxy", serverSide = "gigaherz.elementsofpower.CommonProxy")
-    public static CommonProxy proxy;
+    @SidedProxy(clientSide = "gigaherz.elementsofpower.client.ClientProxy", serverSide = "gigaherz.elementsofpower.server.ServerProxy")
+    public static ISideProxy proxy;
 
     public static SimpleNetworkWrapper channel;
 
@@ -100,12 +101,6 @@ public class ElementsOfPower
             return magicWand;
         }
     };
-
-    private void registerNetworkStuff()
-    {
-        channel = NetworkRegistry.INSTANCE.newSimpleChannel(CHANNEL);
-        channel.registerMessage(SpellSequenceUpdate.Handler.class, SpellSequenceUpdate.class, 0, Side.SERVER);
-    }
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
@@ -154,8 +149,11 @@ public class ElementsOfPower
         life = magicOrb.getStack(1, 6);
         death = magicOrb.getStack(1, 7);
 
-        registerNetworkStuff();
+        // Network channels
+        channel = NetworkRegistry.INSTANCE.newSimpleChannel(CHANNEL);
+        channel.registerMessage(SpellSequenceUpdate.Handler.class, SpellSequenceUpdate.class, 0, Side.SERVER);
 
+        // Client-side code
         proxy.preInit();
     }
 

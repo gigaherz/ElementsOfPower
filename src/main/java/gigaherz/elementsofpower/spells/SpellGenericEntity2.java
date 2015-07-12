@@ -32,7 +32,8 @@ public class SpellGenericEntity2
         try
         {
             world.spawnEntityInWorld(clazz.getConstructor(World.class, int.class, boolean.class, EntityLivingBase.class).newInstance(world, power, spawnSources, player));
-        } catch (ReflectiveOperationException e)
+        }
+        catch (ReflectiveOperationException e)
         {
             throw new ReportedException(new CrashReport("Exception spawning Spell Entity", e));
         }

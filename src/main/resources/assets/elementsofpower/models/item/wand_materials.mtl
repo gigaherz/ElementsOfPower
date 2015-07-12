@@ -6,7 +6,7 @@ Ks 1.0000 1.0000 1.0000
 Tf 0.0000 0.0000 0.0000
 d 1.0000
 Ns 0
-map_Kd minecraft:blocks/iron_block
+map_Kd caps
 
 newmtl lapis_gem
 Ka 0.0000 0.0000 0.0000
@@ -15,7 +15,7 @@ Ks 1.0000 1.0000 1.0000
 Tf 0.0000 0.0000 0.0000
 d 1.0000
 Ns 0
-map_Kd minecraft:blocks/lapis_block
+map_Kd lapis_gem
 
 newmtl emerald_gem
 Ka 0.0000 0.0000 0.0000
@@ -24,7 +24,7 @@ Ks 1.0000 1.0000 1.0000
 Tf 0.0000 0.0000 0.0000
 d 1.0000
 Ns 0
-map_Kd minecraft:blocks/emerald_block
+map_Kd emerald_gem
 
 newmtl diamond_gem
 Ka 0.0000 0.0000 0.0000
@@ -33,7 +33,7 @@ Ks 1.0000 1.0000 1.0000
 Tf 0.0000 0.0000 0.0000
 d 1.0000
 Ns 0
-map_Kd minecraft:blocks/diamond_block
+map_Kd diamond_gem
 
 newmtl creative_gem
 Ka 0.0000 0.0000 0.0000
@@ -42,7 +42,7 @@ Ks 1.0000 1.0000 1.0000
 Tf 0.0000 0.0000 0.0000
 d 1.0000
 Ns 0
-map_Kd minecraft:blocks/bedrock
+map_Kd creative_gem
 
 newmtl orbs
 Ka 0.0000 0.0000 0.0000
@@ -51,7 +51,7 @@ Ks 1.0000 1.0000 1.0000
 Tf 0.0000 0.0000 0.0000
 d 1.0000
 Ns 0
-map_Kd minecraft:blocks/quartz_block_chiseled
+map_Kd orbs
 
 newmtl rod
 Ka 0.0000 0.0000 0.0000
@@ -60,5 +60,5 @@ Ks 1.0000 1.0000 1.0000
 Tf 0.0000 0.0000 0.0000
 d 1.0000
 Ns 0
-map_Kd minecraft:blocks/log_oak
+map_Kd rod
 

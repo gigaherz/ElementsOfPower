@@ -490,7 +490,8 @@ public class MagicDatabase
                 }
 
                 amounts.amounts[i] = amount;
-            } catch (NumberFormatException ex)
+            }
+            catch (NumberFormatException ex)
             {
                 throw new ReportedException(new CrashReport("Exception while parsing NBT magic infromation", ex));
             }
@@ -552,7 +553,8 @@ public class MagicDatabase
             }
 
             return output;
-        } else
+        }
+        else
         {
             output.setTagCompound(null);
             ItemStack is = Utils.findKeyForValue(containerConversion, output);

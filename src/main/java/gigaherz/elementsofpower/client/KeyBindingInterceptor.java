@@ -64,10 +64,12 @@ public class KeyBindingInterceptor extends KeyBinding
             ensureHavePressTime();
             fieldPressTime.set(binding, time);
 
-        } catch (NoSuchFieldException e)
+        }
+        catch (NoSuchFieldException e)
         {
             throw new ReportedException(new CrashReport("Exception updating KeyBindingInterceptor", e));
-        } catch (IllegalAccessException e)
+        }
+        catch (IllegalAccessException e)
         {
             throw new ReportedException(new CrashReport("Exception updating KeyBindingInterceptor", e));
         }
@@ -80,10 +82,12 @@ public class KeyBindingInterceptor extends KeyBinding
             ensureHavePressTime();
             fieldPressTime.set(binding, time);
 
-        } catch (NoSuchFieldException e)
+        }
+        catch (NoSuchFieldException e)
         {
             throw new ReportedException(new CrashReport("Exception updating KeyBindingInterceptor", e));
-        } catch (IllegalAccessException e)
+        }
+        catch (IllegalAccessException e)
         {
             throw new ReportedException(new CrashReport("Exception updating KeyBindingInterceptor", e));
         }
@@ -96,10 +100,12 @@ public class KeyBindingInterceptor extends KeyBinding
             ensureHavePressed();
             return (Boolean) fieldPressed.get(binding);
 
-        } catch (NoSuchFieldException e)
+        }
+        catch (NoSuchFieldException e)
         {
             throw new ReportedException(new CrashReport("Exception updating KeyBindingInterceptor", e));
-        } catch (IllegalAccessException e)
+        }
+        catch (IllegalAccessException e)
         {
             throw new ReportedException(new CrashReport("Exception updating KeyBindingInterceptor", e));
         }
@@ -112,10 +118,12 @@ public class KeyBindingInterceptor extends KeyBinding
             ensureHavePressTime();
             return (Integer) fieldPressTime.get(binding);
 
-        } catch (NoSuchFieldException e)
+        }
+        catch (NoSuchFieldException e)
         {
             throw new ReportedException(new CrashReport("Exception updating KeyBindingInterceptor", e));
-        } catch (IllegalAccessException e)
+        }
+        catch (IllegalAccessException e)
         {
             throw new ReportedException(new CrashReport("Exception updating KeyBindingInterceptor", e));
         }
@@ -127,10 +135,12 @@ public class KeyBindingInterceptor extends KeyBinding
         {
             ensureHaveKeybindArray();
             keybindArray = (List) fieldKeybindArray.get(null);
-        } catch (NoSuchFieldException e)
+        }
+        catch (NoSuchFieldException e)
         {
             throw new ReportedException(new CrashReport("Exception initializing KeyBindingInterceptor", e));
-        } catch (IllegalAccessException e)
+        }
+        catch (IllegalAccessException e)
         {
             throw new ReportedException(new CrashReport("Exception initializing KeyBindingInterceptor", e));
         }
@@ -163,7 +173,8 @@ public class KeyBindingInterceptor extends KeyBinding
         if (existingKeyBinding instanceof KeyBindingInterceptor)
         {
             interceptedKeyBinding = ((KeyBindingInterceptor) existingKeyBinding).getOriginalKeyBinding();
-        } else
+        }
+        else
         {
             interceptedKeyBinding = existingKeyBinding;
         }
@@ -199,12 +210,14 @@ public class KeyBindingInterceptor extends KeyBinding
             if (this.interceptedPressTime == 0)
             {
                 return false;
-            } else
+            }
+            else
             {
                 --this.interceptedPressTime;
                 return true;
             }
-        } else
+        }
+        else
         {
             return false;
         }
@@ -227,13 +240,15 @@ public class KeyBindingInterceptor extends KeyBinding
         {
             setPressedAndTime(this, false, 0);
             return false;
-        } else
+        }
+        else
         {
             int pressTime = getPressTime(this);
             if (pressTime == 0)
             {
                 return false;
-            } else
+            }
+            else
             {
                 setPressTime(this, --pressTime);
                 return true;

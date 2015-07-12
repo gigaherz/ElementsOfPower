@@ -1,5 +1,5 @@
 {
-    "parent": "builtin/generated",
+    "parent": "elementsofpower:item/wand_base",
     "display": {
         "thirdperson": {
             "rotation": [ -150, 0, 0 ],

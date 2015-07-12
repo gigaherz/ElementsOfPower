@@ -85,7 +85,8 @@ public abstract class EntityBallBase extends EntityThrowable implements IVariabl
                 else if (pos.sideHit == EnumFacing.WEST) bp = bp.west();
                 else if (pos.sideHit == EnumFacing.NORTH) bp = bp.north();
                 else if (pos.sideHit == EnumFacing.SOUTH) bp = bp.south();
-            } else
+            }
+            else
             {
                 bp = new BlockPos(pos.hitVec);
             }

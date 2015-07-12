@@ -97,7 +97,8 @@ public class BlockDust extends Block
 
                 if (!given)
                     worldIn.setBlockToAir(bp);
-            } else if (neighbour.getBlock() == this)
+            }
+            else if (neighbour.getBlock() == this)
             {
                 if (density > maxGive)
                 {
@@ -118,7 +119,8 @@ public class BlockDust extends Block
         if (density <= 0)
         {
             worldIn.setBlockToAir(pos);
-        } else
+        }
+        else
         {
             worldIn.setBlockState(pos, state.withProperty(DENSITY, density));
         }

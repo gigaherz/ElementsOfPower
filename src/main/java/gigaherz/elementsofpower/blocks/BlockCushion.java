@@ -120,7 +120,8 @@ public class BlockCushion extends Block
 
                 if (!given)
                     worldIn.setBlockToAir(bp);
-            } else if (neighbour.getBlock() == this)
+            }
+            else if (neighbour.getBlock() == this)
             {
                 if (density > maxGive)
                 {
@@ -141,7 +142,8 @@ public class BlockCushion extends Block
         if (density <= 0)
         {
             worldIn.setBlockToAir(pos);
-        } else
+        }
+        else
         {
             worldIn.setBlockState(pos, state.withProperty(DENSITY, density));
         }

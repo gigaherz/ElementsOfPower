@@ -55,7 +55,8 @@ public class EntityLavaball extends EntityBallBase
             if (spawnSourceBlocks)
             {
                 worldObj.setBlockState(blockPos, Blocks.flowing_lava.getDefaultState().withProperty(BlockDynamicLiquid.LEVEL, 0));
-            } else
+            }
+            else
             {
                 worldObj.setBlockState(blockPos, Blocks.flowing_lava.getDefaultState().withProperty(BlockDynamicLiquid.LEVEL, 15));
             }

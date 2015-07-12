@@ -54,29 +54,34 @@ public class EntityFrostball extends EntityBallBase
         if (block == Blocks.fire)
         {
             worldObj.setBlockToAir(blockPos);
-        } else if (layers > 0)
+        }
+        else if (layers > 0)
         {
             if (block == Blocks.flowing_lava || block == Blocks.lava)
             {
                 if ((Integer) currentState.getValue(BlockDynamicLiquid.LEVEL) > 0)
                 {
                     worldObj.setBlockState(blockPos, Blocks.cobblestone.getDefaultState());
-                } else
+                }
+                else
                 {
                     worldObj.setBlockState(blockPos, Blocks.obsidian.getDefaultState());
                 }
                 return;
-            } else if (block == Blocks.flowing_water || block == Blocks.water)
+            }
+            else if (block == Blocks.flowing_water || block == Blocks.water)
             {
                 if ((Integer) currentState.getValue(BlockDynamicLiquid.LEVEL) > 0)
                 {
                     worldObj.setBlockState(blockPos, Blocks.ice.getDefaultState());
-                } else
+                }
+                else
                 {
                     worldObj.setBlockState(blockPos, Blocks.packed_ice.getDefaultState());
                 }
                 return;
-            } else if (!Blocks.snow_layer.canPlaceBlockOnSide(worldObj, blockPos, EnumFacing.UP))
+            }
+            else if (!Blocks.snow_layer.canPlaceBlockOnSide(worldObj, blockPos, EnumFacing.UP))
             {
                 return;
             }
@@ -95,12 +100,14 @@ public class EntityFrostball extends EntityBallBase
                     l += add;
                     worldObj.setBlockState(blockPos, currentState.withProperty(BlockSnow.LAYERS, l));
                     layers -= add;
-                } else if (block == Blocks.air)
+                }
+                else if (block == Blocks.air)
                 {
                     int add = Math.min(8, layers);
                     worldObj.setBlockState(blockPos, Blocks.snow_layer.getDefaultState().withProperty(BlockSnow.LAYERS, add));
                     layers -= add;
-                } else
+                }
+                else
                 {
                     break;
                 }

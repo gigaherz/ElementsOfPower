@@ -90,11 +90,13 @@ public class EntityAirball extends EntityBallBase
         {
             this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_HUGE, this.posX, this.posY, this.posZ,
                     getRandomForParticle(), getRandomForParticle(), getRandomForParticle());
-        } else if (damageForce >= 2)
+        }
+        else if (damageForce >= 2)
         {
             this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE, this.posX, this.posY, this.posZ,
                     getRandomForParticle(), getRandomForParticle(), getRandomForParticle());
-        } else
+        }
+        else
         {
             this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, this.posX, this.posY, this.posZ,
                     getRandomForParticle(), getRandomForParticle(), getRandomForParticle());
@@ -110,13 +112,15 @@ public class EntityAirball extends EntityBallBase
         if (block == Blocks.fire)
         {
             worldObj.setBlockToAir(blockPos);
-        } else if (block == Blocks.flowing_water || block == Blocks.water)
+        }
+        else if (block == Blocks.flowing_water || block == Blocks.water)
         {
             if ((Integer) currentState.getValue(BlockDynamicLiquid.LEVEL) > 0)
             {
                 worldObj.setBlockToAir(blockPos);
             }
-        } else if (!block.getMaterial().blocksMovement() && !block.getMaterial().isLiquid())
+        }
+        else if (!block.getMaterial().blocksMovement() && !block.getMaterial().isLiquid())
         {
             block.dropBlockAsItem(worldObj, blockPos, currentState, 0);
             worldObj.setBlockToAir(blockPos);

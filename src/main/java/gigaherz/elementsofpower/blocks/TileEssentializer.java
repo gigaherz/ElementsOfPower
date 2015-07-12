@@ -91,7 +91,8 @@ public class TileEssentializer
             if (stack.stackSize <= amount)
             {
                 setInventorySlotContents(slotIndex, null);
-            } else
+            }
+            else
             {
                 stack = stack.splitStack(amount);
 
@@ -337,7 +338,8 @@ public class TileEssentializer
 
             inventory[8] = MagicDatabase.setContainedMagic(input, amounts);
 
-        } else
+        }
+        else
         {
             MagicAmounts amounts = MagicDatabase.getEssences(input);
 
@@ -464,7 +466,8 @@ public class TileEssentializer
         if (magic == null)
         {
             inventory[type] = new ItemStack(ElementsOfPower.magicOrb, amount, type);
-        } else
+        }
+        else
         {
             magic.stackSize += amount;
         }

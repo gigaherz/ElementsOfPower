@@ -1,5 +1,15 @@
 {
     "parent": "builtin/generated",
+    "textures": {
+        "caps": "minecraft:blocks/iron_block",
+        "lapis_gem": "minecraft:blocks/lapis_block",
+        "emerald_gem": "minecraft:blocks/emerald_block",
+        "diamond_gem": "minecraft:blocks/diamond_block",
+        "creative_gem": "minecraft:blocks/bedrock",
+        "orbs": "minecraft:blocks/quartz_block_chiseled",
+        "rod": "minecraft:blocks/log_oak",
+        "particle": "minecraft:blocks/log_oak"
+    },
     "display": {
         "thirdperson": {
             "rotation": [ -100, 0, 0 ],

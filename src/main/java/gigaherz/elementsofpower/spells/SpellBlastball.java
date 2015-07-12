@@ -33,7 +33,8 @@ public class SpellBlastball extends SpellBase
             EntityLargeFireball largeFb = new EntityLargeFireball(world, player, lookAt.xCoord * 10, lookAt.yCoord * 10, lookAt.zCoord * 10);
             largeFb.explosionPower = power;
             fireball = largeFb;
-        } else
+        }
+        else
         {
             fireball = new EntitySmallFireball(world, player, lookAt.xCoord * 10, lookAt.yCoord * 10, lookAt.zCoord * 10);
         }

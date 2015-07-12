@@ -57,7 +57,8 @@ public class RecipeTools
             }
 
             out.close();
-        } catch (IOException e)
+        }
+        catch (IOException e)
         {
             return;
         }
@@ -73,16 +74,20 @@ public class RecipeTools
             if (recipe instanceof ShapedRecipes)
             {
                 provider = new ShapedRecipeInfo((ShapedRecipes) recipe);
-            } else if (recipe instanceof ShapelessRecipes)
+            }
+            else if (recipe instanceof ShapelessRecipes)
             {
                 provider = new ShapelessRecipeInfo((ShapelessRecipes) recipe);
-            } else if (recipe instanceof ShapedOreRecipe)
+            }
+            else if (recipe instanceof ShapedOreRecipe)
             {
                 provider = new ShapedOreRecipeInfo((ShapedOreRecipe) recipe);
-            } else if (recipe instanceof ShapelessOreRecipe)
+            }
+            else if (recipe instanceof ShapelessOreRecipe)
             {
                 provider = new ShapelessOreRecipeInfo((ShapelessOreRecipe) recipe);
-            } else
+            }
+            else
             {
                 // TODO: Allow registration of more recipe providers.
                 ElementsOfPower.logger.warn("Recipe class unknown: " + recipe.getClass().getName());
@@ -205,7 +210,8 @@ public class RecipeTools
                     }
 
                     anythingChanged = true;
-                } else
+                }
+                else
                 {
                     ItemStack r = s.copy();
                     r.stackSize *= totalMult;
@@ -274,7 +280,8 @@ public class RecipeTools
                     q.stackSize *= mult2;
                     applied.add(q);
                 }
-            } else
+            }
+            else
             {
                 ItemStack q = is.copy();
                 q.stackSize *= totalMult;
@@ -330,7 +337,8 @@ public class RecipeTools
             {
                 existing.stackSize += is.stackSize;
             }
-        } else
+        }
+        else
         {
             ItemStack isc = is.copy();
             itemsResolved.add(isc);

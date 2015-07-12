@@ -1,6 +1,3 @@
 {
-    "parent": "elementsofpower:item/magicStaff",
-    "textures": {
-        "layer0": "elementsofpower:items/staffLapis"
-    }
+  "parent": "elementsofpower:item/staff_base"
 }

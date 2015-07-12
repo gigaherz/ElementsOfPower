@@ -1,6 +1,6 @@
 # Rhino
 
-mtllib wand1.mtl
+mtllib wand_materials.mtl
 usemtl rod
 v 0.512288 0.175144 0.516355
 v 0.512288 0.825144 0.516355

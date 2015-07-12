@@ -97,7 +97,8 @@ public class EntityLifeball extends EntityBallBase
         if (Potion.potionTypes[id].isInstant())
         {
             Potion.potionTypes[id].affectEntity(this, this.getThrower(), e, amplifier, distance);
-        } else
+        }
+        else
         {
             int j = (int) (distance * durationBase + 0.5D);
 

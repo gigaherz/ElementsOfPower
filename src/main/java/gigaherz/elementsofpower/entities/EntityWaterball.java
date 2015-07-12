@@ -56,7 +56,8 @@ public class EntityWaterball extends EntityBallBase
             if (spawnSourceBlocks)
             {
                 worldObj.setBlockState(blockPos, Blocks.flowing_water.getDefaultState().withProperty(BlockDynamicLiquid.LEVEL, 0));
-            } else
+            }
+            else
             {
                 worldObj.setBlockState(blockPos, Blocks.flowing_water.getDefaultState().withProperty(BlockDynamicLiquid.LEVEL, 15));
             }
