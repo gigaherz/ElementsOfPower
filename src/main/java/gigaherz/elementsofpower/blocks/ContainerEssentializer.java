@@ -55,25 +55,6 @@ public class ContainerEssentializer
         }
     }
 
-    /*@Override
-    public void onCraftGuiClosed(EntityPlayer player)
-    {
-        super.onCraftGuiClosed(player);
-
-        if (!this.tile.worldObj.isRemote)
-        {
-            for (int i = 8; i < 10; i++)
-            {
-                ItemStack stack = this.tile.getStackInSlotOnClosing(i);
-
-                if (stack != null)
-                {
-                    player.dropPlayerItem(stack);
-                }
-            }
-        }
-    }*/
-
     @Override
     public boolean canInteractWith(EntityPlayer player)
     {
@@ -90,16 +71,14 @@ public class ContainerEssentializer
             return null;
         }
 
-        ItemStack stackCopy = null;
         Slot slot = (Slot) this.inventorySlots.get(slotIndex);
-
         if (slot == null || !slot.getHasStack())
         {
             return null;
         }
 
         ItemStack stack = slot.getStack();
-        stackCopy = stack.copy();
+        ItemStack stackCopy = stack.copy();
 
         if (slotIndex >= 10)
         {
@@ -188,7 +167,7 @@ public class ContainerEssentializer
 
         if (stack.stackSize == 0)
         {
-            slot.putStack((ItemStack) null);
+            slot.putStack(null);
         }
         else
         {
@@ -202,10 +181,5 @@ public class ContainerEssentializer
 
         slot.onPickupFromSlot(player, stack);
         return stackCopy;
-    }
-
-    public void clickedMagic(Slot slot, int button)
-    {
-        //ElementsOfPower.proxy.sendProgressBarUpdate(tile, button, slot.slotNumber);
     }
 }

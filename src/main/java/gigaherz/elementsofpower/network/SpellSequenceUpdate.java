@@ -14,7 +14,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 public class SpellSequenceUpdate
         implements IMessage
 {
-
     public enum ChangeMode
     {
         BEGIN,
@@ -23,8 +22,6 @@ public class SpellSequenceUpdate
         CANCEL;
         public static final ChangeMode values[] = values();
     }
-
-    ;
 
     public int dimension;
     public EntityPlayer entity;
@@ -81,11 +78,9 @@ public class SpellSequenceUpdate
 
     public static class Handler implements IMessageHandler<SpellSequenceUpdate, IMessage>
     {
-
         @Override
         public IMessage onMessage(SpellSequenceUpdate message, MessageContext ctx)
         {
-
             final SpellSequenceUpdate msg = message;
 
             WorldServer ws = (WorldServer) message.entity.worldObj;

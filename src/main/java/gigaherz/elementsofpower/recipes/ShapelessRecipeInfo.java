@@ -16,15 +16,15 @@ public class ShapelessRecipeInfo implements IRecipeInfoProvider
     {
         this.recipe = recipe;
 
-        List<ItemStack> input = recipe.recipeItems;
-        for (ItemStack o : input)
+        List<ItemStack> inputs = recipe.recipeItems;
+        for (ItemStack input : inputs)
         {
-            if (o == null)
+            if (input == null)
                 continue;
 
-            ItemStack c = o.copy();
-            c.stackSize = 1;
-            recipeItems.add(c);
+            ItemStack stack = input.copy();
+            stack.stackSize = 1;
+            recipeItems.add(stack);
         }
     }
 

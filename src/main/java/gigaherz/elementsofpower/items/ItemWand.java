@@ -38,12 +38,10 @@ public class ItemWand extends ItemMagicContainer
             false, false, false, true
     };
 
-    public boolean isCreative(ItemStack stack)
+    public static boolean isCreative(ItemStack stack)
     {
         int dmg = stack.getItemDamage();
-        if (dmg > areCreative.length)
-            return false;
-        return areCreative[dmg];
+        return dmg <= areCreative.length && areCreative[dmg];
     }
 
     public ItemWand()
@@ -73,7 +71,7 @@ public class ItemWand extends ItemMagicContainer
 
         if (sub >= subNames.length)
         {
-            sub = 0;
+            return getUnlocalizedName();
         }
 
         return getUnlocalizedName() + "." + subNames[sub];
@@ -166,7 +164,7 @@ public class ItemWand extends ItemMagicContainer
             NBTTagCompound nbt = stack.getTagCompound();
             if (nbt == null)
             {
-                if (!((ItemWand) stack.getItem()).isCreative(stack))
+                if (!ItemWand.isCreative(stack))
                     return;
 
                 nbt = new NBTTagCompound();

@@ -77,11 +77,12 @@ public class ItemMagicContainer extends Item
             return;
         }
 
+        List<String> tips = (List<String>) tooltipList;
 
-        tooltipList.add(EnumChatFormatting.YELLOW + "Contains magic:");
+        tips.add(EnumChatFormatting.YELLOW + "Contains magic:");
         if (!Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) && !Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
         {
-            tooltipList.add(EnumChatFormatting.GRAY + "  (Hold SHIFT)");
+            tips.add(EnumChatFormatting.GRAY + "  (Hold SHIFT)");
             return;
         }
 
@@ -94,7 +95,7 @@ public class ItemMagicContainer extends Item
 
             String magicName = MagicDatabase.getMagicName(i);
             String str = String.format("%s  %s x%d", EnumChatFormatting.GRAY, magicName, amounts.amounts[i]);
-            tooltipList.add(str);
+            tips.add(str);
         }
     }
 }

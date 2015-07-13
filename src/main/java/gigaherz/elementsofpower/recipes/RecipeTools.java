@@ -7,9 +7,6 @@ import net.minecraft.item.crafting.*;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,33 +34,6 @@ public class RecipeTools
         int temp = gcd(a, b);
         return temp > 0 ? (a / temp * b) : 0;
     }
-
-    public static void dumpItemRoots()
-    {
-        try
-        {
-            FileOutputStream fos = new FileOutputStream("itemRoots.csv");
-            OutputStreamWriter out = new OutputStreamWriter(fos, "UTF-8");
-
-            for (ItemStack is : itemRoots)
-            {
-                if (is.getItem() == null)
-                {
-                    continue;
-                }
-                out.write(is.getItem().getUnlocalizedName());
-                out.write("," + is.getItemDamage());
-                out.write("\r\n");
-            }
-
-            out.close();
-        }
-        catch (IOException e)
-        {
-            return;
-        }
-    }
-
 
     public static void gatherRecipes()
     {

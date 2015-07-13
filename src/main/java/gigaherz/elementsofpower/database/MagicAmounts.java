@@ -2,28 +2,20 @@ package gigaherz.elementsofpower.database;
 
 public class MagicAmounts
 {
+    public static final int FIRE = 0;
+    public static final int WATER = 0;
+    public static final int AIR = 0;
+    public static final int EARTH = 0;
+    public static final int LIGHT = 0;
+    public static final int DARKNESS = 0;
+    public static final int LIFE = 0;
+    public static final int DEATH = 0;
 
-    public enum MagicTypes
-    {
-        fire, water, air, earth, light, darkness, life, death
-    }
-
-    public int[] amounts;
-
-    public MagicAmounts()
-    {
-        amounts = new int[8];
-    }
-
-    public MagicAmounts(int fire, int water, int air, int earth, int light, int darkness, int life, int death)
-    {
-        amounts = new int[]{fire, water, air, earth, light, darkness, life, death};
-    }
+    public final int[] amounts = new int[8];
 
     @Override
     public String toString()
     {
-
         if (isEmpty())
             return "{Empty}";
 
@@ -50,24 +42,30 @@ public class MagicAmounts
         return b.toString();
     }
 
+    public boolean isEmpty()
+    {
+        for (int amount : amounts)
+        {
+            if (amount > 0)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
 
     public int getTotalMagic()
     {
         int acc = 0;
 
-        for (int i = 0; i < amounts.length; i++)
+        for (int amount : amounts)
         {
-            acc += amounts[i];
+            acc += amount;
         }
 
         return acc;
     }
-
-    public int getAmountOfType(int type)
-    {
-        return amounts[type];
-    }
-
 
     public boolean hasEnough(MagicAmounts cost)
     {
@@ -83,24 +81,6 @@ public class MagicAmounts
     {
         for (int i = 0; i < 8; i++)
             amounts[i] -= cost.amounts[i];
-    }
-
-    public boolean isEmpty()
-    {
-        for (int i = 0; i < amounts.length; i++)
-        {
-            if (amounts[i] > 0)
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    public void setAmountOfType(int type, int amount)
-    {
-        amounts[type] = amount;
     }
 
     public MagicAmounts fire(int amount)

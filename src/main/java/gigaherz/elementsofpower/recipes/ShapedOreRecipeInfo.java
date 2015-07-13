@@ -17,27 +17,27 @@ public class ShapedOreRecipeInfo implements IRecipeInfoProvider
     {
         this.recipe = recipe;
 
-        Object[] input = recipe.getInput();
-        for (Object o : input)
+        Object[] inputs = recipe.getInput();
+        for (Object input : inputs)
         {
-            Object oo = o;
-            if (oo instanceof List)
+            Object actualInput = input;
+            if (actualInput instanceof List)
             {
-                oo = ((List) o).get(0);
+                actualInput = ((List) input).get(0);
             }
 
-            if (oo == null)
+            if (actualInput == null)
                 continue;
 
-            if (oo instanceof ItemStack)
+            if (actualInput instanceof ItemStack)
             {
-                ItemStack c = ((ItemStack) oo).copy();
-                c.stackSize = 1;
-                recipeItems.add(c);
+                ItemStack stack = ((ItemStack) actualInput).copy();
+                stack.stackSize = 1;
+                recipeItems.add(stack);
             }
             else
             {
-                ElementsOfPower.logger.warn("Unknown type of item in ShapedOreRecipe: " + o.getClass().getName());
+                ElementsOfPower.logger.warn("Unknown type of item in ShapedOreRecipe: " + input.getClass().getName());
             }
         }
     }

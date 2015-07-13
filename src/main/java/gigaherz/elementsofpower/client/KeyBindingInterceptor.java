@@ -24,7 +24,7 @@ public class KeyBindingInterceptor extends KeyBinding
 
     private static Field findObfuscatedField(Class<?> clazz, String... names)
     {
-        return ReflectionHelper.findField(KeyBinding.class, ObfuscationReflectionHelper.remapFieldNames(clazz.getName(), names));
+        return ReflectionHelper.findField(clazz, ObfuscationReflectionHelper.remapFieldNames(clazz.getName(), names));
     }
 
     private static void ensureHaveKeybindArray() throws NoSuchFieldException

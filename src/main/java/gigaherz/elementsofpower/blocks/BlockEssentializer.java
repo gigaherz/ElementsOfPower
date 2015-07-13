@@ -29,11 +29,10 @@ public class BlockEssentializer
         TileEntity tileEntity = worldIn.getTileEntity(pos);
 
         if (tileEntity == null || playerIn.isSneaking())
-        {
             return false;
-        }
 
         playerIn.openGui(ElementsOfPower.instance, 0, worldIn, pos.getX(), pos.getY(), pos.getZ());
+
         return true;
     }
 

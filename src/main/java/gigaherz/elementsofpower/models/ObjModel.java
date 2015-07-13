@@ -13,13 +13,13 @@ import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.Attributes;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.vecmath.Vector2f;
 import javax.vecmath.Vector3f;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.security.InvalidParameterException;
 import java.util.*;
 
 public class ObjModel
@@ -28,12 +28,8 @@ public class ObjModel
     public List<Vector3f> normals;
     public List<Vector2f> texCoords;
 
-    public List<MeshPart> parts;
-
-    public ObjModel()
-    {
-        parts = new ArrayList<MeshPart>();
-    }
+    public final List<MeshPart> parts = new ArrayList<MeshPart>();
+    ;
 
     public void addPosition(float x, float y, float z)
     {
@@ -76,71 +72,82 @@ public class ObjModel
             TextureAtlasSprite sprite = null;
             int color = 0xFFFFFFFF;
 
-            if (part.material != null)
+            Material m = part.material;
+            if (m == null)
             {
-                if (part.material.DiffuseTextureMap != null)
+                if (part.materialName != null)
                 {
-                    sprite = manager.getTextureMap().getAtlasSprite(textures.getOrDefault(part.material.DiffuseTextureMap, part.material.DiffuseTextureMap));
+                    sprite = manager.getTextureMap().getAtlasSprite(textures.get(part.materialName));
                 }
-                else if (part.material.AmbientTextureMap != null)
+            }
+            else
+            {
+                if (m.DiffuseTextureMap != null)
                 {
-                    sprite = manager.getTextureMap().getAtlasSprite(textures.getOrDefault(part.material.AmbientTextureMap, part.material.AmbientTextureMap));
+                    sprite = manager.getTextureMap().getAtlasSprite(textures.get(m.DiffuseTextureMap));
                 }
-                if (part.material.DiffuseColor != null)
+                else if (m.AmbientTextureMap != null)
                 {
-                    color = getColorValue(part.material.DiffuseColor);
+                    sprite = manager.getTextureMap().getAtlasSprite(textures.get(m.AmbientTextureMap));
+                }
+
+                if (m.DiffuseColor != null)
+                {
+                    color = getColorValue(m.DiffuseColor);
                 }
             }
 
-            for (int i = 0; i < part.indices.size(); i += 4)
+            for (int[][] face : part.indices)
             {
-                BakedQuad quad = bakeQuad(part, i, sprite, color);
-                bakeList.add(quad);
+                bakeList.add(makeQuad(face, sprite, color));
             }
         }
     }
 
-    private BakedQuad bakeQuad(MeshPart part, int startIndex, TextureAtlasSprite sprite, int color)
+    private BakedQuad makeQuad(int[][] face, TextureAtlasSprite sprite, int color)
     {
         int[] faceData = new int[28];
-        for (int i = 0; i < 4; i++)
-        {
 
-            Vector3f position = new Vector3f(0, 0, 0);
-            Vector2f texCoord = new Vector2f(0, 0);
-            int p = 0;
-            int[] indices = part.indices.get(startIndex + i);
+        processVertex(faceData, 0, face[0], color, sprite);
+        processVertex(faceData, 1, face[1], color, sprite);
+        processVertex(faceData, 2, face[2], color, sprite);
+        processVertex(faceData, 3, face[3], color, sprite);
 
-            if (positions != null)
-                position = positions.get(indices[p++]);
-
-            if (normals != null)
-                p++; // normals not used by minecraft
-
-            if (texCoords != null)
-                texCoord = texCoords.get(indices[p]);
-
-            storeVertexData(faceData, i, position, texCoord, sprite, color);
-        }
         return new BakedQuad(faceData, -1, FaceBakery.getFacingFromVertexData(faceData));
     }
 
-    private static void storeVertexData(int[] faceData, int storeIndex, Vector3f position, Vector2f faceUV, TextureAtlasSprite sprite, int shadeColor)
+    private void processVertex(int[] faceData, int i, int[] vertex, int color, TextureAtlasSprite sprite)
     {
-        if (sprite != null)
+        Vector3f position = new Vector3f(0, 0, 0);
+        Vector2f texCoord = new Vector2f(0, 0);
+
+        int p = 0;
+
+        if (positions != null)
+            position = positions.get(vertex[p++]);
+
+        if (normals != null)
+            p++; // normals not used by minecraft
+
+        if (texCoords != null)
         {
-            faceUV = new Vector2f(
-                    sprite.getInterpolatedU(faceUV.x * 16),
-                    sprite.getInterpolatedV(faceUV.y * 16));
+            texCoord = texCoords.get(vertex[p]);
+
+            if (sprite != null)
+            {
+                texCoord = new Vector2f(
+                        sprite.getInterpolatedU(texCoord.x * 16),
+                        sprite.getInterpolatedV(texCoord.y * 16));
+            }
         }
 
-        int l = storeIndex * 7;
+        int l = i * 7;
         faceData[l++] = Float.floatToRawIntBits(position.x);
         faceData[l++] = Float.floatToRawIntBits(position.y);
         faceData[l++] = Float.floatToRawIntBits(position.z);
-        faceData[l++] = shadeColor;
-        faceData[l++] = Float.floatToRawIntBits(faceUV.x);
-        faceData[l++] = Float.floatToRawIntBits(faceUV.y);
+        faceData[l++] = color;
+        faceData[l++] = Float.floatToRawIntBits(texCoord.x);
+        faceData[l++] = Float.floatToRawIntBits(texCoord.y);
         faceData[l] = 0;
     }
 
@@ -149,36 +156,20 @@ public class ObjModel
         return Attributes.DEFAULT_BAKED_FORMAT;
     }
 
-    public void mapTextureSprites(Map<String, ResourceLocation> textures)
-    {
-    }
-
     public static class MeshPart
     {
-        public String name;
+        public String materialName;
         public Material material;
-        public List<int[]> indices;
+        public List<int[][]> indices;
 
         public MeshPart()
         {
-            indices = new ArrayList<int[]>();
+            indices = new ArrayList<int[][]>();
         }
 
-        public void addTriangleFace(int[] a, int[] b, int[] c)
+        public void addFace(int[]... f)
         {
-            // Degenerate quad
-            indices.add(a);
-            indices.add(b);
-            indices.add(c);
-            indices.add(c);
-        }
-
-        public void addQuadFace(int[] a, int[] b, int[] c, int[] d)
-        {
-            indices.add(a);
-            indices.add(b);
-            indices.add(c);
-            indices.add(d);
+            indices.add(f);
         }
     }
 
@@ -189,8 +180,6 @@ public class ObjModel
         private ObjModel currentModel;
         private ObjModel.MeshPart currentPart;
         private MaterialLibrary currentMatLib;
-
-        private String lastObjectName;
 
         public final ResourceLocation modelLocation;
         public final ResourceLocation baseLocation;
@@ -233,15 +222,19 @@ public class ObjModel
                 Material m = p.material;
 
                 if (m == null)
+                {
+                    if (p.materialName != null)
+                        usedTextures.add(textures.get(p.materialName));
                     continue;
+                }
 
                 if (m.DiffuseTextureMap != null)
                 {
-                    usedTextures.add(textures.getOrDefault(m.DiffuseTextureMap, m.DiffuseTextureMap));
+                    usedTextures.add(textures.get(m.DiffuseTextureMap));
                 }
                 else if (m.AmbientTextureMap != null)
                 {
-                    usedTextures.add(textures.getOrDefault(m.AmbientTextureMap, m.AmbientTextureMap));
+                    usedTextures.add(textures.get(m.AmbientTextureMap));
                 }
             }
 
@@ -291,7 +284,7 @@ public class ObjModel
             String[] args = line.split(" ");
 
             if (args.length < 3 || args.length > 4)
-                throw new NotImplementedException();
+                throw new InvalidParameterException();
 
             String[] p1 = args[0].split("/");
             String[] p2 = args[1].split("/");
@@ -303,14 +296,14 @@ public class ObjModel
 
             if (args.length == 3)
             {
-                currentPart.addTriangleFace(v1, v2, v3);
+                currentPart.addFace(v1, v2, v3, v3);
             }
             else if (args.length == 4)
             {
                 String[] p4 = args[3].split("/");
                 int[] v4 = parseIndices(p4);
 
-                currentPart.addQuadFace(v1, v2, v3, v4);
+                currentPart.addFace(v1, v2, v3, v4);
             }
         }
 
@@ -327,19 +320,17 @@ public class ObjModel
         private void useMaterial(String matName)
         {
             currentPart = new ObjModel.MeshPart();
-            currentPart.name = lastObjectName;
-            currentPart.material = currentMatLib.get(matName);
+            currentPart.materialName = matName;
+            currentPart.material = currentMatLib.materials.get(matName);
             currentModel.addPart(currentPart);
         }
 
         private void newObject(String line)
         {
-            lastObjectName = line;
         }
 
         private void newGroup(String line)
         {
-            lastObjectName = line;
         }
 
         private void loadMaterialLibrary(ResourceLocation locOfParent, String path) throws IOException
@@ -426,8 +417,6 @@ public class ObjModel
 
     static class Material
     {
-        public String Name;
-
         public Vector3f AmbientColor;
         public Vector3f DiffuseColor;
         public Vector3f SpecularColor;
@@ -448,36 +437,13 @@ public class ObjModel
         public String StencilDecalMap;
 
         public String AlphaTextureMap;
-
-        public Material(String materialName)
-        {
-            Name = materialName;
-        }
     }
 
     static class MaterialLibrary
     {
-
         static final Set<String> unknownCommands = new HashSet<String>();
 
-        private final Dictionary<String, Material> materialLibrary = new Hashtable<String, Material>();
-
-        private Material currentMaterial;
-
-        public MaterialLibrary()
-        {
-        }
-
-        public Material get(Object key)
-        {
-            return materialLibrary.get(key);
-        }
-
-        private void pushMaterial(String materialName)
-        {
-            currentMaterial = new Material(materialName);
-            materialLibrary.put(currentMaterial.Name, currentMaterial);
-        }
+        public final Dictionary<String, Material> materials = new Hashtable<String, Material>();
 
         public void loadFromStream(ResourceLocation loc) throws IOException
         {
@@ -485,6 +451,7 @@ public class ObjModel
             InputStreamReader lineStream = new InputStreamReader(res.getInputStream(), Charsets.UTF_8);
             BufferedReader lineReader = new BufferedReader(lineStream);
 
+            Material currentMaterial = null;
             for (; ; )
             {
                 String currentLine = lineReader.readLine();
@@ -492,9 +459,7 @@ public class ObjModel
                     break;
 
                 if (currentLine.length() == 0 || currentLine.startsWith("#"))
-                {
                     continue;
-                }
 
                 String[] fields = currentLine.split(" ", 2);
                 String keyword = fields[0];
@@ -502,7 +467,12 @@ public class ObjModel
 
                 if (keyword.equalsIgnoreCase("newmtl"))
                 {
-                    pushMaterial(data);
+                    currentMaterial = new Material();
+                    materials.put(data, currentMaterial);
+                }
+                else if (currentMaterial == null)
+                {
+                    throw new IOException("Found material attributes before 'newmtl'");
                 }
                 else if (keyword.equalsIgnoreCase("Ka"))
                 {
@@ -520,7 +490,8 @@ public class ObjModel
                 {
                     currentMaterial.SpecularCoefficient = Float.parseFloat(data);
                 }
-                else if (keyword.equalsIgnoreCase("Tr"))
+                else if (keyword.equalsIgnoreCase("Tr") ||
+                        keyword.equalsIgnoreCase("d"))
                 {
                     currentMaterial.Transparency = Float.parseFloat(data);
                 }
@@ -548,11 +519,8 @@ public class ObjModel
                 {
                     currentMaterial.AlphaTextureMap = data;
                 }
-                else if (keyword.equalsIgnoreCase("map_bump"))
-                {
-                    currentMaterial.BumpMap = data;
-                }
-                else if (keyword.equalsIgnoreCase("bump"))
+                else if (keyword.equalsIgnoreCase("map_bump") ||
+                        keyword.equalsIgnoreCase("bump"))
                 {
                     currentMaterial.BumpMap = data;
                 }
@@ -564,19 +532,11 @@ public class ObjModel
                 {
                     currentMaterial.StencilDecalMap = data;
                 }
-                else if (keyword.equalsIgnoreCase("Tf"))
-                {
-                    // Unhandled
-                }
-                else if (keyword.equalsIgnoreCase("d"))
-                {
-                    // Unhandled
-                }
                 else
                 {
                     if (!unknownCommands.contains(keyword))
                     {
-                        ElementsOfPower.logger.warn("Unrecognized command: " + currentLine);
+                        ElementsOfPower.logger.info("Unrecognized command: " + currentLine);
                         unknownCommands.add(keyword);
                     }
                 }

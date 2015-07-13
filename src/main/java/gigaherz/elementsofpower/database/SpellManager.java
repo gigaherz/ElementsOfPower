@@ -8,7 +8,6 @@ import java.util.Map;
 
 public class SpellManager
 {
-
     public final static char[] elementChars = {'F', 'W', 'A', 'E', 'G', 'K', 'L', 'D'};
     public final static Map<Character, Integer> elementIndices = new Hashtable<Character, Integer>();
 
@@ -81,6 +80,8 @@ public class SpellManager
         registerSpell(new SpellGenericEntity(EntityLifeball.class, 3).life().life().life().cost(COST_AVERAGE));
         registerSpell(new SpellGenericEntity(EntityLifeball.class, 4).life().life().life().life().cost(COST_COMPLEX));
         registerSpell(new SpellGenericEntity(EntityLifeball.class, 5).life().life().life().life().life().cost(COST_EXTREME));
+
+        registerSpell(new SpellResurrection().life().life().life().light().light().cost(COST_EXTREME * COMBO_COEF));
     }
 
     public static void registerSpell(SpellBase spell)

@@ -426,7 +426,6 @@ public class MagicDatabase
     public static boolean canItemContainMagic(ItemStack stack)
     {
         return stack.stackSize <= 1 && Utils.stackIsInMap(containerCapacity, stack);
-
     }
 
     public static MagicAmounts getMagicLimits(ItemStack stack)
@@ -520,7 +519,7 @@ public class MagicDatabase
         Item item = output.getItem();
         if (item instanceof ItemWand)
         {
-            if (((ItemWand) item).isCreative(output))
+            if (ItemWand.isCreative(output))
                 return output;
         }
 

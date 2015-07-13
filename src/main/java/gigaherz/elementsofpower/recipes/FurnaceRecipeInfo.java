@@ -16,11 +16,11 @@ public class FurnaceRecipeInfo implements IRecipeInfoProvider
     {
         ItemStack recipeInput = input.copy();
 
-        ArrayList<ItemStack> al = new ArrayList<ItemStack>();
-        al.add(recipeInput);
-        al.add(new ItemStack(Items.coal));
+        ArrayList<ItemStack> inputs = new ArrayList<ItemStack>();
+        inputs.add(recipeInput);
+        inputs.add(new ItemStack(Items.coal));
 
-        recipeItems = al;
+        recipeItems = inputs;
         recipeOutput = output.copy();
 
         recipeInput.stackSize *= 8;

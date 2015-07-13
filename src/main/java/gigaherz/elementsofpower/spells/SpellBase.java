@@ -8,7 +8,6 @@ import net.minecraft.item.ItemStack;
 public abstract class SpellBase
         implements ISpellEffect
 {
-
     protected MagicAmounts spellCost = new MagicAmounts();
     protected StringBuilder spellSequence = new StringBuilder();
     protected String finalSequence = null;

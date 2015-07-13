@@ -62,7 +62,8 @@ public class ObjModelRegistrationHelper
                 {
                     for (String loc : e.getValue().getTextures(this))
                     {
-                        // Workaround for a MC/Deobf bug
+                        // Workaround for a MC/Deobf bug,
+                        // where the map lookup uses a ResourceLocation where the map stores Strings
                         if (event.map.getTextureExtry(loc) != null)
                             continue;
                         event.map.registerSprite(new ResourceLocation(loc));
@@ -144,7 +145,6 @@ public class ObjModelRegistrationHelper
 
     protected ModelBlock loadModel(final ResourceLocation loc)
     {
-        Reader reader = null;
         ModelBlock modelblock = modelBlocks.get(loc);
 
         if (modelblock != null)
@@ -160,7 +160,7 @@ public class ObjModelRegistrationHelper
             IResource iresource = Minecraft.getMinecraft().getResourceManager().getResource(getJsonLocation(loc));
             if (iresource != null)
             {
-                reader = new InputStreamReader(iresource.getInputStream(), Charsets.UTF_8);
+                Reader reader = new InputStreamReader(iresource.getInputStream(), Charsets.UTF_8);
 
                 modelblock = ModelBlock.deserialize(reader);
                 modelblock.name = loc.toString();

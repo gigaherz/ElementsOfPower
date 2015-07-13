@@ -53,6 +53,8 @@ public class EntityLifeball extends EntityBallBase
         //e.attackEntityFrom(DamageSource.causeThrownDamage(this, this.getThrower()), (float) b0);
     }
 
+
+    @SuppressWarnings("unchecked")
     @Override
     protected void processEntitiesAroundAfter(Vec3 hitVec)
     {
