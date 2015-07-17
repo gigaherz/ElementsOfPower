@@ -17,25 +17,25 @@ public abstract class EntityBallBase extends EntityThrowable implements IVariabl
     public int damageForce;
     private ItemStack stackForRendering;
 
-    public EntityBallBase(ItemStack stack, World worldIn)
+    protected EntityBallBase(ItemStack stack, World worldIn)
     {
         super(worldIn);
         stackForRendering = stack;
     }
 
-    public EntityBallBase(ItemStack stack, World worldIn, EntityLivingBase p_i1774_2_)
+    protected EntityBallBase(ItemStack stack, World worldIn, EntityLivingBase p_i1774_2_)
     {
         super(worldIn, p_i1774_2_);
         stackForRendering = stack;
     }
 
-    public EntityBallBase(ItemStack stack, World worldIn, double x, double y, double z)
+    protected EntityBallBase(ItemStack stack, World worldIn, double x, double y, double z)
     {
         super(worldIn, x, y, z);
         stackForRendering = stack;
     }
 
-    public EntityBallBase(ItemStack stack, World worldIn, int force, EntityLivingBase p_i1774_2_)
+    protected EntityBallBase(ItemStack stack, World worldIn, int force, EntityLivingBase p_i1774_2_)
     {
         super(worldIn, p_i1774_2_);
         this.addVelocity(0, p_i1774_2_.motionY, 0);
@@ -79,12 +79,7 @@ public abstract class EntityBallBase extends EntityThrowable implements IVariabl
 
             if (bp != null)
             {
-                if (pos.sideHit == EnumFacing.UP) bp = bp.up();
-                else if (pos.sideHit == EnumFacing.DOWN) bp = bp.down();
-                else if (pos.sideHit == EnumFacing.EAST) bp = bp.east();
-                else if (pos.sideHit == EnumFacing.WEST) bp = bp.west();
-                else if (pos.sideHit == EnumFacing.NORTH) bp = bp.north();
-                else if (pos.sideHit == EnumFacing.SOUTH) bp = bp.south();
+                bp=bp.offset(pos.sideHit);
             }
             else
             {

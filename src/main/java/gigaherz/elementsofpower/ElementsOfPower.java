@@ -14,11 +14,25 @@ import gigaherz.elementsofpower.network.SpellSequenceUpdate;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.entity.RenderLiving;
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.monster.EntityGuardian;
+import net.minecraft.entity.passive.EntitySheep;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.projectile.EntityEgg;
+import net.minecraft.entity.projectile.EntityFireball;
+import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBow;
+import net.minecraft.item.ItemEgg;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.RecipesBanners;
+import net.minecraft.item.crafting.RecipesMapCloning;
+import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -121,7 +135,6 @@ public class ElementsOfPower
 
         essentializer = new BlockEssentializer();
         GameRegistry.registerBlock(essentializer, "essentializer");
-
         GameRegistry.registerTileEntity(TileEssentializer.class, "essentializerTile");
 
         dust = new BlockDust();
@@ -169,6 +182,7 @@ public class ElementsOfPower
         EntityRegistry.registerModEntity(EntityFrostball.class, "Frostball", entityId++, this, 80, 3, true);
         EntityRegistry.registerModEntity(EntityWaterball.class, "Waterball", entityId++, this, 80, 3, true);
         EntityRegistry.registerModEntity(EntityFlameball.class, "Flameball", entityId++, this, 80, 3, true);
+        EntityRegistry.registerModEntity(EntityFireBeam.class, "Flamebeam", entityId++, this, 80, 3, true);
 
         // Recipes
         GameRegistry.addRecipe(new ItemStack(essentializer, 1),
@@ -217,6 +231,8 @@ public class ElementsOfPower
                 'S', Items.stick);
         // Gui
         NetworkRegistry.INSTANCE.registerGuiHandler(this, guiHandler);
+
+        ItemBow it;
 
         MagicDatabase.initialize();
     }

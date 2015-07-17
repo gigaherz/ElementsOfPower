@@ -82,6 +82,8 @@ public class SpellManager
         registerSpell(new SpellGenericEntity(EntityLifeball.class, 5).life().life().life().life().life().cost(COST_EXTREME));
 
         registerSpell(new SpellResurrection().life().life().life().light().light().cost(COST_EXTREME * COMBO_COEF));
+
+        registerSpell(new SpellBeam(EntityBeamBase.class, 2, 5).fire().darkness().cost(COST_AVERAGE));
     }
 
     public static void registerSpell(SpellBase spell)

@@ -24,7 +24,7 @@ public class ContainerEssentializer
         {
             for (int j = 0; j < 2; j++)
             {
-                addSlotToContainer(new SlotMagic(tileEntity,
+                addSlotToContainer(new SlotMagic(tileEntity.holder,
                         j + i * 2,
                         71 + j * 18, 8 + i * 18));
             }
@@ -32,8 +32,8 @@ public class ContainerEssentializer
 
         BlockWorkbench wb;
 
-        addSlotToContainer(new SlotSource(tileEntity, 8, 26, 35));
-        addSlotToContainer(new SlotContainer(tileEntity, 9, 134, 35));
+        addSlotToContainer(new SlotSource(tileEntity, 0, 26, 35));
+        addSlotToContainer(new SlotContainer(tileEntity, 1, 134, 35));
         bindPlayerInventory(playerInventory);
     }
 
