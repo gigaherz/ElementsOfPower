@@ -61,6 +61,9 @@ public class NBTSerializerTests
     private static void testSerialize(Object o, String expected) throws TestException
     {
         NBTTagCompound serialized;
+
+        System.out.println("Test Serialize " + (o!=null? o.getClass().getName() : "(null)"));
+
         try
         {
             serialized = NBTSerializer.serialize(o);
@@ -83,6 +86,8 @@ public class NBTSerializerTests
     private static void testRoundTrip(Object o) throws TestException
     {
         NBTTagCompound serialized;
+
+        System.out.println("Test Round Trip "  + (o!=null? o.getClass().getName() : "(null)"));
 
         try
         {

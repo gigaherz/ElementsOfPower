@@ -14,9 +14,12 @@ public class NBTSerializer
 
     static
     {
-        // Must go first so that it's handled before the rest
+        // Must go first so that something such as "extends Map implements ICustomNBTSerializable",
+        // favor the interface over the base class
         mappers.add(new CustomSerializableMapper());
 
+        mappers.add(new PrimitiveTypeMapper());
+        mappers.add(new StringMapper());
         mappers.add(new EnumMapper());
         mappers.add(new ArrayMapper());
 
@@ -25,7 +28,7 @@ public class NBTSerializer
         mappers.add(new SetMapper());
     }
 
-    public void registerNBTMapper(INBTMapper mapper)
+    public static void registerNBTMapper(INBTMapper mapper)
     {
         if (mappers.contains(mapper))
             throw new KeyAlreadyExistsException();
@@ -43,85 +46,40 @@ public class NBTSerializer
         return tag;
     }
 
-    public static void serializeToField(NBTTagCompound tag, String fieldName, Object o)
+    public static void serializeToField(NBTTagCompound tag, String fieldName, Object object)
             throws ReflectiveOperationException
     {
-        if (o == null)
-        {
-            generic.serializeField(tag, fieldName, o);
-        }
-        else if (o instanceof Byte)
-        {
-            tag.setByte(fieldName, (Byte) o);
-        }
-        else if (o instanceof Short)
-        {
-            tag.setShort(fieldName, (Short) o);
-        }
-        else if (o instanceof Integer)
-        {
-            tag.setInteger(fieldName, (Integer) o);
-        }
-        else if (o instanceof Long)
-        {
-            tag.setLong(fieldName, (Long) o);
-        }
-        else if (o instanceof Float)
-        {
-            tag.setFloat(fieldName, (Float) o);
-        }
-        else if (o instanceof Double)
-        {
-            tag.setDouble(fieldName, (Double) o);
-        }
-        else if (o instanceof Boolean)
-        {
-            tag.setBoolean(fieldName, (Boolean) o);
-        }
-        else if (o instanceof Character)
-        {
-            tag.setInteger(fieldName, (Character) o);
-        }
-        else if (o instanceof String)
-        {
-            tag.setString(fieldName, (String) o);
-        }
-        else
+        if (object != null)
         {
             for (INBTMapper mapper : mappers)
             {
-                if (mapper.canMapToField(o.getClass()))
+                if (mapper.canMapToField(object.getClass()))
                 {
-                    mapper.serializeField(tag, fieldName, o);
+                    mapper.serializeField(tag, fieldName, object);
                     return;
                 }
             }
-
-            generic.serializeField(tag, fieldName, o);
         }
+
+        generic.serializeField(tag, fieldName, object);
     }
 
-    public static void serializeToCompound(NBTTagCompound tag, Object o)
+    public static void serializeToCompound(NBTTagCompound tag, Object object)
             throws ReflectiveOperationException
     {
-        // Basic types can't be serialized to compounds
-        if (o == null)
-        {
-            generic.serializeCompound(tag, o);
-        }
-        else
+        if (object != null)
         {
             for (INBTMapper mapper : mappers)
             {
-                if (mapper.canMapToCompound(o.getClass()))
+                if (mapper.canMapToCompound(object.getClass()))
                 {
-                    mapper.serializeCompound(tag, o);
+                    mapper.serializeCompound(tag, object);
                     return;
                 }
             }
-
-            generic.serializeCompound(tag, o);
         }
+
+        generic.serializeCompound(tag, object);
     }
 
     // ==============================================================================================================
@@ -138,52 +96,13 @@ public class NBTSerializer
         if (!parent.hasKey(fieldName))
             return currentValue;
 
-        if (clazz == Byte.class || clazz == byte.class)
+        for (INBTMapper mapper : mappers)
         {
-            return parent.getByte(fieldName);
+            if (mapper.canMapToField(clazz))
+                return mapper.deserializeField(parent, fieldName, clazz);
         }
-        else if (clazz == Short.class || clazz == short.class)
-        {
-            return parent.getShort(fieldName);
-        }
-        else if (clazz == Integer.class || clazz == int.class)
-        {
-            return parent.getInteger(fieldName);
-        }
-        else if (clazz == Long.class || clazz == long.class)
-        {
-            return parent.getLong(fieldName);
-        }
-        else if (clazz == Float.class || clazz == float.class)
-        {
-            return parent.getFloat(fieldName);
-        }
-        else if (clazz == Double.class || clazz == double.class)
-        {
-            return parent.getDouble(fieldName);
-        }
-        else if (clazz == Boolean.class || clazz == boolean.class)
-        {
-            return parent.getBoolean(fieldName);
-        }
-        else if (clazz == Character.class || clazz == char.class)
-        {
-            return parent.getInteger(fieldName);
-        }
-        else if (clazz == String.class)
-        {
-            return parent.getString(fieldName);
-        }
-        else
-        {
-            for (INBTMapper mapper : mappers)
-            {
-                if (mapper.canMapToField(clazz))
-                    return mapper.deserializeField(parent, fieldName, clazz);
-            }
 
-            return generic.deserializeField(parent, fieldName, clazz);
-        }
+        return generic.deserializeField(parent, fieldName, clazz);
     }
 
     public static Object deserializeToCompound(NBTTagCompound self, Class<?> clazz)
