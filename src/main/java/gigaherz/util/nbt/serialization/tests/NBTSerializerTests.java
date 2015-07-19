@@ -42,6 +42,8 @@ public class NBTSerializerTests
             testRoundTrip(new TestSetOfStrings().prepare());
             testRoundTrip(new TestMapOfStrings().prepare());
             testRoundTrip(new TestMapOfLists().prepare());
+            
+            testRoundTrip(new TestListOfTests().prepare());
         }
         catch(TestException e)
         {
@@ -71,7 +73,7 @@ public class NBTSerializerTests
 
     private static abstract class AbstractTest
     {
-        public Object prepare() {return this;}
+        public AbstractTest prepare() {return this;}
 
         @Override
         public abstract boolean equals(Object obj);
@@ -194,7 +196,7 @@ public class NBTSerializerTests
         List<String> value1 = new ArrayList<String>();
 
         @Override
-        public Object prepare()
+        public AbstractTest prepare()
         {
             value1.add("Test1");
             value1.add("Test2");
@@ -218,7 +220,7 @@ public class NBTSerializerTests
         float[] value1;
 
         @Override
-        public Object prepare()
+        public AbstractTest prepare()
         {
             value1 = new float[5];
             value1[0] = 1.0f;
@@ -245,7 +247,7 @@ public class NBTSerializerTests
         String[] value1;
 
         @Override
-        public Object prepare()
+        public AbstractTest prepare()
         {
             value1 = new String[4];
             value1[0] = "Test1";
@@ -271,7 +273,7 @@ public class NBTSerializerTests
         Set<String> value1 = new HashSet<String>();
 
         @Override
-        public Object prepare()
+        public AbstractTest prepare()
         {
             value1.add("Test1");
             value1.add("Test2");
@@ -295,7 +297,7 @@ public class NBTSerializerTests
         Map<String, String> value1 = new HashMap<String, String>();
 
         @Override
-        public Object prepare()
+        public AbstractTest prepare()
         {
             value1.put("Key1", "Value1");
             value1.put("Key2", "Value2");
@@ -319,7 +321,7 @@ public class NBTSerializerTests
         Map<String, List> value1 = new HashMap<String, List>();
 
         @Override
-        public Object prepare()
+        public AbstractTest prepare()
         {
             value1.put("Key1", makeListFrom("1","2","3"));
             value1.put("Key2", makeListFrom("a","b","c"));
@@ -340,6 +342,40 @@ public class NBTSerializerTests
             if(!(obj instanceof TestMapOfLists))
                 return false;
             TestMapOfLists other = (TestMapOfLists)obj;
+            return value1.equals(other.value1);
+        }
+    }
+
+    public static class TestListOfTests extends AbstractTest
+    {
+        List<AbstractTest> value1 = new ArrayList<AbstractTest>();
+
+        @Override
+        public AbstractTest prepare()
+        {
+            value1.add(new TestSingleByte().prepare());
+            value1.add(new TestSingleShort().prepare());
+            value1.add(new TestSingleInt().prepare());
+            value1.add(new TestSingleLong().prepare());
+            value1.add(new TestSingleFloat().prepare());
+            value1.add(new TestSingleDouble().prepare());
+            value1.add(new TestSingleBoolean().prepare());
+            value1.add(new TestString().prepare());
+            value1.add(new TestArrayOfFloats().prepare());
+            value1.add(new TestArrayOfStrings().prepare());
+            value1.add(new TestListOfStrings().prepare());
+            value1.add(new TestSetOfStrings().prepare());
+            value1.add(new TestMapOfStrings().prepare());
+            value1.add(new TestMapOfLists().prepare());
+            return this;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if(!(obj instanceof TestListOfTests))
+                return false;
+            TestListOfTests other = (TestListOfTests)obj;
             return value1.equals(other.value1);
         }
     }
