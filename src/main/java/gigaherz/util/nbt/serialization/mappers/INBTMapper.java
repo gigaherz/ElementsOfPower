@@ -1,4 +1,4 @@
-package gigaherz.util.nbt.serialization;
+package gigaherz.util.nbt.serialization.mappers;
 
 import net.minecraft.nbt.NBTTagCompound;
 

@@ -1,6 +1,5 @@
 package gigaherz.util.nbt.serialization.mappers;
 
-import gigaherz.util.nbt.serialization.INBTMapper;
 import net.minecraft.nbt.NBTTagCompound;
 import org.apache.commons.lang3.SerializationException;
 
