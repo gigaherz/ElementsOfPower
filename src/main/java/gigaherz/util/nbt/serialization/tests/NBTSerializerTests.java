@@ -19,6 +19,7 @@ public class NBTSerializerTests
     {
         try
         {
+            testSerialize(null, "{type:\"null\",}");
             testSerialize(new TestSingleByte().prepare(), "{value1:10b,className:\"gigaherz.util.nbt.serialization.tests.NBTSerializerTests$TestSingleByte\",type:\"object\",}");
             testSerialize(new TestSingleShort().prepare(), "{value1:10s,className:\"gigaherz.util.nbt.serialization.tests.NBTSerializerTests$TestSingleShort\",type:\"object\",}");
             testSerialize(new TestSingleInt().prepare(), "{value1:10,className:\"gigaherz.util.nbt.serialization.tests.NBTSerializerTests$TestSingleInt\",type:\"object\",}");
@@ -42,7 +43,7 @@ public class NBTSerializerTests
             testRoundTrip(new TestSetOfStrings().prepare());
             testRoundTrip(new TestMapOfStrings().prepare());
             testRoundTrip(new TestMapOfLists().prepare());
-            
+
             testRoundTrip(new TestListOfTests().prepare());
         }
         catch(TestException e)

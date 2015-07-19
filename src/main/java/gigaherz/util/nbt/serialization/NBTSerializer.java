@@ -10,6 +10,7 @@ import org.apache.commons.lang3.SerializationException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,12 @@ public class NBTSerializer
 
     private static void serializeObject(NBTTagCompound tag, Object o)
     {
+        if(o == null)
+        {
+            serializeNull(tag);
+            return;
+        }
+
         tag.setString("type","object");
         tag.setString("className", o.getClass().getName());
 
@@ -41,6 +48,8 @@ public class NBTSerializer
                 Field[] fields = cls.getDeclaredFields();
                 for(Field f : fields)
                 {
+                    if(Modifier.isStatic(f.getModifiers()))
+                        continue;
 
                     f.setAccessible(true);
                     serializeField(tag, f.getName(), f.get(o));
@@ -57,7 +66,13 @@ public class NBTSerializer
 
     private static void serializeField(NBTTagCompound tag, String fieldName, Object o)
     {
-        if(o instanceof Byte)
+        if(o == null)
+        {
+            NBTTagCompound tag2 = new NBTTagCompound();
+            serializeNull(tag2);
+            tag.setTag(fieldName, tag2);
+        }
+        else if(o instanceof Byte)
         {
             tag.setByte(fieldName, (Byte)o);
         }
@@ -136,6 +151,11 @@ public class NBTSerializer
         tag.setString("type","enum");
         tag.setString("className",o.getClass().getName());
         tag.setString("valueName", o.name());
+    }
+
+    private static void serializeNull(NBTTagCompound tag)
+    {
+        tag.setString("type", "null");
     }
 
     private static void serializeArray(NBTTagCompound tag, Object a)
@@ -227,13 +247,16 @@ public class NBTSerializer
 
     // ==============================================================================================================
     // Deserializing
-    public static Object deserialize(Class<?> clazz, NBTTagCompound tag)
+    public static <T> T deserialize(Class<? extends T> clazz, NBTTagCompound tag)
     {
-        return deserializeObject(tag, clazz);
+        return (T)deserializeObject(tag, clazz);
     }
 
     private static Object deserializeObject(NBTTagCompound tag, Class<?> clazz)
     {
+        if (tag.getString("type").equals("null"))
+            return null;
+
         if (!tag.getString("type").equals("object"))
             throw new SerializationException();
 
@@ -253,6 +276,8 @@ public class NBTSerializer
                 Field[] fields = cls.getDeclaredFields();
                 for(Field f : fields)
                 {
+                    if(Modifier.isStatic(f.getModifiers()))
+                        continue;
 
                     f.setAccessible(true);
                     f.set(o, deserializeField(tag, f.getName(), f.getType(), f.get(o)));
@@ -383,31 +408,31 @@ public class NBTSerializer
             }
             else if(cls == Short.class || cls == short.class)
             {
-                Array.setShort(o, index, (Short)value);
+                Array.setShort(o, index, (Short) value);
             }
             else if(cls == Integer.class || cls == int.class)
             {
-                Array.setInt(o, index, (Integer)value);
+                Array.setInt(o, index, (Integer) value);
             }
             else if(cls == Long.class || cls == long.class)
             {
-                Array.setLong(o, index, (Long)value);
+                Array.setLong(o, index, (Long) value);
             }
             else if(cls == Float.class || cls == float.class)
             {
-                Array.setFloat(o, index, (Float)value);
+                Array.setFloat(o, index, (Float) value);
             }
             else if(cls == Double.class || cls == double.class)
             {
-                Array.setDouble(o, index, (Double)value);
+                Array.setDouble(o, index, (Double) value);
             }
             else if(cls == Boolean.class || cls == boolean.class)
             {
-                Array.setBoolean(o, index, (Boolean)value);
+                Array.setBoolean(o, index, (Boolean) value);
             }
             else if(cls == Character.class || cls == char.class)
             {
-                Array.setChar(o, index, (Character)value);
+                Array.setChar(o, index, (Character) value);
             }
             else
             {
