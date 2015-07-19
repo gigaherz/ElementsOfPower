@@ -33,22 +33,23 @@ public class RenderBeam extends Render
      */
     public void doRender(Entity entity, double x, double y, double z, float p_76986_8_, float partialTicks)
     {
-        ItemStack stack;
-        float scale = 0.5f;
+        float scale = 0.15f;
         if (!(entity instanceof EntityBeamBase))
             return;
 
         EntityBeamBase beam = (EntityBeamBase)entity;
 
         Vec3 ep = beam.getEndPoint();
-        double dx = ep.xCoord-x;
-        double dy = ep.yCoord-y;
-        double dz = ep.zCoord-z;
+        if(ep == null)
+            ep = new Vec3(x,y,z);
+
+        double dx = ep.xCoord-beam.posX;
+        double dy = ep.yCoord-beam.posY;
+        double dz = ep.zCoord-beam.posZ;
         double d10x = dx/10;
         double d10y = dy/10;
         double d10z = dz/10;
 
-        stack = ((IRenderStackProvider) entity).getStackForRendering();
         GlStateManager.pushMatrix();
         for(int i=0;i<=10;i++)
         {

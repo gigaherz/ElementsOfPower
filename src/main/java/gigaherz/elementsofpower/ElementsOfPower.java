@@ -32,6 +32,8 @@ import net.minecraft.item.ItemEgg;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.RecipesBanners;
 import net.minecraft.item.crafting.RecipesMapCloning;
+import net.minecraftforge.client.model.ForgeBlockStateV1;
+import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -232,7 +234,7 @@ public class ElementsOfPower
         // Gui
         NetworkRegistry.INSTANCE.registerGuiHandler(this, guiHandler);
 
-        ItemBow it;
+
 
         MagicDatabase.initialize();
     }

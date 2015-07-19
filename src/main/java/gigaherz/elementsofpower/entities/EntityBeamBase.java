@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower.entities;
 
+import gigaherz.elementsofpower.ElementsOfPower;
 import net.minecraft.entity.DataWatcher;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -14,7 +15,6 @@ public abstract class EntityBeamBase extends Entity
 {
     private static final int DATA_INDEX_CASTER = 5;
 
-    protected String casterName;
     protected EntityLivingBase caster;
     protected int power;
     protected int effectInterval;
@@ -32,26 +32,33 @@ public abstract class EntityBeamBase extends Entity
     protected EntityBeamBase(World worldIn)
     {
         super(worldIn);
+
+        setSize(0.1f, 0.1f);
+        setCaster(caster);
     }
 
     protected EntityBeamBase(World worldIn, EntityLivingBase caster, float maxDistance, int power, int effectInterval, int timeToLive)
     {
         super(worldIn);
-        this.caster = caster;
+
         this.maxDistance = maxDistance;
         this.power = power;
         this.effectInterval = effectInterval;
         this.timeToLive = timeToLive;
         this.effectTime = effectInterval;
+
+        setSize(0.1f, 0.1f);
+        setCaster(caster);
+
+        this.posX = caster.posX;
+        this.posY = caster.posY + caster.getEyeHeight() * 0.9;
+        this.posZ = caster.posZ;
     }
 
     @Override
     protected void entityInit()
     {
-        DataWatcher dw = getDataWatcher();
-
-        if(caster != null)
-            dw.addObject(DATA_INDEX_CASTER, caster.getName());
+        getDataWatcher().addObject(DATA_INDEX_CASTER, "");
     }
 
     protected void updateBeamPosition()
@@ -63,8 +70,8 @@ public abstract class EntityBeamBase extends Entity
         hitInfo = caster.rayTrace(maxDistance, 0);
 
         this.posX = caster.posX;
-        this.posY = caster.posY + caster.getEyeHeight();
-        this.posZ = caster.posX;
+        this.posY = caster.posY + caster.getEyeHeight() * 0.9;
+        this.posZ = caster.posZ;
 
         if(hitInfo != null)
             endPoint = hitInfo.hitVec;
@@ -79,6 +86,11 @@ public abstract class EntityBeamBase extends Entity
     public void onUpdate()
     {
         super.onUpdate();
+
+        if(worldObj.isRemote)
+            ElementsOfPower.logger.warn("Beam update! client");
+        else
+            ElementsOfPower.logger.warn("Beam update! server");
 
         updateBeamPosition();
 
@@ -141,48 +153,43 @@ public abstract class EntityBeamBase extends Entity
         return endPoint;
     }
 
-    public Vec3 getDirection()
-    {
-        return direction;
-    }
-
     protected String getCasterName()
     {
-        if(casterName != null)
-            return casterName;
-
-        if(caster != null)
-            casterName = caster.getName();
-
-        if(casterName == null)
-            casterName = "";
-
-        return casterName;
+        String name = getDataWatcher().getWatchableObjectString(DATA_INDEX_CASTER);
+        if(name.length() == 0)
+            return null;
+        else
+            return name;
     }
 
     protected void setCasterName(String name)
     {
-        casterName = name;
-        if (casterName != null && casterName.length() == 0)
-        {
-            casterName = null;
-        }
+        DataWatcher dw = getDataWatcher();
+        dw.updateObject(DATA_INDEX_CASTER, name != null ? name : "");
+        dw.setObjectWatched(DATA_INDEX_CASTER);
 
-        getDataWatcher().updateObject(DATA_INDEX_CASTER, casterName);
+        caster = null;
     }
 
     public EntityLivingBase getCaster()
     {
-        if(this.caster == null && this.casterName == null)
+        if (caster == null)
         {
-            casterName = getDataWatcher().getWatchableObjectString(DATA_INDEX_CASTER);
-        }
-
-        if (this.caster == null && this.casterName != null && this.casterName.length() > 0)
-        {
-            this.caster = this.worldObj.getPlayerEntityByName(this.casterName);
+            String name = getCasterName();
+            if(name != null)
+                caster = worldObj.getPlayerEntityByName(name);
         }
 
         return caster;
+    }
+
+    public void setCaster(EntityLivingBase living)
+    {
+        if(living == null)
+            setCasterName(null);
+        else
+            setCasterName(living.getName());
+
+        caster = living;
     }
 }
