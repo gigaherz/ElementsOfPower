@@ -72,9 +72,15 @@ public class NBTSerializer
             serializeNull(tag2);
             tag.setTag(fieldName, tag2);
         }
+        else if(o instanceof ICustomNBTMapper)
+        {
+            NBTTagCompound tag2 = new NBTTagCompound();
+            ((ICustomNBTMapper)o).writeToNBT(tag2);
+            tag.setTag(fieldName, tag2);
+        }
         else if(o instanceof Byte)
         {
-            tag.setByte(fieldName, (Byte)o);
+            tag.setByte(fieldName, (Byte) o);
         }
         else if(o instanceof Short)
         {
@@ -300,6 +306,13 @@ public class NBTSerializer
         if(!tag.hasKey(fieldName))
             return currentValue;
 
+        if(ICustomNBTMapper.class.isAssignableFrom(clazz))
+        {
+            NBTTagCompound tag2 = new NBTTagCompound();
+            ICustomNBTMapper o = (ICustomNBTMapper)clazz.newInstance();
+            o.readFromNBT(tag2);
+            tag.setTag(fieldName, tag2);
+        }
         if(clazz == Byte.class || clazz == byte.class)
         {
             return tag.getByte(fieldName);
