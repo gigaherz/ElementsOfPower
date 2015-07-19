@@ -7,13 +7,18 @@ import net.minecraft.util.ReportedException;
 import net.minecraftforge.common.util.Constants;
 import org.apache.commons.lang3.SerializationException;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public class NBTSerializer
 {
+    // ==============================================================================================================
+    // Serializing
     public static NBTTagCompound serialize(Object o)
     {
         NBTTagCompound tag = new NBTTagCompound();
@@ -30,10 +35,18 @@ public class NBTSerializer
 
         try
         {
-            for(Field f :cls.getFields())
+            // The loop skips Object
+            while(cls.getSuperclass()!=null)
             {
-                f.setAccessible(true);
-                serializeField(tag, f.getName(), f.get(o));
+                Field[] fields = cls.getDeclaredFields();
+                for(Field f : fields)
+                {
+
+                    f.setAccessible(true);
+                    serializeField(tag, f.getName(), f.get(o));
+                }
+
+                cls = cls.getSuperclass();
             }
         }
         catch (IllegalAccessException e)
@@ -86,6 +99,12 @@ public class NBTSerializer
             serializeEnum(tag2, ((Enum) o));
             tag.setTag(fieldName, tag2);
         }
+        else if(o.getClass().isArray())
+        {
+            NBTTagCompound tag2 = new NBTTagCompound();
+            serializeArray(tag2, o);
+            tag.setTag(fieldName, tag2);
+        }
         else if(o instanceof List)
         {
             NBTTagCompound tag2 = new NBTTagCompound();
@@ -119,6 +138,27 @@ public class NBTSerializer
         tag.setString("valueName", o.name());
     }
 
+    private static void serializeArray(NBTTagCompound tag, Object a)
+    {
+        tag.setString("type","array");
+        tag.setString("className", a.getClass().getName());
+
+        NBTTagList list = new NBTTagList();
+        for (int ii = 0; ii < Array.getLength(a); ii++)
+        {
+            Object o = Array.get(a, ii);
+            NBTTagCompound tag2 = new NBTTagCompound();
+            tag2.setInteger("index", ii);
+            if(o != null)
+            {
+                serializeField(tag2, "valueClass", o.getClass().getName());
+                serializeField(tag2, "value", o);
+            }
+            list.appendTag(tag2);
+        }
+        tag.setTag("elements", list);
+    }
+
     private static void serializeList(NBTTagCompound tag, List l)
     {
         tag.setString("type","list");
@@ -130,8 +170,11 @@ public class NBTSerializer
             Object o = l.get(ii);
             NBTTagCompound tag2 = new NBTTagCompound();
             tag2.setInteger("index", ii);
-            serializeField(tag2, "valueClass", o.getClass().getName());
-            serializeField(tag2, "value", o);
+            if(o != null)
+            {
+                serializeField(tag2, "valueClass", o.getClass().getName());
+                serializeField(tag2, "value", o);
+            }
             list.appendTag(tag2);
         }
         tag.setTag("elements", list);
@@ -139,15 +182,18 @@ public class NBTSerializer
 
     private static void serializeSet(NBTTagCompound tag, Set s)
     {
-        tag.setString("type","list");
+        tag.setString("type","set");
         tag.setString("className", s.getClass().getName());
 
         NBTTagList list = new NBTTagList();
         for (Object o : s)
         {
             NBTTagCompound tag2 = new NBTTagCompound();
-            serializeField(tag2, "valueClass", o.getClass().getName());
-            serializeField(tag2, "value", o);
+            if(o != null)
+            {
+                serializeField(tag2, "valueClass", o.getClass().getName());
+                serializeField(tag2, "value", o);
+            }
             list.appendTag(tag2);
         }
         tag.setTag("elements", list);
@@ -155,7 +201,7 @@ public class NBTSerializer
 
     private static void serializeMap(NBTTagCompound tag, Map<Object,Object> m)
     {
-        tag.setString("type","list");
+        tag.setString("type","map");
         tag.setString("className", m.getClass().getName());
 
         NBTTagList list = new NBTTagList();
@@ -164,15 +210,23 @@ public class NBTSerializer
             NBTTagCompound tag2 = new NBTTagCompound();
             Object key = e.getKey();
             Object value = e.getValue();
-            serializeField(tag2, "keyClass", key.getClass().getName());
-            serializeField(tag2, "key", key);
-            serializeField(tag2, "valueClass", value.getClass().getName());
-            serializeField(tag2, "value", value);
+            if(key != null)
+            {
+                serializeField(tag2, "keyClass", key.getClass().getName());
+                serializeField(tag2, "key", key);
+            }
+            if(value != null)
+            {
+                serializeField(tag2, "valueClass", value.getClass().getName());
+                serializeField(tag2, "value", value);
+            }
             list.appendTag(tag2);
         }
         tag.setTag("elements", list);
     }
 
+    // ==============================================================================================================
+    // Deserializing
     public static Object deserialize(Class<?> clazz, NBTTagCompound tag)
     {
         return deserializeObject(tag, clazz);
@@ -182,24 +236,36 @@ public class NBTSerializer
     {
         if (!tag.getString("type").equals("object"))
             throw new SerializationException();
-        if(!tag.getString("className").equals(clazz.getName()))
-            throw new SerializationException();
 
         try
         {
-            Object o = clazz.newInstance();
+            Class<?> actual = Class.forName(tag.getString("className"));
+            if(!clazz.isAssignableFrom(actual))
+                throw new SerializationException();
 
-            for(Field f : clazz.getFields())
+            Class<?> cls = actual;
+
+            Object o = cls.newInstance();
+
+            // The loop skips Object
+            while(cls.getSuperclass()!=null)
             {
-                f.setAccessible(true);
-                f.set(o, deserializeField(tag, f.getName(), f.getType(), f.get(o)));
+                Field[] fields = cls.getDeclaredFields();
+                for(Field f : fields)
+                {
+
+                    f.setAccessible(true);
+                    f.set(o, deserializeField(tag, f.getName(), f.getType(), f.get(o)));
+                }
+
+                cls = cls.getSuperclass();
             }
 
             return o;
         }
         catch (ReflectiveOperationException e)
         {
-            throw new ReportedException(new CrashReport("Exception serializing class to NBT", e));
+            throw new ReportedException(new CrashReport("Exception deserializing class to NBT", e));
         }
     }
 
@@ -209,35 +275,35 @@ public class NBTSerializer
         if(!tag.hasKey(fieldName))
             return currentValue;
 
-        if(clazz == Byte.class)
+        if(clazz == Byte.class || clazz == byte.class)
         {
             return tag.getByte(fieldName);
         }
-        else if(clazz == Short.class)
+        else if(clazz == Short.class || clazz == short.class)
         {
             return tag.getShort(fieldName);
         }
-        else if(clazz == Integer.class)
+        else if(clazz == Integer.class || clazz == int.class)
         {
             return tag.getInteger(fieldName);
         }
-        else if(clazz == Long.class)
+        else if(clazz == Long.class || clazz == long.class)
         {
             return tag.getLong(fieldName);
         }
-        else if(clazz == Float.class)
+        else if(clazz == Float.class || clazz == float.class)
         {
             return tag.getFloat(fieldName);
         }
-        else if(clazz == Double.class)
+        else if(clazz == Double.class || clazz == double.class)
         {
             return tag.getDouble(fieldName);
         }
-        else if(clazz == Boolean.class)
+        else if(clazz == Boolean.class || clazz == boolean.class)
         {
             return tag.getBoolean(fieldName);
         }
-        else if(clazz == Character.class)
+        else if(clazz == Character.class || clazz == char.class)
         {
             return tag.getInteger(fieldName);
         }
@@ -248,17 +314,22 @@ public class NBTSerializer
         else if(Enum.class.isAssignableFrom(clazz))
         {
             NBTTagCompound tag2 = (NBTTagCompound)tag.getTag(fieldName);
-            return deserializeEnum(tag2, (Class<? extends Enum>)clazz);
+            return deserializeEnum(tag2, (Class<? extends Enum>) clazz);
+        }
+        else if(clazz.isArray())
+        {
+            NBTTagCompound tag2 = (NBTTagCompound)tag.getTag(fieldName);
+            return deserializeArray(tag2, clazz);
         }
         else if(List.class.isAssignableFrom(clazz))
         {
             NBTTagCompound tag2 = (NBTTagCompound)tag.getTag(fieldName);
-            return deserializeList(tag2, (Class<? extends List>)clazz);
+            return deserializeList(tag2, (Class<? extends List>) clazz);
         }
         else if(Map.class.isAssignableFrom(clazz))
         {
             NBTTagCompound tag2 = (NBTTagCompound)tag.getTag(fieldName);
-            return deserializeMap(tag2, (Class<? extends Map>)clazz);
+            return deserializeMap(tag2, (Class<? extends Map>) clazz);
         }
         else if(Set.class.isAssignableFrom(clazz))
         {
@@ -274,7 +345,7 @@ public class NBTSerializer
 
     private static Object deserializeEnum(NBTTagCompound tag, Class<? extends Enum> clazz)
     {
-        if (!tag.getString("type").equals("object"))
+        if (!tag.getString("type").equals("enum"))
             throw new SerializationException();
         if(!tag.getString("className").equals(clazz.getName()))
             throw new SerializationException();
@@ -282,22 +353,100 @@ public class NBTSerializer
         return Enum.valueOf(clazz, tag.getString("value"));
     }
 
-    private static List deserializeList(NBTTagCompound tag, Class<? extends List> clazz)
+    private static Object deserializeArray(NBTTagCompound tag, Class<?> clazz)
             throws IllegalAccessException, InstantiationException, ClassNotFoundException
     {
-        if (!tag.getString("type").equals("object"))
+        if (!tag.getString("type").equals("array"))
             throw new SerializationException();
-        if(!tag.getString("className").equals(clazz.getName()))
-            throw new SerializationException();
-
-        List l = clazz.newInstance();
 
         NBTTagList list = tag.getTagList("elements", Constants.NBT.TAG_COMPOUND);
+
+        Object o = Array.newInstance(clazz.getComponentType(), list.tagCount());
+
         for (int ii = 0; ii < list.tagCount(); ii++)
         {
             NBTTagCompound tag2 = (NBTTagCompound) list.get(ii);
 
             int index = tag2.getInteger("index");
+
+            if(!tag2.hasKey("value"))
+            {
+                continue;
+            }
+
+            Class<?> cls = Class.forName(tag2.getString("valueClass"));
+            Object value = deserializeField(tag2, "value", cls, null);
+
+            if(cls == Byte.class || cls == byte.class)
+            {
+                Array.setByte(o, index, (Byte)value);
+            }
+            else if(cls == Short.class || cls == short.class)
+            {
+                Array.setShort(o, index, (Short)value);
+            }
+            else if(cls == Integer.class || cls == int.class)
+            {
+                Array.setInt(o, index, (Integer)value);
+            }
+            else if(cls == Long.class || cls == long.class)
+            {
+                Array.setLong(o, index, (Long)value);
+            }
+            else if(cls == Float.class || cls == float.class)
+            {
+                Array.setFloat(o, index, (Float)value);
+            }
+            else if(cls == Double.class || cls == double.class)
+            {
+                Array.setDouble(o, index, (Double)value);
+            }
+            else if(cls == Boolean.class || cls == boolean.class)
+            {
+                Array.setBoolean(o, index, (Boolean)value);
+            }
+            else if(cls == Character.class || cls == char.class)
+            {
+                Array.setChar(o, index, (Character)value);
+            }
+            else
+            {
+                Array.set(o, index, value);
+            }
+        }
+
+        return o;
+    }
+
+    private static List deserializeList(NBTTagCompound tag, Class<? extends List> clazz)
+            throws IllegalAccessException, InstantiationException, ClassNotFoundException
+    {
+        if (!tag.getString("type").equals("list"))
+            throw new SerializationException();
+
+        Class<?> actual = Class.forName(tag.getString("className"));
+        if(!clazz.isAssignableFrom(actual))
+            throw new SerializationException();
+
+        List l = (List)actual.newInstance();
+
+        NBTTagList list = tag.getTagList("elements", Constants.NBT.TAG_COMPOUND);
+
+        for (int ii = 0; ii < list.tagCount(); ii++)
+        {
+            l.add(null);
+        }
+
+        for (int ii = 0; ii < list.tagCount(); ii++)
+        {
+            NBTTagCompound tag2 = (NBTTagCompound) list.get(ii);
+
+            int index = tag2.getInteger("index");
+
+            if(!tag2.hasKey("value"))
+            {
+                continue;
+            }
 
             Class<?> cls = Class.forName(tag2.getString("valueClass"));
             Object value = deserializeField(tag2, "value", cls, null);
@@ -311,20 +460,26 @@ public class NBTSerializer
     private static Set deserializeSet(NBTTagCompound tag, Class<? extends Set> clazz)
             throws IllegalAccessException, InstantiationException, ClassNotFoundException
     {
-        if (!tag.getString("type").equals("object"))
-            throw new SerializationException();
-        if(!tag.getString("className").equals(clazz.getName()))
+        if (!tag.getString("type").equals("set"))
             throw new SerializationException();
 
-        Set s = clazz.newInstance();
+        Class<?> actual = Class.forName(tag.getString("className"));
+        if(!clazz.isAssignableFrom(actual))
+            throw new SerializationException();
+
+        Set s = (Set)actual.newInstance();
 
         NBTTagList list = tag.getTagList("elements", Constants.NBT.TAG_COMPOUND);
         for (int ii = 0; ii < list.tagCount(); ii++)
         {
             NBTTagCompound tag2 = (NBTTagCompound) list.get(ii);
 
-            Class<?> cls = Class.forName(tag2.getString("valueClass"));
-            Object value = deserializeField(tag2, "value", cls, null);
+            Object value = null;
+            if(tag2.hasKey("value"))
+            {
+                Class<?> cls = Class.forName(tag2.getString("valueClass"));
+                value = deserializeField(tag2, "value", cls, null);
+            }
 
             s.add(value);
         }
@@ -335,23 +490,35 @@ public class NBTSerializer
     private static Map deserializeMap(NBTTagCompound tag, Class<? extends Map> clazz)
             throws IllegalAccessException, InstantiationException, ClassNotFoundException
     {
-        if (!tag.getString("type").equals("object"))
-            throw new SerializationException();
-        if(!tag.getString("className").equals(clazz.getName()))
+        if (!tag.getString("type").equals("map"))
             throw new SerializationException();
 
-        Map m = clazz.newInstance();
+        Class<?> actual = Class.forName(tag.getString("className"));
+        if(!clazz.isAssignableFrom(actual))
+            throw new SerializationException();
+
+        Map m = (Map)actual.newInstance();
 
         NBTTagList list = tag.getTagList("elements", Constants.NBT.TAG_COMPOUND);
         for (int ii = 0; ii < list.tagCount(); ii++)
         {
             NBTTagCompound tag2 = (NBTTagCompound) list.get(ii);
 
-            Class<?> clsk = Class.forName(tag2.getString("keyClass"));
-            Object key = deserializeField(tag2, "key", clsk, null);
+            Object key = null;
+            Object value = null;
 
-            Class<?> cls = Class.forName(tag2.getString("valueClass"));
-            Object value = deserializeField(tag2, "value", cls, null);
+            if(tag2.hasKey("key"))
+            {
+                Class<?> clsk = Class.forName(tag2.getString("keyClass"));
+                key = deserializeField(tag2, "key", clsk, null);
+            }
+
+
+            if(tag2.hasKey("value"))
+            {
+                Class<?> cls = Class.forName(tag2.getString("valueClass"));
+                value = deserializeField(tag2, "value", cls, null);
+            }
 
             m.put(key, value);
         }

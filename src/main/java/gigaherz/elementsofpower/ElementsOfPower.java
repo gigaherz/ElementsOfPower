@@ -6,11 +6,15 @@ import gigaherz.elementsofpower.blocks.BlockEssentializer;
 import gigaherz.elementsofpower.blocks.TileEssentializer;
 import gigaherz.elementsofpower.blocks.materials.MaterialCushion;
 import gigaherz.elementsofpower.database.MagicDatabase;
+import gigaherz.elementsofpower.database.SpellManager;
 import gigaherz.elementsofpower.entities.*;
 import gigaherz.elementsofpower.items.ItemMagicContainer;
 import gigaherz.elementsofpower.items.ItemMagicOrb;
 import gigaherz.elementsofpower.items.ItemWand;
 import gigaherz.elementsofpower.network.SpellSequenceUpdate;
+import gigaherz.elementsofpower.recipes.RecipeTools;
+import gigaherz.util.nbt.serialization.NBTSerializer;
+import gigaherz.util.nbt.serialization.tests.NBTSerializerTests;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
@@ -32,6 +36,7 @@ import net.minecraft.item.ItemEgg;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.RecipesBanners;
 import net.minecraft.item.crafting.RecipesMapCloning;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.client.model.ForgeBlockStateV1;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
@@ -233,8 +238,6 @@ public class ElementsOfPower
                 'S', Items.stick);
         // Gui
         NetworkRegistry.INSTANCE.registerGuiHandler(this, guiHandler);
-
-
 
         MagicDatabase.initialize();
     }
