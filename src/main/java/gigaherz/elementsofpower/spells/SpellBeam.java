@@ -1,13 +1,9 @@
 package gigaherz.elementsofpower.spells;
 
-import gigaherz.elementsofpower.entities.EntityBallBase;
 import gigaherz.elementsofpower.entities.EntityBeamBase;
 import gigaherz.elementsofpower.entities.EntityFireBeam;
-import net.minecraft.crash.CrashReport;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ReportedException;
 import net.minecraft.world.World;
 
 public class SpellBeam

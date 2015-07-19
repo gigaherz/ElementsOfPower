@@ -1,7 +1,9 @@
 package gigaherz.util.nbt.serialization.tests;
 
+import gigaherz.util.nbt.serialization.ICustomNBTSerializable;
 import gigaherz.util.nbt.serialization.NBTSerializer;
 import net.minecraft.nbt.NBTTagCompound;
+import org.apache.commons.lang3.SerializationException;
 
 import java.util.*;
 
@@ -9,7 +11,7 @@ public class NBTSerializerTests
 {
     public static void main(String[] args)
     {
-        if(runTests())
+        if (runTests())
             System.out.println("All tests passed.");
         else
             System.out.println("At least one test failed. See printed stack trace");
@@ -37,6 +39,7 @@ public class NBTSerializerTests
             testRoundTrip(new TestSingleDouble().prepare());
             testRoundTrip(new TestSingleBoolean().prepare());
             testRoundTrip(new TestString().prepare());
+            testRoundTrip(new TestCustomSerializable().prepare());
             testRoundTrip(new TestArrayOfFloats().prepare());
             testRoundTrip(new TestArrayOfStrings().prepare());
             testRoundTrip(new TestListOfStrings().prepare());
@@ -46,7 +49,7 @@ public class NBTSerializerTests
 
             testRoundTrip(new TestListOfTests().prepare());
         }
-        catch(TestException e)
+        catch (TestException e)
         {
             e.printStackTrace();
             return false;
@@ -57,24 +60,67 @@ public class NBTSerializerTests
 
     private static void testSerialize(Object o, String expected) throws TestException
     {
-        NBTTagCompound serialized = NBTSerializer.serialize(o);
+        NBTTagCompound serialized;
+        try
+        {
+            serialized = NBTSerializer.serialize(o);
+        }
+        catch (ReflectiveOperationException e)
+        {
+            throw new TestException("Test threw an exception", e);
+        }
+        catch (SerializationException e)
+        {
+            throw new TestException("Test threw an exception", e);
+        }
+
         String result = serialized.toString();
-        if(!expected.equals(result))
+
+        if (!expected.equals(result))
             throw new TestException("Result did not match expected: " + result);
     }
 
     private static void testRoundTrip(Object o) throws TestException
     {
-        NBTTagCompound serialized = NBTSerializer.serialize(o);
-        Object r = NBTSerializer.deserialize(o.getClass(), serialized);
+        NBTTagCompound serialized;
 
-        if(!o.equals(r))
+        try
+        {
+            serialized = NBTSerializer.serialize(o);
+        }
+        catch (ReflectiveOperationException e)
+        {
+            throw new TestException("Test threw an exception during serialization", e);
+        }
+        catch (SerializationException e)
+        {
+            throw new TestException("Test threw an exception during serialization", e);
+        }
+
+        Object result;
+        try
+        {
+            result = NBTSerializer.deserialize(o.getClass(), serialized);
+        }
+        catch (ReflectiveOperationException e)
+        {
+            throw new TestException("Test threw an exception during deserialization", e);
+        }
+        catch (SerializationException e)
+        {
+            throw new TestException("Test threw an exception during deserialization", e);
+        }
+
+        if (!o.equals(result))
             throw new TestException("Result did not match expected.");
     }
 
     private static abstract class AbstractTest
     {
-        public AbstractTest prepare() {return this;}
+        public AbstractTest prepare()
+        {
+            return this;
+        }
 
         @Override
         public abstract boolean equals(Object obj);
@@ -87,9 +133,9 @@ public class NBTSerializerTests
         @Override
         public boolean equals(Object obj)
         {
-            if(!(obj instanceof TestSingleByte))
+            if (!(obj instanceof TestSingleByte))
                 return false;
-            TestSingleByte other = (TestSingleByte)obj;
+            TestSingleByte other = (TestSingleByte) obj;
             return value1 == other.value1;
         }
     }
@@ -101,9 +147,9 @@ public class NBTSerializerTests
         @Override
         public boolean equals(Object obj)
         {
-            if(!(obj instanceof TestSingleShort))
+            if (!(obj instanceof TestSingleShort))
                 return false;
-            TestSingleShort other = (TestSingleShort)obj;
+            TestSingleShort other = (TestSingleShort) obj;
             return value1 == other.value1;
         }
     }
@@ -115,9 +161,9 @@ public class NBTSerializerTests
         @Override
         public boolean equals(Object obj)
         {
-            if(!(obj instanceof TestSingleInt))
+            if (!(obj instanceof TestSingleInt))
                 return false;
-            TestSingleInt other = (TestSingleInt)obj;
+            TestSingleInt other = (TestSingleInt) obj;
             return value1 == other.value1;
         }
     }
@@ -129,9 +175,9 @@ public class NBTSerializerTests
         @Override
         public boolean equals(Object obj)
         {
-            if(!(obj instanceof TestSingleLong))
+            if (!(obj instanceof TestSingleLong))
                 return false;
-            TestSingleLong other = (TestSingleLong)obj;
+            TestSingleLong other = (TestSingleLong) obj;
             return value1 == other.value1;
         }
     }
@@ -143,9 +189,9 @@ public class NBTSerializerTests
         @Override
         public boolean equals(Object obj)
         {
-            if(!(obj instanceof TestSingleFloat))
+            if (!(obj instanceof TestSingleFloat))
                 return false;
-            TestSingleFloat other = (TestSingleFloat)obj;
+            TestSingleFloat other = (TestSingleFloat) obj;
             return value1 == other.value1;
         }
     }
@@ -157,9 +203,9 @@ public class NBTSerializerTests
         @Override
         public boolean equals(Object obj)
         {
-            if(!(obj instanceof TestSingleDouble))
+            if (!(obj instanceof TestSingleDouble))
                 return false;
-            TestSingleDouble other = (TestSingleDouble)obj;
+            TestSingleDouble other = (TestSingleDouble) obj;
             return value1 == other.value1;
         }
     }
@@ -171,9 +217,9 @@ public class NBTSerializerTests
         @Override
         public boolean equals(Object obj)
         {
-            if(!(obj instanceof TestSingleBoolean))
+            if (!(obj instanceof TestSingleBoolean))
                 return false;
-            TestSingleBoolean other = (TestSingleBoolean)obj;
+            TestSingleBoolean other = (TestSingleBoolean) obj;
             return value1 == other.value1;
         }
     }
@@ -185,10 +231,36 @@ public class NBTSerializerTests
         @Override
         public boolean equals(Object obj)
         {
-            if(!(obj instanceof TestString))
+            if (!(obj instanceof TestString))
                 return false;
-            TestString other = (TestString)obj;
+            TestString other = (TestString) obj;
             return value1.equals(other.value1);
+        }
+    }
+
+    public static class TestCustomSerializable extends AbstractTest implements ICustomNBTSerializable
+    {
+        String value1 = "Test8";
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (!(obj instanceof TestCustomSerializable))
+                return false;
+            TestCustomSerializable other = (TestCustomSerializable) obj;
+            return value1.equals(other.value1);
+        }
+
+        @Override
+        public void writeToNBT(NBTTagCompound tag)
+        {
+            tag.setString("custom1", value1);
+        }
+
+        @Override
+        public void readFromNBT(NBTTagCompound tag)
+        {
+            value1 = tag.getString("custom1");
         }
     }
 
@@ -209,9 +281,9 @@ public class NBTSerializerTests
         @Override
         public boolean equals(Object obj)
         {
-            if(!(obj instanceof TestListOfStrings))
+            if (!(obj instanceof TestListOfStrings))
                 return false;
-            TestListOfStrings other = (TestListOfStrings)obj;
+            TestListOfStrings other = (TestListOfStrings) obj;
             return value1.equals(other.value1);
         }
     }
@@ -235,9 +307,9 @@ public class NBTSerializerTests
         @Override
         public boolean equals(Object obj)
         {
-            if(!(obj instanceof TestArrayOfFloats))
+            if (!(obj instanceof TestArrayOfFloats))
                 return false;
-            TestArrayOfFloats other = (TestArrayOfFloats)obj;
+            TestArrayOfFloats other = (TestArrayOfFloats) obj;
 
             return Arrays.equals(value1, other.value1);
         }
@@ -254,16 +326,16 @@ public class NBTSerializerTests
             value1[0] = "Test1";
             value1[1] = "Test2";
             value1[2] = "Test3";
-            value1[3] = "Test4";
+            value1[3] = null;
             return this;
         }
 
         @Override
         public boolean equals(Object obj)
         {
-            if(!(obj instanceof TestArrayOfStrings))
+            if (!(obj instanceof TestArrayOfStrings))
                 return false;
-            TestArrayOfStrings other = (TestArrayOfStrings)obj;
+            TestArrayOfStrings other = (TestArrayOfStrings) obj;
 
             return Arrays.equals(value1, other.value1);
         }
@@ -279,16 +351,16 @@ public class NBTSerializerTests
             value1.add("Test1");
             value1.add("Test2");
             value1.add("Test3");
-            value1.add("Test4");
+            value1.add(null);
             return this;
         }
 
         @Override
         public boolean equals(Object obj)
         {
-            if(!(obj instanceof TestSetOfStrings))
+            if (!(obj instanceof TestSetOfStrings))
                 return false;
-            TestSetOfStrings other = (TestSetOfStrings)obj;
+            TestSetOfStrings other = (TestSetOfStrings) obj;
             return value1.equals(other.value1);
         }
     }
@@ -304,15 +376,17 @@ public class NBTSerializerTests
             value1.put("Key2", "Value2");
             value1.put("Key3", "Value3");
             value1.put("Key4", "Value4");
+            value1.put("Key4", null);
+            value1.put(null, "Value4");
             return this;
         }
 
         @Override
         public boolean equals(Object obj)
         {
-            if(!(obj instanceof TestMapOfStrings))
+            if (!(obj instanceof TestMapOfStrings))
                 return false;
-            TestMapOfStrings other = (TestMapOfStrings)obj;
+            TestMapOfStrings other = (TestMapOfStrings) obj;
             return value1.equals(other.value1);
         }
     }
@@ -324,9 +398,9 @@ public class NBTSerializerTests
         @Override
         public AbstractTest prepare()
         {
-            value1.put("Key1", makeListFrom("1","2","3"));
-            value1.put("Key2", makeListFrom("a","b","c"));
-            value1.put("Key3", makeListFrom(null,"", "\t"));
+            value1.put("Key1", makeListFrom("1", "2", "3"));
+            value1.put("Key2", makeListFrom("a", "b", "c"));
+            value1.put("Key3", makeListFrom(null, "", "\t"));
             return this;
         }
 
@@ -340,9 +414,9 @@ public class NBTSerializerTests
         @Override
         public boolean equals(Object obj)
         {
-            if(!(obj instanceof TestMapOfLists))
+            if (!(obj instanceof TestMapOfLists))
                 return false;
-            TestMapOfLists other = (TestMapOfLists)obj;
+            TestMapOfLists other = (TestMapOfLists) obj;
             return value1.equals(other.value1);
         }
     }
@@ -374,9 +448,9 @@ public class NBTSerializerTests
         @Override
         public boolean equals(Object obj)
         {
-            if(!(obj instanceof TestListOfTests))
+            if (!(obj instanceof TestListOfTests))
                 return false;
-            TestListOfTests other = (TestListOfTests)obj;
+            TestListOfTests other = (TestListOfTests) obj;
             return value1.equals(other.value1);
         }
     }

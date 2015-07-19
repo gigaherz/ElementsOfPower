@@ -1,7 +1,6 @@
 package gigaherz.elementsofpower.client.render;
 
 import gigaherz.elementsofpower.entities.EntityBeamBase;
-import gigaherz.elementsofpower.entities.IRenderStackProvider;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderItem;
@@ -37,24 +36,24 @@ public class RenderBeam extends Render
         if (!(entity instanceof EntityBeamBase))
             return;
 
-        EntityBeamBase beam = (EntityBeamBase)entity;
+        EntityBeamBase beam = (EntityBeamBase) entity;
 
         Vec3 ep = beam.getEndPoint();
-        if(ep == null)
-            ep = new Vec3(x,y,z);
+        if (ep == null)
+            ep = new Vec3(x, y, z);
 
-        double dx = ep.xCoord-beam.posX;
-        double dy = ep.yCoord-beam.posY;
-        double dz = ep.zCoord-beam.posZ;
-        double d10x = dx/10;
-        double d10y = dy/10;
-        double d10z = dz/10;
+        double dx = ep.xCoord - beam.posX;
+        double dy = ep.yCoord - beam.posY;
+        double dz = ep.zCoord - beam.posZ;
+        double d10x = dx / 10;
+        double d10y = dy / 10;
+        double d10z = dz / 10;
 
         GlStateManager.pushMatrix();
-        for(int i=0;i<=10;i++)
+        for (int i = 0; i <= 10; i++)
         {
             GlStateManager.pushMatrix();
-            GlStateManager.translate((float) (x + d10x * i), (float) (y+d10y * i), (float) (z+d10z*i));
+            GlStateManager.translate((float) (x + d10x * i), (float) (y + d10y * i), (float) (z + d10z * i));
             GlStateManager.enableRescaleNormal();
             GlStateManager.scale(scale, scale, scale);
             GlStateManager.rotate(-this.renderManager.playerViewY, 0.0F, 1.0F, 0.0F);

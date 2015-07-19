@@ -1,12 +1,9 @@
 package gigaherz.elementsofpower.entities;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 public class EntityFireBeam extends EntityBeamBase
@@ -23,18 +20,18 @@ public class EntityFireBeam extends EntityBeamBase
 
     protected void applyEffect()
     {
-        if(hitInfo == null)
+        if (hitInfo == null)
             return;
 
-        if(hitInfo.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK)
+        if (hitInfo.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK)
         {
             BlockPos pos = hitInfo.getBlockPos().offset(hitInfo.sideHit);
-            if(worldObj.getBlockState(pos).getBlock() == Blocks.air)
+            if (worldObj.getBlockState(pos).getBlock() == Blocks.air)
             {
                 worldObj.setBlockState(pos, Blocks.fire.getDefaultState());
             }
         }
-        else if(hitInfo.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY)
+        else if (hitInfo.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY)
         {
             this.func_174815_a(this.getCaster(), hitInfo.entityHit);
 

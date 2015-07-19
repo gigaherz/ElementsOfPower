@@ -3,7 +3,6 @@ package gigaherz.elementsofpower.client;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.util.ReportedException;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import java.lang.reflect.Field;
@@ -22,16 +21,11 @@ public class KeyBindingInterceptor extends KeyBinding
     static Field fieldPressed;
     static Field fieldPressTime;
 
-    private static Field findObfuscatedField(Class<?> clazz, String... names)
-    {
-        return ReflectionHelper.findField(clazz, ObfuscationReflectionHelper.remapFieldNames(clazz.getName(), names));
-    }
-
     private static void ensureHaveKeybindArray() throws NoSuchFieldException
     {
         if (fieldKeybindArray == null)
         {
-            fieldKeybindArray = findObfuscatedField(KeyBinding.class, "keybindArray", "field_74516_a");
+            fieldKeybindArray = ReflectionHelper.findField(KeyBinding.class, "field_74516_a", "keybindArray");
             fieldKeybindArray.setAccessible(true);
         }
     }
@@ -40,7 +34,7 @@ public class KeyBindingInterceptor extends KeyBinding
     {
         if (fieldPressed == null)
         {
-            fieldPressed = findObfuscatedField(KeyBinding.class, "pressed", "field_74513_e");
+            fieldPressed = ReflectionHelper.findField(KeyBinding.class, "field_74513_e", "pressed");
             fieldPressed.setAccessible(true);
         }
     }
@@ -49,7 +43,7 @@ public class KeyBindingInterceptor extends KeyBinding
     {
         if (fieldPressTime == null)
         {
-            fieldPressTime = findObfuscatedField(KeyBinding.class, "pressTime", "field_151474_i");
+            fieldPressTime = ReflectionHelper.findField(KeyBinding.class, "field_151474_i", "pressTime");
             fieldPressTime.setAccessible(true);
         }
     }

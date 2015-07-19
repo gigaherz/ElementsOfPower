@@ -1,12 +1,10 @@
 package gigaherz.elementsofpower.blocks;
 
-import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.MagicDatabase;
 import gigaherz.elementsofpower.database.MagicHolder;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.InventoryBasic;
-import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -15,7 +13,6 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.common.util.Constants;
@@ -145,16 +142,19 @@ public class TileEssentializer
         return inventory.getInventoryStackLimit();
     }
 
-    public void clear() { inventory.clear(); }
+    public void clear()
+    {
+        inventory.clear();
+    }
 
     // Can't forward this one because it returns true always
     public boolean isUseableByPlayer(EntityPlayer player)
     {
         return (this.worldObj.getTileEntity(pos) == this)
                 && (player.getDistanceSq(
-                    pos.getX() + 0.5,
-                    pos.getY() + 0.5,
-                    pos.getZ() + 0.5) < 64);
+                pos.getX() + 0.5,
+                pos.getY() + 0.5,
+                pos.getZ() + 0.5) < 64);
     }
 
     // Pointless inventory methods
@@ -163,16 +163,22 @@ public class TileEssentializer
         return 0;
     }
 
-    public void setField(int id, int value) {}
+    public void setField(int id, int value)
+    {
+    }
 
     public int getFieldCount()
     {
         return 0;
     }
 
-    public void openInventory(EntityPlayer player) {}
+    public void openInventory(EntityPlayer player)
+    {
+    }
 
-    public void closeInventory(EntityPlayer player) {}
+    public void closeInventory(EntityPlayer player)
+    {
+    }
 
     // ISidedInventory
     public int[] getSlotsForFace(EnumFacing side)
@@ -182,13 +188,16 @@ public class TileEssentializer
 
     public boolean isItemValidForSlot(int index, ItemStack stack)
     {
-        switch(index)
+        switch (index)
         {
-            case 0: return MagicDatabase.itemContainsMagic(stack) || MagicDatabase.itemHasEssence(stack);
-            case 1: return MagicDatabase.canItemContainMagic(stack);
+            case 0:
+                return MagicDatabase.itemContainsMagic(stack) || MagicDatabase.itemHasEssence(stack);
+            case 1:
+                return MagicDatabase.canItemContainMagic(stack);
         }
         return false;
     }
+
     public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction)
     {
         return isItemValidForSlot(index, itemStackIn);

@@ -1,15 +1,12 @@
 package gigaherz.elementsofpower.spells;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 public class SpellResurrection
@@ -24,7 +21,7 @@ public class SpellResurrection
         if (pos == null)
             return;
 
-        if(pos.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK)
+        if (pos.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK)
             return;
 
         // Resurrecting players culd be done -- sending dimension packet or maybe respawn

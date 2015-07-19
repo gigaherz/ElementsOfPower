@@ -10,8 +10,6 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.common.util.Constants;
 
-import javax.lang.model.util.Elements;
-
 public class MagicHolder extends MagicAmounts implements IInventory
 {
     public static final int MaxEssentializerMagic = 1000;
@@ -38,10 +36,10 @@ public class MagicHolder extends MagicAmounts implements IInventory
 
         for (int i = 0; i < 8; i++)
         {
-                NBTTagCompound tag = new NBTTagCompound();
-                tag.setByte("Type", (byte) i);
-                tag.setInteger("Count", amounts[i]);
-                itemList.appendTag(tag);
+            NBTTagCompound tag = new NBTTagCompound();
+            tag.setByte("Type", (byte) i);
+            tag.setInteger("Count", amounts[i]);
+            itemList.appendTag(tag);
         }
 
         tagCompound.setTag("Essences", itemList);
@@ -104,7 +102,7 @@ public class MagicHolder extends MagicAmounts implements IInventory
 
             input.stackSize--;
 
-            if(input.stackSize <= 0)
+            if (input.stackSize <= 0)
                 input = null;
         }
 
@@ -140,7 +138,7 @@ public class MagicHolder extends MagicAmounts implements IInventory
         int added = 0;
         for (int i = 0; i < 8; i++)
         {
-            int transfer =  Math.min(Math.min(limits.amounts[i] - contained.amounts[i], 1), amounts[i]);
+            int transfer = Math.min(Math.min(limits.amounts[i] - contained.amounts[i], 1), amounts[i]);
 
             amounts[i] -= transfer;
 
@@ -194,7 +192,7 @@ public class MagicHolder extends MagicAmounts implements IInventory
     @Override
     public ItemStack getStackInSlot(int index)
     {
-        if(amounts[index] == 0)
+        if (amounts[index] == 0)
             return null;
         return new ItemStack(ElementsOfPower.magicOrb, amounts[index], index);
     }
@@ -215,7 +213,7 @@ public class MagicHolder extends MagicAmounts implements IInventory
     @Override
     public void setInventorySlotContents(int index, ItemStack stack)
     {
-        if(stack != null)
+        if (stack != null)
             amounts[index] = stack.stackSize;
         else
             amounts[index] = 0;

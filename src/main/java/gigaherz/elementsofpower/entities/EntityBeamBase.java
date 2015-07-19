@@ -9,8 +9,6 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
-import java.util.Map;
-
 public abstract class EntityBeamBase extends Entity
 {
     private static final int DATA_INDEX_CASTER = 5;
@@ -63,7 +61,7 @@ public abstract class EntityBeamBase extends Entity
 
     protected void updateBeamPosition()
     {
-        if(getCaster() == null)
+        if (getCaster() == null)
             return;
 
         direction = caster.getLookVec();
@@ -73,7 +71,7 @@ public abstract class EntityBeamBase extends Entity
         this.posY = caster.posY + caster.getEyeHeight() * 0.9;
         this.posZ = caster.posZ;
 
-        if(hitInfo != null)
+        if (hitInfo != null)
             endPoint = hitInfo.hitVec;
         else
             endPoint = new Vec3(
@@ -87,14 +85,14 @@ public abstract class EntityBeamBase extends Entity
     {
         super.onUpdate();
 
-        if(worldObj.isRemote)
+        if (worldObj.isRemote)
             ElementsOfPower.logger.warn("Beam update! client");
         else
             ElementsOfPower.logger.warn("Beam update! server");
 
         updateBeamPosition();
 
-        if(!worldObj.isRemote)
+        if (!worldObj.isRemote)
         {
             timeToLive--;
             effectTime--;
@@ -156,7 +154,7 @@ public abstract class EntityBeamBase extends Entity
     protected String getCasterName()
     {
         String name = getDataWatcher().getWatchableObjectString(DATA_INDEX_CASTER);
-        if(name.length() == 0)
+        if (name.length() == 0)
             return null;
         else
             return name;
@@ -176,7 +174,7 @@ public abstract class EntityBeamBase extends Entity
         if (caster == null)
         {
             String name = getCasterName();
-            if(name != null)
+            if (name != null)
                 caster = worldObj.getPlayerEntityByName(name);
         }
 
@@ -185,7 +183,7 @@ public abstract class EntityBeamBase extends Entity
 
     public void setCaster(EntityLivingBase living)
     {
-        if(living == null)
+        if (living == null)
             setCasterName(null);
         else
             setCasterName(living.getName());
