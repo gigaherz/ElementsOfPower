@@ -8,8 +8,14 @@ import org.apache.commons.lang3.SerializationException;
 
 import java.util.Map;
 
-public class MapMapper implements INBTMapper
+@SuppressWarnings("unchecked")
+public class MapMapper extends MapperBase
 {
+    public MapMapper(int priority)
+    {
+        super(priority);
+    }
+
     @Override
     public boolean canMapToField(Class<?> clazz)
     {

@@ -1,10 +1,11 @@
 package gigaherz.util.nbt.serialization.mappers;
 
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class StringMapper extends MapperBase
+public class TagMapper extends MapperBase
 {
-    public StringMapper(int priority)
+    public TagMapper(int priority)
     {
         super(priority);
     }
@@ -12,7 +13,7 @@ public class StringMapper extends MapperBase
     @Override
     public boolean canMapToField(Class<?> clazz)
     {
-        return clazz == String.class;
+        return NBTBase.class.isAssignableFrom(clazz);
     }
 
     @Override
@@ -24,13 +25,13 @@ public class StringMapper extends MapperBase
     @Override
     public void serializeField(NBTTagCompound parent, String fieldName, Object object) throws ReflectiveOperationException
     {
-        parent.setString(fieldName, (String) object);
+        parent.setTag(fieldName, ((NBTBase) object).copy());
     }
 
     @Override
     public Object deserializeField(NBTTagCompound parent, String fieldName, Class<?> clazz) throws ReflectiveOperationException
     {
-        return parent.getString(fieldName);
+        return parent.getTag(fieldName).copy();
     }
 
     @Override

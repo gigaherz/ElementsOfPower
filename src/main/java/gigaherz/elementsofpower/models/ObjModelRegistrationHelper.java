@@ -33,6 +33,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.*;
 
+@SuppressWarnings("deprecation")
 public class ObjModelRegistrationHelper
 {
     public static final ObjModelRegistrationHelper instance = new ObjModelRegistrationHelper();

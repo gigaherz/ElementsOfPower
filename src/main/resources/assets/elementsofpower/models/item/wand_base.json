@@ -1,30 +1,30 @@
 {
-    "parent": "builtin/generated",
-    "textures": {
-        "caps": "minecraft:blocks/iron_block",
-        "lapis_gem": "minecraft:blocks/lapis_block",
-        "emerald_gem": "minecraft:blocks/emerald_block",
-        "diamond_gem": "minecraft:blocks/diamond_block",
-        "creative_gem": "minecraft:blocks/bedrock",
-        "orbs": "minecraft:blocks/quartz_block_chiseled",
-        "rod": "minecraft:blocks/log_oak",
-        "particle": "minecraft:blocks/log_oak"
+  "parent": "builtin/generated",
+  "textures": {
+    "caps": "minecraft:blocks/iron_block",
+    "lapis_gem": "minecraft:blocks/lapis_block",
+    "emerald_gem": "minecraft:blocks/emerald_block",
+    "diamond_gem": "minecraft:blocks/diamond_block",
+    "creative_gem": "minecraft:blocks/bedrock",
+    "orbs": "minecraft:blocks/quartz_block_chiseled",
+    "rod": "minecraft:blocks/log_oak",
+    "particle": "minecraft:blocks/log_oak"
+  },
+  "display": {
+    "thirdperson": {
+      "rotation": [-100, 0, 0],
+      "translation": [0, 1, -2.5],
+      "scale": [1.0, 1.0, 1.0]
     },
-    "display": {
-        "thirdperson": {
-            "rotation": [ -100, 0, 0 ],
-            "translation": [ 0, 1, -2.5],
-            "scale": [ 1.0, 1.0, 1.0 ]
-        },
-        "firstperson": {
-            "rotation": [ -30, 0, -20 ],
-            "translation": [ 8, 0, 0 ],
-            "scale": [ 2.5, 2.5, 2.5 ]
-        },
-        "gui": {
-            "rotation": [ 0, 0, -45 ],
-            "translation": [ -0.5, -0.5, -0.5 ],
-            "scale": [ 1.2, 1.2, 1.2 ]
-        }
+    "firstperson": {
+      "rotation": [-30, 0, -20],
+      "translation": [8, 0, 0],
+      "scale": [2.5, 2.5, 2.5]
+    },
+    "gui": {
+      "rotation": [0, 0, -45],
+      "translation": [-0.5, -0.5, -0.5],
+      "scale": [1.2, 1.2, 1.2]
     }
+  }
 }

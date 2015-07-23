@@ -25,7 +25,7 @@ group = "gigaherz.elementsofpower" // http://maven.apache.org/guides/mini/guide-
 archivesBaseName = "ElementsOfPower"
 
 minecraft {
-    version = "1.8-11.14.3.1487"
+    version = "1.8-11.14.3.1493"
     runDir = "eclipse"
 
     // the mappings can be changed at any time, and must be in the following format.
@@ -71,4 +71,4 @@ processResources {
     }
 }
 
-idea { module { inheritOutputDirs = true } }
+idea.module.inheritOutputDirs = true

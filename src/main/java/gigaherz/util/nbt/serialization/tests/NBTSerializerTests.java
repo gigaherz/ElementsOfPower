@@ -62,7 +62,7 @@ public class NBTSerializerTests
     {
         NBTTagCompound serialized;
 
-        System.out.println("Test Serialize " + (o!=null? o.getClass().getName() : "(null)"));
+        System.out.println("Test Serialize " + (o != null ? o.getClass().getName() : "(null)"));
 
         try
         {
@@ -87,7 +87,7 @@ public class NBTSerializerTests
     {
         NBTTagCompound serialized;
 
-        System.out.println("Test Round Trip "  + (o!=null? o.getClass().getName() : "(null)"));
+        System.out.println("Test Round Trip " + (o != null ? o.getClass().getName() : "(null)"));
 
         try
         {

@@ -3,8 +3,13 @@ package gigaherz.util.nbt.serialization.mappers;
 import gigaherz.util.nbt.serialization.ICustomNBTSerializable;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class CustomSerializableMapper implements INBTMapper
+public class CustomSerializableMapper extends MapperBase
 {
+    public CustomSerializableMapper(int priority)
+    {
+        super(priority);
+    }
+
     @Override
     public boolean canMapToField(Class<?> clazz)
     {

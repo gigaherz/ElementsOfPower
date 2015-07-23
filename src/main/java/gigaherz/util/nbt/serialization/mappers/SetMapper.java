@@ -8,8 +8,14 @@ import org.apache.commons.lang3.SerializationException;
 
 import java.util.Set;
 
-public class SetMapper implements INBTMapper
+@SuppressWarnings("unchecked")
+public class SetMapper extends MapperBase
 {
+    public SetMapper(int priority)
+    {
+        super(priority);
+    }
+
     @Override
     public boolean canMapToField(Class<?> clazz)
     {

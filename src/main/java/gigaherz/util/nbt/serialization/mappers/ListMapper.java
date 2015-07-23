@@ -8,8 +8,14 @@ import org.apache.commons.lang3.SerializationException;
 
 import java.util.List;
 
-public class ListMapper implements INBTMapper
+@SuppressWarnings("unchecked")
+public class ListMapper extends MapperBase
 {
+    public ListMapper(int priority)
+    {
+        super(priority);
+    }
+
     @Override
     public boolean canMapToField(Class<?> clazz)
     {

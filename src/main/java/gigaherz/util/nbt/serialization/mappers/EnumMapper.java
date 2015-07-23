@@ -3,8 +3,14 @@ package gigaherz.util.nbt.serialization.mappers;
 import net.minecraft.nbt.NBTTagCompound;
 import org.apache.commons.lang3.SerializationException;
 
-public class EnumMapper implements INBTMapper
+@SuppressWarnings("unchecked")
+public class EnumMapper extends MapperBase
 {
+    public EnumMapper(int priority)
+    {
+        super(priority);
+    }
+
     @Override
     public boolean canMapToField(Class<?> clazz)
     {

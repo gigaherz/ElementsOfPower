@@ -9,8 +9,7 @@
   },
   "variants": {
     "inventory": [
-      {
-      }
+      {}
     ],
     "density": {
       "1": {

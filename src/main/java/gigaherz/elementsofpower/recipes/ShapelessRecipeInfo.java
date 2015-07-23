@@ -6,6 +6,7 @@ import net.minecraft.item.crafting.ShapelessRecipes;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("unchecked")
 public class ShapelessRecipeInfo implements IRecipeInfoProvider
 {
 

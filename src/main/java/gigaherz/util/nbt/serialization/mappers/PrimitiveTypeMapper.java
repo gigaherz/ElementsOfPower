@@ -3,8 +3,13 @@ package gigaherz.util.nbt.serialization.mappers;
 import com.google.common.primitives.Primitives;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class PrimitiveTypeMapper implements INBTMapper
+public class PrimitiveTypeMapper extends MapperBase
 {
+    public PrimitiveTypeMapper(int priority)
+    {
+        super(priority);
+    }
+
     @Override
     public boolean canMapToField(Class<?> clazz)
     {

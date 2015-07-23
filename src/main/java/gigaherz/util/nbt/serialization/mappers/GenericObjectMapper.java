@@ -8,8 +8,13 @@ import org.apache.commons.lang3.SerializationException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-public class GenericObjectMapper implements INBTMapper
+public class GenericObjectMapper extends MapperBase
 {
+    public GenericObjectMapper(int priority)
+    {
+        super(priority);
+    }
+
     @Override
     public boolean canMapToField(Class<?> clazz)
     {

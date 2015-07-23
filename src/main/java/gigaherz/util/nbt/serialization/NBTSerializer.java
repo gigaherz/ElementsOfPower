@@ -3,36 +3,51 @@ package gigaherz.util.nbt.serialization;
 import gigaherz.util.nbt.serialization.mappers.*;
 import net.minecraft.nbt.NBTTagCompound;
 
-import javax.management.openmbean.KeyAlreadyExistsException;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("unchecked")
 public class NBTSerializer
 {
-    static final List<INBTMapper> mappers = new ArrayList<INBTMapper>();
-    static final GenericObjectMapper generic = new GenericObjectMapper();
+    public static final int PRIORITY_INTERFACE = Integer.MAX_VALUE;
+    public static final int PRIORITY_USER = 0;
+    public static final int PRIORITY_PRIMITIVE = -200;
+    public static final int PRIORITY_COLLECTION = -300;
+
+    static final List<MapperBase> mappers = new ArrayList<MapperBase>();
+    static final GenericObjectMapper generic = new GenericObjectMapper(Integer.MIN_VALUE);
 
     static
     {
-        // Must go first so that something such as "extends Map implements ICustomNBTSerializable",
+        // Must have highest priority so that something such as "extends Map implements ICustomNBTSerializable",
         // favor the interface over the base class
-        mappers.add(new CustomSerializableMapper());
-
-        mappers.add(new PrimitiveTypeMapper());
-        mappers.add(new StringMapper());
-        mappers.add(new EnumMapper());
-        mappers.add(new ArrayMapper());
-
-        mappers.add(new ListMapper());
-        mappers.add(new MapMapper());
-        mappers.add(new SetMapper());
+        registerNBTMapper(new CustomSerializableMapper(PRIORITY_INTERFACE));
+        registerNBTMapper(new PrimitiveTypeMapper(PRIORITY_PRIMITIVE));
+        registerNBTMapper(new StringMapper(PRIORITY_PRIMITIVE));
+        registerNBTMapper(new EnumMapper(PRIORITY_PRIMITIVE));
+        registerNBTMapper(new ArrayMapper(PRIORITY_PRIMITIVE));
+        registerNBTMapper(new ListMapper(PRIORITY_COLLECTION));
+        registerNBTMapper(new MapMapper(PRIORITY_COLLECTION));
+        registerNBTMapper(new SetMapper(PRIORITY_COLLECTION));
+        registerNBTMapper(new TagMapper(PRIORITY_COLLECTION + 1));
     }
 
-    public static void registerNBTMapper(INBTMapper mapper)
+    public static void registerNBTMapper(MapperBase mapper)
     {
-        if (mappers.contains(mapper))
-            throw new KeyAlreadyExistsException();
-
+        int prio = mapper.getPriority();
+        for (int i = 0; i < mappers.size(); i++)
+        {
+            MapperBase existing = mappers.get(i);
+            if (existing.getPriority() < prio)
+            {
+                mappers.add(i, mapper);
+                return;
+            }
+            else if (existing.equals(mapper))
+            {
+                throw new IllegalArgumentException();
+            }
+        }
         mappers.add(mapper);
     }
 
@@ -46,18 +61,42 @@ public class NBTSerializer
         return tag;
     }
 
+    private static MapperBase findTopFieldMapperForClass(Class<?> clazz)
+    {
+        for (MapperBase mapper : mappers)
+        {
+            if (mapper.canMapToField(clazz))
+            {
+                return mapper;
+            }
+        }
+
+        return null;
+    }
+
+    private static MapperBase findTopCompoundMapperForClass(Class<?> clazz)
+    {
+        for (MapperBase mapper : mappers)
+        {
+            if (mapper.canMapToCompound(clazz))
+            {
+                return mapper;
+            }
+        }
+
+        return null;
+    }
+
     public static void serializeToField(NBTTagCompound tag, String fieldName, Object object)
             throws ReflectiveOperationException
     {
         if (object != null)
         {
-            for (INBTMapper mapper : mappers)
+            MapperBase mapper = findTopFieldMapperForClass(object.getClass());
+            if (mapper != null)
             {
-                if (mapper.canMapToField(object.getClass()))
-                {
-                    mapper.serializeField(tag, fieldName, object);
-                    return;
-                }
+                mapper.serializeField(tag, fieldName, object);
+                return;
             }
         }
 
@@ -69,13 +108,11 @@ public class NBTSerializer
     {
         if (object != null)
         {
-            for (INBTMapper mapper : mappers)
+            MapperBase mapper = findTopCompoundMapperForClass(object.getClass());
+            if (mapper != null)
             {
-                if (mapper.canMapToCompound(object.getClass()))
-                {
-                    mapper.serializeCompound(tag, object);
-                    return;
-                }
+                mapper.serializeCompound(tag, object);
+                return;
             }
         }
 
@@ -96,10 +133,10 @@ public class NBTSerializer
         if (!parent.hasKey(fieldName))
             return currentValue;
 
-        for (INBTMapper mapper : mappers)
+        MapperBase mapper = findTopFieldMapperForClass(clazz);
+        if (mapper != null)
         {
-            if (mapper.canMapToField(clazz))
-                return mapper.deserializeField(parent, fieldName, clazz);
+            return mapper.deserializeField(parent, fieldName, clazz);
         }
 
         return generic.deserializeField(parent, fieldName, clazz);
@@ -108,12 +145,13 @@ public class NBTSerializer
     public static Object deserializeToCompound(NBTTagCompound self, Class<?> clazz)
             throws ReflectiveOperationException
     {
-        for (INBTMapper mapper : mappers)
+        MapperBase mapper = findTopCompoundMapperForClass(clazz);
+        if (mapper != null)
         {
-            if (mapper.canMapToCompound(clazz))
-                return mapper.deserializeCompound(self, clazz);
+            return mapper.deserializeCompound(self, clazz);
         }
 
         return generic.deserializeCompound(self, clazz);
     }
+
 }

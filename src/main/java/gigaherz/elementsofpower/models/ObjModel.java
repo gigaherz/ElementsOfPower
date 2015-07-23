@@ -201,6 +201,7 @@ public class ObjModel
             return loadFromResource();
         }
 
+        @SuppressWarnings("unchecked")
         public Collection<String> getTextures(ObjModelRegistrationHelper objModelRegistrationHelper) throws IOException
         {
             ModelBlock modelblock = objModelRegistrationHelper.loadModel(baseLocation);

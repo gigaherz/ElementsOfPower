@@ -8,8 +8,13 @@ import org.apache.commons.lang3.SerializationException;
 
 import java.lang.reflect.Array;
 
-public class ArrayMapper implements INBTMapper
+public class ArrayMapper extends MapperBase
 {
+    public ArrayMapper(int priority)
+    {
+        super(priority);
+    }
+
     @Override
     public boolean canMapToField(Class<?> clazz)
     {
