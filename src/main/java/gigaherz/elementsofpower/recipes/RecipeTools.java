@@ -4,6 +4,7 @@ import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.*;
+import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
@@ -12,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("unchecked")
 public class RecipeTools
 {
 
@@ -90,7 +92,7 @@ public class RecipeTools
                     ItemStack t = s.copy();
                     t.stackSize = 1;
                     int d = t.getItemDamage();
-                    if (d < 0 || d >= 32767)
+                    if (d == OreDictionary.WILDCARD_VALUE)
                         t.setItemDamage(0);
                     itemRoots.add(t);
                 }

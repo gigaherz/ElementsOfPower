@@ -16,7 +16,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.client.model.b3d.B3DLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
@@ -24,11 +23,12 @@ public class ClientProxy implements ISideProxy
 {
     public void preInit()
     {
+        // Uncomment this to activate my custom obj loader
+        //ObjModelRegistrationHelper.instance.enableDomain(ElementsOfPower.MODID);
+
         registerClientEvents();
         registerCustomBakedModels();
         registerModels();
-
-        B3DLoader l;
     }
 
     public void init()

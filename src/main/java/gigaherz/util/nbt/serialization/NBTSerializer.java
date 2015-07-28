@@ -51,16 +51,6 @@ public class NBTSerializer
         mappers.add(mapper);
     }
 
-    // ==============================================================================================================
-    // Serializing
-    public static NBTTagCompound serialize(Object o)
-            throws ReflectiveOperationException
-    {
-        NBTTagCompound tag = new NBTTagCompound();
-        serializeToCompound(tag, o);
-        return tag;
-    }
-
     private static MapperBase findTopFieldMapperForClass(Class<?> clazz)
     {
         for (MapperBase mapper : mappers)
@@ -85,6 +75,16 @@ public class NBTSerializer
         }
 
         return null;
+    }
+
+    // ==============================================================================================================
+    // Serializing
+    public static NBTTagCompound serialize(Object o)
+            throws ReflectiveOperationException
+    {
+        NBTTagCompound tag = new NBTTagCompound();
+        serializeToCompound(tag, o);
+        return tag;
     }
 
     public static void serializeToField(NBTTagCompound tag, String fieldName, Object object)

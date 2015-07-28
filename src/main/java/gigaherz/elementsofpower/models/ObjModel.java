@@ -1,6 +1,7 @@
 package gigaherz.elementsofpower.models;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import gigaherz.elementsofpower.ElementsOfPower;
 import net.minecraft.client.Minecraft;
@@ -65,7 +66,15 @@ public class ObjModel
         return 0xFF000000 | (r << 16) | (g << 8) | b;
     }
 
-    public void bake(ModelManager manager, Map<String, String> textures, ImmutableList.Builder<BakedQuad> bakeList)
+    public void bake(ModelManager manager, Map<String, ResourceLocation> textures, ImmutableList.Builder<BakedQuad> bakeList)
+    {
+        bake((ResourceLocation r) -> manager.getTextureMap().getAtlasSprite(r.toString()), textures, bakeList);
+    }
+
+    public void bake(
+            Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter,
+            Map<String, ResourceLocation> textures,
+            ImmutableList.Builder<BakedQuad> bakeList)
     {
         for (MeshPart part : parts)
         {
@@ -77,18 +86,18 @@ public class ObjModel
             {
                 if (part.materialName != null)
                 {
-                    sprite = manager.getTextureMap().getAtlasSprite(textures.get(part.materialName));
+                    sprite = bakedTextureGetter.apply(textures.get(part.materialName));
                 }
             }
             else
             {
                 if (m.DiffuseTextureMap != null)
                 {
-                    sprite = manager.getTextureMap().getAtlasSprite(textures.get(m.DiffuseTextureMap));
+                    sprite = bakedTextureGetter.apply(textures.get(m.DiffuseTextureMap));
                 }
                 else if (m.AmbientTextureMap != null)
                 {
-                    sprite = manager.getTextureMap().getAtlasSprite(textures.get(m.AmbientTextureMap));
+                    sprite = bakedTextureGetter.apply(textures.get(m.AmbientTextureMap));
                 }
 
                 if (m.DiffuseColor != null)
@@ -182,15 +191,15 @@ public class ObjModel
         private MaterialLibrary currentMatLib;
 
         public final ResourceLocation modelLocation;
-        public final ResourceLocation baseLocation;
+        public final ResourceLocation jsonLocation;
 
-        public final Map<String, String> textures = new HashMap<String, String>();
-        public final Set<String> usedTextures = new HashSet<String>();
+        public final Map<String, ResourceLocation> textures = new HashMap<String, ResourceLocation>();
+        public final Set<ResourceLocation> usedTextures = new HashSet<ResourceLocation>();
 
-        public Loader(ResourceLocation baseLocation)
+        public Loader(ResourceLocation jsonLocation, ResourceLocation modelLocation)
         {
-            this.baseLocation = baseLocation;
-            this.modelLocation = ObjModelRegistrationHelper.getObjLocation(baseLocation);
+            this.jsonLocation = jsonLocation;
+            this.modelLocation = modelLocation;
         }
 
         public ObjModel getModel() throws IOException
@@ -202,16 +211,16 @@ public class ObjModel
         }
 
         @SuppressWarnings("unchecked")
-        public Collection<String> getTextures(ObjModelRegistrationHelper objModelRegistrationHelper) throws IOException
+        public Collection<ResourceLocation> getTextures() throws IOException
         {
-            ModelBlock modelblock = objModelRegistrationHelper.loadModel(baseLocation);
+            ModelBlock modelblock = ObjModelRegistrationHelper.ModelUtilities.loadJsonModel(jsonLocation);
 
             while (modelblock != null)
             {
                 for (Map.Entry<String, String> e : ((Map<String, String>) modelblock.textures).entrySet())
                 {
                     if (!textures.containsKey(e.getKey()))
-                        textures.put(e.getKey(), e.getValue());
+                        textures.put(e.getKey(), new ResourceLocation(e.getValue()));
                 }
                 modelblock = modelblock.parent;
             }
@@ -225,17 +234,25 @@ public class ObjModel
                 if (m == null)
                 {
                     if (p.materialName != null)
-                        usedTextures.add(textures.get(p.materialName));
+                    {
+                        ResourceLocation s = textures.get(p.materialName);
+                        if (s != null)
+                            usedTextures.add(s);
+                    }
                     continue;
                 }
 
                 if (m.DiffuseTextureMap != null)
                 {
-                    usedTextures.add(textures.get(m.DiffuseTextureMap));
+                    ResourceLocation s = textures.get(m.DiffuseTextureMap);
+                    if (s != null)
+                        usedTextures.add(s);
                 }
                 else if (m.AmbientTextureMap != null)
                 {
-                    usedTextures.add(textures.get(m.AmbientTextureMap));
+                    ResourceLocation s = textures.get(m.AmbientTextureMap);
+                    if (s != null)
+                        usedTextures.add(s);
                 }
             }
 
