@@ -15,16 +15,12 @@ import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.model.IBakedModel;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.ModelBakeEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.*;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.vecmath.Matrix4f;
@@ -57,60 +53,6 @@ public class ObjModelRegistrationHelper implements ICustomModelLoader
     public void setExplicitOverride(ResourceLocation location)
     {
         explicitOverrides.add(location);
-    }
-
-    public void registerCustomModel(ModelResourceLocation modelLocation, ResourceLocation resourceLocation)
-    {
-        ResourceLocation json = resourceLocation;
-        ResourceLocation obj = ObjModelRegistrationHelper.ModelUtilities.getObjLocation(resourceLocation);
-
-        modelsToInject.add(new ObjModel.Loader(modelLocation, json, obj));
-    }
-
-    @SubscribeEvent
-    public void onTextureStitch(TextureStitchEvent event)
-    {
-        if (event.map == Minecraft.getMinecraft().getTextureMapBlocks())
-        {
-            try
-            {
-                for (ObjModel.Loader ldr : modelsToInject)
-                {
-                    for (ResourceLocation loc : ldr.getModel().getTextures())
-                    {
-                        // Workaround for a MC/Deobf bug,
-                        // where the map lookup uses a ResourceLocation while the map stores Strings
-                        if (event.map.getTextureExtry(loc.toString()) != null)
-                            continue;
-                        event.map.registerSprite(loc);
-                    }
-                }
-            }
-            catch (IOException e)
-            {
-                throw new ReportedException(new CrashReport("Exception loading custom Model", e));
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public void onModelBake(ModelBakeEvent event)
-    {
-        try
-        {
-            for (ObjModel.Loader ldr : modelsToInject)
-            {
-                ObjModel model = ldr.getModel();
-
-                IFlexibleBakedModel bakedModel = model.bake(model.getDefaultState(), model.getVertexFormat(), (ResourceLocation r) -> event.modelManager.getTextureMap().getAtlasSprite(r.toString()));
-
-                event.modelRegistry.putObject(model.modelLocation, bakedModel);
-            }
-        }
-        catch (IOException e)
-        {
-            throw new ReportedException(new CrashReport("Exception loading custom Model", e));
-        }
     }
 
     @Override
