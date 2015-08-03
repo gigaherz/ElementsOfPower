@@ -1,4 +1,4 @@
-package gigaherz.elementsofpower.blocks;
+package gigaherz.elementsofpower.tileentities;
 
 import gigaherz.elementsofpower.database.MagicDatabase;
 import gigaherz.elementsofpower.database.MagicHolder;

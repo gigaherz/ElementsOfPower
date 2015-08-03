@@ -1,22 +1,23 @@
-package gigaherz.elementsofpower.recipes;
+package gigaherz.elementsofpower.database.recipes;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.ShapedRecipes;
+import net.minecraft.item.crafting.ShapelessRecipes;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShapedRecipeInfo implements IRecipeInfoProvider
+@SuppressWarnings("unchecked")
+public class ShapelessRecipeInfo implements IRecipeInfoProvider
 {
 
     ArrayList<ItemStack> recipeItems = new ArrayList<>();
-    ShapedRecipes recipe;
+    ShapelessRecipes recipe;
 
-    public ShapedRecipeInfo(ShapedRecipes recipe)
+    public ShapelessRecipeInfo(ShapelessRecipes recipe)
     {
         this.recipe = recipe;
 
-        ItemStack[] inputs = recipe.recipeItems;
+        List<ItemStack> inputs = recipe.recipeItems;
         for (ItemStack input : inputs)
         {
             if (input == null)

@@ -1,4 +1,4 @@
-package gigaherz.elementsofpower.recipes;
+package gigaherz.elementsofpower.database.recipes;
 
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.Utils;

@@ -1,4 +1,4 @@
-package gigaherz.elementsofpower.spells;
+package gigaherz.elementsofpower.database.spells;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.boss.EntityDragon;

@@ -1,4 +1,4 @@
-package gigaherz.elementsofpower.spells;
+package gigaherz.elementsofpower.database.spells;
 
 import gigaherz.elementsofpower.entities.EntityBeamBase;
 import gigaherz.elementsofpower.entities.EntityFireBeam;

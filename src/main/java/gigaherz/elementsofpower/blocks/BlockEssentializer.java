@@ -1,6 +1,7 @@
 package gigaherz.elementsofpower.blocks;
 
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.tileentities.TileEssentializer;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;

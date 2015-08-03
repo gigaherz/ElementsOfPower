@@ -1,23 +1,23 @@
-package gigaherz.elementsofpower.recipes;
+package gigaherz.elementsofpower.database.recipes;
 
 import gigaherz.elementsofpower.ElementsOfPower;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.oredict.ShapedOreRecipe;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShapedOreRecipeInfo implements IRecipeInfoProvider
+public class ShapelessOreRecipeInfo implements IRecipeInfoProvider
 {
 
     ArrayList<ItemStack> recipeItems = new ArrayList<>();
-    ShapedOreRecipe recipe;
+    ShapelessOreRecipe recipe;
 
-    public ShapedOreRecipeInfo(ShapedOreRecipe recipe)
+    public ShapelessOreRecipeInfo(ShapelessOreRecipe recipe)
     {
         this.recipe = recipe;
 
-        Object[] inputs = recipe.getInput();
+        ArrayList<Object> inputs = recipe.getInput();
         for (Object input : inputs)
         {
             Object actualInput = input;

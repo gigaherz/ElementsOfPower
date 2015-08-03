@@ -1,4 +1,4 @@
-package gigaherz.elementsofpower.recipes;
+package gigaherz.elementsofpower.database.recipes;
 
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;

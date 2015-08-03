@@ -1,4 +1,4 @@
-package gigaherz.elementsofpower.client.render;
+package gigaherz.elementsofpower.renders;
 
 import gigaherz.elementsofpower.entities.IRenderStackProvider;
 import gigaherz.elementsofpower.entities.IVariableSize;

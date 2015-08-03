@@ -2,8 +2,8 @@ package gigaherz.elementsofpower.client;
 
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.ISideProxy;
-import gigaherz.elementsofpower.client.render.RenderBeam;
-import gigaherz.elementsofpower.client.render.RenderEntityProvidedStack;
+import gigaherz.elementsofpower.renders.RenderBeam;
+import gigaherz.elementsofpower.renders.RenderEntityProvidedStack;
 import gigaherz.elementsofpower.entities.EntityBallBase;
 import gigaherz.elementsofpower.entities.EntityBeamBase;
 import gigaherz.elementsofpower.models.ObjModelLoader;

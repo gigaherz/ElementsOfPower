@@ -1,4 +1,4 @@
-package gigaherz.elementsofpower.blocks.materials;
+package gigaherz.elementsofpower.materials;
 
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
