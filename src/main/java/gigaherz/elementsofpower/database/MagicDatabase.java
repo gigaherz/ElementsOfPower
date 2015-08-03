@@ -1,7 +1,6 @@
 package gigaherz.elementsofpower.database;
 
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.Utils;
 import gigaherz.elementsofpower.items.ItemMagicContainer;
 import gigaherz.elementsofpower.items.ItemWand;
 import gigaherz.elementsofpower.database.recipes.RecipeTools;

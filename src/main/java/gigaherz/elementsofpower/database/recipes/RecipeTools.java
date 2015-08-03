@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.database.recipes;
 
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.Utils;
+import gigaherz.elementsofpower.database.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.*;
 import net.minecraftforge.oredict.OreDictionary;
