@@ -11,9 +11,8 @@ import net.minecraft.client.renderer.block.model.ModelBlock;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.IResource;
-import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.Attributes;
+import net.minecraftforge.client.model.*;
 
 import javax.vecmath.Vector2f;
 import javax.vecmath.Vector3f;
@@ -23,59 +22,34 @@ import java.io.InputStreamReader;
 import java.security.InvalidParameterException;
 import java.util.*;
 
-public class ObjModel
+public class ObjModel implements IModel
 {
+    final ResourceLocation modelLocation;
+
     public List<Vector3f> positions;
     public List<Vector3f> normals;
     public List<Vector2f> texCoords;
 
-    public final List<MeshPart> parts = new ArrayList<MeshPart>();
-    ;
+    public final List<MeshPart> parts = new ArrayList<>();
 
-    public void addPosition(float x, float y, float z)
+    final Map<String, ResourceLocation> textures = new HashMap<>();
+    private final Set<ResourceLocation> usedTextures = new HashSet<>();
+
+    private ModelBlock modelBlock;
+
+    private ObjModel(ModelBlock modelBlock, ResourceLocation modelLocation)
     {
-        if (positions == null)
-            positions = new ArrayList<Vector3f>();
-        positions.add(new Vector3f(x, y, z));
+        this.modelBlock = modelBlock;
+        this.modelLocation = modelLocation;
     }
 
-    public void addNormal(float x, float y, float z)
+    @Override
+    public IFlexibleBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
     {
-        if (normals == null)
-            normals = new ArrayList<Vector3f>();
-        normals.add(new Vector3f(x, y, z));
-    }
+        TextureAtlasSprite particle = bakedTextureGetter.apply(textures.get("particle"));
 
-    public void addTexCoords(float x, float y)
-    {
-        if (texCoords == null)
-            texCoords = new ArrayList<Vector2f>();
-        texCoords.add(new Vector2f(x, y));
-    }
+        ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
 
-    public void addPart(MeshPart part)
-    {
-        parts.add(part);
-    }
-
-    private int getColorValue(Vector3f color)
-    {
-        int r = (int) color.x;
-        int g = (int) color.y;
-        int b = (int) color.z;
-        return 0xFF000000 | (r << 16) | (g << 8) | b;
-    }
-
-    public void bake(ModelManager manager, Map<String, ResourceLocation> textures, ImmutableList.Builder<BakedQuad> bakeList)
-    {
-        bake((ResourceLocation r) -> manager.getTextureMap().getAtlasSprite(r.toString()), textures, bakeList);
-    }
-
-    public void bake(
-            Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter,
-            Map<String, ResourceLocation> textures,
-            ImmutableList.Builder<BakedQuad> bakeList)
-    {
         for (MeshPart part : parts)
         {
             TextureAtlasSprite sprite = null;
@@ -102,27 +76,27 @@ public class ObjModel
 
                 if (m.DiffuseColor != null)
                 {
-                    color = getColorValue(m.DiffuseColor);
+                    int r = (int) m.DiffuseColor.x;
+                    int g = (int) m.DiffuseColor.y;
+                    int b = (int) m.DiffuseColor.z;
+                    color = 0xFF000000 | (r << 16) | (g << 8) | b;
                 }
             }
 
             for (int[][] face : part.indices)
             {
-                bakeList.add(makeQuad(face, sprite, color));
+                int[] faceData = new int[28];
+
+                processVertex(faceData, 0, face[0], color, sprite);
+                processVertex(faceData, 1, face[1], color, sprite);
+                processVertex(faceData, 2, face[2], color, sprite);
+                processVertex(faceData, 3, face[3], color, sprite);
+
+                builder.add(new BakedQuad(faceData, -1, FaceBakery.getFacingFromVertexData(faceData)));
             }
         }
-    }
 
-    private BakedQuad makeQuad(int[][] face, TextureAtlasSprite sprite, int color)
-    {
-        int[] faceData = new int[28];
-
-        processVertex(faceData, 0, face[0], color, sprite);
-        processVertex(faceData, 1, face[1], color, sprite);
-        processVertex(faceData, 2, face[2], color, sprite);
-        processVertex(faceData, 3, face[3], color, sprite);
-
-        return new BakedQuad(faceData, -1, FaceBakery.getFacingFromVertexData(faceData));
+        return new ObjModelRegistrationHelper.BakedModel(builder.build(), modelBlock, particle, getVertexFormat());
     }
 
     private void processVertex(int[] faceData, int i, int[] vertex, int color, TextureAtlasSprite sprite)
@@ -165,6 +139,72 @@ public class ObjModel
         return Attributes.DEFAULT_BAKED_FORMAT;
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public Collection<ResourceLocation> getTextures()
+    {
+        ModelBlock modelblock = modelBlock;
+
+        while (modelblock != null)
+        {
+            for (Map.Entry<String, String> e : ((Map<String, String>) modelblock.textures).entrySet())
+            {
+                if (!textures.containsKey(e.getKey()))
+                    textures.put(e.getKey(), new ResourceLocation(e.getValue()));
+            }
+            modelblock = modelblock.parent;
+        }
+
+        for (MeshPart p : parts)
+        {
+            Material m = p.material;
+
+            if (m == null)
+            {
+                if (p.materialName != null)
+                {
+                    ResourceLocation s = textures.get(p.materialName);
+                    if (s != null)
+                        usedTextures.add(s);
+                }
+                continue;
+            }
+
+            if (m.DiffuseTextureMap != null)
+            {
+                ResourceLocation s = textures.get(m.DiffuseTextureMap);
+                if (s != null)
+                    usedTextures.add(s);
+            }
+            else if (m.AmbientTextureMap != null)
+            {
+                ResourceLocation s = textures.get(m.AmbientTextureMap);
+                if (s != null)
+                    usedTextures.add(s);
+            }
+        }
+
+        if (textures.containsKey("particle"))
+            usedTextures.add(textures.get("particle"));
+
+        return usedTextures;
+
+    }
+
+    @Override
+    public Collection<ResourceLocation> getDependencies()
+    {
+        // I guess this could be used to load the .json files,
+        // but I have no idea how I'd obtain them later, so...
+        return Collections.emptyList();
+    }
+
+    @Override
+    public IModelState getDefaultState()
+    {
+        return null;
+    }
+
     public static class MeshPart
     {
         public String materialName;
@@ -173,7 +213,7 @@ public class ObjModel
 
         public MeshPart()
         {
-            indices = new ArrayList<int[][]>();
+            indices = new ArrayList<>();
         }
 
         public void addFace(int[]... f)
@@ -187,19 +227,25 @@ public class ObjModel
         static final Set<String> unknownCommands = new HashSet<String>();
 
         private ObjModel currentModel;
-        private ObjModel.MeshPart currentPart;
         private MaterialLibrary currentMatLib;
 
-        public final ResourceLocation modelLocation;
-        public final ResourceLocation jsonLocation;
+        private ObjModel.MeshPart currentPart;
 
-        public final Map<String, ResourceLocation> textures = new HashMap<String, ResourceLocation>();
-        public final Set<ResourceLocation> usedTextures = new HashSet<ResourceLocation>();
+        private final ResourceLocation baseLocation;
+        private final ResourceLocation jsonLocation;
+        private final ResourceLocation modelLocation;
 
-        public Loader(ResourceLocation jsonLocation, ResourceLocation modelLocation)
+        public Loader (ResourceLocation baseLocation, ResourceLocation jsonLocation, ResourceLocation modelLocation)
         {
+            this.baseLocation = baseLocation;
             this.jsonLocation = jsonLocation;
             this.modelLocation = modelLocation;
+        }
+
+        public void reset()
+        {
+            currentModel = null;
+            currentMatLib = null;
         }
 
         public ObjModel getModel() throws IOException
@@ -210,58 +256,6 @@ public class ObjModel
             return loadFromResource();
         }
 
-        @SuppressWarnings("unchecked")
-        public Collection<ResourceLocation> getTextures() throws IOException
-        {
-            ModelBlock modelblock = ObjModelRegistrationHelper.ModelUtilities.loadJsonModel(jsonLocation);
-
-            while (modelblock != null)
-            {
-                for (Map.Entry<String, String> e : ((Map<String, String>) modelblock.textures).entrySet())
-                {
-                    if (!textures.containsKey(e.getKey()))
-                        textures.put(e.getKey(), new ResourceLocation(e.getValue()));
-                }
-                modelblock = modelblock.parent;
-            }
-
-            ObjModel model = getModel();
-
-            for (MeshPart p : model.parts)
-            {
-                Material m = p.material;
-
-                if (m == null)
-                {
-                    if (p.materialName != null)
-                    {
-                        ResourceLocation s = textures.get(p.materialName);
-                        if (s != null)
-                            usedTextures.add(s);
-                    }
-                    continue;
-                }
-
-                if (m.DiffuseTextureMap != null)
-                {
-                    ResourceLocation s = textures.get(m.DiffuseTextureMap);
-                    if (s != null)
-                        usedTextures.add(s);
-                }
-                else if (m.AmbientTextureMap != null)
-                {
-                    ResourceLocation s = textures.get(m.AmbientTextureMap);
-                    if (s != null)
-                        usedTextures.add(s);
-                }
-            }
-
-            if (textures.containsKey("particle"))
-                usedTextures.add(textures.get("particle"));
-
-            return usedTextures;
-        }
-
         private void addTexCoord(String line)
         {
             String[] args = line.split(" ");
@@ -269,7 +263,9 @@ public class ObjModel
             float x = Float.parseFloat(args[0]);
             float y = Float.parseFloat(args[1]);
 
-            currentModel.addTexCoords(x, y);
+            if (currentModel.texCoords == null)
+                currentModel.texCoords = new ArrayList<>();
+            currentModel.texCoords.add(new Vector2f(x, y));
         }
 
         private void addNormal(String line)
@@ -283,7 +279,9 @@ public class ObjModel
                     ? (float) Math.sqrt(1 - x * x - y * y)
                     : Float.parseFloat(args[2]);
 
-            currentModel.addNormal(x, y, z);
+            if (currentModel.normals == null)
+                currentModel.normals = new ArrayList<>();
+            currentModel.normals.add(new Vector3f(x, y, z));
         }
 
         private void addPosition(String line)
@@ -294,7 +292,9 @@ public class ObjModel
             float y = Float.parseFloat(args[1]);
             float z = Float.parseFloat(args[2]);
 
-            currentModel.addPosition(x, y, z);
+            if (currentModel.positions == null)
+                currentModel.positions = new ArrayList<>();
+            currentModel.positions.add(new Vector3f(x, y, z));
         }
 
         private void addFace(String line)
@@ -340,7 +340,7 @@ public class ObjModel
             currentPart = new ObjModel.MeshPart();
             currentPart.materialName = matName;
             currentPart.material = currentMatLib.materials.get(matName);
-            currentModel.addPart(currentPart);
+            currentModel.parts.add(currentPart);
         }
 
         private void newObject(String line)
@@ -353,7 +353,6 @@ public class ObjModel
 
         private void loadMaterialLibrary(ResourceLocation locOfParent, String path) throws IOException
         {
-
             String prefix = locOfParent.getResourcePath();
             int pp = prefix.lastIndexOf('/');
             prefix = (pp >= 0) ? prefix.substring(0, pp + 1) : "";
@@ -365,12 +364,14 @@ public class ObjModel
 
         private ObjModel loadFromResource() throws IOException
         {
+            ModelBlock modelblock = ObjModelRegistrationHelper.ModelUtilities.loadJsonModel(jsonLocation);
+
+            currentModel = new ObjModel(modelblock, baseLocation);
+            currentMatLib = new MaterialLibrary();
+
             IResource res = Minecraft.getMinecraft().getResourceManager().getResource(modelLocation);
             InputStreamReader lineStream = new InputStreamReader(res.getInputStream(), Charsets.UTF_8);
             BufferedReader lineReader = new BufferedReader(lineStream);
-
-            currentModel = new ObjModel();
-            currentMatLib = new MaterialLibrary();
 
             for (; ; )
             {
@@ -429,6 +430,7 @@ public class ObjModel
                 }
             }
 
+            currentPart = null;
             return currentModel;
         }
     }
@@ -459,9 +461,9 @@ public class ObjModel
 
     static class MaterialLibrary
     {
-        static final Set<String> unknownCommands = new HashSet<String>();
+        static final Set<String> unknownCommands = new HashSet<>();
 
-        public final Dictionary<String, Material> materials = new Hashtable<String, Material>();
+        public final Dictionary<String, Material> materials = new Hashtable<>();
 
         public void loadFromStream(ResourceLocation loc) throws IOException
         {

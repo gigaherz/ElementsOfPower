@@ -1,7 +1,6 @@
 package gigaherz.elementsofpower.models;
 
 import com.google.common.base.Charsets;
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -39,9 +38,10 @@ public class ObjModelRegistrationHelper implements ICustomModelLoader
 {
     public static final ObjModelRegistrationHelper instance = new ObjModelRegistrationHelper();
 
-    private final Set<String> enabledDomains = new HashSet<String>();
+    private final Set<String> enabledDomains = new HashSet<>();
+    private final Set<ResourceLocation> explicitOverrides = new HashSet<>();
 
-    final Map<ResourceLocation, ObjModel.Loader> modelsToInject = new Hashtable<>();
+    final List<ObjModel.Loader> modelsToInject = new ArrayList<>();
 
     public ObjModelRegistrationHelper()
     {
@@ -54,13 +54,17 @@ public class ObjModelRegistrationHelper implements ICustomModelLoader
         enabledDomains.add(domain.toLowerCase());
     }
 
+    public void setExplicitOverride(ResourceLocation location)
+    {
+        explicitOverrides.add(location);
+    }
+
     public void registerCustomModel(ModelResourceLocation modelLocation, ResourceLocation resourceLocation)
     {
         ResourceLocation json = resourceLocation;
         ResourceLocation obj = ObjModelRegistrationHelper.ModelUtilities.getObjLocation(resourceLocation);
 
-        ObjModel.Loader ldr = new ObjModel.Loader(json, obj);
-        modelsToInject.put(modelLocation, ldr);
+        modelsToInject.add(new ObjModel.Loader(modelLocation, json, obj));
     }
 
     @SubscribeEvent
@@ -70,9 +74,9 @@ public class ObjModelRegistrationHelper implements ICustomModelLoader
         {
             try
             {
-                for (Map.Entry<ResourceLocation, ObjModel.Loader> e : modelsToInject.entrySet())
+                for (ObjModel.Loader ldr : modelsToInject)
                 {
-                    for (ResourceLocation loc : e.getValue().getTextures())
+                    for (ResourceLocation loc : ldr.getModel().getTextures())
                     {
                         // Workaround for a MC/Deobf bug,
                         // where the map lookup uses a ResourceLocation while the map stores Strings
@@ -94,22 +98,13 @@ public class ObjModelRegistrationHelper implements ICustomModelLoader
     {
         try
         {
-            for (Map.Entry<ResourceLocation, ObjModel.Loader> entry : modelsToInject.entrySet())
+            for (ObjModel.Loader ldr : modelsToInject)
             {
-                ObjModel.Loader loader = entry.getValue();
+                ObjModel model = ldr.getModel();
 
-                ImmutableMap<TransformType, Matrix4f> transformations = ModelUtilities.loadModelTransforms(loader.jsonLocation);
+                IFlexibleBakedModel bakedModel = model.bake(model.getDefaultState(), model.getVertexFormat(), (ResourceLocation r) -> event.modelManager.getTextureMap().getAtlasSprite(r.toString()));
 
-                TextureAtlasSprite particle = event.modelManager.getTextureMap().getAtlasSprite(loader.textures.get("particle").toString());
-
-                ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
-
-                ObjModel model = loader.getModel();
-                model.bake(event.modelManager, loader.textures, builder);
-
-                BakedModel bakedModel = new BakedModel(builder.build(), transformations, particle, model.getVertexFormat());
-
-                event.modelRegistry.putObject(entry.getKey(), bakedModel);
+                event.modelRegistry.putObject(model.modelLocation, bakedModel);
             }
         }
         catch (IOException e)
@@ -121,118 +116,54 @@ public class ObjModelRegistrationHelper implements ICustomModelLoader
     @Override
     public boolean accepts(ResourceLocation modelLocation)
     {
+        if (explicitOverrides.contains(modelLocation))
+        {
+            return true;
+        }
+
         if (!enabledDomains.contains(modelLocation.getResourceDomain()))
             return false;
 
         // This requires the model reference to include the extension,
         // which doesn't seem to be possible for items
         return modelLocation.getResourcePath().endsWith(".obj");
-
-        // The code below accepts ANY resource location that can be mapped to a .obj filename,
-        // but using exceptions as the "default" case with non-exception being the exception,
-        // hurts my soul deeply, so it shall remain disabled.
-
-        /*
-        ResourceLocation obj = new ResourceLocation(modelLocation.toString() + ".obj");
-
-        try {
-            IResource dummy = Minecraft.getMinecraft().getResourceManager().getResource(obj);
-            return dummy != null;
-        }
-        catch(FileNotFoundException e)
-        {
-            return false;
-        }
-        catch(IOException e)
-        {
-            throw new ReportedException(new CrashReport("Exception loading custom Model", e));
-        }
-        */
     }
 
     @Override
     public IModel loadModel(ResourceLocation modelLocation) throws IOException
     {
-        String path = modelLocation.getResourcePath();
-        int start = "models/".length();
-        int length = path.length() - "models/.obj".length();
+        ResourceLocation json, obj;
 
-        ResourceLocation obj = modelLocation;
-        ResourceLocation json = new ResourceLocation(
-                modelLocation.getResourceDomain(),
-                path.substring(start, length));
+        if(explicitOverrides.contains(modelLocation))
+        {
+            json = new ResourceLocation(modelLocation.getResourceDomain(), modelLocation.getResourcePath().substring("models/".length()));
+            obj = new ResourceLocation(modelLocation.toString() + ".obj");
+        }
+        else
+        {
+            String path = modelLocation.getResourcePath();
+            int start = "models/".length();
+            int length = path.length() - "models/.obj".length();
 
-        // Use the code below if also using the exception-driven accepts() above.
-        /*
-        ResourceLocation json = new ResourceLocation(modelLocation.getResourceDomain(), modelLocation.getResourcePath().substring("models/".length()));
-        ResourceLocation obj = new ResourceLocation(modelLocation.toString() + ".obj");
-        */
+            obj = modelLocation;
+            json = new ResourceLocation(
+                    modelLocation.getResourceDomain(),
+                    path.substring(start, length));
+        }
 
-        ObjModel.Loader ldr = new ObjModel.Loader(json, obj);
-        return new ModelInfo(ldr);
+        ObjModel.Loader ldr = new ObjModel.Loader(null, json, obj);
+        return ldr.getModel();
     }
 
     @Override
     public void onResourceManagerReload(IResourceManager resourceManager)
     {
+        for(ObjModel.Loader ldr : modelsToInject)
+        {
+            ldr.reset();
+        }
+
         ModelUtilities.clearCache();
-    }
-
-    public static class ModelInfo implements IModel
-    {
-        ObjModel.Loader loader;
-
-        ModelInfo(ObjModel.Loader loader)
-        {
-            this.loader = loader;
-        }
-
-        @Override
-        public Collection<ResourceLocation> getDependencies()
-        {
-            return Collections.emptyList();
-        }
-
-        @Override
-        public Collection<ResourceLocation> getTextures()
-        {
-            try
-            {
-                return loader.getTextures();
-            }
-            catch (IOException e)
-            {
-                return Collections.emptyList();
-            }
-        }
-
-        @Override
-        public IFlexibleBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
-        {
-            try
-            {
-                ImmutableMap<TransformType, Matrix4f> transformations = ModelUtilities.loadModelTransforms(loader.jsonLocation);
-
-                TextureAtlasSprite particle = bakedTextureGetter.apply(loader.textures.get("particle"));
-
-                ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
-
-                ObjModel model = loader.getModel();
-                model.bake(bakedTextureGetter, loader.textures, builder);
-
-                return new BakedModel(builder.build(), transformations, particle, model.getVertexFormat());
-            }
-            catch (IOException e)
-            {
-                throw new ReportedException(new CrashReport("Exception loading custom Model", e));
-            }
-        }
-
-        @Override
-        public IModelState getDefaultState()
-        {
-            return null;
-        }
     }
 
     public static class BakedModel
@@ -252,11 +183,11 @@ public class ObjModelRegistrationHelper implements ICustomModelLoader
         final VertexFormat format;
 
         public BakedModel(ImmutableList<BakedQuad> generalQuads,
-                          ImmutableMap<TransformType, Matrix4f> transformations,
+                          ModelBlock modelBlock,
                           TextureAtlasSprite particle,
                           VertexFormat format)
         {
-            this.transformations = transformations;
+            this.transformations  = ObjModelRegistrationHelper.ModelUtilities.loadModelTransforms(modelBlock);
             this.iconSprite = particle;
             this.generalQuads = generalQuads;
             this.format = format;
@@ -317,9 +248,8 @@ public class ObjModelRegistrationHelper implements ICustomModelLoader
             modelBlocks.clear();
         }
 
-        static ImmutableMap<TransformType, Matrix4f> loadModelTransforms(final ResourceLocation loc)
+        static ImmutableMap<TransformType, Matrix4f> loadModelTransforms(final ModelBlock modelblock)
         {
-            ModelBlock modelblock = loadJsonModel(loc);
             if (modelblock == null)
                 return ImmutableMap.of();
 

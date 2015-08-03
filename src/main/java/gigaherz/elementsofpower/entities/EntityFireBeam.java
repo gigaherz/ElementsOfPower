@@ -33,7 +33,7 @@ public class EntityFireBeam extends EntityBeamBase
         }
         else if (hitInfo.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY)
         {
-            this.func_174815_a(this.getCaster(), hitInfo.entityHit);
+            this.applyEnchantments(this.getCaster(), hitInfo.entityHit);
 
             if (!hitInfo.entityHit.isImmuneToFire())
             {

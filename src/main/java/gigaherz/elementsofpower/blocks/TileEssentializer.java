@@ -97,9 +97,9 @@ public class TileEssentializer
     }
 
     // IInventory forwarders
-    public String getName()
+    public String getCommandSenderName()
     {
-        return inventory.getName();
+        return inventory.getCommandSenderName();
     }
 
     public boolean hasCustomName()

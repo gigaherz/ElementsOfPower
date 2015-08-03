@@ -16,9 +16,6 @@ buildscript {
 }
 
 apply plugin: 'java'
-sourceCompatibility = 1.8
-targetCompatibility = 1.6
-
 apply plugin: 'forge'
 
 version = "1.0"
@@ -34,7 +31,12 @@ minecraft {
     // stable_#            stables are built at the discretion of the MCP team.
     // Use non-default mappings at your own risk. they may not allways work.
     // simply re-run your setup task after changing the mappings to update your workspace.
-    mappings = "snapshot_20141130"
+    mappings = "snapshot_20150801"
+}
+
+compileJava {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 }
 
 dependencies {
@@ -72,4 +74,4 @@ processResources {
     }
 }
 
-idea.module.inheritOutputDirs = true
+idea { module.inheritOutputDirs = true }

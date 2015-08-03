@@ -80,89 +80,54 @@ public class ContainerEssentializer
         ItemStack stack = slot.getStack();
         ItemStack stackCopy = stack.copy();
 
+        int startIndex;
+        int endIndex;
+
         if (slotIndex >= 10)
         {
             boolean itemIsContainer = MagicDatabase.canItemContainMagic(stack);
             boolean itemContainsMagic = itemIsContainer && MagicDatabase.itemContainsMagic(stack);
             boolean itemHasEssence = MagicDatabase.itemHasEssence(stack);
 
-            if (itemIsContainer)
+            if (itemContainsMagic)
             {
-                if (itemContainsMagic)
-                {
-                    if (!this.mergeItemStack(stack, 8, 9, false))
-                    {
-                        ItemStack dest = ((Slot) this.inventorySlots.get(9)).getStack();
-
-                        if (dest != null && dest.stackSize > 0)
-                        {
-                            return null;
-                        }
-
-                        if (!this.mergeItemStack(stack, 9, 10, false))
-                        {
-                            return null;
-                        }
-                    }
-                }
-                else
-                {
-                    ItemStack dest = ((Slot) this.inventorySlots.get(9)).getStack();
-
-                    if (dest != null && dest.stackSize > 0)
-                    {
-                        if (!itemHasEssence)
-                        {
-                            return null;
-                        }
-
-                        if (!this.mergeItemStack(stack, 8, 9, false))
-                        {
-                            return null;
-                        }
-                    }
-                    else if (!this.mergeItemStack(stack, 9, 10, false))
-                    {
-                        if (!itemHasEssence)
-                        {
-                            return null;
-                        }
-
-                        if (!this.mergeItemStack(stack, 8, 9, false))
-                        {
-                            return null;
-                        }
-                    }
-                }
+                startIndex = 8;
+                endIndex = 10;
+            }
+            else if (itemIsContainer)
+            {
+                startIndex = 9;
+                endIndex = 10;
             }
             else if (itemHasEssence)
             {
-                if (!this.mergeItemStack(stack, 8, 9, false))
-                {
-                    return null;
-                }
+                startIndex = 8;
+                endIndex = 9;
             }
-            else if (slotIndex >= 10 && slotIndex < 37)
+            else if (slotIndex < 37)
             {
-                if (!this.mergeItemStack(stack, 37, 46, false))
-                {
-                    return null;
-                }
+                startIndex = 37;
+                endIndex = 46;
             }
             else if (slotIndex >= 37 && slotIndex < 39)
             {
-                if (!this.mergeItemStack(stack, 10, 37, false))
-                {
-                    return null;
-                }
+                startIndex = 10;
+                endIndex = 37;
+            }
+            else
+            {
+                return null;
             }
         }
         else
         {
-            if (!this.mergeItemStack(stack, 10, 46, false))
-            {
-                return null;
-            }
+            startIndex = 10;
+            endIndex = 46;
+        }
+
+        if (!this.mergeItemStack(stack, startIndex, endIndex, false))
+        {
+            return null;
         }
 
         if (stack.stackSize == 0)

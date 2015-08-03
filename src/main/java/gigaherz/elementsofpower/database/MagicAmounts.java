@@ -3,13 +3,13 @@ package gigaherz.elementsofpower.database;
 public class MagicAmounts
 {
     public static final int FIRE = 0;
-    public static final int WATER = 0;
-    public static final int AIR = 0;
-    public static final int EARTH = 0;
-    public static final int LIGHT = 0;
-    public static final int DARKNESS = 0;
-    public static final int LIFE = 0;
-    public static final int DEATH = 0;
+    public static final int WATER = 1;
+    public static final int AIR = 2;
+    public static final int EARTH = 3;
+    public static final int LIGHT = 4;
+    public static final int DARKNESS = 5;
+    public static final int LIFE = 6;
+    public static final int DEATH = 7;
 
     public final int[] amounts = new int[8];
 

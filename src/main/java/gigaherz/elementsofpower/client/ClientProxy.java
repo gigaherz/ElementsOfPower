@@ -44,14 +44,19 @@ public class ClientProxy implements ISideProxy
     // ----------------------------------------------------------- Item/Block Custom OBJ Models
     public void registerCustomBakedModels()
     {
-        registerCustomItemModel("wand_lapis");
-        registerCustomItemModel("wand_emerald");
-        registerCustomItemModel("wand_diamond");
-        registerCustomItemModel("wand_creative");
-        registerCustomItemModel("staff_lapis");
-        registerCustomItemModel("staff_emerald");
-        registerCustomItemModel("staff_diamond");
-        registerCustomItemModel("staff_creative");
+        registerExplicitItemModelhandling("wand_lapis");
+        registerExplicitItemModelhandling("wand_emerald");
+        registerExplicitItemModelhandling("wand_diamond");
+        registerExplicitItemModelhandling("wand_creative");
+        registerExplicitItemModelhandling("staff_lapis");
+        registerExplicitItemModelhandling("staff_emerald");
+        registerExplicitItemModelhandling("staff_diamond");
+        registerExplicitItemModelhandling("staff_creative");
+    }
+
+    public void registerExplicitItemModelhandling(final String itemName)
+    {
+        ObjModelRegistrationHelper.instance.setExplicitOverride(new ResourceLocation(ElementsOfPower.MODID + ":models/item/" + itemName));
     }
 
     public void registerCustomItemModel(final String itemName)

@@ -9,7 +9,7 @@ import java.util.List;
 public class ShapedRecipeInfo implements IRecipeInfoProvider
 {
 
-    ArrayList<ItemStack> recipeItems = new ArrayList<ItemStack>();
+    ArrayList<ItemStack> recipeItems = new ArrayList<>();
     ShapedRecipes recipe;
 
     public ShapedRecipeInfo(ShapedRecipes recipe)

@@ -92,7 +92,7 @@ public class EntityFlameball extends EntityBallBase
 
             if (flag)
             {
-                this.func_174815_a(this.getThrower(), e);
+                this.applyEnchantments(this.getThrower(), e);
 
                 if (!e.isImmuneToFire())
                 {

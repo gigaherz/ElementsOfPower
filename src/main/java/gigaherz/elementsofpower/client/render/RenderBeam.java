@@ -14,8 +14,7 @@ import net.minecraft.util.Vec3;
 public class RenderBeam extends Render
 {
     private final RenderItem renderItem;
-    ItemStack stack;
-    private static final String __OBFID = "CL_00001008";
+    private final ItemStack stack;
 
     public RenderBeam(RenderManager renderManager, ItemStack stack, RenderItem renderItem)
     {

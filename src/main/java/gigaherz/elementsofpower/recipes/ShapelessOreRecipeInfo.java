@@ -10,7 +10,7 @@ import java.util.List;
 public class ShapelessOreRecipeInfo implements IRecipeInfoProvider
 {
 
-    ArrayList<ItemStack> recipeItems = new ArrayList<ItemStack>();
+    ArrayList<ItemStack> recipeItems = new ArrayList<>();
     ShapelessOreRecipe recipe;
 
     public ShapelessOreRecipeInfo(ShapelessOreRecipe recipe)

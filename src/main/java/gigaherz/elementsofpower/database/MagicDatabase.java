@@ -2,6 +2,7 @@ package gigaherz.elementsofpower.database;
 
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.Utils;
+import gigaherz.elementsofpower.items.ItemMagicContainer;
 import gigaherz.elementsofpower.items.ItemWand;
 import gigaherz.elementsofpower.recipes.RecipeTools;
 import net.minecraft.block.Block;
@@ -19,144 +20,11 @@ import java.util.*;
 
 public class MagicDatabase
 {
-    private static class ItemEssenceEntry
-    {
-        ItemStack item;
-        MagicAmounts amounts;
+    static final List<ItemEssenceEntry> stockEntries = new ArrayList<>();
 
-        public ItemEssenceEntry(ItemStack item, MagicAmounts amounts)
-        {
-            this.item = item;
-            this.amounts = amounts;
-        }
-
-        public ItemEssenceEntry all(int amount)
-        {
-            amounts.all(amount);
-            return this;
-        }
-
-        public ItemEssenceEntry fire(int amount)
-        {
-            amounts.fire(amount);
-            return this;
-        }
-
-        public ItemEssenceEntry water(int amount)
-        {
-            amounts.water(amount);
-            return this;
-        }
-
-        public ItemEssenceEntry air(int amount)
-        {
-            amounts.air(amount);
-            return this;
-        }
-
-        public ItemEssenceEntry earth(int amount)
-        {
-            amounts.earth(amount);
-            return this;
-        }
-
-        public ItemEssenceEntry light(int amount)
-        {
-            amounts.light(amount);
-            return this;
-        }
-
-        public ItemEssenceEntry darkness(int amount)
-        {
-            amounts.darkness(amount);
-            return this;
-        }
-
-        public ItemEssenceEntry life(int amount)
-        {
-            amounts.life(amount);
-            return this;
-        }
-
-        public ItemEssenceEntry death(int amount)
-        {
-            amounts.death(amount);
-            return this;
-        }
-    }
-
-    private static class ItemEssenceCollection extends ArrayList<ItemEssenceEntry>
-    {
-
-        public ItemEssenceCollection all(int amount)
-        {
-            for (ItemEssenceEntry e : this)
-                e.all(amount);
-            return this;
-        }
-
-        public ItemEssenceCollection fire(int amount)
-        {
-            for (ItemEssenceEntry e : this)
-                e.fire(amount);
-            return this;
-        }
-
-        public ItemEssenceCollection water(int amount)
-        {
-            for (ItemEssenceEntry e : this)
-                e.water(amount);
-            return this;
-        }
-
-        public ItemEssenceCollection air(int amount)
-        {
-            for (ItemEssenceEntry e : this)
-                e.air(amount);
-            return this;
-        }
-
-        public ItemEssenceCollection earth(int amount)
-        {
-            for (ItemEssenceEntry e : this)
-                e.earth(amount);
-            return this;
-        }
-
-        public ItemEssenceCollection light(int amount)
-        {
-            for (ItemEssenceEntry e : this)
-                e.light(amount);
-            return this;
-        }
-
-        public ItemEssenceCollection darkness(int amount)
-        {
-            for (ItemEssenceEntry e : this)
-                e.darkness(amount);
-            return this;
-        }
-
-        public ItemEssenceCollection life(int amount)
-        {
-            for (ItemEssenceEntry e : this)
-                e.life(amount);
-            return this;
-        }
-
-        public ItemEssenceCollection death(int amount)
-        {
-            for (ItemEssenceEntry e : this)
-                e.death(amount);
-            return this;
-        }
-    }
-
-    static final List<ItemEssenceEntry> stockEntries = new ArrayList<ItemEssenceEntry>();
-
-    public static Map<ItemStack, ItemStack> containerConversion = new HashMap<ItemStack, ItemStack>();
-    public static Map<ItemStack, MagicAmounts> containerCapacity = new HashMap<ItemStack, MagicAmounts>();
-    public static Map<ItemStack, MagicAmounts> itemEssences = new HashMap<ItemStack, MagicAmounts>();
+    public static Map<ItemStack, ItemStack> containerConversion = new HashMap<>();
+    public static Map<ItemStack, MagicAmounts> containerCapacity = new HashMap<>();
+    public static Map<ItemStack, MagicAmounts> itemEssences = new HashMap<>();
 
     public final static String[] magicNames = {
             "element.fire",
@@ -173,7 +41,6 @@ public class MagicDatabase
     {
         return StatCollector.translateToLocal(magicNames[i]);
     }
-
 
     public static void initialize()
     {
@@ -440,6 +307,11 @@ public class MagicDatabase
 
     public static boolean itemHasEssence(ItemStack stack)
     {
+        if(stack.stackSize > 1)
+        {
+            stack = stack.copy();
+            stack.stackSize = 1;
+        }
         return Utils.stackIsInMap(itemEssences, stack);
     }
 
@@ -462,10 +334,12 @@ public class MagicDatabase
 
         if (output.getItem() instanceof ItemWand)
         {
-            int meta = output.getMetadata();
-            if (meta == 3 || meta == 7)
+            if (ItemWand.isCreative(output))
                 return new MagicAmounts().all(999);
         }
+
+        if(!(output.getItem() instanceof ItemMagicContainer))
+            return null;
 
         NBTTagCompound nbt = output.getTagCompound();
 
@@ -564,6 +438,139 @@ public class MagicDatabase
             }
 
             return output;
+        }
+    }
+
+    private static class ItemEssenceEntry
+    {
+        ItemStack item;
+        MagicAmounts amounts;
+
+        public ItemEssenceEntry(ItemStack item, MagicAmounts amounts)
+        {
+            this.item = item;
+            this.amounts = amounts;
+        }
+
+        public ItemEssenceEntry all(int amount)
+        {
+            amounts.all(amount);
+            return this;
+        }
+
+        public ItemEssenceEntry fire(int amount)
+        {
+            amounts.fire(amount);
+            return this;
+        }
+
+        public ItemEssenceEntry water(int amount)
+        {
+            amounts.water(amount);
+            return this;
+        }
+
+        public ItemEssenceEntry air(int amount)
+        {
+            amounts.air(amount);
+            return this;
+        }
+
+        public ItemEssenceEntry earth(int amount)
+        {
+            amounts.earth(amount);
+            return this;
+        }
+
+        public ItemEssenceEntry light(int amount)
+        {
+            amounts.light(amount);
+            return this;
+        }
+
+        public ItemEssenceEntry darkness(int amount)
+        {
+            amounts.darkness(amount);
+            return this;
+        }
+
+        public ItemEssenceEntry life(int amount)
+        {
+            amounts.life(amount);
+            return this;
+        }
+
+        public ItemEssenceEntry death(int amount)
+        {
+            amounts.death(amount);
+            return this;
+        }
+    }
+
+    private static class ItemEssenceCollection extends ArrayList<ItemEssenceEntry>
+    {
+
+        public ItemEssenceCollection all(int amount)
+        {
+            for (ItemEssenceEntry e : this)
+                e.all(amount);
+            return this;
+        }
+
+        public ItemEssenceCollection fire(int amount)
+        {
+            for (ItemEssenceEntry e : this)
+                e.fire(amount);
+            return this;
+        }
+
+        public ItemEssenceCollection water(int amount)
+        {
+            for (ItemEssenceEntry e : this)
+                e.water(amount);
+            return this;
+        }
+
+        public ItemEssenceCollection air(int amount)
+        {
+            for (ItemEssenceEntry e : this)
+                e.air(amount);
+            return this;
+        }
+
+        public ItemEssenceCollection earth(int amount)
+        {
+            for (ItemEssenceEntry e : this)
+                e.earth(amount);
+            return this;
+        }
+
+        public ItemEssenceCollection light(int amount)
+        {
+            for (ItemEssenceEntry e : this)
+                e.light(amount);
+            return this;
+        }
+
+        public ItemEssenceCollection darkness(int amount)
+        {
+            for (ItemEssenceEntry e : this)
+                e.darkness(amount);
+            return this;
+        }
+
+        public ItemEssenceCollection life(int amount)
+        {
+            for (ItemEssenceEntry e : this)
+                e.life(amount);
+            return this;
+        }
+
+        public ItemEssenceCollection death(int amount)
+        {
+            for (ItemEssenceEntry e : this)
+                e.death(amount);
+            return this;
         }
     }
 }

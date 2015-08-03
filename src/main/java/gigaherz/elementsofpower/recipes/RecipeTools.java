@@ -17,8 +17,8 @@ import java.util.Map;
 public class RecipeTools
 {
 
-    public static Map<ItemStack, List<ItemStack>> itemSources = new HashMap<ItemStack, List<ItemStack>>();
-    public static List<ItemStack> itemRoots = new ArrayList<ItemStack>();
+    public static Map<ItemStack, List<ItemStack>> itemSources = new HashMap<>();
+    public static List<ItemStack> itemRoots = new ArrayList<>();
 
     static int gcd(int a, int b)
     {

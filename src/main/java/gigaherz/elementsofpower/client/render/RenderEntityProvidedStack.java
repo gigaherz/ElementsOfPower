@@ -14,7 +14,6 @@ import net.minecraft.util.ResourceLocation;
 public class RenderEntityProvidedStack extends Render
 {
     private final RenderItem renderItem;
-    private static final String __OBFID = "CL_00001008";
 
     public RenderEntityProvidedStack(RenderManager renderManager, RenderItem renderItem)
     {

@@ -186,7 +186,7 @@ public abstract class EntityBeamBase extends Entity
         if (living == null)
             setCasterName(null);
         else
-            setCasterName(living.getName());
+            setCasterName(living.getCommandSenderName());
 
         caster = living;
     }
