@@ -20,28 +20,25 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.*;
-import net.minecraftforge.common.MinecraftForge;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.vecmath.Matrix4f;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.*;
 
 @SuppressWarnings("deprecation")
-public class ObjModelRegistrationHelper implements ICustomModelLoader
+public class ObjModelLoader implements ICustomModelLoader
 {
-    public static final ObjModelRegistrationHelper instance = new ObjModelRegistrationHelper();
+    public static final ObjModelLoader instance = new ObjModelLoader();
 
     private final Set<String> enabledDomains = new HashSet<>();
     private final Set<ResourceLocation> explicitOverrides = new HashSet<>();
 
-    final List<ObjModel.Loader> modelsToInject = new ArrayList<>();
+    final Map<ResourceLocation, IModel> modelCache = new HashMap<>();
 
-    public ObjModelRegistrationHelper()
+    public ObjModelLoader()
     {
-        MinecraftForge.EVENT_BUS.register(this);
         ModelLoaderRegistry.registerLoader(this);
     }
 
@@ -76,6 +73,9 @@ public class ObjModelRegistrationHelper implements ICustomModelLoader
     {
         ResourceLocation json, obj;
 
+        if(modelCache.containsKey(modelLocation))
+            return modelCache.get(modelLocation);
+
         if(explicitOverrides.contains(modelLocation))
         {
             json = new ResourceLocation(modelLocation.getResourceDomain(), modelLocation.getResourcePath().substring("models/".length()));
@@ -93,17 +93,19 @@ public class ObjModelRegistrationHelper implements ICustomModelLoader
                     path.substring(start, length));
         }
 
-        ObjModel.Loader ldr = new ObjModel.Loader(null, json, obj);
-        return ldr.getModel();
+        ObjModel model = ObjModel.loadFromResource(obj);
+
+        model.modelBlock = ObjModelLoader.ModelUtilities.loadJsonModel(json);
+
+        modelCache.put(modelLocation, model);
+
+        return model;
     }
 
     @Override
     public void onResourceManagerReload(IResourceManager resourceManager)
     {
-        for(ObjModel.Loader ldr : modelsToInject)
-        {
-            ldr.reset();
-        }
+        modelCache.clear();
 
         ModelUtilities.clearCache();
     }
@@ -123,16 +125,18 @@ public class ObjModelRegistrationHelper implements ICustomModelLoader
         final ImmutableList<BakedQuad> generalQuads;
         final TextureAtlasSprite iconSprite;
         final VertexFormat format;
+        final boolean isGui3d;
 
         public BakedModel(ImmutableList<BakedQuad> generalQuads,
                           ModelBlock modelBlock,
                           TextureAtlasSprite particle,
                           VertexFormat format)
         {
-            this.transformations  = ObjModelRegistrationHelper.ModelUtilities.loadModelTransforms(modelBlock);
+            this.transformations  = ObjModelLoader.ModelUtilities.loadModelTransforms(modelBlock);
             this.iconSprite = particle;
             this.generalQuads = generalQuads;
             this.format = format;
+            this.isGui3d = !ObjModelLoader.ModelUtilities.getRootLocation(modelBlock).getResourcePath().equals("builtin/generated");
         }
 
         public List<BakedQuad> getFaceQuads(EnumFacing face)
@@ -157,7 +161,7 @@ public class ObjModelRegistrationHelper implements ICustomModelLoader
 
         public boolean isGui3d()
         {
-            return false;
+            return isGui3d;
         }
 
         public boolean isBuiltInRenderer()
@@ -228,11 +232,11 @@ public class ObjModelRegistrationHelper implements ICustomModelLoader
 
         static ModelBlock loadJsonModel(final ResourceLocation loc)
         {
-            ModelBlock modelblock = modelBlocks.get(loc);
+            ModelBlock modelBlock = modelBlocks.get(loc);
 
-            if (modelblock != null)
+            if (modelBlock != null)
             {
-                return modelblock;
+                return modelBlock;
             }
 
             if (loc.getResourcePath().startsWith("builtin/"))
@@ -243,19 +247,19 @@ public class ObjModelRegistrationHelper implements ICustomModelLoader
                 IResource iresource = Minecraft.getMinecraft().getResourceManager().getResource(getJsonLocation(loc));
                 if (iresource != null)
                 {
-                    Reader reader = new InputStreamReader(iresource.getInputStream(), Charsets.UTF_8);
+                    java.io.Reader reader = new InputStreamReader(iresource.getInputStream(), Charsets.UTF_8);
 
-                    modelblock = ModelBlock.deserialize(reader);
-                    modelblock.name = loc.toString();
-                    modelBlocks.put(loc, modelblock);
+                    modelBlock = ModelBlock.deserialize(reader);
+                    modelBlock.name = loc.toString();
+                    modelBlocks.put(loc, modelBlock);
 
-                    ResourceLocation parentLoc = modelblock.getParentLocation();
+                    ResourceLocation parentLoc = modelBlock.getParentLocation();
                     if (parentLoc != null && !parentLoc.getResourcePath().startsWith("builtin/"))
                     {
                         ModelBlock parentModel = loadJsonModel(parentLoc);
                         if (parentModel != null)
                         {
-                            modelblock.getParentFromMap(modelBlocks);
+                            modelBlock.getParentFromMap(modelBlocks);
                         }
                     }
                 }
@@ -265,17 +269,19 @@ public class ObjModelRegistrationHelper implements ICustomModelLoader
                 throw new ReportedException(new CrashReport("Exception loading JSON Model: " + loc.toString(), e));
             }
 
-            return modelblock;
-        }
-
-        static ResourceLocation getObjLocation(ResourceLocation loc)
-        {
-            return new ResourceLocation(loc.getResourceDomain(), "models/" + loc.getResourcePath() + ".obj");
+            return modelBlock;
         }
 
         static ResourceLocation getJsonLocation(ResourceLocation loc)
         {
             return new ResourceLocation(loc.getResourceDomain(), "models/" + loc.getResourcePath() + ".json");
+        }
+
+        public static ResourceLocation getRootLocation(ModelBlock modelBlock)
+        {
+            while(modelBlock.parent != null)
+                modelBlock = modelBlock.parent;
+            return modelBlock.getParentLocation();
         }
     }
 }

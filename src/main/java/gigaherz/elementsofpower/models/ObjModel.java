@@ -24,8 +24,6 @@ import java.util.*;
 
 public class ObjModel implements IModel
 {
-    final ResourceLocation modelLocation;
-
     public List<Vector3f> positions;
     public List<Vector3f> normals;
     public List<Vector2f> texCoords;
@@ -35,13 +33,7 @@ public class ObjModel implements IModel
     final Map<String, ResourceLocation> textures = new HashMap<>();
     private final Set<ResourceLocation> usedTextures = new HashSet<>();
 
-    private ModelBlock modelBlock;
-
-    private ObjModel(ModelBlock modelBlock, ResourceLocation modelLocation)
-    {
-        this.modelBlock = modelBlock;
-        this.modelLocation = modelLocation;
-    }
+    ModelBlock modelBlock;
 
     @Override
     public IFlexibleBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
@@ -96,7 +88,7 @@ public class ObjModel implements IModel
             }
         }
 
-        return new ObjModelRegistrationHelper.BakedModel(builder.build(), modelBlock, particle, getVertexFormat());
+        return new ObjModelLoader.BakedModel(builder.build(), modelBlock, particle, getVertexFormat());
     }
 
     private void processVertex(int[] faceData, int i, int[] vertex, int color, TextureAtlasSprite sprite)
@@ -205,6 +197,11 @@ public class ObjModel implements IModel
         return null;
     }
 
+    public static ObjModel loadFromResource(ResourceLocation modelLocation) throws IOException
+    {
+        return new Reader(modelLocation).loadFromResource();
+    }
+
     public static class MeshPart
     {
         public String materialName;
@@ -222,7 +219,7 @@ public class ObjModel implements IModel
         }
     }
 
-    public static class Loader
+    public static class Reader
     {
         static final Set<String> unknownCommands = new HashSet<String>();
 
@@ -231,14 +228,10 @@ public class ObjModel implements IModel
 
         private ObjModel.MeshPart currentPart;
 
-        private final ResourceLocation baseLocation;
-        private final ResourceLocation jsonLocation;
         private final ResourceLocation modelLocation;
 
-        public Loader (ResourceLocation baseLocation, ResourceLocation jsonLocation, ResourceLocation modelLocation)
+        private Reader(ResourceLocation modelLocation)
         {
-            this.baseLocation = baseLocation;
-            this.jsonLocation = jsonLocation;
             this.modelLocation = modelLocation;
         }
 
@@ -246,14 +239,6 @@ public class ObjModel implements IModel
         {
             currentModel = null;
             currentMatLib = null;
-        }
-
-        public ObjModel getModel() throws IOException
-        {
-            if (currentModel != null)
-                return currentModel;
-
-            return loadFromResource();
         }
 
         private void addTexCoord(String line)
@@ -364,9 +349,7 @@ public class ObjModel implements IModel
 
         private ObjModel loadFromResource() throws IOException
         {
-            ModelBlock modelblock = ObjModelRegistrationHelper.ModelUtilities.loadJsonModel(jsonLocation);
-
-            currentModel = new ObjModel(modelblock, baseLocation);
+            currentModel = new ObjModel();
             currentMatLib = new MaterialLibrary();
 
             IResource res = Minecraft.getMinecraft().getResourceManager().getResource(modelLocation);

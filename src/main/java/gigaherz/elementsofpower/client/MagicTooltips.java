@@ -12,7 +12,7 @@ public class MagicTooltips
     @SubscribeEvent
     public void onTooltip(ItemTooltipEvent event)
     {
-        if (!MagicDatabase.itemContainsMagic(event.itemStack))
+        if (MagicDatabase.itemContainsMagic(event.itemStack))
             return;
 
         MagicAmounts amounts = MagicDatabase.getEssences(event.itemStack);
@@ -34,7 +34,12 @@ public class MagicTooltips
             }
 
             String magicName = MagicDatabase.getMagicName(i);
-            String str = String.format("%s  %s x%d", EnumChatFormatting.GRAY, magicName, amounts.amounts[i]);
+
+            String str;
+            if(event.itemStack.stackSize > 1)
+                str = String.format("%s  %s x%d (stack %d)", EnumChatFormatting.GRAY, magicName, amounts.amounts[i], amounts.amounts[i] * event.itemStack.stackSize);
+            else
+                str = String.format("%s  %s x%d", EnumChatFormatting.GRAY, magicName, amounts.amounts[i]);
             event.toolTip.add(str);
         }
     }

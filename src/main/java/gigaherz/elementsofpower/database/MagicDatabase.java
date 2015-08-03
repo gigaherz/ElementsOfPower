@@ -11,6 +11,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ReportedException;
@@ -20,7 +21,7 @@ import java.util.*;
 
 public class MagicDatabase
 {
-    static final List<ItemEssenceEntry> stockEntries = new ArrayList<>();
+    static final List<ItemEssenceConversion> stockEntries = new ArrayList<>();
 
     public static Map<ItemStack, ItemStack> containerConversion = new HashMap<>();
     public static Map<ItemStack, MagicAmounts> containerCapacity = new HashMap<>();
@@ -80,33 +81,22 @@ public class MagicDatabase
             if (!allFound)
                 continue;
 
+            ItemStack key = it.getKey().copy();
+
+            for(int i=0;i<am.amounts.length;i++)
+            {
+                am.amounts[i] /= key.stackSize;
+            }
+
+            key.stackSize = 1;
+
             itemEssences.put(it.getKey(), am);
         }
     }
 
     static void registerEssenceSources()
     {
-        //essences(Blocks.dirt).earth(3).life(1);
-        //essences(Blocks.grass).earth(2).life(2);
-        //essences(Blocks.cobblestone).earth(5);
-        //essences(Blocks.stone).earth(10);
-        //essences(Blocks.sand).earth(2).air(2);
-        //essences(Blocks.gravel).earth(3).air(1);
-        //essences(Blocks.clay).earth(3).water(1);
-        //essences(Blocks.hardened_clay).earth(5).fire(1);
-        //essences(Blocks.stained_hardened_clay).earth(5).fire(1);
-        //essences(Blocks.log).life(16);
-        //essences(Blocks.log2).life(16);
-        //essences(Blocks.planks).life(4);
-        //essences(Items.stick).life(1);
-        //essences(Items.coal).fire(8);
         //essences(Blocks.coal_ore).fire(8).earth(2);
-        //essences(Blocks.coal_block).fire(72).earth(8);
-
-        //essences(Blocks.coal_block,0);
-        //essences(Blocks.iron_block,0);
-        //essences(Blocks.lapis_block,0);
-        //essences(Blocks.brick_block,0);
         //essences(Blocks.quartz_ore,0);
 
         essences(Blocks.cactus).life(3);
@@ -114,12 +104,23 @@ public class MagicDatabase
 
         //essences(Items.dye);
 
-        essences(Blocks.clay).earth(3).water(1);
+        essences(Items.clay_ball).earth(1).water(1);
+        essences(Blocks.clay).earth(4).water(4);
+        essences(Items.brick).earth(1).fire(1);
+        essences(Blocks.brick_block).earth(4).fire(4);
+
         essences(Blocks.dirt).earth(3).life(1);
-        essences(Blocks.gravel, 0).earth(3).air(1);
-        essences(Blocks.sand, 0).earth(2).air(2);
-        essences(Blocks.sand, 1).earth(2).air(2);
-        essences(Blocks.obsidian, 0).earth(10).darkness(10);
+        essences(Blocks.gravel).earth(3).air(1);
+        essences(Blocks.sand).earth(2).air(2);
+        essences(Blocks.obsidian).earth(10).darkness(10);
+        essences(Blocks.netherrack).earth(1).fire(1);
+
+        essences(Blocks.cobblestone).earth(5);
+        essences(Blocks.stone).earth(10);
+        essences(Blocks.hardened_clay).earth(5).fire(1);
+        essences(Blocks.stained_hardened_clay).earth(5).fire(1);
+
+        essences(Blocks.grass).earth(2).life(2);
 
         collection(
                 essences(Blocks.yellow_flower),
@@ -130,13 +131,18 @@ public class MagicDatabase
                 essences(Blocks.red_flower, 5),
                 essences(Blocks.red_flower, 7)).life(1);
 
-        collection(
-                essences(Blocks.log, 0),
-                essences(Blocks.log, 1),
-                essences(Blocks.log, 2),
-                essences(Blocks.log, 3),
-                essences(Blocks.log, 4),
-                essences(Blocks.log, 5)).life(4);
+        essences(Blocks.log).life(16);
+        essences(Blocks.log2).life(16);
+        essences(Blocks.planks).life(4);
+        essences(Items.stick).life(1);
+
+        essences(Items.coal).fire(8);
+        essences(Blocks.coal_block).fire(72).earth(8);
+
+        //essences(Blocks.iron_block);
+        //essences(Blocks.lapis_block);
+        //essences(Blocks.nether_brick);
+        //essences(Blocks.quartz_block);
 
         //essences(Blocks.stone_slab, 0);
         //essences(Blocks.stone_slab, 1);
@@ -145,17 +151,14 @@ public class MagicDatabase
         //essences(Blocks.stone_slab2, 0);
         //essences(Blocks.wooden_slab,0);
 
-        essences(Blocks.hay_block, 0).earth(1).life(9).air(1);
+        essences(Items.wheat).life(1);
+        essences(Blocks.hay_block).earth(1).life(9).air(1);
 
         essences(Blocks.red_mushroom, 0).earth(2).life(2);
         essences(Blocks.brown_mushroom, 0).earth(2).life(2);
         essences(Blocks.pumpkin, 0).earth(1).life(3);
         essences(Blocks.sponge, 1).water(4).life(2);
         essences(Blocks.vine, 0).life(2);
-
-        //essences(Blocks.netherrack, 0);
-        //essences(Blocks.nether_brick, 0);
-        //essences(Blocks.quartz_block,0);
 
         //essences(Blocks.piston,0);
         //essences(Blocks.snow,0);
@@ -177,7 +180,6 @@ public class MagicDatabase
         //essences(Items.bone,0);
         //essences(Items.bowl,0);
         //essences(Items.clay_ball,0);
-        //essences(Items.coal,0);
         //essences(Items.diamond,0);
         //essences(Items.emerald,0);
         //essences(Items.ender_pearl,0);
@@ -201,17 +203,15 @@ public class MagicDatabase
         //essences(Items.slime_ball,0);
         //essences(Items.snowball,0);
         //essences(Items.spider_eye,0);
-        //essences(Items.stick,0);
         //essences(Items.string,0);
         //essences(Items.gunpowder,0);
-        //essences(Items.wheat,0);
         //essences(Items.glowstone_dust,0);
 
-        for (ItemEssenceEntry source : stockEntries)
-            itemEssences.put(source.item, source.amounts);
+        for (ItemEssenceConversion source : stockEntries)
+            source.putAll(itemEssences);
     }
 
-    private static ItemEssenceCollection collection(ItemEssenceEntry... entries)
+    private static ItemEssenceCollection collection(ItemEssenceConversion... entries)
     {
         ItemEssenceCollection collection = new ItemEssenceCollection();
 
@@ -222,7 +222,7 @@ public class MagicDatabase
 
     private static ItemEssenceCollection essences(Item item)
     {
-        List<ItemStack> subItems = new ArrayList<ItemStack>();
+        List<ItemStack> subItems = new ArrayList<>();
 
         item.getSubItems(item, CreativeTabs.tabAllSearch, subItems);
 
@@ -237,11 +237,9 @@ public class MagicDatabase
         return collection;
     }
 
-    private static ItemEssenceEntry essences(Block block)
+    private static ItemEssenceCollection essences(Block block)
     {
-        ItemEssenceEntry ee = new ItemEssenceEntry(new ItemStack(block), new MagicAmounts());
-        stockEntries.add(ee);
-        return ee;
+        return essences(Item.getItemFromBlock(block));
     }
 
     private static ItemEssenceEntry essences(Item item, int meta)
@@ -441,7 +439,22 @@ public class MagicDatabase
         }
     }
 
-    private static class ItemEssenceEntry
+    public interface ItemEssenceConversion
+    {
+        ItemEssenceConversion all(int amount);
+        ItemEssenceConversion fire(int amount);
+        ItemEssenceConversion water(int amount);
+        ItemEssenceConversion air(int amount);
+        ItemEssenceConversion earth(int amount);
+        ItemEssenceConversion light(int amount);
+        ItemEssenceConversion darkness(int amount);
+        ItemEssenceConversion life(int amount);
+        ItemEssenceConversion death(int amount);
+
+        void putAll(Map<ItemStack, MagicAmounts> essences);
+    }
+
+    private static class ItemEssenceEntry implements ItemEssenceConversion
     {
         ItemStack item;
         MagicAmounts amounts;
@@ -452,54 +465,69 @@ public class MagicDatabase
             this.amounts = amounts;
         }
 
+        @Override
+        public void putAll(Map<ItemStack, MagicAmounts> essences)
+        {
+            essences.put(item, amounts);
+        }
+
+        @Override
         public ItemEssenceEntry all(int amount)
         {
             amounts.all(amount);
             return this;
         }
 
+        @Override
         public ItemEssenceEntry fire(int amount)
         {
             amounts.fire(amount);
             return this;
         }
 
+        @Override
         public ItemEssenceEntry water(int amount)
         {
             amounts.water(amount);
             return this;
         }
 
+        @Override
         public ItemEssenceEntry air(int amount)
         {
             amounts.air(amount);
             return this;
         }
 
+        @Override
         public ItemEssenceEntry earth(int amount)
         {
             amounts.earth(amount);
             return this;
         }
 
+        @Override
         public ItemEssenceEntry light(int amount)
         {
             amounts.light(amount);
             return this;
         }
 
+        @Override
         public ItemEssenceEntry darkness(int amount)
         {
             amounts.darkness(amount);
             return this;
         }
 
+        @Override
         public ItemEssenceEntry life(int amount)
         {
             amounts.life(amount);
             return this;
         }
 
+        @Override
         public ItemEssenceEntry death(int amount)
         {
             amounts.death(amount);
@@ -507,68 +535,83 @@ public class MagicDatabase
         }
     }
 
-    private static class ItemEssenceCollection extends ArrayList<ItemEssenceEntry>
+    private static class ItemEssenceCollection extends ArrayList<ItemEssenceConversion> implements ItemEssenceConversion
     {
+        @Override
+        public void putAll(Map<ItemStack, MagicAmounts> essences)
+        {
+            for(ItemEssenceConversion c : this)
+                c.putAll(essences);
+        }
 
+        @Override
         public ItemEssenceCollection all(int amount)
         {
-            for (ItemEssenceEntry e : this)
+            for (ItemEssenceConversion e : this)
                 e.all(amount);
             return this;
         }
 
+        @Override
         public ItemEssenceCollection fire(int amount)
         {
-            for (ItemEssenceEntry e : this)
+            for (ItemEssenceConversion e : this)
                 e.fire(amount);
             return this;
         }
 
+        @Override
         public ItemEssenceCollection water(int amount)
         {
-            for (ItemEssenceEntry e : this)
+            for (ItemEssenceConversion e : this)
                 e.water(amount);
             return this;
         }
 
+        @Override
         public ItemEssenceCollection air(int amount)
         {
-            for (ItemEssenceEntry e : this)
+            for (ItemEssenceConversion e : this)
                 e.air(amount);
             return this;
         }
 
+        @Override
         public ItemEssenceCollection earth(int amount)
         {
-            for (ItemEssenceEntry e : this)
+            for (ItemEssenceConversion e : this)
                 e.earth(amount);
             return this;
         }
 
+        @Override
         public ItemEssenceCollection light(int amount)
         {
-            for (ItemEssenceEntry e : this)
+            for (ItemEssenceConversion e : this)
                 e.light(amount);
             return this;
         }
 
+        @Override
         public ItemEssenceCollection darkness(int amount)
         {
-            for (ItemEssenceEntry e : this)
+            for (ItemEssenceConversion e : this)
                 e.darkness(amount);
             return this;
         }
 
+        @Override
         public ItemEssenceCollection life(int amount)
         {
-            for (ItemEssenceEntry e : this)
+            for (ItemEssenceConversion e : this)
                 e.life(amount);
             return this;
         }
 
+        @Override
         public ItemEssenceCollection death(int amount)
         {
-            for (ItemEssenceEntry e : this)
+            for (ItemEssenceConversion e : this)
                 e.death(amount);
             return this;
         }

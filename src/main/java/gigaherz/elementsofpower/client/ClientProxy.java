@@ -6,7 +6,7 @@ import gigaherz.elementsofpower.client.render.RenderBeam;
 import gigaherz.elementsofpower.client.render.RenderEntityProvidedStack;
 import gigaherz.elementsofpower.entities.EntityBallBase;
 import gigaherz.elementsofpower.entities.EntityBeamBase;
-import gigaherz.elementsofpower.models.ObjModelRegistrationHelper;
+import gigaherz.elementsofpower.models.ObjModelLoader;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.Render;
@@ -39,27 +39,25 @@ public class ClientProxy implements ISideProxy
     public void registerClientEvents()
     {
         MinecraftForge.EVENT_BUS.register(new GuiOverlayMagicContainer());
+        MinecraftForge.EVENT_BUS.register(new MagicTooltips());
     }
 
     // ----------------------------------------------------------- Item/Block Custom OBJ Models
     public void registerCustomBakedModels()
     {
-        ObjModelRegistrationHelper.instance.setExplicitOverride(new ResourceLocation(ElementsOfPower.MODID, "models/item/wand_lapis"));
-        ObjModelRegistrationHelper.instance.setExplicitOverride(new ResourceLocation(ElementsOfPower.MODID, "models/item/wand_emerald"));
-        ObjModelRegistrationHelper.instance.setExplicitOverride(new ResourceLocation(ElementsOfPower.MODID, "models/item/wand_diamond"));
-        ObjModelRegistrationHelper.instance.setExplicitOverride(new ResourceLocation(ElementsOfPower.MODID, "models/item/wand_creative"));
-        ObjModelRegistrationHelper.instance.setExplicitOverride(new ResourceLocation(ElementsOfPower.MODID, "models/item/staff_lapis"));
-        ObjModelRegistrationHelper.instance.setExplicitOverride(new ResourceLocation(ElementsOfPower.MODID, "models/item/staff_emerald"));
-        ObjModelRegistrationHelper.instance.setExplicitOverride(new ResourceLocation(ElementsOfPower.MODID, "models/item/staff_diamond"));
-        ObjModelRegistrationHelper.instance.setExplicitOverride(new ResourceLocation(ElementsOfPower.MODID, "models/item/staff_creative"));
+        ObjModelLoader.instance.setExplicitOverride(new ResourceLocation(ElementsOfPower.MODID, "models/item/wand_lapis"));
+        ObjModelLoader.instance.setExplicitOverride(new ResourceLocation(ElementsOfPower.MODID, "models/item/wand_emerald"));
+        ObjModelLoader.instance.setExplicitOverride(new ResourceLocation(ElementsOfPower.MODID, "models/item/wand_diamond"));
+        ObjModelLoader.instance.setExplicitOverride(new ResourceLocation(ElementsOfPower.MODID, "models/item/wand_creative"));
+        ObjModelLoader.instance.setExplicitOverride(new ResourceLocation(ElementsOfPower.MODID, "models/item/staff_lapis"));
+        ObjModelLoader.instance.setExplicitOverride(new ResourceLocation(ElementsOfPower.MODID, "models/item/staff_emerald"));
+        ObjModelLoader.instance.setExplicitOverride(new ResourceLocation(ElementsOfPower.MODID, "models/item/staff_diamond"));
+        ObjModelLoader.instance.setExplicitOverride(new ResourceLocation(ElementsOfPower.MODID, "models/item/staff_creative"));
     }
 
     // ----------------------------------------------------------- Item/Block Models
     public void registerModels()
     {
-
-        MinecraftForge.EVENT_BUS.register(new MagicTooltips());
-
         registerBlockModelAsItem(ElementsOfPower.essentializer, "essentializer");
         registerBlockModelAsItem(ElementsOfPower.dust, "dust");
 
