@@ -11,6 +11,8 @@ import net.minecraft.client.renderer.block.model.ModelBlock;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.IResource;
+import net.minecraft.crash.CrashReport;
+import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.*;
 
@@ -21,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.security.InvalidParameterException;
 import java.util.*;
+import java.util.function.Consumer;
 
 public class ObjModel implements IModel
 {
@@ -230,9 +233,20 @@ public class ObjModel implements IModel
 
         private final ResourceLocation modelLocation;
 
+        private final Map<String, Consumer<String>> handlers = new HashMap<>();
+
         private Reader(ResourceLocation modelLocation)
         {
             this.modelLocation = modelLocation;
+
+            handlers.put("o", this::newObject);
+            handlers.put("g", this::newGroup);
+            handlers.put("mtllib", this::loadMaterialLibrary);
+            handlers.put("usemtl", this::useMaterial);
+            handlers.put("v", this::addPosition);
+            handlers.put("vt", this::addTexCoord);
+            handlers.put("vn", this::addNormal);
+            handlers.put("f", this::addFace);
         }
 
         public void reset()
@@ -336,15 +350,22 @@ public class ObjModel implements IModel
         {
         }
 
-        private void loadMaterialLibrary(ResourceLocation locOfParent, String path) throws IOException
+        private void loadMaterialLibrary(String path)
         {
-            String prefix = locOfParent.getResourcePath();
-            int pp = prefix.lastIndexOf('/');
-            prefix = (pp >= 0) ? prefix.substring(0, pp + 1) : "";
+            try
+            {
+                String prefix = modelLocation.getResourcePath();
+                int pp = prefix.lastIndexOf('/');
+                prefix = (pp >= 0) ? prefix.substring(0, pp + 1) : "";
 
-            ResourceLocation loc = new ResourceLocation(locOfParent.getResourceDomain(), prefix + path);
+                ResourceLocation loc = new ResourceLocation(modelLocation.getResourceDomain(), prefix + path);
 
-            currentMatLib.loadFromStream(loc);
+                currentMatLib.loadFromStream(loc);
+            }
+            catch(IOException e)
+            {
+                throw new ReportedException(new CrashReport("Failed to load material library", e));
+            }
         }
 
         private ObjModel loadFromResource() throws IOException
@@ -355,6 +376,7 @@ public class ObjModel implements IModel
             IResource res = Minecraft.getMinecraft().getResourceManager().getResource(modelLocation);
             InputStreamReader lineStream = new InputStreamReader(res.getInputStream(), Charsets.UTF_8);
             BufferedReader lineReader = new BufferedReader(lineStream);
+
 
             for (; ; )
             {
@@ -368,40 +390,14 @@ public class ObjModel implements IModel
                 }
 
                 String[] fields = currentLine.split(" ", 2);
-                String keyword = fields[0];
+                String keyword = fields[0].toLowerCase();
                 String data = fields[1];
 
-                if (keyword.equalsIgnoreCase("o"))
+                Consumer<String> action = handlers.get(keyword);
+
+                if(action != null)
                 {
-                    newObject(data);
-                }
-                else if (keyword.equalsIgnoreCase("g"))
-                {
-                    newGroup(data);
-                }
-                else if (keyword.equalsIgnoreCase("mtllib"))
-                {
-                    loadMaterialLibrary(modelLocation, data);
-                }
-                else if (keyword.equalsIgnoreCase("usemtl"))
-                {
-                    useMaterial(data);
-                }
-                else if (keyword.equalsIgnoreCase("v"))
-                {
-                    addPosition(data);
-                }
-                else if (keyword.equalsIgnoreCase("vn"))
-                {
-                    addNormal(data);
-                }
-                else if (keyword.equalsIgnoreCase("vt"))
-                {
-                    addTexCoord(data);
-                }
-                else if (keyword.equalsIgnoreCase("f"))
-                {
-                    addFace(data);
+                    action.accept(data);
                 }
                 else
                 {
@@ -448,13 +444,36 @@ public class ObjModel implements IModel
 
         public final Dictionary<String, Material> materials = new Hashtable<>();
 
+        private final Map<String, Consumer<String>> handlers = new HashMap<>();
+
+        private Material currentMaterial = null;
+
+        private MaterialLibrary()
+        {
+            handlers.put("Ka", (data) -> currentMaterial.AmbientColor = parseVector3f(data));
+            handlers.put("Kd", (data) -> currentMaterial.DiffuseColor = parseVector3f(data));
+            handlers.put("Ks", (data) -> currentMaterial.SpecularColor = parseVector3f(data));
+            handlers.put("Ns", (data) -> currentMaterial.SpecularCoefficient = Float.parseFloat(data));
+            handlers.put("Tr", (data) -> currentMaterial.Transparency = Float.parseFloat(data));
+            handlers.put("d", (data) -> currentMaterial.Transparency = Float.parseFloat(data));
+            handlers.put("illum", (data) -> currentMaterial.IlluminationModel = Integer.parseInt(data));
+            handlers.put("map_Ka", (data) -> currentMaterial.AmbientTextureMap = data);
+            handlers.put("map_Kd", (data) -> currentMaterial.DiffuseTextureMap = data);
+            handlers.put("map_Ks", (data) -> currentMaterial.SpecularTextureMap = data);
+            handlers.put("map_Ns", (data) -> currentMaterial.SpecularHighlightTextureMap = data);
+            handlers.put("map_d", (data) -> currentMaterial.AlphaTextureMap = data);
+            handlers.put("map_bump", (data) -> currentMaterial.BumpMap = data);
+            handlers.put("bump", (data) -> currentMaterial.BumpMap = data);
+            handlers.put("disp", (data) -> currentMaterial.DisplacementMap = data);
+            handlers.put("decal", (data) -> currentMaterial.StencilDecalMap = data);
+        }
+
         public void loadFromStream(ResourceLocation loc) throws IOException
         {
             IResource res = Minecraft.getMinecraft().getResourceManager().getResource(loc);
             InputStreamReader lineStream = new InputStreamReader(res.getInputStream(), Charsets.UTF_8);
             BufferedReader lineReader = new BufferedReader(lineStream);
 
-            Material currentMaterial = null;
             for (; ; )
             {
                 String currentLine = lineReader.readLine();
@@ -468,6 +487,8 @@ public class ObjModel implements IModel
                 String keyword = fields[0];
                 String data = fields[1];
 
+                Consumer<String> action = handlers.get(keyword);
+
                 if (keyword.equalsIgnoreCase("newmtl"))
                 {
                     currentMaterial = new Material();
@@ -477,63 +498,9 @@ public class ObjModel implements IModel
                 {
                     throw new IOException("Found material attributes before 'newmtl'");
                 }
-                else if (keyword.equalsIgnoreCase("Ka"))
+                else if(action != null)
                 {
-                    currentMaterial.AmbientColor = parseVector3f(data);
-                }
-                else if (keyword.equalsIgnoreCase("Kd"))
-                {
-                    currentMaterial.DiffuseColor = parseVector3f(data);
-                }
-                else if (keyword.equalsIgnoreCase("Ks"))
-                {
-                    currentMaterial.SpecularColor = parseVector3f(data);
-                }
-                else if (keyword.equalsIgnoreCase("Ns"))
-                {
-                    currentMaterial.SpecularCoefficient = Float.parseFloat(data);
-                }
-                else if (keyword.equalsIgnoreCase("Tr") ||
-                        keyword.equalsIgnoreCase("d"))
-                {
-                    currentMaterial.Transparency = Float.parseFloat(data);
-                }
-                else if (keyword.equalsIgnoreCase("illum"))
-                {
-                    currentMaterial.IlluminationModel = Integer.parseInt(data);
-                }
-                else if (keyword.equalsIgnoreCase("map_Ka"))
-                {
-                    currentMaterial.AmbientTextureMap = data;
-                }
-                else if (keyword.equalsIgnoreCase("map_Kd"))
-                {
-                    currentMaterial.DiffuseTextureMap = data;
-                }
-                else if (keyword.equalsIgnoreCase("map_Ks"))
-                {
-                    currentMaterial.SpecularTextureMap = data;
-                }
-                else if (keyword.equalsIgnoreCase("map_Ns"))
-                {
-                    currentMaterial.SpecularHighlightTextureMap = data;
-                }
-                else if (keyword.equalsIgnoreCase("map_d"))
-                {
-                    currentMaterial.AlphaTextureMap = data;
-                }
-                else if (keyword.equalsIgnoreCase("map_bump") ||
-                        keyword.equalsIgnoreCase("bump"))
-                {
-                    currentMaterial.BumpMap = data;
-                }
-                else if (keyword.equalsIgnoreCase("disp"))
-                {
-                    currentMaterial.DisplacementMap = data;
-                }
-                else if (keyword.equalsIgnoreCase("decal"))
-                {
-                    currentMaterial.StencilDecalMap = data;
+                    action.accept(data);
                 }
                 else
                 {
