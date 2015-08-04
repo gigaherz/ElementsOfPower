@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.security.InvalidParameterException;
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class ObjModel implements IModel
@@ -444,28 +445,26 @@ public class ObjModel implements IModel
 
         public final Dictionary<String, Material> materials = new Hashtable<>();
 
-        private final Map<String, Consumer<String>> handlers = new HashMap<>();
-
-        private Material currentMaterial = null;
+        private final Map<String, BiConsumer<Material, String>> handlers = new HashMap<>();
 
         private MaterialLibrary()
         {
-            handlers.put("Ka", (data) -> currentMaterial.AmbientColor = parseVector3f(data));
-            handlers.put("Kd", (data) -> currentMaterial.DiffuseColor = parseVector3f(data));
-            handlers.put("Ks", (data) -> currentMaterial.SpecularColor = parseVector3f(data));
-            handlers.put("Ns", (data) -> currentMaterial.SpecularCoefficient = Float.parseFloat(data));
-            handlers.put("Tr", (data) -> currentMaterial.Transparency = Float.parseFloat(data));
-            handlers.put("d", (data) -> currentMaterial.Transparency = Float.parseFloat(data));
-            handlers.put("illum", (data) -> currentMaterial.IlluminationModel = Integer.parseInt(data));
-            handlers.put("map_Ka", (data) -> currentMaterial.AmbientTextureMap = data);
-            handlers.put("map_Kd", (data) -> currentMaterial.DiffuseTextureMap = data);
-            handlers.put("map_Ks", (data) -> currentMaterial.SpecularTextureMap = data);
-            handlers.put("map_Ns", (data) -> currentMaterial.SpecularHighlightTextureMap = data);
-            handlers.put("map_d", (data) -> currentMaterial.AlphaTextureMap = data);
-            handlers.put("map_bump", (data) -> currentMaterial.BumpMap = data);
-            handlers.put("bump", (data) -> currentMaterial.BumpMap = data);
-            handlers.put("disp", (data) -> currentMaterial.DisplacementMap = data);
-            handlers.put("decal", (data) -> currentMaterial.StencilDecalMap = data);
+            handlers.put("Ka", (mat, data) -> mat.AmbientColor = parseVector3f(data));
+            handlers.put("Kd", (mat, data) -> mat.DiffuseColor = parseVector3f(data));
+            handlers.put("Ks", (mat, data) -> mat.SpecularColor = parseVector3f(data));
+            handlers.put("Ns", (mat, data) -> mat.SpecularCoefficient = Float.parseFloat(data));
+            handlers.put("Tr", (mat, data) -> mat.Transparency = Float.parseFloat(data));
+            handlers.put("d", (mat, data) -> mat.Transparency = Float.parseFloat(data));
+            handlers.put("illum", (mat, data) -> mat.IlluminationModel = Integer.parseInt(data));
+            handlers.put("map_Ka", (mat, data) -> mat.AmbientTextureMap = data);
+            handlers.put("map_Kd", (mat, data) -> mat.DiffuseTextureMap = data);
+            handlers.put("map_Ks", (mat, data) -> mat.SpecularTextureMap = data);
+            handlers.put("map_Ns", (mat, data) -> mat.SpecularHighlightTextureMap = data);
+            handlers.put("map_d", (mat, data) -> mat.AlphaTextureMap = data);
+            handlers.put("map_bump", (mat, data) -> mat.BumpMap = data);
+            handlers.put("bump", (mat, data) -> mat.BumpMap = data);
+            handlers.put("disp", (mat, data) -> mat.DisplacementMap = data);
+            handlers.put("decal", (mat, data) -> mat.StencilDecalMap = data);
         }
 
         public void loadFromStream(ResourceLocation loc) throws IOException
@@ -473,6 +472,8 @@ public class ObjModel implements IModel
             IResource res = Minecraft.getMinecraft().getResourceManager().getResource(loc);
             InputStreamReader lineStream = new InputStreamReader(res.getInputStream(), Charsets.UTF_8);
             BufferedReader lineReader = new BufferedReader(lineStream);
+
+            Material currentMaterial = null;
 
             for (; ; )
             {
@@ -487,7 +488,7 @@ public class ObjModel implements IModel
                 String keyword = fields[0];
                 String data = fields[1];
 
-                Consumer<String> action = handlers.get(keyword);
+                BiConsumer<Material, String> action = handlers.get(keyword);
 
                 if (keyword.equalsIgnoreCase("newmtl"))
                 {
@@ -500,7 +501,7 @@ public class ObjModel implements IModel
                 }
                 else if(action != null)
                 {
-                    action.accept(data);
+                    action.accept(currentMaterial, data);
                 }
                 else
                 {
