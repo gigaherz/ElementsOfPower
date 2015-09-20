@@ -1,37 +1,37 @@
-essentializer=Essentializer
+elementsofpower.essentializer=Essentializer
 
-tile.essentializer.name=Essentializer
-tile.dust.name=Dust Block (disperses quickly)
+tile.elementsofpower.essentializer.name=Essentializer
+tile.elementsofpower.dust.name=Dust Block (disperses quickly)
 
-item.magicContainer.lapisContainer.name=Magic-imbued Lapis Lazuli
-item.magicContainer.emeraldContainer.name=Magic-imbued Emerald
-item.magicContainer.diamondContainer.name=Magic-imbued Diamond
+item.elementsofpower.magicContainer.lapisContainer.name=Magic-imbued Lapis Lazuli
+item.elementsofpower.magicContainer.emeraldContainer.name=Magic-imbued Emerald
+item.elementsofpower.magicContainer.diamondContainer.name=Magic-imbued Diamond
 
-item.magicWand.lapisWand.name=Lapis Wand
-item.magicWand.emeraldWand.name=Emerald Wand
-item.magicWand.diamondWand.name=Diamond Wand
-item.magicWand.creativeWand.name=Creative Wand
-item.magicWand.lapisStaff.name=Lapis Staff
-item.magicWand.emeraldStaff.name=Emerald Staff
-item.magicWand.diamondStaff.name=Diamond Staff
-item.magicWand.creativeStaff.name=Creative Staff
+item.elementsofpower.magicWand.lapisWand.name=Lapis Wand
+item.elementsofpower.magicWand.emeraldWand.name=Emerald Wand
+item.elementsofpower.magicWand.diamondWand.name=Diamond Wand
+item.elementsofpower.magicWand.creativeWand.name=Creative Wand
+item.elementsofpower.magicWand.lapisStaff.name=Lapis Staff
+item.elementsofpower.magicWand.emeraldStaff.name=Emerald Staff
+item.elementsofpower.magicWand.diamondStaff.name=Diamond Staff
+item.elementsofpower.magicWand.creativeStaff.name=Creative Staff
 
-item.magicOrb.water.name=Fire
-item.magicOrb.water.name=Water
-item.magicOrb.air.name=Air
-item.magicOrb.earth.name=Earth
-item.magicOrb.light.name=Light
-item.magicOrb.darkness.name=Darkness
-item.magicOrb.life.name=Life
-item.magicOrb.death.name=Death
+item.elementsofpower.magicOrb.water.name=Fire
+item.elementsofpower.magicOrb.water.name=Water
+item.elementsofpower.magicOrb.air.name=Air
+item.elementsofpower.magicOrb.earth.name=Earth
+item.elementsofpower.magicOrb.light.name=Light
+item.elementsofpower.magicOrb.darkness.name=Darkness
+item.elementsofpower.magicOrb.life.name=Life
+item.elementsofpower.magicOrb.death.name=Death
 
 itemGroup.elementsofpower=Elements Of Power
 
-element.fire=Fire
-element.water=Water
-element.air=Air
-element.earth=Earth
-element.light=Light
-element.darkness=Darkness
-element.life=Life
-element.death=Death
+elementsofpower.element.fire=Fire
+elementsofpower.element.water=Water
+elementsofpower.element.air=Air
+elementsofpower.element.earth=Earth
+elementsofpower.element.light=Light
+elementsofpower.element.darkness=Darkness
+elementsofpower.element.life=Life
+elementsofpower.element.death=Death

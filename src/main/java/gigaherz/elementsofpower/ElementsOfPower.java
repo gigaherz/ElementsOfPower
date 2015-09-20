@@ -3,16 +3,17 @@ package gigaherz.elementsofpower;
 import gigaherz.elementsofpower.blocks.BlockCushion;
 import gigaherz.elementsofpower.blocks.BlockDust;
 import gigaherz.elementsofpower.blocks.BlockEssentializer;
-import gigaherz.elementsofpower.gui.GuiHandler;
-import gigaherz.elementsofpower.tileentities.TileEssentializer;
-import gigaherz.elementsofpower.materials.MaterialCushion;
 import gigaherz.elementsofpower.database.MagicDatabase;
 import gigaherz.elementsofpower.entities.*;
+import gigaherz.elementsofpower.gui.GuiHandler;
 import gigaherz.elementsofpower.items.ItemMagicContainer;
 import gigaherz.elementsofpower.items.ItemMagicOrb;
 import gigaherz.elementsofpower.items.ItemWand;
+import gigaherz.elementsofpower.materials.MaterialCushion;
 import gigaherz.elementsofpower.network.SpellSequenceUpdate;
+import gigaherz.elementsofpower.tileentities.TileEssentializer;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockSapling;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
@@ -20,6 +21,8 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -108,9 +111,12 @@ public class ElementsOfPower
         logger = event.getModLog();
 
         // Initialize Block Materials
+        logger.info("Initializing block materials...");
         materialCushion = new MaterialCushion(MapColor.blackColor);
 
         // Block and Item registration
+        logger.info("Initializing blocks and items...");
+
         magicOrb = new ItemMagicOrb();
         GameRegistry.registerItem(magicOrb, "magicOrb");
 
@@ -131,6 +137,8 @@ public class ElementsOfPower
         GameRegistry.registerBlock(cushion, "cushion");
 
         // Template stacks
+        logger.info("Generating template stacks...");
+
         wandLapis = magicWand.getStack(1, 0);
         wandEmerald = magicWand.getStack(1, 1);
         wandDiamond = magicWand.getStack(1, 2);
@@ -149,8 +157,12 @@ public class ElementsOfPower
         death = magicOrb.getStack(1, 7);
 
         // Network channels
+        logger.info("Registering network channel...");
+
         channel = NetworkRegistry.INSTANCE.newSimpleChannel(CHANNEL);
         channel.registerMessage(SpellSequenceUpdate.Handler.class, SpellSequenceUpdate.class, 0, Side.SERVER);
+
+        logger.info("Performing pre-initialization proxy tasks...");
 
         // Client-side code
         proxy.preInit();
@@ -159,7 +171,12 @@ public class ElementsOfPower
     @EventHandler
     public void init(FMLInitializationEvent event)
     {
+        logger.info("Performing initialization proxy tasks...");
+
         proxy.init();
+
+        // Entities
+        logger.info("Registering entities...");
 
         int entityId = 1;
         EntityRegistry.registerModEntity(EntityAirball.class, "Airball", entityId++, this, 80, 3, true);
@@ -170,8 +187,11 @@ public class ElementsOfPower
         EntityRegistry.registerModEntity(EntityWaterball.class, "Waterball", entityId++, this, 80, 3, true);
         EntityRegistry.registerModEntity(EntityFlameball.class, "Flameball", entityId++, this, 80, 3, true);
         EntityRegistry.registerModEntity(EntityFireBeam.class, "Flamebeam", entityId++, this, 80, 3, true);
+        logger.debug("Next entity id: " + entityId);
 
         // Recipes
+        logger.info("Registering recipes...");
+
         GameRegistry.addRecipe(new ItemStack(essentializer, 1),
                 "IQI",
                 "ONO",
@@ -218,6 +238,8 @@ public class ElementsOfPower
                 'S', Items.stick);
         // Gui
         NetworkRegistry.INSTANCE.registerGuiHandler(this, guiHandler);
+
+        GameRegistry.findBlock()
 
         MagicDatabase.initialize();
     }

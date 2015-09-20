@@ -36,7 +36,7 @@ public class MagicTooltips
             String magicName = MagicDatabase.getMagicName(i);
 
             String str;
-            if(event.itemStack.stackSize > 1)
+            if (event.itemStack.stackSize > 1)
                 str = String.format("%s  %s x%d (stack %d)", EnumChatFormatting.GRAY, magicName, amounts.amounts[i], amounts.amounts[i] * event.itemStack.stackSize);
             else
                 str = String.format("%s  %s x%d", EnumChatFormatting.GRAY, magicName, amounts.amounts[i]);

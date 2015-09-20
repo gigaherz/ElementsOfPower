@@ -14,13 +14,14 @@ import net.minecraft.client.resources.IResource;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.*;
+import net.minecraftforge.client.model.Attributes;
+import net.minecraftforge.client.model.IFlexibleBakedModel;
+import net.minecraftforge.client.model.IModel;
+import net.minecraftforge.client.model.IModelState;
 
 import javax.vecmath.Vector2f;
 import javax.vecmath.Vector3f;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.security.InvalidParameterException;
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -363,7 +364,7 @@ public class ObjModel implements IModel
 
                 currentMatLib.loadFromStream(loc);
             }
-            catch(IOException e)
+            catch (IOException e)
             {
                 throw new ReportedException(new CrashReport("Failed to load material library", e));
             }
@@ -396,7 +397,7 @@ public class ObjModel implements IModel
 
                 Consumer<String> action = handlers.get(keyword);
 
-                if(action != null)
+                if (action != null)
                 {
                     action.accept(data);
                 }
@@ -406,6 +407,51 @@ public class ObjModel implements IModel
                     {
                         ElementsOfPower.logger.warn("Unrecognized command: " + currentLine);
                         unknownCommands.add(keyword);
+                    }
+                }
+            }
+
+            if (modelLocation.getResourcePath().endsWith("thing.obj"))
+            {
+                String newline = System.getProperty("line.separator");
+                BufferedWriter writer = null;
+                try
+                {
+                    File logFile = new File("F:/thing.java");
+
+                    writer = new BufferedWriter(new FileWriter(logFile));
+
+                    for (MeshPart part : currentModel.parts)
+                    {
+                        String mat = part.materialName != null ? part.materialName : "";
+                        writer.write("icon = getIcon(\"" + mat + "\");" + newline);
+
+                        for (int[][] face : part.indices)
+                        {
+                            for (int[] vertex : face)
+                            {
+                                Vector3f pos = currentModel.positions.get(vertex[0]);
+                                Vector2f uv = currentModel.texCoords.get(vertex[0]);
+
+                                writer.write("tessellator.addVertexWithUV(" + pos.x + ", " + pos.y + ", " + pos.z + ", icon.getInterpolatedU(" + (16 - uv.x * 16) + "), icon.getInterpolatedV(" + (16 - uv.y * 16) + "));" + newline);
+                            }
+                        }
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+                finally
+                {
+                    try
+                    {
+                        // Close the writer regardless of what happens...
+                        writer.close();
+                    }
+                    catch (Exception e)
+                    {
                     }
                 }
             }
@@ -499,7 +545,7 @@ public class ObjModel implements IModel
                 {
                     throw new IOException("Found material attributes before 'newmtl'");
                 }
-                else if(action != null)
+                else if (action != null)
                 {
                     action.accept(currentMaterial, data);
                 }

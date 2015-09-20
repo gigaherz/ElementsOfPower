@@ -32,7 +32,7 @@ public class BlockCushion extends Block
     public BlockCushion()
     {
         super(ElementsOfPower.materialCushion);
-        setUnlocalizedName("dust");
+        setUnlocalizedName(ElementsOfPower.MODID + ".cushion");
         setCreativeTab(CreativeTabs.tabMisc);
         setHardness(0.1F);
         setBlockUnbreakable();

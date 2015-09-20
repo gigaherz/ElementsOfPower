@@ -1,10 +1,10 @@
 package gigaherz.elementsofpower.containers;
 
-import gigaherz.elementsofpower.tileentities.TileEssentializer;
 import gigaherz.elementsofpower.database.MagicDatabase;
 import gigaherz.elementsofpower.slots.SlotContainer;
 import gigaherz.elementsofpower.slots.SlotMagic;
 import gigaherz.elementsofpower.slots.SlotSource;
+import gigaherz.elementsofpower.tileentities.TileEssentializer;
 import net.minecraft.block.BlockWorkbench;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;

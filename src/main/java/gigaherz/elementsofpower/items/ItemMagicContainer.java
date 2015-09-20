@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower.items;
 
+import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.database.MagicDatabase;
 import net.minecraft.creativetab.CreativeTabs;
@@ -20,7 +21,7 @@ public class ItemMagicContainer extends Item
 
     public ItemMagicContainer()
     {
-        setUnlocalizedName("magicContainer");
+        setUnlocalizedName(ElementsOfPower.MODID + ".magicContainer");
     }
 
     public ItemStack getStack(int count, int damageValue)

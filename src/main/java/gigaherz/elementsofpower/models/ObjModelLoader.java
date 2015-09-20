@@ -73,10 +73,10 @@ public class ObjModelLoader implements ICustomModelLoader
     {
         ResourceLocation json, obj;
 
-        if(modelCache.containsKey(modelLocation))
+        if (modelCache.containsKey(modelLocation))
             return modelCache.get(modelLocation);
 
-        if(explicitOverrides.contains(modelLocation))
+        if (explicitOverrides.contains(modelLocation))
         {
             json = new ResourceLocation(modelLocation.getResourceDomain(), modelLocation.getResourcePath().substring("models/".length()));
             obj = new ResourceLocation(modelLocation.toString() + ".obj");
@@ -132,7 +132,7 @@ public class ObjModelLoader implements ICustomModelLoader
                           TextureAtlasSprite particle,
                           VertexFormat format)
         {
-            this.transformations  = ObjModelLoader.ModelUtilities.loadModelTransforms(modelBlock);
+            this.transformations = ObjModelLoader.ModelUtilities.loadModelTransforms(modelBlock);
             this.iconSprite = particle;
             this.generalQuads = generalQuads;
             this.format = format;
@@ -279,7 +279,7 @@ public class ObjModelLoader implements ICustomModelLoader
 
         public static ResourceLocation getRootLocation(ModelBlock modelBlock)
         {
-            while(modelBlock.parent != null)
+            while (modelBlock.parent != null)
                 modelBlock = modelBlock.parent;
             return modelBlock.getParentLocation();
         }

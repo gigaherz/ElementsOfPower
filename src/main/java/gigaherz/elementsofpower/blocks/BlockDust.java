@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower.blocks;
 
+import gigaherz.elementsofpower.ElementsOfPower;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyInteger;
@@ -25,7 +26,7 @@ public class BlockDust extends Block
     public BlockDust()
     {
         super(Material.clay);
-        setUnlocalizedName("dust");
+        setUnlocalizedName(ElementsOfPower.MODID + ".dust");
         setCreativeTab(CreativeTabs.tabMisc);
         setHardness(0.1F);
         setBlockUnbreakable();

@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower.items;
 
+import gigaherz.elementsofpower.ElementsOfPower;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -20,7 +21,7 @@ public class ItemMagicOrb extends Item
     {
         setMaxStackSize(1000);
         setHasSubtypes(true);
-        setUnlocalizedName("magicOrb");
+        setUnlocalizedName(ElementsOfPower.MODID + ".magicOrb");
     }
 
     @Override

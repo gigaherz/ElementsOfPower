@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower.tileentities;
 
+import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.MagicDatabase;
 import gigaherz.elementsofpower.database.MagicHolder;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,7 +22,7 @@ public class TileEssentializer
         extends TileEntity
         implements ISidedInventory, IUpdatePlayerListBox
 {
-    public final InventoryBasic inventory = new InventoryBasic("essentializer", false, 2);
+    public final InventoryBasic inventory = new InventoryBasic(ElementsOfPower.MODID + ".essentializer", false, 2);
     public final MagicHolder holder = new MagicHolder();
 
     @Override

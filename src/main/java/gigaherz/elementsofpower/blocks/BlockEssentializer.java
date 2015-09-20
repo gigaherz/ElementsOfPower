@@ -18,7 +18,7 @@ public class BlockEssentializer
     public BlockEssentializer()
     {
         super(Material.iron);
-        setUnlocalizedName("essentializer");
+        setUnlocalizedName(ElementsOfPower.MODID + ".essentializer");
         setCreativeTab(ElementsOfPower.tabMagic);
         setHardness(15.0F);
         setStepSound(Block.soundTypeMetal);

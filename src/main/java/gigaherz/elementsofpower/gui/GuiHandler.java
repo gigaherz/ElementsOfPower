@@ -2,7 +2,6 @@ package gigaherz.elementsofpower.gui;
 
 import gigaherz.elementsofpower.containers.ContainerEssentializer;
 import gigaherz.elementsofpower.tileentities.TileEssentializer;
-import gigaherz.elementsofpower.gui.GuiEssentializer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;

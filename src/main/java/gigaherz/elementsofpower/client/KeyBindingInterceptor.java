@@ -3,6 +3,7 @@ package gigaherz.elementsofpower.client;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.util.ReportedException;
+import net.minecraft.world.chunk.storage.RegionFile;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import java.lang.reflect.Field;
@@ -27,6 +28,10 @@ public class KeyBindingInterceptor extends KeyBinding
         {
             fieldKeybindArray = ReflectionHelper.findField(KeyBinding.class, "field_74516_a", "keybindArray");
             fieldKeybindArray.setAccessible(true);
+
+            String[] names = { "name1", "name2"};
+            RegionFile instance = null;
+            ReflectionHelper.findMethod(RegionFile.class, instance, names, int.class, int.class, int.class);
         }
     }
 

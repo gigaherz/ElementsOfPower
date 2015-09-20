@@ -2,11 +2,11 @@ package gigaherz.elementsofpower.client;
 
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.ISideProxy;
-import gigaherz.elementsofpower.renders.RenderBeam;
-import gigaherz.elementsofpower.renders.RenderEntityProvidedStack;
 import gigaherz.elementsofpower.entities.EntityBallBase;
 import gigaherz.elementsofpower.entities.EntityBeamBase;
 import gigaherz.elementsofpower.models.ObjModelLoader;
+import gigaherz.elementsofpower.renders.RenderBeam;
+import gigaherz.elementsofpower.renders.RenderEntityProvidedStack;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.Render;
@@ -45,6 +45,7 @@ public class ClientProxy implements ISideProxy
     // ----------------------------------------------------------- Item/Block Custom OBJ Models
     public void registerCustomBakedModels()
     {
+        ObjModelLoader.instance.setExplicitOverride(new ResourceLocation(ElementsOfPower.MODID, "models/item/thing"));
         ObjModelLoader.instance.setExplicitOverride(new ResourceLocation(ElementsOfPower.MODID, "models/item/wand_lapis"));
         ObjModelLoader.instance.setExplicitOverride(new ResourceLocation(ElementsOfPower.MODID, "models/item/wand_emerald"));
         ObjModelLoader.instance.setExplicitOverride(new ResourceLocation(ElementsOfPower.MODID, "models/item/wand_diamond"));
@@ -69,7 +70,7 @@ public class ClientProxy implements ISideProxy
         registerItemModel(ElementsOfPower.magicOrb, 5, "orb_dark");
         registerItemModel(ElementsOfPower.magicOrb, 6, "orb_life");
         registerItemModel(ElementsOfPower.magicOrb, 7, "orb_death");
-        registerItemModel(ElementsOfPower.magicWand, 0, "wand_lapis");
+        registerItemModel(ElementsOfPower.magicWand, 0, "thing");// "wand_lapis");
         registerItemModel(ElementsOfPower.magicWand, 1, "wand_emerald");
         registerItemModel(ElementsOfPower.magicWand, 2, "wand_diamond");
         registerItemModel(ElementsOfPower.magicWand, 3, "wand_creative");

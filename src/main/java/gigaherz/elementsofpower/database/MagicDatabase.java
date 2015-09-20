@@ -1,9 +1,9 @@
 package gigaherz.elementsofpower.database;
 
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.database.recipes.RecipeTools;
 import gigaherz.elementsofpower.items.ItemMagicContainer;
 import gigaherz.elementsofpower.items.ItemWand;
-import gigaherz.elementsofpower.database.recipes.RecipeTools;
 import net.minecraft.block.Block;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.creativetab.CreativeTabs;
@@ -26,14 +26,14 @@ public class MagicDatabase
     public static Map<ItemStack, MagicAmounts> itemEssences = new HashMap<>();
 
     public final static String[] magicNames = {
-            "element.fire",
-            "element.water",
-            "element.air",
-            "element.earth",
-            "element.light",
-            "element.darkness",
-            "element.life",
-            "element.death",
+            ElementsOfPower.MODID + ".element.fire",
+            ElementsOfPower.MODID + ".element.water",
+            ElementsOfPower.MODID + ".element.air",
+            ElementsOfPower.MODID + ".element.earth",
+            ElementsOfPower.MODID + ".element.light",
+            ElementsOfPower.MODID + ".element.darkness",
+            ElementsOfPower.MODID + ".element.life",
+            ElementsOfPower.MODID + ".element.death",
     };
 
     public static String getMagicName(int i)
@@ -81,7 +81,7 @@ public class MagicDatabase
 
             ItemStack key = it.getKey().copy();
 
-            for(int i=0;i<am.amounts.length;i++)
+            for (int i = 0; i < am.amounts.length; i++)
             {
                 am.amounts[i] /= key.stackSize;
             }
@@ -303,7 +303,7 @@ public class MagicDatabase
 
     public static boolean itemHasEssence(ItemStack stack)
     {
-        if(stack.stackSize > 1)
+        if (stack.stackSize > 1)
         {
             stack = stack.copy();
             stack.stackSize = 1;
@@ -334,7 +334,7 @@ public class MagicDatabase
                 return new MagicAmounts().all(999);
         }
 
-        if(!(output.getItem() instanceof ItemMagicContainer))
+        if (!(output.getItem() instanceof ItemMagicContainer))
             return null;
 
         NBTTagCompound nbt = output.getTagCompound();
@@ -440,13 +440,21 @@ public class MagicDatabase
     public interface ItemEssenceConversion
     {
         ItemEssenceConversion all(int amount);
+
         ItemEssenceConversion fire(int amount);
+
         ItemEssenceConversion water(int amount);
+
         ItemEssenceConversion air(int amount);
+
         ItemEssenceConversion earth(int amount);
+
         ItemEssenceConversion light(int amount);
+
         ItemEssenceConversion darkness(int amount);
+
         ItemEssenceConversion life(int amount);
+
         ItemEssenceConversion death(int amount);
 
         void putAll(Map<ItemStack, MagicAmounts> essences);
@@ -538,7 +546,7 @@ public class MagicDatabase
         @Override
         public void putAll(Map<ItemStack, MagicAmounts> essences)
         {
-            for(ItemEssenceConversion c : this)
+            for (ItemEssenceConversion c : this)
                 c.putAll(essences);
         }
 

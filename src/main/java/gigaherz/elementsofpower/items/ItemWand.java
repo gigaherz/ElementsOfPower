@@ -5,8 +5,8 @@ import gigaherz.elementsofpower.client.GuiOverlayMagicContainer;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.database.MagicDatabase;
 import gigaherz.elementsofpower.database.SpellManager;
-import gigaherz.elementsofpower.network.SpellSequenceUpdate;
 import gigaherz.elementsofpower.database.spells.ISpellEffect;
+import gigaherz.elementsofpower.network.SpellSequenceUpdate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -48,7 +48,7 @@ public class ItemWand extends ItemMagicContainer
     {
         setMaxStackSize(1);
         setHasSubtypes(true);
-        setUnlocalizedName("magicWand");
+        setUnlocalizedName(ElementsOfPower.MODID + ".magicWand");
         setCreativeTab(ElementsOfPower.tabMagic);
     }
 

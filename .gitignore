@@ -1,18 +1,17 @@
 /.gradle
 /.idea
 /eclipse
+/build
 
-/CREDITS-fml.txt
-/LICENSE-fml.txt
-/MinecraftForge-Credits.txt
-/MinecraftForge-License.txt
+/*-fml.txt
+/MinecraftForge-*.txt
 /README.txt
 /forge-*-changelog.txt
-/forge.iml
-/gradle/wrapper/gradle-wrapper.jar
-/gradle/wrapper/gradle-wrapper.properties
+/gradle
 /gradlew
 /gradlew.bat
+/Paulscode * License.txt
+/*.iml
 
 *.bak
 *.rhl

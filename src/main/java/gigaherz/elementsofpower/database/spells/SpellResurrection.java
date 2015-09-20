@@ -1,22 +1,33 @@
 package gigaherz.elementsofpower.database.spells;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.BreakingFour;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 public class SpellResurrection
         extends SpellBase
 {
+    public MovingObjectPosition rayTracePlayer(Entity p, double blockReachDistance)
+    {
+        Vec3 eyePos = new Vec3(p.posX, p.posY + p.getEyeHeight(), p.posZ);
+        Vec3 look = p.getLook(0);
+        Vec3 targetPos = eyePos.addVector(look.xCoord * blockReachDistance, look.yCoord * blockReachDistance, look.zCoord * blockReachDistance);
+        return p.worldObj.rayTraceBlocks(eyePos, targetPos, false, false, true);
+    }
+
     @Override
     public void castSpell(ItemStack stack, EntityPlayer player)
     {
         World world = player.worldObj;
-        MovingObjectPosition pos = player.rayTrace(10, 0);
+        MovingObjectPosition pos = rayTracePlayer(player, 10);
 
         if (pos == null)
             return;
@@ -24,7 +35,8 @@ public class SpellResurrection
         if (pos.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK)
             return;
 
-        // Resurrecting players culd be done -- sending dimension packet or maybe respawn
+        // Resurrecting players could be done by
+        // sending dimension packet or maybe respawn keeping items
 
         BlockPos bp = pos.getBlockPos();
 

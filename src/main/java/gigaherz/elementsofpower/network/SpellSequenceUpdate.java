@@ -84,19 +84,14 @@ public class SpellSequenceUpdate
             final SpellSequenceUpdate msg = message;
 
             WorldServer ws = (WorldServer) message.entity.worldObj;
-            ws.addScheduledTask(new Runnable()
-            {
-                @Override
-                public void run()
+            ws.addScheduledTask(() -> {
+
+                ItemStack stack = msg.entity.inventory.mainInventory[msg.slotNumber];
+
+                if (stack != null && stack.getItem() instanceof ItemWand)
                 {
-
-                    ItemStack stack = msg.entity.inventory.mainInventory[msg.slotNumber];
-
-                    if (stack != null && stack.getItem() instanceof ItemWand)
-                    {
-                        ItemWand wand = (ItemWand) stack.getItem();
-                        wand.processSequenceUpdate(msg, stack);
-                    }
+                    ItemWand wand = (ItemWand) stack.getItem();
+                    wand.processSequenceUpdate(msg, stack);
                 }
             });
 
