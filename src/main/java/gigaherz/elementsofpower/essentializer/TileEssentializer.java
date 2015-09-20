@@ -1,4 +1,4 @@
-package gigaherz.elementsofpower.tileentities;
+package gigaherz.elementsofpower.essentializer;
 
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.MagicDatabase;

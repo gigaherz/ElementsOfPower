@@ -1,8 +1,6 @@
-package gigaherz.elementsofpower.gui;
+package gigaherz.elementsofpower.essentializer;
 
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.containers.ContainerEssentializer;
-import gigaherz.elementsofpower.tileentities.TileEssentializer;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;

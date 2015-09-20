@@ -1,4 +1,4 @@
-package gigaherz.elementsofpower.database.spells;
+package gigaherz.elementsofpower.spells;
 
 import gigaherz.elementsofpower.database.MagicAmounts;
 import net.minecraft.entity.player.EntityPlayer;

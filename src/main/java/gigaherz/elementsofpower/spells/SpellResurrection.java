@@ -1,7 +1,6 @@
-package gigaherz.elementsofpower.database.spells;
+package gigaherz.elementsofpower.spells;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.block.model.BreakingFour;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.player.EntityPlayer;

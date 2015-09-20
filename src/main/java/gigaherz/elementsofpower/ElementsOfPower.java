@@ -2,7 +2,7 @@ package gigaherz.elementsofpower;
 
 import gigaherz.elementsofpower.blocks.BlockCushion;
 import gigaherz.elementsofpower.blocks.BlockDust;
-import gigaherz.elementsofpower.blocks.BlockEssentializer;
+import gigaherz.elementsofpower.essentializer.BlockEssentializer;
 import gigaherz.elementsofpower.database.MagicDatabase;
 import gigaherz.elementsofpower.entities.*;
 import gigaherz.elementsofpower.gui.GuiHandler;
@@ -11,9 +11,8 @@ import gigaherz.elementsofpower.items.ItemMagicOrb;
 import gigaherz.elementsofpower.items.ItemWand;
 import gigaherz.elementsofpower.materials.MaterialCushion;
 import gigaherz.elementsofpower.network.SpellSequenceUpdate;
-import gigaherz.elementsofpower.tileentities.TileEssentializer;
+import gigaherz.elementsofpower.essentializer.TileEssentializer;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockSapling;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
@@ -21,8 +20,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.WorldServer;
-import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -42,7 +39,7 @@ public class ElementsOfPower
 {
     public static final String MODID = "elementsofpower";
     public static final String MODNAME = "Elements Of Power";
-    public static final String VERSION = "1.0";
+    public static final String VERSION = "@VERSIOM@";
 
     public static final String CHANNEL = "ElementsOfPower";
 
@@ -238,8 +235,6 @@ public class ElementsOfPower
                 'S', Items.stick);
         // Gui
         NetworkRegistry.INSTANCE.registerGuiHandler(this, guiHandler);
-
-        GameRegistry.findBlock()
 
         MagicDatabase.initialize();
     }

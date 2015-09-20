@@ -1,4 +1,4 @@
-package gigaherz.elementsofpower.database.spells;
+package gigaherz.elementsofpower.spells;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityFireball;

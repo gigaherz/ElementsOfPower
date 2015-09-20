@@ -1,4 +1,4 @@
-package gigaherz.elementsofpower.database.spells;
+package gigaherz.elementsofpower.spells;
 
 import gigaherz.elementsofpower.entities.EntityBallBase;
 import net.minecraft.crash.CrashReport;
@@ -8,18 +8,20 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ReportedException;
 import net.minecraft.world.World;
 
-public class SpellGenericEntity
+public class SpellGenericEntity2
         extends SpellBase
 {
 
     int power;
+    boolean spawnSources;
 
     Class<? extends EntityBallBase> clazz;
 
-    public SpellGenericEntity(Class<? extends EntityBallBase> clazz, int power)
+    public SpellGenericEntity2(Class<? extends EntityBallBase> clazz, int power, boolean spawnSources)
     {
         this.clazz = clazz;
         this.power = power;
+        this.spawnSources = spawnSources;
     }
 
     @Override
@@ -29,7 +31,7 @@ public class SpellGenericEntity
 
         try
         {
-            world.spawnEntityInWorld(clazz.getConstructor(World.class, int.class, EntityLivingBase.class).newInstance(world, power, player));
+            world.spawnEntityInWorld(clazz.getConstructor(World.class, int.class, boolean.class, EntityLivingBase.class).newInstance(world, power, spawnSources, player));
         }
         catch (ReflectiveOperationException e)
         {
