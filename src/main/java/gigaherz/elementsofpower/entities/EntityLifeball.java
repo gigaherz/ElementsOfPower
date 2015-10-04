@@ -44,12 +44,12 @@ public class EntityLifeball extends EntityBallBase
     protected void processDirectHit(Entity e)
     {
         //int b0 = damageForce;
-//
+        //
         //if (e instanceof EntityBlaze)
         //{
         //    b0 = 3 + damageForce;
         //}
-//
+        //
         //e.attackEntityFrom(DamageSource.causeThrownDamage(this, this.getThrower()), (float) b0);
     }
 

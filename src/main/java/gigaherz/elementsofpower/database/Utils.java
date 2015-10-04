@@ -47,7 +47,6 @@ public class Utils
     public static <OType> boolean stackIsInMap(Map<ItemStack, OType> map, ItemStack stack)
     {
         return stack != null && getFromMap(map, stack) != null;
-
     }
 
     public static ItemStack findKeyForValue(Map<ItemStack, ItemStack> map, ItemStack stack)

@@ -2,16 +2,16 @@ package gigaherz.elementsofpower;
 
 import gigaherz.elementsofpower.blocks.BlockCushion;
 import gigaherz.elementsofpower.blocks.BlockDust;
-import gigaherz.elementsofpower.essentializer.BlockEssentializer;
 import gigaherz.elementsofpower.database.MagicDatabase;
 import gigaherz.elementsofpower.entities.*;
+import gigaherz.elementsofpower.essentializer.BlockEssentializer;
+import gigaherz.elementsofpower.essentializer.TileEssentializer;
 import gigaherz.elementsofpower.gui.GuiHandler;
 import gigaherz.elementsofpower.items.ItemMagicContainer;
 import gigaherz.elementsofpower.items.ItemMagicOrb;
 import gigaherz.elementsofpower.items.ItemWand;
 import gigaherz.elementsofpower.materials.MaterialCushion;
 import gigaherz.elementsofpower.network.SpellSequenceUpdate;
-import gigaherz.elementsofpower.essentializer.TileEssentializer;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;

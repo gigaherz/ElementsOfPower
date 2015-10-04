@@ -101,7 +101,6 @@ public class EntityAirball extends EntityBallBase
             this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, this.posX, this.posY, this.posZ,
                     getRandomForParticle(), getRandomForParticle(), getRandomForParticle());
         }
-
     }
 
     @Override

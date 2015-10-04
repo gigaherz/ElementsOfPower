@@ -321,8 +321,7 @@ public class RecipeTools
     {
         for (Map.Entry<ItemStack, List<ItemStack>> entry : itemSources.entrySet())
         {
-            if (Utils.compareItemStacksStrict(is, entry.getKey()))
-                return entry;
+            if (Utils.compareItemStacksStrict(is, entry.getKey())) return entry;
         }
 
         return null;

@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.database;
 
-import gigaherz.elementsofpower.spells.*;
 import gigaherz.elementsofpower.entities.*;
+import gigaherz.elementsofpower.spells.*;
 
 import java.util.Hashtable;
 import java.util.Map;

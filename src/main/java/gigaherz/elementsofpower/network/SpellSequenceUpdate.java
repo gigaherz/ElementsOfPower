@@ -46,7 +46,6 @@ public class SpellSequenceUpdate
     @Override
     public void fromBytes(ByteBuf buf)
     {
-
         dimension = buf.readInt();
         changeMode = ChangeMode.values[buf.readInt()];
         entity = (EntityPlayer) MinecraftServer.getServer().worldServerForDimension(dimension).getEntityByID(buf.readInt());

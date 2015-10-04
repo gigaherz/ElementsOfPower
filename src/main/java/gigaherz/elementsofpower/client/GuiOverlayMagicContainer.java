@@ -144,7 +144,6 @@ public class GuiOverlayMagicContainer extends Gui
             renderItem.renderItemAndEffectIntoGUI(new ItemStack(ElementsOfPower.magicOrb, amounts.amounts[i], i), xPos, yPos);
             xPos += 6;
         }
-
     }
 
     public void beginHoldingRightButton(int slotNumber, ItemStack itemUsing)
@@ -156,7 +155,9 @@ public class GuiOverlayMagicContainer extends Gui
         ElementsOfPower.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.BEGIN, player, slotInUse, null));
 
         for (int i = 0; i < 8; i++)
+        {
             interceptKeys[i].setInterceptionActive(true);
+        }
     }
 
     public void endHoldingRightButton(boolean cancelMagicSetting)
@@ -173,6 +174,8 @@ public class GuiOverlayMagicContainer extends Gui
         itemInUse = null;
         sequence = new StringBuilder();
         for (int i = 0; i < 8; i++)
+        {
             interceptKeys[i].setInterceptionActive(false);
+        }
     }
 }

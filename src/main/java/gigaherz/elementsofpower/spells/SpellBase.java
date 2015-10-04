@@ -142,5 +142,4 @@ public abstract class SpellBase
     {
         return amountMultiple(7, count);
     }
-
 }

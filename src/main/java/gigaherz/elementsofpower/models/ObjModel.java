@@ -185,7 +185,6 @@ public class ObjModel implements IModel
             usedTextures.add(textures.get("particle"));
 
         return usedTextures;
-
     }
 
     @Override
@@ -437,7 +436,6 @@ public class ObjModel implements IModel
                             }
                         }
                     }
-
                 }
                 catch (Exception e)
                 {
