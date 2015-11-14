@@ -52,17 +52,14 @@ public class BlockCushion extends Block
 
     public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn)
     {
-        double factor = 0.9; //slowDown[(Integer)state.getValue(DENSITY) - 1];
+        double factor = 0.9;
         entityIn.motionX *= factor;
         entityIn.motionY *= factor;
         entityIn.motionZ *= factor;
 
         double gravity = 0.6;
-
-        // dv = g * t ==> t = dv / g
         double t = entityIn.motionY / gravity;
 
-        // dx = v0*t + 1/2 * g * t^2
         entityIn.fallDistance = (float) (0.5 * gravity * t * t);
     }
 
