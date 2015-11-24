@@ -10,133 +10,51 @@ import java.util.List;
 
 public class KeyBindingInterceptor extends KeyBinding
 {
-    static List keybindArray = null;
+    private static class FieldHelper<C, T> {
+        Class<?> target;
+        String[] names;
+        Field field;
+
+        public FieldHelper(Class<? extends C> target, String... names) {
+            this.target = target;
+            this.names = names;
+        }
+
+        private void ensureHaveField()
+        {
+            if (field == null)
+            {
+                field = ReflectionHelper.findField(target, names);
+                field.setAccessible(true);
+            }
+        }
+
+        public T get(C binding) throws IllegalAccessException
+        {
+            ensureHaveField();
+            return (T) field.get(binding);
+        }
+
+        public void set(C binding, T value) throws IllegalAccessException
+        {
+            ensureHaveField();
+            field.set(binding, value);
+        }
+    }
+
+    static List<KeyBinding> keybindArray = null;
 
     protected KeyBinding interceptedKeyBinding;
     private boolean interceptionActive;
 
     private int interceptedPressTime;
 
-    static Field fieldKeybindArray;
-    static Field fieldPressed;
-    static Field fieldPressTime;
-
-    private static void ensureHaveKeybindArray() throws NoSuchFieldException
-    {
-        if (fieldKeybindArray == null)
-        {
-            fieldKeybindArray = ReflectionHelper.findField(KeyBinding.class, "field_74516_a", "keybindArray");
-            fieldKeybindArray.setAccessible(true);
-        }
-    }
-
-    private static void ensureHavePressed() throws NoSuchFieldException
-    {
-        if (fieldPressed == null)
-        {
-            fieldPressed = ReflectionHelper.findField(KeyBinding.class, "field_74513_e", "pressed");
-            fieldPressed.setAccessible(true);
-        }
-    }
-
-    private static void ensureHavePressTime() throws NoSuchFieldException
-    {
-        if (fieldPressTime == null)
-        {
-            fieldPressTime = ReflectionHelper.findField(KeyBinding.class, "field_151474_i", "pressTime");
-            fieldPressTime.setAccessible(true);
-        }
-    }
-
-    private static void setPressedAndTime(KeyBinding binding, boolean pressed, int time)
-    {
-        try
-        {
-            ensureHavePressed();
-            fieldPressed.set(binding, pressed);
-
-            ensureHavePressTime();
-            fieldPressTime.set(binding, time);
-
-        }
-        catch (NoSuchFieldException e)
-        {
-            throw new ReportedException(new CrashReport("Exception updating KeyBindingInterceptor", e));
-        }
-        catch (IllegalAccessException e)
-        {
-            throw new ReportedException(new CrashReport("Exception updating KeyBindingInterceptor", e));
-        }
-    }
-
-    private static void setPressTime(KeyBinding binding, int time)
-    {
-        try
-        {
-            ensureHavePressTime();
-            fieldPressTime.set(binding, time);
-
-        }
-        catch (NoSuchFieldException e)
-        {
-            throw new ReportedException(new CrashReport("Exception updating KeyBindingInterceptor", e));
-        }
-        catch (IllegalAccessException e)
-        {
-            throw new ReportedException(new CrashReport("Exception updating KeyBindingInterceptor", e));
-        }
-    }
-
-    private static boolean getPressed(KeyBinding binding)
-    {
-        try
-        {
-            ensureHavePressed();
-            return (Boolean) fieldPressed.get(binding);
-        }
-        catch (NoSuchFieldException e)
-        {
-            throw new ReportedException(new CrashReport("Exception updating KeyBindingInterceptor", e));
-        }
-        catch (IllegalAccessException e)
-        {
-            throw new ReportedException(new CrashReport("Exception updating KeyBindingInterceptor", e));
-        }
-    }
-
-    private static int getPressTime(KeyBinding binding)
-    {
-        try
-        {
-            ensureHavePressTime();
-            return (Integer) fieldPressTime.get(binding);
-
-        }
-        catch (NoSuchFieldException e)
-        {
-            throw new ReportedException(new CrashReport("Exception updating KeyBindingInterceptor", e));
-        }
-        catch (IllegalAccessException e)
-        {
-            throw new ReportedException(new CrashReport("Exception updating KeyBindingInterceptor", e));
-        }
-    }
+    static FieldHelper<KeyBinding, Boolean> fieldPressed = new FieldHelper<>(KeyBinding.class, "field_74513_e", "pressed");
+    static FieldHelper<KeyBinding, Integer> fieldPressTime = new FieldHelper<>(KeyBinding.class, "field_151474_i", "pressTime");
 
     private static void getKeybindArrayFromSuper()
     {
-        try
-        {
-            ensureHaveKeybindArray();
-            keybindArray = (List) fieldKeybindArray.get(null);
-        }
-        catch (NoSuchFieldException e)
-        {
-            throw new ReportedException(new CrashReport("Exception initializing KeyBindingInterceptor", e));
-        }
-        catch (IllegalAccessException e)
-        {
-            throw new ReportedException(new CrashReport("Exception initializing KeyBindingInterceptor", e));
-        }
+        keybindArray = ReflectionHelper.getPrivateValue(KeyBinding.class, null, "field_74516_a", "keybindArray");
     }
 
     /**
@@ -159,7 +77,14 @@ public class KeyBindingInterceptor extends KeyBinding
 
         this.interceptionActive = false;
 
-        setPressedAndTime(this, false, 0);
+        try {
+            fieldPressed.set(this, false);
+            fieldPressTime.set(this,  0);
+        }
+        catch (IllegalAccessException e)
+        {
+            throw new ReportedException(new CrashReport("Exception updating KeyBindingInterceptor", e));
+        }
 
         this.interceptedPressTime = 0;
 
@@ -195,24 +120,31 @@ public class KeyBindingInterceptor extends KeyBinding
      */
     public boolean retrieveClick()
     {
-        copyKeyCodeToOriginal();
-        if (interceptionActive)
+        try
         {
-            copyClickInfoFromOriginal();
-
-            if (this.interceptedPressTime == 0)
+            copyKeyCodeToOriginal();
+            if (interceptionActive)
             {
-                return false;
+                copyClickInfoFromOriginal();
+
+                if (this.interceptedPressTime == 0)
+                {
+                    return false;
+                }
+                else
+                {
+                    --this.interceptedPressTime;
+                    return true;
+                }
             }
             else
             {
-                --this.interceptedPressTime;
-                return true;
+                return false;
             }
         }
-        else
+        catch (IllegalAccessException e)
         {
-            return false;
+            throw new ReportedException(new CrashReport("Exception updating KeyBindingInterceptor", e));
         }
     }
 
@@ -226,26 +158,34 @@ public class KeyBindingInterceptor extends KeyBinding
     @Override
     public boolean isPressed()
     {
-        copyKeyCodeToOriginal();
-        copyClickInfoFromOriginal();
+        try
+        {
+            copyKeyCodeToOriginal();
+            copyClickInfoFromOriginal();
 
-        if (interceptionActive)
-        {
-            setPressedAndTime(this, false, 0);
-            return false;
-        }
-        else
-        {
-            int pressTime = getPressTime(this);
-            if (pressTime == 0)
+            if (interceptionActive)
             {
+                fieldPressed.set(this, false);
+                fieldPressTime.set(this, 0);
                 return false;
             }
             else
             {
-                setPressTime(this, --pressTime);
-                return true;
+                int pressTime = fieldPressTime.get(this);
+                if (pressTime == 0)
+                {
+                    return false;
+                }
+                else
+                {
+                    fieldPressTime.set(this, --pressTime);
+                    return true;
+                }
             }
+        }
+        catch (IllegalAccessException e)
+        {
+            throw new ReportedException(new CrashReport("Exception updating KeyBindingInterceptor", e));
         }
     }
 
@@ -254,13 +194,14 @@ public class KeyBindingInterceptor extends KeyBinding
         return interceptedKeyBinding;
     }
 
-    protected void copyClickInfoFromOriginal()
+    protected void copyClickInfoFromOriginal() throws IllegalAccessException
     {
-        int pressTimeIntercepted = getPressTime(interceptedKeyBinding);
-        int pressTime = getPressTime(this) + pressTimeIntercepted;
+        int pressTimeIntercepted = fieldPressTime.get(interceptedKeyBinding);
+        int pressTime = fieldPressTime.get(this) + pressTimeIntercepted;
         this.interceptedPressTime += pressTimeIntercepted;
-        setPressTime(interceptedKeyBinding, 0);
-        setPressedAndTime(this, getPressed(interceptedKeyBinding), pressTime);
+        fieldPressTime.set(interceptedKeyBinding, 0);
+        fieldPressed.set(this, fieldPressed.get(interceptedKeyBinding));
+        fieldPressTime.set(this, pressTime);
     }
 
     protected void copyKeyCodeToOriginal()

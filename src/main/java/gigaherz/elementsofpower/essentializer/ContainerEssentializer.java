@@ -4,7 +4,6 @@ import gigaherz.elementsofpower.database.MagicDatabase;
 import gigaherz.elementsofpower.slots.SlotContainer;
 import gigaherz.elementsofpower.slots.SlotMagic;
 import gigaherz.elementsofpower.slots.SlotSource;
-import net.minecraft.block.BlockWorkbench;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -29,8 +28,6 @@ public class ContainerEssentializer
                         71 + j * 18, 8 + i * 18));
             }
         }
-
-        BlockWorkbench wb;
 
         addSlotToContainer(new SlotSource(tileEntity, 0, 26, 35));
         addSlotToContainer(new SlotContainer(tileEntity, 1, 134, 35));
@@ -71,7 +68,7 @@ public class ContainerEssentializer
             return null;
         }
 
-        Slot slot = (Slot) this.inventorySlots.get(slotIndex);
+        Slot slot = this.inventorySlots.get(slotIndex);
         if (slot == null || !slot.getHasStack())
         {
             return null;

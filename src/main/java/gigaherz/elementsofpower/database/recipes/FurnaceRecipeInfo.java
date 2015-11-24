@@ -8,7 +8,6 @@ import java.util.List;
 
 public class FurnaceRecipeInfo implements IRecipeInfoProvider
 {
-
     ArrayList<ItemStack> recipeItems;
     ItemStack recipeOutput;
 
@@ -16,7 +15,7 @@ public class FurnaceRecipeInfo implements IRecipeInfoProvider
     {
         ItemStack recipeInput = input.copy();
 
-        ArrayList<ItemStack> inputs = new ArrayList<ItemStack>();
+        ArrayList<ItemStack> inputs = new ArrayList<>();
         inputs.add(recipeInput);
         inputs.add(new ItemStack(Items.coal));
 

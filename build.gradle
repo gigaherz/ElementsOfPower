@@ -1,6 +1,17 @@
-plugins {
-    id "net.minecraftforge.gradle.forge" version "2.0.2"
+// For those who want the bleeding edge
+buildscript {
+    repositories {
+        jcenter()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
+    }
 }
+apply plugin: 'net.minecraftforge.gradle.forge'
 
 version = "1.0"
 group = "gigaherz.elementsofpower" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -25,10 +36,10 @@ artifacts {
 tasks.build.dependsOn('srcJar', 'deobfJar')
 
 minecraft {
-    version = "1.8-11.14.4.1565"
+    version = "1.8.8-11.14.4.1579-1.8.8"
     runDir = "run"
 
-    mappings = "snapshot_20151114"
+    mappings = "snapshot_20151124"
 
     replace "@VERSION@", project.version
     replaceIn "ElementsOfPower.java"

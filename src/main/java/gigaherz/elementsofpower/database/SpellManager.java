@@ -9,9 +9,9 @@ import java.util.Map;
 public class SpellManager
 {
     public final static char[] elementChars = {'F', 'W', 'A', 'E', 'G', 'K', 'L', 'D'};
-    public final static Map<Character, Integer> elementIndices = new Hashtable<Character, Integer>();
+    public final static Map<Character, Integer> elementIndices = new Hashtable<>();
 
-    public static final Map<String, ISpellEffect> spellRegistration = new Hashtable<String, ISpellEffect>();
+    public static final Map<String, ISpellEffect> spellRegistration = new Hashtable<>();
 
     public static final int COST_ELEMENTARY = 8;
     public static final int COST_SIMPLE = 24;
@@ -89,10 +89,5 @@ public class SpellManager
     public static void registerSpell(SpellBase spell)
     {
         spellRegistration.put(spell.getSequence(), spell);
-    }
-
-    public static void registerSpell(String sequence, ISpellEffect spell)
-    {
-        spellRegistration.put(sequence, spell);
     }
 }

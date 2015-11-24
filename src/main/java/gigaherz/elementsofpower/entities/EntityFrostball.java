@@ -59,7 +59,7 @@ public class EntityFrostball extends EntityBallBase
         {
             if (block == Blocks.flowing_lava || block == Blocks.lava)
             {
-                if ((Integer) currentState.getValue(BlockDynamicLiquid.LEVEL) > 0)
+                if (currentState.getValue(BlockDynamicLiquid.LEVEL) > 0)
                 {
                     worldObj.setBlockState(blockPos, Blocks.cobblestone.getDefaultState());
                 }
@@ -71,7 +71,7 @@ public class EntityFrostball extends EntityBallBase
             }
             else if (block == Blocks.flowing_water || block == Blocks.water)
             {
-                if ((Integer) currentState.getValue(BlockDynamicLiquid.LEVEL) > 0)
+                if (currentState.getValue(BlockDynamicLiquid.LEVEL) > 0)
                 {
                     worldObj.setBlockState(blockPos, Blocks.ice.getDefaultState());
                 }
@@ -93,7 +93,7 @@ public class EntityFrostball extends EntityBallBase
 
                 if (block == Blocks.snow_layer)
                 {
-                    int l = (Integer) currentState.getValue(BlockSnow.LAYERS);
+                    int l = currentState.getValue(BlockSnow.LAYERS);
                     if (l == 8)
                         break;
                     int add = Math.min(8 - l, layers);

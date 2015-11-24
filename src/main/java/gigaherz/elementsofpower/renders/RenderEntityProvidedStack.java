@@ -11,7 +11,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
-public class RenderEntityProvidedStack extends Render
+import static net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
+
+public class RenderEntityProvidedStack extends Render<Entity>
 {
     private final RenderItem renderItem;
 
@@ -45,7 +47,7 @@ public class RenderEntityProvidedStack extends Render
         GlStateManager.rotate(-this.renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
         GlStateManager.rotate(this.renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
         this.bindTexture(TextureMap.locationBlocksTexture);
-        this.renderItem.renderItemModel(stack);
+        this.renderItem.func_181564_a(stack, TransformType.NONE);
         GlStateManager.disableRescaleNormal();
         GlStateManager.popMatrix();
         super.doRender(entity, x, y, z, p_76986_8_, partialTicks);

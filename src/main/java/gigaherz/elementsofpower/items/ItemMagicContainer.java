@@ -43,7 +43,7 @@ public class ItemMagicContainer extends Item
     }
 
     @Override
-    public void getSubItems(Item itemIn, CreativeTabs tab, List subItems)
+    public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems)
     {
         for (int meta = 0; meta < subNames.length; meta++)
         {
@@ -69,7 +69,7 @@ public class ItemMagicContainer extends Item
     }
 
     @Override
-    public void addInformation(ItemStack stack, EntityPlayer player, List tooltipList, boolean showAdvancedInfo)
+    public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltipList, boolean showAdvancedInfo)
     {
         MagicAmounts amounts = MagicDatabase.getContainedMagic(stack);
 
@@ -78,12 +78,10 @@ public class ItemMagicContainer extends Item
             return;
         }
 
-        List<String> tips = (List<String>) tooltipList;
-
-        tips.add(EnumChatFormatting.YELLOW + "Contains magic:");
+        tooltipList.add(EnumChatFormatting.YELLOW + "Contains magic:");
         if (!Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) && !Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
         {
-            tips.add(EnumChatFormatting.GRAY + "  (Hold SHIFT)");
+            tooltipList.add(EnumChatFormatting.GRAY + "  (Hold SHIFT)");
             return;
         }
 
@@ -96,7 +94,7 @@ public class ItemMagicContainer extends Item
 
             String magicName = MagicDatabase.getMagicName(i);
             String str = String.format("%s  %s x%d", EnumChatFormatting.GRAY, magicName, amounts.amounts[i]);
-            tips.add(str);
+            tooltipList.add(str);
         }
     }
 }

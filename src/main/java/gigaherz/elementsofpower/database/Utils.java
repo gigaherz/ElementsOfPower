@@ -7,7 +7,6 @@ import java.util.Map;
 
 public class Utils
 {
-
     public static ItemStack getExistingInList(List<ItemStack> list, ItemStack stack)
     {
         if (stack == null)

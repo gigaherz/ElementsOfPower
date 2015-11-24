@@ -6,12 +6,13 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 
-public class RenderBeam extends Render
+import static net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
+
+public class RenderBeam extends Render<EntityBeamBase>
 {
     private final RenderItem renderItem;
     private final ItemStack stack;
@@ -29,21 +30,17 @@ public class RenderBeam extends Render
      * (Render<T extends Entity>) and this method has signature public void func_76986_a(T entity, double d, double d1,
      * double d2, float f, float f1). But JAD is pre 1.5 so doe
      */
-    public void doRender(Entity entity, double x, double y, double z, float p_76986_8_, float partialTicks)
+    public void doRender(EntityBeamBase entity, double x, double y, double z, float p_76986_8_, float partialTicks)
     {
         float scale = 0.15f;
-        if (!(entity instanceof EntityBeamBase))
-            return;
 
-        EntityBeamBase beam = (EntityBeamBase) entity;
-
-        Vec3 ep = beam.getEndPoint();
+        Vec3 ep = entity.getEndPoint();
         if (ep == null)
             ep = new Vec3(x, y, z);
 
-        double dx = ep.xCoord - beam.posX;
-        double dy = ep.yCoord - beam.posY;
-        double dz = ep.zCoord - beam.posZ;
+        double dx = ep.xCoord - entity.posX;
+        double dy = ep.yCoord - entity.posY;
+        double dz = ep.zCoord - entity.posZ;
         double d10x = dx / 10;
         double d10y = dy / 10;
         double d10z = dz / 10;
@@ -58,7 +55,7 @@ public class RenderBeam extends Render
             GlStateManager.rotate(-this.renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
             GlStateManager.rotate(this.renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
             this.bindTexture(TextureMap.locationBlocksTexture);
-            this.renderItem.renderItemModel(stack);
+            this.renderItem.func_181564_a(stack, TransformType.NONE);
             GlStateManager.disableRescaleNormal();
             GlStateManager.popMatrix();
         }
@@ -69,7 +66,7 @@ public class RenderBeam extends Render
     /**
      * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
      */
-    protected ResourceLocation getEntityTexture(Entity entity)
+    protected ResourceLocation getEntityTexture(EntityBeamBase entity)
     {
         return TextureMap.locationBlocksTexture;
     }
