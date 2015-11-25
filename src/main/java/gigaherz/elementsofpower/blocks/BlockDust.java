@@ -24,7 +24,11 @@ public class BlockDust extends Block
 
     public BlockDust()
     {
-        super(Material.clay);
+        this(Material.clay);
+    }
+    public BlockDust(Material mat)
+    {
+        super(mat);
         setUnlocalizedName(ElementsOfPower.MODID + ".dust");
         setCreativeTab(CreativeTabs.tabMisc);
         setHardness(0.1F);
