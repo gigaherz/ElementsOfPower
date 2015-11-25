@@ -44,7 +44,7 @@ public class ItemMagicOrb extends Item
     }
 
     @Override
-    public void getSubItems(Item itemIn, CreativeTabs tab, List subItems)
+    public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems)
     {
         for (int meta = 1; meta < subNames.length; meta++)
         {

@@ -47,9 +47,10 @@ public class BlockCushion extends Block
         IBlockState state = world.getBlockState(pos);
         if (state.getBlock() != this)
             return 16;
-        return (Integer) state.getValue(DENSITY);
+        return state.getValue(DENSITY);
     }
 
+    @Override
     public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn)
     {
         double factor = 0.9;
@@ -93,7 +94,7 @@ public class BlockCushion extends Block
     @Override
     public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
     {
-        int density = (Integer) state.getValue(DENSITY) - 1;
+        int density = state.getValue(DENSITY) - 1;
         int maxGive = (int) Math.sqrt(density);
 
         for (EnumFacing f : EnumFacing.VALUES)
@@ -122,7 +123,7 @@ public class BlockCushion extends Block
             {
                 if (density > maxGive)
                 {
-                    int od = (Integer) neighbour.getValue(DENSITY);
+                    int od = neighbour.getValue(DENSITY);
                     if (od < 16)
                     {
                         int d = rand.nextInt(Math.min(16 - od, maxGive));
@@ -171,7 +172,7 @@ public class BlockCushion extends Block
     @Override
     public int getMetaFromState(IBlockState state)
     {
-        return 16 - (Integer) state.getValue(DENSITY);
+        return 16 - state.getValue(DENSITY);
     }
 
     @Override

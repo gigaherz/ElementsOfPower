@@ -118,7 +118,7 @@ public class ClientProxy implements ISideProxy
                         Minecraft.getMinecraft().getRenderItem()));
     }
 
-    public void registerEntityRenderingHandler(Class<? extends Entity> entityClass, Render render)
+    public void registerEntityRenderingHandler(Class<? extends Entity> entityClass, Render<? extends Entity> render)
     {
         RenderingRegistry.registerEntityRenderingHandler(entityClass, render);
     }

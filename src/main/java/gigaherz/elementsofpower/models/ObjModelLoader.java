@@ -20,11 +20,15 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.*;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.vecmath.Matrix4f;
+import javax.vecmath.Vector3f;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
 
 @SuppressWarnings("deprecation")
@@ -199,20 +203,38 @@ public class ObjModelLoader implements ICustomModelLoader
             if (modelblock == null)
                 return ImmutableMap.of();
 
+
             Map<TransformType, Matrix4f> map = new HashMap<>();
-            map.put(TransformType.THIRD_PERSON, getMatrix(modelblock.getThirdPersonTransform()));
-            map.put(TransformType.FIRST_PERSON, getMatrix(modelblock.getFirstPersonTransform()));
-            map.put(TransformType.HEAD, getMatrix(modelblock.getHeadTransform()));
-            map.put(TransformType.GUI, getMatrix(modelblock.getInGuiTransform()));
+            map.put(TransformType.THIRD_PERSON, getMatrixForTransform(modelblock, TransformType.THIRD_PERSON));
+            map.put(TransformType.FIRST_PERSON, getMatrixForTransform(modelblock, TransformType.FIRST_PERSON));
+            map.put(TransformType.HEAD, getMatrixForTransform(modelblock, TransformType.HEAD));
+            map.put(TransformType.GUI, getMatrixForTransform(modelblock, TransformType.GUI));
+            map.put(TransformType.NONE, getMatrixForTransform(modelblock, TransformType.NONE));
 
             return Maps.immutableEnumMap(map);
+        }
+
+        static Matrix4f getMatrixForTransform(ModelBlock b, ItemCameraTransforms.TransformType t)
+        {
+            try
+            {
+                Method m = ReflectionHelper.findMethod(ModelBlock.class, b, new String[]{"func_181681_a"}, ItemCameraTransforms.TransformType.class);
+                m.setAccessible(true);
+
+                ItemTransformVec3f tt = (ItemTransformVec3f)m.invoke(b, t);
+                return getMatrix(tt);
+            }
+            catch(InvocationTargetException | IllegalAccessException e)
+            {
+                throw new ReportedException(new CrashReport("Error obtaining camera transform", e));
+            }
         }
 
         static Matrix4f getMatrix(ItemTransformVec3f transform)
         {
             javax.vecmath.Matrix4f m = new javax.vecmath.Matrix4f(), t = new javax.vecmath.Matrix4f();
             m.setIdentity();
-            m.setTranslation(transform.translation);
+            m.setTranslation(new Vector3f( transform.translation.x,  transform.translation.y,  transform.translation.z));
             t.setIdentity();
             t.rotY((float) Math.toRadians(transform.rotation.y));
             m.mul(t);

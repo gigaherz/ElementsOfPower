@@ -5,20 +5,22 @@ import gigaherz.elementsofpower.database.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.*;
 import net.minecraftforge.oredict.OreDictionary;
-import net.minecraftforge.oredict.ShapedOreRecipe;
-import net.minecraftforge.oredict.ShapelessOreRecipe;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-@SuppressWarnings("unchecked")
 public class RecipeTools
 {
-
     public static Map<ItemStack, List<ItemStack>> itemSources = new HashMap<>();
     public static List<ItemStack> itemRoots = new ArrayList<>();
+
+    public static List<IRecipeHandler> recipeHandlers = new ArrayList<>();
+
+    static {
+        recipeHandlers.add(new ShapedRecipeHandler());
+        recipeHandlers.add(new ShapelessRecipeHandler());
+        recipeHandlers.add(new ShapedOreRecipeHandler());
+        recipeHandlers.add(new ShapelessOreRecipeHandler());
+    }
 
     static int gcd(int a, int b)
     {
@@ -39,37 +41,36 @@ public class RecipeTools
 
     public static void gatherRecipes()
     {
+        Set<Class<? extends IRecipe>> seenClasses = new HashSet<>();
 
-        for (IRecipe recipe : (List<IRecipe>) CraftingManager.getInstance().getRecipeList())
+        for (IRecipe recipe : CraftingManager.getInstance().getRecipeList())
         {
-            IRecipeInfoProvider provider;
-            if (recipe instanceof ShapedRecipes)
+            IRecipeInfoProvider provider = null;
+
+            for(IRecipeHandler h : recipeHandlers)
             {
-                provider = new ShapedRecipeInfo((ShapedRecipes) recipe);
+                if(h.accepts(recipe))
+                {
+                    provider = h.handle(recipe);
+                    break;
+                }
             }
-            else if (recipe instanceof ShapelessRecipes)
+
+            if (provider == null)
             {
-                provider = new ShapelessRecipeInfo((ShapelessRecipes) recipe);
-            }
-            else if (recipe instanceof ShapedOreRecipe)
-            {
-                provider = new ShapedOreRecipeInfo((ShapedOreRecipe) recipe);
-            }
-            else if (recipe instanceof ShapelessOreRecipe)
-            {
-                provider = new ShapelessOreRecipeInfo((ShapelessOreRecipe) recipe);
-            }
-            else
-            {
-                // TODO: Allow registration of more recipe providers.
-                ElementsOfPower.logger.warn("Recipe class unknown: " + recipe.getClass().getName());
+                Class<? extends IRecipe> c = recipe.getClass();
+                if(!seenClasses.contains(c))
+                {
+                    seenClasses.add(c);
+                    ElementsOfPower.logger.warn("Ignoring unhandled recipe class: " + c.getName());
+                }
                 continue;
             }
 
             processRecipe(provider);
         }
 
-        for (Map.Entry<ItemStack, ItemStack> entry : ((Map<ItemStack, ItemStack>) FurnaceRecipes.instance().getSmeltingList()).entrySet())
+        for (Map.Entry<ItemStack, ItemStack> entry : FurnaceRecipes.instance().getSmeltingList().entrySet())
         {
             processRecipe(new FurnaceRecipeInfo(entry.getKey(), entry.getValue()));
         }
@@ -118,7 +119,7 @@ public class RecipeTools
 
         items = reduceItemsList(items);
 
-        List<ItemStack> applied = new ArrayList<ItemStack>();
+        List<ItemStack> applied = new ArrayList<>();
         output = applyExistingRecipes(output, items, applied);
 
         applied = reduceItemsList(applied);
@@ -143,13 +144,13 @@ public class RecipeTools
     private static void replaceExistingSources(ItemStack output, List<ItemStack> items)
     {
 
-        List<ItemStack> stacksToRemove = new ArrayList<ItemStack>();
-        Map<ItemStack, List<ItemStack>> stacksToAdd = new HashMap<ItemStack, List<ItemStack>>();
+        List<ItemStack> stacksToRemove = new ArrayList<>();
+        Map<ItemStack, List<ItemStack>> stacksToAdd = new HashMap<>();
 
         for (Map.Entry<ItemStack, List<ItemStack>> entry : itemSources.entrySet())
         {
             ItemStack result = entry.getKey().copy();
-            List<ItemStack> stacks = new ArrayList<ItemStack>();
+            List<ItemStack> stacks = new ArrayList<>();
             int totalMult = 1;
             boolean anythingChanged = false;
 
@@ -284,7 +285,7 @@ public class RecipeTools
 
     public static List<ItemStack> reduceItemsList(List<ItemStack> items)
     {
-        List<ItemStack> itemsResolved = new ArrayList<ItemStack>();
+        List<ItemStack> itemsResolved = new ArrayList<>();
 
         for (ItemStack is : items)
         {

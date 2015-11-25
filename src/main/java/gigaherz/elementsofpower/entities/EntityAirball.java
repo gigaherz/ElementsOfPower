@@ -18,7 +18,6 @@ import java.util.List;
 
 public class EntityAirball extends EntityBallBase
 {
-
     public EntityAirball(World worldIn)
     {
         super(ElementsOfPower.air, worldIn);
@@ -51,10 +50,10 @@ public class EntityAirball extends EntityBallBase
                 hitVec.yCoord + damageForce,
                 hitVec.zCoord + damageForce);
 
-        List<EntityLivingBase> living = (List<EntityLivingBase>) worldObj.getEntitiesWithinAABB(EntityLivingBase.class, aabb);
+        List<EntityLivingBase> living = worldObj.getEntitiesWithinAABB(EntityLivingBase.class, aabb);
         pushEntities(hitVec, living);
 
-        List<EntityItem> items = (List<EntityItem>) worldObj.getEntitiesWithinAABB(EntityItem.class, aabb);
+        List<EntityItem> items = worldObj.getEntitiesWithinAABB(EntityItem.class, aabb);
         pushEntities(hitVec, items);
     }
 
@@ -114,7 +113,7 @@ public class EntityAirball extends EntityBallBase
         }
         else if (block == Blocks.flowing_water || block == Blocks.water)
         {
-            if ((Integer) currentState.getValue(BlockDynamicLiquid.LEVEL) > 0)
+            if (currentState.getValue(BlockDynamicLiquid.LEVEL) > 0)
             {
                 worldObj.setBlockToAir(blockPos);
             }

@@ -11,6 +11,8 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.settings.GameSettings;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -34,10 +36,30 @@ public class GuiOverlayMagicContainer extends Gui
         instance = this;
         mc = Minecraft.getMinecraft();
 
+        GameSettings s = Minecraft.getMinecraft().gameSettings;
+
+        int l = s.keyBindings.length;
+        int[] indices = new int[8];
+        int f = 0;
+        for(int i=0;i<8;i++)
+        {
+            KeyBinding b = s.keyBindsHotbar[i];
+            for(int j =0;j<l;j++)
+            {
+                if(s.keyBindings[(f+j)%l] == b)
+                {
+                    f=f+j;
+                    indices[i]=f;
+                    break;
+                }
+            }
+        }
+
         for (int i = 0; i < 8; i++)
         {
-            interceptKeys[i] = new KeyBindingInterceptor(Minecraft.getMinecraft().gameSettings.keyBindsHotbar[i]);
-            Minecraft.getMinecraft().gameSettings.keyBindsHotbar[i] = interceptKeys[i];
+            interceptKeys[i] = new KeyBindingInterceptor(s.keyBindsHotbar[i]);
+            s.keyBindsHotbar[i] = interceptKeys[i];
+            s.keyBindings[indices[i]] = interceptKeys[i];
         }
     }
 
@@ -98,9 +120,9 @@ public class GuiOverlayMagicContainer extends Gui
 
             renderItem.renderItemAndEffectIntoGUI(new ItemStack(ElementsOfPower.magicOrb, amounts.amounts[i], i), xPos, yPos);
 
-            this.drawCenteredString(font, "" + amounts.amounts[i], xPos + 8, yPos + 16, (int) 0xFFC0C0C0);
+            this.drawCenteredString(font, "" + amounts.amounts[i], xPos + 8, yPos + 16, 0xFFC0C0C0);
             if (itemInUse != null)
-                this.drawCenteredString(font, "K:" + (i + 1), xPos + 8, yPos + 28, (int) 0xFFC0C0C0);
+                this.drawCenteredString(font, "K:" + (i + 1), xPos + 8, yPos + 28, 0xFFC0C0C0);
 
             xPos += 22;
         }

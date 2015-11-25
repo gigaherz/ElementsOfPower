@@ -84,7 +84,7 @@ public class ItemWand extends ItemMagicContainer
     }
 
     @Override
-    public void getSubItems(Item itemIn, CreativeTabs tab, List subItems)
+    public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems)
     {
         for (int meta = 0; meta < subNames.length; meta++)
         {

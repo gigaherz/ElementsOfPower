@@ -63,10 +63,10 @@ public class EntityFlameball extends EntityBallBase
                 hitVec.yCoord + damageForce,
                 hitVec.zCoord + damageForce);
 
-        List<EntityLivingBase> living = (List<EntityLivingBase>) worldObj.getEntitiesWithinAABB(EntityLivingBase.class, aabb);
+        List<EntityLivingBase> living = worldObj.getEntitiesWithinAABB(EntityLivingBase.class, aabb);
         burnEntities(hitVec, living);
 
-        List<EntityItem> items = (List<EntityItem>) worldObj.getEntitiesWithinAABB(EntityItem.class, aabb);
+        List<EntityItem> items = worldObj.getEntitiesWithinAABB(EntityItem.class, aabb);
         burnEntities(hitVec, items);
     }
 

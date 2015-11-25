@@ -137,14 +137,13 @@ public class ObjModel implements IModel
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public Collection<ResourceLocation> getTextures()
     {
         ModelBlock modelblock = modelBlock;
 
         while (modelblock != null)
         {
-            for (Map.Entry<String, String> e : ((Map<String, String>) modelblock.textures).entrySet())
+            for (Map.Entry<String, String> e : modelblock.textures.entrySet())
             {
                 if (!textures.containsKey(e.getKey()))
                     textures.put(e.getKey(), new ResourceLocation(e.getValue()));
@@ -225,7 +224,7 @@ public class ObjModel implements IModel
 
     public static class Reader
     {
-        static final Set<String> unknownCommands = new HashSet<String>();
+        static final Set<String> unknownCommands = new HashSet<>();
 
         private ObjModel currentModel;
         private MaterialLibrary currentMatLib;
@@ -248,12 +247,6 @@ public class ObjModel implements IModel
             handlers.put("vt", this::addTexCoord);
             handlers.put("vn", this::addNormal);
             handlers.put("f", this::addFace);
-        }
-
-        public void reset()
-        {
-            currentModel = null;
-            currentMatLib = null;
         }
 
         private void addTexCoord(String line)
@@ -443,14 +436,8 @@ public class ObjModel implements IModel
                 }
                 finally
                 {
-                    try
-                    {
-                        // Close the writer regardless of what happens...
+                    if(writer != null)
                         writer.close();
-                    }
-                    catch (Exception e)
-                    {
-                    }
                 }
             }
 

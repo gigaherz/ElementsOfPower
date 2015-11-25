@@ -53,8 +53,6 @@ public class EntityLifeball extends EntityBallBase
         //e.attackEntityFrom(DamageSource.causeThrownDamage(this, this.getThrower()), (float) b0);
     }
 
-
-    @SuppressWarnings("unchecked")
     @Override
     protected void processEntitiesAroundAfter(Vec3 hitVec)
     {
@@ -67,7 +65,7 @@ public class EntityLifeball extends EntityBallBase
                 hitVec.yCoord + damageForce,
                 hitVec.zCoord + damageForce);
 
-        List<EntityLivingBase> living = (List<EntityLivingBase>) worldObj.getEntitiesWithinAABB(EntityLivingBase.class, aabb);
+        List<EntityLivingBase> living = worldObj.getEntitiesWithinAABB(EntityLivingBase.class, aabb);
         burnEntities(hitVec, living);
     }
 
@@ -125,7 +123,7 @@ public class EntityLifeball extends EntityBallBase
 
         if (block == Blocks.dirt)
         {
-            switch ((BlockDirt.DirtType) currentState.getValue(BlockDirt.VARIANT))
+            switch (currentState.getValue(BlockDirt.VARIANT))
             {
                 case COARSE_DIRT:
                     worldObj.setBlockState(blockPos, Blocks.dirt.getDefaultState());
