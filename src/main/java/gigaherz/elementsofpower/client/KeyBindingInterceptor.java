@@ -29,6 +29,7 @@ public class KeyBindingInterceptor extends KeyBinding
             }
         }
 
+        @SuppressWarnings("unchecked")
         public T get(C binding) throws IllegalAccessException
         {
             ensureHaveField();

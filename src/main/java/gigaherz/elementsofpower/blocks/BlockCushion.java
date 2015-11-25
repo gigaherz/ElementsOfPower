@@ -23,12 +23,6 @@ public class BlockCushion extends Block
 
     public static final PropertyInteger DENSITY = PropertyInteger.create("density", 1, 16);
 
-    public static final double[] slowDown = {
-            1.0, 0.95, 0.9, 0.85,
-            0.8, 0.775, 0.75, 0.725,
-            0.7, 0.6875, 0.675, 0.6625,
-            0.65, 0.6375, 0.625, 0.6125};
-
     public BlockCushion()
     {
         super(ElementsOfPower.materialCushion);
@@ -42,26 +36,36 @@ public class BlockCushion extends Block
     }
 
     @Override
+    public boolean isVisuallyOpaque()
+    {
+        return false;
+    }
+
+    @Override
     public int getLightOpacity(IBlockAccess world, BlockPos pos)
     {
-        IBlockState state = world.getBlockState(pos);
-        if (state.getBlock() != this)
-            return 16;
-        return state.getValue(DENSITY);
+        return 0;
     }
 
     @Override
     public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn)
     {
-        double factor = 0.9;
-        entityIn.motionX *= factor;
-        entityIn.motionY *= factor;
-        entityIn.motionZ *= factor;
+        double maxV = 0.1;
+        double maxVSq = maxV*maxV;
+        double factor = 0.5;
 
-        double gravity = 0.6;
-        double t = entityIn.motionY / gravity;
+        double velocitySq = entityIn.motionX * entityIn.motionX + entityIn.motionY * entityIn.motionY + entityIn.motionZ * entityIn.motionZ;
+        if(velocitySq > maxVSq)
+        {
+            double velocity = Math.sqrt(velocitySq);
+            double newVel = velocity + factor * (maxV - velocity);
 
-        entityIn.fallDistance = (float) (0.5 * gravity * t * t);
+            entityIn.motionX = entityIn.motionX * newVel / velocity;
+            entityIn.motionY = entityIn.motionY * newVel / velocity;
+            entityIn.motionZ = entityIn.motionZ * newVel / velocity;
+
+            entityIn.fallDistance = (float) (entityIn.fallDistance * newVel / velocity);
+        }
     }
 
     @Override

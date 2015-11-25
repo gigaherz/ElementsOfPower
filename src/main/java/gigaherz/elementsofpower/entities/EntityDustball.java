@@ -2,6 +2,7 @@ package gigaherz.elementsofpower.entities;
 
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.blocks.BlockCushion;
+import gigaherz.elementsofpower.blocks.BlockDust;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -12,6 +13,7 @@ import net.minecraft.world.World;
 
 public class EntityDustball extends EntityBallBase
 {
+    boolean cushion = false;
 
     public EntityDustball(World worldIn)
     {
@@ -28,9 +30,10 @@ public class EntityDustball extends EntityBallBase
         super(ElementsOfPower.earth, worldIn, x, y, z);
     }
 
-    public EntityDustball(World worldIn, int force, EntityLivingBase p_i1774_2_)
+    public EntityDustball(World worldIn, int force, boolean cushionMode, EntityLivingBase p_i1774_2_)
     {
         super(ElementsOfPower.earth, worldIn, force, p_i1774_2_);
+        cushion = cushionMode;
     }
 
     @Override
@@ -50,7 +53,10 @@ public class EntityDustball extends EntityBallBase
 
         if (block == Blocks.air)
         {
-            worldObj.setBlockState(blockPos, ElementsOfPower.cushion.getDefaultState().withProperty(BlockCushion.DENSITY, 16));
+            if(cushion)
+                worldObj.setBlockState(blockPos, ElementsOfPower.cushion.getDefaultState().withProperty(BlockCushion.DENSITY, 16));
+            else
+                worldObj.setBlockState(blockPos, ElementsOfPower.dust.getDefaultState().withProperty(BlockDust.DENSITY, 16));
         }
     }
 }

@@ -233,6 +233,7 @@ public class ElementsOfPower
                 'W', wandDiamond,
                 'G', Blocks.quartz_block,
                 'S', Items.stick);
+
         // Gui
         NetworkRegistry.INSTANCE.registerGuiHandler(this, guiHandler);
 
