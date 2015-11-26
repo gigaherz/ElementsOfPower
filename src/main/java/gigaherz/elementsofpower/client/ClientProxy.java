@@ -70,7 +70,7 @@ public class ClientProxy implements ISideProxy
         registerItemModel(ElementsOfPower.magicOrb, 5, "orb_dark");
         registerItemModel(ElementsOfPower.magicOrb, 6, "orb_life");
         registerItemModel(ElementsOfPower.magicOrb, 7, "orb_death");
-        registerItemModel(ElementsOfPower.magicWand, 0, "thing");// "wand_lapis");
+        registerItemModel(ElementsOfPower.magicWand, 0, "wand_lapis");
         registerItemModel(ElementsOfPower.magicWand, 1, "wand_emerald");
         registerItemModel(ElementsOfPower.magicWand, 2, "wand_diamond");
         registerItemModel(ElementsOfPower.magicWand, 3, "wand_creative");
