@@ -2,7 +2,6 @@ package gigaherz.elementsofpower.database.recipes;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
 
 import java.util.ArrayList;

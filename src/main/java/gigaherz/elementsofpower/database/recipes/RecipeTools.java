@@ -3,7 +3,9 @@ package gigaherz.elementsofpower.database.recipes;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.Utils;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.*;
+import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.item.crafting.FurnaceRecipes;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.*;
