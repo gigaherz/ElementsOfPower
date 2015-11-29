@@ -143,46 +143,55 @@ public class ObjModelLoader implements ICustomModelLoader
             this.isGui3d = !ObjModelLoader.ModelUtilities.getRootLocation(modelBlock).getResourcePath().equals("builtin/generated");
         }
 
+        @Override
         public List<BakedQuad> getFaceQuads(EnumFacing face)
         {
             return Collections.emptyList();
         }
 
+        @Override
         public List<BakedQuad> getGeneralQuads()
         {
             return generalQuads;
         }
 
+        @Override
         public VertexFormat getFormat()
         {
             return format;
         }
 
+        @Override
         public boolean isAmbientOcclusion()
         {
             return false;
         }
 
+        @Override
         public boolean isGui3d()
         {
             return isGui3d;
         }
 
+        @Override
         public boolean isBuiltInRenderer()
         {
             return false;
         }
 
-        public TextureAtlasSprite getTexture()
+        @Override
+        public TextureAtlasSprite getParticleTexture()
         {
             return iconSprite;
         }
 
+        @Override
         public ItemCameraTransforms getItemCameraTransforms()
         {
             return null;
         }
 
+        @Override
         public Pair<IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
         {
             return Pair.<IBakedModel, Matrix4f>of(this, transformations.getOrDefault(cameraTransformType, identity));

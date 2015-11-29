@@ -98,57 +98,68 @@ public class TileEssentializer
     }
 
     // IInventory forwarders
-    public String getCommandSenderName()
+    @Override
+    public String getName()
     {
-        return inventory.getCommandSenderName();
+        return inventory.getName();
     }
 
+    @Override
     public boolean hasCustomName()
     {
         return inventory.hasCustomName();
     }
 
+    @Override
     public IChatComponent getDisplayName()
     {
         return inventory.getDisplayName();
     }
 
+    @Override
     public int getSizeInventory()
     {
         return inventory.getSizeInventory();
     }
 
+    @Override
     public ItemStack getStackInSlot(int slotIndex)
     {
         return inventory.getStackInSlot(slotIndex);
     }
 
+    @Override
     public void setInventorySlotContents(int slot, ItemStack stack)
     {
         inventory.setInventorySlotContents(slot, stack);
     }
 
+    @Override
     public ItemStack decrStackSize(int slotIndex, int amount)
     {
         return inventory.decrStackSize(slotIndex, amount);
     }
 
-    public ItemStack getStackInSlotOnClosing(int slotIndex)
+    @Override
+    public ItemStack removeStackFromSlot(int slotIndex)
     {
-        return inventory.getStackInSlotOnClosing(slotIndex);
+        return inventory.removeStackFromSlot(slotIndex);
     }
 
+    @Override
     public int getInventoryStackLimit()
     {
         return inventory.getInventoryStackLimit();
     }
 
+    @Override
     public void clear()
     {
         inventory.clear();
     }
 
     // Can't forward this one because it returns true always
+    @Override
     public boolean isUseableByPlayer(EntityPlayer player)
     {
         return (this.worldObj.getTileEntity(pos) == this)
@@ -159,24 +170,29 @@ public class TileEssentializer
     }
 
     // Pointless inventory methods
+    @Override
     public int getField(int id)
     {
         return 0;
     }
 
+    @Override
     public void setField(int id, int value)
     {
     }
 
+    @Override
     public int getFieldCount()
     {
         return 0;
     }
 
+    @Override
     public void openInventory(EntityPlayer player)
     {
     }
 
+    @Override
     public void closeInventory(EntityPlayer player)
     {
     }

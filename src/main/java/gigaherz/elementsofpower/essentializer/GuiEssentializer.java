@@ -24,8 +24,8 @@ public class GuiEssentializer extends GuiContainer
     @Override
     protected void drawGuiContainerForegroundLayer(int i, int j)
     {
-        mc.fontRendererObj.drawString(StatCollector.translateToLocal(this.tile.getCommandSenderName()), 8, 6, 0x404040);
-        mc.fontRendererObj.drawString(StatCollector.translateToLocal(this.player.getCommandSenderName()), 8, ySize - 96 + 2, 0x404040);
+        mc.fontRendererObj.drawString(StatCollector.translateToLocal(this.tile.getName()), 8, 6, 0x404040);
+        mc.fontRendererObj.drawString(StatCollector.translateToLocal(this.player.getName()), 8, ySize - 96 + 2, 0x404040);
     }
 
     @Override

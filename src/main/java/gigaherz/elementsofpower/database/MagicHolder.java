@@ -205,7 +205,7 @@ public class MagicHolder extends MagicAmounts implements IInventory
     }
 
     @Override
-    public ItemStack getStackInSlotOnClosing(int index)
+    public ItemStack removeStackFromSlot(int index)
     {
         return null;
     }
@@ -280,7 +280,7 @@ public class MagicHolder extends MagicAmounts implements IInventory
     }
 
     @Override
-    public String getCommandSenderName()
+    public String getName()
     {
         return null;
     }

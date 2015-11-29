@@ -39,7 +39,7 @@ public class ElementsOfPower
 {
     public static final String MODID = "elementsofpower";
     public static final String MODNAME = "Elements Of Power";
-    public static final String VERSION = "@VERSIOM@";
+    public static final String VERSION = "@VERSION@";
 
     public static final String CHANNEL = "ElementsOfPower";
 
