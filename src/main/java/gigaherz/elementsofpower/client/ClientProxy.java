@@ -4,9 +4,11 @@ import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.ISideProxy;
 import gigaherz.elementsofpower.entities.EntityBallBase;
 import gigaherz.elementsofpower.entities.EntityBeamBase;
+import gigaherz.elementsofpower.entities.EntityTeleporter;
 import gigaherz.elementsofpower.models.ObjModelLoader;
 import gigaherz.elementsofpower.renders.RenderBeam;
 import gigaherz.elementsofpower.renders.RenderEntityProvidedStack;
+import gigaherz.elementsofpower.util.Used;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.Render;
@@ -19,6 +21,7 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
+@Used
 public class ClientProxy implements ISideProxy
 {
     public void preInit()
@@ -102,6 +105,7 @@ public class ClientProxy implements ISideProxy
     // ----------------------------------------------------------- Entity Renderers
     public void registerEntityRenderers()
     {
+        registerEntityRenderingHandler(EntityTeleporter.class);
         registerEntityRenderingHandler(EntityBallBase.class);
         registerEntityRenderingHandler(EntityBeamBase.class,
                 new RenderBeam(

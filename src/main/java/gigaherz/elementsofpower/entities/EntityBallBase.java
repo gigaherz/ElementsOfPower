@@ -37,9 +37,13 @@ public abstract class EntityBallBase extends EntityThrowable implements IVariabl
     protected EntityBallBase(ItemStack stack, World worldIn, int force, EntityLivingBase p_i1774_2_)
     {
         super(worldIn, p_i1774_2_);
-        this.addVelocity(0, p_i1774_2_.motionY, 0);
         damageForce = force;
         stackForRendering = stack;
+    }
+
+    protected float getVelocity()
+    {
+        return 2.0F;
     }
 
     public ItemStack getStackForRendering()

@@ -184,6 +184,7 @@ public class ElementsOfPower
         EntityRegistry.registerModEntity(EntityWaterball.class, "Waterball", entityId++, this, 80, 3, true);
         EntityRegistry.registerModEntity(EntityFlameball.class, "Flameball", entityId++, this, 80, 3, true);
         EntityRegistry.registerModEntity(EntityFireBeam.class, "Flamebeam", entityId++, this, 80, 3, true);
+        EntityRegistry.registerModEntity(EntityTeleporter.class, "Teleporter", entityId++, this, 80, 3, true);
         logger.debug("Next entity id: " + entityId);
 
         // Recipes

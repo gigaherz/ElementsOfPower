@@ -88,6 +88,8 @@ public class SpellManager
 
         registerSpell(new SpellResurrection().life().life().life().light().light().cost(COST_EXTREME * COMBO_COEF));
 
+        registerSpell(new SpellTeleport().light().darkness().cost(COST_ELEMENTARY * COMBO_COEF));
+
         registerSpell(new SpellBeam(EntityBeamBase.class, 2, 5).fire().darkness().cost(COST_AVERAGE));
     }
 
