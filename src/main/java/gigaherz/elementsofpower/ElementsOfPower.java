@@ -94,7 +94,7 @@ public class ElementsOfPower
 
     public static Logger logger;
 
-    public static final CreativeTabs tabMagic = new CreativeTabs(MODID.toLowerCase())
+    public static CreativeTabs tabMagic = new CreativeTabs(MODID)
     {
         @Override
         public Item getTabIconItem()

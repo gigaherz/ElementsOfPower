@@ -39,25 +39,37 @@ public class TESREssentializer extends TileEntitySpecialRenderer<TileEssentializ
             }
             catch(IOException e)
             {
-                throw new ReportedException(new CrashReport("Oops", e));
+                throw new ReportedException(new CrashReport("Error loading model for TESR", e));
             }
         }
 
         bindTexture(TextureMap.locationBlocksTexture);
+
         GL11.glPushMatrix();
-        GL11.glTranslated(x, y, z);
+        GL11.glTranslated(x + 0.5, y + 1, z + 0.5);
 
         float time = (te.getWorld().getWorldTime() + partialTicks) * 1.5f;
+        float angle1 = time * 2.5f + 120 * (1 + (float)Math.sin(time * 0.05f));
+        float angle2 = time * 0.9f;
+        float bob = (float) Math.sin(time * (Math.PI / 180) * 2.91) * 0.06f;
 
-        float angle = time * 0.9f;
-        GL11.glTranslatef(0.5f, 0.5f, 0.5f);
-        GL11.glRotatef(angle, 0, 1, 0);
-        GL11.glTranslatef(-0.5f, -0.5f, -0.5f);
-
-        float bob = (float)Math.sin(angle * (Math.PI/180) * 2.91) * 0.06f;
         GL11.glTranslated(0, bob, 0);
 
-        renderModel(model);
+        for(int i=0;i<4;i++)
+        {
+            GL11.glPushMatrix();
+
+            float angle3 = angle2 + 90*i;
+            GL11.glRotatef(angle3, 0, 1, 0);
+            GL11.glTranslated(0.6,0,0);
+            GL11.glRotatef(-45, 0, 0, 1);
+
+            GL11.glRotatef(angle1, 0, 1, 0);
+
+            renderModel(model);
+
+            GL11.glPopMatrix();
+        }
 
         GL11.glPopMatrix();
     }
