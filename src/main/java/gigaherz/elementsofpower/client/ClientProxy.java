@@ -5,6 +5,7 @@ import gigaherz.elementsofpower.ISideProxy;
 import gigaherz.elementsofpower.entities.EntityBallBase;
 import gigaherz.elementsofpower.entities.EntityBeamBase;
 import gigaherz.elementsofpower.entities.EntityTeleporter;
+import gigaherz.elementsofpower.essentializer.TileEssentializer;
 import gigaherz.elementsofpower.models.ObjModelLoader;
 import gigaherz.elementsofpower.renders.RenderBeam;
 import gigaherz.elementsofpower.renders.RenderEntityProvidedStack;
@@ -18,7 +19,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
 @Used
@@ -26,8 +29,7 @@ public class ClientProxy implements ISideProxy
 {
     public void preInit()
     {
-        // Uncomment this to activate my custom obj loader
-        //ObjModelRegistrationHelper.instance.enableDomain(ElementsOfPower.MODID);
+        OBJLoader.instance.addDomain(ElementsOfPower.MODID);
 
         registerClientEvents();
         registerCustomBakedModels();
@@ -105,6 +107,8 @@ public class ClientProxy implements ISideProxy
     // ----------------------------------------------------------- Entity Renderers
     public void registerEntityRenderers()
     {
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEssentializer.class, new TESREssentializer());
+
         registerEntityRenderingHandler(EntityTeleporter.class);
         registerEntityRenderingHandler(EntityBallBase.class);
         registerEntityRenderingHandler(EntityBeamBase.class,

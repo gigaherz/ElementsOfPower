@@ -43,7 +43,11 @@ public class ObjModel implements IModel
     @Override
     public IFlexibleBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
     {
-        TextureAtlasSprite particle = bakedTextureGetter.apply(textures.get("particle"));
+        ResourceLocation particleTex = textures.get("particle");
+
+        TextureAtlasSprite particle = null;
+
+        if(particleTex != null) particle = bakedTextureGetter.apply(particleTex);
 
         ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
 
@@ -64,11 +68,15 @@ public class ObjModel implements IModel
             {
                 if (m.DiffuseTextureMap != null)
                 {
-                    sprite = bakedTextureGetter.apply(textures.get(m.DiffuseTextureMap));
+                    ResourceLocation t = textures.get(m.DiffuseTextureMap);
+                    if(t == null) t = new ResourceLocation(m.DiffuseTextureMap);
+                    sprite = bakedTextureGetter.apply(t);
                 }
                 else if (m.AmbientTextureMap != null)
                 {
-                    sprite = bakedTextureGetter.apply(textures.get(m.AmbientTextureMap));
+                    ResourceLocation t = textures.get(m.AmbientTextureMap);
+                    if(t == null) t = new ResourceLocation(m.AmbientTextureMap);
+                    sprite = bakedTextureGetter.apply(t);
                 }
 
                 if (m.DiffuseColor != null)

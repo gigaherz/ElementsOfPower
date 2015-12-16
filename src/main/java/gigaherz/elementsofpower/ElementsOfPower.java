@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower;
 
+import com.google.common.base.Predicate;
 import gigaherz.elementsofpower.blocks.BlockCushion;
 import gigaherz.elementsofpower.blocks.BlockDust;
 import gigaherz.elementsofpower.database.MagicDatabase;
@@ -12,6 +13,7 @@ import gigaherz.elementsofpower.items.ItemMagicOrb;
 import gigaherz.elementsofpower.items.ItemWand;
 import gigaherz.elementsofpower.materials.MaterialCushion;
 import gigaherz.elementsofpower.network.SpellSequenceUpdate;
+import gigaherz.elementsofpower.storage.TestEntityData;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
@@ -32,7 +34,6 @@ import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.Logger;
-
 
 @Mod(modid = ElementsOfPower.MODID, name = ElementsOfPower.MODNAME, version = ElementsOfPower.VERSION)
 public class ElementsOfPower
@@ -160,6 +161,8 @@ public class ElementsOfPower
         channel.registerMessage(SpellSequenceUpdate.Handler.class, SpellSequenceUpdate.class, 0, Side.SERVER);
 
         logger.info("Performing pre-initialization proxy tasks...");
+
+        TestEntityData.initHandling();
 
         // Client-side code
         proxy.preInit();

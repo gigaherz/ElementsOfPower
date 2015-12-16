@@ -89,7 +89,7 @@ public class ObjModelLoader implements ICustomModelLoader
         {
             String path = modelLocation.getResourcePath();
             int start = "models/".length();
-            int length = path.length() - "models/.obj".length();
+            int length = path.length() - ".obj".length();
 
             obj = modelLocation;
             json = new ResourceLocation(
@@ -192,9 +192,9 @@ public class ObjModelLoader implements ICustomModelLoader
         }
 
         @Override
-        public Pair<IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
+        public Pair<? extends IFlexibleBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
         {
-            return Pair.<IBakedModel, Matrix4f>of(this, transformations.getOrDefault(cameraTransformType, identity));
+            return Pair.of(this, transformations.getOrDefault(cameraTransformType, identity));
         }
     }
 

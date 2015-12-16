@@ -1,7 +1,8 @@
 {
+  "forge_marker": 1,
   "variants": {
     "normal": {
-      "model": "elementsofpower:essentializer"
+      "model": "elementsofpower:essentializer.obj"
     }
   }
 }

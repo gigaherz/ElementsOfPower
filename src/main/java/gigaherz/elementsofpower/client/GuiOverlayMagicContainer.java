@@ -63,16 +63,13 @@ public class GuiOverlayMagicContainer extends Gui
         }
     }
 
+    /**
+     * @param event
+     */
     @SubscribeEvent
-    public void onRenderGameOverlay(RenderGameOverlayEvent event)
+    public void onRenderGameOverlay(RenderGameOverlayEvent.Post event)
     {
-        //
-        // We draw after the ExperienceBar has drawn.  The event raised by GuiIngameForge.pre()
-        // will return true from isCancelable.  If you call event.setCanceled(true) in
-        // that case, the portion of rendering which this event represents will be canceled.
-        // We want to draw *after* the experience bar is drawn, so we make sure isCancelable() returns
-        // false and that the eventType represents the ExperienceBar event.
-        if (event.isCancelable() || event.type != RenderGameOverlayEvent.ElementType.EXPERIENCE)
+        if (event.type != RenderGameOverlayEvent.ElementType.EXPERIENCE)
         {
             return;
         }
@@ -86,8 +83,6 @@ public class GuiOverlayMagicContainer extends Gui
         }
 
         // Contained essences
-        int xPos = 2 + 10;
-        int yPos = 2;
 
         MagicAmounts amounts = MagicDatabase.getContainedMagic(heldItem);
         if (amounts == null)
@@ -108,41 +103,68 @@ public class GuiOverlayMagicContainer extends Gui
 
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glDisable(GL11.GL_LIGHTING);
+        GL11.glPushMatrix();
         Minecraft.getMinecraft().renderEngine.bindTexture(icons);
 
-        // TODO: Figure out viewport size to adjust the initial xPos
-        //Minecraft.getMinecraft().getRenderManager().vi
+        float rescale = 1;
+        int rescaledWidth = (int)(event.resolution.getScaledWidth() / rescale);
+        int rescaledHeight = (int)(event.resolution.getScaledHeight() / rescale);
+        GL11.glScalef(rescale,rescale,1);
 
+        int xPos = (rescaledWidth - (totalIcons-1) * 22 - 16) / 2;
+        int yPos = 2;
         for (int i = 0; i < 8; i++)
         {
-            if (amounts.amounts[i] == 0)
-                continue;
+            if(amounts.amounts[i] != 0)
+                GL11.glColor4f(1,1,1,0.5f);
 
-            renderItem.renderItemAndEffectIntoGUI(new ItemStack(ElementsOfPower.magicOrb, amounts.amounts[i], i), xPos, yPos);
+            renderItem.renderItemAndEffectIntoGUI(ElementsOfPower.magicOrb.getStack(amounts.amounts[i], i), xPos, yPos);
 
             this.drawCenteredString(font, "" + amounts.amounts[i], xPos + 8, yPos + 16, 0xFFC0C0C0);
             if (itemInUse != null)
                 this.drawCenteredString(font, "K:" + (i + 1), xPos + 8, yPos + 28, 0xFFC0C0C0);
 
+            if(amounts.amounts[i] != 0)
+                GL11.glColor4f(1,1,1,1);
+
             xPos += 22;
         }
-
-        // Saved spell sequence
-        xPos = 2 + 10;
-        yPos = 40;
 
         NBTTagCompound nbt = heldItem.getTagCompound();
         if (nbt != null)
         {
             String savedSequence = nbt.getString(ItemWand.SPELL_SEQUENCE_TAG);
-            for (char c : savedSequence.toCharArray())
+
+            if(savedSequence != null && savedSequence.length() > 0)
+            {
+                // Saved spell sequence
+                xPos = (rescaledWidth - 6 * (savedSequence.length() - 1) - 14) / 2;
+                yPos = rescaledHeight / 2 - 16 - 16;
+                for (char c : savedSequence.toCharArray())
+                {
+                    int i = SpellManager.elementIndices.get(c);
+                    renderItem.renderItemAndEffectIntoGUI(ElementsOfPower.magicOrb.getStack(amounts.amounts[i], i), xPos, yPos);
+                    xPos += 6;
+                }
+            }
+        }
+
+        if (sequence != null)
+        {
+            // New spell sequence
+            xPos = (rescaledWidth - 6 * (sequence.length() - 1) - 14) / 2;
+            yPos = rescaledHeight / 2 + 16;
+            for (char c : sequence.toString().toCharArray())
             {
                 int i = SpellManager.elementIndices.get(c);
-                renderItem.renderItemAndEffectIntoGUI(new ItemStack(ElementsOfPower.magicOrb, amounts.amounts[i], i), xPos, yPos);
+                renderItem.renderItemAndEffectIntoGUI(ElementsOfPower.magicOrb.getStack(amounts.amounts[i], i), xPos, yPos);
                 xPos += 6;
             }
         }
 
+        GL11.glPopMatrix();
+
+        // This doesn't belong here, but meh.
         if (itemInUse != null)
         {
             for (int i = 0; i < 8; i++)
@@ -152,19 +174,6 @@ public class GuiOverlayMagicContainer extends Gui
                     sequence.append(SpellManager.elementChars[i]);
                 }
             }
-        }
-
-        if (sequence == null)
-            return;
-
-        // New spell sequence
-        xPos = 2 + 10;
-        yPos = 60;
-        for (char c : sequence.toString().toCharArray())
-        {
-            int i = SpellManager.elementIndices.get(c);
-            renderItem.renderItemAndEffectIntoGUI(new ItemStack(ElementsOfPower.magicOrb, amounts.amounts[i], i), xPos, yPos);
-            xPos += 6;
         }
     }
 

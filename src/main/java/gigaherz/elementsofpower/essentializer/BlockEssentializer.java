@@ -5,10 +5,17 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.Random;
 
 public class BlockEssentializer
         extends Block
@@ -21,6 +28,14 @@ public class BlockEssentializer
         setCreativeTab(ElementsOfPower.tabMagic);
         setHardness(15.0F);
         setStepSound(Block.soundTypeMetal);
+        setLightLevel(1);
+        setLightOpacity(0);
+    }
+
+    @Override
+    public boolean isOpaqueCube()
+    {
+        return false;
     }
 
     @Override
@@ -46,5 +61,32 @@ public class BlockEssentializer
     public TileEntity createTileEntity(World world, IBlockState state)
     {
         return new TileEssentializer();
+    }
+
+    @Override
+    public void randomDisplayTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
+    {
+        double x = (double)pos.getX() + 0.5;
+        double y = (double)pos.getY() + (8.5 / 16.0);
+        double z = (double)pos.getZ() + 0.5;
+        double rx = rand.nextDouble() * 0.2D - 0.1D;
+        double rz = rand.nextDouble() * 0.2D - 0.1D;
+
+        switch(rand.nextInt(4))
+        {
+            case 0:
+                worldIn.spawnParticle(EnumParticleTypes.CLOUD, x + rx + 0.4, y, z + rz, 0.0D, 0.05D, 0.0D);
+                break;
+            case 1:
+                worldIn.spawnParticle(EnumParticleTypes.CLOUD, x + rx - 0.4, y, z + rz, 0.0D, 0.05D, 0.0D);
+                break;
+            case 2:
+                worldIn.spawnParticle(EnumParticleTypes.CLOUD, x + rx, y, z + rz + 0.4, 0.0D, 0.05D, 0.0D);
+                break;
+            case 3:
+                worldIn.spawnParticle(EnumParticleTypes.CLOUD, x + rx, y, z + rz - 0.4, 0.0D, 0.05D, 0.0D);
+                break;
+        }
+
     }
 }
