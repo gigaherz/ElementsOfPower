@@ -17,23 +17,29 @@ public class EntityDustball extends EntityBallBase
 
     public EntityDustball(World worldIn)
     {
-        super(ElementsOfPower.earth, worldIn);
+        super(worldIn);
     }
 
     public EntityDustball(World worldIn, EntityLivingBase p_i1774_2_)
     {
-        super(ElementsOfPower.earth, worldIn, p_i1774_2_);
+        super(worldIn, p_i1774_2_);
     }
 
     public EntityDustball(World worldIn, double x, double y, double z)
     {
-        super(ElementsOfPower.earth, worldIn, x, y, z);
+        super(worldIn, x, y, z);
     }
 
     public EntityDustball(World worldIn, int force, boolean cushionMode, EntityLivingBase p_i1774_2_)
     {
-        super(ElementsOfPower.earth, worldIn, force, p_i1774_2_);
+        super(worldIn, force, p_i1774_2_);
         cushion = cushionMode;
+    }
+
+    @Override
+    public int getBallColor()
+    {
+        return 0x404040;
     }
 
     @Override

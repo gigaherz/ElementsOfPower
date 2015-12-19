@@ -1,6 +1,5 @@
 package gigaherz.elementsofpower;
 
-import com.google.common.base.Predicate;
 import gigaherz.elementsofpower.blocks.BlockCushion;
 import gigaherz.elementsofpower.blocks.BlockDust;
 import gigaherz.elementsofpower.database.MagicDatabase;
@@ -21,7 +20,12 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBow;
+import net.minecraft.item.ItemEnderPearl;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -34,6 +38,9 @@ import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.Logger;
+
+import java.lang.reflect.Method;
+import java.util.function.Function;
 
 @Mod(modid = ElementsOfPower.MODID, name = ElementsOfPower.MODNAME, version = ElementsOfPower.VERSION)
 public class ElementsOfPower
@@ -103,10 +110,29 @@ public class ElementsOfPower
         }
     };
 
+    public static int SMALL_CLOUD_PARTICLE_ID;
+    public static EnumParticleTypes SMALL_CLOUD_PARTICLE;
+
+    void registerParticle()
+    {
+        SMALL_CLOUD_PARTICLE_ID = -1;
+        for(EnumParticleTypes t : EnumParticleTypes.values())
+        {
+            SMALL_CLOUD_PARTICLE_ID = Math.max(SMALL_CLOUD_PARTICLE_ID, t.getParticleID()+1);
+        }
+        SMALL_CLOUD_PARTICLE = EnumHelper.addEnum(EnumParticleTypes.class, "SMALL_CLOUD",
+                new Class<?>[] {String.class, int.class, boolean.class},
+                new Object[] {"small_cloud", SMALL_CLOUD_PARTICLE_ID, false});
+
+        // Client-side rendering registered in: proxy.registerParticle();
+    }
+
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
         logger = event.getModLog();
+
+        registerParticle();
 
         // Initialize Block Materials
         logger.info("Initializing block materials...");

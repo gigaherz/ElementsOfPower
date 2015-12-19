@@ -1,20 +1,20 @@
 package gigaherz.elementsofpower.entities;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 
-public class EntityTeleporter extends EntityThrowable implements IRenderStackProvider
+public class EntityTeleporter extends EntityBallBase
 {
-    private ItemStack stackForRendering = new ItemStack(Items.ender_pearl, 1);
-
     @SuppressWarnings("unused")
     public EntityTeleporter(World worldIn)
     {
@@ -33,15 +33,15 @@ public class EntityTeleporter extends EntityThrowable implements IRenderStackPro
     }
 
     @Override
-    protected float getVelocity()
+    public int getBallColor()
     {
-        return 2.0F;
+        return 0x008000;
     }
 
     @Override
-    public ItemStack getStackForRendering()
+    protected float getVelocity()
     {
-        return stackForRendering;
+        return 2.0F;
     }
 
     @Override
@@ -50,9 +50,7 @@ public class EntityTeleporter extends EntityThrowable implements IRenderStackPro
         return 0.001F;
     }
 
-    /**
-     * Called when this EntityThrowable hits a block or entity.
-     */
+    @Override
     protected void onImpact(MovingObjectPosition hitInfo)
     {
         EntityLivingBase thrower = this.getThrower();
@@ -101,6 +99,18 @@ public class EntityTeleporter extends EntityThrowable implements IRenderStackPro
 
             this.setDead();
         }
+    }
+
+    @Override
+    protected void processBlockWithinRadius(BlockPos blockPos, IBlockState currentState, int layers)
+    {
+
+    }
+
+    @Override
+    protected void spawnBallParticles()
+    {
+
     }
 
     /**

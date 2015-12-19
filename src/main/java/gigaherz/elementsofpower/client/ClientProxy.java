@@ -7,8 +7,9 @@ import gigaherz.elementsofpower.entities.EntityBeamBase;
 import gigaherz.elementsofpower.entities.EntityTeleporter;
 import gigaherz.elementsofpower.essentializer.TileEssentializer;
 import gigaherz.elementsofpower.models.ObjModelLoader;
+import gigaherz.elementsofpower.renders.RenderBall;
 import gigaherz.elementsofpower.renders.RenderBeam;
-import gigaherz.elementsofpower.renders.RenderEntityProvidedStack;
+import gigaherz.elementsofpower.renders.RenderEssentializer;
 import gigaherz.elementsofpower.util.Used;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -39,6 +40,12 @@ public class ClientProxy implements ISideProxy
     public void init()
     {
         registerEntityRenderers();
+        registerParticle();
+    }
+
+    public void registerParticle()
+    {
+        Minecraft.getMinecraft().effectRenderer.registerParticle(ElementsOfPower.SMALL_CLOUD_PARTICLE_ID, new EntitySmallCloudFX.Factory());
     }
 
     public void registerClientEvents()
@@ -107,22 +114,16 @@ public class ClientProxy implements ISideProxy
     // ----------------------------------------------------------- Entity Renderers
     public void registerEntityRenderers()
     {
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEssentializer.class, new TESREssentializer());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEssentializer.class, new RenderEssentializer());
 
-        registerEntityRenderingHandler(EntityTeleporter.class);
-        registerEntityRenderingHandler(EntityBallBase.class);
+        registerEntityRenderingHandler(EntityTeleporter.class,
+                new RenderBall(Minecraft.getMinecraft().getRenderManager()));
+        registerEntityRenderingHandler(EntityBallBase.class,
+                new RenderBall(Minecraft.getMinecraft().getRenderManager()));
         registerEntityRenderingHandler(EntityBeamBase.class,
                 new RenderBeam(
                         Minecraft.getMinecraft().getRenderManager(),
                         ElementsOfPower.fire,
-                        Minecraft.getMinecraft().getRenderItem()));
-    }
-
-    public void registerEntityRenderingHandler(Class<? extends Entity> entityClass)
-    {
-        registerEntityRenderingHandler(entityClass,
-                new RenderEntityProvidedStack(
-                        Minecraft.getMinecraft().getRenderManager(),
                         Minecraft.getMinecraft().getRenderItem()));
     }
 

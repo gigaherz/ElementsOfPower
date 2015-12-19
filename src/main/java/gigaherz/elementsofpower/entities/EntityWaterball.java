@@ -17,23 +17,29 @@ public class EntityWaterball extends EntityBallBase
 
     public EntityWaterball(World worldIn)
     {
-        super(ElementsOfPower.water, worldIn);
+        super(worldIn);
     }
 
     public EntityWaterball(World worldIn, EntityLivingBase p_i1774_2_)
     {
-        super(ElementsOfPower.water, worldIn, p_i1774_2_);
+        super(worldIn, p_i1774_2_);
     }
 
     public EntityWaterball(World worldIn, double x, double y, double z)
     {
-        super(ElementsOfPower.water, worldIn, x, y, z);
+        super(worldIn, x, y, z);
     }
 
     public EntityWaterball(World worldIn, int force, boolean spawnSourceBlocks, EntityLivingBase p_i1774_2_)
     {
-        super(ElementsOfPower.water, worldIn, force, p_i1774_2_);
+        super(worldIn, force, p_i1774_2_);
         this.spawnSourceBlocks = spawnSourceBlocks;
+    }
+
+    @Override
+    public int getBallColor()
+    {
+        return 0xFF0000;
     }
 
     @Override

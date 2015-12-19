@@ -10,56 +10,41 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
-public abstract class EntityBallBase extends EntityThrowable implements IVariableSize, IRenderStackProvider
+public abstract class EntityBallBase extends EntityThrowable
 {
-
     public int damageForce;
-    private ItemStack stackForRendering;
 
-    protected EntityBallBase(ItemStack stack, World worldIn)
+    protected EntityBallBase(World worldIn)
     {
         super(worldIn);
-        stackForRendering = stack;
     }
 
-    protected EntityBallBase(ItemStack stack, World worldIn, EntityLivingBase p_i1774_2_)
+    protected EntityBallBase(World worldIn, EntityLivingBase p_i1774_2_)
     {
         super(worldIn, p_i1774_2_);
-        stackForRendering = stack;
     }
 
-    protected EntityBallBase(ItemStack stack, World worldIn, double x, double y, double z)
+    protected EntityBallBase(World worldIn, double x, double y, double z)
     {
         super(worldIn, x, y, z);
-        stackForRendering = stack;
     }
 
-    protected EntityBallBase(ItemStack stack, World worldIn, int force, EntityLivingBase p_i1774_2_)
+    protected EntityBallBase(World worldIn, int force, EntityLivingBase p_i1774_2_)
     {
         super(worldIn, p_i1774_2_);
         damageForce = force;
-        stackForRendering = stack;
     }
 
+    @Override
     protected float getVelocity()
     {
         return 2.0F;
-    }
-
-    public ItemStack getStackForRendering()
-    {
-        return stackForRendering;
     }
 
     @Override
     protected float getGravityVelocity()
     {
         return 0.001F;
-    }
-
-    protected float getRandomForParticle()
-    {
-        return (rand.nextFloat() - 0.5f) * damageForce / 8;
     }
 
     @Override
@@ -128,6 +113,11 @@ public abstract class EntityBallBase extends EntityThrowable implements IVariabl
         }
     }
 
+    protected float getRandomForParticle()
+    {
+        return (rand.nextFloat() - 0.5f) * damageForce / 8;
+    }
+
     protected void processDirectHit(Entity entityHit)
     {
     }
@@ -144,14 +134,15 @@ public abstract class EntityBallBase extends EntityThrowable implements IVariabl
 
     protected abstract void spawnBallParticles();
 
-    @Override
     public float getScale()
     {
-        return 0.25f * (1 + damageForce);
+        return 0.6f * (1 + damageForce);
     }
 
     public int getDamageForce()
     {
         return damageForce;
     }
+
+    public abstract int getBallColor();
 }

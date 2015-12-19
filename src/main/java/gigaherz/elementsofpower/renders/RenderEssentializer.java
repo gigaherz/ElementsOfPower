@@ -1,7 +1,8 @@
-package gigaherz.elementsofpower.client;
+package gigaherz.elementsofpower.renders;
 
 import gigaherz.elementsofpower.essentializer.TileEssentializer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -18,11 +19,11 @@ import org.lwjgl.opengl.GL11;
 import java.io.IOException;
 import java.util.List;
 
-public class TESREssentializer extends TileEntitySpecialRenderer<TileEssentializer>
+public class RenderEssentializer extends TileEntitySpecialRenderer<TileEssentializer>
 {
     IFlexibleBakedModel model;
 
-    public TESREssentializer()
+    public RenderEssentializer()
     {
     }
 
@@ -45,10 +46,12 @@ public class TESREssentializer extends TileEntitySpecialRenderer<TileEssentializ
 
         bindTexture(TextureMap.locationBlocksTexture);
 
+        GlStateManager.disableLighting();
+
         GL11.glPushMatrix();
         GL11.glTranslated(x + 0.5, y + 1, z + 0.5);
 
-        float time = (te.getWorld().getWorldTime() + partialTicks) * 1.5f;
+        float time = (te.renderTime + partialTicks) * 1.5f;
         float angle1 = time * 2.5f + 120 * (1 + (float)Math.sin(time * 0.05f));
         float angle2 = time * 0.9f;
         float bob = (float) Math.sin(time * (Math.PI / 180) * 2.91) * 0.06f;
@@ -72,6 +75,8 @@ public class TESREssentializer extends TileEntitySpecialRenderer<TileEssentializ
         }
 
         GL11.glPopMatrix();
+
+        GlStateManager.enableLighting();
     }
 
     private void renderModel(IFlexibleBakedModel model)

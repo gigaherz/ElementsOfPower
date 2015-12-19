@@ -25,6 +25,8 @@ public class TileEssentializer
     public final InventoryBasic inventory = new InventoryBasic(ElementsOfPower.MODID + ".essentializer", false, 2);
     public final MagicHolder holder = new MagicHolder();
 
+    public float renderTime;
+
     @Override
     public void readFromNBT(NBTTagCompound tagCompound)
     {
@@ -94,6 +96,11 @@ public class TileEssentializer
         {
             if (holder.processInventory(inventory))
                 worldObj.markBlockForUpdate(getPos());
+        }
+
+        if(worldObj.isRemote)
+        {
+            renderTime ++;
         }
     }
 

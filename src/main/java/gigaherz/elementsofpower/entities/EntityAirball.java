@@ -20,22 +20,28 @@ public class EntityAirball extends EntityBallBase
 {
     public EntityAirball(World worldIn)
     {
-        super(ElementsOfPower.air, worldIn);
+        super(worldIn);
     }
 
     public EntityAirball(World worldIn, EntityLivingBase p_i1774_2_)
     {
-        super(ElementsOfPower.air, worldIn, p_i1774_2_);
+        super(worldIn, p_i1774_2_);
     }
 
     public EntityAirball(World worldIn, double x, double y, double z)
     {
-        super(ElementsOfPower.air, worldIn, x, y, z);
+        super(worldIn, x, y, z);
     }
 
     public EntityAirball(World worldIn, int force, EntityLivingBase p_i1774_2_)
     {
-        super(ElementsOfPower.air, worldIn, force, p_i1774_2_);
+        super(worldIn, force, p_i1774_2_);
+    }
+
+    @Override
+    public int getBallColor()
+    {
+        return 0xFFFFFF;
     }
 
     @Override

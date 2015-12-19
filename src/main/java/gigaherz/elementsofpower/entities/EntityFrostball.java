@@ -17,22 +17,28 @@ public class EntityFrostball extends EntityBallBase
 
     public EntityFrostball(World worldIn)
     {
-        super(ElementsOfPower.air, worldIn);
+        super(worldIn);
     }
 
     public EntityFrostball(World worldIn, EntityLivingBase p_i1774_2_)
     {
-        super(ElementsOfPower.air, worldIn, p_i1774_2_);
+        super(worldIn, p_i1774_2_);
     }
 
     public EntityFrostball(World worldIn, double x, double y, double z)
     {
-        super(ElementsOfPower.air, worldIn, x, y, z);
+        super(worldIn, x, y, z);
     }
 
     public EntityFrostball(World worldIn, int force, EntityLivingBase p_i1774_2_)
     {
-        super(ElementsOfPower.air, worldIn, force, p_i1774_2_);
+        super(worldIn, force, p_i1774_2_);
+    }
+
+    @Override
+    public int getBallColor()
+    {
+        return 0xFF8020;
     }
 
     @Override

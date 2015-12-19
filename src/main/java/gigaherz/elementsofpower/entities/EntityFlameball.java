@@ -20,22 +20,28 @@ public class EntityFlameball extends EntityBallBase
 
     public EntityFlameball(World worldIn)
     {
-        super(ElementsOfPower.fire, worldIn);
+        super(worldIn);
     }
 
     public EntityFlameball(World worldIn, EntityLivingBase p_i1774_2_)
     {
-        super(ElementsOfPower.fire, worldIn, p_i1774_2_);
+        super(worldIn, p_i1774_2_);
     }
 
     public EntityFlameball(World worldIn, double x, double y, double z)
     {
-        super(ElementsOfPower.fire, worldIn, x, y, z);
+        super(worldIn, x, y, z);
     }
 
     public EntityFlameball(World worldIn, int force, EntityLivingBase p_i1774_2_)
     {
-        super(ElementsOfPower.fire, worldIn, force, p_i1774_2_);
+        super(worldIn, force, p_i1774_2_);
+    }
+
+    @Override
+    public int getBallColor()
+    {
+        return 0x0000FF;
     }
 
     @Override

@@ -75,16 +75,16 @@ public class BlockEssentializer
         switch(rand.nextInt(4))
         {
             case 0:
-                worldIn.spawnParticle(EnumParticleTypes.CLOUD, x + rx + 0.4, y, z + rz, 0.0D, 0.05D, 0.0D);
+                worldIn.spawnParticle(ElementsOfPower.SMALL_CLOUD_PARTICLE, x + rx + 0.4, y, z + rz, 0.0D, 0.05D, 0.0D);
                 break;
             case 1:
-                worldIn.spawnParticle(EnumParticleTypes.CLOUD, x + rx - 0.4, y, z + rz, 0.0D, 0.05D, 0.0D);
+                worldIn.spawnParticle(ElementsOfPower.SMALL_CLOUD_PARTICLE, x + rx - 0.4, y, z + rz, 0.0D, 0.05D, 0.0D);
                 break;
             case 2:
-                worldIn.spawnParticle(EnumParticleTypes.CLOUD, x + rx, y, z + rz + 0.4, 0.0D, 0.05D, 0.0D);
+                worldIn.spawnParticle(ElementsOfPower.SMALL_CLOUD_PARTICLE, x + rx, y, z + rz + 0.4, 0.0D, 0.05D, 0.0D);
                 break;
             case 3:
-                worldIn.spawnParticle(EnumParticleTypes.CLOUD, x + rx, y, z + rz - 0.4, 0.0D, 0.05D, 0.0D);
+                worldIn.spawnParticle(ElementsOfPower.SMALL_CLOUD_PARTICLE, x + rx, y, z + rz - 0.4, 0.0D, 0.05D, 0.0D);
                 break;
         }
 

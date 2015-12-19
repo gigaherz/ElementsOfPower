@@ -16,23 +16,29 @@ public class EntityLavaball extends EntityBallBase
 
     public EntityLavaball(World worldIn)
     {
-        super(ElementsOfPower.fire, worldIn);
+        super(worldIn);
     }
 
     public EntityLavaball(World worldIn, EntityLivingBase p_i1774_2_)
     {
-        super(ElementsOfPower.fire, worldIn, p_i1774_2_);
+        super(worldIn, p_i1774_2_);
     }
 
     public EntityLavaball(World worldIn, double x, double y, double z)
     {
-        super(ElementsOfPower.fire, worldIn, x, y, z);
+        super(worldIn, x, y, z);
     }
 
     public EntityLavaball(World worldIn, int force, boolean spawnSourceBlocks, EntityLivingBase p_i1774_2_)
     {
-        super(ElementsOfPower.fire, worldIn, force, p_i1774_2_);
+        super(worldIn, force, p_i1774_2_);
         this.spawnSourceBlocks = spawnSourceBlocks;
+    }
+
+    @Override
+    public int getBallColor()
+    {
+        return 0x3080FF;
     }
 
     @Override
