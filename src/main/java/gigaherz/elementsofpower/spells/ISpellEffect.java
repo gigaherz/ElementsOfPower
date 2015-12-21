@@ -10,11 +10,17 @@ public interface ISpellEffect
 
     MagicAmounts getSpellCost();
 
+    int getColor();
+
     boolean isBeam();
 
-    float getDuration();
+    int getDuration();
 
     String getSequence();
 
     ISpellcast getNewCast();
+
+    ISpellEffect withColor(int color);
+
+    float getScale();
 }

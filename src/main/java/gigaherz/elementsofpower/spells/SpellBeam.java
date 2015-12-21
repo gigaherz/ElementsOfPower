@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 public class SpellBeam
@@ -19,7 +20,7 @@ public class SpellBeam
     public SpellBeam(int power, int ticks)
     {
         this.power = power;
-        this.effectInterval = 30;
+        this.effectInterval = 2;
         this.timeToLive = effectInterval * ticks;
     }
 
@@ -27,7 +28,10 @@ public class SpellBeam
     public boolean isBeam() { return true; }
 
     @Override
-    public float getDuration() {return timeToLive; }
+    public int getDuration() {return timeToLive; }
+
+    @Override
+    public float getScale() { return 1 + 0.25f * power; }
 
     @Override
     public ISpellcast getNewCast()
@@ -43,7 +47,9 @@ public class SpellBeam
 
     public class SpellcastBeam implements ISpellcast<SpellBeam>
     {
-        float remainingCastTime;
+        int remainingCastTime;
+        int remainingInterval;
+        World world;
         EntityPlayer player;
 
         @Override
@@ -53,35 +59,43 @@ public class SpellBeam
         }
 
         @Override
-        public void init(EntityPlayer player)
+        public void init(World world, EntityPlayer player)
         {
+            this.world = world;
             this.player = player;
             remainingCastTime = getDuration();
+            remainingInterval = effectInterval;
         }
 
         @Override
         public SpellBeam getEffect() {return SpellBeam.this; }
 
-        void applyEffect(World worldObj, MovingObjectPosition hitInfo)
+        void applyEffect()
         {
-            if (hitInfo == null)
+            float maxDistance = 10;
+            Vec3 start = player.getPositionEyes(1);
+            Vec3 dir = player.getLook(1);
+            Vec3 end = start.addVector(dir.xCoord * maxDistance, dir.yCoord * maxDistance, dir.zCoord * maxDistance);
+            MovingObjectPosition mop = player.worldObj.rayTraceBlocks(start, end, false, true, false);
+
+            if (mop == null)
                 return;
 
-            if (hitInfo.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK)
+            if (mop.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK)
             {
-                BlockPos pos = hitInfo.getBlockPos().offset(hitInfo.sideHit);
-                if (worldObj.getBlockState(pos).getBlock() == Blocks.air)
+                BlockPos pos = mop.getBlockPos().offset(mop.sideHit);
+                if (world.getBlockState(pos).getBlock() == Blocks.air)
                 {
-                    worldObj.setBlockState(pos, Blocks.fire.getDefaultState());
+                    world.setBlockState(pos, Blocks.fire.getDefaultState());
                 }
             }
-            else if (hitInfo.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY)
+            else if (mop.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY)
             {
                 // TODO: this.applyEnchantments(this.getCaster(), hitInfo.entityHit);
 
-                if (!hitInfo.entityHit.isImmuneToFire())
+                if (!mop.entityHit.isImmuneToFire())
                 {
-                    hitInfo.entityHit.setFire(power);
+                    mop.entityHit.setFire(power);
                 }
             }
         }
@@ -90,6 +104,20 @@ public class SpellBeam
         public void update()
         {
             remainingCastTime--;
+            remainingInterval--;
+
+            if(remainingInterval<=0)
+            {
+                remainingInterval = effectInterval;
+
+                if(!world.isRemote)
+                {
+                    applyEffect();
+                }
+
+                // TODO: visual effects?
+            }
+
             if(remainingCastTime<=0)
             {
                 SpellcastEntityData data = SpellcastEntityData.get(player);
@@ -103,13 +131,13 @@ public class SpellBeam
         @Override
         public void readFromNBT(NBTTagCompound tagData)
         {
-            remainingCastTime = tagData.getFloat("remainingCastTime");
+            remainingCastTime = tagData.getInteger("remainingCastTime");
         }
 
         @Override
         public void writeToNBT(NBTTagCompound tagData)
         {
-            tagData.setFloat("remainingCastTime", remainingCastTime);
+            tagData.setInteger("remainingCastTime", remainingCastTime);
         }
     }
 }

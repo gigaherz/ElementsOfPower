@@ -90,10 +90,12 @@ public class SpellManager
 
         registerSpell(new SpellTeleport().light().darkness().cost(COST_ELEMENTARY * COMBO_COEF));
 
-        registerSpell(new SpellBeam(2, 5).fire().darkness().cost(COST_AVERAGE));
+        registerSpell(new SpellBeam(2, 25).fire().darkness().cost(COST_AVERAGE).withColor(0x0000ff));
+        registerSpell(new SpellBeam(4, 40).fire().fire().darkness().cost(COST_COMPLEX).withColor(0x0040ff));
+        registerSpell(new SpellBeam(6, 60).fire().fire().fire().darkness().cost(COST_EXTREME).withColor(0x00a0ff));
     }
 
-    public static void registerSpell(SpellBase spell)
+    public static void registerSpell(ISpellEffect spell)
     {
         spellRegistration.put(spell.getSequence(), spell);
     }

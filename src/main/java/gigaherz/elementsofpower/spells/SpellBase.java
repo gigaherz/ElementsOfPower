@@ -5,6 +5,7 @@ import gigaherz.elementsofpower.database.SpellManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 
 public abstract class SpellBase
         implements ISpellEffect
@@ -18,8 +19,9 @@ public abstract class SpellBase
         }
 
         @Override
-        public void init(EntityPlayer player)
+        public void init(World world, EntityPlayer player)
         {
+
         }
 
         @Override
@@ -44,12 +46,22 @@ public abstract class SpellBase
     protected MagicAmounts spellCost = new MagicAmounts();
     protected StringBuilder spellSequence = new StringBuilder();
     protected String finalSequence = null;
+    protected int color = 0xFFFFFF;
+
+    @Override
+    public ISpellEffect withColor(int color) { this.color=color; return this; }
+
+    @Override
+    public int getColor() { return color; }
+
+    @Override
+    public float getScale() { return 1; }
 
     @Override
     public boolean isBeam() { return false; }
 
     @Override
-    public float getDuration() {return 0; }
+    public int getDuration() {return 0; }
 
     @Override
     public ISpellcast getNewCast()

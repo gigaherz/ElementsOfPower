@@ -23,6 +23,9 @@ public class SpellGenericEntity
     }
 
     @Override
+    public float getScale() { return 1 + 0.25f * power; }
+
+    @Override
     public ISpellcast castSpell(ItemStack stack, EntityPlayer player)
     {
         World world = player.worldObj;

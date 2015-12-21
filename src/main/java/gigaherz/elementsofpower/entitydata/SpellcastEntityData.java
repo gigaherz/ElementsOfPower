@@ -79,7 +79,7 @@ public class SpellcastEntityData implements IExtendedEntityProperties
         interrupt();
 
         currentCasting = spell;
-        currentCasting.init(player);
+        currentCasting.init(world, player);
 
         if(!world.isRemote) ElementsOfPower.channel.sendTo(new SpellcastSync(SpellcastSync.ChangeMode.BEGIN, spell), (EntityPlayerMP)player);
     }
@@ -146,6 +146,11 @@ public class SpellcastEntityData implements IExtendedEntityProperties
                 cancel();
                 break;
         }
+    }
+
+    public ISpellcast getCurrentCasting()
+    {
+        return currentCasting;
     }
 
     public static class Handler

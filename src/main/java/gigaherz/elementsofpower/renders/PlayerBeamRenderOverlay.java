@@ -2,19 +2,16 @@ package gigaherz.elementsofpower.renders;
 
 import gigaherz.elementsofpower.entitydata.SpellcastEntityData;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.tileentity.TileEntityBeacon;
 import net.minecraft.util.*;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -32,6 +29,7 @@ import java.util.List;
 public class PlayerBeamRenderOverlay
 {
     IFlexibleBakedModel model;
+    IFlexibleBakedModel modelCyl;
 
     /*@Override
     public void doRenderLayer(EntityPlayer player, float swing, float prevSwing, float partialTicks, float animationProgress, float relativeHeadYaw, float prevPitch, float scale)
@@ -64,10 +62,10 @@ public class PlayerBeamRenderOverlay
 
     public void drawSpellsOnPlayer(EntityPlayer player, RenderManager renderManager, double x, double y, double z, float partialTicks)
     {
-        SpellcastEntityData spell = SpellcastEntityData.get(player);
+        SpellcastEntityData data = SpellcastEntityData.get(player);
 
         // TODO: add special effects for other spell tipes that I may add in the future
-        if(!spell.isCastingBeam())
+        if(!data.isCastingBeam())
             return;
 
         if(model == null)
@@ -84,7 +82,22 @@ public class PlayerBeamRenderOverlay
             }
         }
 
-        float scale = 0.15f;
+        if(modelCyl == null)
+        {
+            try
+            {
+                IModel mod = ModelLoaderRegistry.getModel(new ResourceLocation("elementsofpower:entity/cylinder.obj"));
+                modelCyl = mod.bake(mod.getDefaultState(), Attributes.DEFAULT_BAKED_FORMAT,
+                        (location) -> Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString()));
+            }
+            catch(IOException e)
+            {
+                throw new ReportedException(new CrashReport("Error loading model for entity", e));
+            }
+        }
+
+        int beam_color = data.getCurrentCasting().getEffect().getColor();
+        float scale = 0.15f * data.getCurrentCasting().getEffect().getScale();
         float maxDistance = 10.0f;
 
         float ppitch = player.prevRotationPitch + partialTicks * (player.rotationPitch - player.prevRotationPitch);
@@ -115,113 +128,60 @@ public class PlayerBeamRenderOverlay
         double beamYaw = Math.atan2(dir.zCoord, dir.xCoord);
         double beamPitch = Math.atan2(dir.yCoord, beamPlane);
 
-        final float step = 0.01f;
-
-        Vec3 vstep = new Vec3(
-                dir.xCoord * step,
-                dir.yCoord * step,
-                dir.zCoord * step);
-
         GlStateManager.disableLighting();
         GlStateManager.enableRescaleNormal();
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.depthMask(false);
 
         renderManager.renderEngine.bindTexture(TextureMap.locationBlocksTexture);
 
         GlStateManager.pushMatrix();
 
-        Vec3 cp = off;
-
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(
-                (float) (x + cp.xCoord),
-                (float) (y + cp.yCoord),
-                (float) (z + cp.zCoord));
-        GlStateManager.rotate(-(float)Math.toDegrees(beamYaw) + 90, 0, 1, 0);
-        GlStateManager.rotate(-(float)Math.toDegrees(beamPitch), 1, 0, 0);
-        GlStateManager.rotate((player.ticksExisted % 60 + partialTicks) * 360 / 61.0f, 0, 0, 1);
-        GlStateManager.scale(scale*0.5, scale*0.5, distance);
-
-        int beam_color = 0xFFffffff;
-        renderBeam(Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite("minecraft:blocks/sea_lantern"), beam_color);
-
-        GlStateManager.popMatrix();
-
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         for(int i=0;i<=4;i++)
         {
             float tt = (i+(player.ticksExisted % 10 + partialTicks) / 11.0f)/5.0f;
-            float tscale = 0.25f *(1 + 0.5f * tt);
+            float tscale = scale * 1.2f *(1 + 0.5f * tt);
+
+            int alpha = 255 - (i==0 ? 0 : (int)(tt*255));
+            int color = (alpha << 24) | beam_color;
 
             GlStateManager.pushMatrix();
             GlStateManager.translate(
-                    (float) (x + beam0.xCoord),
-                    (float) (y + beam0.yCoord),
-                    (float) (z + beam0.zCoord));
+                    (float) (x + off.xCoord),
+                    (float) (y + off.yCoord),
+                    (float) (z + off.zCoord));
             GlStateManager.rotate(-(float) Math.toDegrees(beamYaw), 0, 1, 0);
-            GlStateManager.rotate((float) Math.toDegrees(beamPitch), 0, 0, 1);
-            GlStateManager.scale(tscale, tscale, tscale);
+            GlStateManager.rotate((float) Math.toDegrees(beamPitch) - 90, 0, 0, 1);
+            GlStateManager.scale(tscale * 0.25, distance, tscale * 0.25);
 
-            int alpha = 255 - (i==0 ? 0 : (int)(tt*255));
-            int color = (alpha << 24) | 0xffffff;
-            renderModel(model, color);
+            renderModel(modelCyl, color);
 
             GlStateManager.popMatrix();
+
+            if(mop != null && mop.hitVec != null)
+            {
+                GlStateManager.pushMatrix();
+                GlStateManager.translate(
+                        (float) (x + beam0.xCoord),
+                        (float) (y + beam0.yCoord),
+                        (float) (z + beam0.zCoord));
+                GlStateManager.rotate(-(float) Math.toDegrees(beamYaw), 0, 1, 0);
+                GlStateManager.rotate((float) Math.toDegrees(beamPitch) - 90, 0, 0, 1);
+                GlStateManager.scale(tscale, tscale, tscale);
+
+                renderModel(model, color);
+
+                GlStateManager.popMatrix();
+            }
         }
 
         GlStateManager.popMatrix();
 
+        GlStateManager.depthMask(true);
+        GlStateManager.disableBlend();
         GlStateManager.disableRescaleNormal();
         GlStateManager.enableLighting();
-    }
-
-    private void renderBeam(TextureAtlasSprite tas, int beamColor)
-    {
-        float u0 = tas.getInterpolatedU(0);
-        float u1 = tas.getInterpolatedU(1);
-        float v0 = tas.getInterpolatedV(0);
-        float v1 = tas.getInterpolatedV(1);
-        
-        Vec3 a0 = new Vec3(0,1,0);
-        Vec3 b0 = new Vec3(1,0,0);
-        Vec3 c0 = new Vec3(0,-1,0);
-        Vec3 d0 = new Vec3(-1,0,0);
-
-        Vec3 a1 = new Vec3(0,1,1);
-        Vec3 b1 = new Vec3(1,0,1);
-        Vec3 c1 = new Vec3(0,-1,1);
-        Vec3 d1 = new Vec3(-1,0,1);
-
-        int r = beamColor & 0xFF;
-        int g = (beamColor>>8) & 0xFF;
-        int b = (beamColor>>16) & 0xFF;
-        int a = (beamColor>>24) & 0xFF;
-
-        WorldRenderer wr = Tessellator.getInstance().getWorldRenderer();
-
-        wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
-        wr.pos(a0.xCoord, a0.yCoord, a0.zCoord).tex(u0,v0).color(r, g, b, a).normal(1,1,0).endVertex();
-        wr.pos(a1.xCoord, a1.yCoord, a1.zCoord).tex(u0,v1).color(r, g, b, a).normal(1,1,0).endVertex();
-        wr.pos(b1.xCoord, b1.yCoord, b1.zCoord).tex(u1,v1).color(r, g, b, a).normal(1,1,0).endVertex();
-        wr.pos(b0.xCoord, b0.yCoord, b0.zCoord).tex(u1,v0).color(r, g, b, a).normal(1,1,0).endVertex();
-        wr.pos(b0.xCoord, b0.yCoord, b0.zCoord).tex(u0,v0).color(r, g, b, a).normal(1,-1,0).endVertex();
-        wr.pos(b1.xCoord, b1.yCoord, b1.zCoord).tex(u0,v1).color(r, g, b, a).normal(1,-1,0).endVertex();
-        wr.pos(c1.xCoord, c1.yCoord, c1.zCoord).tex(u1,v1).color(r, g, b, a).normal(1,-1,0).endVertex();
-        wr.pos(c0.xCoord, c0.yCoord, c0.zCoord).tex(u1,v0).color(r, g, b, a).normal(1,-1,0).endVertex();
-        wr.pos(c0.xCoord, c0.yCoord, c0.zCoord).tex(u0,v0).color(r, g, b, a).normal(-1,-1,0).endVertex();
-        wr.pos(c1.xCoord, c1.yCoord, c1.zCoord).tex(u0,v1).color(r, g, b, a).normal(-1,-1,0).endVertex();
-        wr.pos(d1.xCoord, d1.yCoord, d1.zCoord).tex(u1,v1).color(r, g, b, a).normal(-1,-1,0).endVertex();
-        wr.pos(d0.xCoord, d0.yCoord, d0.zCoord).tex(u1,v0).color(r, g, b, a).normal(-1,-1,0).endVertex();
-        wr.pos(d0.xCoord, d0.yCoord, d0.zCoord).tex(u0,v0).color(r, g, b, a).normal(-1,1,0).endVertex();
-        wr.pos(d1.xCoord, d1.yCoord, d1.zCoord).tex(u0,v1).color(r, g, b, a).normal(-1,1,0).endVertex();
-        wr.pos(a1.xCoord, a1.yCoord, a1.zCoord).tex(u1,v1).color(r, g, b, a).normal(-1,1,0).endVertex();
-        wr.pos(a0.xCoord, a0.yCoord, a0.zCoord).tex(u1,v0).color(r, g, b, a).normal(-1,1,0).endVertex();
-        Tessellator.getInstance().draw();
-    }
-
-    private void renderModel(IFlexibleBakedModel model)
-    {
-        renderModel(model, -1);
     }
 
     private void renderModel(IFlexibleBakedModel model, int color)
