@@ -4,16 +4,61 @@ import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.database.SpellManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 public abstract class SpellBase
         implements ISpellEffect
 {
+    public class Spellcast implements ISpellcast<SpellBase>
+    {
+        @Override
+        public float getRemainingCastTime()
+        {
+            return 0;
+        }
+
+        @Override
+        public void init(EntityPlayer player)
+        {
+        }
+
+        @Override
+        public SpellBase getEffect() {return SpellBase.this; }
+
+        @Override
+        public void update()
+        {
+        }
+
+        @Override
+        public void readFromNBT(NBTTagCompound tagData)
+        {
+        }
+
+        @Override
+        public void writeToNBT(NBTTagCompound tagData)
+        {
+        }
+    }
+
     protected MagicAmounts spellCost = new MagicAmounts();
     protected StringBuilder spellSequence = new StringBuilder();
     protected String finalSequence = null;
 
     @Override
-    public abstract void castSpell(ItemStack stack, EntityPlayer player);
+    public boolean isBeam() { return false; }
+
+    @Override
+    public float getDuration() {return 0; }
+
+    @Override
+    public ISpellcast getNewCast()
+    {
+        return new Spellcast();
+    }
+
+    @Override
+    public abstract ISpellcast castSpell(ItemStack stack, EntityPlayer player);
 
     @Override
     public MagicAmounts getSpellCost()
@@ -21,6 +66,7 @@ public abstract class SpellBase
         return spellCost;
     }
 
+    @Override
     public String getSequence()
     {
         if (finalSequence == null)

@@ -23,16 +23,16 @@ public class SpellResurrection
     }
 
     @Override
-    public void castSpell(ItemStack stack, EntityPlayer player)
+    public ISpellcast castSpell(ItemStack stack, EntityPlayer player)
     {
         World world = player.worldObj;
         MovingObjectPosition pos = rayTracePlayer(player, 10);
 
         if (pos == null)
-            return;
+            return null;
 
         if (pos.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK)
-            return;
+            return null;
 
         // Resurrecting players could be done by
         // sending dimension packet or maybe respawn keeping items
@@ -52,7 +52,11 @@ public class SpellResurrection
             if (world.spawnEntityInWorld(dragon))
             {
                 world.setBlockToAir(bp);
+
+                return getNewCast();
             }
         }
+
+        return null;
     }
 }

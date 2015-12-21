@@ -9,7 +9,7 @@ import net.minecraft.world.World;
 public class SpellTeleport extends SpellBase
 {
     @Override
-    public void castSpell(ItemStack stack, EntityPlayer player)
+    public ISpellcast castSpell(ItemStack stack, EntityPlayer player)
     {
         World world = player.worldObj;
         Vec3 lookAt = player.getLook(1.0F);
@@ -22,6 +22,9 @@ public class SpellTeleport extends SpellBase
         fireball.posY = player.posY + 1.0f;
         fireball.posZ = player.posZ + lookAt.zCoord * player.width * 0.75f;
 
-        world.spawnEntityInWorld(fireball);
+        if (world.spawnEntityInWorld(fireball))
+            return getNewCast();
+
+        return null;
     }
 }

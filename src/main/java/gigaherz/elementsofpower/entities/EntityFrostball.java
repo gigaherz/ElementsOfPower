@@ -38,7 +38,7 @@ public class EntityFrostball extends EntityBallBase
     @Override
     public int getBallColor()
     {
-        return 0xFF8020;
+        return 0xFFA080;
     }
 
     @Override
@@ -90,6 +90,15 @@ public class EntityFrostball extends EntityBallBase
             else if (!Blocks.snow_layer.canPlaceBlockOnSide(worldObj, blockPos, EnumFacing.UP))
             {
                 return;
+            }
+
+            IBlockState below = worldObj.getBlockState(blockPos.down());
+            if(below.getBlock() == Blocks.snow_layer)
+            {
+                if(below.getValue(BlockSnow.LAYERS) < 8)
+                {
+                    blockPos = blockPos.down();
+                }
             }
 
             while (layers > 0)

@@ -53,7 +53,7 @@ public class RenderBall extends Render<EntityBallBase>
             }
             catch(IOException e)
             {
-                throw new ReportedException(new CrashReport("Error loading model for TESR", e));
+                throw new ReportedException(new CrashReport("Error loading model for entity", e));
             }
         }
 
@@ -65,8 +65,6 @@ public class RenderBall extends Render<EntityBallBase>
         GlStateManager.translate((float) x, (float) y, (float) z);
         GlStateManager.enableRescaleNormal();
         GlStateManager.scale(scale, scale, scale);
-        GlStateManager.rotate(-this.renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
-        GlStateManager.rotate(this.renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
 
         bindTexture(TextureMap.locationBlocksTexture);
 
@@ -75,7 +73,7 @@ public class RenderBall extends Render<EntityBallBase>
         GlStateManager.disableRescaleNormal();
         GlStateManager.popMatrix();
 
-        //GlStateManager.enableLighting();
+        GlStateManager.enableLighting();
 
         super.doRender(entity, x, y, z, p_76986_8_, partialTicks);
     }

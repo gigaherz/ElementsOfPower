@@ -3,20 +3,24 @@ package gigaherz.elementsofpower.client;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.ISideProxy;
 import gigaherz.elementsofpower.entities.EntityBallBase;
-import gigaherz.elementsofpower.entities.EntityBeamBase;
 import gigaherz.elementsofpower.entities.EntityTeleporter;
 import gigaherz.elementsofpower.essentializer.TileEssentializer;
 import gigaherz.elementsofpower.models.ObjModelLoader;
+import gigaherz.elementsofpower.renders.PlayerBeamRenderOverlay;
 import gigaherz.elementsofpower.renders.RenderBall;
-import gigaherz.elementsofpower.renders.RenderBeam;
 import gigaherz.elementsofpower.renders.RenderEssentializer;
 import gigaherz.elementsofpower.util.Used;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.AbstractClientPlayer;
+import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.RendererLivingEntity;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
@@ -24,6 +28,7 @@ import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 @Used
 public class ClientProxy implements ISideProxy
@@ -52,6 +57,7 @@ public class ClientProxy implements ISideProxy
     {
         MinecraftForge.EVENT_BUS.register(new GuiOverlayMagicContainer());
         MinecraftForge.EVENT_BUS.register(new MagicTooltips());
+        MinecraftForge.EVENT_BUS.register(new PlayerBeamRenderOverlay());
     }
 
     // ----------------------------------------------------------- Item/Block Custom OBJ Models
@@ -120,11 +126,9 @@ public class ClientProxy implements ISideProxy
                 new RenderBall(Minecraft.getMinecraft().getRenderManager()));
         registerEntityRenderingHandler(EntityBallBase.class,
                 new RenderBall(Minecraft.getMinecraft().getRenderManager()));
-        registerEntityRenderingHandler(EntityBeamBase.class,
-                new RenderBeam(
-                        Minecraft.getMinecraft().getRenderManager(),
-                        ElementsOfPower.fire,
-                        Minecraft.getMinecraft().getRenderItem()));
+
+        //RendererLivingEntity rplayer = ReflectionHelper.getPrivateValue(RenderManager.class, Minecraft.getMinecraft().getRenderManager(), "field_178637_m", "playerRenderer");
+        //rplayer.addLayer(new PlayerBeamRenderOverlay());
     }
 
     public void registerEntityRenderingHandler(Class<? extends Entity> entityClass, Render<? extends Entity> render)

@@ -5,8 +5,10 @@ import gigaherz.elementsofpower.client.GuiOverlayMagicContainer;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.database.MagicDatabase;
 import gigaherz.elementsofpower.database.SpellManager;
+import gigaherz.elementsofpower.entitydata.SpellcastEntityData;
 import gigaherz.elementsofpower.network.SpellSequenceUpdate;
 import gigaherz.elementsofpower.spells.ISpellEffect;
+import gigaherz.elementsofpower.spells.ISpellcast;
 import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -131,7 +133,6 @@ public class ItemWand extends ItemMagicContainer
 
     public void onSpellCommit(ItemStack stack, EntityPlayer player)
     {
-
         String sequence = stack.getTagCompound().getString(SPELL_SEQUENCE_TAG);
 
         if (sequence.length() == 0)
@@ -148,7 +149,15 @@ public class ItemWand extends ItemMagicContainer
         if (!amounts.hasEnough(cost))
             return;
 
-        effect.castSpell(stack, player);
+        ISpellcast cast = effect.castSpell(stack, player);
+        if (cast != null)
+        {
+            SpellcastEntityData data = SpellcastEntityData.get(player);
+            if(data != null)
+            {
+                data.begin(cast);
+            }
+        }
 
         amounts.subtract(cost);
 

@@ -90,11 +90,16 @@ public class SpellManager
 
         registerSpell(new SpellTeleport().light().darkness().cost(COST_ELEMENTARY * COMBO_COEF));
 
-        registerSpell(new SpellBeam(EntityBeamBase.class, 2, 5).fire().darkness().cost(COST_AVERAGE));
+        registerSpell(new SpellBeam(2, 5).fire().darkness().cost(COST_AVERAGE));
     }
 
     public static void registerSpell(SpellBase spell)
     {
         spellRegistration.put(spell.getSequence(), spell);
+    }
+
+    public static ISpellEffect findSpell(String sequence)
+    {
+        return spellRegistration.get(sequence);
     }
 }

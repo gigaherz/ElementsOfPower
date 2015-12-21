@@ -23,13 +23,16 @@ public class SpellGenericEntity
     }
 
     @Override
-    public void castSpell(ItemStack stack, EntityPlayer player)
+    public ISpellcast castSpell(ItemStack stack, EntityPlayer player)
     {
         World world = player.worldObj;
 
         try
         {
-            world.spawnEntityInWorld(clazz.getConstructor(World.class, int.class, EntityLivingBase.class).newInstance(world, power, player));
+            if (world.spawnEntityInWorld(clazz.getConstructor(World.class, int.class, EntityLivingBase.class).newInstance(world, power, player)))
+                return getNewCast();
+
+            return null;
         }
         catch (ReflectiveOperationException e)
         {
