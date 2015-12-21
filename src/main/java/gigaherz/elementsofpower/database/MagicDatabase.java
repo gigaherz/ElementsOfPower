@@ -14,7 +14,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.StatCollector;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
 
 public class MagicDatabase
@@ -134,7 +137,7 @@ public class MagicDatabase
         essences(Blocks.planks).life(4);
         essences(Items.stick).life(1);
 
-        essences(Items.coal).fire(8);
+        essences(Items.coal, 0, 1).fire(8);
         essences(Blocks.coal_block).fire(72).earth(8);
 
         //essences(Blocks.iron_block);
@@ -218,11 +221,21 @@ public class MagicDatabase
         return collection;
     }
 
-    private static ItemEssenceCollection essences(Item item)
+    private static ItemEssenceCollection essences(Item item, int... metaValues)
     {
         List<ItemStack> subItems = new ArrayList<>();
 
-        item.getSubItems(item, CreativeTabs.tabAllSearch, subItems);
+        if(metaValues.length == 0)
+        {
+            subItems.add(new ItemStack(item, 1));
+        }
+        else
+        {
+            for (int v : metaValues)
+            {
+                subItems.add(new ItemStack(item, 1, v));
+            }
+        }
 
         ItemEssenceCollection collection = new ItemEssenceCollection();
         for (ItemStack is : subItems)
@@ -235,9 +248,9 @@ public class MagicDatabase
         return collection;
     }
 
-    private static ItemEssenceCollection essences(Block block)
+    private static ItemEssenceCollection essences(Block block, int... itemMetaValues)
     {
-        return essences(Item.getItemFromBlock(block));
+        return essences(Item.getItemFromBlock(block), itemMetaValues);
     }
 
     private static ItemEssenceEntry essences(Item item, int meta)

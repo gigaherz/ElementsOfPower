@@ -1,12 +1,16 @@
 package gigaherz.elementsofpower.essentializer;
 
+import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.MagicDatabase;
+import gigaherz.elementsofpower.network.SetSpecialSlot;
 import gigaherz.elementsofpower.slots.SlotContainer;
 import gigaherz.elementsofpower.slots.SlotMagic;
 import gigaherz.elementsofpower.slots.SlotSource;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
@@ -56,6 +60,36 @@ public class ContainerEssentializer
     public boolean canInteractWith(EntityPlayer player)
     {
         return tile.isUseableByPlayer(player);
+    }
+
+    @Override
+    public void detectAndSendChanges()
+    {
+        for (int i = 0; i < this.inventorySlots.size(); ++i)
+        {
+            Slot slot = this.inventorySlots.get(i);
+            ItemStack newStack = slot.getStack();
+            ItemStack current = this.inventoryItemStacks.get(i);
+
+            if (!ItemStack.areItemStacksEqual(current, newStack))
+            {
+                current = newStack == null ? null : newStack.copy();
+                this.inventoryItemStacks.set(i, current);
+
+                for (ICrafting crafter : this.crafters)
+                {
+                    if(slot instanceof SlotMagic && crafter instanceof EntityPlayerMP)
+                        sendSpecialSlotContents((EntityPlayerMP)crafter, this, i, current);
+                    else
+                        crafter.sendSlotContents(this, i, current);
+                }
+            }
+        }
+    }
+
+    private void sendSpecialSlotContents(EntityPlayerMP crafter, ContainerEssentializer containerEssentializer, int i, ItemStack current)
+    {
+        ElementsOfPower.channel.sendTo(new SetSpecialSlot(containerEssentializer.windowId, i, current), crafter);
     }
 
     /**

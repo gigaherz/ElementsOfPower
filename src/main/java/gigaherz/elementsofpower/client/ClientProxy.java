@@ -4,8 +4,11 @@ import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.ISideProxy;
 import gigaherz.elementsofpower.entities.EntityBallBase;
 import gigaherz.elementsofpower.entities.EntityTeleporter;
+import gigaherz.elementsofpower.entitydata.SpellcastEntityData;
 import gigaherz.elementsofpower.essentializer.TileEssentializer;
 import gigaherz.elementsofpower.models.ObjModelLoader;
+import gigaherz.elementsofpower.network.SetSpecialSlot;
+import gigaherz.elementsofpower.network.SpellcastSync;
 import gigaherz.elementsofpower.renders.PlayerBeamRenderOverlay;
 import gigaherz.elementsofpower.renders.RenderBall;
 import gigaherz.elementsofpower.renders.RenderEssentializer;
@@ -13,15 +16,21 @@ import gigaherz.elementsofpower.util.Used;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
+import net.minecraft.client.gui.inventory.GuiContainerCreative;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.RendererLivingEntity;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketThreadUtil;
+import net.minecraft.network.play.INetHandlerPlayClient;
+import net.minecraft.network.play.server.S2FPacketSetSlot;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.obj.OBJLoader;
@@ -46,6 +55,65 @@ public class ClientProxy implements ISideProxy
     {
         registerEntityRenderers();
         registerParticle();
+    }
+
+    @Override
+    public void handleSpellcastSync(SpellcastSync message)
+    {
+        Minecraft.getMinecraft().addScheduledTask(() -> handleSpellcastSync2(message));
+    }
+
+    public void handleSpellcastSync2(SpellcastSync message)
+    {
+        EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+        SpellcastEntityData data = SpellcastEntityData.get(player);
+
+        if (data != null)
+            data.sync(message.changeMode, message.spellcast);
+    }
+
+    @Override
+    public void handleSetSpecialSlot(SetSpecialSlot message)
+    {
+        Minecraft.getMinecraft().addScheduledTask(() -> handleSetSpecialSlot2(message));
+    }
+
+    void handleSetSpecialSlot2(SetSpecialSlot message)
+    {
+        Minecraft gameController = Minecraft.getMinecraft();
+
+        EntityPlayer entityplayer = gameController.thePlayer;
+
+        if (message.windowId == -1)
+        {
+            entityplayer.inventory.setItemStack(message.stack);
+        }
+        else
+        {
+            boolean flag = false;
+
+            if (gameController.currentScreen instanceof GuiContainerCreative)
+            {
+                GuiContainerCreative guicontainercreative = (GuiContainerCreative)gameController.currentScreen;
+                flag = guicontainercreative.getSelectedTabIndex() != CreativeTabs.tabInventory.getTabIndex();
+            }
+
+            if (message.windowId == 0 && message.slot >= 36 && message.slot < 45)
+            {
+                ItemStack itemstack = entityplayer.inventoryContainer.getSlot(message.slot).getStack();
+
+                if (message.stack != null && (itemstack == null || itemstack.stackSize < message.stack.stackSize))
+                {
+                    message.stack.animationsToGo = 5;
+                }
+
+                entityplayer.inventoryContainer.putStackInSlot(message.slot, message.stack);
+            }
+            else if (message.windowId == entityplayer.openContainer.windowId && (message.windowId != 0 || !flag))
+            {
+                entityplayer.openContainer.putStackInSlot(message.slot, message.stack);
+            }
+        }
     }
 
     public void registerParticle()

@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower.network;
 
+import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.SpellManager;
 import gigaherz.elementsofpower.entitydata.SpellcastEntityData;
 import gigaherz.elementsofpower.spells.ISpellEffect;
@@ -72,11 +73,7 @@ public class SpellcastSync
         @Override
         public IMessage onMessage(SpellcastSync message, MessageContext ctx)
         {
-            EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-            SpellcastEntityData data = SpellcastEntityData.get(player);
-
-            if (data != null)
-                data.sync(message.changeMode, message.spellcast);
+            Minecraft.getMinecraft().addScheduledTask(() -> ElementsOfPower.proxy.handleSpellcastSync(message));
 
             return null; // no response in this case
         }

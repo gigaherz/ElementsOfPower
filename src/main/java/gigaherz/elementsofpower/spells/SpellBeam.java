@@ -73,7 +73,7 @@ public class SpellBeam
         void applyEffect()
         {
             float maxDistance = 10;
-            Vec3 start = player.getPositionEyes(1);
+            Vec3 start = new Vec3(player.posX, player.posY + (double)player.getEyeHeight(), player.posZ);
             Vec3 dir = player.getLook(1);
             Vec3 end = start.addVector(dir.xCoord * maxDistance, dir.yCoord * maxDistance, dir.zCoord * maxDistance);
             MovingObjectPosition mop = player.worldObj.rayTraceBlocks(start, end, false, true, false);
