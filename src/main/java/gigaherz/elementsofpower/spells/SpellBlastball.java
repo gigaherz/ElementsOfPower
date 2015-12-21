@@ -10,7 +10,6 @@ import net.minecraft.world.World;
 
 public class SpellBlastball extends SpellBase
 {
-
     int power;
     boolean explode;
 
@@ -19,6 +18,13 @@ public class SpellBlastball extends SpellBase
         this.power = power;
         this.explode = explode;
     }
+
+    @Override
+    public int getPower()
+    {
+        return power;
+    }
+
 
     @Override
     public float getScale() { return 1 + 0.25f * power; }

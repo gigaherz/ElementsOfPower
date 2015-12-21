@@ -2,6 +2,8 @@ package gigaherz.elementsofpower.database;
 
 import gigaherz.elementsofpower.entities.*;
 import gigaherz.elementsofpower.spells.*;
+import gigaherz.elementsofpower.spells.beams.Firebeam;
+import gigaherz.elementsofpower.spells.beams.Miningbeam;
 
 import java.util.Hashtable;
 import java.util.Map;
@@ -90,9 +92,13 @@ public class SpellManager
 
         registerSpell(new SpellTeleport().light().darkness().cost(COST_ELEMENTARY * COMBO_COEF));
 
-        registerSpell(new SpellBeam(2, 25).fire().darkness().cost(COST_AVERAGE).withColor(0x0000ff));
-        registerSpell(new SpellBeam(4, 40).fire().fire().darkness().cost(COST_COMPLEX).withColor(0x0040ff));
-        registerSpell(new SpellBeam(6, 60).fire().fire().fire().darkness().cost(COST_EXTREME).withColor(0x00a0ff));
+        registerSpell(new SpellBeam(Firebeam.class, 2, 25).fire().darkness().cost(COST_AVERAGE).withColor(0x0000ff));
+        registerSpell(new SpellBeam(Firebeam.class, 4, 40).fire().fire().darkness().cost(COST_COMPLEX).withColor(0x0040ff));
+        registerSpell(new SpellBeam(Firebeam.class, 6, 60).fire().fire().fire().darkness().cost(COST_EXTREME).withColor(0x00a0ff));
+
+        registerSpell(new SpellBeam(Miningbeam.class, 2, 25).death().darkness().cost(COST_AVERAGE).withColor(0x222222));
+        registerSpell(new SpellBeam(Miningbeam.class, 4, 40).death().death().darkness().cost(COST_COMPLEX).withColor(0x444444));
+        registerSpell(new SpellBeam(Miningbeam.class, 6, 60).death().death().death().darkness().cost(COST_EXTREME).withColor(0x666666));
     }
 
     public static void registerSpell(ISpellEffect spell)

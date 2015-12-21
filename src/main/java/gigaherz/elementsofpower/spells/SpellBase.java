@@ -64,6 +64,12 @@ public abstract class SpellBase
     public int getDuration() {return 0; }
 
     @Override
+    public int getPower()
+    {
+        return 0;
+    }
+
+    @Override
     public ISpellcast getNewCast()
     {
         return new Spellcast();

@@ -18,6 +18,8 @@ public interface ISpellEffect
 
     String getSequence();
 
+    int getPower();
+
     ISpellcast getNewCast();
 
     ISpellEffect withColor(int color);
