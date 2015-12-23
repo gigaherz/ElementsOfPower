@@ -2,7 +2,7 @@ package gigaherz.elementsofpower.client;
 
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.ISideProxy;
-import gigaherz.elementsofpower.entities.EntityBallBase;
+import gigaherz.elementsofpower.entities.EntityBall;
 import gigaherz.elementsofpower.entities.EntityTeleporter;
 import gigaherz.elementsofpower.entitydata.SpellcastEntityData;
 import gigaherz.elementsofpower.essentializer.TileEssentializer;
@@ -15,12 +15,8 @@ import gigaherz.elementsofpower.renders.RenderEssentializer;
 import gigaherz.elementsofpower.util.Used;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.gui.inventory.GuiContainerCreative;
-import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.renderer.entity.RendererLivingEntity;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
@@ -28,16 +24,12 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketThreadUtil;
-import net.minecraft.network.play.INetHandlerPlayClient;
-import net.minecraft.network.play.server.S2FPacketSetSlot;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 @Used
 public class ClientProxy implements ISideProxy
@@ -192,7 +184,7 @@ public class ClientProxy implements ISideProxy
 
         registerEntityRenderingHandler(EntityTeleporter.class,
                 new RenderBall(Minecraft.getMinecraft().getRenderManager()));
-        registerEntityRenderingHandler(EntityBallBase.class,
+        registerEntityRenderingHandler(EntityBall.class,
                 new RenderBall(Minecraft.getMinecraft().getRenderManager()));
 
         //RendererLivingEntity rplayer = ReflectionHelper.getPrivateValue(RenderManager.class, Minecraft.getMinecraft().getRenderManager(), "field_178637_m", "playerRenderer");

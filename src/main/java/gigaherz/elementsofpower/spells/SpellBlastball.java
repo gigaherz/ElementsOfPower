@@ -1,59 +1,34 @@
 package gigaherz.elementsofpower.spells;
 
+import gigaherz.elementsofpower.entities.EntityBall;
+import gigaherz.elementsofpower.spells.cast.Blastball;
+import gigaherz.elementsofpower.spells.cast.ISpellcast;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.projectile.EntityFireball;
-import net.minecraft.entity.projectile.EntityLargeFireball;
-import net.minecraft.entity.projectile.EntitySmallFireball;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
-public class SpellBlastball extends SpellBase
+public class SpellBlastball
+        extends SpellBase<SpellBlastball, Blastball>
 {
-    int power;
-    boolean explode;
-
-    public SpellBlastball(int power, boolean explode)
+    public SpellBlastball()
     {
-        this.power = power;
-        this.explode = explode;
     }
 
     @Override
-    public int getPower()
+    public Blastball getNewCast()
     {
-        return power;
+        return new Blastball(this);
     }
-
-
-    @Override
-    public float getScale() { return 1 + 0.25f * power; }
 
     @Override
     public ISpellcast castSpell(ItemStack stack, EntityPlayer player)
     {
         World world = player.worldObj;
-        Vec3 lookAt = player.getLook(1.0F);
+        Blastball cast = getNewCast();
+        EntityBall entity = new EntityBall(world, cast, player);
 
-        EntityFireball fireball;
-
-        if (explode)
-        {
-            EntityLargeFireball largeFb = new EntityLargeFireball(world, player, lookAt.xCoord * 10, lookAt.yCoord * 10, lookAt.zCoord * 10);
-            largeFb.explosionPower = power;
-            fireball = largeFb;
-        }
-        else
-        {
-            fireball = new EntitySmallFireball(world, player, lookAt.xCoord * 10, lookAt.yCoord * 10, lookAt.zCoord * 10);
-        }
-
-        fireball.posX = player.posX + lookAt.xCoord * player.width * 0.75f;
-        fireball.posY = player.posY + 1.0f;
-        fireball.posZ = player.posZ + lookAt.zCoord * player.width * 0.75f;
-
-        if(world.spawnEntityInWorld(fireball))
-            return getNewCast();
+        if (world.spawnEntityInWorld(entity))
+            return cast;
 
         return null;
     }

@@ -1,21 +1,15 @@
 package gigaherz.elementsofpower.renders;
 
-import gigaherz.elementsofpower.entities.EntityBallBase;
-import gigaherz.elementsofpower.entities.IRenderStackProvider;
-import gigaherz.elementsofpower.entities.IVariableSize;
-import gigaherz.elementsofpower.essentializer.TileEssentializer;
+import gigaherz.elementsofpower.entities.EntityBall;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.crash.CrashReport;
-import net.minecraft.entity.Entity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
@@ -29,9 +23,7 @@ import org.lwjgl.opengl.GL11;
 import java.io.IOException;
 import java.util.List;
 
-import static net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
-
-public class RenderBall extends Render<EntityBallBase>
+public class RenderBall extends Render<EntityBall>
 {
     IFlexibleBakedModel model;
 
@@ -41,23 +33,14 @@ public class RenderBall extends Render<EntityBallBase>
     }
 
     @Override
-    public void doRender(EntityBallBase entity, double x, double y, double z, float p_76986_8_, float partialTicks)
+    public void doRender(EntityBall entity, double x, double y, double z, float p_76986_8_, float partialTicks)
     {
         if(model == null)
         {
-            try
-            {
-                IModel mod = ModelLoaderRegistry.getModel(new ResourceLocation("elementsofpower:entity/sphere.obj"));
-                model = mod.bake(mod.getDefaultState(), Attributes.DEFAULT_BAKED_FORMAT,
-                        (location) -> Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString()));
-            }
-            catch(IOException e)
-            {
-                throw new ReportedException(new CrashReport("Error loading model for entity", e));
-            }
+            model = RenderingStuffs.loadModel("elementsofpower:entity/sphere.obj");
         }
 
-        float scale = entity.getScale();
+        float scale = entity.getScale() * 0.25f;
 
         GlStateManager.disableLighting();
 
@@ -68,7 +51,22 @@ public class RenderBall extends Render<EntityBallBase>
 
         bindTexture(TextureMap.locationBlocksTexture);
 
-        renderModel(model, entity.getBallColor() | 0xFF000000);
+        int ball_color = entity.getSpellcast().getEffect().getColor();
+        for(int i=0;i<=4;i++)
+        {
+            float tt = (i+(entity.ticksExisted % 10 + partialTicks) / 11.0f)/5.0f;
+            float subScale = (1 + 0.5f * tt);
+
+            int alpha = 255 - (i==0 ? 0 : (int)(tt*255));
+            int color = (alpha << 24) | ball_color;
+
+            GlStateManager.pushMatrix();
+            GlStateManager.scale(subScale, subScale, subScale);
+
+            RenderingStuffs.renderModel(model, color);
+
+            GlStateManager.popMatrix();
+        }
 
         GlStateManager.disableRescaleNormal();
         GlStateManager.popMatrix();
@@ -79,34 +77,9 @@ public class RenderBall extends Render<EntityBallBase>
     }
 
     @Override
-    protected ResourceLocation getEntityTexture(EntityBallBase entity)
+    protected ResourceLocation getEntityTexture(EntityBall entity)
     {
         return TextureMap.locationBlocksTexture;
     }
 
-    private void renderModel(IFlexibleBakedModel model)
-    {
-        renderModel(model, -1);
-    }
-
-    private void renderModel(IFlexibleBakedModel model, int color)
-    {
-        Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-        worldrenderer.begin(GL11.GL_QUADS, model.getFormat());
-
-        for (EnumFacing enumfacing : EnumFacing.values())
-        {
-            this.renderQuads(worldrenderer, model.getFaceQuads(enumfacing), color);
-        }
-
-        this.renderQuads(worldrenderer, model.getGeneralQuads(), color);
-        tessellator.draw();
-    }
-
-    private void renderQuads(WorldRenderer renderer, List<BakedQuad> quads, int color)
-    {
-        for (BakedQuad bakedquad : quads)
-            LightUtil.renderQuadColor(renderer, bakedquad, color);
-    }
 }

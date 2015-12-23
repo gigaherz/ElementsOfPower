@@ -1,12 +1,11 @@
-package gigaherz.elementsofpower.spells.beams;
+package gigaherz.elementsofpower.spells.cast.beams;
 
 import gigaherz.elementsofpower.spells.SpellBeam;
-import gigaherz.elementsofpower.spells.SpellcastBeam;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
 
-public class Firebeam extends SpellcastBeam
+public class Firebeam extends BeamBase
 {
     public Firebeam(SpellBeam spell)
     {

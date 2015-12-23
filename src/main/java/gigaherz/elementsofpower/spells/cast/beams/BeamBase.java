@@ -1,24 +1,22 @@
-package gigaherz.elementsofpower.spells;
+package gigaherz.elementsofpower.spells.cast.beams;
 
 import gigaherz.elementsofpower.entitydata.SpellcastEntityData;
+import gigaherz.elementsofpower.spells.SpellBeam;
+import gigaherz.elementsofpower.spells.cast.Spellcast;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
-public abstract class SpellcastBeam implements ISpellcast<SpellBeam>
+public abstract class BeamBase extends Spellcast<SpellBeam>
 {
-    protected SpellBeam spell;
-    protected World world;
-    protected EntityPlayer player;
-
     protected int remainingCastTime;
     protected int remainingInterval;
 
-    public SpellcastBeam(SpellBeam spell)
+    public BeamBase(SpellBeam parent)
     {
-        this.spell = spell;
+        super(parent);
     }
 
     @Override
@@ -30,8 +28,7 @@ public abstract class SpellcastBeam implements ISpellcast<SpellBeam>
     @Override
     public void init(World world, EntityPlayer player)
     {
-        this.world = world;
-        this.player = player;
+        super.init(world, player);
         remainingCastTime = spell.getDuration();
         remainingInterval = spell.effectInterval;
     }

@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower.client;
 
+import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.database.MagicDatabase;
 import net.minecraft.util.EnumChatFormatting;
@@ -37,9 +38,12 @@ public class MagicTooltips
 
             String str;
             if (event.itemStack.stackSize > 1)
-                str = String.format("%s  %s x%d (stack %d)", EnumChatFormatting.GRAY, magicName, amounts.amounts[i], amounts.amounts[i] * event.itemStack.stackSize);
+                str = String.format("%s  %s x%s (stack %s)", EnumChatFormatting.GRAY, magicName,
+                        ElementsOfPower.prettyNumberFormatter.format(amounts.amounts[i]),
+                        ElementsOfPower.prettyNumberFormatter.format(amounts.amounts[i] * event.itemStack.stackSize));
             else
-                str = String.format("%s  %s x%d", EnumChatFormatting.GRAY, magicName, amounts.amounts[i]);
+                str = String.format("%s  %s x%s", EnumChatFormatting.GRAY, magicName,
+                        ElementsOfPower.prettyNumberFormatter.format(amounts.amounts[i]));
             event.toolTip.add(str);
         }
     }

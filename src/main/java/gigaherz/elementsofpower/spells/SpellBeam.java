@@ -1,5 +1,7 @@
 package gigaherz.elementsofpower.spells;
 
+import gigaherz.elementsofpower.spells.cast.ISpellcast;
+import gigaherz.elementsofpower.spells.cast.beams.BeamBase;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -8,19 +10,17 @@ import net.minecraft.util.ReportedException;
 import java.lang.reflect.InvocationTargetException;
 
 public class SpellBeam
-        extends SpellBase
+        extends SpellBase<SpellBeam, BeamBase>
 {
-    int power;
-    int effectInterval;
+    public int effectInterval;
     int timeToLive;
-    Class<? extends SpellcastBeam> effect;
+    Class<? extends BeamBase> effect;
 
-    public SpellBeam(Class<? extends SpellcastBeam> effect, int power, int ticks)
+    public SpellBeam(Class<? extends BeamBase> effect, int effectInterval, int ticks)
     {
         this.effect = effect;
-        this.power = power;
-        this.effectInterval = 2;
-        this.timeToLive = effectInterval * ticks;
+        this.effectInterval = effectInterval;
+        this.timeToLive = this.effectInterval * ticks;
     }
 
     @Override
@@ -30,16 +30,7 @@ public class SpellBeam
     public int getDuration() {return timeToLive; }
 
     @Override
-    public int getPower()
-    {
-        return power;
-    }
-
-    @Override
-    public float getScale() { return 1 + 0.25f * power; }
-
-    @Override
-    public ISpellcast getNewCast()
+    public BeamBase getNewCast()
     {
         try
         {

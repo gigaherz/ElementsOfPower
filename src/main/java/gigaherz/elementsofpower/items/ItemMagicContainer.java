@@ -93,7 +93,8 @@ public class ItemMagicContainer extends Item
             }
 
             String magicName = MagicDatabase.getMagicName(i);
-            String str = String.format("%s  %s x%d", EnumChatFormatting.GRAY, magicName, amounts.amounts[i]);
+            String str = String.format("%s  %s x%s", EnumChatFormatting.GRAY, magicName,
+                    ElementsOfPower.prettyNumberFormatter.format(amounts.amounts[i]));
             tooltipList.add(str);
         }
     }

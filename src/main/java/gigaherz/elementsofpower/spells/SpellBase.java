@@ -2,60 +2,24 @@ package gigaherz.elementsofpower.spells;
 
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.database.SpellManager;
+import gigaherz.elementsofpower.spells.cast.ISpellcast;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
 
-public abstract class SpellBase
+public abstract class SpellBase<Sub extends SpellBase, Effect extends ISpellcast>
         implements ISpellEffect
 {
-    public class Spellcast implements ISpellcast<SpellBase>
-    {
-        @Override
-        public float getRemainingCastTime()
-        {
-            return 0;
-        }
-
-        @Override
-        public void init(World world, EntityPlayer player)
-        {
-
-        }
-
-        @Override
-        public SpellBase getEffect() {return SpellBase.this; }
-
-        @Override
-        public void update()
-        {
-        }
-
-        @Override
-        public void readFromNBT(NBTTagCompound tagData)
-        {
-        }
-
-        @Override
-        public void writeToNBT(NBTTagCompound tagData)
-        {
-        }
-    }
-
     protected MagicAmounts spellCost = new MagicAmounts();
     protected StringBuilder spellSequence = new StringBuilder();
     protected String finalSequence = null;
     protected int color = 0xFFFFFF;
-
-    @Override
-    public ISpellEffect withColor(int color) { this.color=color; return this; }
+    protected int power = 0;
 
     @Override
     public int getColor() { return color; }
 
     @Override
-    public float getScale() { return 1; }
+    public float getScale() { return 1 + 0.25f * power; }
 
     @Override
     public boolean isBeam() { return false; }
@@ -66,14 +30,11 @@ public abstract class SpellBase
     @Override
     public int getPower()
     {
-        return 0;
+        return power;
     }
 
     @Override
-    public ISpellcast getNewCast()
-    {
-        return new Spellcast();
-    }
+    public abstract Effect getNewCast();
 
     @Override
     public abstract ISpellcast castSpell(ItemStack stack, EntityPlayer player);
@@ -95,7 +56,13 @@ public abstract class SpellBase
         return finalSequence;
     }
 
-    protected SpellBase amount(int which)
+    @SuppressWarnings("unchecked")
+    protected Sub self() {return (Sub)this; }
+
+    public Sub color(int color) { this.color=color; return self(); }
+    public Sub power(int power) { this.power=power; return self(); }
+
+    protected Sub amount(int which)
     {
         if (spellSequence == null)
         {
@@ -104,105 +71,105 @@ public abstract class SpellBase
         }
         spellCost.amounts[which]++;
         spellSequence.append(SpellManager.elementChars[which]);
-        return this;
+        return self();
     }
 
-    protected SpellBase amountMultiple(int which, int count)
+    protected Sub amountMultiple(int which, int count)
     {
         while (count > 0)
         {
             amount(which);
             count--;
         }
-        return this;
+        return self();
     }
 
-    public SpellBase cost(float totalCost)
+    public Sub cost(float totalCost)
     {
-        double totalAmounts = spellCost.getTotalMagic();
+        float totalAmounts = spellCost.getTotalMagic();
         for (int i = 0; i < spellCost.amounts.length; i++)
         {
-            spellCost.amounts[i] = (int) Math.ceil(spellCost.amounts[i] * totalCost / totalAmounts);
+            spellCost.amounts[i] = (spellCost.amounts[i] * totalCost / totalAmounts);
         }
-        return this;
+        return self();
     }
 
-    public SpellBase fire()
+    public Sub fire()
     {
         return amount(0);
     }
 
-    public SpellBase water()
+    public Sub water()
     {
         return amount(1);
     }
 
-    public SpellBase air()
+    public Sub air()
     {
         return amount(2);
     }
 
-    public SpellBase earth()
+    public Sub earth()
     {
         return amount(3);
     }
 
-    public SpellBase light()
+    public Sub light()
     {
         return amount(4);
     }
 
-    public SpellBase darkness()
+    public Sub darkness()
     {
         return amount(5);
     }
 
-    public SpellBase life()
+    public Sub life()
     {
         return amount(6);
     }
 
-    public SpellBase death()
+    public Sub death()
     {
         return amount(7);
     }
 
-    public SpellBase fire(int count)
+    public Sub fire(int count)
     {
         return amountMultiple(0, count);
     }
 
-    public SpellBase water(int count)
+    public Sub water(int count)
     {
         return amountMultiple(1, count);
     }
 
-    public SpellBase air(int count)
+    public Sub air(int count)
     {
         return amountMultiple(2, count);
     }
 
-    public SpellBase earth(int count)
+    public Sub earth(int count)
     {
         return amountMultiple(3, count);
     }
 
-    public SpellBase light(int count)
+    public Sub light(int count)
     {
         return amountMultiple(4, count);
     }
 
-    public SpellBase darkness(int count)
+    public Sub darkness(int count)
     {
         return amountMultiple(5, count);
     }
 
-    public SpellBase life(int count)
+    public Sub life(int count)
     {
         return amountMultiple(6, count);
     }
 
-    public SpellBase death(int count)
+    public Sub death(int count)
     {
         return amountMultiple(7, count);
     }

@@ -16,14 +16,17 @@ import gigaherz.elementsofpower.network.SetSpecialSlot;
 import gigaherz.elementsofpower.network.SpellSequenceUpdate;
 import gigaherz.elementsofpower.network.SpellcastSync;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockStainedGlassPane;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
+import net.minecraft.command.CommandTime;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -37,8 +40,13 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.LanguageRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.Logger;
+
+import java.io.File;
+import java.text.DecimalFormat;
+import java.text.Format;
 
 @Mod(modid = ElementsOfPower.MODID, name = ElementsOfPower.MODNAME, version = ElementsOfPower.VERSION)
 public class ElementsOfPower
@@ -95,9 +103,13 @@ public class ElementsOfPower
 
     public static SimpleNetworkWrapper channel;
 
+    public final static Format prettyNumberFormatter = new DecimalFormat("#.#");
+
     private GuiHandler guiHandler = new GuiHandler();
 
     public static Logger logger;
+    public static Configuration config;
+    public static String overrides;
 
     public static CreativeTabs tabMagic = new CreativeTabs(MODID)
     {
@@ -129,6 +141,11 @@ public class ElementsOfPower
     public void preInit(FMLPreInitializationEvent event)
     {
         logger = event.getModLog();
+
+        config = new Configuration(event.getSuggestedConfigurationFile());
+        config.load();
+
+        overrides = event.getModConfigurationDirectory() + File.separator + "elementsofpower_essences.json";
 
         registerParticle();
 
@@ -209,13 +226,7 @@ public class ElementsOfPower
         logger.info("Registering entities...");
 
         int entityId = 1;
-        EntityRegistry.registerModEntity(EntityAirball.class, "Airball", entityId++, this, 80, 3, true);
-        EntityRegistry.registerModEntity(EntityDustball.class, "Earthball", entityId++, this, 80, 3, true);
-        EntityRegistry.registerModEntity(EntityLavaball.class, "Lavaball", entityId++, this, 80, 3, true);
-        EntityRegistry.registerModEntity(EntityLifeball.class, "Lifeball", entityId++, this, 80, 3, true);
-        EntityRegistry.registerModEntity(EntityFrostball.class, "Frostball", entityId++, this, 80, 3, true);
-        EntityRegistry.registerModEntity(EntityWaterball.class, "Waterball", entityId++, this, 80, 3, true);
-        EntityRegistry.registerModEntity(EntityFlameball.class, "Flameball", entityId++, this, 80, 3, true);
+        EntityRegistry.registerModEntity(EntityBall.class, "Airball", entityId++, this, 80, 3, true);
         EntityRegistry.registerModEntity(EntityTeleporter.class, "Teleporter", entityId++, this, 80, 3, true);
         logger.debug("Next entity id: " + entityId);
 

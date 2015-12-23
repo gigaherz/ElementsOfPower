@@ -1,6 +1,7 @@
 package gigaherz.elementsofpower.database;
 
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.List;
 import java.util.Map;
@@ -16,7 +17,7 @@ public class Utils
 
         for (ItemStack k : list)
         {
-            if (compareItemStacksStrict(stack, k))
+            if (stackFitsInSlot(stack, k))
             {
                 return k;
             }
@@ -34,7 +35,7 @@ public class Utils
 
         for (ItemStack k : map.keySet())
         {
-            if (compareItemStacksStrict(stack, k))
+            if (stackFitsInSlot(stack, k))
             {
                 return map.get(k);
             }
@@ -71,7 +72,7 @@ public class Utils
     public static boolean stackFitsInSlot(ItemStack test, ItemStack stack)
     {
         int dmg = test.getItemDamage();
-        return test.getItem() == stack.getItem() && (dmg < 0 || dmg >= 32767 || dmg == stack.getItemDamage());
+        return test.getItem() == stack.getItem() && (dmg == OreDictionary.WILDCARD_VALUE || dmg == stack.getItemDamage());
     }
 
     public static boolean compareItemStacksStrict(ItemStack test, ItemStack stack)

@@ -1,5 +1,7 @@
 package gigaherz.elementsofpower.spells;
 
+import gigaherz.elementsofpower.spells.cast.ISpellcast;
+import gigaherz.elementsofpower.spells.cast.Spellcast;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.EntityDragon;
@@ -20,6 +22,12 @@ public class SpellResurrection
         Vec3 look = p.getLook(0);
         Vec3 targetPos = eyePos.addVector(look.xCoord * blockReachDistance, look.yCoord * blockReachDistance, look.zCoord * blockReachDistance);
         return p.worldObj.rayTraceBlocks(eyePos, targetPos, false, false, true);
+    }
+
+    @Override
+    public ISpellcast getNewCast()
+    {
+        return new Spellcast<SpellResurrection>(this){};
     }
 
     @Override

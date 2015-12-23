@@ -1,19 +1,15 @@
-package gigaherz.elementsofpower.spells.beams;
+package gigaherz.elementsofpower.spells.cast.beams;
 
 import gigaherz.elementsofpower.spells.SpellBeam;
-import gigaherz.elementsofpower.spells.SpellcastBeam;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.server.management.ItemInWorldManager;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
 
-public class Miningbeam extends SpellcastBeam
+public class Miningbeam extends BeamBase
 {
     public Miningbeam(SpellBeam spell)
     {
@@ -32,7 +28,9 @@ public class Miningbeam extends SpellcastBeam
             IBlockState state = world.getBlockState(pos);
             Block block = state.getBlock();
 
-            if (!block.isAir(world, pos) &&  block.getBlockHardness(world, pos) <= spell.getPower())
+            float hardness = block.getBlockHardness(world, pos);
+
+            if (!block.isAir(world, pos) && hardness >= 0 && hardness <= (spell.getPower()/3.0f))
             {
                 if(player instanceof EntityPlayerMP)
                 {

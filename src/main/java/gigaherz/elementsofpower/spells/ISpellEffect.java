@@ -1,6 +1,7 @@
 package gigaherz.elementsofpower.spells;
 
 import gigaherz.elementsofpower.database.MagicAmounts;
+import gigaherz.elementsofpower.spells.cast.ISpellcast;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
@@ -21,8 +22,6 @@ public interface ISpellEffect
     int getPower();
 
     ISpellcast getNewCast();
-
-    ISpellEffect withColor(int color);
 
     float getScale();
 }

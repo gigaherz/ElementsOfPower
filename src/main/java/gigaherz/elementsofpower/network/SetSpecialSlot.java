@@ -1,19 +1,11 @@
 package gigaherz.elementsofpower.network;
 
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.database.SpellManager;
-import gigaherz.elementsofpower.spells.ISpellEffect;
-import gigaherz.elementsofpower.spells.ISpellcast;
 import gigaherz.elementsofpower.util.Used;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.inventory.GuiContainerCreative;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketThreadUtil;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -45,14 +37,21 @@ public class SetSpecialSlot
         windowId = buf.readInt();
         slot = buf.readInt();
         int count = buf.readInt();
-        int meta = buf.readInt();
-        Item item = Item.itemRegistry.getObject(new ResourceLocation(ByteBufUtils.readUTF8String(buf)));
-        boolean hasTag = buf.readBoolean();
-        stack = new ItemStack(item, count, meta);
-        if(hasTag)
+        if(count > 0)
         {
-            NBTTagCompound tag = ByteBufUtils.readTag(buf);
-            stack.setTagCompound(tag);
+            int meta = buf.readInt();
+            Item item = Item.itemRegistry.getObject(new ResourceLocation(ByteBufUtils.readUTF8String(buf)));
+            boolean hasTag = buf.readBoolean();
+            stack = new ItemStack(item, count, meta);
+            if (hasTag)
+            {
+                NBTTagCompound tag = ByteBufUtils.readTag(buf);
+                stack.setTagCompound(tag);
+            }
+        }
+        else
+        {
+            stack = null;
         }
     }
 
@@ -61,14 +60,21 @@ public class SetSpecialSlot
     {
         buf.writeInt(windowId);
         buf.writeInt(slot);
-        buf.writeInt(stack.stackSize);
-        buf.writeInt(stack.getItemDamage());
-        ByteBufUtils.writeUTF8String(buf, Item.itemRegistry.getNameForObject(stack.getItem()).toString());
-        NBTTagCompound tag = stack.getTagCompound();
-        buf.writeBoolean(tag != null);
-        if(tag != null)
+        if(stack != null && stack.stackSize > 0)
         {
-            ByteBufUtils.writeTag(buf, tag);
+            buf.writeInt(stack.stackSize);
+            buf.writeInt(stack.getItemDamage());
+            ByteBufUtils.writeUTF8String(buf, Item.itemRegistry.getNameForObject(stack.getItem()).toString());
+            NBTTagCompound tag = stack.getTagCompound();
+            buf.writeBoolean(tag != null);
+            if (tag != null)
+            {
+                ByteBufUtils.writeTag(buf, tag);
+            }
+        }
+        else
+        {
+            buf.writeInt(0);
         }
     }
 

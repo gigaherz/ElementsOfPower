@@ -1,6 +1,6 @@
-package gigaherz.elementsofpower.entities;
+package gigaherz.elementsofpower.spells.cast.balls;
 
-import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.spells.SpellBall;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDynamicLiquid;
 import net.minecraft.block.state.IBlockState;
@@ -8,58 +8,32 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.Vec3;
-import net.minecraft.world.World;
+import net.minecraft.util.*;
 
 import java.util.List;
 
-public class EntityAirball extends EntityBallBase
+public class Airball extends BallBase
 {
-    public EntityAirball(World worldIn)
+    public Airball(SpellBall parent)
     {
-        super(worldIn);
-    }
-
-    public EntityAirball(World worldIn, EntityLivingBase p_i1774_2_)
-    {
-        super(worldIn, p_i1774_2_);
-    }
-
-    public EntityAirball(World worldIn, double x, double y, double z)
-    {
-        super(worldIn, x, y, z);
-    }
-
-    public EntityAirball(World worldIn, int force, EntityLivingBase p_i1774_2_)
-    {
-        super(worldIn, force, p_i1774_2_);
-    }
-
-    @Override
-    public int getBallColor()
-    {
-        return 0xFFFFFF;
+        super(parent);
     }
 
     @Override
     protected void processEntitiesAroundBefore(Vec3 hitVec)
     {
-
         AxisAlignedBB aabb = new AxisAlignedBB(
-                hitVec.xCoord - damageForce,
-                hitVec.yCoord - damageForce,
-                hitVec.zCoord - damageForce,
-                hitVec.xCoord + damageForce,
-                hitVec.yCoord + damageForce,
-                hitVec.zCoord + damageForce);
+                hitVec.xCoord - getDamageForce(),
+                hitVec.yCoord - getDamageForce(),
+                hitVec.zCoord - getDamageForce(),
+                hitVec.xCoord + getDamageForce(),
+                hitVec.yCoord + getDamageForce(),
+                hitVec.zCoord + getDamageForce());
 
-        List<EntityLivingBase> living = worldObj.getEntitiesWithinAABB(EntityLivingBase.class, aabb);
+        List<EntityLivingBase> living = world.getEntitiesWithinAABB(EntityLivingBase.class, aabb);
         pushEntities(hitVec, living);
 
-        List<EntityItem> items = worldObj.getEntitiesWithinAABB(EntityItem.class, aabb);
+        List<EntityItem> items = world.getEntitiesWithinAABB(EntityItem.class, aabb);
         pushEntities(hitVec, items);
     }
 
@@ -79,7 +53,7 @@ public class EntityAirball extends EntityBallBase
             if (ll < 0.0001f)
                 continue;
 
-            double lv = Math.max(0, damageForce - ll);
+            double lv = Math.max(0, getDamageForce() - ll);
 
             double vx = dx * lv / ll;
             double vy = dy * lv / ll;
@@ -89,21 +63,24 @@ public class EntityAirball extends EntityBallBase
     }
 
     @Override
-    protected void spawnBallParticles()
+    protected void spawnBallParticles(MovingObjectPosition mop)
     {
-        if (damageForce >= 5)
+        if (getDamageForce() >= 5)
         {
-            this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_HUGE, this.posX, this.posY, this.posZ,
+            world.spawnParticle(EnumParticleTypes.EXPLOSION_HUGE,
+                    mop.hitVec.xCoord, mop.hitVec.yCoord, mop.hitVec.zCoord,
                     getRandomForParticle(), getRandomForParticle(), getRandomForParticle());
         }
-        else if (damageForce >= 2)
+        else if (getDamageForce() >= 2)
         {
-            this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE, this.posX, this.posY, this.posZ,
+            world.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE,
+                    mop.hitVec.xCoord, mop.hitVec.yCoord, mop.hitVec.zCoord,
                     getRandomForParticle(), getRandomForParticle(), getRandomForParticle());
         }
         else
         {
-            this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, this.posX, this.posY, this.posZ,
+            world.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL,
+                    mop.hitVec.xCoord, mop.hitVec.yCoord, mop.hitVec.zCoord,
                     getRandomForParticle(), getRandomForParticle(), getRandomForParticle());
         }
     }
@@ -115,19 +92,19 @@ public class EntityAirball extends EntityBallBase
 
         if (block == Blocks.fire)
         {
-            worldObj.setBlockToAir(blockPos);
+            world.setBlockToAir(blockPos);
         }
         else if (block == Blocks.flowing_water || block == Blocks.water)
         {
             if (currentState.getValue(BlockDynamicLiquid.LEVEL) > 0)
             {
-                worldObj.setBlockToAir(blockPos);
+                world.setBlockToAir(blockPos);
             }
         }
         else if (!block.getMaterial().blocksMovement() && !block.getMaterial().isLiquid())
         {
-            block.dropBlockAsItem(worldObj, blockPos, currentState, 0);
-            worldObj.setBlockToAir(blockPos);
+            block.dropBlockAsItem(world, blockPos, currentState, 0);
+            world.setBlockToAir(blockPos);
         }
     }
 }

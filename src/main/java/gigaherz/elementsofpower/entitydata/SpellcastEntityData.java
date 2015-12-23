@@ -4,7 +4,7 @@ import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.SpellManager;
 import gigaherz.elementsofpower.network.SpellcastSync;
 import gigaherz.elementsofpower.spells.ISpellEffect;
-import gigaherz.elementsofpower.spells.ISpellcast;
+import gigaherz.elementsofpower.spells.cast.ISpellcast;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -16,7 +16,6 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 public class SpellcastEntityData implements IExtendedEntityProperties
 {

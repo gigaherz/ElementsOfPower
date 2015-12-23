@@ -25,7 +25,7 @@ public class MagicHolder extends MagicAmounts implements IInventory
 
             if (slot >= 0 && slot < 8)
             {
-                amounts[slot] = tag.getInteger("Count");
+                amounts[slot] = tag.getFloat("Count");
             }
         }
     }
@@ -38,7 +38,7 @@ public class MagicHolder extends MagicAmounts implements IInventory
         {
             NBTTagCompound tag = new NBTTagCompound();
             tag.setByte("Type", (byte) i);
-            tag.setInteger("Count", amounts[i]);
+            tag.setFloat("Count", amounts[i]);
             itemList.appendTag(tag);
         }
 
@@ -138,7 +138,7 @@ public class MagicHolder extends MagicAmounts implements IInventory
         int added = 0;
         for (int i = 0; i < 8; i++)
         {
-            int transfer = Math.min(Math.min(limits.amounts[i] - contained.amounts[i], 1), amounts[i]);
+            float transfer = Math.min(Math.min(limits.amounts[i] - contained.amounts[i], 1), amounts[i]);
 
             amounts[i] -= transfer;
 
@@ -158,7 +158,7 @@ public class MagicHolder extends MagicAmounts implements IInventory
         // test if we can truly add the magic
         for (int i = 0; i < 8; i++)
         {
-            int amount = magic.amounts[i];
+            float amount = magic.amounts[i];
 
             if (amount == 0)
                 continue;
@@ -172,7 +172,7 @@ public class MagicHolder extends MagicAmounts implements IInventory
         // we can, add it
         for (int i = 0; i < 8; i++)
         {
-            int amount = magic.amounts[i];
+            float amount = magic.amounts[i];
 
             if (amount == 0)
                 continue;
@@ -194,7 +194,7 @@ public class MagicHolder extends MagicAmounts implements IInventory
     {
         if (amounts[index] == 0)
             return null;
-        return new ItemStack(ElementsOfPower.magicOrb, amounts[index], index);
+        return new ItemStack(ElementsOfPower.magicOrb, (int)amounts[index], index);
     }
 
     @Override

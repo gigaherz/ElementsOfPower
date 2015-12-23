@@ -1,29 +1,31 @@
 package gigaherz.elementsofpower.spells;
 
-import gigaherz.elementsofpower.entities.EntityTeleporter;
+import gigaherz.elementsofpower.entities.EntityBall;
+import gigaherz.elementsofpower.spells.cast.ISpellcast;
+import gigaherz.elementsofpower.spells.cast.Teleport;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
-public class SpellTeleport extends SpellBase
+public class SpellTeleport
+        extends SpellBase<SpellTeleport, Teleport>
 {
+
+    @Override
+    public Teleport getNewCast()
+    {
+        return new Teleport(this);
+    }
+
     @Override
     public ISpellcast castSpell(ItemStack stack, EntityPlayer player)
     {
         World world = player.worldObj;
-        Vec3 lookAt = player.getLook(1.0F);
+        Teleport cast = getNewCast();
+        EntityBall entity = new EntityBall(world, cast, player);
 
-        EntityTeleporter fireball;
-
-        fireball = new EntityTeleporter(world, player);
-
-        fireball.posX = player.posX + lookAt.xCoord * player.width * 0.75f;
-        fireball.posY = player.posY + 1.0f;
-        fireball.posZ = player.posZ + lookAt.zCoord * player.width * 0.75f;
-
-        if (world.spawnEntityInWorld(fireball))
-            return getNewCast();
+        if (world.spawnEntityInWorld(entity))
+            return cast;
 
         return null;
     }

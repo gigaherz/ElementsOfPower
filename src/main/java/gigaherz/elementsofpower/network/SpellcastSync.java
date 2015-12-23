@@ -2,13 +2,11 @@ package gigaherz.elementsofpower.network;
 
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.SpellManager;
-import gigaherz.elementsofpower.entitydata.SpellcastEntityData;
 import gigaherz.elementsofpower.spells.ISpellEffect;
-import gigaherz.elementsofpower.spells.ISpellcast;
+import gigaherz.elementsofpower.spells.cast.ISpellcast;
 import gigaherz.elementsofpower.util.Used;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;

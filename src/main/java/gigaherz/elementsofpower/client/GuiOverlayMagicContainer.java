@@ -10,15 +10,27 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.texture.TextureUtil;
+import net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.model.pipeline.LightUtil;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
+
+import java.util.List;
 
 public class GuiOverlayMagicContainer extends Gui
 {
@@ -63,9 +75,6 @@ public class GuiOverlayMagicContainer extends Gui
         }
     }
 
-    /**
-     * @param event
-     */
     @SubscribeEvent
     public void onRenderGameOverlay(RenderGameOverlayEvent.Post event)
     {
@@ -88,47 +97,40 @@ public class GuiOverlayMagicContainer extends Gui
         if (amounts == null)
             return;
 
-        int totalIcons = 0;
-        for (int amount : amounts.amounts)
-        {
-            if (amount > 0)
-                totalIcons++;
-        }
-
-        if (totalIcons == 0)
-            return;
-
         RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
         FontRenderer font = Minecraft.getMinecraft().fontRendererObj;
-
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        GL11.glDisable(GL11.GL_LIGHTING);
-        GL11.glPushMatrix();
-        Minecraft.getMinecraft().renderEngine.bindTexture(icons);
 
         float rescale = 1;
         int rescaledWidth = (int)(event.resolution.getScaledWidth() / rescale);
         int rescaledHeight = (int)(event.resolution.getScaledHeight() / rescale);
-        GL11.glScalef(rescale,rescale,1);
 
-        int xPos = (rescaledWidth - (totalIcons-1) * 22 - 16) / 2;
+        GlStateManager.pushAttrib();
+        GlStateManager.pushMatrix();
+        GlStateManager.scale(rescale,rescale,1);
+
+        ItemModelMesher mesher = Minecraft.getMinecraft().getRenderItem().getItemModelMesher();
+        TextureManager renderEngine = Minecraft.getMinecraft().renderEngine;
+
+        int xPos = (rescaledWidth - 7 * 28 - 16) / 2;
         int yPos = 2;
         for (int i = 0; i < 8; i++)
         {
-            if(amounts.amounts[i] != 0)
-                GL11.glColor4f(1,1,1,0.5f);
+            int alpha = (amounts.amounts[i] < 0.001) ? 0x3FFFFFFF : 0xFFFFFFFF;
 
-            renderItem.renderItemAndEffectIntoGUI(ElementsOfPower.magicOrb.getStack(amounts.amounts[i], i), xPos, yPos);
+            ItemStack stack = ElementsOfPower.magicOrb.getStack((int) amounts.amounts[i], i);
 
-            this.drawCenteredString(font, "" + amounts.amounts[i], xPos + 8, yPos + 16, 0xFFC0C0C0);
+            renderItem(mesher, renderEngine, xPos, yPos, stack, alpha);
+
+            String formatted = ElementsOfPower.prettyNumberFormatter.format(amounts.amounts[i]);
+            this.drawCenteredString(font, formatted, xPos + 8, yPos + 16, 0xFFC0C0C0);
             if (itemInUse != null)
                 this.drawCenteredString(font, "K:" + (i + 1), xPos + 8, yPos + 28, 0xFFC0C0C0);
 
-            if(amounts.amounts[i] != 0)
-                GL11.glColor4f(1,1,1,1);
-
-            xPos += 22;
+            xPos += 28;
         }
+
+        renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+        renderEngine.getTexture(TextureMap.locationBlocksTexture).setBlurMipmap(false, false);
 
         NBTTagCompound nbt = heldItem.getTagCompound();
         if (nbt != null)
@@ -143,7 +145,11 @@ public class GuiOverlayMagicContainer extends Gui
                 for (char c : savedSequence.toCharArray())
                 {
                     int i = SpellManager.elementIndices.get(c);
-                    renderItem.renderItemAndEffectIntoGUI(ElementsOfPower.magicOrb.getStack(amounts.amounts[i], i), xPos, yPos);
+
+                    ItemStack stack = ElementsOfPower.magicOrb.getStack(1, i);
+
+                    renderItem(mesher, renderEngine, xPos, yPos, stack, 0xFFFFFFFF);
+
                     xPos += 6;
                 }
             }
@@ -157,12 +163,17 @@ public class GuiOverlayMagicContainer extends Gui
             for (char c : sequence.toString().toCharArray())
             {
                 int i = SpellManager.elementIndices.get(c);
-                renderItem.renderItemAndEffectIntoGUI(ElementsOfPower.magicOrb.getStack(amounts.amounts[i], i), xPos, yPos);
+
+                ItemStack stack = ElementsOfPower.magicOrb.getStack(1, i);
+
+                renderItem(mesher, renderEngine, xPos, yPos, stack, 0xFFFFFFFF);
+
                 xPos += 6;
             }
         }
 
-        GL11.glPopMatrix();
+        GlStateManager.popMatrix();
+        GlStateManager.popAttrib();
 
         // This doesn't belong here, but meh.
         if (itemInUse != null)
@@ -174,6 +185,70 @@ public class GuiOverlayMagicContainer extends Gui
                     sequence.append(SpellManager.elementChars[i]);
                 }
             }
+        }
+    }
+
+    private void renderItem(ItemModelMesher mesher, TextureManager renderEngine, int xPos, int yPos, ItemStack stack, int color)
+    {
+        GlStateManager.disableLighting();
+        GlStateManager.enableRescaleNormal();
+        GlStateManager.enableAlpha();
+        GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+        renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+        renderEngine.getTexture(TextureMap.locationBlocksTexture).setBlurMipmap(false, false);
+
+        GlStateManager.pushMatrix();
+
+        IBakedModel model = mesher.getItemModel(stack);
+        setupGuiTransform(xPos, yPos, model.isGui3d());
+
+        GlStateManager.scale(0.5F, 0.5F, 0.5F);
+        GlStateManager.translate(-0.5F, -0.5F, -0.5F);
+
+        renderItem(model, color);
+
+        GlStateManager.popMatrix();
+
+        renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+        renderEngine.getTexture(TextureMap.locationBlocksTexture).restoreLastBlurMipmap();
+    }
+
+    public void renderItem(IBakedModel model, int color)
+    {
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+        worldrenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
+
+        for (BakedQuad bakedquad : model.getGeneralQuads())
+        {
+            LightUtil.renderQuadColor(worldrenderer, bakedquad, color);
+        }
+
+        tessellator.draw();
+    }
+
+    private void setupGuiTransform(int xPosition, int yPosition, boolean isGui3d)
+    {
+        GlStateManager.translate((float)xPosition, (float)yPosition, 100.0F + this.zLevel);
+        GlStateManager.translate(8.0F, 8.0F, 0.0F);
+        GlStateManager.scale(1.0F, 1.0F, -1.0F);
+        GlStateManager.scale(0.5F, 0.5F, 0.5F);
+
+        if (isGui3d)
+        {
+            GlStateManager.scale(40.0F, 40.0F, 40.0F);
+            GlStateManager.rotate(210.0F, 1.0F, 0.0F, 0.0F);
+            GlStateManager.rotate(-135.0F, 0.0F, 1.0F, 0.0F);
+            GlStateManager.enableLighting();
+        }
+        else
+        {
+            GlStateManager.scale(64.0F, 64.0F, 64.0F);
+            GlStateManager.rotate(180.0F, 1.0F, 0.0F, 0.0F);
+            GlStateManager.disableLighting();
         }
     }
 

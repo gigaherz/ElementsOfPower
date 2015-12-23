@@ -1,52 +1,30 @@
-package gigaherz.elementsofpower.entities;
+package gigaherz.elementsofpower.spells.cast.balls;
 
-import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.spells.SpellBall;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDynamicLiquid;
 import net.minecraft.block.BlockSnow;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.world.World;
+import net.minecraft.util.MovingObjectPosition;
 
-public class EntityFrostball extends EntityBallBase
+public class Frostball extends BallBase
 {
-
-    public EntityFrostball(World worldIn)
+    public Frostball(SpellBall parent)
     {
-        super(worldIn);
-    }
-
-    public EntityFrostball(World worldIn, EntityLivingBase p_i1774_2_)
-    {
-        super(worldIn, p_i1774_2_);
-    }
-
-    public EntityFrostball(World worldIn, double x, double y, double z)
-    {
-        super(worldIn, x, y, z);
-    }
-
-    public EntityFrostball(World worldIn, int force, EntityLivingBase p_i1774_2_)
-    {
-        super(worldIn, force, p_i1774_2_);
+        super(parent);
     }
 
     @Override
-    public int getBallColor()
-    {
-        return 0xFFA080;
-    }
-
-    @Override
-    protected void spawnBallParticles()
+    protected void spawnBallParticles(MovingObjectPosition mop)
     {
         for (int i = 0; i < 8; ++i)
         {
-            this.worldObj.spawnParticle(EnumParticleTypes.SNOWBALL, this.posX, this.posY, this.posZ,
+            world.spawnParticle(EnumParticleTypes.SNOWBALL,
+                    mop.hitVec.xCoord, mop.hitVec.yCoord, mop.hitVec.zCoord,
                     getRandomForParticle(), getRandomForParticle(), getRandomForParticle());
         }
 
@@ -59,7 +37,7 @@ public class EntityFrostball extends EntityBallBase
 
         if (block == Blocks.fire)
         {
-            worldObj.setBlockToAir(blockPos);
+            world.setBlockToAir(blockPos);
         }
         else if (layers > 0)
         {
@@ -67,11 +45,11 @@ public class EntityFrostball extends EntityBallBase
             {
                 if (currentState.getValue(BlockDynamicLiquid.LEVEL) > 0)
                 {
-                    worldObj.setBlockState(blockPos, Blocks.cobblestone.getDefaultState());
+                    world.setBlockState(blockPos, Blocks.cobblestone.getDefaultState());
                 }
                 else
                 {
-                    worldObj.setBlockState(blockPos, Blocks.obsidian.getDefaultState());
+                    world.setBlockState(blockPos, Blocks.obsidian.getDefaultState());
                 }
                 return;
             }
@@ -79,20 +57,20 @@ public class EntityFrostball extends EntityBallBase
             {
                 if (currentState.getValue(BlockDynamicLiquid.LEVEL) > 0)
                 {
-                    worldObj.setBlockState(blockPos, Blocks.ice.getDefaultState());
+                    world.setBlockState(blockPos, Blocks.ice.getDefaultState());
                 }
                 else
                 {
-                    worldObj.setBlockState(blockPos, Blocks.packed_ice.getDefaultState());
+                    world.setBlockState(blockPos, Blocks.packed_ice.getDefaultState());
                 }
                 return;
             }
-            else if (!Blocks.snow_layer.canPlaceBlockOnSide(worldObj, blockPos, EnumFacing.UP))
+            else if (!Blocks.snow_layer.canPlaceBlockOnSide(world, blockPos, EnumFacing.UP))
             {
                 return;
             }
 
-            IBlockState below = worldObj.getBlockState(blockPos.down());
+            IBlockState below = world.getBlockState(blockPos.down());
             if(below.getBlock() == Blocks.snow_layer)
             {
                 if(below.getValue(BlockSnow.LAYERS) < 8)
@@ -103,7 +81,7 @@ public class EntityFrostball extends EntityBallBase
 
             while (layers > 0)
             {
-                currentState = worldObj.getBlockState(blockPos);
+                currentState = world.getBlockState(blockPos);
                 block = currentState.getBlock();
 
                 if (block == Blocks.snow_layer)
@@ -113,13 +91,13 @@ public class EntityFrostball extends EntityBallBase
                         break;
                     int add = Math.min(8 - l, layers);
                     l += add;
-                    worldObj.setBlockState(blockPos, currentState.withProperty(BlockSnow.LAYERS, l));
+                    world.setBlockState(blockPos, currentState.withProperty(BlockSnow.LAYERS, l));
                     layers -= add;
                 }
                 else if (block == Blocks.air)
                 {
                     int add = Math.min(8, layers);
-                    worldObj.setBlockState(blockPos, Blocks.snow_layer.getDefaultState().withProperty(BlockSnow.LAYERS, add));
+                    world.setBlockState(blockPos, Blocks.snow_layer.getDefaultState().withProperty(BlockSnow.LAYERS, add));
                     layers -= add;
                 }
                 else

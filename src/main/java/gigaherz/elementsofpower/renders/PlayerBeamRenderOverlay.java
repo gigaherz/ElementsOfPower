@@ -3,41 +3,22 @@ package gigaherz.elementsofpower.renders;
 import gigaherz.elementsofpower.entitydata.SpellcastEntityData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.crash.CrashReport;
+import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.*;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.model.Attributes;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
-import net.minecraftforge.client.model.IModel;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
-import net.minecraftforge.client.model.pipeline.LightUtil;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
 
-import java.io.IOException;
-import java.util.List;
-
 public class PlayerBeamRenderOverlay
 {
-    IFlexibleBakedModel model;
+    IFlexibleBakedModel modelSphere;
     IFlexibleBakedModel modelCyl;
-
-    /*@Override
-    public void doRenderLayer(EntityPlayer player, float swing, float prevSwing, float partialTicks, float animationProgress, float relativeHeadYaw, float prevPitch, float scale)
-    {
-        RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
-        drawSpellsOnPlayer(player, renderManager, 0, 0, 0, partialTicks);
-    }
-    */
 
     @SubscribeEvent
     public void renderFirstPerson(RenderWorldLastEvent event)
@@ -68,32 +49,14 @@ public class PlayerBeamRenderOverlay
         if(!data.isCastingBeam())
             return;
 
-        if(model == null)
+        if(modelSphere == null)
         {
-            try
-            {
-                IModel mod = ModelLoaderRegistry.getModel(new ResourceLocation("elementsofpower:entity/sphere.obj"));
-                model = mod.bake(mod.getDefaultState(), Attributes.DEFAULT_BAKED_FORMAT,
-                        (location) -> Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString()));
-            }
-            catch(IOException e)
-            {
-                throw new ReportedException(new CrashReport("Error loading model for entity", e));
-            }
+            modelSphere = RenderingStuffs.loadModel("elementsofpower:entity/sphere.obj");
         }
 
         if(modelCyl == null)
         {
-            try
-            {
-                IModel mod = ModelLoaderRegistry.getModel(new ResourceLocation("elementsofpower:entity/cylinder.obj"));
-                modelCyl = mod.bake(mod.getDefaultState(), Attributes.DEFAULT_BAKED_FORMAT,
-                        (location) -> Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString()));
-            }
-            catch(IOException e)
-            {
-                throw new ReportedException(new CrashReport("Error loading model for entity", e));
-            }
+            modelCyl =RenderingStuffs.loadModel("elementsofpower:entity/cylinder.obj");
         }
 
         int beam_color = data.getCurrentCasting().getEffect().getColor();
@@ -155,7 +118,7 @@ public class PlayerBeamRenderOverlay
             GlStateManager.rotate((float) Math.toDegrees(beamPitch) - 90, 0, 0, 1);
             GlStateManager.scale(tscale * 0.25, distance, tscale * 0.25);
 
-            renderModel(modelCyl, color);
+            RenderingStuffs.renderModel(modelCyl, color);
 
             GlStateManager.popMatrix();
 
@@ -170,7 +133,7 @@ public class PlayerBeamRenderOverlay
                 GlStateManager.rotate((float) Math.toDegrees(beamPitch) - 90, 0, 0, 1);
                 GlStateManager.scale(tscale, tscale, tscale);
 
-                renderModel(model, color);
+                RenderingStuffs.renderModel(modelSphere, color);
 
                 GlStateManager.popMatrix();
             }
@@ -182,26 +145,5 @@ public class PlayerBeamRenderOverlay
         GlStateManager.disableBlend();
         GlStateManager.disableRescaleNormal();
         GlStateManager.enableLighting();
-    }
-
-    private void renderModel(IFlexibleBakedModel model, int color)
-    {
-        Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-        worldrenderer.begin(GL11.GL_QUADS, model.getFormat());
-
-        for (EnumFacing enumfacing : EnumFacing.values())
-        {
-            this.renderQuads(worldrenderer, model.getFaceQuads(enumfacing), color);
-        }
-
-        this.renderQuads(worldrenderer, model.getGeneralQuads(), color);
-        tessellator.draw();
-    }
-
-    private void renderQuads(WorldRenderer renderer, List<BakedQuad> quads, int color)
-    {
-        for (BakedQuad bakedquad : quads)
-            LightUtil.renderQuadColor(renderer, bakedquad, color);
     }
 }

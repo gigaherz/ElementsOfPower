@@ -1,6 +1,6 @@
-package gigaherz.elementsofpower.entities;
+package gigaherz.elementsofpower.spells.cast.balls;
 
-import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.spells.SpellBall;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDirt;
 import net.minecraft.block.state.IBlockState;
@@ -9,51 +9,25 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.Vec3;
-import net.minecraft.world.World;
+import net.minecraft.util.*;
 
 import java.util.List;
 
-public class EntityLifeball extends EntityBallBase
+public class Lifeball extends BallBase
 {
-
-    public EntityLifeball(World worldIn)
+    public Lifeball(SpellBall parent)
     {
-        super(worldIn);
-    }
-
-    public EntityLifeball(World worldIn, EntityLivingBase p_i1774_2_)
-    {
-        super(worldIn, p_i1774_2_);
-    }
-
-    public EntityLifeball(World worldIn, double x, double y, double z)
-    {
-        super(worldIn, x, y, z);
-    }
-
-    public EntityLifeball(World worldIn, int force, EntityLivingBase p_i1774_2_)
-    {
-        super(worldIn, force, p_i1774_2_);
-    }
-
-    @Override
-    public int getBallColor()
-    {
-        return 0x40FF40;
+        super(parent);
     }
 
     @Override
     protected void processDirectHit(Entity e)
     {
-        //int b0 = damageForce;
+        //int b0 = getDamageForce();
         //
         //if (e instanceof EntityBlaze)
         //{
-        //    b0 = 3 + damageForce;
+        //    b0 = 3 + getDamageForce();
         //}
         //
         //e.attackEntityFrom(DamageSource.causeThrownDamage(this, this.getThrower()), (float) b0);
@@ -64,14 +38,14 @@ public class EntityLifeball extends EntityBallBase
     {
 
         AxisAlignedBB aabb = new AxisAlignedBB(
-                hitVec.xCoord - damageForce,
-                hitVec.yCoord - damageForce,
-                hitVec.zCoord - damageForce,
-                hitVec.xCoord + damageForce,
-                hitVec.yCoord + damageForce,
-                hitVec.zCoord + damageForce);
+                hitVec.xCoord - getDamageForce(),
+                hitVec.yCoord - getDamageForce(),
+                hitVec.zCoord - getDamageForce(),
+                hitVec.xCoord + getDamageForce(),
+                hitVec.yCoord + getDamageForce(),
+                hitVec.zCoord + getDamageForce());
 
-        List<EntityLivingBase> living = worldObj.getEntitiesWithinAABB(EntityLivingBase.class, aabb);
+        List<EntityLivingBase> living = world.getEntitiesWithinAABB(EntityLivingBase.class, aabb);
         burnEntities(hitVec, living);
     }
 
@@ -89,7 +63,7 @@ public class EntityLifeball extends EntityBallBase
 
             double ll = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-            double lv = Math.max(0, damageForce - ll);
+            double lv = Math.max(0, getDamageForce() - ll);
 
             causePotionEffect(e, Potion.heal, 0, lv * 0.5, 0.0);
             causePotionEffect(e, Potion.regeneration, 0, lv, 100.0);
@@ -102,7 +76,7 @@ public class EntityLifeball extends EntityBallBase
         int id = potion.getId();
         if (Potion.potionTypes[id].isInstant())
         {
-            Potion.potionTypes[id].affectEntity(this, this.getThrower(), e, amplifier, distance);
+            Potion.potionTypes[id].affectEntity(projectile, player, e, amplifier, distance);
         }
         else
         {
@@ -116,9 +90,10 @@ public class EntityLifeball extends EntityBallBase
     }
 
     @Override
-    protected void spawnBallParticles()
+    protected void spawnBallParticles(MovingObjectPosition mop)
     {
-        this.worldObj.spawnParticle(EnumParticleTypes.FLAME, this.posX, this.posY, this.posZ,
+        this.world.spawnParticle(EnumParticleTypes.FLAME,
+                mop.hitVec.xCoord, mop.hitVec.yCoord, mop.hitVec.zCoord,
                 getRandomForParticle(), getRandomForParticle(), getRandomForParticle());
     }
 
@@ -132,10 +107,10 @@ public class EntityLifeball extends EntityBallBase
             switch (currentState.getValue(BlockDirt.VARIANT))
             {
                 case COARSE_DIRT:
-                    worldObj.setBlockState(blockPos, Blocks.dirt.getDefaultState());
+                    world.setBlockState(blockPos, Blocks.dirt.getDefaultState());
                     break;
                 case DIRT:
-                    worldObj.setBlockState(blockPos, Blocks.grass.getDefaultState());
+                    world.setBlockState(blockPos, Blocks.grass.getDefaultState());
                     break;
             }
         }

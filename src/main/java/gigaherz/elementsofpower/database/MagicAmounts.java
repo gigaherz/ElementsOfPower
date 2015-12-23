@@ -1,5 +1,9 @@
 package gigaherz.elementsofpower.database;
 
+import com.google.gson.*;
+
+import java.lang.reflect.Type;
+
 public class MagicAmounts
 {
     public static final int FIRE = 0;
@@ -11,7 +15,7 @@ public class MagicAmounts
     public static final int LIFE = 6;
     public static final int DEATH = 7;
 
-    public final int[] amounts = new int[8];
+    public final float[] amounts = new float[8];
 
     @Override
     public String toString()
@@ -32,7 +36,7 @@ public class MagicAmounts
                 b.append(", ");
 
             String magicName = MagicDatabase.getMagicName(i);
-            String str = String.format("%s: %d", magicName, amounts[i]);
+            String str = String.format("%s: %f", magicName, amounts[i]);
             b.append(str);
 
             first = false;
@@ -44,7 +48,7 @@ public class MagicAmounts
 
     public boolean isEmpty()
     {
-        for (int amount : amounts)
+        for (float amount : amounts)
         {
             if (amount > 0)
             {
@@ -59,7 +63,7 @@ public class MagicAmounts
     {
         int acc = 0;
 
-        for (int amount : amounts)
+        for (float amount : amounts)
         {
             acc += amount;
         }
@@ -146,6 +150,32 @@ public class MagicAmounts
         for (int i = 0; i < amounts.length; i++)
         {
             amounts[i] += other.amounts[i];
+        }
+    }
+
+    public static class Serializer
+            implements JsonSerializer<MagicAmounts>, JsonDeserializer<MagicAmounts>
+    {
+        @Override
+        public JsonElement serialize(MagicAmounts src, Type typeOfSrc, JsonSerializationContext context)
+        {
+            JsonArray array = new JsonArray();
+            for(float a : src.amounts)
+            {
+                array.add(new JsonPrimitive(a));
+            }
+            return array;
+        }
+        @Override
+        public MagicAmounts deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException
+        {
+            MagicAmounts amounts = new MagicAmounts();
+            JsonArray array = json.getAsJsonArray();
+            for(int i=0;i<amounts.amounts.length;i++)
+            {
+                amounts.amounts[i] = array.get(i).getAsInt();
+            }
+            return amounts;
         }
     }
 }
