@@ -6,6 +6,9 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraft.client.resources.IReloadableResourceManager;
+import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.*;
 import net.minecraftforge.client.event.RenderPlayerEvent;
@@ -17,8 +20,6 @@ import org.lwjgl.opengl.GL11;
 
 public class PlayerBeamRenderOverlay
 {
-    IFlexibleBakedModel modelSphere;
-    IFlexibleBakedModel modelCyl;
 
     @SubscribeEvent
     public void renderFirstPerson(RenderWorldLastEvent event)
@@ -38,7 +39,7 @@ public class PlayerBeamRenderOverlay
         EntityPlayer player = event.entityPlayer;
         RenderManager renderManager = event.renderer.getRenderManager();
 
-        drawSpellsOnPlayer(player, renderManager, event.x, event.y, event.z, event.partialRenderTick);
+        drawSpellsOnPlayer(player, renderManager, event.x, event.y + player.getEyeHeight(), event.z, event.partialRenderTick);
     }
 
     public void drawSpellsOnPlayer(EntityPlayer player, RenderManager renderManager, double x, double y, double z, float partialTicks)
@@ -49,15 +50,8 @@ public class PlayerBeamRenderOverlay
         if(!data.isCastingBeam())
             return;
 
-        if(modelSphere == null)
-        {
-            modelSphere = RenderingStuffs.loadModel("elementsofpower:entity/sphere.obj");
-        }
-
-        if(modelCyl == null)
-        {
-            modelCyl =RenderingStuffs.loadModel("elementsofpower:entity/cylinder.obj");
-        }
+        IFlexibleBakedModel modelSphere = RenderingStuffs.loadModel("elementsofpower:entity/sphere.obj");
+        IFlexibleBakedModel modelCyl = RenderingStuffs.loadModel("elementsofpower:entity/cylinder.obj");
 
         int beam_color = data.getCurrentCasting().getEffect().getColor();
         float scale = 0.15f * data.getCurrentCasting().getEffect().getScale();

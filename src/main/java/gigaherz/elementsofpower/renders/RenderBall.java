@@ -9,6 +9,9 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.resources.IReloadableResourceManager;
+import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ReportedException;
@@ -25,8 +28,6 @@ import java.util.List;
 
 public class RenderBall extends Render<EntityBall>
 {
-    IFlexibleBakedModel model;
-
     public RenderBall(RenderManager renderManager)
     {
         super(renderManager);
@@ -35,10 +36,7 @@ public class RenderBall extends Render<EntityBall>
     @Override
     public void doRender(EntityBall entity, double x, double y, double z, float p_76986_8_, float partialTicks)
     {
-        if(model == null)
-        {
-            model = RenderingStuffs.loadModel("elementsofpower:entity/sphere.obj");
-        }
+        IFlexibleBakedModel model = RenderingStuffs.loadModel("elementsofpower:entity/sphere.obj");
 
         float scale = entity.getScale() * 0.25f;
 

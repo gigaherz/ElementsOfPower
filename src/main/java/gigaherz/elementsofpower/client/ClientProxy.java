@@ -12,6 +12,7 @@ import gigaherz.elementsofpower.network.SpellcastSync;
 import gigaherz.elementsofpower.renders.PlayerBeamRenderOverlay;
 import gigaherz.elementsofpower.renders.RenderBall;
 import gigaherz.elementsofpower.renders.RenderEssentializer;
+import gigaherz.elementsofpower.renders.RenderingStuffs;
 import gigaherz.elementsofpower.util.Used;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -25,6 +26,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.MinecraftForge;
@@ -57,7 +59,8 @@ public class ClientProxy implements ISideProxy
 
     public void handleSpellcastSync2(SpellcastSync message)
     {
-        EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+        World world = Minecraft.getMinecraft().theWorld;
+        EntityPlayer player = (EntityPlayer) world.getEntityByID(message.casterID);
         SpellcastEntityData data = SpellcastEntityData.get(player);
 
         if (data != null)
@@ -187,8 +190,7 @@ public class ClientProxy implements ISideProxy
         registerEntityRenderingHandler(EntityBall.class,
                 new RenderBall(Minecraft.getMinecraft().getRenderManager()));
 
-        //RendererLivingEntity rplayer = ReflectionHelper.getPrivateValue(RenderManager.class, Minecraft.getMinecraft().getRenderManager(), "field_178637_m", "playerRenderer");
-        //rplayer.addLayer(new PlayerBeamRenderOverlay());
+        RenderingStuffs.init();
     }
 
     public void registerEntityRenderingHandler(Class<? extends Entity> entityClass, Render<? extends Entity> render)

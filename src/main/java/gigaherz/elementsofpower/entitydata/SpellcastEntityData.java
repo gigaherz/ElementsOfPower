@@ -16,6 +16,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 public class SpellcastEntityData implements IExtendedEntityProperties
 {
@@ -56,6 +57,7 @@ public class SpellcastEntityData implements IExtendedEntityProperties
             ISpellEffect ef = SpellManager.findSpell(sequence);
 
             currentCasting = ef.getNewCast();
+            currentCasting.init(world, player);
             currentCasting.readFromNBT(cast);
         }
     }
@@ -80,14 +82,16 @@ public class SpellcastEntityData implements IExtendedEntityProperties
         currentCasting = spell;
         currentCasting.init(world, player);
 
-        if(!world.isRemote) ElementsOfPower.channel.sendTo(new SpellcastSync(SpellcastSync.ChangeMode.BEGIN, spell), (EntityPlayerMP)player);
+        if(!world.isRemote) ElementsOfPower.channel.sendToAllAround(new SpellcastSync(SpellcastSync.ChangeMode.BEGIN, spell),
+                new NetworkRegistry.TargetPoint(player.dimension, player.posX, player.posY, player.posZ, 128));
     }
 
     public void end()
     {
         if(currentCasting != null)
         {
-            if(!world.isRemote) ElementsOfPower.channel.sendTo(new SpellcastSync(SpellcastSync.ChangeMode.END, currentCasting), (EntityPlayerMP)player);
+            if(!world.isRemote) ElementsOfPower.channel.sendToAllAround(new SpellcastSync(SpellcastSync.ChangeMode.END, currentCasting),
+                    new NetworkRegistry.TargetPoint(player.dimension, player.posX, player.posY, player.posZ, 128));
 
             currentCasting = null;
         }
@@ -97,7 +101,8 @@ public class SpellcastEntityData implements IExtendedEntityProperties
     {
         if(currentCasting != null)
         {
-            if(!world.isRemote) ElementsOfPower.channel.sendTo(new SpellcastSync(SpellcastSync.ChangeMode.INTERRUPT, currentCasting), (EntityPlayerMP)player);
+            if(!world.isRemote) ElementsOfPower.channel.sendToAllAround(new SpellcastSync(SpellcastSync.ChangeMode.INTERRUPT, currentCasting),
+                    new NetworkRegistry.TargetPoint(player.dimension, player.posX, player.posY, player.posZ, 128));
 
             currentCasting = null;
         }
@@ -107,7 +112,8 @@ public class SpellcastEntityData implements IExtendedEntityProperties
     {
         if(currentCasting != null)
         {
-            if(!world.isRemote) ElementsOfPower.channel.sendTo(new SpellcastSync(SpellcastSync.ChangeMode.CANCEL, currentCasting), (EntityPlayerMP)player);
+            if(!world.isRemote) ElementsOfPower.channel.sendToAllAround(new SpellcastSync(SpellcastSync.ChangeMode.CANCEL, currentCasting),
+                    new NetworkRegistry.TargetPoint(player.dimension, player.posX, player.posY, player.posZ, 128));
 
             currentCasting = null;
         }

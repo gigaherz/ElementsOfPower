@@ -7,6 +7,10 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
+import net.minecraft.client.resources.IReloadableResourceManager;
+import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.client.resources.IResourceManagerReloadListener;
+import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
@@ -18,9 +22,13 @@ import net.minecraftforge.client.model.pipeline.LightUtil;
 import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class RenderingStuffs
 {
+    static Map<String, IFlexibleBakedModel> loadedModels = new HashMap<>();
+
     // A vertex format with normals that doesn't break the OBJ loader.
     // FIXME: Replace with DefaultvertexFormats.POSITION_TEX_COLOR_NORMAL when it works.
     public static final VertexFormat CUSTOM_FORMAT;
@@ -35,6 +43,15 @@ public class RenderingStuffs
         CUSTOM_FORMAT.addElement(new VertexFormatElement(0, VertexFormatElement.EnumType.BYTE,  VertexFormatElement.EnumUsage.PADDING,  1));
     }
 
+    public static void init()
+    {
+        IResourceManager rm = Minecraft.getMinecraft().getResourceManager();
+        if(rm instanceof IReloadableResourceManager)
+        {
+            ((IReloadableResourceManager)rm).registerReloadListener(__ -> loadedModels.clear());
+        }
+    }
+
     public static void renderModel(IFlexibleBakedModel model, int color)
     {
         Tessellator tessellator = Tessellator.getInstance();
@@ -47,13 +64,17 @@ public class RenderingStuffs
 
     public static IFlexibleBakedModel loadModel(String resourceName)
     {
+        IFlexibleBakedModel model = loadedModels.get(resourceName);
+        if (model != null)
+            return model;
 
         try
         {
             TextureMap textures = Minecraft.getMinecraft().getTextureMapBlocks();
             IModel mod = ModelLoaderRegistry.getModel(new ResourceLocation(resourceName));
-            return mod.bake(mod.getDefaultState(), Attributes.DEFAULT_BAKED_FORMAT,
+            model = mod.bake(mod.getDefaultState(), Attributes.DEFAULT_BAKED_FORMAT,
                     (location) -> textures.getAtlasSprite(location.toString()));
+            return model;
         }
         catch(IOException e)
         {

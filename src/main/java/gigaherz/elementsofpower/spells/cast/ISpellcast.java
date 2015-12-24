@@ -17,4 +17,6 @@ public interface ISpellcast<T extends ISpellEffect>
 
     void readFromNBT(NBTTagCompound tagData);
     void writeToNBT(NBTTagCompound tagData);
+
+    EntityPlayer getCastingPlayer();
 }

@@ -49,4 +49,10 @@ public class Spellcast<T extends SpellBase> implements ISpellcast<T>
     public void writeToNBT(NBTTagCompound tagData)
     {
     }
+
+    @Override
+    public EntityPlayer getCastingPlayer()
+    {
+        return player;
+    }
 }

@@ -8,6 +8,9 @@ import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.client.resources.IReloadableResourceManager;
+import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.util.*;
 import net.minecraftforge.client.model.*;
@@ -18,19 +21,10 @@ import java.io.IOException;
 
 public class RenderEssentializer extends TileEntitySpecialRenderer<TileEssentializer>
 {
-    IFlexibleBakedModel model;
-
-    public RenderEssentializer()
-    {
-    }
-
     @Override
     public void renderTileEntityAt(TileEssentializer te, double x, double y, double z, float partialTicks, int destroyStage)
     {
-        if(model == null)
-        {
-            model = RenderingStuffs.loadModel("elementsofpower:block/essentializer_2.obj");
-        }
+        IFlexibleBakedModel model = RenderingStuffs.loadModel("elementsofpower:block/essentializer_2.obj");
 
         bindTexture(TextureMap.locationBlocksTexture);
 

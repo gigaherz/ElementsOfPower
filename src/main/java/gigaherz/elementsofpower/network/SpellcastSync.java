@@ -7,7 +7,10 @@ import gigaherz.elementsofpower.spells.cast.ISpellcast;
 import gigaherz.elementsofpower.util.Used;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -25,6 +28,7 @@ public class SpellcastSync
         public static final ChangeMode values[] = values();
     }
 
+    public int casterID;
     public ChangeMode changeMode;
     public ISpellcast spellcast;
 
@@ -37,12 +41,14 @@ public class SpellcastSync
     {
         changeMode = mode;
         spellcast = cast;
+        casterID = cast.getCastingPlayer().getEntityId();
     }
 
     @Override
     public void fromBytes(ByteBuf buf)
     {
         changeMode = ChangeMode.values[buf.readInt()];
+        casterID = buf.readInt();
 
         NBTTagCompound tagData = ByteBufUtils.readTag(buf);
         String sequence = tagData.getString("sequence");
@@ -57,6 +63,7 @@ public class SpellcastSync
     public void toBytes(ByteBuf buf)
     {
         buf.writeInt(changeMode.ordinal());
+        buf.writeInt(casterID);
 
         NBTTagCompound tagData = new NBTTagCompound();
         spellcast.writeToNBT(tagData);
