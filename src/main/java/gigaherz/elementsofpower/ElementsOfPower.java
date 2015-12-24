@@ -3,7 +3,8 @@ package gigaherz.elementsofpower;
 import gigaherz.elementsofpower.blocks.BlockCushion;
 import gigaherz.elementsofpower.blocks.BlockDust;
 import gigaherz.elementsofpower.database.MagicDatabase;
-import gigaherz.elementsofpower.entities.*;
+import gigaherz.elementsofpower.entities.EntityBall;
+import gigaherz.elementsofpower.entities.EntityTeleporter;
 import gigaherz.elementsofpower.entitydata.SpellcastEntityData;
 import gigaherz.elementsofpower.essentializer.BlockEssentializer;
 import gigaherz.elementsofpower.essentializer.TileEssentializer;
@@ -16,10 +17,8 @@ import gigaherz.elementsofpower.network.SetSpecialSlot;
 import gigaherz.elementsofpower.network.SpellSequenceUpdate;
 import gigaherz.elementsofpower.network.SpellcastSync;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockStainedGlassPane;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
-import net.minecraft.command.CommandTime;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -28,19 +27,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.util.EnumHelper;
-import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.common.registry.LanguageRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.Logger;
 
@@ -126,13 +122,13 @@ public class ElementsOfPower
     void registerParticle()
     {
         SMALL_CLOUD_PARTICLE_ID = -1;
-        for(EnumParticleTypes t : EnumParticleTypes.values())
+        for (EnumParticleTypes t : EnumParticleTypes.values())
         {
-            SMALL_CLOUD_PARTICLE_ID = Math.max(SMALL_CLOUD_PARTICLE_ID, t.getParticleID()+1);
+            SMALL_CLOUD_PARTICLE_ID = Math.max(SMALL_CLOUD_PARTICLE_ID, t.getParticleID() + 1);
         }
         SMALL_CLOUD_PARTICLE = EnumHelper.addEnum(EnumParticleTypes.class, "SMALL_CLOUD",
-                new Class<?>[] {String.class, int.class, boolean.class},
-                new Object[] {"small_cloud", SMALL_CLOUD_PARTICLE_ID, false});
+                new Class<?>[]{String.class, int.class, boolean.class},
+                new Object[]{"small_cloud", SMALL_CLOUD_PARTICLE_ID, false});
 
         // Client-side rendering registered in: proxy.registerParticle();
     }

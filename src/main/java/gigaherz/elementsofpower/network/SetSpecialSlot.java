@@ -37,7 +37,7 @@ public class SetSpecialSlot
         windowId = buf.readInt();
         slot = buf.readInt();
         int count = buf.readInt();
-        if(count > 0)
+        if (count > 0)
         {
             int meta = buf.readInt();
             Item item = Item.itemRegistry.getObject(new ResourceLocation(ByteBufUtils.readUTF8String(buf)));
@@ -60,7 +60,7 @@ public class SetSpecialSlot
     {
         buf.writeInt(windowId);
         buf.writeInt(slot);
-        if(stack != null && stack.stackSize > 0)
+        if (stack != null && stack.stackSize > 0)
         {
             buf.writeInt(stack.stackSize);
             buf.writeInt(stack.getItemDamage());

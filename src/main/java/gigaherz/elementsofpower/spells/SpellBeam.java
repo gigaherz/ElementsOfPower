@@ -24,10 +24,16 @@ public class SpellBeam
     }
 
     @Override
-    public boolean isBeam() { return true; }
+    public boolean isBeam()
+    {
+        return true;
+    }
 
     @Override
-    public int getDuration() {return timeToLive; }
+    public int getDuration()
+    {
+        return timeToLive;
+    }
 
     @Override
     public BeamBase getNewCast()

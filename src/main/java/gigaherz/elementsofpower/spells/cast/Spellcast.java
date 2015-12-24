@@ -31,9 +31,15 @@ public class Spellcast<T extends SpellBase> implements ISpellcast<T>
     }
 
     @Override
-    public T getEffect() { return spell; }
+    public T getEffect()
+    {
+        return spell;
+    }
 
-    public int getDamageForce() { return spell.getPower(); }
+    public int getDamageForce()
+    {
+        return spell.getPower();
+    }
 
     @Override
     public void update()

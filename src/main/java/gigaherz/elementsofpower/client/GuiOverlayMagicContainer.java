@@ -10,13 +10,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.ItemModelMesher;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.texture.TextureUtil;
-import net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.client.settings.GameSettings;
@@ -24,13 +25,10 @@ import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.model.pipeline.LightUtil;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
-
-import java.util.List;
 
 public class GuiOverlayMagicContainer extends Gui
 {
@@ -53,15 +51,15 @@ public class GuiOverlayMagicContainer extends Gui
         int l = s.keyBindings.length;
         int[] indices = new int[8];
         int f = 0;
-        for(int i=0;i<8;i++)
+        for (int i = 0; i < 8; i++)
         {
             KeyBinding b = s.keyBindsHotbar[i];
-            for(int j =0;j<l;j++)
+            for (int j = 0; j < l; j++)
             {
-                if(s.keyBindings[(f+j)%l] == b)
+                if (s.keyBindings[(f + j) % l] == b)
                 {
-                    f=f+j;
-                    indices[i]=f;
+                    f = f + j;
+                    indices[i] = f;
                     break;
                 }
             }
@@ -101,12 +99,12 @@ public class GuiOverlayMagicContainer extends Gui
         FontRenderer font = Minecraft.getMinecraft().fontRendererObj;
 
         float rescale = 1;
-        int rescaledWidth = (int)(event.resolution.getScaledWidth() / rescale);
-        int rescaledHeight = (int)(event.resolution.getScaledHeight() / rescale);
+        int rescaledWidth = (int) (event.resolution.getScaledWidth() / rescale);
+        int rescaledHeight = (int) (event.resolution.getScaledHeight() / rescale);
 
         GlStateManager.pushAttrib();
         GlStateManager.pushMatrix();
-        GlStateManager.scale(rescale,rescale,1);
+        GlStateManager.scale(rescale, rescale, 1);
 
         ItemModelMesher mesher = Minecraft.getMinecraft().getRenderItem().getItemModelMesher();
         TextureManager renderEngine = Minecraft.getMinecraft().renderEngine;
@@ -137,7 +135,7 @@ public class GuiOverlayMagicContainer extends Gui
         {
             String savedSequence = nbt.getString(ItemWand.SPELL_SEQUENCE_TAG);
 
-            if(savedSequence != null && savedSequence.length() > 0)
+            if (savedSequence != null && savedSequence.length() > 0)
             {
                 // Saved spell sequence
                 xPos = (rescaledWidth - 6 * (savedSequence.length() - 1) - 14) / 2;
@@ -232,7 +230,7 @@ public class GuiOverlayMagicContainer extends Gui
 
     private void setupGuiTransform(int xPosition, int yPosition, boolean isGui3d)
     {
-        GlStateManager.translate((float)xPosition, (float)yPosition, 100.0F + this.zLevel);
+        GlStateManager.translate((float) xPosition, (float) yPosition, 100.0F + this.zLevel);
         GlStateManager.translate(8.0F, 8.0F, 0.0F);
         GlStateManager.scale(1.0F, 1.0F, -1.0F);
         GlStateManager.scale(0.5F, 0.5F, 0.5F);

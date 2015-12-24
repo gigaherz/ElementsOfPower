@@ -19,7 +19,7 @@ public class ShapedOreRecipeHandler implements IRecipeHandler
     @Override
     public IRecipeInfoProvider handle(IRecipe recipe)
     {
-        return new ShapedOreRecipeInfo((ShapedOreRecipe)recipe);
+        return new ShapedOreRecipeInfo((ShapedOreRecipe) recipe);
     }
 
     private static class ShapedOreRecipeInfo implements IRecipeInfoProvider

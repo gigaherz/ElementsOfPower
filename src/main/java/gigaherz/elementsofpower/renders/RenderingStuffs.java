@@ -9,8 +9,6 @@ import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.resources.IResourceManagerReloadListener;
-import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
@@ -37,18 +35,18 @@ public class RenderingStuffs
     {
         CUSTOM_FORMAT = new VertexFormat();
         CUSTOM_FORMAT.addElement(new VertexFormatElement(0, VertexFormatElement.EnumType.FLOAT, VertexFormatElement.EnumUsage.POSITION, 3));
-        CUSTOM_FORMAT.addElement(new VertexFormatElement(0, VertexFormatElement.EnumType.UBYTE, VertexFormatElement.EnumUsage.COLOR,    4));
-        CUSTOM_FORMAT.addElement(new VertexFormatElement(0, VertexFormatElement.EnumType.FLOAT, VertexFormatElement.EnumUsage.UV,       2));
-        CUSTOM_FORMAT.addElement(new VertexFormatElement(0, VertexFormatElement.EnumType.BYTE,  VertexFormatElement.EnumUsage.NORMAL,   3));
-        CUSTOM_FORMAT.addElement(new VertexFormatElement(0, VertexFormatElement.EnumType.BYTE,  VertexFormatElement.EnumUsage.PADDING,  1));
+        CUSTOM_FORMAT.addElement(new VertexFormatElement(0, VertexFormatElement.EnumType.UBYTE, VertexFormatElement.EnumUsage.COLOR, 4));
+        CUSTOM_FORMAT.addElement(new VertexFormatElement(0, VertexFormatElement.EnumType.FLOAT, VertexFormatElement.EnumUsage.UV, 2));
+        CUSTOM_FORMAT.addElement(new VertexFormatElement(0, VertexFormatElement.EnumType.BYTE, VertexFormatElement.EnumUsage.NORMAL, 3));
+        CUSTOM_FORMAT.addElement(new VertexFormatElement(0, VertexFormatElement.EnumType.BYTE, VertexFormatElement.EnumUsage.PADDING, 1));
     }
 
     public static void init()
     {
         IResourceManager rm = Minecraft.getMinecraft().getResourceManager();
-        if(rm instanceof IReloadableResourceManager)
+        if (rm instanceof IReloadableResourceManager)
         {
-            ((IReloadableResourceManager)rm).registerReloadListener(__ -> loadedModels.clear());
+            ((IReloadableResourceManager) rm).registerReloadListener(__ -> loadedModels.clear());
         }
     }
 
@@ -58,7 +56,9 @@ public class RenderingStuffs
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
         worldrenderer.begin(GL11.GL_QUADS, model.getFormat());
         for (BakedQuad bakedquad : model.getGeneralQuads())
+        {
             LightUtil.renderQuadColor(worldrenderer, bakedquad, color);
+        }
         tessellator.draw();
     }
 
@@ -76,7 +76,7 @@ public class RenderingStuffs
                     (location) -> textures.getAtlasSprite(location.toString()));
             return model;
         }
-        catch(IOException e)
+        catch (IOException e)
         {
             throw new ReportedException(new CrashReport("Error loading custom model " + resourceName, e));
         }

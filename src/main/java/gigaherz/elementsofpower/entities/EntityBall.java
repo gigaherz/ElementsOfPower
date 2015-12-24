@@ -3,7 +3,6 @@ package gigaherz.elementsofpower.entities;
 import gigaherz.elementsofpower.database.SpellManager;
 import gigaherz.elementsofpower.spells.ISpellEffect;
 import gigaherz.elementsofpower.spells.cast.ISpellcastBall;
-import net.minecraft.entity.DataWatcher;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityThrowable;
@@ -64,7 +63,7 @@ public class EntityBall extends EntityThrowable
     {
         if (!this.worldObj.isRemote)
         {
-            if(getSpellcast() != null)
+            if (getSpellcast() != null)
                 spellcast.onImpact(pos, rand);
 
             this.setDead();
@@ -78,14 +77,14 @@ public class EntityBall extends EntityThrowable
 
     public ISpellcastBall getSpellcast()
     {
-        if(spellcast==null)
+        if (spellcast == null)
         {
             String sequence = getDataWatcher().getWatchableObjectString(10);
-            if(sequence != null)
+            if (sequence != null)
             {
                 ISpellEffect spell = SpellManager.findSpell(sequence);
                 spellcast = (ISpellcastBall) spell.getNewCast();
-                spellcast.init(worldObj, (EntityPlayer)getThrower());
+                spellcast.init(worldObj, (EntityPlayer) getThrower());
             }
         }
         return spellcast;

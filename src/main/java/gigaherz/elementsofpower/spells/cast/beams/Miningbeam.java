@@ -30,12 +30,12 @@ public class Miningbeam extends BeamBase
 
             float hardness = block.getBlockHardness(world, pos);
 
-            if (!block.isAir(world, pos) && hardness >= 0 && hardness <= (spell.getPower()/3.0f))
+            if (!block.isAir(world, pos) && hardness >= 0 && hardness <= (spell.getPower() / 3.0f))
             {
-                if(player instanceof EntityPlayerMP)
+                if (player instanceof EntityPlayerMP)
                 {
                     EntityPlayerMP playermp = (EntityPlayerMP) player;
-                    ItemInWorldManager mgr =playermp.theItemInWorldManager;
+                    ItemInWorldManager mgr = playermp.theItemInWorldManager;
 
                     int exp = net.minecraftforge.common.ForgeHooks.onBlockBreakEvent(world, mgr.getGameType(), playermp, pos);
                     if (exp != -1)

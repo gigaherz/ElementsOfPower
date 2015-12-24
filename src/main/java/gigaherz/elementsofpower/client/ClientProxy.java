@@ -89,7 +89,7 @@ public class ClientProxy implements ISideProxy
 
             if (gameController.currentScreen instanceof GuiContainerCreative)
             {
-                GuiContainerCreative guicontainercreative = (GuiContainerCreative)gameController.currentScreen;
+                GuiContainerCreative guicontainercreative = (GuiContainerCreative) gameController.currentScreen;
                 flag = guicontainercreative.getSelectedTabIndex() != CreativeTabs.tabInventory.getTabIndex();
             }
 

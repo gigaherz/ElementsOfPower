@@ -39,11 +39,11 @@ public class BlockCushion extends BlockDust
     public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn)
     {
         double maxV = 0.1;
-        double maxVSq = maxV*maxV;
+        double maxVSq = maxV * maxV;
         double factor = 0.2;
 
         double velocitySq = entityIn.motionX * entityIn.motionX + entityIn.motionY * entityIn.motionY + entityIn.motionZ * entityIn.motionZ;
-        if(velocitySq > maxVSq)
+        if (velocitySq > maxVSq)
         {
             double velocity = Math.sqrt(velocitySq);
             double newVel = velocity + factor * (maxV - velocity);

@@ -1,6 +1,7 @@
 package gigaherz.elementsofpower.database;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.recipes.RecipeTools;
@@ -69,10 +70,12 @@ public class MagicDatabase
         try
         {
             Reader r = new FileReader(ElementsOfPower.overrides);
-            Type type = new TypeToken<Map<String, MagicAmounts>>(){}.getType();
+            Type type = new TypeToken<Map<String, MagicAmounts>>()
+            {
+            }.getType();
 
             Map<String, MagicAmounts> ovr = SERIALIZER.<Map<String, MagicAmounts>>fromJson(r, type);
-            if(ovr != null)
+            if (ovr != null)
             {
                 essenceOverrides.putAll(ovr);
             }
@@ -92,7 +95,7 @@ public class MagicDatabase
             w.flush();
             w.close();
         }
-        catch(IOException e)
+        catch (IOException e)
         {
             e.printStackTrace();
         }
@@ -112,7 +115,7 @@ public class MagicDatabase
 
     private static void applyOverrides()
     {
-        for(Map.Entry<String, MagicAmounts> e : essenceOverrides.entrySet())
+        for (Map.Entry<String, MagicAmounts> e : essenceOverrides.entrySet())
         {
             String itemName;
             String entryName = e.getKey();
@@ -126,7 +129,7 @@ public class MagicDatabase
             else
             {
                 itemName = entryName.substring(0, pos);
-                meta = Integer.parseInt(entryName.substring(pos+1));
+                meta = Integer.parseInt(entryName.substring(pos + 1));
             }
 
             Item item = Item.itemRegistry.getObject(new ResourceLocation(itemName));
@@ -143,7 +146,7 @@ public class MagicDatabase
             List<ItemStack> inputs = it.getValue();
             int stackSize = output.stackSize;
 
-            if(output.stackSize > 1)
+            if (output.stackSize > 1)
             {
                 output = output.copy();
                 output.stackSize = 1;
@@ -169,7 +172,7 @@ public class MagicDatabase
             if (!allFound)
                 continue;
 
-            if(stackSize > 1)
+            if (stackSize > 1)
             {
                 for (int i = 0; i < am.amounts.length; i++)
                 {
@@ -189,7 +192,7 @@ public class MagicDatabase
         essences(Items.dye, 0).water(2).darkness(2);
         essences(Items.dye, 4).earth(8);
         essences(Items.dye, 15).earth(1).death(1);
-        essences(Items.dye, 1,2,3,5,6,7,8,9,10,11,12,13,14).earth(1).life(1);
+        essences(Items.dye, 1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14).earth(1).life(1);
 
         essences(Items.clay_ball).earth(1).water(1);
         essences(Blocks.clay).earth(4).water(4);
@@ -203,20 +206,20 @@ public class MagicDatabase
         essences(Blocks.netherrack).earth(1).fire(1);
 
         essences(Blocks.cobblestone).earth(5);
-        essences(Blocks.stone,0,1,2,3,4,5,6).earth(10);
+        essences(Blocks.stone, 0, 1, 2, 3, 4, 5, 6).earth(10);
         essences(Blocks.hardened_clay).earth(5).fire(1);
         essences(Blocks.stained_hardened_clay).earth(5).fire(1);
 
         essences(Blocks.grass).earth(2).life(2);
 
         collection(
-            essences(Blocks.yellow_flower),
-            essences(Blocks.red_flower, 0),
-            essences(Blocks.red_flower, 1),
-            essences(Blocks.red_flower, 2),
-            essences(Blocks.red_flower, 3),
-            essences(Blocks.red_flower, 5),
-            essences(Blocks.red_flower, 7)).life(1);
+                essences(Blocks.yellow_flower),
+                essences(Blocks.red_flower, 0),
+                essences(Blocks.red_flower, 1),
+                essences(Blocks.red_flower, 2),
+                essences(Blocks.red_flower, 3),
+                essences(Blocks.red_flower, 5),
+                essences(Blocks.red_flower, 7)).life(1);
 
         essences(Blocks.log).life(16);
         essences(Blocks.log2).life(16);
@@ -235,7 +238,7 @@ public class MagicDatabase
         essences(Blocks.sponge, 1).water(4).life(2);
         essences(Blocks.vine, 0).life(2);
 
-        essences(Items.nether_star,0).all(64);
+        essences(Items.nether_star, 0).all(64);
 
         //essences(Blocks.coal_ore).fire(8).earth(2);
         //essences(Blocks.quartz_ore,0);
@@ -298,7 +301,9 @@ public class MagicDatabase
         //essences(Items.glowstone_dust,0);
 
         for (ItemEssenceConversion source : stockEntries)
+        {
             source.putInto(itemEssences);
+        }
     }
 
     private static ItemEssenceCollection collection(ItemEssenceConversion... entries)
@@ -314,7 +319,7 @@ public class MagicDatabase
     {
         List<ItemStack> subItems = new ArrayList<>();
 
-        if(metaValues.length == 0)
+        if (metaValues.length == 0)
         {
             subItems.add(new ItemStack(item, 1));
         }
@@ -416,16 +421,18 @@ public class MagicDatabase
     public static MagicAmounts getEssences(ItemStack stack)
     {
         int stackSize = stack.stackSize;
-        if(stackSize > 1)
+        if (stackSize > 1)
         {
             stack = stack.copy();
             stack.stackSize = 1;
         }
         MagicAmounts m = Utils.getFromMap(itemEssences, stack);
-        if(m != null && stackSize > 1)
+        if (m != null && stackSize > 1)
         {
             for (int i = 0; i < m.amounts.length; i++)
+            {
                 m.amounts[i] *= stackSize;
+            }
         }
         return m;
     }
@@ -661,14 +668,18 @@ public class MagicDatabase
         public void putInto(Map<ItemStack, MagicAmounts> essences)
         {
             for (ItemEssenceConversion c : this)
+            {
                 c.putInto(essences);
+            }
         }
 
         @Override
         public ItemEssenceCollection all(int amount)
         {
             for (ItemEssenceConversion e : this)
+            {
                 e.all(amount);
+            }
             return this;
         }
 
@@ -676,7 +687,9 @@ public class MagicDatabase
         public ItemEssenceCollection fire(int amount)
         {
             for (ItemEssenceConversion e : this)
+            {
                 e.fire(amount);
+            }
             return this;
         }
 
@@ -684,7 +697,9 @@ public class MagicDatabase
         public ItemEssenceCollection water(int amount)
         {
             for (ItemEssenceConversion e : this)
+            {
                 e.water(amount);
+            }
             return this;
         }
 
@@ -692,7 +707,9 @@ public class MagicDatabase
         public ItemEssenceCollection air(int amount)
         {
             for (ItemEssenceConversion e : this)
+            {
                 e.air(amount);
+            }
             return this;
         }
 
@@ -700,7 +717,9 @@ public class MagicDatabase
         public ItemEssenceCollection earth(int amount)
         {
             for (ItemEssenceConversion e : this)
+            {
                 e.earth(amount);
+            }
             return this;
         }
 
@@ -708,7 +727,9 @@ public class MagicDatabase
         public ItemEssenceCollection light(int amount)
         {
             for (ItemEssenceConversion e : this)
+            {
                 e.light(amount);
+            }
             return this;
         }
 
@@ -716,7 +737,9 @@ public class MagicDatabase
         public ItemEssenceCollection darkness(int amount)
         {
             for (ItemEssenceConversion e : this)
+            {
                 e.darkness(amount);
+            }
             return this;
         }
 
@@ -724,7 +747,9 @@ public class MagicDatabase
         public ItemEssenceCollection life(int amount)
         {
             for (ItemEssenceConversion e : this)
+            {
                 e.life(amount);
+            }
             return this;
         }
 
@@ -732,7 +757,9 @@ public class MagicDatabase
         public ItemEssenceCollection death(int amount)
         {
             for (ItemEssenceConversion e : this)
+            {
                 e.death(amount);
+            }
             return this;
         }
     }

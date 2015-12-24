@@ -14,7 +14,6 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ReportedException;
@@ -230,10 +229,10 @@ public class ObjModelLoader implements ICustomModelLoader
                 Method m = ReflectionHelper.findMethod(ModelBlock.class, b, new String[]{"func_181681_a"}, ItemCameraTransforms.TransformType.class);
                 m.setAccessible(true);
 
-                ItemTransformVec3f tt = (ItemTransformVec3f)m.invoke(b, t);
+                ItemTransformVec3f tt = (ItemTransformVec3f) m.invoke(b, t);
                 return getMatrix(tt);
             }
-            catch(InvocationTargetException | IllegalAccessException e)
+            catch (InvocationTargetException | IllegalAccessException e)
             {
                 throw new ReportedException(new CrashReport("Error obtaining camera transform", e));
             }
@@ -243,7 +242,7 @@ public class ObjModelLoader implements ICustomModelLoader
         {
             javax.vecmath.Matrix4f m = new javax.vecmath.Matrix4f(), t = new javax.vecmath.Matrix4f();
             m.setIdentity();
-            m.setTranslation(new Vector3f( transform.translation.x,  transform.translation.y,  transform.translation.z));
+            m.setTranslation(new Vector3f(transform.translation.x, transform.translation.y, transform.translation.z));
             t.setIdentity();
             t.rotY((float) Math.toRadians(transform.rotation.y));
             m.mul(t);
@@ -311,7 +310,9 @@ public class ObjModelLoader implements ICustomModelLoader
         public static ResourceLocation getRootLocation(ModelBlock modelBlock)
         {
             while (modelBlock.parent != null)
+            {
                 modelBlock = modelBlock.parent;
+            }
             return modelBlock.getParentLocation();
         }
     }

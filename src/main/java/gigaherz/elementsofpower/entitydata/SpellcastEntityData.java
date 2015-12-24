@@ -7,7 +7,6 @@ import gigaherz.elementsofpower.spells.ISpellEffect;
 import gigaherz.elementsofpower.spells.cast.ISpellcast;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
@@ -28,30 +27,32 @@ public class SpellcastEntityData implements IExtendedEntityProperties
 
     public static SpellcastEntityData get(EntityPlayer p)
     {
-        return (SpellcastEntityData)p.getExtendedProperties(PROP_NAME);
+        return (SpellcastEntityData) p.getExtendedProperties(PROP_NAME);
     }
 
-    public static void register() { MinecraftForge.EVENT_BUS.register(new Handler()); }
+    public static void register()
+    {
+        MinecraftForge.EVENT_BUS.register(new Handler());
+    }
 
     @Override
     public void saveNBTData(NBTTagCompound compound)
     {
-        if(currentCasting != null)
+        if (currentCasting != null)
         {
             NBTTagCompound cast = new NBTTagCompound();
             currentCasting.writeToNBT(cast);
             cast.setString("sequence", currentCasting.getEffect().getSequence());
             compound.setTag("currentSpell", cast);
-
         }
     }
 
     @Override
     public void loadNBTData(NBTTagCompound compound)
     {
-        if(compound.hasKey("currentSpell", Constants.NBT.TAG_COMPOUND))
+        if (compound.hasKey("currentSpell", Constants.NBT.TAG_COMPOUND))
         {
-            NBTTagCompound cast = (NBTTagCompound)compound.getTag("currentSpell");
+            NBTTagCompound cast = (NBTTagCompound) compound.getTag("currentSpell");
             String sequence = cast.getString("sequence");
 
             ISpellEffect ef = SpellManager.findSpell(sequence);
@@ -65,7 +66,7 @@ public class SpellcastEntityData implements IExtendedEntityProperties
     @Override
     public void init(Entity entity, World world)
     {
-        this.player = (EntityPlayer)entity;
+        this.player = (EntityPlayer) entity;
         this.world = world;
     }
 
@@ -82,16 +83,18 @@ public class SpellcastEntityData implements IExtendedEntityProperties
         currentCasting = spell;
         currentCasting.init(world, player);
 
-        if(!world.isRemote) ElementsOfPower.channel.sendToAllAround(new SpellcastSync(SpellcastSync.ChangeMode.BEGIN, spell),
-                new NetworkRegistry.TargetPoint(player.dimension, player.posX, player.posY, player.posZ, 128));
+        if (!world.isRemote)
+            ElementsOfPower.channel.sendToAllAround(new SpellcastSync(SpellcastSync.ChangeMode.BEGIN, spell),
+                    new NetworkRegistry.TargetPoint(player.dimension, player.posX, player.posY, player.posZ, 128));
     }
 
     public void end()
     {
-        if(currentCasting != null)
+        if (currentCasting != null)
         {
-            if(!world.isRemote) ElementsOfPower.channel.sendToAllAround(new SpellcastSync(SpellcastSync.ChangeMode.END, currentCasting),
-                    new NetworkRegistry.TargetPoint(player.dimension, player.posX, player.posY, player.posZ, 128));
+            if (!world.isRemote)
+                ElementsOfPower.channel.sendToAllAround(new SpellcastSync(SpellcastSync.ChangeMode.END, currentCasting),
+                        new NetworkRegistry.TargetPoint(player.dimension, player.posX, player.posY, player.posZ, 128));
 
             currentCasting = null;
         }
@@ -99,10 +102,11 @@ public class SpellcastEntityData implements IExtendedEntityProperties
 
     public void interrupt()
     {
-        if(currentCasting != null)
+        if (currentCasting != null)
         {
-            if(!world.isRemote) ElementsOfPower.channel.sendToAllAround(new SpellcastSync(SpellcastSync.ChangeMode.INTERRUPT, currentCasting),
-                    new NetworkRegistry.TargetPoint(player.dimension, player.posX, player.posY, player.posZ, 128));
+            if (!world.isRemote)
+                ElementsOfPower.channel.sendToAllAround(new SpellcastSync(SpellcastSync.ChangeMode.INTERRUPT, currentCasting),
+                        new NetworkRegistry.TargetPoint(player.dimension, player.posX, player.posY, player.posZ, 128));
 
             currentCasting = null;
         }
@@ -110,10 +114,11 @@ public class SpellcastEntityData implements IExtendedEntityProperties
 
     public void cancel()
     {
-        if(currentCasting != null)
+        if (currentCasting != null)
         {
-            if(!world.isRemote) ElementsOfPower.channel.sendToAllAround(new SpellcastSync(SpellcastSync.ChangeMode.CANCEL, currentCasting),
-                    new NetworkRegistry.TargetPoint(player.dimension, player.posX, player.posY, player.posZ, 128));
+            if (!world.isRemote)
+                ElementsOfPower.channel.sendToAllAround(new SpellcastSync(SpellcastSync.ChangeMode.CANCEL, currentCasting),
+                        new NetworkRegistry.TargetPoint(player.dimension, player.posX, player.posY, player.posZ, 128));
 
             currentCasting = null;
         }
@@ -121,7 +126,7 @@ public class SpellcastEntityData implements IExtendedEntityProperties
 
     public void updateSpell()
     {
-        if(currentCasting != null)
+        if (currentCasting != null)
         {
             currentCasting.update();
         }
@@ -129,7 +134,7 @@ public class SpellcastEntityData implements IExtendedEntityProperties
 
     public void sync(SpellcastSync.ChangeMode changeMode, ISpellcast cast)
     {
-        switch(changeMode)
+        switch (changeMode)
         {
             case BEGIN:
                 // TODO: Begin cast animation?
@@ -163,7 +168,7 @@ public class SpellcastEntityData implements IExtendedEntityProperties
         @SubscribeEvent
         public void entityConstruct(EntityEvent.EntityConstructing e)
         {
-            if(e.entity instanceof EntityPlayer)
+            if (e.entity instanceof EntityPlayer)
             {
                 if (e.entity.getExtendedProperties(PROP_NAME) == null)
                     e.entity.registerExtendedProperties(PROP_NAME, new SpellcastEntityData());
@@ -173,10 +178,10 @@ public class SpellcastEntityData implements IExtendedEntityProperties
         @SubscribeEvent
         public void playerTickEvent(TickEvent.PlayerTickEvent e)
         {
-            if(e.phase == TickEvent.Phase.END)
+            if (e.phase == TickEvent.Phase.END)
             {
                 SpellcastEntityData data = SpellcastEntityData.get(e.player);
-                if(data != null)
+                if (data != null)
                     data.updateSpell();
             }
         }

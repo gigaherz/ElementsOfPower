@@ -84,7 +84,9 @@ public class MagicAmounts
     public void subtract(MagicAmounts cost)
     {
         for (int i = 0; i < 8; i++)
+        {
             amounts[i] -= cost.amounts[i];
+        }
     }
 
     public MagicAmounts fire(int amount)
@@ -160,18 +162,19 @@ public class MagicAmounts
         public JsonElement serialize(MagicAmounts src, Type typeOfSrc, JsonSerializationContext context)
         {
             JsonArray array = new JsonArray();
-            for(float a : src.amounts)
+            for (float a : src.amounts)
             {
                 array.add(new JsonPrimitive(a));
             }
             return array;
         }
+
         @Override
         public MagicAmounts deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException
         {
             MagicAmounts amounts = new MagicAmounts();
             JsonArray array = json.getAsJsonArray();
-            for(int i=0;i<amounts.amounts.length;i++)
+            for (int i = 0; i < amounts.amounts.length; i++)
             {
                 amounts.amounts[i] = array.get(i).getAsInt();
             }

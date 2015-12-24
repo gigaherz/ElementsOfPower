@@ -194,7 +194,7 @@ public class MagicHolder extends MagicAmounts implements IInventory
     {
         if (amounts[index] == 0)
             return null;
-        return new ItemStack(ElementsOfPower.magicOrb, (int)amounts[index], index);
+        return new ItemStack(ElementsOfPower.magicOrb, (int) amounts[index], index);
     }
 
     @Override

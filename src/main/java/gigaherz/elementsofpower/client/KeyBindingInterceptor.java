@@ -10,12 +10,14 @@ import java.util.List;
 
 public class KeyBindingInterceptor extends KeyBinding
 {
-    private static class FieldHelper<C, T> {
+    private static class FieldHelper<C, T>
+    {
         Class<?> target;
         String[] names;
         Field field;
 
-        public FieldHelper(Class<? extends C> target, String... names) {
+        public FieldHelper(Class<? extends C> target, String... names)
+        {
             this.target = target;
             this.names = names;
         }
@@ -78,9 +80,10 @@ public class KeyBindingInterceptor extends KeyBinding
 
         this.interceptionActive = false;
 
-        try {
+        try
+        {
             fieldPressed.set(this, false);
-            fieldPressTime.set(this,  0);
+            fieldPressTime.set(this, 0);
         }
         catch (IllegalAccessException e)
         {

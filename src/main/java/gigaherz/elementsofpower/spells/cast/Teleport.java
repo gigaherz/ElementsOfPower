@@ -47,7 +47,7 @@ public class Teleport extends Spellcast<SpellTeleport> implements ISpellcastBall
         {
             if (player instanceof EntityPlayerMP)
             {
-                EntityPlayerMP playerMP = (EntityPlayerMP)this.player;
+                EntityPlayerMP playerMP = (EntityPlayerMP) this.player;
 
                 if (playerMP.playerNetServerHandler.getNetworkManager().isChannelOpen()
                         && playerMP.worldObj == world
@@ -64,7 +64,7 @@ public class Teleport extends Spellcast<SpellTeleport> implements ISpellcastBall
             }
             else if (player != null)
             {
-                player.setPositionAndUpdate(mop.hitVec.xCoord,mop.hitVec.yCoord,mop.hitVec.zCoord);
+                player.setPositionAndUpdate(mop.hitVec.xCoord, mop.hitVec.yCoord, mop.hitVec.zCoord);
                 player.fallDistance = 0.0F;
             }
         }

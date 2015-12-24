@@ -78,8 +78,8 @@ public class ContainerEssentializer
 
                 for (ICrafting crafter : this.crafters)
                 {
-                    if(slot instanceof SlotMagic && crafter instanceof EntityPlayerMP)
-                        sendSpecialSlotContents((EntityPlayerMP)crafter, this, i, current);
+                    if (slot instanceof SlotMagic && crafter instanceof EntityPlayerMP)
+                        sendSpecialSlotContents((EntityPlayerMP) crafter, this, i, current);
                     else
                         crafter.sendSlotContents(this, i, current);
                 }

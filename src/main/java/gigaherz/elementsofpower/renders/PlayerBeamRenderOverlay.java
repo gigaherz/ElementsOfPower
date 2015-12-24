@@ -5,15 +5,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.resources.IReloadableResourceManager;
-import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.*;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.client.model.Attributes;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
@@ -47,7 +43,7 @@ public class PlayerBeamRenderOverlay
         SpellcastEntityData data = SpellcastEntityData.get(player);
 
         // TODO: add special effects for other spell tipes that I may add in the future
-        if(!data.isCastingBeam())
+        if (!data.isCastingBeam())
             return;
 
         IFlexibleBakedModel modelSphere = RenderingStuffs.loadModel("elementsofpower:entity/sphere.obj");
@@ -61,15 +57,15 @@ public class PlayerBeamRenderOverlay
         float pyaw = player.prevRotationYawHead + partialTicks * (player.rotationYawHead - player.prevRotationYawHead);
 
         Vec3 off = new Vec3(0, -0.15, 0);
-        off = off.rotatePitch(-(float)Math.toRadians(ppitch));
-        off = off.rotateYaw(-(float)Math.toRadians(pyaw));
+        off = off.rotatePitch(-(float) Math.toRadians(ppitch));
+        off = off.rotateYaw(-(float) Math.toRadians(pyaw));
 
         Vec3 start = player.getPositionEyes(partialTicks);
         Vec3 dir = player.getLook(partialTicks);
         Vec3 end = start.addVector(dir.xCoord * maxDistance, dir.yCoord * maxDistance, dir.zCoord * maxDistance);
         MovingObjectPosition mop = player.worldObj.rayTraceBlocks(start, end, false, true, false);
 
-        if(mop != null && mop.hitVec != null)
+        if (mop != null && mop.hitVec != null)
             end = mop.hitVec;
 
         Vec3 beam0 = end.subtract(start);
@@ -81,7 +77,7 @@ public class PlayerBeamRenderOverlay
 
         double distance = beam.lengthVector();
 
-        double beamPlane = Math.sqrt(dir.xCoord*dir.xCoord + dir.zCoord*dir.zCoord);
+        double beamPlane = Math.sqrt(dir.xCoord * dir.xCoord + dir.zCoord * dir.zCoord);
         double beamYaw = Math.atan2(dir.zCoord, dir.xCoord);
         double beamPitch = Math.atan2(dir.yCoord, beamPlane);
 
@@ -95,12 +91,12 @@ public class PlayerBeamRenderOverlay
 
         GlStateManager.pushMatrix();
 
-        for(int i=0;i<=4;i++)
+        for (int i = 0; i <= 4; i++)
         {
-            float tt = (i+(player.ticksExisted % 10 + partialTicks) / 11.0f)/5.0f;
-            float tscale = scale * 1.2f *(1 + 0.5f * tt);
+            float tt = (i + (player.ticksExisted % 10 + partialTicks) / 11.0f) / 5.0f;
+            float tscale = scale * 1.2f * (1 + 0.5f * tt);
 
-            int alpha = 255 - (i==0 ? 0 : (int)(tt*255));
+            int alpha = 255 - (i == 0 ? 0 : (int) (tt * 255));
             int color = (alpha << 24) | beam_color;
 
             GlStateManager.pushMatrix();
@@ -116,7 +112,7 @@ public class PlayerBeamRenderOverlay
 
             GlStateManager.popMatrix();
 
-            if(mop != null && mop.hitVec != null)
+            if (mop != null && mop.hitVec != null)
             {
                 GlStateManager.pushMatrix();
                 GlStateManager.translate(

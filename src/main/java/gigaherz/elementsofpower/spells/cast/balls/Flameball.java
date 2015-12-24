@@ -28,7 +28,7 @@ public class Flameball extends BallBase
 
         if (e instanceof EntityBlaze)
         {
-        b0 = 3 + getDamageForce();
+            b0 = 3 + getDamageForce();
         }
 
         e.attackEntityFrom(DamageSource.causeThrownDamage(projectile, player), (float) b0);

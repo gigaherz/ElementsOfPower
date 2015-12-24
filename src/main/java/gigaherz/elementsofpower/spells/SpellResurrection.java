@@ -27,7 +27,9 @@ public class SpellResurrection
     @Override
     public ISpellcast getNewCast()
     {
-        return new Spellcast<SpellResurrection>(this){};
+        return new Spellcast<SpellResurrection>(this)
+        {
+        };
     }
 
     @Override

@@ -26,6 +26,7 @@ public class BlockDust extends Block
     {
         this(Material.clay);
     }
+
     public BlockDust(Material mat)
     {
         super(mat);

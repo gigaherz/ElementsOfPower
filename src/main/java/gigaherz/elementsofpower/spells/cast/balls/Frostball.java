@@ -27,7 +27,6 @@ public class Frostball extends BallBase
                     mop.hitVec.xCoord, mop.hitVec.yCoord, mop.hitVec.zCoord,
                     getRandomForParticle(), getRandomForParticle(), getRandomForParticle());
         }
-
     }
 
     @Override
@@ -71,9 +70,9 @@ public class Frostball extends BallBase
             }
 
             IBlockState below = world.getBlockState(blockPos.down());
-            if(below.getBlock() == Blocks.snow_layer)
+            if (below.getBlock() == Blocks.snow_layer)
             {
-                if(below.getValue(BlockSnow.LAYERS) < 8)
+                if (below.getValue(BlockSnow.LAYERS) < 8)
                 {
                     blockPos = blockPos.down();
                 }

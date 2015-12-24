@@ -1,7 +1,6 @@
 package gigaherz.elementsofpower.database;
 
 import gigaherz.elementsofpower.spells.*;
-import gigaherz.elementsofpower.spells.cast.Blastball;
 import gigaherz.elementsofpower.spells.cast.balls.*;
 import gigaherz.elementsofpower.spells.cast.beams.Firebeam;
 import gigaherz.elementsofpower.spells.cast.beams.Miningbeam;
@@ -17,10 +16,10 @@ public class SpellManager
     public static final Map<String, ISpellEffect> spellRegistration = new Hashtable<>();
 
     public static final int COST_ELEMENTARY = 8;
-    public static final int COST_SIMPLE = COST_ELEMENTARY*3;
-    public static final int COST_AVERAGE = COST_SIMPLE*3;
-    public static final int COST_COMPLEX = COST_AVERAGE*3;
-    public static final int COST_EXTREME = COST_COMPLEX*3;
+    public static final int COST_SIMPLE = COST_ELEMENTARY * 3;
+    public static final int COST_AVERAGE = COST_SIMPLE * 3;
+    public static final int COST_COMPLEX = COST_AVERAGE * 3;
+    public static final int COST_EXTREME = COST_COMPLEX * 3;
     public static final float COMBO_COEF = 1.2f;
 
     static

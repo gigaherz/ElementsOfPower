@@ -17,7 +17,8 @@ public class RecipeTools
 
     public static List<IRecipeHandler> recipeHandlers = new ArrayList<>();
 
-    static {
+    static
+    {
         recipeHandlers.add(new ShapedRecipeHandler());
         recipeHandlers.add(new ShapelessRecipeHandler());
         recipeHandlers.add(new ShapedOreRecipeHandler());
@@ -49,9 +50,9 @@ public class RecipeTools
         {
             IRecipeInfoProvider provider = null;
 
-            for(IRecipeHandler h : recipeHandlers)
+            for (IRecipeHandler h : recipeHandlers)
             {
-                if(h.accepts(recipe))
+                if (h.accepts(recipe))
                 {
                     provider = h.handle(recipe);
                     break;
@@ -61,7 +62,7 @@ public class RecipeTools
             if (provider == null)
             {
                 Class<? extends IRecipe> c = recipe.getClass();
-                if(!seenClasses.contains(c))
+                if (!seenClasses.contains(c))
                 {
                     seenClasses.add(c);
                     ElementsOfPower.logger.warn("Ignoring unhandled recipe class: " + c.getName());

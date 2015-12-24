@@ -153,7 +153,7 @@ public class ItemWand extends ItemMagicContainer
         if (cast != null)
         {
             SpellcastEntityData data = SpellcastEntityData.get(player);
-            if(data != null)
+            if (data != null)
             {
                 data.begin(cast);
             }

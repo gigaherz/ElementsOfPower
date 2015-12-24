@@ -47,7 +47,7 @@ public class ObjModel implements IModel
 
         TextureAtlasSprite particle = null;
 
-        if(particleTex != null) particle = bakedTextureGetter.apply(particleTex);
+        if (particleTex != null) particle = bakedTextureGetter.apply(particleTex);
 
         ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
 
@@ -69,13 +69,13 @@ public class ObjModel implements IModel
                 if (m.DiffuseTextureMap != null)
                 {
                     ResourceLocation t = textures.get(m.DiffuseTextureMap);
-                    if(t == null) t = new ResourceLocation(m.DiffuseTextureMap);
+                    if (t == null) t = new ResourceLocation(m.DiffuseTextureMap);
                     sprite = bakedTextureGetter.apply(t);
                 }
                 else if (m.AmbientTextureMap != null)
                 {
                     ResourceLocation t = textures.get(m.AmbientTextureMap);
-                    if(t == null) t = new ResourceLocation(m.AmbientTextureMap);
+                    if (t == null) t = new ResourceLocation(m.AmbientTextureMap);
                     sprite = bakedTextureGetter.apply(t);
                 }
 
@@ -444,7 +444,7 @@ public class ObjModel implements IModel
                 }
                 finally
                 {
-                    if(writer != null)
+                    if (writer != null)
                         writer.close();
                 }
             }

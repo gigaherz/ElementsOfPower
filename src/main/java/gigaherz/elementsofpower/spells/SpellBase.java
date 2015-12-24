@@ -16,16 +16,28 @@ public abstract class SpellBase<Sub extends SpellBase, Effect extends ISpellcast
     protected int power = 0;
 
     @Override
-    public int getColor() { return color; }
+    public int getColor()
+    {
+        return color;
+    }
 
     @Override
-    public float getScale() { return 1 + 0.25f * power; }
+    public float getScale()
+    {
+        return 1 + 0.25f * power;
+    }
 
     @Override
-    public boolean isBeam() { return false; }
+    public boolean isBeam()
+    {
+        return false;
+    }
 
     @Override
-    public int getDuration() {return 0; }
+    public int getDuration()
+    {
+        return 0;
+    }
 
     @Override
     public int getPower()
@@ -57,10 +69,22 @@ public abstract class SpellBase<Sub extends SpellBase, Effect extends ISpellcast
     }
 
     @SuppressWarnings("unchecked")
-    protected Sub self() {return (Sub)this; }
+    protected Sub self()
+    {
+        return (Sub) this;
+    }
 
-    public Sub color(int color) { this.color=color; return self(); }
-    public Sub power(int power) { this.power=power; return self(); }
+    public Sub color(int color)
+    {
+        this.color = color;
+        return self();
+    }
+
+    public Sub power(int power)
+    {
+        this.power = power;
+        return self();
+    }
 
     protected Sub amount(int which)
     {
