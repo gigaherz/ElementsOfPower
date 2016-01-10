@@ -3,25 +3,21 @@ package gigaherz.elementsofpower.client;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.ISideProxy;
 import gigaherz.elementsofpower.entities.EntityBall;
+import gigaherz.elementsofpower.entities.EntityEssence;
 import gigaherz.elementsofpower.entities.EntityTeleporter;
 import gigaherz.elementsofpower.entitydata.SpellcastEntityData;
 import gigaherz.elementsofpower.essentializer.TileEssentializer;
 import gigaherz.elementsofpower.models.ObjModelLoader;
 import gigaherz.elementsofpower.network.SetSpecialSlot;
 import gigaherz.elementsofpower.network.SpellcastSync;
-import gigaherz.elementsofpower.renders.PlayerBeamRenderOverlay;
-import gigaherz.elementsofpower.renders.RenderBall;
-import gigaherz.elementsofpower.renders.RenderEssentializer;
-import gigaherz.elementsofpower.renders.RenderingStuffs;
+import gigaherz.elementsofpower.renders.*;
 import gigaherz.elementsofpower.util.Used;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainerCreative;
-import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -43,11 +39,11 @@ public class ClientProxy implements ISideProxy
         registerClientEvents();
         registerCustomBakedModels();
         registerModels();
+        registerEntityRenderers();
     }
 
     public void init()
     {
-        registerEntityRenderers();
         registerParticle();
     }
 
@@ -185,16 +181,10 @@ public class ClientProxy implements ISideProxy
     {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEssentializer.class, new RenderEssentializer());
 
-        registerEntityRenderingHandler(EntityTeleporter.class,
-                new RenderBall(Minecraft.getMinecraft().getRenderManager()));
-        registerEntityRenderingHandler(EntityBall.class,
-                new RenderBall(Minecraft.getMinecraft().getRenderManager()));
+        RenderingRegistry.registerEntityRenderingHandler(EntityTeleporter.class, RenderBall::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityBall.class, RenderBall::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityEssence.class, RenderEssence::new);
 
         RenderingStuffs.init();
-    }
-
-    public void registerEntityRenderingHandler(Class<? extends Entity> entityClass, Render<? extends Entity> render)
-    {
-        RenderingRegistry.registerEntityRenderingHandler(entityClass, render);
     }
 }

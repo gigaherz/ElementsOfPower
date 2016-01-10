@@ -1,9 +1,11 @@
 package gigaherz.elementsofpower;
 
+import com.google.common.collect.Lists;
 import gigaherz.elementsofpower.blocks.BlockCushion;
 import gigaherz.elementsofpower.blocks.BlockDust;
 import gigaherz.elementsofpower.database.MagicDatabase;
 import gigaherz.elementsofpower.entities.EntityBall;
+import gigaherz.elementsofpower.entities.EntityEssence;
 import gigaherz.elementsofpower.entities.EntityTeleporter;
 import gigaherz.elementsofpower.entitydata.SpellcastEntityData;
 import gigaherz.elementsofpower.essentializer.BlockEssentializer;
@@ -20,11 +22,15 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntitySpawnPlacementRegistry;
+import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.common.Mod;
@@ -43,6 +49,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.Format;
+import java.util.List;
 
 @Mod(modid = ElementsOfPower.MODID, name = ElementsOfPower.MODNAME, version = ElementsOfPower.VERSION)
 public class ElementsOfPower
@@ -224,7 +231,21 @@ public class ElementsOfPower
         int entityId = 1;
         EntityRegistry.registerModEntity(EntityBall.class, "Airball", entityId++, this, 80, 3, true);
         EntityRegistry.registerModEntity(EntityTeleporter.class, "Teleporter", entityId++, this, 80, 3, true);
+        EntityRegistry.registerModEntity(EntityEssence.class, "Essence", entityId++, this, 80, 3, true, 0x0000FF, 0xFFFF00);
         logger.debug("Next entity id: " + entityId);
+
+        List<BiomeGenBase> biomes = Lists.newArrayList();
+
+        for (BiomeGenBase b : BiomeGenBase.getBiomeGenArray())
+        {
+            if (b != null)
+                biomes.add(b);
+        }
+
+        BiomeGenBase[] biomesArray = biomes.toArray(new BiomeGenBase[biomes.size()]);
+
+        EntitySpawnPlacementRegistry.setPlacementType(EntityEssence.class, EntityLiving.SpawnPlacementType.IN_AIR);
+        EntityRegistry.addSpawn(EntityEssence.class, 50, 1, 4, EnumCreatureType.AMBIENT, biomesArray);
 
         // Recipes
         logger.info("Registering recipes...");

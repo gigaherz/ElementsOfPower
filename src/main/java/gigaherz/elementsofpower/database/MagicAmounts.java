@@ -59,9 +59,9 @@ public class MagicAmounts
         return true;
     }
 
-    public int getTotalMagic()
+    public float getTotalMagic()
     {
-        int acc = 0;
+        float acc = 0;
 
         for (float amount : amounts)
         {
@@ -156,7 +156,8 @@ public class MagicAmounts
     }
 
     public static class Serializer
-            implements JsonSerializer<MagicAmounts>, JsonDeserializer<MagicAmounts>
+            implements JsonSerializer<MagicAmounts>,
+            JsonDeserializer<MagicAmounts>
     {
         @Override
         public JsonElement serialize(MagicAmounts src, Type typeOfSrc, JsonSerializationContext context)

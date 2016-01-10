@@ -15,7 +15,6 @@ import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -95,7 +94,6 @@ public class GuiOverlayMagicContainer extends Gui
         if (amounts == null)
             return;
 
-        RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
         FontRenderer font = Minecraft.getMinecraft().fontRendererObj;
 
         float rescale = 1;
@@ -104,6 +102,7 @@ public class GuiOverlayMagicContainer extends Gui
 
         GlStateManager.pushAttrib();
         GlStateManager.pushMatrix();
+        GlStateManager.depthMask(false);
         GlStateManager.scale(rescale, rescale, 1);
 
         ItemModelMesher mesher = Minecraft.getMinecraft().getRenderItem().getItemModelMesher();
@@ -117,7 +116,7 @@ public class GuiOverlayMagicContainer extends Gui
 
             ItemStack stack = ElementsOfPower.magicOrb.getStack((int) amounts.amounts[i], i);
 
-            renderItem(mesher, renderEngine, xPos, yPos, stack, alpha);
+            renderItemStack(mesher, renderEngine, xPos, yPos, stack, alpha);
 
             String formatted = ElementsOfPower.prettyNumberFormatter.format(amounts.amounts[i]);
             this.drawCenteredString(font, formatted, xPos + 8, yPos + 16, 0xFFC0C0C0);
@@ -126,9 +125,6 @@ public class GuiOverlayMagicContainer extends Gui
 
             xPos += 28;
         }
-
-        renderEngine.bindTexture(TextureMap.locationBlocksTexture);
-        renderEngine.getTexture(TextureMap.locationBlocksTexture).setBlurMipmap(false, false);
 
         NBTTagCompound nbt = heldItem.getTagCompound();
         if (nbt != null)
@@ -146,7 +142,7 @@ public class GuiOverlayMagicContainer extends Gui
 
                     ItemStack stack = ElementsOfPower.magicOrb.getStack(1, i);
 
-                    renderItem(mesher, renderEngine, xPos, yPos, stack, 0xFFFFFFFF);
+                    renderItemStack(mesher, renderEngine, xPos, yPos, stack, 0xFFFFFFFF);
 
                     xPos += 6;
                 }
@@ -164,14 +160,18 @@ public class GuiOverlayMagicContainer extends Gui
 
                 ItemStack stack = ElementsOfPower.magicOrb.getStack(1, i);
 
-                renderItem(mesher, renderEngine, xPos, yPos, stack, 0xFFFFFFFF);
+                renderItemStack(mesher, renderEngine, xPos, yPos, stack, 0xFFFFFFFF);
 
                 xPos += 6;
             }
         }
 
+        //GlStateManager.depthMask(false);
         GlStateManager.popMatrix();
         GlStateManager.popAttrib();
+
+        GlStateManager.disableAlpha();
+        GlStateManager.disableBlend();
 
         // This doesn't belong here, but meh.
         if (itemInUse != null)
@@ -186,7 +186,7 @@ public class GuiOverlayMagicContainer extends Gui
         }
     }
 
-    private void renderItem(ItemModelMesher mesher, TextureManager renderEngine, int xPos, int yPos, ItemStack stack, int color)
+    private void renderItemStack(ItemModelMesher mesher, TextureManager renderEngine, int xPos, int yPos, ItemStack stack, int color)
     {
         GlStateManager.disableLighting();
         GlStateManager.enableRescaleNormal();

@@ -27,6 +27,8 @@ item.elementsofpower.magicOrb.death.name=Death
 
 itemGroup.elementsofpower=Elements Of Power
 
+entity.elementsofpower.Essence.name=Living Essence
+
 elementsofpower.element.fire=Fire
 elementsofpower.element.water=Water
 elementsofpower.element.air=Air

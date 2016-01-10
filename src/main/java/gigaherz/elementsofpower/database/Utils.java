@@ -37,7 +37,8 @@ public class Utils
         {
             if (stackFitsInSlot(stack, k))
             {
-                return map.get(k);
+                OType t = map.get(k);
+                return t;
             }
         }
 

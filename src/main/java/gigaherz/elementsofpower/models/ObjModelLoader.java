@@ -187,7 +187,7 @@ public class ObjModelLoader implements ICustomModelLoader
         @Override
         public ItemCameraTransforms getItemCameraTransforms()
         {
-            return null;
+            return ItemCameraTransforms.DEFAULT;
         }
 
         @Override

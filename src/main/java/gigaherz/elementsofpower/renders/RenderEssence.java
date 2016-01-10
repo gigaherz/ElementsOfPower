@@ -1,0 +1,69 @@
+package gigaherz.elementsofpower.renders;
+
+import gigaherz.elementsofpower.entities.EntityEssence;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.IFlexibleBakedModel;
+import org.lwjgl.opengl.GL11;
+
+public class RenderEssence extends Render<EntityEssence>
+{
+    public RenderEssence(RenderManager renderManager)
+    {
+        super(renderManager);
+    }
+
+    @Override
+    public void doRender(EntityEssence entity, double x, double y, double z, float p_76986_8_, float partialTicks)
+    {
+        IFlexibleBakedModel model = RenderingStuffs.loadModel("elementsofpower:entity/sphere.obj");
+
+        float scale = entity.getScale();
+
+        GlStateManager.disableLighting();
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.pushMatrix();
+        GlStateManager.translate((float) x, (float) y, (float) z);
+        GlStateManager.enableRescaleNormal();
+        GlStateManager.scale(scale, scale, scale);
+
+        bindTexture(TextureMap.locationBlocksTexture);
+
+        float cycle = (entity.ticksExisted % 10 + partialTicks) / 11.0f;
+
+        int ball_color = entity.getColor(entity.ticksExisted + partialTicks);
+        for (int i = 0; i <= 8; i++)
+        {
+            float tt = (i + cycle) / 9.0f;
+            float subScale = EntityEssence.lerp(0.01f, 1.0f, tt);
+
+            float rtt = (1 - tt);
+            int alpha = (i == 0 ? 255 : (int) (rtt * 255));
+            int color = (alpha << 24) | ball_color;
+
+            GlStateManager.pushMatrix();
+            GlStateManager.scale(subScale, subScale, subScale);
+
+            RenderingStuffs.renderModel(model, color);
+
+            GlStateManager.popMatrix();
+        }
+
+        GlStateManager.disableRescaleNormal();
+        GlStateManager.popMatrix();
+
+        GlStateManager.enableLighting();
+
+        super.doRender(entity, x, y, z, p_76986_8_, partialTicks);
+    }
+
+    @Override
+    protected ResourceLocation getEntityTexture(EntityEssence entity)
+    {
+        return TextureMap.locationBlocksTexture;
+    }
+}

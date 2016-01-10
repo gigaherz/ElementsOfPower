@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower.entities;
 
+import gigaherz.elementsofpower.spells.cast.ISpellcastBall;
 import gigaherz.elementsofpower.spells.cast.Teleport;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,15 +15,10 @@ public class EntityTeleporter extends EntityBall
         super(worldIn);
     }
 
-    public EntityTeleporter(World worldIn, EntityLivingBase p_i1774_2_)
-    {
-        super(worldIn, p_i1774_2_);
-    }
-
     @SuppressWarnings("unused")
-    public EntityTeleporter(World worldIn, double x, double y, double z)
+    public EntityTeleporter(World worldIn, ISpellcastBall spellcast, EntityLivingBase thrower)
     {
-        super(worldIn, x, y, z);
+        super(worldIn, spellcast, thrower);
     }
 
     @Override

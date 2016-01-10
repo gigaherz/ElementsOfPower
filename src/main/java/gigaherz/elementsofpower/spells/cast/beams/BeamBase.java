@@ -55,8 +55,8 @@ public abstract class BeamBase extends Spellcast<SpellBeam>
             {
                 float maxDistance = 10;
                 Vec3 start = new Vec3(player.posX, player.posY + (double) player.getEyeHeight(), player.posZ);
-                Vec3 dir = player.getLook(1);
-                Vec3 end = start.addVector(dir.xCoord * maxDistance, dir.yCoord * maxDistance, dir.zCoord * maxDistance);
+                Vec3 look = player.getLook(1);
+                Vec3 end = start.addVector(look.xCoord * maxDistance, look.yCoord * maxDistance, look.zCoord * maxDistance);
                 MovingObjectPosition mop = player.worldObj.rayTraceBlocks(start, end, false, true, false);
 
                 // TODO: Detect entities

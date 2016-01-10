@@ -18,19 +18,9 @@ public class EntityBall extends EntityThrowable
         super(worldIn);
     }
 
-    public EntityBall(World worldIn, EntityLivingBase p_i1774_2_)
+    public EntityBall(World worldIn, ISpellcastBall spellcast, EntityLivingBase thrower)
     {
-        super(worldIn, p_i1774_2_);
-    }
-
-    public EntityBall(World worldIn, double x, double y, double z)
-    {
-        super(worldIn, x, y, z);
-    }
-
-    public EntityBall(World worldIn, ISpellcastBall spellcast, EntityLivingBase p_i1774_2_)
-    {
-        super(worldIn, p_i1774_2_);
+        super(worldIn, thrower);
         this.spellcast = spellcast;
         spellcast.setProjectile(this);
         getDataWatcher().addObjectByDataType(10, 4);

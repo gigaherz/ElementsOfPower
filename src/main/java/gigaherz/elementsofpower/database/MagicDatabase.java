@@ -144,8 +144,11 @@ public class MagicDatabase
         {
             ItemStack output = it.getKey();
             List<ItemStack> inputs = it.getValue();
-            int stackSize = output.stackSize;
 
+            if (output.getItem() instanceof ItemWand)
+                continue;
+
+            int stackSize = output.stackSize;
             if (output.stackSize > 1)
             {
                 output = output.copy();
@@ -556,6 +559,26 @@ public class MagicDatabase
 
             return output;
         }
+    }
+
+    public static boolean isContainerFull(ItemStack stack)
+    {
+        MagicAmounts limits = getMagicLimits(stack);
+        MagicAmounts amounts = getContainedMagic(stack);
+
+        if (amounts == null)
+            return false;
+
+        if (limits == null)
+            return true;
+
+        for (int i = 0; i < 8; i++)
+        {
+            if (amounts.amounts[i] < limits.amounts[i])
+                return false;
+        }
+
+        return true;
     }
 
     public interface ItemEssenceConversion
