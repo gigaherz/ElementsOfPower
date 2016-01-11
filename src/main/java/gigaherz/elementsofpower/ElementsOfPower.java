@@ -13,6 +13,7 @@ import gigaherz.elementsofpower.essentializer.TileEssentializer;
 import gigaherz.elementsofpower.gui.GuiHandler;
 import gigaherz.elementsofpower.items.ItemMagicContainer;
 import gigaherz.elementsofpower.items.ItemMagicOrb;
+import gigaherz.elementsofpower.items.ItemRing;
 import gigaherz.elementsofpower.items.ItemWand;
 import gigaherz.elementsofpower.materials.MaterialCushion;
 import gigaherz.elementsofpower.network.SetSpecialSlot;
@@ -71,11 +72,17 @@ public class ElementsOfPower
     // Item templates
     public static ItemMagicOrb magicOrb;
 
-    public static Item magicContainer;
+    public static ItemMagicContainer magicContainer;
 
     public static ItemWand magicWand;
 
+    public static ItemRing magicRing;
+
     // Subitems
+    public static ItemStack containerLapis;
+    public static ItemStack containerEmerald;
+    public static ItemStack containerDiamond;
+
     public static ItemStack wandLapis;
     public static ItemStack wandEmerald;
     public static ItemStack wandDiamond;
@@ -85,6 +92,11 @@ public class ElementsOfPower
     public static ItemStack staffEmerald;
     public static ItemStack staffDiamond;
     public static ItemStack staffCreative;
+
+    public static ItemStack ringLapis;
+    public static ItemStack ringEmerald;
+    public static ItemStack ringDiamond;
+    public static ItemStack ringCreative;
 
     public static ItemStack fire;
     public static ItemStack water;
@@ -168,6 +180,9 @@ public class ElementsOfPower
         magicWand = new ItemWand();
         GameRegistry.registerItem(magicWand, "magicWand");
 
+        magicRing = new ItemRing();
+        GameRegistry.registerItem(magicRing, "magicRing");
+
         essentializer = new BlockEssentializer();
         GameRegistry.registerBlock(essentializer, "essentializer");
         GameRegistry.registerTileEntity(TileEssentializer.class, "essentializerTile");
@@ -189,6 +204,13 @@ public class ElementsOfPower
         staffEmerald = magicWand.getStack(1, 5);
         staffDiamond = magicWand.getStack(1, 6);
         staffCreative = magicWand.getStack(1, 7);
+        ringLapis = magicRing.getStack(1, 0);
+        ringEmerald = magicRing.getStack(1, 1);
+        ringDiamond = magicRing.getStack(1, 2);
+        ringCreative = magicRing.getStack(1, 3);
+        containerLapis = magicContainer.getStack(1, 0);
+        containerEmerald = magicContainer.getStack(1, 1);
+        containerDiamond = magicContainer.getStack(1, 2);
         fire = magicOrb.getStack(1, 0);
         water = magicOrb.getStack(1, 1);
         air = magicOrb.getStack(1, 2);

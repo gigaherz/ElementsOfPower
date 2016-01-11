@@ -17,6 +17,15 @@ public class MagicAmounts
 
     public final float[] amounts = new float[8];
 
+    public MagicAmounts()
+    {
+    }
+
+    public MagicAmounts(final MagicAmounts other)
+    {
+        System.arraycopy(other.amounts, 0, amounts, 0, amounts.length);
+    }
+
     @Override
     public String toString()
     {
@@ -153,6 +162,11 @@ public class MagicAmounts
         {
             amounts[i] += other.amounts[i];
         }
+    }
+
+    public MagicAmounts copy()
+    {
+        return new MagicAmounts(this);
     }
 
     public static class Serializer

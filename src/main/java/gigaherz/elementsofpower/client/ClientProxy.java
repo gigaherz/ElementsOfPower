@@ -15,7 +15,6 @@ import gigaherz.elementsofpower.util.Used;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainerCreative;
-import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -45,6 +44,14 @@ public class ClientProxy implements ISideProxy
     public void init()
     {
         registerParticle();
+    }
+
+    public void registerClientEvents()
+    {
+        MinecraftForge.EVENT_BUS.register(new GuiOverlayMagicContainer());
+        MinecraftForge.EVENT_BUS.register(new MagicTooltips());
+        MinecraftForge.EVENT_BUS.register(new PlayerBeamRenderOverlay());
+        MinecraftForge.EVENT_BUS.register(new TickEventWandControl());
     }
 
     @Override
@@ -112,13 +119,6 @@ public class ClientProxy implements ISideProxy
         Minecraft.getMinecraft().effectRenderer.registerParticle(ElementsOfPower.SMALL_CLOUD_PARTICLE_ID, new EntitySmallCloudFX.Factory());
     }
 
-    public void registerClientEvents()
-    {
-        MinecraftForge.EVENT_BUS.register(new GuiOverlayMagicContainer());
-        MinecraftForge.EVENT_BUS.register(new MagicTooltips());
-        MinecraftForge.EVENT_BUS.register(new PlayerBeamRenderOverlay());
-    }
-
     // ----------------------------------------------------------- Item/Block Custom OBJ Models
     public void registerCustomBakedModels()
     {
@@ -158,6 +158,10 @@ public class ClientProxy implements ISideProxy
         registerItemModel(ElementsOfPower.magicContainer, 0, "container_lapis");
         registerItemModel(ElementsOfPower.magicContainer, 1, "container_emerald");
         registerItemModel(ElementsOfPower.magicContainer, 2, "container_diamond");
+        registerItemModel(ElementsOfPower.magicRing, 0, "magicRing", "gem=lapis");
+        registerItemModel(ElementsOfPower.magicRing, 1, "magicRing", "gem=emerald");
+        registerItemModel(ElementsOfPower.magicRing, 2, "magicRing", "gem=diamond");
+        registerItemModel(ElementsOfPower.magicRing, 3, "magicRing", "gem=creative");
     }
 
     public void registerBlockModelAsItem(final Block block, final String blockName)
@@ -173,7 +177,11 @@ public class ClientProxy implements ISideProxy
     public void registerItemModel(final Item item, int meta, final String itemName)
     {
         ModelLoader.setCustomModelResourceLocation(item, meta, new ModelResourceLocation(ElementsOfPower.MODID + ":" + itemName, "inventory"));
-        ModelBakery.addVariantName(item, ElementsOfPower.MODID + ":" + itemName);
+    }
+
+    public void registerItemModel(final Item item, int meta, final String itemName, final String variantName)
+    {
+        ModelLoader.setCustomModelResourceLocation(item, meta, new ModelResourceLocation(ElementsOfPower.MODID + ":" + itemName, variantName));
     }
 
     // ----------------------------------------------------------- Entity Renderers

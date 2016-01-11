@@ -1,7 +1,6 @@
 package gigaherz.elementsofpower.items;
 
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.client.GuiOverlayMagicContainer;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.database.MagicDatabase;
 import gigaherz.elementsofpower.database.SpellManager;
@@ -9,7 +8,6 @@ import gigaherz.elementsofpower.entitydata.SpellcastEntityData;
 import gigaherz.elementsofpower.network.SpellSequenceUpdate;
 import gigaherz.elementsofpower.spells.ISpellEffect;
 import gigaherz.elementsofpower.spells.cast.ISpellcast;
-import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
@@ -26,8 +24,8 @@ public class ItemWand extends ItemMagicContainer
     public static final String SPELL_SEQUENCE_TAG = "SpellSequence";
 
     private static final String[] subNames = {
-            "lapisWand", "emeraldWand", "diamondWand", "creativeWand",
-            "lapisStaff", "emeraldStaff", "diamondStaff", "creativeStaff"
+            ".lapisWand", ".emeraldWand", ".diamondWand", ".creativeWand",
+            ".lapisStaff", ".emeraldStaff", ".diamondStaff", ".creativeStaff"
     };
 
     private static final EnumRarity rarities[] = {
@@ -40,7 +38,8 @@ public class ItemWand extends ItemMagicContainer
             false, false, false, true
     };
 
-    public static boolean isCreative(ItemStack stack)
+    @Override
+    public boolean isInfinite(ItemStack stack)
     {
         int dmg = stack.getItemDamage();
         return dmg <= areCreative.length && areCreative[dmg];
@@ -48,10 +47,17 @@ public class ItemWand extends ItemMagicContainer
 
     public ItemWand()
     {
-        setMaxStackSize(1);
+        super();
         setHasSubtypes(true);
         setUnlocalizedName(ElementsOfPower.MODID + ".magicWand");
         setCreativeTab(ElementsOfPower.tabMagic);
+    }
+
+    @Override
+    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged)
+    {
+        return slotChanged || oldStack == null || newStack == null
+                || oldStack.getItem() != newStack.getItem() || oldStack.getMetadata() != newStack.getMetadata();
     }
 
     @Override
@@ -76,7 +82,7 @@ public class ItemWand extends ItemMagicContainer
             return getUnlocalizedName();
         }
 
-        return getUnlocalizedName() + "." + subNames[sub];
+        return "item." + ElementsOfPower.MODID + subNames[sub];
     }
 
     @Override
@@ -97,26 +103,17 @@ public class ItemWand extends ItemMagicContainer
     @Override
     public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player)
     {
-        if (player.isSneaking())
+        if (!world.isRemote)
         {
-            stack.getTagCompound().removeTag(SPELL_SEQUENCE_TAG);
+            if (player.isSneaking())
+            {
+                stack.getTagCompound().removeTag(SPELL_SEQUENCE_TAG);
+            }
         }
-        player.setItemInUse(stack, this.getMaxItemUseDuration(stack));
-        if (world.isRemote)
-        {
-            int slot = Minecraft.getMinecraft().thePlayer.inventory.currentItem;
-            GuiOverlayMagicContainer.instance.beginHoldingRightButton(slot, stack);
-        }
-        return stack;
-    }
 
-    @Override
-    public void onPlayerStoppedUsing(ItemStack stack, World world, EntityPlayer player, int remaining)
-    {
-        if (world.isRemote)
-        {
-            GuiOverlayMagicContainer.instance.endHoldingRightButton(false);
-        }
+        // itemInUse handled by TickEventWandControl
+
+        return stack;
     }
 
     @Override
@@ -166,14 +163,13 @@ public class ItemWand extends ItemMagicContainer
 
     public void processSequenceUpdate(SpellSequenceUpdate message, ItemStack stack)
     {
-
         if (message.changeMode == SpellSequenceUpdate.ChangeMode.COMMIT)
         {
 
             NBTTagCompound nbt = stack.getTagCompound();
             if (nbt == null)
             {
-                if (!ItemWand.isCreative(stack))
+                if (!MagicDatabase.isInfiniteContainer(stack))
                     return;
 
                 nbt = new NBTTagCompound();

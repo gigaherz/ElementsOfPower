@@ -1,0 +1,37 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "elementsofpower:ring.obj",
+    "transform": {
+      "thirdperson": {
+        "rotation": [{"y":-80},{"z":90}],
+        "translation": [0, 0.1, -0.1],
+        "scale": 0.2
+      },
+      "firstperson": {
+        "rotation": [{"y":-100},{"x":10},{"z":30}],
+        "translation": [0, 0.1, 0],
+        "scale": 0.6
+      },
+      "gui": {
+        "rotation": [{"y":-80},{"z":90}],
+        "translation": [0, 0, 0],
+        "scale": 1.5
+      }
+    }
+  },
+  "variants": {
+    "gem=lapis": [{
+      "textures": { "#Gem": "minecraft:blocks/lapis_block" }
+    }],
+    "gem=diamond": [{
+      "textures": { "#Gem": "minecraft:blocks/diamond_block" }
+    }],
+    "gem=emerald": [{
+      "textures": { "#Gem": "minecraft:blocks/emerald_block" }
+    }],
+    "gem=creative": [{
+      "textures": { "#Gem": "minecraft:blocks/obsidian" }
+    }]
+  }
+}

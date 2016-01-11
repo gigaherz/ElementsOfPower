@@ -36,7 +36,7 @@ public class EntityEssence extends EntityAmbientCreature
     {
         super(worldIn);
 
-        int numEssences = 1 + rand.nextInt(9);
+        int numEssences = 5 + rand.nextInt(15);
         MagicAmounts am = new MagicAmounts();
 
         int j = 0;
@@ -51,7 +51,7 @@ public class EntityEssence extends EntityAmbientCreature
             dataWatcher.addObject(16 + i, am.amounts[i]);
         }
 
-        scale = 0.1f * numEssences;
+        scale = 0.025f * numEssences;
 
         setEntityBoundingBox(null);
     }
@@ -215,7 +215,7 @@ public class EntityEssence extends EntityAmbientCreature
         if (entity != null)
         {
             dp = getDistanceSqToEntity(entity);
-            if (dp < 1.0)
+            if (dp < 1.0 && entityAge2 > 100)
             {
                 tryAbosrbInto(entity);
             }
@@ -257,7 +257,7 @@ public class EntityEssence extends EntityAmbientCreature
 
             if (worldObj.isAirBlock(blockPos))
             {
-                spawnPosition = blockPos.up(Math.min(n, 3));
+                spawnPosition = blockPos;
             }
         }
 
@@ -308,6 +308,12 @@ public class EntityEssence extends EntityAmbientCreature
         if (!(entity instanceof EntityPlayer))
             return;
 
+        MagicAmounts self = new MagicAmounts();
+        for (int i = 0; i < 8; i++)
+        {
+            self.amounts[i] = dataWatcher.getWatchableObjectFloat(16 + i);
+        }
+
         EntityPlayer p = (EntityPlayer) entity;
         IInventory inv = null;
         int slot = 0;
@@ -321,7 +327,7 @@ public class EntityEssence extends EntityAmbientCreature
                 continue;
             if (MagicDatabase.canItemContainMagic(s))
             {
-                if (!MagicDatabase.isContainerFull(s))
+                if (MagicDatabase.canTransferAnything(s, self))
                 {
                     stack = s;
                     inv = b;
@@ -343,7 +349,7 @@ public class EntityEssence extends EntityAmbientCreature
                         continue;
                     if (MagicDatabase.canItemContainMagic(s))
                     {
-                        if (!MagicDatabase.isContainerFull(s))
+                        if (MagicDatabase.canTransferAnything(s, self))
                         {
                             stack = s;
                             inv = b;
@@ -357,12 +363,6 @@ public class EntityEssence extends EntityAmbientCreature
 
         if (stack == null)
             return;
-
-        MagicAmounts self = new MagicAmounts();
-        for (int i = 0; i < 8; i++)
-        {
-            self.amounts[i] = dataWatcher.getWatchableObjectFloat(16 + i);
-        }
 
         MagicAmounts limits = MagicDatabase.getMagicLimits(stack);
         MagicAmounts amounts = MagicDatabase.getContainedMagic(stack);
@@ -458,6 +458,27 @@ public class EntityEssence extends EntityAmbientCreature
 
         this.limbSwingAmount += (f2 - this.limbSwingAmount) * 0.4F;
         this.limbSwing += this.limbSwingAmount;
+    }
+
+    @Override
+    public boolean canRenderOnFire()
+    {
+        return false;
+    }
+
+    @Override
+    protected void setOnFireFromLava()
+    {
+    }
+
+    @Override
+    protected void dealFireDamage(int amount)
+    {
+    }
+
+    @Override
+    public void setFire(int seconds)
+    {
     }
 
     @Override

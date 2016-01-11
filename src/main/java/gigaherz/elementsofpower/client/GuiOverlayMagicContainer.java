@@ -5,7 +5,6 @@ import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.database.MagicDatabase;
 import gigaherz.elementsofpower.database.SpellManager;
 import gigaherz.elementsofpower.items.ItemWand;
-import gigaherz.elementsofpower.network.SpellSequenceUpdate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
@@ -19,9 +18,6 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.model.IBakedModel;
-import net.minecraft.client.settings.GameSettings;
-import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -31,47 +27,6 @@ import org.lwjgl.opengl.GL11;
 
 public class GuiOverlayMagicContainer extends Gui
 {
-    public static GuiOverlayMagicContainer instance;
-
-    Minecraft mc;
-    ItemStack itemInUse = null;
-    int slotInUse;
-    StringBuilder sequence = new StringBuilder();
-
-    final KeyBindingInterceptor[] interceptKeys = new KeyBindingInterceptor[8];
-
-    public GuiOverlayMagicContainer()
-    {
-        instance = this;
-        mc = Minecraft.getMinecraft();
-
-        GameSettings s = Minecraft.getMinecraft().gameSettings;
-
-        int l = s.keyBindings.length;
-        int[] indices = new int[8];
-        int f = 0;
-        for (int i = 0; i < 8; i++)
-        {
-            KeyBinding b = s.keyBindsHotbar[i];
-            for (int j = 0; j < l; j++)
-            {
-                if (s.keyBindings[(f + j) % l] == b)
-                {
-                    f = f + j;
-                    indices[i] = f;
-                    break;
-                }
-            }
-        }
-
-        for (int i = 0; i < 8; i++)
-        {
-            interceptKeys[i] = new KeyBindingInterceptor(s.keyBindsHotbar[i]);
-            s.keyBindsHotbar[i] = interceptKeys[i];
-            s.keyBindings[indices[i]] = interceptKeys[i];
-        }
-    }
-
     @SubscribeEvent
     public void onRenderGameOverlay(RenderGameOverlayEvent.Post event)
     {
@@ -80,16 +35,10 @@ public class GuiOverlayMagicContainer extends Gui
             return;
         }
 
-        EntityPlayerSP player = mc.thePlayer;
+        EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
         ItemStack heldItem = player.inventory.getCurrentItem();
 
-        if (itemInUse != null && (heldItem != itemInUse || !player.isUsingItem()))
-        {
-            endHoldingRightButton(true);
-        }
-
         // Contained essences
-
         MagicAmounts amounts = MagicDatabase.getContainedMagic(heldItem);
         if (amounts == null)
             return;
@@ -120,7 +69,7 @@ public class GuiOverlayMagicContainer extends Gui
 
             String formatted = ElementsOfPower.prettyNumberFormatter.format(amounts.amounts[i]);
             this.drawCenteredString(font, formatted, xPos + 8, yPos + 16, 0xFFC0C0C0);
-            if (itemInUse != null)
+            if (TickEventWandControl.instance.itemInUse != null)
                 this.drawCenteredString(font, "K:" + (i + 1), xPos + 8, yPos + 28, 0xFFC0C0C0);
 
             xPos += 28;
@@ -149,12 +98,12 @@ public class GuiOverlayMagicContainer extends Gui
             }
         }
 
-        if (sequence != null)
+        if (TickEventWandControl.instance.sequence != null)
         {
             // New spell sequence
-            xPos = (rescaledWidth - 6 * (sequence.length() - 1) - 14) / 2;
+            xPos = (rescaledWidth - 6 * (TickEventWandControl.instance.sequence.length() - 1) - 14) / 2;
             yPos = rescaledHeight / 2 + 16;
-            for (char c : sequence.toString().toCharArray())
+            for (char c : TickEventWandControl.instance.sequence.toString().toCharArray())
             {
                 int i = SpellManager.elementIndices.get(c);
 
@@ -172,18 +121,6 @@ public class GuiOverlayMagicContainer extends Gui
 
         GlStateManager.disableAlpha();
         GlStateManager.disableBlend();
-
-        // This doesn't belong here, but meh.
-        if (itemInUse != null)
-        {
-            for (int i = 0; i < 8; i++)
-            {
-                if (interceptKeys[i].retrieveClick() && amounts.amounts[i] > 0)
-                {
-                    sequence.append(SpellManager.elementChars[i]);
-                }
-            }
-        }
     }
 
     private void renderItemStack(ItemModelMesher mesher, TextureManager renderEngine, int xPos, int yPos, ItemStack stack, int color)
@@ -247,39 +184,6 @@ public class GuiOverlayMagicContainer extends Gui
             GlStateManager.scale(64.0F, 64.0F, 64.0F);
             GlStateManager.rotate(180.0F, 1.0F, 0.0F, 0.0F);
             GlStateManager.disableLighting();
-        }
-    }
-
-    public void beginHoldingRightButton(int slotNumber, ItemStack itemUsing)
-    {
-        EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-        itemInUse = itemUsing;
-        slotInUse = slotNumber;
-        sequence = new StringBuilder();
-        ElementsOfPower.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.BEGIN, player, slotInUse, null));
-
-        for (int i = 0; i < 8; i++)
-        {
-            interceptKeys[i].setInterceptionActive(true);
-        }
-    }
-
-    public void endHoldingRightButton(boolean cancelMagicSetting)
-    {
-        EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-        if (cancelMagicSetting)
-        {
-            ElementsOfPower.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.CANCEL, player, slotInUse, null));
-        }
-        else
-        {
-            ElementsOfPower.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.COMMIT, player, slotInUse, sequence.toString()));
-        }
-        itemInUse = null;
-        sequence = new StringBuilder();
-        for (int i = 0; i < 8; i++)
-        {
-            interceptKeys[i].setInterceptionActive(false);
         }
     }
 }

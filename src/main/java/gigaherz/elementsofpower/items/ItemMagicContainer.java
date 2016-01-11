@@ -16,12 +16,18 @@ import java.util.List;
 public class ItemMagicContainer extends Item
 {
     private static final String[] subNames = {
-            "lapisContainer", "emeraldContainer", "diamondContainer"
+            ".lapisContainer", ".emeraldContainer", ".diamondContainer"
     };
 
     public ItemMagicContainer()
     {
+        setMaxStackSize(1);
         setUnlocalizedName(ElementsOfPower.MODID + ".magicContainer");
+    }
+
+    public boolean isInfinite(ItemStack stack)
+    {
+        return false;
     }
 
     public ItemStack getStack(int count, int damageValue)
@@ -36,10 +42,10 @@ public class ItemMagicContainer extends Item
 
         if (sub >= subNames.length)
         {
-            sub = 0;
+            return getUnlocalizedName();
         }
 
-        return getUnlocalizedName() + "." + subNames[sub];
+        return "item." + ElementsOfPower.MODID + subNames[sub];
     }
 
     @Override
@@ -54,6 +60,9 @@ public class ItemMagicContainer extends Item
     @Override
     public boolean hasEffect(ItemStack stack)
     {
+        if (isInfinite(stack))
+            return true;
+
         MagicAmounts amounts = MagicDatabase.getContainedMagic(stack);
 
         return amounts != null && !amounts.isEmpty();

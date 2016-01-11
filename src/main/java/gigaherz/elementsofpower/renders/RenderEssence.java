@@ -43,6 +43,8 @@ public class RenderEssence extends Render<EntityEssence>
 
             float rtt = (1 - tt);
             int alpha = (i == 0 ? 255 : (int) (rtt * 255));
+            if (alpha >= 128) alpha = 255 - alpha;
+            alpha /= 2;
             int color = (alpha << 24) | ball_color;
 
             GlStateManager.pushMatrix();

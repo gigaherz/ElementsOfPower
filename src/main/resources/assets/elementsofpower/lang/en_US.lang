@@ -3,18 +3,26 @@ elementsofpower.essentializer=Essentializer
 tile.elementsofpower.essentializer.name=Essentializer
 tile.elementsofpower.dust.name=Dust Block (disperses quickly)
 
-item.elementsofpower.magicContainer.lapisContainer.name=Magic-imbued Lapis Lazuli
-item.elementsofpower.magicContainer.emeraldContainer.name=Magic-imbued Emerald
-item.elementsofpower.magicContainer.diamondContainer.name=Magic-imbued Diamond
+item.elementsofpower.magicContainer.name=Magic-imbued Container
+item.elementsofpower.lapisContainer.name=Magic-imbued Lapis Lazuli
+item.elementsofpower.emeraldContainer.name=Magic-imbued Emerald
+item.elementsofpower.diamondContainer.name=Magic-imbued Diamond
 
-item.elementsofpower.magicWand.lapisWand.name=Lapis Wand
-item.elementsofpower.magicWand.emeraldWand.name=Emerald Wand
-item.elementsofpower.magicWand.diamondWand.name=Diamond Wand
-item.elementsofpower.magicWand.creativeWand.name=Creative Wand
-item.elementsofpower.magicWand.lapisStaff.name=Lapis Staff
-item.elementsofpower.magicWand.emeraldStaff.name=Emerald Staff
-item.elementsofpower.magicWand.diamondStaff.name=Diamond Staff
-item.elementsofpower.magicWand.creativeStaff.name=Creative Staff
+item.elementsofpower.magicWand.name=Unknown Wand
+item.elementsofpower.lapisWand.name=Lapis Wand
+item.elementsofpower.emeraldWand.name=Emerald Wand
+item.elementsofpower.diamondWand.name=Diamond Wand
+item.elementsofpower.creativeWand.name=Creative Wand
+item.elementsofpower.lapisStaff.name=Lapis Staff
+item.elementsofpower.emeraldStaff.name=Emerald Staff
+item.elementsofpower.diamondStaff.name=Diamond Staff
+item.elementsofpower.creativeStaff.name=Creative Staff
+
+item.elementsofpower.magicRing.name=Unknown Ring
+item.elementsofpower.lapisRing.name=Lapis Ring
+item.elementsofpower.emeraldRing.name=Emerald Ring
+item.elementsofpower.diamondRing.name=Diamond Ring
+item.elementsofpower.creativeRing.name=Creative Ring
 
 item.elementsofpower.magicOrb.water.name=Fire
 item.elementsofpower.magicOrb.water.name=Water

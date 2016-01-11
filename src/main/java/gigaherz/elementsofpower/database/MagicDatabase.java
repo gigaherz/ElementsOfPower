@@ -6,7 +6,6 @@ import com.google.gson.reflect.TypeToken;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.recipes.RecipeTools;
 import gigaherz.elementsofpower.items.ItemMagicContainer;
-import gigaherz.elementsofpower.items.ItemWand;
 import net.minecraft.block.Block;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.init.Blocks;
@@ -134,7 +133,15 @@ public class MagicDatabase
 
             Item item = Item.itemRegistry.getObject(new ResourceLocation(itemName));
 
-            itemEssences.put(new ItemStack(item, 1, meta), e.getValue());
+            ItemStack stack = new ItemStack(item, 1, meta);
+            MagicAmounts m = e.getValue();
+            if (Utils.stackIsInMap(itemEssences, stack))
+            {
+                ElementsOfPower.logger.error("Stack already inserted! " + stack.toString());
+                continue;
+            }
+
+            itemEssences.put(stack, m);
         }
     }
 
@@ -145,10 +152,16 @@ public class MagicDatabase
             ItemStack output = it.getKey();
             List<ItemStack> inputs = it.getValue();
 
-            if (output.getItem() instanceof ItemWand)
+            if (output.getItem() instanceof ItemMagicContainer)
                 continue;
 
             int stackSize = output.stackSize;
+            if (stackSize < 1)
+            {
+                ElementsOfPower.logger.warn("StackSize is invalid! " + output.toString());
+                continue;
+            }
+
             if (output.stackSize > 1)
             {
                 output = output.copy();
@@ -164,11 +177,19 @@ public class MagicDatabase
             for (ItemStack b : inputs)
             {
                 MagicAmounts m = getEssences(b);
+
                 if (m == null || m.isEmpty())
                 {
                     allFound = false;
                     break;
                 }
+
+                for (int i = 0; i < m.amounts.length; i++)
+                {
+                    if (m.amounts[i] > 999)
+                        ElementsOfPower.logger.warn("Amounts is stupidly large!!!");
+                }
+
                 am.add(m);
             }
 
@@ -181,6 +202,18 @@ public class MagicDatabase
                 {
                     am.amounts[i] /= stackSize;
                 }
+            }
+
+            for (int i = 0; i < am.amounts.length; i++)
+            {
+                if (am.amounts[i] > 256)
+                    ElementsOfPower.logger.warn("Amounts is stupidly large!!!");
+            }
+
+            if (Utils.stackIsInMap(itemEssences, output))
+            {
+                ElementsOfPower.logger.error("Stack already inserted! " + output.toString());
+                continue;
             }
 
             itemEssences.put(output, am);
@@ -204,7 +237,8 @@ public class MagicDatabase
 
         essences(Blocks.dirt).earth(3).life(1);
         essences(Blocks.gravel).earth(3).air(1);
-        essences(Blocks.sand).earth(2).air(2);
+        essences(Blocks.sand, 0, 1).earth(2).air(2);
+        essences(Blocks.sandstone, 0, 1, 2).earth(8).air(8);
         essences(Blocks.obsidian).earth(10).darkness(10);
         essences(Blocks.netherrack).earth(1).fire(1);
 
@@ -224,8 +258,8 @@ public class MagicDatabase
                 essences(Blocks.red_flower, 5),
                 essences(Blocks.red_flower, 7)).life(1);
 
-        essences(Blocks.log).life(16);
-        essences(Blocks.log2).life(16);
+        essences(Blocks.log, 0, 1, 2, 3).life(16);
+        essences(Blocks.log2, 0, 1).life(16);
         essences(Blocks.planks).life(4);
         essences(Items.stick).life(1);
 
@@ -370,23 +404,28 @@ public class MagicDatabase
         containerCapacity.put(new ItemStack(Items.emerald, 1), new MagicAmounts().all(50));
         containerCapacity.put(new ItemStack(Items.diamond, 1), new MagicAmounts().all(100));
 
-        containerCapacity.put(new ItemStack(ElementsOfPower.magicContainer, 1, 0), new MagicAmounts().all(10));
-        containerCapacity.put(new ItemStack(ElementsOfPower.magicContainer, 1, 1), new MagicAmounts().all(50));
-        containerCapacity.put(new ItemStack(ElementsOfPower.magicContainer, 1, 2), new MagicAmounts().all(100));
+        containerCapacity.put(ElementsOfPower.containerLapis, new MagicAmounts().all(10));
+        containerCapacity.put(ElementsOfPower.containerEmerald, new MagicAmounts().all(50));
+        containerCapacity.put(ElementsOfPower.containerDiamond, new MagicAmounts().all(100));
 
         containerCapacity.put(ElementsOfPower.wandLapis, new MagicAmounts().all(10));
         containerCapacity.put(ElementsOfPower.wandEmerald, new MagicAmounts().all(50));
         containerCapacity.put(ElementsOfPower.wandDiamond, new MagicAmounts().all(100));
+
         containerCapacity.put(ElementsOfPower.staffLapis, new MagicAmounts().all(50));
         containerCapacity.put(ElementsOfPower.staffEmerald, new MagicAmounts().all(250));
         containerCapacity.put(ElementsOfPower.staffDiamond, new MagicAmounts().all(500));
+
+        containerCapacity.put(ElementsOfPower.ringLapis, new MagicAmounts().all(25));
+        containerCapacity.put(ElementsOfPower.ringEmerald, new MagicAmounts().all(100));
+        containerCapacity.put(ElementsOfPower.ringDiamond, new MagicAmounts().all(250));
     }
 
     private static void registerContainerConversions()
     {
-        containerConversion.put(new ItemStack(Items.dye, 1, 4), new ItemStack(ElementsOfPower.magicContainer, 1, 0));
-        containerConversion.put(new ItemStack(Items.emerald, 1), new ItemStack(ElementsOfPower.magicContainer, 1, 1));
-        containerConversion.put(new ItemStack(Items.diamond, 1), new ItemStack(ElementsOfPower.magicContainer, 1, 2));
+        containerConversion.put(new ItemStack(Items.dye, 1, 4), ElementsOfPower.containerLapis);
+        containerConversion.put(new ItemStack(Items.emerald, 1), ElementsOfPower.containerEmerald);
+        containerConversion.put(new ItemStack(Items.diamond, 1), ElementsOfPower.containerDiamond);
     }
 
     public static boolean itemContainsMagic(ItemStack stack)
@@ -403,12 +442,16 @@ public class MagicDatabase
 
     public static MagicAmounts getMagicLimits(ItemStack stack)
     {
-        if (stack.stackSize > 1)
+        if (stack.stackSize != 1)
         {
             return null;
         }
 
-        return Utils.getFromMap(containerCapacity, stack);
+        MagicAmounts m = Utils.getFromMap(containerCapacity, stack);
+        if (m == null)
+            return null;
+
+        return m.copy();
     }
 
     public static boolean itemHasEssence(ItemStack stack)
@@ -430,14 +473,27 @@ public class MagicDatabase
             stack.stackSize = 1;
         }
         MagicAmounts m = Utils.getFromMap(itemEssences, stack);
-        if (m != null && stackSize > 1)
+        if (m == null)
+            return null;
+
+        m = m.copy();
+
+        if (stackSize > 1)
         {
             for (int i = 0; i < m.amounts.length; i++)
             {
                 m.amounts[i] *= stackSize;
             }
         }
+
         return m;
+    }
+
+    public static boolean isInfiniteContainer(ItemStack stack)
+    {
+        Item item = stack.getItem();
+        return item instanceof ItemMagicContainer
+                && ((ItemMagicContainer) item).isInfinite(stack);
     }
 
     public static MagicAmounts getContainedMagic(ItemStack output)
@@ -452,11 +508,8 @@ public class MagicDatabase
             return null;
         }
 
-        if (output.getItem() instanceof ItemWand)
-        {
-            if (ItemWand.isCreative(output))
-                return new MagicAmounts().all(999);
-        }
+        if (isInfiniteContainer(output))
+            return new MagicAmounts().all(999);
 
         if (!(output.getItem() instanceof ItemMagicContainer))
             return null;
@@ -510,12 +563,8 @@ public class MagicDatabase
             return null;
         }
 
-        Item item = output.getItem();
-        if (item instanceof ItemWand)
-        {
-            if (ItemWand.isCreative(output))
-                return output;
-        }
+        if (isInfiniteContainer(output))
+            return output;
 
         if (amounts != null)
         {
@@ -550,8 +599,8 @@ public class MagicDatabase
         else
         {
             output.setTagCompound(null);
-            ItemStack is = Utils.findKeyForValue(containerConversion, output);
 
+            ItemStack is = Utils.findKeyForValue(containerConversion, output);
             if (is != null)
             {
                 output = is.copy();
@@ -579,6 +628,26 @@ public class MagicDatabase
         }
 
         return true;
+    }
+
+    public static boolean canTransferAnything(ItemStack stack, MagicAmounts self)
+    {
+        MagicAmounts limits = MagicDatabase.getMagicLimits(stack);
+        MagicAmounts amounts = MagicDatabase.getContainedMagic(stack);
+
+        if (limits == null)
+            return true;
+
+        if (amounts == null)
+            return true;
+
+        for (int i = 0; i < 8; i++)
+        {
+            if (self.amounts[i] > 0 && amounts.amounts[i] < limits.amounts[i])
+                return true;
+        }
+
+        return false;
     }
 
     public interface ItemEssenceConversion
