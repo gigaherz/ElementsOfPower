@@ -1,6 +1,0 @@
-{
-  "parent": "elementsofpower:item/container_base",
-  "textures": {
-    "layer0": "items/emerald"
-  }
-}

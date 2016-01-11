@@ -1,0 +1,11 @@
+newmtl caps
+map_Kd minecraft:blocks/iron_block
+
+newmtl gem
+map_Kd minecraft:blocks/bedrock
+
+newmtl orbs
+map_Kd minecraft:blocks/quartz_block_chiseled
+
+newmtl rod
+map_Kd minecraft:blocks/log_oak

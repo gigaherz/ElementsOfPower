@@ -7,7 +7,6 @@ import gigaherz.elementsofpower.entities.EntityEssence;
 import gigaherz.elementsofpower.entities.EntityTeleporter;
 import gigaherz.elementsofpower.entitydata.SpellcastEntityData;
 import gigaherz.elementsofpower.essentializer.TileEssentializer;
-import gigaherz.elementsofpower.models.ObjModelLoader;
 import gigaherz.elementsofpower.network.SetSpecialSlot;
 import gigaherz.elementsofpower.network.SpellcastSync;
 import gigaherz.elementsofpower.renders.*;
@@ -20,7 +19,6 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.obj.OBJLoader;
@@ -36,7 +34,6 @@ public class ClientProxy implements ISideProxy
         OBJLoader.instance.addDomain(ElementsOfPower.MODID);
 
         registerClientEvents();
-        registerCustomBakedModels();
         registerModels();
         registerEntityRenderers();
     }
@@ -119,45 +116,31 @@ public class ClientProxy implements ISideProxy
         Minecraft.getMinecraft().effectRenderer.registerParticle(ElementsOfPower.SMALL_CLOUD_PARTICLE_ID, new EntitySmallCloudFX.Factory());
     }
 
-    // ----------------------------------------------------------- Item/Block Custom OBJ Models
-    public void registerCustomBakedModels()
-    {
-        ObjModelLoader.instance.setExplicitOverride(new ResourceLocation(ElementsOfPower.MODID, "models/item/thing"));
-        ObjModelLoader.instance.setExplicitOverride(new ResourceLocation(ElementsOfPower.MODID, "models/item/wand_lapis"));
-        ObjModelLoader.instance.setExplicitOverride(new ResourceLocation(ElementsOfPower.MODID, "models/item/wand_emerald"));
-        ObjModelLoader.instance.setExplicitOverride(new ResourceLocation(ElementsOfPower.MODID, "models/item/wand_diamond"));
-        ObjModelLoader.instance.setExplicitOverride(new ResourceLocation(ElementsOfPower.MODID, "models/item/wand_creative"));
-        ObjModelLoader.instance.setExplicitOverride(new ResourceLocation(ElementsOfPower.MODID, "models/item/staff_lapis"));
-        ObjModelLoader.instance.setExplicitOverride(new ResourceLocation(ElementsOfPower.MODID, "models/item/staff_emerald"));
-        ObjModelLoader.instance.setExplicitOverride(new ResourceLocation(ElementsOfPower.MODID, "models/item/staff_diamond"));
-        ObjModelLoader.instance.setExplicitOverride(new ResourceLocation(ElementsOfPower.MODID, "models/item/staff_creative"));
-    }
-
     // ----------------------------------------------------------- Item/Block Models
     public void registerModels()
     {
         registerBlockModelAsItem(ElementsOfPower.essentializer, "essentializer");
         registerBlockModelAsItem(ElementsOfPower.dust, "dust");
 
-        registerItemModel(ElementsOfPower.magicOrb, 0, "orb_fire");
-        registerItemModel(ElementsOfPower.magicOrb, 1, "orb_water");
-        registerItemModel(ElementsOfPower.magicOrb, 2, "orb_air");
-        registerItemModel(ElementsOfPower.magicOrb, 3, "orb_earth");
-        registerItemModel(ElementsOfPower.magicOrb, 4, "orb_light");
-        registerItemModel(ElementsOfPower.magicOrb, 5, "orb_dark");
-        registerItemModel(ElementsOfPower.magicOrb, 6, "orb_life");
-        registerItemModel(ElementsOfPower.magicOrb, 7, "orb_death");
-        registerItemModel(ElementsOfPower.magicWand, 0, "wand_lapis");
-        registerItemModel(ElementsOfPower.magicWand, 1, "wand_emerald");
-        registerItemModel(ElementsOfPower.magicWand, 2, "wand_diamond");
-        registerItemModel(ElementsOfPower.magicWand, 3, "wand_creative");
-        registerItemModel(ElementsOfPower.magicWand, 4, "staff_lapis");
-        registerItemModel(ElementsOfPower.magicWand, 5, "staff_emerald");
-        registerItemModel(ElementsOfPower.magicWand, 6, "staff_diamond");
-        registerItemModel(ElementsOfPower.magicWand, 7, "staff_creative");
-        registerItemModel(ElementsOfPower.magicContainer, 0, "container_lapis");
-        registerItemModel(ElementsOfPower.magicContainer, 1, "container_emerald");
-        registerItemModel(ElementsOfPower.magicContainer, 2, "container_diamond");
+        registerItemModel(ElementsOfPower.magicOrb, 0, "magicOrb", "element=fire");
+        registerItemModel(ElementsOfPower.magicOrb, 1, "magicOrb", "element=water");
+        registerItemModel(ElementsOfPower.magicOrb, 2, "magicOrb", "element=air");
+        registerItemModel(ElementsOfPower.magicOrb, 3, "magicOrb", "element=earth");
+        registerItemModel(ElementsOfPower.magicOrb, 4, "magicOrb", "element=light");
+        registerItemModel(ElementsOfPower.magicOrb, 5, "magicOrb", "element=dark");
+        registerItemModel(ElementsOfPower.magicOrb, 6, "magicOrb", "element=life");
+        registerItemModel(ElementsOfPower.magicOrb, 7, "magicOrb", "element=death");
+        registerItemModel(ElementsOfPower.magicWand, 0, "magicWand", "gem=lapis,type=wand");
+        registerItemModel(ElementsOfPower.magicWand, 1, "magicWand", "gem=emerald,type=wand");
+        registerItemModel(ElementsOfPower.magicWand, 2, "magicWand", "gem=diamond,type=wand");
+        registerItemModel(ElementsOfPower.magicWand, 3, "magicWand", "gem=creative,type=wand");
+        registerItemModel(ElementsOfPower.magicWand, 4, "magicWand", "gem=lapis,type=staff");
+        registerItemModel(ElementsOfPower.magicWand, 5, "magicWand", "gem=emerald,type=staff");
+        registerItemModel(ElementsOfPower.magicWand, 6, "magicWand", "gem=diamond,type=staff");
+        registerItemModel(ElementsOfPower.magicWand, 7, "magicWand", "gem=creative,type=staff");
+        registerItemModel(ElementsOfPower.magicContainer, 0, "magicContainer", "gem=lapis");
+        registerItemModel(ElementsOfPower.magicContainer, 1, "magicContainer", "gem=emerald");
+        registerItemModel(ElementsOfPower.magicContainer, 2, "magicContainer", "gem=diamond");
         registerItemModel(ElementsOfPower.magicRing, 0, "magicRing", "gem=lapis");
         registerItemModel(ElementsOfPower.magicRing, 1, "magicRing", "gem=emerald");
         registerItemModel(ElementsOfPower.magicRing, 2, "magicRing", "gem=diamond");

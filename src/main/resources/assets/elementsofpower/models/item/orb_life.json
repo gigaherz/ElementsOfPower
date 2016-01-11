@@ -1,6 +1,0 @@
-{
-  "parent": "elementsofpower:item/orb_base",
-  "textures": {
-    "layer0": "elementsofpower:items/orb_life"
-  }
-}

@@ -1,0 +1,19 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "builtin/generated",
+    "transform": "forge:default-item"
+  },
+  "variants": {
+    "element": {
+      "fire":  { "textures": { "layer0": "elementsofpower:items/orb_fire" } },
+      "air":   { "textures": { "layer0": "elementsofpower:items/orb_air" } },
+      "water": { "textures": { "layer0": "elementsofpower:items/orb_water" } },
+      "earth": { "textures": { "layer0": "elementsofpower:items/orb_earth" } },
+      "light": { "textures": { "layer0": "elementsofpower:items/orb_light" } },
+      "dark":  { "textures": { "layer0": "elementsofpower:items/orb_darkness" } },
+      "life":  { "textures": { "layer0": "elementsofpower:items/orb_life" } },
+      "death": { "textures": { "layer0": "elementsofpower:items/orb_death" } }
+    }
+  }
+}
