@@ -152,9 +152,6 @@ public class MagicDatabase
             ItemStack output = it.getKey();
             List<ItemStack> inputs = it.getValue();
 
-            if (output.getItem() instanceof ItemMagicContainer)
-                continue;
-
             int stackSize = output.stackSize;
             if (stackSize < 1)
             {
@@ -184,12 +181,6 @@ public class MagicDatabase
                     break;
                 }
 
-                for (int i = 0; i < m.amounts.length; i++)
-                {
-                    if (m.amounts[i] > 999)
-                        ElementsOfPower.logger.warn("Amounts is stupidly large!!!");
-                }
-
                 am.add(m);
             }
 
@@ -202,12 +193,6 @@ public class MagicDatabase
                 {
                     am.amounts[i] /= stackSize;
                 }
-            }
-
-            for (int i = 0; i < am.amounts.length; i++)
-            {
-                if (am.amounts[i] > 256)
-                    ElementsOfPower.logger.warn("Amounts is stupidly large!!!");
             }
 
             if (Utils.stackIsInMap(itemEssences, output))
@@ -437,7 +422,12 @@ public class MagicDatabase
 
     public static boolean canItemContainMagic(ItemStack stack)
     {
-        return stack.stackSize <= 1 && Utils.stackIsInMap(containerCapacity, stack);
+        if(stack.stackSize != 1)
+        {
+            stack = stack.copy();
+            stack.stackSize = 1;
+        }
+        return Utils.stackIsInMap(containerCapacity, stack);
     }
 
     public static MagicAmounts getMagicLimits(ItemStack stack)

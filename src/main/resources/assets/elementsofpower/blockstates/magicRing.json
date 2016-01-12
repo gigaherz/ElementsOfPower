@@ -22,10 +22,10 @@
   },
   "variants": {
     "gem": {
-      "lapis": { "textures": { "#gem": "minecraft:blocks/lapis_block" } },
-      "diamond": { "textures": { "#gem": "minecraft:blocks/diamond_block" } },
-      "emerald": { "textures": { "#gem": "minecraft:blocks/emerald_block" } },
-      "creative": { "textures": { "#gem": "minecraft:blocks/obsidian" } }
+      "lapis": { "textures": { "#Gem": "minecraft:blocks/lapis_block" } },
+      "diamond": { "textures": { "#Gem": "minecraft:blocks/diamond_block" } },
+      "emerald": { "textures": { "#Gem": "minecraft:blocks/emerald_block" } },
+      "creative": { "textures": { "#Gem": "minecraft:blocks/obsidian" } }
     }
   }
 }

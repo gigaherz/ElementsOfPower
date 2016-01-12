@@ -47,12 +47,13 @@ public class MagicHolder extends MagicAmounts implements IInventory
 
     public boolean processInventory(InventoryBasic inventory)
     {
-        boolean b1 = convertInput(inventory);
-        boolean b2 = addMagicToOutput(inventory);
-        return b1 || b2;
+        boolean b1 = convertSource(inventory);
+        boolean b2 = getMagicFromInput(inventory);
+        boolean b3 = addMagicToOutput(inventory);
+        return b1 || b2 || b3;
     }
 
-    public boolean convertInput(InventoryBasic inventory)
+    public boolean convertSource(InventoryBasic inventory)
     {
         ItemStack input = inventory.getStackInSlot(0);
 
@@ -61,58 +62,69 @@ public class MagicHolder extends MagicAmounts implements IInventory
             return false;
         }
 
-        if (MagicDatabase.itemContainsMagic(input))
-        {
-            MagicAmounts contained = MagicDatabase.getContainedMagic(input);
+        MagicAmounts contained = MagicDatabase.getEssences(input);
 
-            if (contained == null)
-                return false;
+        if (contained == null)
+            return false;
 
-            boolean inserted = false;
-            for (int i = 0; i < 8; i++)
-            {
-                if (contained.amounts[i] > 0 && amounts[i] < MaxEssentializerMagic)
-                {
-                    amounts[i] += 1;
-                    contained.amounts[i]--;
-                    inserted = true;
-                }
-            }
+        if (contained.isEmpty())
+            return false;
 
-            if (!inserted)
-                return false;
+        if (!tryAddAll(contained))
+            return false;
 
-            if (contained.getTotalMagic() == 0)
-                contained = null;
+        input.stackSize--;
 
-            input = MagicDatabase.setContainedMagic(input, contained);
-        }
-        else
-        {
-            MagicAmounts contained = MagicDatabase.getEssences(input);
-
-            if (contained == null)
-                return false;
-
-            if (contained.isEmpty())
-                return false;
-
-            if (!tryAddAll(contained))
-                return false;
-
-            input.stackSize--;
-
-            if (input.stackSize <= 0)
-                input = null;
-        }
+        if (input.stackSize <= 0)
+            input = null;
 
         inventory.setInventorySlotContents(0, input);
         return true;
     }
 
+    public boolean getMagicFromInput(InventoryBasic inventory)
+    {
+        ItemStack input = inventory.getStackInSlot(1);
+
+        if (input == null)
+        {
+            return false;
+        }
+
+        if (!MagicDatabase.itemContainsMagic(input))
+            return false;
+
+        MagicAmounts contained = MagicDatabase.getContainedMagic(input);
+
+        if (contained == null)
+            return false;
+
+        boolean inserted = false;
+        for (int i = 0; i < 8; i++)
+        {
+            if (contained.amounts[i] > 0 && amounts[i] < MaxEssentializerMagic)
+            {
+                amounts[i] += 1;
+                contained.amounts[i]--;
+                inserted = true;
+            }
+        }
+
+        if (!inserted)
+            return false;
+
+        if (contained.getTotalMagic() == 0)
+            contained = null;
+
+        input = MagicDatabase.setContainedMagic(input, contained);
+
+        inventory.setInventorySlotContents(1, input);
+        return true;
+    }
+
     public boolean addMagicToOutput(InventoryBasic inventory)
     {
-        ItemStack output = inventory.getStackInSlot(1);
+        ItemStack output = inventory.getStackInSlot(2);
 
         if (output == null)
         {
@@ -149,7 +161,7 @@ public class MagicHolder extends MagicAmounts implements IInventory
         if (added == 0)
             return false;
 
-        inventory.setInventorySlotContents(1, MagicDatabase.setContainedMagic(output, contained));
+        inventory.setInventorySlotContents(2, MagicDatabase.setContainedMagic(output, contained));
         return true;
     }
 

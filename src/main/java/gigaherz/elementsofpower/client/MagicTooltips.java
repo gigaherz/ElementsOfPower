@@ -39,8 +39,8 @@ public class MagicTooltips
             String str;
             if (event.itemStack.stackSize > 1)
                 str = String.format("%s  %s x%s (stack %s)", EnumChatFormatting.GRAY, magicName,
-                        ElementsOfPower.prettyNumberFormatter.format(amounts.amounts[i]),
-                        ElementsOfPower.prettyNumberFormatter.format(amounts.amounts[i] * event.itemStack.stackSize));
+                        ElementsOfPower.prettyNumberFormatter.format(amounts.amounts[i] / event.itemStack.stackSize),
+                        ElementsOfPower.prettyNumberFormatter.format(amounts.amounts[i]));
             else
                 str = String.format("%s  %s x%s", EnumChatFormatting.GRAY, magicName,
                         ElementsOfPower.prettyNumberFormatter.format(amounts.amounts[i]));

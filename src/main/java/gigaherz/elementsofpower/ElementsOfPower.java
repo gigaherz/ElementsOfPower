@@ -7,6 +7,7 @@ import gigaherz.elementsofpower.database.MagicDatabase;
 import gigaherz.elementsofpower.entities.EntityBall;
 import gigaherz.elementsofpower.entities.EntityEssence;
 import gigaherz.elementsofpower.entities.EntityTeleporter;
+import gigaherz.elementsofpower.entitydata.DiscoveryEntityData;
 import gigaherz.elementsofpower.entitydata.SpellcastEntityData;
 import gigaherz.elementsofpower.essentializer.BlockEssentializer;
 import gigaherz.elementsofpower.essentializer.TileEssentializer;
@@ -19,6 +20,7 @@ import gigaherz.elementsofpower.materials.MaterialCushion;
 import gigaherz.elementsofpower.network.SetSpecialSlot;
 import gigaherz.elementsofpower.network.SpellSequenceUpdate;
 import gigaherz.elementsofpower.network.SpellcastSync;
+import gigaherz.elementsofpower.progression.DiscoveryHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
@@ -234,6 +236,8 @@ public class ElementsOfPower
         logger.info("Registering extended entity properties...");
 
         SpellcastEntityData.register();
+        //DiscoveryEntityData.register(); // NOT USED YET
+        DiscoveryHandler.init();
 
         logger.info("Performing pre-initialization proxy tasks...");
 
@@ -316,6 +320,24 @@ public class ElementsOfPower
                 'W', wandDiamond,
                 'G', Blocks.quartz_block,
                 'S', Items.stick);
+        GameRegistry.addRecipe(ringLapis,
+                " GL",
+                "G G",
+                " G ",
+                'G', Items.gold_ingot,
+                'L', new ItemStack(Items.dye, 1, 4));
+        GameRegistry.addRecipe(ringDiamond,
+                " GL",
+                "G G",
+                " G ",
+                'G', Items.gold_ingot,
+                'L', Items.diamond);
+        GameRegistry.addRecipe(ringEmerald,
+                " GL",
+                "G G",
+                " G ",
+                'G', Items.gold_ingot,
+                'L', Items.emerald);
 
         // Gui
         NetworkRegistry.INSTANCE.registerGuiHandler(this, guiHandler);

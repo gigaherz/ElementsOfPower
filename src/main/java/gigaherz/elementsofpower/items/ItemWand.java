@@ -6,6 +6,7 @@ import gigaherz.elementsofpower.database.MagicDatabase;
 import gigaherz.elementsofpower.database.SpellManager;
 import gigaherz.elementsofpower.entitydata.SpellcastEntityData;
 import gigaherz.elementsofpower.network.SpellSequenceUpdate;
+import gigaherz.elementsofpower.progression.DiscoveryHandler;
 import gigaherz.elementsofpower.spells.ISpellEffect;
 import gigaherz.elementsofpower.spells.cast.ISpellcast;
 import net.minecraft.creativetab.CreativeTabs;
@@ -43,6 +44,11 @@ public class ItemWand extends ItemMagicContainer
     {
         int dmg = stack.getItemDamage();
         return dmg <= areCreative.length && areCreative[dmg];
+    }
+
+    public boolean isStaff(ItemStack stack)
+    {
+        return stack.getMetadata() >= 4;
     }
 
     public ItemWand()
@@ -159,6 +165,8 @@ public class ItemWand extends ItemMagicContainer
         amounts.subtract(cost);
 
         MagicDatabase.setContainedMagic(stack, amounts);
+
+        DiscoveryHandler.instance.onSpellcast(player, cast);
     }
 
     public void processSequenceUpdate(SpellSequenceUpdate message, ItemStack stack)

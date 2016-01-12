@@ -3,7 +3,8 @@ package gigaherz.elementsofpower.essentializer;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.MagicDatabase;
 import gigaherz.elementsofpower.network.SetSpecialSlot;
-import gigaherz.elementsofpower.slots.SlotContainer;
+import gigaherz.elementsofpower.slots.SlotContainerIn;
+import gigaherz.elementsofpower.slots.SlotContainerOut;
 import gigaherz.elementsofpower.slots.SlotMagic;
 import gigaherz.elementsofpower.slots.SlotSource;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,18 +24,19 @@ public class ContainerEssentializer
     {
         this.tile = tileEntity;
 
-        for (int i = 0; i < 4; i++)
-        {
-            for (int j = 0; j < 2; j++)
-            {
-                addSlotToContainer(new SlotMagic(tileEntity.holder,
-                        j + i * 2,
-                        71 + j * 18, 8 + i * 18));
-            }
-        }
+        addSlotToContainer(new SlotMagic(tileEntity.holder, 0,  50, 32));
+        addSlotToContainer(new SlotMagic(tileEntity.holder, 1,  68, 16));
+        addSlotToContainer(new SlotMagic(tileEntity.holder, 2,  92, 16));
+        addSlotToContainer(new SlotMagic(tileEntity.holder, 3, 110, 32));
+        addSlotToContainer(new SlotMagic(tileEntity.holder, 4,  50, 56));
+        addSlotToContainer(new SlotMagic(tileEntity.holder, 5,  68, 72));
+        addSlotToContainer(new SlotMagic(tileEntity.holder, 6,  92, 72));
+        addSlotToContainer(new SlotMagic(tileEntity.holder, 7, 110, 56));
 
-        addSlotToContainer(new SlotSource(tileEntity, 0, 26, 35));
-        addSlotToContainer(new SlotContainer(tileEntity, 1, 134, 35));
+        addSlotToContainer(new SlotSource(tileEntity, 0, 80, 44));
+        addSlotToContainer(new SlotContainerIn(tileEntity, 1, 8, 56));
+        addSlotToContainer(new SlotContainerOut(tileEntity, 2, 152, 56));
+
         bindPlayerInventory(playerInventory);
     }
 
@@ -46,13 +48,13 @@ public class ContainerEssentializer
             {
                 addSlotToContainer(new Slot(playerInventory,
                         j + i * 9 + 9,
-                        8 + j * 18, 84 + i * 18));
+                        8 + j * 18, 94 + i * 18));
             }
         }
 
         for (int i = 0; i < 9; i++)
         {
-            addSlotToContainer(new Slot(playerInventory, i, 8 + i * 18, 142));
+            addSlotToContainer(new Slot(playerInventory, i, 8 + i * 18, 152));
         }
     }
 

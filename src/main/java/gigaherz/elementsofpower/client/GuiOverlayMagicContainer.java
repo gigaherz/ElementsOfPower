@@ -9,21 +9,27 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.ItemModelMesher;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.texture.TextureUtil;
+import net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.model.Attributes;
+import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.pipeline.LightUtil;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
+
+import java.util.Collection;
+import java.util.List;
 
 public class GuiOverlayMagicContainer extends Gui
 {
@@ -52,6 +58,7 @@ public class GuiOverlayMagicContainer extends Gui
         GlStateManager.pushAttrib();
         GlStateManager.pushMatrix();
         GlStateManager.depthMask(false);
+
         GlStateManager.scale(rescale, rescale, 1);
 
         ItemModelMesher mesher = Minecraft.getMinecraft().getRenderItem().getItemModelMesher();
@@ -115,7 +122,8 @@ public class GuiOverlayMagicContainer extends Gui
             }
         }
 
-        //GlStateManager.depthMask(false);
+        GlStateManager.depthMask(true);
+
         GlStateManager.popMatrix();
         GlStateManager.popAttrib();
 
@@ -125,12 +133,14 @@ public class GuiOverlayMagicContainer extends Gui
 
     private void renderItemStack(ItemModelMesher mesher, TextureManager renderEngine, int xPos, int yPos, ItemStack stack, int color)
     {
-        GlStateManager.disableLighting();
+        this.zLevel = 250.0F;
+        RenderHelper.enableGUIStandardItemLighting();
         GlStateManager.enableRescaleNormal();
         GlStateManager.enableAlpha();
         GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
         renderEngine.bindTexture(TextureMap.locationBlocksTexture);
         renderEngine.getTexture(TextureMap.locationBlocksTexture).setBlurMipmap(false, false);
@@ -139,6 +149,7 @@ public class GuiOverlayMagicContainer extends Gui
 
         IBakedModel model = mesher.getItemModel(stack);
         setupGuiTransform(xPos, yPos, model.isGui3d());
+        model = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(model, ItemCameraTransforms.TransformType.GUI);
 
         GlStateManager.scale(0.5F, 0.5F, 0.5F);
         GlStateManager.translate(-0.5F, -0.5F, -0.5F);
@@ -149,13 +160,20 @@ public class GuiOverlayMagicContainer extends Gui
 
         renderEngine.bindTexture(TextureMap.locationBlocksTexture);
         renderEngine.getTexture(TextureMap.locationBlocksTexture).restoreLastBlurMipmap();
+
+        RenderHelper.disableStandardItemLighting();
+        this.zLevel = 0.0F;
     }
 
     public void renderItem(IBakedModel model, int color)
     {
+        IFlexibleBakedModel fbm = null;
+        if(model instanceof IFlexibleBakedModel)
+            fbm = (IFlexibleBakedModel)model;
+
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-        worldrenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
+        worldrenderer.begin(GL11.GL_QUADS, fbm != null ? fbm.getFormat() : DefaultVertexFormats.ITEM);
 
         for (BakedQuad bakedquad : model.getGeneralQuads())
         {
@@ -175,8 +193,9 @@ public class GuiOverlayMagicContainer extends Gui
         if (isGui3d)
         {
             GlStateManager.scale(40.0F, 40.0F, 40.0F);
-            GlStateManager.rotate(210.0F, 1.0F, 0.0F, 0.0F);
-            GlStateManager.rotate(-135.0F, 0.0F, 1.0F, 0.0F);
+            //GlStateManager.rotate(210.0F, 1.0F, 0.0F, 0.0F);
+            //GlStateManager.rotate(-135.0F, 0.0F, 1.0F, 0.0F);
+            GlStateManager.rotate(180.0F, 1.0F, 0.0F, 0.0F);
             GlStateManager.enableLighting();
         }
         else

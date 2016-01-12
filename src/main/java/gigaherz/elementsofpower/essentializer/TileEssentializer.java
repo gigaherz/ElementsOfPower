@@ -22,7 +22,7 @@ public class TileEssentializer
         extends TileEntity
         implements ISidedInventory, ITickable
 {
-    public final InventoryBasic inventory = new InventoryBasic(ElementsOfPower.MODID + ".essentializer", false, 2);
+    public final InventoryBasic inventory = new InventoryBasic(ElementsOfPower.MODID + ".essentializer", false, 3);
     public final MagicHolder holder = new MagicHolder();
 
     @Override

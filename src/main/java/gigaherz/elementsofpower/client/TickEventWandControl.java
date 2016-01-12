@@ -135,8 +135,6 @@ public class TickEventWandControl
 
     private void beginHoldingRightButton(int slotNumber, ItemStack itemUsing)
     {
-        ElementsOfPower.logger.warn("beginHoldingRightButton()");
-
         EntityPlayer player = Minecraft.getMinecraft().thePlayer;
         itemInUse = itemUsing;
         itemInUseCount = itemInUse.getMaxItemUseDuration();
@@ -155,7 +153,6 @@ public class TickEventWandControl
 
     private void endHoldingRightButton(boolean cancelMagicSetting)
     {
-        ElementsOfPower.logger.warn("endHoldingRightButton()");
         EntityPlayer player = Minecraft.getMinecraft().thePlayer;
         if (cancelMagicSetting)
         {
