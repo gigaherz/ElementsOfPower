@@ -83,7 +83,7 @@ public class GuiEssentializer extends GuiContainer
         mc.fontRendererObj.drawString(StatCollector.translateToLocal(this.tile.getName()), 8, 6, 0x404040);
         mc.fontRendererObj.drawString(StatCollector.translateToLocal(this.player.getName()), 8, ySize - 96 + 3, 0x404040);
 
-        float opaqueLevel = TileEssentializer.MaxConvertPerTick * 60; // approx 3s fadeout
+        float opaqueLevel = TileEssentializer.MaxConvertPerTick * 20; // approx 3s fadeout
 
         MagicAmounts am = tile.remainingToConvert;
         if(am != null)
@@ -91,7 +91,8 @@ public class GuiEssentializer extends GuiContainer
             mc.renderEngine.bindTexture(guiTextureLocation);
             for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
             {
-                float alpha = Math.min(1, am.amounts[i]/opaqueLevel);
+                float alpha = (float)(0.9+0.1*Math.sin(Math.PI * 8 * am.amounts[i]/opaqueLevel))
+                        * Math.min(1, am.amounts[i]/opaqueLevel);
 
                 float r = colors[i*3];
                 float g = colors[i*3+1];

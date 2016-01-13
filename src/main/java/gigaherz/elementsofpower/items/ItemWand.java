@@ -134,23 +134,25 @@ public class ItemWand extends ItemMagicContainer
         return EnumAction.BOW;
     }
 
-    public void onSpellCommit(ItemStack stack, EntityPlayer player)
+    public boolean onSpellCommit(ItemStack stack, EntityPlayer player, String sequence)
     {
-        String sequence = stack.getTagCompound().getString(SPELL_SEQUENCE_TAG);
+        if(sequence == null)
+            sequence = stack.getTagCompound().getString(SPELL_SEQUENCE_TAG);
+
 
         if (sequence.length() == 0)
-            return;
+            return false;
 
         ISpellEffect effect = SpellManager.spellRegistration.get(sequence);
 
         if (effect == null)
-            return;
+            return false;
 
         MagicAmounts amounts = MagicDatabase.getContainedMagic(stack);
         MagicAmounts cost = effect.getSpellCost();
 
         if (!MagicDatabase.isInfiniteContainer(stack) && !amounts.hasEnough(cost))
-            return;
+            return false;
 
         ISpellcast cast = effect.castSpell(stack, player);
         if (cast != null)
@@ -168,13 +170,13 @@ public class ItemWand extends ItemMagicContainer
         MagicDatabase.setContainedMagic(stack, amounts);
 
         DiscoveryHandler.instance.onSpellcast(player, cast);
+        return true;
     }
 
     public void processSequenceUpdate(SpellSequenceUpdate message, ItemStack stack)
     {
         if (message.changeMode == SpellSequenceUpdate.ChangeMode.COMMIT)
         {
-
             NBTTagCompound nbt = stack.getTagCompound();
             if (nbt == null)
             {
@@ -185,10 +187,8 @@ public class ItemWand extends ItemMagicContainer
                 stack.setTagCompound(nbt);
             }
 
-            if (message.sequence != null)
+            if (onSpellCommit(stack, message.entity, message.sequence))
                 nbt.setString(SPELL_SEQUENCE_TAG, message.sequence);
-
-            onSpellCommit(stack, message.entity);
         }
     }
 }
