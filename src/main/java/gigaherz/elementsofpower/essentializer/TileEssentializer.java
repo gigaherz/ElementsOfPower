@@ -23,7 +23,7 @@ public class TileEssentializer
         implements ISidedInventory, ITickable
 {
     public static final int MaxEssentializerMagic = 1000;
-    public static final float MaxConvertPerTick = 5/20.0f;
+    public static final float MaxConvertPerTick = 5 / 20.0f;
 
     public final InventoryBasic inventory = new InventoryBasic(ElementsOfPower.MODID + ".essentializer", false, 3);
 
@@ -37,7 +37,7 @@ public class TileEssentializer
         readInventoryFromNBT(tagCompound);
         containedMagic = readAmountsFromNBT(tagCompound, "Contained");
         remainingToConvert = readAmountsFromNBT(tagCompound, "Remaining");
-        if(containedMagic == null)
+        if (containedMagic == null)
             containedMagic = new MagicAmounts();
     }
 
@@ -53,7 +53,7 @@ public class TileEssentializer
     private MagicAmounts readAmountsFromNBT(NBTTagCompound tagCompound, String key)
     {
         MagicAmounts amounts = null;
-        if(tagCompound.hasKey(key, Constants.NBT.TAG_COMPOUND))
+        if (tagCompound.hasKey(key, Constants.NBT.TAG_COMPOUND))
         {
             NBTTagCompound tag = tagCompound.getCompoundTag(key);
 
@@ -65,7 +65,7 @@ public class TileEssentializer
 
     private void writeAmountsToNBT(NBTTagCompound tagCompound, String key, MagicAmounts amounts)
     {
-        if(amounts != null)
+        if (amounts != null)
         {
             NBTTagCompound tag = new NBTTagCompound();
 
@@ -143,15 +143,15 @@ public class TileEssentializer
 
     private boolean convertRemaining()
     {
-        if(remainingToConvert == null)
+        if (remainingToConvert == null)
             return false;
 
         float totalAdded = 0;
-        for(int i=0;i<MagicAmounts.ELEMENTS;i++)
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
             float maxTransfer = Math.min(MaxConvertPerTick, MaxEssentializerMagic - containedMagic.amounts[i]);
             float transfer = Math.min(maxTransfer, remainingToConvert.amounts[i]);
-            if(transfer > 0)
+            if (transfer > 0)
             {
                 remainingToConvert.amounts[i] -= transfer;
                 containedMagic.amounts[i] += transfer;
@@ -159,7 +159,7 @@ public class TileEssentializer
             }
         }
 
-        if(remainingToConvert.isEmpty())
+        if (remainingToConvert.isEmpty())
             remainingToConvert = null;
 
         return totalAdded > 0;
@@ -167,7 +167,7 @@ public class TileEssentializer
 
     private boolean convertSource(InventoryBasic inventory)
     {
-        if(remainingToConvert != null)
+        if (remainingToConvert != null)
             return false;
 
         ItemStack input = inventory.getStackInSlot(0);
@@ -223,9 +223,9 @@ public class TileEssentializer
         {
             float maxTransfer = Math.min(MaxConvertPerTick, MaxEssentializerMagic - containedMagic.amounts[i]);
             float transfer = isInfinite ? maxTransfer : Math.min(maxTransfer, contained.amounts[i]);
-            if(transfer > 0)
+            if (transfer > 0)
             {
-                if(!isInfinite) contained.amounts[i] -= transfer;
+                if (!isInfinite) contained.amounts[i] -= transfer;
                 containedMagic.amounts[i] += transfer;
                 totalAdded += transfer;
             }
@@ -254,7 +254,7 @@ public class TileEssentializer
             return false;
         }
 
-        if(MagicDatabase.isInfiniteContainer(output))
+        if (MagicDatabase.isInfiniteContainer(output))
             return false;
 
         MagicAmounts limits = MagicDatabase.getMagicLimits(output);
@@ -273,7 +273,7 @@ public class TileEssentializer
         {
             float maxTransfer = Math.min(MaxConvertPerTick, limits.amounts[i] - contained.amounts[i]);
             float transfer = Math.min(maxTransfer, containedMagic.amounts[i]);
-            if(transfer > 0)
+            if (transfer > 0)
             {
                 contained.amounts[i] += transfer;
                 containedMagic.amounts[i] -= transfer;

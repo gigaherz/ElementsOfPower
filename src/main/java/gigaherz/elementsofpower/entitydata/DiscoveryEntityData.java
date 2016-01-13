@@ -12,17 +12,18 @@ import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
 public class DiscoveryEntityData implements IExtendedEntityProperties
 {
     public static final String PROP_NAME = ElementsOfPower.MODID + "_DiscoveryData";
+
     public static void register()
     {
         MinecraftForge.EVENT_BUS.register(new Handler());
     }
+
     public static DiscoveryEntityData get(EntityPlayer p)
     {
         return (DiscoveryEntityData) p.getExtendedProperties(PROP_NAME);
@@ -36,7 +37,7 @@ public class DiscoveryEntityData implements IExtendedEntityProperties
     @Override
     public void saveNBTData(NBTTagCompound compound)
     {
-        for(Map.Entry<String,String> entry : discoveries.entrySet())
+        for (Map.Entry<String, String> entry : discoveries.entrySet())
         {
             NBTTagCompound discoveries = new NBTTagCompound();
 
@@ -50,7 +51,7 @@ public class DiscoveryEntityData implements IExtendedEntityProperties
     public void loadNBTData(NBTTagCompound compound)
     {
         NBTTagCompound discoveries = compound.getCompoundTag("Discoveries");
-        for(String key : discoveries.getKeySet())
+        for (String key : discoveries.getKeySet())
         {
             String value = discoveries.getString(key);
             this.discoveries.put(key, value);

@@ -37,7 +37,8 @@ public class ShapelessOreRecipeHandler implements IRecipeHandler
                 Object actualInput = input;
                 if (actualInput instanceof List)
                 {
-                    actualInput = ((List) input).get(0);
+                    if (((List) actualInput).size() > 0)
+                        actualInput = ((List) input).get(0);
                 }
 
                 if (actualInput == null)

@@ -48,7 +48,7 @@ public class EssentializerAmountsUpdate
     {
         MagicAmounts amounts = null;
         int numElements = buf.readByte();
-        if(numElements > 0)
+        if (numElements > 0)
         {
             amounts = new MagicAmounts();
             for (int i = 0; i < numElements; i++)
@@ -63,17 +63,17 @@ public class EssentializerAmountsUpdate
 
     private void writeAmounts(ByteBuf buf, MagicAmounts amounts)
     {
-        if(amounts != null)
+        if (amounts != null)
         {
             int count = 0;
-            for(int i=0;i<MagicAmounts.ELEMENTS;i++)
+            for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
             {
                 if (amounts.amounts[i] > 0) count++;
             }
 
             buf.writeByte(count);
 
-            for(int i=0;i<MagicAmounts.ELEMENTS;i++)
+            for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
             {
                 if (amounts.amounts[i] > 0)
                 {

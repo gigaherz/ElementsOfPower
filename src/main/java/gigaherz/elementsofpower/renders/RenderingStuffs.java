@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
@@ -46,7 +47,14 @@ public class RenderingStuffs
         IResourceManager rm = Minecraft.getMinecraft().getResourceManager();
         if (rm instanceof IReloadableResourceManager)
         {
-            ((IReloadableResourceManager) rm).registerReloadListener(__ -> loadedModels.clear());
+            ((IReloadableResourceManager) rm).registerReloadListener(new IResourceManagerReloadListener()
+            {
+                @Override
+                public void onResourceManagerReload(IResourceManager __)
+                {
+                    loadedModels.clear();
+                }
+            });
         }
     }
 

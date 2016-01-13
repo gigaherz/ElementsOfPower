@@ -136,7 +136,7 @@ public class ItemWand extends ItemMagicContainer
 
     public boolean onSpellCommit(ItemStack stack, EntityPlayer player, String sequence)
     {
-        if(sequence == null)
+        if (sequence == null)
             sequence = stack.getTagCompound().getString(SPELL_SEQUENCE_TAG);
 
 
@@ -164,7 +164,7 @@ public class ItemWand extends ItemMagicContainer
             }
         }
 
-        if(!MagicDatabase.isInfiniteContainer(stack))
+        if (!MagicDatabase.isInfiniteContainer(stack))
             amounts.subtract(cost);
 
         MagicDatabase.setContainedMagic(stack, amounts);

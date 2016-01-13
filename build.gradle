@@ -13,7 +13,7 @@ buildscript {
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = "0.3alpha"
+version = "0.3.1alpha"
 group = "gigaherz.elementsofpower" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "ElementsOfPower"
 
@@ -42,6 +42,7 @@ minecraft {
 compileJava {
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
+    options.encoding = 'UTF-8'
 }
 
 processResources

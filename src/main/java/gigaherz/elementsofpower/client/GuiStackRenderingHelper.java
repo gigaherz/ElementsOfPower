@@ -47,8 +47,8 @@ public class GuiStackRenderingHelper
     private static void renderItem(IBakedModel model, int color)
     {
         IFlexibleBakedModel fbm = null;
-        if(model instanceof IFlexibleBakedModel)
-            fbm = (IFlexibleBakedModel)model;
+        if (model instanceof IFlexibleBakedModel)
+            fbm = (IFlexibleBakedModel) model;
 
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
@@ -72,7 +72,7 @@ public class GuiStackRenderingHelper
         if (isGui3d)
         {
             GlStateManager.scale(40.0F, 40.0F, 40.0F);
-            if(rotate3DItem)
+            if (rotate3DItem)
             {
                 GlStateManager.rotate(210.0F, 1.0F, 0.0F, 0.0F);
                 GlStateManager.rotate(-135.0F, 0.0F, 1.0F, 0.0F);

@@ -415,7 +415,7 @@ public class MagicDatabase
 
     public static boolean itemContainsMagic(ItemStack stack)
     {
-        if(isInfiniteContainer(stack))
+        if (isInfiniteContainer(stack))
             return true;
 
         MagicAmounts amounts = getContainedMagic(stack);
@@ -425,7 +425,7 @@ public class MagicDatabase
 
     public static boolean canItemContainMagic(ItemStack stack)
     {
-        if(stack.stackSize != 1)
+        if (stack.stackSize != 1)
         {
             stack = stack.copy();
             stack.stackSize = 1;
@@ -625,7 +625,7 @@ public class MagicDatabase
 
     public static boolean canTransferAnything(ItemStack stack, MagicAmounts self)
     {
-        if(isInfiniteContainer(stack))
+        if (isInfiniteContainer(stack))
             return false;
 
         MagicAmounts limits = MagicDatabase.getMagicLimits(stack);

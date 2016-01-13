@@ -209,7 +209,7 @@ public class EntityEssence extends EntityAmbientCreature
         if (worldObj.isRemote)
             return;
 
-        Vec3 followPos = new Vec3(posX,posY,posZ);
+        Vec3 followPos = new Vec3(posX, posY, posZ);
 
         double dp = Double.POSITIVE_INFINITY;
 
@@ -243,8 +243,8 @@ public class EntityEssence extends EntityAmbientCreature
                 spawnPosition = spawnPosition.up();
             }
 
-            if(spawnPosition != null)
-                new Vec3(spawnPosition.getX(),spawnPosition.getY()+1,spawnPosition.getZ());
+            if (spawnPosition != null)
+                new Vec3(spawnPosition.getX(), spawnPosition.getY() + 1, spawnPosition.getZ());
         }
 
         double dx = followPos.xCoord - posX;

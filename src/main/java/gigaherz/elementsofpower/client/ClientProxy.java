@@ -80,9 +80,9 @@ public class ClientProxy implements ISideProxy
 
         if (message.windowId == player.openContainer.windowId)
         {
-            if(!(player.openContainer instanceof ContainerEssentializer))
+            if (!(player.openContainer instanceof ContainerEssentializer))
                 return;
-            ((ContainerEssentializer)player.openContainer).updateAmounts(message.contained, message.remaining);
+            ((ContainerEssentializer) player.openContainer).updateAmounts(message.contained, message.remaining);
         }
     }
 

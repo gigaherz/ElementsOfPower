@@ -67,14 +67,14 @@ public class ContainerEssentializer
         {
             for (ICrafting watcher : this.crafters)
             {
-                if(watcher instanceof EntityPlayerMP)
+                if (watcher instanceof EntityPlayerMP)
                 {
-                    ElementsOfPower.channel.sendTo(new EssentializerAmountsUpdate(windowId, tile), (EntityPlayerMP)watcher);
+                    ElementsOfPower.channel.sendTo(new EssentializerAmountsUpdate(windowId, tile), (EntityPlayerMP) watcher);
                 }
             }
 
             prevContained = MagicAmounts.copyOf(tile.containedMagic);
-            prevRemaining =  MagicAmounts.copyOf(tile.remainingToConvert);
+            prevRemaining = MagicAmounts.copyOf(tile.remainingToConvert);
         }
     }
 
@@ -113,27 +113,27 @@ public class ContainerEssentializer
             if (itemContainsMagic)
             {
                 startIndex = 1;
-                endIndex = startIndex+1;
+                endIndex = startIndex + 1;
             }
             else if (itemIsContainer)
             {
                 startIndex = 2;
-                endIndex = startIndex+1;
+                endIndex = startIndex + 1;
             }
             else if (itemHasEssence)
             {
                 startIndex = 0;
-                endIndex = startIndex+1;
+                endIndex = startIndex + 1;
             }
-            else if (slotIndex < (27+3))
+            else if (slotIndex < (27 + 3))
             {
-                startIndex = 27+3;
-                endIndex = startIndex+9;
+                startIndex = 27 + 3;
+                endIndex = startIndex + 9;
             }
-            else if (slotIndex >= (27+3))
+            else if (slotIndex >= (27 + 3))
             {
                 startIndex = 3;
-                endIndex = startIndex+27;
+                endIndex = startIndex + 27;
             }
             else
             {
@@ -143,7 +143,7 @@ public class ContainerEssentializer
         else
         {
             startIndex = 3;
-            endIndex = startIndex + 9*4;
+            endIndex = startIndex + 9 * 4;
         }
 
         if (!this.mergeItemStack(stack, startIndex, endIndex, false))

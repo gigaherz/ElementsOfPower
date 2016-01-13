@@ -42,7 +42,7 @@ public class DiscoveryHandler
         MinecraftForge.EVENT_BUS.register(instance);
 
         // Prepare item comparisons
-        gemTypes.add(new ItemStack(Items.dye,1,4));
+        gemTypes.add(new ItemStack(Items.dye, 1, 4));
         gemTypes.add(new ItemStack(Items.emerald));
         gemTypes.add(new ItemStack(Items.diamond));
 
@@ -79,29 +79,29 @@ public class DiscoveryHandler
 
     public static Achievement newAchievement(String baseName, int column, int row, Item item, Achievement parent)
     {
-        String achvName = ElementsOfPower.MODID+baseName;
-        String achvId = "achievement."+achvName;
+        String achvName = ElementsOfPower.MODID + baseName;
+        String achvId = "achievement." + achvName;
         return new Achievement(achvId, achvName, column, row, item, parent);
     }
 
     public static Achievement newAchievement(String baseName, int column, int row, Block block, Achievement parent)
     {
-        String achvName = ElementsOfPower.MODID+baseName;
-        String achvId = "achievement."+achvName;
+        String achvName = ElementsOfPower.MODID + baseName;
+        String achvId = "achievement." + achvName;
         return new Achievement(achvId, achvName, column, row, block, parent);
     }
 
     public static Achievement newAchievement(String baseName, int column, int row, ItemStack stack, Achievement parent)
     {
-        String achvName = ElementsOfPower.MODID+baseName;
-        String achvId = "achievement."+achvName;
+        String achvName = ElementsOfPower.MODID + baseName;
+        String achvId = "achievement." + achvName;
         return new Achievement(achvId, achvName, column, row, stack, parent);
     }
 
     @SubscribeEvent
     public void onItemPickUp(EntityItemPickupEvent event)
     {
-        if(event.entityPlayer.worldObj.isRemote)
+        if (event.entityPlayer.worldObj.isRemote)
             return;
 
         checkItem(event.entityPlayer, event.item.getEntityItem());
@@ -110,7 +110,7 @@ public class DiscoveryHandler
     @SubscribeEvent
     public void onItemCrafted(PlayerEvent.ItemCraftedEvent event)
     {
-        if(event.player.worldObj.isRemote)
+        if (event.player.worldObj.isRemote)
             return;
 
         checkItem(event.player, event.crafting);
@@ -123,9 +123,9 @@ public class DiscoveryHandler
 
     private void checkItem(EntityPlayer player, ItemStack stack)
     {
-        for(ItemStack gem : gemTypes)
+        for (ItemStack gem : gemTypes)
         {
-            if(ItemStack.areItemsEqual(stack, gem))
+            if (ItemStack.areItemsEqual(stack, gem))
             {
                 player.addStat(discoverGems, 1);
                 break;
@@ -134,26 +134,26 @@ public class DiscoveryHandler
 
         Item item = stack.getItem();
 
-        if(item instanceof ItemRing)
+        if (item instanceof ItemRing)
         {
             player.addStat(acquireRing, 1);
         }
 
-        if(item instanceof ItemWand)
+        if (item instanceof ItemWand)
         {
             player.addStat(acquireWand, 1);
 
-            if(((ItemWand)item).isStaff(stack))
+            if (((ItemWand) item).isStaff(stack))
             {
                 player.addStat(acquireStaff, 1);
             }
         }
 
-        if(item instanceof ItemBlock)
+        if (item instanceof ItemBlock)
         {
-            Block block = ((ItemBlock)item).getBlock();
+            Block block = ((ItemBlock) item).getBlock();
 
-            if(block instanceof BlockEssentializer)
+            if (block instanceof BlockEssentializer)
             {
                 player.addStat(essentializing, 1);
             }

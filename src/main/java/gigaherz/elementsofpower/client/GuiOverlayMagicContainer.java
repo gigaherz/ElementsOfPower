@@ -9,7 +9,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -59,7 +60,7 @@ public class GuiOverlayMagicContainer extends Gui
 
             GuiStackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yPos, stack, alpha, false);
 
-            String formatted = MagicDatabase.isInfiniteContainer(heldItem) ? "∞" : ElementsOfPower.prettyNumberFormatter.format(amounts.amounts[i]);
+            String formatted = MagicDatabase.isInfiniteContainer(heldItem) ? "\u221E" : ElementsOfPower.prettyNumberFormatter.format(amounts.amounts[i]);
             this.drawCenteredString(font, formatted, xPos + 8, yPos + 11, 0xFFC0C0C0);
             if (TickEventWandControl.instance.itemInUse != null)
                 this.drawCenteredString(font, "K:" + (i + 1), xPos + 8, yPos + 24, 0xFFC0C0C0);

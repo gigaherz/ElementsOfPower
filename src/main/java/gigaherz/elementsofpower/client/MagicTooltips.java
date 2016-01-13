@@ -37,8 +37,8 @@ public class MagicTooltips
             String magicName = MagicDatabase.getMagicName(i);
 
             String str;
-            if(MagicDatabase.isInfiniteContainer(event.itemStack))
-                str = String.format("%s  %s x∞", EnumChatFormatting.GRAY, magicName);
+            if (MagicDatabase.isInfiniteContainer(event.itemStack))
+                str = String.format("%s  %s x\u221E", EnumChatFormatting.GRAY, magicName);
             else if (event.itemStack.stackSize > 1)
                 str = String.format("%s  %s x%s (stack %s)", EnumChatFormatting.GRAY, magicName,
                         ElementsOfPower.prettyNumberFormatter2.format(amounts.amounts[i]),
