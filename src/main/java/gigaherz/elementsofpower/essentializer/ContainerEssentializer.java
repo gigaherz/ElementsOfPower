@@ -1,11 +1,11 @@
 package gigaherz.elementsofpower.essentializer;
 
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.database.MagicDatabase;
-import gigaherz.elementsofpower.network.SetSpecialSlot;
+import gigaherz.elementsofpower.network.EssentializerAmountsUpdate;
 import gigaherz.elementsofpower.slots.SlotContainerIn;
 import gigaherz.elementsofpower.slots.SlotContainerOut;
-import gigaherz.elementsofpower.slots.SlotMagic;
 import gigaherz.elementsofpower.slots.SlotSource;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -19,19 +19,12 @@ public class ContainerEssentializer
         extends Container
 {
     protected TileEssentializer tile;
+    private MagicAmounts prevContained;
+    private MagicAmounts prevRemaining;
 
     public ContainerEssentializer(TileEssentializer tileEntity, InventoryPlayer playerInventory)
     {
         this.tile = tileEntity;
-
-        addSlotToContainer(new SlotMagic(tileEntity.holder, 0,  50, 32));
-        addSlotToContainer(new SlotMagic(tileEntity.holder, 1,  68, 16));
-        addSlotToContainer(new SlotMagic(tileEntity.holder, 2,  92, 16));
-        addSlotToContainer(new SlotMagic(tileEntity.holder, 3, 110, 32));
-        addSlotToContainer(new SlotMagic(tileEntity.holder, 4,  50, 56));
-        addSlotToContainer(new SlotMagic(tileEntity.holder, 5,  68, 72));
-        addSlotToContainer(new SlotMagic(tileEntity.holder, 6,  92, 72));
-        addSlotToContainer(new SlotMagic(tileEntity.holder, 7, 110, 56));
 
         addSlotToContainer(new SlotSource(tileEntity, 0, 80, 44));
         addSlotToContainer(new SlotContainerIn(tileEntity, 1, 8, 56));
@@ -67,36 +60,31 @@ public class ContainerEssentializer
     @Override
     public void detectAndSendChanges()
     {
-        for (int i = 0; i < this.inventorySlots.size(); ++i)
+        super.detectAndSendChanges();
+
+        if (!MagicAmounts.areAmountsEqual(prevContained, tile.containedMagic)
+                || !MagicAmounts.areAmountsEqual(prevRemaining, tile.remainingToConvert))
         {
-            Slot slot = this.inventorySlots.get(i);
-            ItemStack newStack = slot.getStack();
-            ItemStack current = this.inventoryItemStacks.get(i);
-
-            if (!ItemStack.areItemStacksEqual(current, newStack))
+            for (ICrafting watcher : this.crafters)
             {
-                current = newStack == null ? null : newStack.copy();
-                this.inventoryItemStacks.set(i, current);
-
-                for (ICrafting crafter : this.crafters)
+                if(watcher instanceof EntityPlayerMP)
                 {
-                    if (slot instanceof SlotMagic && crafter instanceof EntityPlayerMP)
-                        sendSpecialSlotContents((EntityPlayerMP) crafter, this, i, current);
-                    else
-                        crafter.sendSlotContents(this, i, current);
+                    ElementsOfPower.channel.sendTo(new EssentializerAmountsUpdate(windowId, tile), (EntityPlayerMP)watcher);
                 }
             }
+
+            prevContained = MagicAmounts.copyOf(tile.containedMagic);
+            prevRemaining =  MagicAmounts.copyOf(tile.remainingToConvert);
         }
     }
 
-    private void sendSpecialSlotContents(EntityPlayerMP crafter, ContainerEssentializer containerEssentializer, int i, ItemStack current)
+    public void updateAmounts(MagicAmounts contained, MagicAmounts remaining)
     {
-        ElementsOfPower.channel.sendTo(new SetSpecialSlot(containerEssentializer.windowId, i, current), crafter);
+        tile.containedMagic = contained;
+        tile.remainingToConvert = remaining;
     }
 
-    /**
-     * Called when a player shift-clicks on a slot. You must override this or you will crash when someone does that.
-     */
+    @Override
     public ItemStack transferStackInSlot(EntityPlayer player, int slotIndex)
     {
         if (slotIndex < 8)
@@ -116,7 +104,7 @@ public class ContainerEssentializer
         int startIndex;
         int endIndex;
 
-        if (slotIndex >= 10)
+        if (slotIndex >= 3)
         {
             boolean itemIsContainer = MagicDatabase.canItemContainMagic(stack);
             boolean itemContainsMagic = itemIsContainer && MagicDatabase.itemContainsMagic(stack);
@@ -124,28 +112,28 @@ public class ContainerEssentializer
 
             if (itemContainsMagic)
             {
-                startIndex = 8;
-                endIndex = 10;
+                startIndex = 1;
+                endIndex = startIndex+1;
             }
             else if (itemIsContainer)
             {
-                startIndex = 9;
-                endIndex = 10;
+                startIndex = 2;
+                endIndex = startIndex+1;
             }
             else if (itemHasEssence)
             {
-                startIndex = 8;
-                endIndex = 9;
+                startIndex = 0;
+                endIndex = startIndex+1;
             }
-            else if (slotIndex < 37)
+            else if (slotIndex < (27+3))
             {
-                startIndex = 37;
-                endIndex = 46;
+                startIndex = 27+3;
+                endIndex = startIndex+9;
             }
-            else if (slotIndex >= 37 && slotIndex < 39)
+            else if (slotIndex >= (27+3))
             {
-                startIndex = 10;
-                endIndex = 37;
+                startIndex = 3;
+                endIndex = startIndex+27;
             }
             else
             {
@@ -154,8 +142,8 @@ public class ContainerEssentializer
         }
         else
         {
-            startIndex = 10;
-            endIndex = 46;
+            startIndex = 3;
+            endIndex = startIndex + 9*4;
         }
 
         if (!this.mergeItemStack(stack, startIndex, endIndex, false))

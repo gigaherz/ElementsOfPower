@@ -1,6 +1,9 @@
 package gigaherz.elementsofpower.database;
 
 import com.google.gson.*;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraftforge.common.util.Constants;
 
 import java.lang.reflect.Type;
 
@@ -15,7 +18,14 @@ public class MagicAmounts
     public static final int LIFE = 6;
     public static final int DEATH = 7;
 
-    public final float[] amounts = new float[8];
+    public static final int ELEMENTS = 8;
+
+    public final float[] amounts = new float[ELEMENTS];
+
+    public static boolean areAmountsEqual(MagicAmounts a1, MagicAmounts a2)
+    {
+        return (a1 == null && a2 == null) || (a1 != null && a1.equals(a2));
+    }
 
     public MagicAmounts()
     {
@@ -34,7 +44,7 @@ public class MagicAmounts
 
         StringBuilder b = new StringBuilder();
         boolean first = true;
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
             if (amounts[i] == 0)
                 continue;
@@ -82,7 +92,7 @@ public class MagicAmounts
 
     public boolean hasEnough(MagicAmounts cost)
     {
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
             if (amounts[i] < cost.amounts[i])
                 return false;
@@ -92,7 +102,7 @@ public class MagicAmounts
 
     public void subtract(MagicAmounts cost)
     {
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
             amounts[i] -= cost.amounts[i];
         }
@@ -148,7 +158,7 @@ public class MagicAmounts
 
     public MagicAmounts all(int amount)
     {
-        for (int i = 0; i < amounts.length; i++)
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
             amounts[i] += amount;
         }
@@ -158,7 +168,7 @@ public class MagicAmounts
 
     public void add(MagicAmounts other)
     {
-        for (int i = 0; i < amounts.length; i++)
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
             amounts[i] += other.amounts[i];
         }
@@ -167,6 +177,42 @@ public class MagicAmounts
     public MagicAmounts copy()
     {
         return new MagicAmounts(this);
+    }
+
+    public void readFromNBT(NBTTagCompound tagCompound)
+    {
+        NBTTagList tagList = tagCompound.getTagList("Essences", Constants.NBT.TAG_COMPOUND);
+
+        for (int i = 0; i < tagList.tagCount(); i++)
+        {
+            NBTTagCompound tag = (NBTTagCompound) tagList.get(i);
+            byte slot = tag.getByte("Type");
+
+            if (slot >= 0 && slot < 8)
+            {
+                amounts[slot] = tag.getFloat("Count");
+            }
+        }
+    }
+
+    public void writeToNBT(NBTTagCompound tagCompound)
+    {
+        NBTTagList itemList = new NBTTagList();
+
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+        {
+            NBTTagCompound tag = new NBTTagCompound();
+            tag.setByte("Type", (byte) i);
+            tag.setFloat("Count", amounts[i]);
+            itemList.appendTag(tag);
+        }
+
+        tagCompound.setTag("Essences", itemList);
+    }
+
+    public static MagicAmounts copyOf(MagicAmounts amounts)
+    {
+        return amounts == null ? null : amounts.copy();
     }
 
     public static class Serializer
@@ -189,7 +235,7 @@ public class MagicAmounts
         {
             MagicAmounts amounts = new MagicAmounts();
             JsonArray array = json.getAsJsonArray();
-            for (int i = 0; i < amounts.amounts.length; i++)
+            for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
             {
                 amounts.amounts[i] = array.get(i).getAsInt();
             }

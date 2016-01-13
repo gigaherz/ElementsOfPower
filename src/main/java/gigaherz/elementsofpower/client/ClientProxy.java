@@ -6,19 +6,17 @@ import gigaherz.elementsofpower.entities.EntityBall;
 import gigaherz.elementsofpower.entities.EntityEssence;
 import gigaherz.elementsofpower.entities.EntityTeleporter;
 import gigaherz.elementsofpower.entitydata.SpellcastEntityData;
+import gigaherz.elementsofpower.essentializer.ContainerEssentializer;
 import gigaherz.elementsofpower.essentializer.TileEssentializer;
-import gigaherz.elementsofpower.network.SetSpecialSlot;
+import gigaherz.elementsofpower.network.EssentializerAmountsUpdate;
 import gigaherz.elementsofpower.network.SpellcastSync;
 import gigaherz.elementsofpower.renders.*;
 import gigaherz.elementsofpower.util.Used;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.inventory.GuiContainerCreative;
 import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.obj.OBJLoader;
@@ -68,46 +66,23 @@ public class ClientProxy implements ISideProxy
     }
 
     @Override
-    public void handleSetSpecialSlot(SetSpecialSlot message)
+    public void handleRemainingAmountsUpdate(EssentializerAmountsUpdate message)
     {
-        Minecraft.getMinecraft().addScheduledTask(() -> handleSetSpecialSlot2(message));
+        Minecraft.getMinecraft().addScheduledTask(() -> handleRemainingAmountsUpdate2(message));
     }
 
-    void handleSetSpecialSlot2(SetSpecialSlot message)
+    private void handleRemainingAmountsUpdate2(EssentializerAmountsUpdate message)
     {
-        Minecraft gameController = Minecraft.getMinecraft();
-
-        EntityPlayer entityplayer = gameController.thePlayer;
+        EntityPlayer player = Minecraft.getMinecraft().thePlayer;
 
         if (message.windowId == -1)
+            return;
+
+        if (message.windowId == player.openContainer.windowId)
         {
-            entityplayer.inventory.setItemStack(message.stack);
-        }
-        else
-        {
-            boolean flag = false;
-
-            if (gameController.currentScreen instanceof GuiContainerCreative)
-            {
-                GuiContainerCreative guicontainercreative = (GuiContainerCreative) gameController.currentScreen;
-                flag = guicontainercreative.getSelectedTabIndex() != CreativeTabs.tabInventory.getTabIndex();
-            }
-
-            if (message.windowId == 0 && message.slot >= 36 && message.slot < 45)
-            {
-                ItemStack itemstack = entityplayer.inventoryContainer.getSlot(message.slot).getStack();
-
-                if (message.stack != null && (itemstack == null || itemstack.stackSize < message.stack.stackSize))
-                {
-                    message.stack.animationsToGo = 5;
-                }
-
-                entityplayer.inventoryContainer.putStackInSlot(message.slot, message.stack);
-            }
-            else if (message.windowId == entityplayer.openContainer.windowId && (message.windowId != 0 || !flag))
-            {
-                entityplayer.openContainer.putStackInSlot(message.slot, message.stack);
-            }
+            if(!(player.openContainer instanceof ContainerEssentializer))
+                return;
+            ((ContainerEssentializer)player.openContainer).updateAmounts(message.contained, message.remaining);
         }
     }
 

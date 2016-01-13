@@ -24,15 +24,6 @@ item.elementsofpower.emeraldRing.name=Emerald Ring
 item.elementsofpower.diamondRing.name=Diamond Ring
 item.elementsofpower.creativeRing.name=Creative Ring
 
-item.elementsofpower.magicOrb.fire.name=Fire
-item.elementsofpower.magicOrb.water.name=Water
-item.elementsofpower.magicOrb.air.name=Air
-item.elementsofpower.magicOrb.earth.name=Earth
-item.elementsofpower.magicOrb.light.name=Light
-item.elementsofpower.magicOrb.darkness.name=Darkness
-item.elementsofpower.magicOrb.life.name=Life
-item.elementsofpower.magicOrb.death.name=Death
-
 itemGroup.elementsofpower=Elements Of Power
 
 entity.elementsofpower.Essence.name=Living Essence

@@ -208,15 +208,18 @@ public class ItemRing extends ItemMagicContainer implements IBauble
 
         float maxTransfer = MAX_TRANSFER_TICK;
         float totalTransfer = 0;
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            float transfer = Math.min(maxTransfer, Math.min(self.amounts[i], limits.amounts[i] - amounts.amounts[i]));
+            float transfer = Math.min(maxTransfer, limits.amounts[i] - amounts.amounts[i]);
+            if(!isInfinite(stack))
+                transfer = Math.min(self.amounts[i], transfer);
             if (transfer > 0)
             {
                 totalTransfer += transfer;
                 maxTransfer -= transfer;
                 amounts.amounts[i] += transfer;
-                self.amounts[i] -= transfer;
+                if(!isInfinite(stack))
+                    self.amounts[i] -= transfer;
             }
         }
 

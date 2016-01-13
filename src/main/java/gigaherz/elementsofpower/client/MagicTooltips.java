@@ -16,7 +16,7 @@ public class MagicTooltips
         if (MagicDatabase.itemContainsMagic(event.itemStack))
             return;
 
-        MagicAmounts amounts = MagicDatabase.getEssences(event.itemStack);
+        MagicAmounts amounts = MagicDatabase.getEssences(event.itemStack, false);
         if (amounts == null || amounts.isEmpty())
             return;
 
@@ -27,7 +27,7 @@ public class MagicTooltips
             return;
         }
 
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
             if (amounts.amounts[i] == 0)
             {
@@ -37,13 +37,15 @@ public class MagicTooltips
             String magicName = MagicDatabase.getMagicName(i);
 
             String str;
-            if (event.itemStack.stackSize > 1)
+            if(MagicDatabase.isInfiniteContainer(event.itemStack))
+                str = String.format("%s  %s x∞", EnumChatFormatting.GRAY, magicName);
+            else if (event.itemStack.stackSize > 1)
                 str = String.format("%s  %s x%s (stack %s)", EnumChatFormatting.GRAY, magicName,
-                        ElementsOfPower.prettyNumberFormatter.format(amounts.amounts[i] / event.itemStack.stackSize),
-                        ElementsOfPower.prettyNumberFormatter.format(amounts.amounts[i]));
+                        ElementsOfPower.prettyNumberFormatter2.format(amounts.amounts[i]),
+                        ElementsOfPower.prettyNumberFormatter2.format(amounts.amounts[i] * event.itemStack.stackSize));
             else
                 str = String.format("%s  %s x%s", EnumChatFormatting.GRAY, magicName,
-                        ElementsOfPower.prettyNumberFormatter.format(amounts.amounts[i]));
+                        ElementsOfPower.prettyNumberFormatter2.format(amounts.amounts[i]));
             event.toolTip.add(str);
         }
     }

@@ -149,7 +149,7 @@ public class ItemWand extends ItemMagicContainer
         MagicAmounts amounts = MagicDatabase.getContainedMagic(stack);
         MagicAmounts cost = effect.getSpellCost();
 
-        if (!amounts.hasEnough(cost))
+        if (!MagicDatabase.isInfiniteContainer(stack) && !amounts.hasEnough(cost))
             return;
 
         ISpellcast cast = effect.castSpell(stack, player);
@@ -162,7 +162,8 @@ public class ItemWand extends ItemMagicContainer
             }
         }
 
-        amounts.subtract(cost);
+        if(!MagicDatabase.isInfiniteContainer(stack))
+            amounts.subtract(cost);
 
         MagicDatabase.setContainedMagic(stack, amounts);
 

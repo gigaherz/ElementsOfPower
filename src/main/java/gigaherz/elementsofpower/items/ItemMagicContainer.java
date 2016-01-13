@@ -94,7 +94,7 @@ public class ItemMagicContainer extends Item
             return;
         }
 
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
             if (amounts.amounts[i] == 0)
             {
@@ -102,8 +102,12 @@ public class ItemMagicContainer extends Item
             }
 
             String magicName = MagicDatabase.getMagicName(i);
-            String str = String.format("%s  %s x%s", EnumChatFormatting.GRAY, magicName,
-                    ElementsOfPower.prettyNumberFormatter.format(amounts.amounts[i]));
+            String str;
+            if(MagicDatabase.isInfiniteContainer(stack))
+                str = String.format("%s  %s x∞", EnumChatFormatting.GRAY, magicName);
+            else
+                str = String.format("%s  %s x%s", EnumChatFormatting.GRAY, magicName,
+                    ElementsOfPower.prettyNumberFormatter2.format(amounts.amounts[i]));
             tooltipList.add(str);
         }
     }

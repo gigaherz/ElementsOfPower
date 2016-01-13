@@ -1,8 +1,8 @@
 package gigaherz.elementsofpower.essentializer;
 
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.database.MagicDatabase;
-import gigaherz.elementsofpower.database.MagicHolder;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.InventoryBasic;
@@ -22,14 +22,61 @@ public class TileEssentializer
         extends TileEntity
         implements ISidedInventory, ITickable
 {
+    public static final int MaxEssentializerMagic = 1000;
+    public static final float MaxConvertPerTick = 5/20.0f;
+
     public final InventoryBasic inventory = new InventoryBasic(ElementsOfPower.MODID + ".essentializer", false, 3);
-    public final MagicHolder holder = new MagicHolder();
+
+    public MagicAmounts containedMagic = new MagicAmounts();
+    public MagicAmounts remainingToConvert;
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound)
     {
         super.readFromNBT(tagCompound);
+        readInventoryFromNBT(tagCompound);
+        containedMagic = readAmountsFromNBT(tagCompound, "Contained");
+        remainingToConvert = readAmountsFromNBT(tagCompound, "Remaining");
+        if(containedMagic == null)
+            containedMagic = new MagicAmounts();
+    }
 
+    @Override
+    public void writeToNBT(NBTTagCompound tagCompound)
+    {
+        super.writeToNBT(tagCompound);
+        writeInventoryToNBT(tagCompound);
+        writeAmountsToNBT(tagCompound, "Contained", containedMagic);
+        writeAmountsToNBT(tagCompound, "Remaining", remainingToConvert);
+    }
+
+    private MagicAmounts readAmountsFromNBT(NBTTagCompound tagCompound, String key)
+    {
+        MagicAmounts amounts = null;
+        if(tagCompound.hasKey(key, Constants.NBT.TAG_COMPOUND))
+        {
+            NBTTagCompound tag = tagCompound.getCompoundTag(key);
+
+            amounts = new MagicAmounts();
+            amounts.readFromNBT(tag);
+        }
+        return amounts;
+    }
+
+    private void writeAmountsToNBT(NBTTagCompound tagCompound, String key, MagicAmounts amounts)
+    {
+        if(amounts != null)
+        {
+            NBTTagCompound tag = new NBTTagCompound();
+
+            amounts.writeToNBT(tag);
+
+            tagCompound.setTag(key, tag);
+        }
+    }
+
+    private void readInventoryFromNBT(NBTTagCompound tagCompound)
+    {
         NBTTagList tagList = tagCompound.getTagList("Inventory", Constants.NBT.TAG_COMPOUND);
 
         for (int i = 0; i < tagList.tagCount(); i++)
@@ -42,15 +89,10 @@ public class TileEssentializer
                 inventory.setInventorySlotContents(slot, ItemStack.loadItemStackFromNBT(tag));
             }
         }
-
-        holder.readFromNBT(tagCompound);
     }
 
-    @Override
-    public void writeToNBT(NBTTagCompound tagCompound)
+    private void writeInventoryToNBT(NBTTagCompound tagCompound)
     {
-        super.writeToNBT(tagCompound);
-
         NBTTagList itemList = new NBTTagList();
 
         for (int i = 0; i < inventory.getSizeInventory(); i++)
@@ -67,8 +109,6 @@ public class TileEssentializer
         }
 
         tagCompound.setTag("Inventory", itemList);
-
-        holder.writeToNBT(tagCompound);
     }
 
     @Override
@@ -92,9 +132,178 @@ public class TileEssentializer
     {
         if (!worldObj.isRemote)
         {
-            if (holder.processInventory(inventory))
-                worldObj.markBlockForUpdate(getPos());
+            boolean b0 = convertRemaining();
+            boolean b1 = convertSource(inventory);
+            boolean b2 = getMagicFromInput(inventory);
+            boolean b3 = addMagicToOutput(inventory);
+            if (b0 || b1 || b2 || b3)
+                markDirty();
         }
+    }
+
+    private boolean convertRemaining()
+    {
+        if(remainingToConvert == null)
+            return false;
+
+        float totalAdded = 0;
+        for(int i=0;i<MagicAmounts.ELEMENTS;i++)
+        {
+            float maxTransfer = Math.min(MaxConvertPerTick, MaxEssentializerMagic - containedMagic.amounts[i]);
+            float transfer = Math.min(maxTransfer, remainingToConvert.amounts[i]);
+            if(transfer > 0)
+            {
+                remainingToConvert.amounts[i] -= transfer;
+                containedMagic.amounts[i] += transfer;
+                totalAdded += transfer;
+            }
+        }
+
+        if(remainingToConvert.isEmpty())
+            remainingToConvert = null;
+
+        return totalAdded > 0;
+    }
+
+    private boolean convertSource(InventoryBasic inventory)
+    {
+        if(remainingToConvert != null)
+            return false;
+
+        ItemStack input = inventory.getStackInSlot(0);
+
+        if (input == null)
+        {
+            return false;
+        }
+
+        MagicAmounts contained = MagicDatabase.getEssences(input, false);
+
+        if (contained == null)
+            return false;
+
+        if (contained.isEmpty())
+            return false;
+
+        if (!canAddAll(contained))
+            return false;
+
+        remainingToConvert = contained.copy();
+
+        input.stackSize--;
+
+        if (input.stackSize <= 0)
+            input = null;
+
+        inventory.setInventorySlotContents(0, input);
+        return true;
+    }
+
+    private boolean getMagicFromInput(InventoryBasic inventory)
+    {
+        ItemStack input = inventory.getStackInSlot(1);
+
+        if (input == null)
+        {
+            return false;
+        }
+
+        if (!MagicDatabase.itemContainsMagic(input))
+            return false;
+
+        boolean isInfinite = MagicDatabase.isInfiniteContainer(input);
+
+        MagicAmounts contained = MagicDatabase.getContainedMagic(input);
+
+        if (contained == null)
+            return false;
+
+        float totalAdded = 0;
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+        {
+            float maxTransfer = Math.min(MaxConvertPerTick, MaxEssentializerMagic - containedMagic.amounts[i]);
+            float transfer = isInfinite ? maxTransfer : Math.min(maxTransfer, contained.amounts[i]);
+            if(transfer > 0)
+            {
+                if(!isInfinite) contained.amounts[i] -= transfer;
+                containedMagic.amounts[i] += transfer;
+                totalAdded += transfer;
+            }
+        }
+
+        if (totalAdded <= 0)
+            return false;
+
+        input = MagicDatabase.setContainedMagic(input, contained);
+
+        inventory.setInventorySlotContents(1, input);
+        return true;
+    }
+
+    private boolean addMagicToOutput(InventoryBasic inventory)
+    {
+        ItemStack output = inventory.getStackInSlot(2);
+
+        if (output == null)
+        {
+            return false;
+        }
+
+        if (output.stackSize != 1)
+        {
+            return false;
+        }
+
+        if(MagicDatabase.isInfiniteContainer(output))
+            return false;
+
+        MagicAmounts limits = MagicDatabase.getMagicLimits(output);
+        MagicAmounts contained = MagicDatabase.getContainedMagic(output);
+
+        if (limits == null)
+            return false;
+
+        if (contained == null)
+        {
+            contained = new MagicAmounts();
+        }
+
+        float totalAdded = 0;
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+        {
+            float maxTransfer = Math.min(MaxConvertPerTick, limits.amounts[i] - contained.amounts[i]);
+            float transfer = Math.min(maxTransfer, containedMagic.amounts[i]);
+            if(transfer > 0)
+            {
+                contained.amounts[i] += transfer;
+                containedMagic.amounts[i] -= transfer;
+                totalAdded += transfer;
+            }
+        }
+
+        if (totalAdded <= 0)
+            return false;
+
+        inventory.setInventorySlotContents(2, MagicDatabase.setContainedMagic(output, contained));
+        return true;
+    }
+
+    private boolean canAddAll(MagicAmounts magic)
+    {
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+        {
+            float amount = magic.amounts[i];
+
+            if (amount <= 0)
+                continue;
+
+            if (containedMagic.amounts[i] + amount > MaxEssentializerMagic)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     // IInventory forwarders

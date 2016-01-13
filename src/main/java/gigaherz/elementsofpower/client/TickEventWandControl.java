@@ -1,6 +1,7 @@
 package gigaherz.elementsofpower.client;
 
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.database.SpellManager;
 import gigaherz.elementsofpower.items.ItemWand;
 import gigaherz.elementsofpower.network.SpellSequenceUpdate;
@@ -33,9 +34,9 @@ public class TickEventWandControl
         GameSettings s = Minecraft.getMinecraft().gameSettings;
 
         int l = s.keyBindings.length;
-        int[] indices = new int[8];
+        int[] indices = new int[MagicAmounts.ELEMENTS];
         int f = 0;
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
             KeyBinding b = s.keyBindsHotbar[i];
             for (int j = 0; j < l; j++)
@@ -49,7 +50,7 @@ public class TickEventWandControl
             }
         }
 
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
             interceptKeys[i] = new KeyBindingInterceptor(s.keyBindsHotbar[i]);
             s.keyBindsHotbar[i] = interceptKeys[i];
@@ -102,7 +103,7 @@ public class TickEventWandControl
 
             itemInUseCount--;
 
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
             {
                 if (interceptKeys[i].retrieveClick())
                 {
@@ -145,7 +146,7 @@ public class TickEventWandControl
         sequence = new StringBuilder();
         ElementsOfPower.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.BEGIN, player, slotInUse, null));
 
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
             interceptKeys[i].setInterceptionActive(true);
         }
@@ -166,7 +167,7 @@ public class TickEventWandControl
         itemInUseCount = 0;
         slotInUse = -1;
         sequence = null;
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
             interceptKeys[i].setInterceptionActive(false);
         }

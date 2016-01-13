@@ -173,7 +173,7 @@ public class MagicDatabase
             MagicAmounts am = new MagicAmounts();
             for (ItemStack b : inputs)
             {
-                MagicAmounts m = getEssences(b);
+                MagicAmounts m = getEssences(b, true);
 
                 if (m == null || m.isEmpty())
                 {
@@ -415,6 +415,9 @@ public class MagicDatabase
 
     public static boolean itemContainsMagic(ItemStack stack)
     {
+        if(isInfiniteContainer(stack))
+            return true;
+
         MagicAmounts amounts = getContainedMagic(stack);
 
         return amounts != null && !amounts.isEmpty();
@@ -454,7 +457,7 @@ public class MagicDatabase
         return Utils.stackIsInMap(itemEssences, stack);
     }
 
-    public static MagicAmounts getEssences(ItemStack stack)
+    public static MagicAmounts getEssences(ItemStack stack, boolean wholeStack)
     {
         int stackSize = stack.stackSize;
         if (stackSize > 1)
@@ -468,7 +471,7 @@ public class MagicDatabase
 
         m = m.copy();
 
-        if (stackSize > 1)
+        if (stackSize > 1 && wholeStack)
         {
             for (int i = 0; i < m.amounts.length; i++)
             {
@@ -514,7 +517,7 @@ public class MagicDatabase
         MagicAmounts amounts = new MagicAmounts();
         float max = 0;
 
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
             try
             {
@@ -579,7 +582,7 @@ public class MagicDatabase
                 output.setTagCompound(nbt);
             }
 
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
             {
                 nbt.setFloat("" + i, amounts.amounts[i]);
             }
@@ -611,7 +614,7 @@ public class MagicDatabase
         if (limits == null)
             return true;
 
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
             if (amounts.amounts[i] < limits.amounts[i])
                 return false;
@@ -622,6 +625,9 @@ public class MagicDatabase
 
     public static boolean canTransferAnything(ItemStack stack, MagicAmounts self)
     {
+        if(isInfiniteContainer(stack))
+            return false;
+
         MagicAmounts limits = MagicDatabase.getMagicLimits(stack);
         MagicAmounts amounts = MagicDatabase.getContainedMagic(stack);
 
@@ -631,7 +637,7 @@ public class MagicDatabase
         if (amounts == null)
             return true;
 
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
             if (self.amounts[i] > 0 && amounts.amounts[i] < limits.amounts[i])
                 return true;

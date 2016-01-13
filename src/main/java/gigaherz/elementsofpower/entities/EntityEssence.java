@@ -46,7 +46,7 @@ public class EntityEssence extends EntityAmbientCreature
             am.amounts[j] += 1;
         }
 
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
             dataWatcher.addObject(16 + i, am.amounts[i]);
         }
@@ -87,12 +87,12 @@ public class EntityEssence extends EntityAmbientCreature
         int total = 0;
 
         MagicAmounts amounts = new MagicAmounts();
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
             amounts.amounts[i] = dataWatcher.getWatchableObjectFloat(16 + i);
         }
 
-        for (int i = 0; i < amounts.amounts.length; i++)
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
             total += Math.ceil(amounts.amounts[i]);
         }
@@ -105,7 +105,7 @@ public class EntityEssence extends EntityAmbientCreature
 
         List<float[]> seq = Lists.newArrayList();
 
-        for (int i = 0; i < amounts.amounts.length; i++)
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
             float am = amounts.amounts[i];
             while (am > 0)
@@ -171,7 +171,7 @@ public class EntityEssence extends EntityAmbientCreature
         if (rand.nextDouble() < (entityAge2 * (1.0 / 2000) - 0.1))
         {
             MagicAmounts amounts = new MagicAmounts();
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
             {
                 amounts.amounts[i] = dataWatcher.getWatchableObjectFloat(16 + i);
             }
@@ -209,61 +209,47 @@ public class EntityEssence extends EntityAmbientCreature
         if (worldObj.isRemote)
             return;
 
+        Vec3 followPos = new Vec3(posX,posY,posZ);
+
         double dp = Double.POSITIVE_INFINITY;
 
         Entity entity = worldObj.getClosestPlayerToEntity(this, 8.0D);
         if (entity != null)
         {
             dp = getDistanceSqToEntity(entity);
-            if (dp < 1.0 && entityAge2 > 100)
+            if (dp < 2.0 && entityAge2 > 100)
             {
                 tryAbosrbInto(entity);
             }
-            spawnPosition = entity.getPosition().up((int) entity.getEyeHeight());
-        }
-
-        if (spawnPosition != null &&
-                (!worldObj.isAirBlock(spawnPosition) || spawnPosition.getY() < 1))
-        {
+            followPos = new Vec3(entity.posX, entity.posY + entity.getEyeHeight(), entity.posZ);
             spawnPosition = null;
         }
-
-        BlockPos blockPos = getPosition();
-        if (spawnPosition == null && worldObj.isAirBlock(blockPos))
+        else
         {
-            int n = 0;
-            do
+            if (spawnPosition == null)
             {
-                blockPos = blockPos.down();
-                n++;
-            } while (worldObj.isAirBlock(blockPos));
+                BlockPos blockPos = getPosition();
 
-            // last air block
-            blockPos.up();
-
-            if (n > 2) n = 2;
-
-            blockPos.up(n);
-            while (n < 2)
-            {
-                blockPos = blockPos.up();
-                n++;
-                if (!worldObj.isAirBlock(blockPos))
+                do
                 {
                     blockPos = blockPos.down();
-                    break;
-                }
+                } while (blockPos.getY() > 0 && worldObj.isAirBlock(blockPos));
+
+                spawnPosition = blockPos.up();
+            }
+            else if (spawnPosition.getY() < 1 ||
+                    !worldObj.isAirBlock(spawnPosition))
+            {
+                spawnPosition = spawnPosition.up();
             }
 
-            if (worldObj.isAirBlock(blockPos))
-            {
-                spawnPosition = blockPos;
-            }
+            if(spawnPosition != null)
+                new Vec3(spawnPosition.getX(),spawnPosition.getY()+1,spawnPosition.getZ());
         }
 
-        double dx = spawnPosition == null ? posX : ((double) spawnPosition.getX() - posX);
-        double dy = spawnPosition == null ? posY : ((double) spawnPosition.getY() - posY);
-        double dz = spawnPosition == null ? posZ : ((double) spawnPosition.getZ() - posZ);
+        double dx = followPos.xCoord - posX;
+        double dy = followPos.yCoord - posY;
+        double dz = followPos.zCoord - posZ;
 
         Vec3 home = new Vec3(dx, dy, dz);
         Vec3 forward = getLookVec();
@@ -309,7 +295,7 @@ public class EntityEssence extends EntityAmbientCreature
             return;
 
         MagicAmounts self = new MagicAmounts();
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
             self.amounts[i] = dataWatcher.getWatchableObjectFloat(16 + i);
         }
@@ -374,7 +360,7 @@ public class EntityEssence extends EntityAmbientCreature
             amounts = new MagicAmounts();
 
         float totalTransfer = 0;
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
             float transfer = Math.min(self.amounts[i], limits.amounts[i] - amounts.amounts[i]);
             if (transfer > 0)
@@ -406,7 +392,7 @@ public class EntityEssence extends EntityAmbientCreature
     public void readEntityFromNBT(NBTTagCompound tag)
     {
         super.readEntityFromNBT(tag);
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
             dataWatcher.updateObject(16 + i, tag.getFloat("Essence" + i));
         }
@@ -420,7 +406,7 @@ public class EntityEssence extends EntityAmbientCreature
     public void writeEntityToNBT(NBTTagCompound tag)
     {
         super.writeEntityToNBT(tag);
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
             tag.setFloat("Essence" + i, dataWatcher.getWatchableObjectFloat(16 + i));
         }

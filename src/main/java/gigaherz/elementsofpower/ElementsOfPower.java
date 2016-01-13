@@ -7,7 +7,6 @@ import gigaherz.elementsofpower.database.MagicDatabase;
 import gigaherz.elementsofpower.entities.EntityBall;
 import gigaherz.elementsofpower.entities.EntityEssence;
 import gigaherz.elementsofpower.entities.EntityTeleporter;
-import gigaherz.elementsofpower.entitydata.DiscoveryEntityData;
 import gigaherz.elementsofpower.entitydata.SpellcastEntityData;
 import gigaherz.elementsofpower.essentializer.BlockEssentializer;
 import gigaherz.elementsofpower.essentializer.TileEssentializer;
@@ -17,7 +16,7 @@ import gigaherz.elementsofpower.items.ItemMagicOrb;
 import gigaherz.elementsofpower.items.ItemRing;
 import gigaherz.elementsofpower.items.ItemWand;
 import gigaherz.elementsofpower.materials.MaterialCushion;
-import gigaherz.elementsofpower.network.SetSpecialSlot;
+import gigaherz.elementsofpower.network.EssentializerAmountsUpdate;
 import gigaherz.elementsofpower.network.SpellSequenceUpdate;
 import gigaherz.elementsofpower.network.SpellcastSync;
 import gigaherz.elementsofpower.progression.DiscoveryHandler;
@@ -121,6 +120,7 @@ public class ElementsOfPower
     public static SimpleNetworkWrapper channel;
 
     public final static Format prettyNumberFormatter = new DecimalFormat("#.#");
+    public final static Format prettyNumberFormatter2 = new DecimalFormat("#0.0");
 
     private GuiHandler guiHandler = new GuiHandler();
 
@@ -230,7 +230,7 @@ public class ElementsOfPower
         int messageNumber = 0;
         channel.registerMessage(SpellSequenceUpdate.Handler.class, SpellSequenceUpdate.class, messageNumber++, Side.SERVER);
         channel.registerMessage(SpellcastSync.Handler.class, SpellcastSync.class, messageNumber++, Side.CLIENT);
-        channel.registerMessage(SetSpecialSlot.Handler.class, SetSpecialSlot.class, messageNumber++, Side.CLIENT);
+        channel.registerMessage(EssentializerAmountsUpdate.Handler.class, EssentializerAmountsUpdate.class, messageNumber++, Side.CLIENT);
         logger.debug("Final message number: " + messageNumber);
 
         logger.info("Registering extended entity properties...");

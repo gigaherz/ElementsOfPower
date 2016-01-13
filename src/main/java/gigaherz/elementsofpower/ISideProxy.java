@@ -1,6 +1,6 @@
 package gigaherz.elementsofpower;
 
-import gigaherz.elementsofpower.network.SetSpecialSlot;
+import gigaherz.elementsofpower.network.EssentializerAmountsUpdate;
 import gigaherz.elementsofpower.network.SpellcastSync;
 
 public interface ISideProxy
@@ -11,5 +11,5 @@ public interface ISideProxy
 
     void handleSpellcastSync(SpellcastSync message);
 
-    void handleSetSpecialSlot(SetSpecialSlot message);
+    void handleRemainingAmountsUpdate(EssentializerAmountsUpdate message);
 }
