@@ -19,11 +19,10 @@ public class TickEventWandControl
 {
     public static TickEventWandControl instance;
 
-    ItemStack itemInUse = null;
-    int slotInUse;
-    int itemInUseCount;
-
-    StringBuilder sequence = new StringBuilder();
+    public StringBuilder sequence = new StringBuilder();
+    public ItemStack itemInUse = null;
+    public int slotInUse;
+    public int itemInUseCount;
 
     final KeyBindingInterceptor[] interceptKeys = new KeyBindingInterceptor[8];
 

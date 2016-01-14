@@ -1,4 +1,4 @@
-package gigaherz.elementsofpower.client;
+package gigaherz.elementsofpower.renders;
 
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -11,7 +11,7 @@ import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.pipeline.LightUtil;
 import org.lwjgl.opengl.GL11;
 
-public class GuiStackRenderingHelper
+public class StackRenderingHelper
 {
     public static void renderItemStack(ItemModelMesher mesher, TextureManager renderEngine, int xPos, int yPos, ItemStack stack, int color, boolean rotate3DItem)
     {

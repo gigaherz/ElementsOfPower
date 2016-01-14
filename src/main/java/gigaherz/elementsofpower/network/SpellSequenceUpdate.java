@@ -25,7 +25,7 @@ public class SpellSequenceUpdate
     }
 
     public int dimension;
-    public EntityPlayer entity;
+    public int entityId;
     public int slotNumber;
 
     public ChangeMode changeMode;
@@ -39,7 +39,7 @@ public class SpellSequenceUpdate
     public SpellSequenceUpdate(ChangeMode mode, EntityPlayer entity, int slotNumber, String sequence)
     {
         changeMode = mode;
-        this.entity = entity;
+        this.entityId = entity.getEntityId();
         this.dimension = entity.dimension;
         this.sequence = sequence;
         this.slotNumber = slotNumber;
@@ -49,8 +49,9 @@ public class SpellSequenceUpdate
     public void fromBytes(ByteBuf buf)
     {
         dimension = buf.readInt();
-        changeMode = ChangeMode.values[buf.readInt()];
-        entity = (EntityPlayer) MinecraftServer.getServer().worldServerForDimension(dimension).getEntityByID(buf.readInt());
+        int r = buf.readInt();
+        changeMode = ChangeMode.values[r];
+        entityId = buf.readInt();
         slotNumber = buf.readByte();
         sequence = ByteBufUtils.readUTF8String(buf);
         if (sequence.length() == 0)
@@ -62,10 +63,9 @@ public class SpellSequenceUpdate
     @Override
     public void toBytes(ByteBuf buf)
     {
-
         buf.writeInt(dimension);
         buf.writeInt(changeMode.ordinal());
-        buf.writeInt(entity.getEntityId());
+        buf.writeInt(entityId);
         buf.writeByte(slotNumber);
         if (sequence != null)
         {
@@ -83,19 +83,19 @@ public class SpellSequenceUpdate
         public IMessage onMessage(SpellSequenceUpdate message, MessageContext ctx)
         {
             final SpellSequenceUpdate msg = message;
+            final WorldServer ws = MinecraftServer.getServer().worldServerForDimension(message.dimension);
 
-            WorldServer ws = (WorldServer) message.entity.worldObj;
             ws.addScheduledTask(() -> {
+                EntityPlayer player = (EntityPlayer) ws.getEntityByID(message.entityId);
 
-                ItemStack stack = msg.entity.inventory.mainInventory[msg.slotNumber];
+                ItemStack stack = player.inventory.mainInventory[msg.slotNumber];
 
                 if (stack != null && stack.getItem() instanceof ItemWand)
                 {
                     ItemWand wand = (ItemWand) stack.getItem();
-                    wand.processSequenceUpdate(msg, stack);
+                    wand.processSequenceUpdate(msg, stack, player);
                 }
             });
-
 
             return null; // no response in this case
         }

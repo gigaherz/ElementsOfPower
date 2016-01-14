@@ -43,7 +43,7 @@ public class ClientProxy implements ISideProxy
 
     public void registerClientEvents()
     {
-        MinecraftForge.EVENT_BUS.register(new GuiOverlayMagicContainer());
+        MinecraftForge.EVENT_BUS.register(new MagicContainerOverlay());
         MinecraftForge.EVENT_BUS.register(new MagicTooltips());
         MinecraftForge.EVENT_BUS.register(new PlayerBeamRenderOverlay());
         MinecraftForge.EVENT_BUS.register(new TickEventWandControl());

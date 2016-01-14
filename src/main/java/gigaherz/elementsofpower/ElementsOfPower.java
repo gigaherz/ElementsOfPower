@@ -236,7 +236,6 @@ public class ElementsOfPower
         logger.info("Registering extended entity properties...");
 
         SpellcastEntityData.register();
-        //DiscoveryEntityData.register(); // NOT USED YET
         DiscoveryHandler.init();
 
         logger.info("Performing pre-initialization proxy tasks...");

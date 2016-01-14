@@ -23,7 +23,14 @@ public class PlayerBeamRenderOverlay
         EntityPlayer player = Minecraft.getMinecraft().thePlayer;
         RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
 
-        drawSpellsOnPlayer(player, renderManager, 0, player.getEyeHeight(), 0, event.partialTicks);
+        float ppitch = player.prevRotationPitch + event.partialTicks * (player.rotationPitch - player.prevRotationPitch);
+        float pyaw = player.prevRotationYawHead + event.partialTicks * (player.rotationYawHead - player.prevRotationYawHead);
+
+        Vec3 off = new Vec3(0, -0.15, 0);
+        off = off.rotatePitch(-(float) Math.toRadians(ppitch));
+        off = off.rotateYaw(-(float) Math.toRadians(pyaw));
+
+        drawSpellsOnPlayer(player, renderManager, 0, player.getEyeHeight(), 0, event.partialTicks, off);
     }
 
     @SubscribeEvent
@@ -32,13 +39,32 @@ public class PlayerBeamRenderOverlay
         if (event.entityPlayer == Minecraft.getMinecraft().thePlayer)
             return;
 
+        boolean isSelf = event.entityPlayer.getEntityId() == Minecraft.getMinecraft().thePlayer.getEntityId();
         EntityPlayer player = event.entityPlayer;
         RenderManager renderManager = event.renderer.getRenderManager();
 
-        drawSpellsOnPlayer(player, renderManager, event.x, event.y + player.getEyeHeight(), event.z, event.partialRenderTick);
+        float ppitch = player.prevRotationPitch + event.partialRenderTick * (player.rotationPitch - player.prevRotationPitch);
+        float pyaw = player.prevRotationYawHead + event.partialRenderTick * (player.rotationYawHead - player.prevRotationYawHead);
+
+        Vec3 off;
+        if (isSelf)
+        {
+            off = new Vec3(0, -0.15, 0);
+            off = off.rotatePitch(-(float) Math.toRadians(ppitch));
+            off = off.rotateYaw(-(float) Math.toRadians(pyaw));
+        }
+        else
+        {
+            off = new Vec3(0, 0, 0.4);
+            off = off.rotatePitch(-(float) Math.toRadians(ppitch));
+            off = off.rotateYaw(-(float) Math.toRadians(pyaw));
+            off = off.add(new Vec3(0, -0.25, 0));
+        }
+
+        drawSpellsOnPlayer(player, renderManager, event.x, event.y + player.getEyeHeight(), event.z, event.partialRenderTick, off);
     }
 
-    public void drawSpellsOnPlayer(EntityPlayer player, RenderManager renderManager, double x, double y, double z, float partialTicks)
+    public void drawSpellsOnPlayer(EntityPlayer player, RenderManager renderManager, double x, double y, double z, float partialTicks, Vec3 off)
     {
         SpellcastEntityData data = SpellcastEntityData.get(player);
 
@@ -52,13 +78,6 @@ public class PlayerBeamRenderOverlay
         int beam_color = data.getCurrentCasting().getEffect().getColor();
         float scale = 0.15f * data.getCurrentCasting().getEffect().getScale();
         float maxDistance = 10.0f;
-
-        float ppitch = player.prevRotationPitch + partialTicks * (player.rotationPitch - player.prevRotationPitch);
-        float pyaw = player.prevRotationYawHead + partialTicks * (player.rotationYawHead - player.prevRotationYawHead);
-
-        Vec3 off = new Vec3(0, -0.15, 0);
-        off = off.rotatePitch(-(float) Math.toRadians(ppitch));
-        off = off.rotateYaw(-(float) Math.toRadians(pyaw));
 
         Vec3 start = player.getPositionEyes(partialTicks);
         Vec3 dir = player.getLook(partialTicks);
@@ -94,23 +113,43 @@ public class PlayerBeamRenderOverlay
         for (int i = 0; i <= 4; i++)
         {
             float tt = (i + (player.ticksExisted % 10 + partialTicks) / 11.0f) / 5.0f;
-            float tscale = scale * 1.2f * (1 + 0.5f * tt);
+            float scale_base = scale * (1 + 0.5f * tt);
+            float scale_start = scale_base * 0.3f;
+            float scale_beam = scale_base * 0.3f;
+            float scale_end = scale_base * 1.2f;
 
             int alpha = 255 - (i == 0 ? 0 : (int) (tt * 255));
             int color = (alpha << 24) | beam_color;
 
-            GlStateManager.pushMatrix();
-            GlStateManager.translate(
-                    (float) (x + off.xCoord),
-                    (float) (y + off.yCoord),
-                    (float) (z + off.zCoord));
-            GlStateManager.rotate(-(float) Math.toDegrees(beamYaw), 0, 1, 0);
-            GlStateManager.rotate((float) Math.toDegrees(beamPitch) - 90, 0, 0, 1);
-            GlStateManager.scale(tscale * 0.25, distance, tscale * 0.25);
+            {
+                GlStateManager.pushMatrix();
+                GlStateManager.translate(
+                        (float) (x + off.xCoord),
+                        (float) (y + off.yCoord),
+                        (float) (z + off.zCoord));
+                GlStateManager.rotate(-(float) Math.toDegrees(beamYaw), 0, 1, 0);
+                GlStateManager.rotate((float) Math.toDegrees(beamPitch) - 90, 0, 0, 1);
+                GlStateManager.scale(scale_start, scale_start, scale_start);
 
-            RenderingStuffs.renderModel(modelCyl, color);
+                RenderingStuffs.renderModel(modelSphere, color);
 
-            GlStateManager.popMatrix();
+                GlStateManager.popMatrix();
+            }
+
+            {
+                GlStateManager.pushMatrix();
+                GlStateManager.translate(
+                        (float) (x + off.xCoord),
+                        (float) (y + off.yCoord),
+                        (float) (z + off.zCoord));
+                GlStateManager.rotate(-(float) Math.toDegrees(beamYaw), 0, 1, 0);
+                GlStateManager.rotate((float) Math.toDegrees(beamPitch) - 90, 0, 0, 1);
+                GlStateManager.scale(scale_beam, distance, scale_beam);
+
+                RenderingStuffs.renderModel(modelCyl, color);
+
+                GlStateManager.popMatrix();
+            }
 
             if (mop != null && mop.hitVec != null)
             {
@@ -121,7 +160,7 @@ public class PlayerBeamRenderOverlay
                         (float) (z + beam0.zCoord));
                 GlStateManager.rotate(-(float) Math.toDegrees(beamYaw), 0, 1, 0);
                 GlStateManager.rotate((float) Math.toDegrees(beamPitch) - 90, 0, 0, 1);
-                GlStateManager.scale(tscale, tscale, tscale);
+                GlStateManager.scale(scale_end, scale_end, scale_end);
 
                 RenderingStuffs.renderModel(modelSphere, color);
 

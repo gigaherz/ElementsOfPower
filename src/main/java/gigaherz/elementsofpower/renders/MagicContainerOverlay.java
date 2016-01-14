@@ -1,6 +1,7 @@
-package gigaherz.elementsofpower.client;
+package gigaherz.elementsofpower.renders;
 
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.client.TickEventWandControl;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.database.MagicDatabase;
 import gigaherz.elementsofpower.database.SpellManager;
@@ -17,7 +18,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-public class GuiOverlayMagicContainer extends Gui
+public class MagicContainerOverlay extends Gui
 {
     @SubscribeEvent
     public void onRenderGameOverlay(RenderGameOverlayEvent.Post event)
@@ -58,7 +59,7 @@ public class GuiOverlayMagicContainer extends Gui
 
             ItemStack stack = ElementsOfPower.magicOrb.getStack((int) amounts.amounts[i], i);
 
-            GuiStackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yPos, stack, alpha, false);
+            StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yPos, stack, alpha, false);
 
             String formatted = MagicDatabase.isInfiniteContainer(heldItem) ? "\u221E" : ElementsOfPower.prettyNumberFormatter.format(amounts.amounts[i]);
             this.drawCenteredString(font, formatted, xPos + 8, yPos + 11, 0xFFC0C0C0);
@@ -84,7 +85,7 @@ public class GuiOverlayMagicContainer extends Gui
 
                     ItemStack stack = ElementsOfPower.magicOrb.getStack(1, i);
 
-                    GuiStackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yPos, stack, 0xFFFFFFFF, false);
+                    StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yPos, stack, 0xFFFFFFFF, false);
 
                     xPos += 6;
                 }
@@ -102,7 +103,7 @@ public class GuiOverlayMagicContainer extends Gui
 
                 ItemStack stack = ElementsOfPower.magicOrb.getStack(1, i);
 
-                GuiStackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yPos, stack, 0xFFFFFFFF, false);
+                StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yPos, stack, 0xFFFFFFFF, false);
 
                 xPos += 6;
             }

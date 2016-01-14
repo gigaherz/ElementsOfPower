@@ -136,9 +136,13 @@ public class ItemWand extends ItemMagicContainer
 
     public boolean onSpellCommit(ItemStack stack, EntityPlayer player, String sequence)
     {
-        if (sequence == null)
-            sequence = stack.getTagCompound().getString(SPELL_SEQUENCE_TAG);
+        boolean updateSequenceOnWand = true;
 
+        if (sequence == null)
+        {
+            updateSequenceOnWand = false;
+            sequence = stack.getTagCompound().getString(SPELL_SEQUENCE_TAG);
+        }
 
         if (sequence.length() == 0)
             return false;
@@ -170,10 +174,10 @@ public class ItemWand extends ItemMagicContainer
         MagicDatabase.setContainedMagic(stack, amounts);
 
         DiscoveryHandler.instance.onSpellcast(player, cast);
-        return true;
+        return updateSequenceOnWand;
     }
 
-    public void processSequenceUpdate(SpellSequenceUpdate message, ItemStack stack)
+    public void processSequenceUpdate(SpellSequenceUpdate message, ItemStack stack, EntityPlayer player)
     {
         if (message.changeMode == SpellSequenceUpdate.ChangeMode.COMMIT)
         {
@@ -187,8 +191,10 @@ public class ItemWand extends ItemMagicContainer
                 stack.setTagCompound(nbt);
             }
 
-            if (onSpellCommit(stack, message.entity, message.sequence))
+            if (onSpellCommit(stack, player, message.sequence))
+            {
                 nbt.setString(SPELL_SEQUENCE_TAG, message.sequence);
+            }
         }
     }
 }
