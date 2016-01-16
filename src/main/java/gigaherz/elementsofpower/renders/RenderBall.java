@@ -31,7 +31,7 @@ public class RenderBall extends Render<EntityBall>
 
         bindTexture(TextureMap.locationBlocksTexture);
 
-        int ball_color = entity.getSpellcast().getEffect().getColor();
+        int ball_color = entity.getSpellcast().getColor();
         for (int i = 0; i <= 4; i++)
         {
             float tt = (i + (entity.ticksExisted % 10 + partialTicks) / 11.0f) / 5.0f;

@@ -1,70 +1,44 @@
-package gigaherz.elementsofpower.spells.cast.balls;
+package gigaherz.elementsofpower.spells.cast.shapes;
 
-import gigaherz.elementsofpower.entities.EntityBall;
 import gigaherz.elementsofpower.spells.SpellBall;
-import gigaherz.elementsofpower.spells.cast.ISpellcastBall;
 import gigaherz.elementsofpower.spells.cast.Spellcast;
+import gigaherz.elementsofpower.spells.cast.effects.SpellEffect;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
 
 import java.util.Random;
 
-public abstract class BallBase extends Spellcast<SpellBall> implements ISpellcastBall<SpellBall>
+public class SpellcastBall extends Spellcast<SpellBall>
 {
     protected Random rand;
-    protected EntityBall projectile;
 
-    public BallBase(SpellBall parent)
+    public SpellcastBall(SpellBall parent, SpellEffect effect)
     {
-        super(parent);
+        super(parent, effect);
     }
 
-    @Override
-    public void setProjectile(EntityBall entityBall)
-    {
-        projectile = entityBall;
-    }
-
-    protected float getRandomForParticle()
+    public float getRandomForParticle()
     {
         return (rand.nextFloat() - 0.5f) * spell.getPower() / 8;
     }
 
-    protected void processDirectHit(Entity entityHit)
-    {
-    }
-
-    protected void processEntitiesAroundBefore(Vec3 hitVec)
-    {
-    }
-
-    protected void processEntitiesAroundAfter(Vec3 hitVec)
-    {
-    }
-
-    protected abstract void processBlockWithinRadius(BlockPos blockPos, IBlockState currentState, int layers);
-
-    protected abstract void spawnBallParticles(MovingObjectPosition mop);
-
-    @Override
     public void onImpact(MovingObjectPosition mop, Random rand)
     {
         this.rand = rand;
 
-        int force = spell.getPower();
-
         if (mop.entityHit != null)
         {
-            processDirectHit(mop.entityHit);
+            effect.processDirectHit(this, mop.entityHit);
         }
 
-        spawnBallParticles(mop);
+        effect.spawnBallParticles(this, mop);
 
-        processEntitiesAroundBefore(mop.hitVec);
+        if (!effect.processEntitiesAroundBefore(this, mop.hitVec))
+            return;
 
+        int force = getDamageForce();
         if (!world.isRemote && force > 0)
         {
             BlockPos bp = mop.getBlockPos();
@@ -103,12 +77,12 @@ public abstract class BallBase extends Spellcast<SpellBall> implements ISpellcas
 
                         IBlockState currentState = world.getBlockState(np);
 
-                        processBlockWithinRadius(np, currentState, layers);
+                        effect.processBlockWithinRadius(this, np, currentState, layers);
                     }
                 }
             }
         }
 
-        processEntitiesAroundAfter(mop.hitVec);
+        effect.processEntitiesAroundAfter(this, mop.hitVec);
     }
 }

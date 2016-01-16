@@ -5,7 +5,7 @@ import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.essentializer.BlockEssentializer;
 import gigaherz.elementsofpower.items.ItemRing;
 import gigaherz.elementsofpower.items.ItemWand;
-import gigaherz.elementsofpower.spells.cast.ISpellcast;
+import gigaherz.elementsofpower.spells.cast.Spellcast;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -116,7 +116,7 @@ public class DiscoveryHandler
         checkItem(event.player, event.crafting);
     }
 
-    public void onSpellcast(EntityPlayer player, ISpellcast spell)
+    public void onSpellcast(EntityPlayer player, Spellcast spell)
     {
         player.addStat(firstSpell, 1);
     }

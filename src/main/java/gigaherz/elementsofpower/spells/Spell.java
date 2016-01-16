@@ -2,62 +2,44 @@ package gigaherz.elementsofpower.spells;
 
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.database.SpellManager;
-import gigaherz.elementsofpower.spells.cast.ISpellcast;
+import gigaherz.elementsofpower.spells.cast.Spellcast;
+import gigaherz.elementsofpower.spells.cast.effects.SpellEffect;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
-public abstract class SpellBase<Sub extends SpellBase, Effect extends ISpellcast>
-        implements ISpellEffect
+public abstract class Spell<S extends Spell, C extends Spellcast>
 {
     protected MagicAmounts spellCost = new MagicAmounts();
     protected StringBuilder spellSequence = new StringBuilder();
     protected String finalSequence = null;
-    protected int color = 0xFFFFFF;
     protected int power = 0;
 
-    @Override
-    public int getColor()
+    public final SpellEffect effect;
+
+    protected Spell(SpellEffect effect)
     {
-        return color;
+        this.effect = effect;
     }
 
-    @Override
     public float getScale()
     {
         return 1 + 0.25f * power;
     }
 
-    @Override
-    public boolean isBeam()
-    {
-        return false;
-    }
-
-    @Override
-    public int getDuration()
-    {
-        return 0;
-    }
-
-    @Override
     public int getPower()
     {
         return power;
     }
 
-    @Override
-    public abstract Effect getNewCast();
+    public abstract C getNewCast();
 
-    @Override
-    public abstract ISpellcast castSpell(ItemStack stack, EntityPlayer player);
+    public abstract C castSpell(ItemStack stack, EntityPlayer player);
 
-    @Override
     public MagicAmounts getSpellCost()
     {
         return spellCost;
     }
 
-    @Override
     public String getSequence()
     {
         if (finalSequence == null)
@@ -69,24 +51,18 @@ public abstract class SpellBase<Sub extends SpellBase, Effect extends ISpellcast
     }
 
     @SuppressWarnings("unchecked")
-    protected Sub self()
+    protected S self()
     {
-        return (Sub) this;
+        return (S) this;
     }
 
-    public Sub color(int color)
-    {
-        this.color = color;
-        return self();
-    }
-
-    public Sub power(int power)
+    public S power(int power)
     {
         this.power = power;
         return self();
     }
 
-    protected Sub amount(int which)
+    public S amount(int which)
     {
         if (spellSequence == null)
         {
@@ -98,7 +74,7 @@ public abstract class SpellBase<Sub extends SpellBase, Effect extends ISpellcast
         return self();
     }
 
-    protected Sub amountMultiple(int which, int count)
+    public S amountMultiple(int which, int count)
     {
         while (count > 0)
         {
@@ -108,7 +84,7 @@ public abstract class SpellBase<Sub extends SpellBase, Effect extends ISpellcast
         return self();
     }
 
-    public Sub cost(float totalCost)
+    public S cost(float totalCost)
     {
         float totalAmounts = spellCost.getTotalMagic();
         for (int i = 0; i < spellCost.amounts.length; i++)
@@ -118,82 +94,82 @@ public abstract class SpellBase<Sub extends SpellBase, Effect extends ISpellcast
         return self();
     }
 
-    public Sub fire()
+    public S fire()
     {
         return amount(0);
     }
 
-    public Sub water()
+    public S water()
     {
         return amount(1);
     }
 
-    public Sub air()
+    public S air()
     {
         return amount(2);
     }
 
-    public Sub earth()
+    public S earth()
     {
         return amount(3);
     }
 
-    public Sub light()
+    public S light()
     {
         return amount(4);
     }
 
-    public Sub darkness()
+    public S darkness()
     {
         return amount(5);
     }
 
-    public Sub life()
+    public S life()
     {
         return amount(6);
     }
 
-    public Sub death()
+    public S death()
     {
         return amount(7);
     }
 
-    public Sub fire(int count)
+    public S fire(int count)
     {
         return amountMultiple(0, count);
     }
 
-    public Sub water(int count)
+    public S water(int count)
     {
         return amountMultiple(1, count);
     }
 
-    public Sub air(int count)
+    public S air(int count)
     {
         return amountMultiple(2, count);
     }
 
-    public Sub earth(int count)
+    public S earth(int count)
     {
         return amountMultiple(3, count);
     }
 
-    public Sub light(int count)
+    public S light(int count)
     {
         return amountMultiple(4, count);
     }
 
-    public Sub darkness(int count)
+    public S darkness(int count)
     {
         return amountMultiple(5, count);
     }
 
-    public Sub life(int count)
+    public S life(int count)
     {
         return amountMultiple(6, count);
     }
 
-    public Sub death(int count)
+    public S death(int count)
     {
         return amountMultiple(7, count);
     }

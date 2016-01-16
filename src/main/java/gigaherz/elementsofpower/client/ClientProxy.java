@@ -4,7 +4,6 @@ import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.ISideProxy;
 import gigaherz.elementsofpower.entities.EntityBall;
 import gigaherz.elementsofpower.entities.EntityEssence;
-import gigaherz.elementsofpower.entities.EntityTeleporter;
 import gigaherz.elementsofpower.entitydata.SpellcastEntityData;
 import gigaherz.elementsofpower.essentializer.ContainerEssentializer;
 import gigaherz.elementsofpower.essentializer.TileEssentializer;
@@ -14,6 +13,7 @@ import gigaherz.elementsofpower.renders.*;
 import gigaherz.elementsofpower.util.Used;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -45,7 +45,7 @@ public class ClientProxy implements ISideProxy
     {
         MinecraftForge.EVENT_BUS.register(new MagicContainerOverlay());
         MinecraftForge.EVENT_BUS.register(new MagicTooltips());
-        MinecraftForge.EVENT_BUS.register(new PlayerBeamRenderOverlay());
+        MinecraftForge.EVENT_BUS.register(new SpellRenderOverlay());
         MinecraftForge.EVENT_BUS.register(new TickEventWandControl());
     }
 
@@ -147,7 +147,6 @@ public class ClientProxy implements ISideProxy
     {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEssentializer.class, new RenderEssentializer());
 
-        RenderingRegistry.registerEntityRenderingHandler(EntityTeleporter.class, RenderBall::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityBall.class, RenderBall::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityEssence.class, RenderEssence::new);
 

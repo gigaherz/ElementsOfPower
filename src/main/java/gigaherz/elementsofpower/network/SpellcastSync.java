@@ -2,8 +2,8 @@ package gigaherz.elementsofpower.network;
 
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.SpellManager;
-import gigaherz.elementsofpower.spells.ISpellEffect;
-import gigaherz.elementsofpower.spells.cast.ISpellcast;
+import gigaherz.elementsofpower.spells.Spell;
+import gigaherz.elementsofpower.spells.cast.Spellcast;
 import gigaherz.elementsofpower.util.Used;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -27,14 +27,14 @@ public class SpellcastSync
 
     public int casterID;
     public ChangeMode changeMode;
-    public ISpellcast spellcast;
+    public Spellcast spellcast;
 
     @Used
     public SpellcastSync()
     {
     }
 
-    public SpellcastSync(ChangeMode mode, ISpellcast cast)
+    public SpellcastSync(ChangeMode mode, Spellcast cast)
     {
         changeMode = mode;
         spellcast = cast;
@@ -50,7 +50,7 @@ public class SpellcastSync
         NBTTagCompound tagData = ByteBufUtils.readTag(buf);
         String sequence = tagData.getString("sequence");
 
-        ISpellEffect ef = SpellManager.findSpell(sequence);
+        Spell ef = SpellManager.findSpell(sequence);
 
         spellcast = ef.getNewCast();
         spellcast.readFromNBT(tagData);

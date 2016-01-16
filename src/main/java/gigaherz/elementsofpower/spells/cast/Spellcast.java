@@ -1,36 +1,45 @@
 package gigaherz.elementsofpower.spells.cast;
 
-import gigaherz.elementsofpower.spells.SpellBase;
+import gigaherz.elementsofpower.spells.Spell;
+import gigaherz.elementsofpower.spells.cast.effects.SpellEffect;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.world.World;
 
-public class Spellcast<T extends SpellBase> implements ISpellcast<T>
+public class Spellcast<T extends Spell>
 {
-    protected World world;
-    protected EntityPlayer player;
+    protected SpellEffect effect;
+
+    public World world;
+    public EntityPlayer player;
     protected T spell;
 
-    public Spellcast(T parent)
+    public Entity projectile;
+
+    public Spellcast(T parent, SpellEffect effect)
     {
         spell = parent;
+        this.effect = effect;
     }
 
+    public void setProjectile(Entity entity)
+    {
+        projectile = entity;
+    }
 
-    @Override
     public float getRemainingCastTime()
     {
         return 0;
     }
 
-    @Override
     public void init(World world, EntityPlayer player)
     {
         this.world = world;
         this.player = player;
     }
 
-    @Override
     public T getEffect()
     {
         return spell;
@@ -38,27 +47,38 @@ public class Spellcast<T extends SpellBase> implements ISpellcast<T>
 
     public int getDamageForce()
     {
-        return spell.getPower();
+        return Math.max(0, spell.getPower() - effect.getForceModifier(this));
     }
 
-    @Override
     public void update()
     {
     }
 
-    @Override
     public void readFromNBT(NBTTagCompound tagData)
     {
     }
 
-    @Override
     public void writeToNBT(NBTTagCompound tagData)
     {
     }
 
-    @Override
     public EntityPlayer getCastingPlayer()
     {
         return player;
+    }
+
+    public int getColor()
+    {
+        return effect.getColor(this);
+    }
+
+    public float getRandomForParticle()
+    {
+        return 0;
+    }
+
+    public void spawnRandomParticle(EnumParticleTypes type, double x, double y, double z)
+    {
+        world.spawnParticle(type, x, y, z, getRandomForParticle(), getRandomForParticle(), getRandomForParticle());
     }
 }

@@ -1,82 +1,27 @@
-package gigaherz.elementsofpower.renders;
+package gigaherz.elementsofpower.renders.spellrender;
 
-import gigaherz.elementsofpower.entitydata.SpellcastEntityData;
-import net.minecraft.client.Minecraft;
+import gigaherz.elementsofpower.renders.RenderingStuffs;
+import gigaherz.elementsofpower.spells.cast.shapes.SpellcastBeam;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
-import net.minecraftforge.client.event.RenderPlayerEvent;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
 
-public class PlayerBeamRenderOverlay
+public class RenderBeam extends RenderSpell<SpellcastBeam>
 {
 
-    @SubscribeEvent
-    public void renderFirstPerson(RenderWorldLastEvent event)
+    @Override
+    public void doRender(SpellcastBeam spellcast, EntityPlayer player, RenderManager renderManager, double x, double y, double z, float partialTicks, Vec3 offset)
     {
-        EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-        RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
-
-        float ppitch = player.prevRotationPitch + event.partialTicks * (player.rotationPitch - player.prevRotationPitch);
-        float pyaw = player.prevRotationYawHead + event.partialTicks * (player.rotationYawHead - player.prevRotationYawHead);
-
-        Vec3 off = new Vec3(0, -0.15, 0);
-        off = off.rotatePitch(-(float) Math.toRadians(ppitch));
-        off = off.rotateYaw(-(float) Math.toRadians(pyaw));
-
-        drawSpellsOnPlayer(player, renderManager, 0, player.getEyeHeight(), 0, event.partialTicks, off);
-    }
-
-    @SubscribeEvent
-    public void playerRenderPost(RenderPlayerEvent.Post event)
-    {
-        if (event.entityPlayer == Minecraft.getMinecraft().thePlayer)
-            return;
-
-        boolean isSelf = event.entityPlayer.getEntityId() == Minecraft.getMinecraft().thePlayer.getEntityId();
-        EntityPlayer player = event.entityPlayer;
-        RenderManager renderManager = event.renderer.getRenderManager();
-
-        float ppitch = player.prevRotationPitch + event.partialRenderTick * (player.rotationPitch - player.prevRotationPitch);
-        float pyaw = player.prevRotationYawHead + event.partialRenderTick * (player.rotationYawHead - player.prevRotationYawHead);
-
-        Vec3 off;
-        if (isSelf)
-        {
-            off = new Vec3(0, -0.15, 0);
-            off = off.rotatePitch(-(float) Math.toRadians(ppitch));
-            off = off.rotateYaw(-(float) Math.toRadians(pyaw));
-        }
-        else
-        {
-            off = new Vec3(0, 0, 0.4);
-            off = off.rotatePitch(-(float) Math.toRadians(ppitch));
-            off = off.rotateYaw(-(float) Math.toRadians(pyaw));
-            off = off.add(new Vec3(0, -0.25, 0));
-        }
-
-        drawSpellsOnPlayer(player, renderManager, event.x, event.y + player.getEyeHeight(), event.z, event.partialRenderTick, off);
-    }
-
-    public void drawSpellsOnPlayer(EntityPlayer player, RenderManager renderManager, double x, double y, double z, float partialTicks, Vec3 off)
-    {
-        SpellcastEntityData data = SpellcastEntityData.get(player);
-
-        // TODO: add special effects for other spell tipes that I may add in the future
-        if (!data.isCastingBeam())
-            return;
-
         IFlexibleBakedModel modelSphere = RenderingStuffs.loadModel("elementsofpower:entity/sphere.obj");
         IFlexibleBakedModel modelCyl = RenderingStuffs.loadModel("elementsofpower:entity/cylinder.obj");
 
-        int beam_color = data.getCurrentCasting().getEffect().getColor();
-        float scale = 0.15f * data.getCurrentCasting().getEffect().getScale();
+        int beam_color = spellcast.getColor();
+        float scale = 0.15f * spellcast.getEffect().getScale();
         float maxDistance = 10.0f;
 
         Vec3 start = player.getPositionEyes(partialTicks);
@@ -89,7 +34,7 @@ public class PlayerBeamRenderOverlay
 
         Vec3 beam0 = end.subtract(start);
 
-        start = start.add(off);
+        start = start.add(offset);
 
         Vec3 beam = end.subtract(start);
         dir = beam.normalize();
@@ -124,9 +69,9 @@ public class PlayerBeamRenderOverlay
             {
                 GlStateManager.pushMatrix();
                 GlStateManager.translate(
-                        (float) (x + off.xCoord),
-                        (float) (y + off.yCoord),
-                        (float) (z + off.zCoord));
+                        (float) (x + offset.xCoord),
+                        (float) (y + offset.yCoord),
+                        (float) (z + offset.zCoord));
                 GlStateManager.rotate(-(float) Math.toDegrees(beamYaw), 0, 1, 0);
                 GlStateManager.rotate((float) Math.toDegrees(beamPitch) - 90, 0, 0, 1);
                 GlStateManager.scale(scale_start, scale_start, scale_start);
@@ -139,9 +84,9 @@ public class PlayerBeamRenderOverlay
             {
                 GlStateManager.pushMatrix();
                 GlStateManager.translate(
-                        (float) (x + off.xCoord),
-                        (float) (y + off.yCoord),
-                        (float) (z + off.zCoord));
+                        (float) (x + offset.xCoord),
+                        (float) (y + offset.yCoord),
+                        (float) (z + offset.zCoord));
                 GlStateManager.rotate(-(float) Math.toDegrees(beamYaw), 0, 1, 0);
                 GlStateManager.rotate((float) Math.toDegrees(beamPitch) - 90, 0, 0, 1);
                 GlStateManager.scale(scale_beam, distance, scale_beam);

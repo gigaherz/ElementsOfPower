@@ -1,6 +1,5 @@
 package gigaherz.elementsofpower.spells;
 
-import gigaherz.elementsofpower.spells.cast.ISpellcast;
 import gigaherz.elementsofpower.spells.cast.Spellcast;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -14,8 +13,13 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 public class SpellResurrection
-        extends SpellBase
+        extends Spell
 {
+    public SpellResurrection()
+    {
+        super(null);
+    }
+
     public MovingObjectPosition rayTracePlayer(Entity p, double blockReachDistance)
     {
         Vec3 eyePos = new Vec3(p.posX, p.posY + p.getEyeHeight(), p.posZ);
@@ -25,15 +29,15 @@ public class SpellResurrection
     }
 
     @Override
-    public ISpellcast getNewCast()
+    public Spellcast getNewCast()
     {
-        return new Spellcast<SpellResurrection>(this)
+        return new Spellcast<SpellResurrection>(this, null)
         {
         };
     }
 
     @Override
-    public ISpellcast castSpell(ItemStack stack, EntityPlayer player)
+    public Spellcast castSpell(ItemStack stack, EntityPlayer player)
     {
         World world = player.worldObj;
         MovingObjectPosition pos = rayTracePlayer(player, 10);

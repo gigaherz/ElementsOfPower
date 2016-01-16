@@ -6,7 +6,6 @@ import gigaherz.elementsofpower.blocks.BlockDust;
 import gigaherz.elementsofpower.database.MagicDatabase;
 import gigaherz.elementsofpower.entities.EntityBall;
 import gigaherz.elementsofpower.entities.EntityEssence;
-import gigaherz.elementsofpower.entities.EntityTeleporter;
 import gigaherz.elementsofpower.entitydata.SpellcastEntityData;
 import gigaherz.elementsofpower.essentializer.BlockEssentializer;
 import gigaherz.elementsofpower.essentializer.TileEssentializer;
@@ -62,6 +61,14 @@ public class ElementsOfPower
 
     public static final String CHANNEL = "ElementsOfPower";
 
+    // The instance of your mod that Forge uses.
+    @Mod.Instance(value = ElementsOfPower.MODID)
+    public static ElementsOfPower instance;
+
+    // Says where the client and server 'proxy' code is loaded.
+    @SidedProxy(clientSide = "gigaherz.elementsofpower.client.ClientProxy", serverSide = "gigaherz.elementsofpower.server.ServerProxy")
+    public static ISideProxy proxy;
+
     // Block templates
     public static Block essentializer;
     public static Block dust;
@@ -109,24 +116,17 @@ public class ElementsOfPower
     public static ItemStack life;
     public static ItemStack death;
 
-    // The instance of your mod that Forge uses.
-    @Mod.Instance(value = ElementsOfPower.MODID)
-    public static ElementsOfPower instance;
-
-    // Says where the client and server 'proxy' code is loaded.
-    @SidedProxy(clientSide = "gigaherz.elementsofpower.client.ClientProxy", serverSide = "gigaherz.elementsofpower.server.ServerProxy")
-    public static ISideProxy proxy;
-
+    // Handlers
     public static SimpleNetworkWrapper channel;
 
-    public final static Format prettyNumberFormatter = new DecimalFormat("#.#");
-    public final static Format prettyNumberFormatter2 = new DecimalFormat("#0.0");
-
-    private GuiHandler guiHandler = new GuiHandler();
+    public static GuiHandler guiHandler = new GuiHandler();
 
     public static Logger logger;
     public static Configuration config;
     public static String overrides;
+
+    public final static Format prettyNumberFormatter = new DecimalFormat("#.#");
+    public final static Format prettyNumberFormatter2 = new DecimalFormat("#0.0");
 
     public static CreativeTabs tabMagic = new CreativeTabs(MODID)
     {
@@ -255,7 +255,6 @@ public class ElementsOfPower
 
         int entityId = 1;
         EntityRegistry.registerModEntity(EntityBall.class, "Airball", entityId++, this, 80, 3, true);
-        EntityRegistry.registerModEntity(EntityTeleporter.class, "Teleporter", entityId++, this, 80, 3, true);
         EntityRegistry.registerModEntity(EntityEssence.class, "Essence", entityId++, this, 80, 3, true, 0x0000FF, 0xFFFF00);
         logger.debug("Next entity id: " + entityId);
 

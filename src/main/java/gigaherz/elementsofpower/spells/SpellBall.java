@@ -1,52 +1,30 @@
 package gigaherz.elementsofpower.spells;
 
 import gigaherz.elementsofpower.entities.EntityBall;
-import gigaherz.elementsofpower.spells.cast.ISpellcast;
-import gigaherz.elementsofpower.spells.cast.balls.BallBase;
-import net.minecraft.crash.CrashReport;
+import gigaherz.elementsofpower.spells.cast.effects.SpellEffect;
+import gigaherz.elementsofpower.spells.cast.shapes.SpellcastBall;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ReportedException;
 import net.minecraft.world.World;
 
-import java.lang.reflect.InvocationTargetException;
-
-public class SpellBall
-        extends SpellBase<SpellBall, BallBase>
+public class SpellBall extends Spell<SpellBall, SpellcastBall>
 {
-    boolean spawnSources = false;
-
-    Class<? extends BallBase> effect;
-
-    public SpellBall spawnSourceBlocks()
+    public SpellBall(SpellEffect effect)
     {
-        spawnSources = true;
-        return this;
-    }
-
-    public SpellBall(Class<? extends BallBase> effect)
-    {
-        this.effect = effect;
+        super(effect);
     }
 
     @Override
-    public BallBase getNewCast()
+    public SpellcastBall getNewCast()
     {
-        try
-        {
-            return effect.getConstructor(SpellBall.class).newInstance(this);
-        }
-        catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e)
-        {
-            throw new ReportedException(new CrashReport("Error creating spellcast instance", e));
-        }
+        return new SpellcastBall(this, effect);
     }
 
     @Override
-    public ISpellcast castSpell(ItemStack stack, EntityPlayer player)
+    public SpellcastBall castSpell(ItemStack stack, EntityPlayer player)
     {
         World world = player.worldObj;
-        BallBase cast = getNewCast();
+        SpellcastBall cast = getNewCast();
         EntityBall entity = new EntityBall(world, cast, player);
 
         if (world.spawnEntityInWorld(entity))

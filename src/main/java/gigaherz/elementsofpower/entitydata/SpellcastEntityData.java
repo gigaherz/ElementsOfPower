@@ -3,10 +3,11 @@ package gigaherz.elementsofpower.entitydata;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.SpellManager;
 import gigaherz.elementsofpower.network.SpellcastSync;
-import gigaherz.elementsofpower.spells.ISpellEffect;
-import gigaherz.elementsofpower.spells.cast.ISpellcast;
+import gigaherz.elementsofpower.spells.Spell;
+import gigaherz.elementsofpower.spells.cast.Spellcast;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
@@ -23,7 +24,7 @@ public class SpellcastEntityData implements IExtendedEntityProperties
 
     EntityPlayer player;
     World world;
-    ISpellcast currentCasting;
+    Spellcast currentCasting;
 
     public static SpellcastEntityData get(EntityPlayer p)
     {
@@ -55,7 +56,7 @@ public class SpellcastEntityData implements IExtendedEntityProperties
             NBTTagCompound cast = (NBTTagCompound) compound.getTag("currentSpell");
             String sequence = cast.getString("sequence");
 
-            ISpellEffect ef = SpellManager.findSpell(sequence);
+            Spell ef = SpellManager.findSpell(sequence);
 
             currentCasting = ef.getNewCast();
             currentCasting.init(world, player);
@@ -70,12 +71,7 @@ public class SpellcastEntityData implements IExtendedEntityProperties
         this.world = world;
     }
 
-    public boolean isCastingBeam()
-    {
-        return currentCasting != null && currentCasting.getEffect().isBeam();
-    }
-
-    public void begin(ISpellcast spell)
+    public void begin(Spellcast spell)
     {
         // If another spell was in progress, interrupt first
         interrupt();
@@ -124,15 +120,36 @@ public class SpellcastEntityData implements IExtendedEntityProperties
         }
     }
 
+    int currentSlot;
+    ItemStack currentItem;
+
     public void updateSpell()
     {
+        boolean shouldCancel = false;
+        int newSlot = player.inventory.currentItem;
+        if(newSlot != currentSlot)
+        {
+            shouldCancel = true;
+            currentSlot = newSlot;
+        }
+        else
+        {
+            if(!ItemStack.areItemsEqual(currentItem, player.inventory.getCurrentItem()) || currentItem == null)
+            {
+                shouldCancel = true;
+            }
+        }
+
         if (currentCasting != null)
         {
-            currentCasting.update();
+            if(shouldCancel)
+                cancel();
+            else
+                currentCasting.update();
         }
     }
 
-    public void sync(SpellcastSync.ChangeMode changeMode, ISpellcast cast)
+    public void sync(SpellcastSync.ChangeMode changeMode, Spellcast cast)
     {
         switch (changeMode)
         {
@@ -158,7 +175,7 @@ public class SpellcastEntityData implements IExtendedEntityProperties
         }
     }
 
-    public ISpellcast getCurrentCasting()
+    public Spellcast getCurrentCasting()
     {
         return currentCasting;
     }

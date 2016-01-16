@@ -1,37 +1,67 @@
-package gigaherz.elementsofpower.spells.cast.balls;
+package gigaherz.elementsofpower.spells.cast.effects;
 
-import gigaherz.elementsofpower.spells.SpellBall;
+import gigaherz.elementsofpower.spells.cast.Spellcast;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDynamicLiquid;
 import net.minecraft.block.BlockSnow;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.*;
+import net.minecraft.world.World;
 
-public class Frostball extends BallBase
+public class FrostEffect extends SpellEffect
 {
-    public Frostball(SpellBall parent)
+    @Override
+    public int getColor(Spellcast cast)
     {
-        super(parent);
+        return 0xFF8080;
     }
 
     @Override
-    protected void spawnBallParticles(MovingObjectPosition mop)
+    public int getBeamDuration(Spellcast cast)
+    {
+        return 20 * 5;
+    }
+
+    @Override
+    public int getBeamInterval(Spellcast cast)
+    {
+        return 8;
+    }
+
+    @Override
+    public void processDirectHit(Spellcast cast, Entity e)
+    {
+
+    }
+
+    @Override
+    public boolean processEntitiesAroundBefore(Spellcast cast, Vec3 hitVec)
+    {
+        return true;
+    }
+
+    @Override
+    public void processEntitiesAroundAfter(Spellcast cast, Vec3 hitVec)
+    {
+
+    }
+
+    @Override
+    public void spawnBallParticles(Spellcast cast, MovingObjectPosition mop)
     {
         for (int i = 0; i < 8; ++i)
         {
-            world.spawnParticle(EnumParticleTypes.SNOWBALL,
-                    mop.hitVec.xCoord, mop.hitVec.yCoord, mop.hitVec.zCoord,
-                    getRandomForParticle(), getRandomForParticle(), getRandomForParticle());
+            cast.spawnRandomParticle(EnumParticleTypes.SNOWBALL,
+                    mop.hitVec.xCoord, mop.hitVec.yCoord, mop.hitVec.zCoord);
         }
     }
 
     @Override
-    protected void processBlockWithinRadius(BlockPos blockPos, IBlockState currentState, int layers)
+    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, int layers)
     {
+        World world = cast.world;
         Block block = currentState.getBlock();
 
         if (block == Blocks.fire)

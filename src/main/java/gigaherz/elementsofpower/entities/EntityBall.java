@@ -1,8 +1,8 @@
 package gigaherz.elementsofpower.entities;
 
 import gigaherz.elementsofpower.database.SpellManager;
-import gigaherz.elementsofpower.spells.ISpellEffect;
-import gigaherz.elementsofpower.spells.cast.ISpellcastBall;
+import gigaherz.elementsofpower.spells.Spell;
+import gigaherz.elementsofpower.spells.cast.shapes.SpellcastBall;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityThrowable;
@@ -11,14 +11,14 @@ import net.minecraft.world.World;
 
 public class EntityBall extends EntityThrowable
 {
-    ISpellcastBall spellcast;
+    SpellcastBall spellcast;
 
     public EntityBall(World worldIn)
     {
         super(worldIn);
     }
 
-    public EntityBall(World worldIn, ISpellcastBall spellcast, EntityLivingBase thrower)
+    public EntityBall(World worldIn, SpellcastBall spellcast, EntityLivingBase thrower)
     {
         super(worldIn, thrower);
         this.spellcast = spellcast;
@@ -65,15 +65,15 @@ public class EntityBall extends EntityThrowable
         return 0.6f * (1 + getSpellcast().getDamageForce());
     }
 
-    public ISpellcastBall getSpellcast()
+    public SpellcastBall getSpellcast()
     {
         if (spellcast == null)
         {
             String sequence = getDataWatcher().getWatchableObjectString(10);
             if (sequence != null)
             {
-                ISpellEffect spell = SpellManager.findSpell(sequence);
-                spellcast = (ISpellcastBall) spell.getNewCast();
+                Spell spell = SpellManager.findSpell(sequence);
+                spellcast = (SpellcastBall) spell.getNewCast();
                 spellcast.init(worldObj, (EntityPlayer) getThrower());
             }
         }
