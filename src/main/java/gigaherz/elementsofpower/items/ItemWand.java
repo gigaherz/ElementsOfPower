@@ -7,8 +7,7 @@ import gigaherz.elementsofpower.database.SpellManager;
 import gigaherz.elementsofpower.entitydata.SpellcastEntityData;
 import gigaherz.elementsofpower.network.SpellSequenceUpdate;
 import gigaherz.elementsofpower.progression.DiscoveryHandler;
-import gigaherz.elementsofpower.spells.Spell;
-import gigaherz.elementsofpower.spells.cast.Spellcast;
+import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
@@ -147,18 +146,18 @@ public class ItemWand extends ItemMagicContainer
         if (sequence.length() == 0)
             return false;
 
-        Spell effect = SpellManager.spellRegistration.get(sequence);
+        Spellcast cast = SpellManager.makeSpell(sequence);
 
-        if (effect == null)
+        if (cast == null)
             return false;
 
         MagicAmounts amounts = MagicDatabase.getContainedMagic(stack);
-        MagicAmounts cost = effect.getSpellCost();
+        MagicAmounts cost = cast.getSpellCost();
 
         if (!MagicDatabase.isInfiniteContainer(stack) && !amounts.hasEnough(cost))
             return false;
 
-        Spellcast cast = effect.castSpell(stack, player);
+        cast = cast.getShape().castSpell(stack, player, cast);
         if (cast != null)
         {
             SpellcastEntityData data = SpellcastEntityData.get(player);

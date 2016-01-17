@@ -1,6 +1,6 @@
-package gigaherz.elementsofpower.spells.cast.effects;
+package gigaherz.elementsofpower.spells.effects;
 
-import gigaherz.elementsofpower.spells.cast.Spellcast;
+import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -58,7 +58,7 @@ public class MiningEffect extends SpellEffect
     }
 
     @Override
-    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, int layers)
+    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, float r, MovingObjectPosition mop)
     {
         EntityPlayer player = cast.player;
         World world = cast.world;

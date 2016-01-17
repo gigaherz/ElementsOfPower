@@ -220,6 +220,7 @@ public class EntityEssence extends EntityAmbientCreature
             if (dp < 2.0 && entityAge2 > 100)
             {
                 tryAbosrbInto(entity);
+                if (isDead) return;
             }
             followPos = new Vec3(entity.posX, entity.posY + entity.getEyeHeight(), entity.posZ);
             spawnPosition = null;
@@ -347,45 +348,40 @@ public class EntityEssence extends EntityAmbientCreature
             }
         }
 
-        if (stack == null)
-            return;
-
-        MagicAmounts limits = MagicDatabase.getMagicLimits(stack);
-        MagicAmounts amounts = MagicDatabase.getContainedMagic(stack);
-
-        if (limits == null)
-            return;
-
-        if (amounts == null)
-            amounts = new MagicAmounts();
-
-        float totalTransfer = 0;
-        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+        if (stack != null)
         {
-            float transfer = Math.min(self.amounts[i], limits.amounts[i] - amounts.amounts[i]);
-            if (transfer > 0)
+            MagicAmounts limits = MagicDatabase.getMagicLimits(stack);
+            MagicAmounts amounts = MagicDatabase.getContainedMagic(stack);
+
+            if (limits != null)
             {
-                totalTransfer += transfer;
-                amounts.amounts[i] = Math.min(amounts.amounts[i] + transfer, limits.amounts[i]);
-                self.amounts[i] -= transfer;
-                dataWatcher.updateObject(16 + i, self.amounts[i]);
+                if (amounts == null)
+                    amounts = new MagicAmounts();
+
+                float totalTransfer = 0;
+                for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+                {
+                    float transfer = Math.min(self.amounts[i], limits.amounts[i] - amounts.amounts[i]);
+                    if (transfer > 0)
+                    {
+                        totalTransfer += transfer;
+                        amounts.amounts[i] = Math.min(amounts.amounts[i] + transfer, limits.amounts[i]);
+                        self.amounts[i] -= transfer;
+                        dataWatcher.updateObject(16 + i, self.amounts[i]);
+                    }
+                }
+
+                if (totalTransfer > 0)
+                {
+                    stack = MagicDatabase.setContainedMagic(stack, amounts);
+                    inv.setInventorySlotContents(slot, stack);
+                }
             }
-        }
 
-        if (totalTransfer > 0)
-        {
-            stack = MagicDatabase.setContainedMagic(stack, amounts);
-            inv.setInventorySlotContents(slot, stack);
-        }
-
-        if (self.isEmpty())
-        {
-            setDead();
-        }
-        else
-        {
             sequence = null;
         }
+
+        setDead();
     }
 
     @Override

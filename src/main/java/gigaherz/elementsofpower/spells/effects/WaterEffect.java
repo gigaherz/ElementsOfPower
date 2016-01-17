@@ -1,9 +1,8 @@
-package gigaherz.elementsofpower.spells.cast.effects;
+package gigaherz.elementsofpower.spells.effects;
 
-import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.blocks.BlockDust;
-import gigaherz.elementsofpower.spells.cast.Spellcast;
+import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockDynamicLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
@@ -12,12 +11,19 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 
-public class DustEffect extends SpellEffect
+public class WaterEffect extends SpellEffect
 {
+    boolean spawnSourceBlocks;
+
+    public WaterEffect(boolean spawnSourceBlocks)
+    {
+        this.spawnSourceBlocks = spawnSourceBlocks;
+    }
+
     @Override
     public int getColor(Spellcast cast)
     {
-        return 0x000000;
+        return 0xFF0000;
     }
 
     @Override
@@ -29,7 +35,13 @@ public class DustEffect extends SpellEffect
     @Override
     public int getBeamInterval(Spellcast cast)
     {
-        return 10;
+        return 4;
+    }
+
+    @Override
+    public int getForceModifier(Spellcast cast)
+    {
+        return cast.world.provider.doesWaterVaporize() ? -3 : 0;
     }
 
     @Override
@@ -61,13 +73,26 @@ public class DustEffect extends SpellEffect
     }
 
     @Override
-    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, int layers)
+    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, float r, MovingObjectPosition mop)
     {
+        if (mop != null)
+        {
+            blockPos = blockPos.offset(mop.sideHit);
+            currentState = cast.world.getBlockState(blockPos);
+        }
+
         Block block = currentState.getBlock();
 
         if (block == Blocks.air)
         {
-            cast.world.setBlockState(blockPos, ElementsOfPower.dust.getDefaultState().withProperty(BlockDust.DENSITY, 16));
+            if (spawnSourceBlocks)
+            {
+                cast.world.setBlockState(blockPos, Blocks.flowing_water.getDefaultState().withProperty(BlockDynamicLiquid.LEVEL, 0));
+            }
+            else
+            {
+                cast.world.setBlockState(blockPos, Blocks.flowing_water.getDefaultState().withProperty(BlockDynamicLiquid.LEVEL, 15));
+            }
         }
     }
 }

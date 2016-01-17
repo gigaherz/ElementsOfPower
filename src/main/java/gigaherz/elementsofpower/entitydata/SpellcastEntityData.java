@@ -3,8 +3,7 @@ package gigaherz.elementsofpower.entitydata;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.SpellManager;
 import gigaherz.elementsofpower.network.SpellcastSync;
-import gigaherz.elementsofpower.spells.Spell;
-import gigaherz.elementsofpower.spells.cast.Spellcast;
+import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -43,7 +42,7 @@ public class SpellcastEntityData implements IExtendedEntityProperties
         {
             NBTTagCompound cast = new NBTTagCompound();
             currentCasting.writeToNBT(cast);
-            cast.setString("sequence", currentCasting.getEffect().getSequence());
+            cast.setString("sequence", currentCasting.getSequence());
             compound.setTag("currentSpell", cast);
         }
     }
@@ -56,9 +55,7 @@ public class SpellcastEntityData implements IExtendedEntityProperties
             NBTTagCompound cast = (NBTTagCompound) compound.getTag("currentSpell");
             String sequence = cast.getString("sequence");
 
-            Spell ef = SpellManager.findSpell(sequence);
-
-            currentCasting = ef.getNewCast();
+            currentCasting = SpellManager.makeSpell(sequence);
             currentCasting.init(world, player);
             currentCasting.readFromNBT(cast);
         }
@@ -127,22 +124,24 @@ public class SpellcastEntityData implements IExtendedEntityProperties
     {
         boolean shouldCancel = false;
         int newSlot = player.inventory.currentItem;
-        if(newSlot != currentSlot)
+        if (newSlot != currentSlot)
         {
             shouldCancel = true;
             currentSlot = newSlot;
         }
         else
         {
-            if(!ItemStack.areItemsEqual(currentItem, player.inventory.getCurrentItem()) || currentItem == null)
+            ItemStack newItem = player.inventory.getCurrentItem();
+            if (!ItemStack.areItemsEqual(currentItem, newItem) || currentItem == null)
             {
                 shouldCancel = true;
             }
+            currentItem = newItem;
         }
 
         if (currentCasting != null)
         {
-            if(shouldCancel)
+            if (shouldCancel)
                 cancel();
             else
                 currentCasting.update();

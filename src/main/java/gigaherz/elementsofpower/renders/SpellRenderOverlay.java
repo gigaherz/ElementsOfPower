@@ -1,11 +1,12 @@
 package gigaherz.elementsofpower.renders;
 
 import com.google.common.collect.Maps;
+import gigaherz.elementsofpower.database.SpellManager;
 import gigaherz.elementsofpower.entitydata.SpellcastEntityData;
 import gigaherz.elementsofpower.renders.spellrender.RenderBeam;
 import gigaherz.elementsofpower.renders.spellrender.RenderSpell;
-import gigaherz.elementsofpower.spells.cast.Spellcast;
-import gigaherz.elementsofpower.spells.cast.shapes.SpellcastBeam;
+import gigaherz.elementsofpower.spells.Spellcast;
+import gigaherz.elementsofpower.spells.shapes.SpellShape;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,34 +19,12 @@ import java.util.Map;
 
 public class SpellRenderOverlay
 {
-    public static final Map<Class<? extends Spellcast>, RenderSpell> rendererRegistry = Maps.newHashMap();
+    public static final Map<SpellShape, RenderSpell> rendererRegistry = Maps.newHashMap();
 
-    static {
-        rendererRegistry.put(SpellcastBeam.class, new RenderBeam());
-        //rendererRegistry.put(ConeBase.class, new RenderBeam());
-    }
-
-    @SuppressWarnings("unchecked")
-    public static RenderSpell getRenderer(Spellcast cast)
+    static
     {
-        Class<? extends Spellcast> clazz = cast.getClass();
-
-        while(clazz != null)
-        {
-            RenderSpell renderer = rendererRegistry.get(clazz);
-            if(renderer != null)
-                return renderer;
-
-            Class<?> clazz2 = clazz.getSuperclass();
-            if(!Spellcast.class.isAssignableFrom(clazz2))
-                break;
-
-            clazz = (Class<? extends Spellcast>) clazz2;
-        }
-
-        return null;
+        rendererRegistry.put(SpellManager.beam, new RenderBeam());
     }
-
 
     @SubscribeEvent
     public void renderFirstPerson(RenderWorldLastEvent event)
@@ -101,11 +80,11 @@ public class SpellRenderOverlay
 
         Spellcast cast = data.getCurrentCasting();
 
-        if(cast == null)
+        if (cast == null)
             return;
 
-        RenderSpell renderer = getRenderer(cast);
-        if(renderer != null)
+        RenderSpell renderer = rendererRegistry.get(cast.getShape());
+        if (renderer != null)
         {
             renderer.doRender(cast, player, renderManager, x, y, z, partialTicks, offset);
         }

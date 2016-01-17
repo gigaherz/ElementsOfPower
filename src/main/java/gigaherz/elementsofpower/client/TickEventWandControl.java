@@ -19,7 +19,7 @@ public class TickEventWandControl
 {
     public static TickEventWandControl instance;
 
-    public StringBuilder sequence = new StringBuilder();
+    public String sequence;
     public ItemStack itemInUse = null;
     public int slotInUse;
     public int itemInUseCount;
@@ -106,7 +106,7 @@ public class TickEventWandControl
             {
                 if (interceptKeys[i].retrieveClick())
                 {
-                    sequence.append(SpellManager.elementChars[i]);
+                    sequence += SpellManager.elementChars[i];
                 }
             }
         }
@@ -142,7 +142,7 @@ public class TickEventWandControl
 
         player.setItemInUse(itemInUse, itemInUseCount);
 
-        sequence = new StringBuilder();
+        sequence = "";
         ElementsOfPower.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.BEGIN, player, slotInUse, null));
 
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)

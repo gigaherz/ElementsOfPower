@@ -1,6 +1,6 @@
-package gigaherz.elementsofpower.spells.cast.effects;
+package gigaherz.elementsofpower.spells.effects;
 
-import gigaherz.elementsofpower.spells.cast.Spellcast;
+import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -29,7 +29,7 @@ public class TeleportEffect extends SpellEffect
     @Override
     public void processDirectHit(Spellcast cast, Entity e)
     {
-        if(e == cast.player)
+        if (e == cast.player)
             return;
         e.attackEntityFrom(DamageSource.causeThrownDamage(cast.projectile, cast.player), 0.0F);
     }
@@ -83,7 +83,7 @@ public class TeleportEffect extends SpellEffect
     }
 
     @Override
-    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, int layers)
+    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, float r, MovingObjectPosition mop)
     {
 
     }

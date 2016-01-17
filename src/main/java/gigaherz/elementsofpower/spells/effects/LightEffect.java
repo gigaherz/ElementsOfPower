@@ -1,8 +1,9 @@
-package gigaherz.elementsofpower.spells.cast.effects;
+package gigaherz.elementsofpower.spells.effects;
 
-import gigaherz.elementsofpower.spells.cast.Spellcast;
+import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.blocks.BlockDust;
+import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockDynamicLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
@@ -11,19 +12,12 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 
-public class LavaEffect extends SpellEffect
+public class LightEffect extends SpellEffect
 {
-    boolean spawnSourceBlocks;
-
-    public LavaEffect(boolean spawnSourceBlocks)
-    {
-        this.spawnSourceBlocks = spawnSourceBlocks;
-    }
-
     @Override
     public int getColor(Spellcast cast)
     {
-        return 0x8080FF;
+        return 0x000000;
     }
 
     @Override
@@ -36,12 +30,6 @@ public class LavaEffect extends SpellEffect
     public int getBeamInterval(Spellcast cast)
     {
         return 10;
-    }
-
-    @Override
-    public int getForceModifier(Spellcast cast)
-    {
-        return cast.world.provider.doesWaterVaporize() ? +1 : 0;
     }
 
     @Override
@@ -67,26 +55,25 @@ public class LavaEffect extends SpellEffect
     {
         for (int i = 0; i < 8; ++i)
         {
-            cast.spawnRandomParticle(EnumParticleTypes.LAVA,
+            cast.spawnRandomParticle(EnumParticleTypes.WATER_SPLASH,
                     mop.hitVec.xCoord, mop.hitVec.yCoord, mop.hitVec.zCoord);
         }
     }
 
     @Override
-    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, int layers)
+    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, float r, MovingObjectPosition mop)
     {
+        if (mop != null)
+        {
+            blockPos = blockPos.offset(mop.sideHit);
+            currentState = cast.world.getBlockState(blockPos);
+        }
+
         Block block = currentState.getBlock();
 
         if (block == Blocks.air)
         {
-            if (spawnSourceBlocks)
-            {
-                cast.world.setBlockState(blockPos, Blocks.flowing_lava.getDefaultState().withProperty(BlockDynamicLiquid.LEVEL, 0));
-            }
-            else
-            {
-                cast.world.setBlockState(blockPos, Blocks.flowing_lava.getDefaultState().withProperty(BlockDynamicLiquid.LEVEL, 15));
-            }
+            cast.world.setBlockState(blockPos, ElementsOfPower.dust.getDefaultState().withProperty(BlockDust.DENSITY, 16));
         }
     }
 }

@@ -30,10 +30,10 @@ artifacts {
 tasks.build.dependsOn('deobfJar')
 
 minecraft {
-    version = "1.8.9-11.15.0.1699"
+    version = "1.8.9-11.15.0.1705"
     runDir = "run"
 
-    mappings = "snapshot_20160114"
+    mappings = "snapshot_20160116"
 
     replace "@VERSION@", project.version
     replaceIn "ElementsOfPower.java"

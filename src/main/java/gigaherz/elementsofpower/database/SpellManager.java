@@ -1,9 +1,16 @@
 package gigaherz.elementsofpower.database;
 
-import gigaherz.elementsofpower.spells.*;
-import gigaherz.elementsofpower.spells.cast.effects.*;
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multiset;
+import gigaherz.elementsofpower.spells.Spellcast;
+import gigaherz.elementsofpower.spells.effects.*;
+import gigaherz.elementsofpower.spells.shapes.*;
 
+import java.util.EnumMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 public class SpellManager
@@ -11,14 +18,26 @@ public class SpellManager
     public final static char[] elementChars = {'F', 'W', 'A', 'E', 'G', 'K', 'L', 'D'};
     public final static Map<Character, Integer> elementIndices = new Hashtable<>();
 
-    public static final Map<String, Spell> spellRegistration = new Hashtable<>();
+    public static final SpellShape sphere = new SphereShape();
+    public static final SpellShape ball = new BallShape();
+    public static final SpellShape beam = new BeamShape();
+    public static final SpellShape cone = new ConeShape();
+    public static final SpellShape self = new SelfShape();
+    public static final SpellShape single = new SingleShape();
 
-    public static final int COST_ELEMENTARY = 8;
-    public static final int COST_SIMPLE = COST_ELEMENTARY * 3;
-    public static final int COST_AVERAGE = COST_SIMPLE * 3;
-    public static final int COST_COMPLEX = COST_AVERAGE * 3;
-    public static final int COST_EXTREME = COST_COMPLEX * 3;
-    public static final float COMBO_COEF = 1.2f;
+    public static final SpellEffect flame = new FlameEffect();
+    public static final SpellEffect water = new WaterEffect(false);
+    public static final SpellEffect wind = new WindEffect();
+    public static final SpellEffect dust = new DustEffect();
+    public static final SpellEffect light = new LightEffect();
+    public static final SpellEffect mining = new MiningEffect();
+    public static final SpellEffect healing = new HealthEffect();
+    public static final SpellEffect breaking = new BreakingEffect();
+    public static final SpellEffect cushion = new CushionEffect();
+    public static final SpellEffect lava = new LavaEffect(false);
+    public static final SpellEffect resurrection = new ResurrectionEffect();
+    public static final SpellEffect waterSource = new WaterEffect(true);
+    public static final SpellEffect lavaSource = new LavaEffect(true);
 
     static
     {
@@ -26,71 +45,315 @@ public class SpellManager
         {
             elementIndices.put(elementChars[i], i);
         }
-
-        registerSpell(new SpellBall(new BlastEffect()).power(1).fire().earth().cost(COST_ELEMENTARY * COMBO_COEF));
-        registerSpell(new SpellBall(new BlastEffect()).power(2).fire(2).earth().cost(COST_SIMPLE * COMBO_COEF));
-        registerSpell(new SpellBall(new BlastEffect()).power(4).fire(3).earth().cost(COST_AVERAGE * COMBO_COEF));
-        registerSpell(new SpellBall(new BlastEffect()).power(6).fire(4).earth().cost(COST_COMPLEX * COMBO_COEF));
-        registerSpell(new SpellBall(new BlastEffect()).power(8).fire(5).earth().cost(COST_EXTREME * COMBO_COEF));
-
-        registerSpell(new SpellBall(new FrostEffect()).power(1).water().air().cost(COST_ELEMENTARY * COMBO_COEF));
-        registerSpell(new SpellBall(new FrostEffect()).power(2).water(2).air().cost(COST_SIMPLE * COMBO_COEF));
-        registerSpell(new SpellBall(new FrostEffect()).power(3).water(3).air().cost(COST_AVERAGE * COMBO_COEF));
-        registerSpell(new SpellBall(new FrostEffect()).power(4).water(4).air().cost(COST_COMPLEX * COMBO_COEF));
-        registerSpell(new SpellBall(new FrostEffect()).power(6).water(5).air().cost(COST_EXTREME * COMBO_COEF));
-
-        registerSpell(new SpellBall(new WaterEffect(true)).power(1).water().life().cost(COST_SIMPLE * COMBO_COEF));
-        registerSpell(new SpellBall(new WaterEffect(true)).power(2).water(2).life().cost(COST_AVERAGE * COMBO_COEF));
-        registerSpell(new SpellBall(new WaterEffect(true)).power(3).water(3).life().cost(COST_COMPLEX * COMBO_COEF));
-        registerSpell(new SpellBall(new WaterEffect(true)).power(4).water(4).life().cost(COST_EXTREME * COMBO_COEF));
-
-        registerSpell(new SpellBall(new CushionEffect()).power(2).earth().air().cost(COST_SIMPLE * COMBO_COEF));
-        registerSpell(new SpellBall(new CushionEffect()).power(3).earth(2).air().cost(COST_AVERAGE * COMBO_COEF));
-        registerSpell(new SpellBall(new CushionEffect()).power(4).earth(3).air().cost(COST_COMPLEX * COMBO_COEF));
-        registerSpell(new SpellBall(new CushionEffect()).power(5).earth(4).air().cost(COST_EXTREME * COMBO_COEF));
-
-        registerSpell(new SpellBall(new LavaEffect(false)).power(2).earth(2).fire(2).cost(COST_COMPLEX * COMBO_COEF));
-        registerSpell(new SpellBall(new LavaEffect(false)).power(4).earth(3).fire(2).cost(COST_EXTREME * COMBO_COEF));
-        registerSpell(new SpellBall(new LavaEffect(true)).power(1).earth(2).fire().life().cost(COST_COMPLEX * COMBO_COEF));
-        registerSpell(new SpellBall(new LavaEffect(true)).power(2).earth(3).fire().life().cost(COST_EXTREME * COMBO_COEF));
-
-        registerSpell(new SpellResurrection().life(3).light(2).cost(COST_EXTREME * COMBO_COEF));
-        registerSpell(new SpellBall(new LifeEffect()).light().darkness().cost(COST_ELEMENTARY * COMBO_COEF));
-
-        registerSpell(new SpellBeam(new MiningEffect()).power(2).death().darkness().cost(COST_SIMPLE));
-        registerSpell(new SpellBeam(new MiningEffect()).power(4).death(2).darkness().cost(COST_AVERAGE));
-        registerSpell(new SpellBeam(new MiningEffect()).power(6).death(3).darkness().cost(COST_COMPLEX));
-        registerSpell(new SpellBeam(new MiningEffect()).power(8).death(4).darkness().cost(COST_EXTREME));
-
-        registerStandardSequence(new FireEffect(), MagicAmounts.FIRE);
-        registerStandardSequence(new WaterEffect(false), MagicAmounts.WATER);
-        registerStandardSequence(new AirEffect(), MagicAmounts.AIR);
-        registerStandardSequence(new DustEffect(), MagicAmounts.EARTH);
-        registerStandardSequence(new LifeEffect(), MagicAmounts.LIFE);
-        registerStandardSequence(new MiningEffect(), MagicAmounts.DEATH);
     }
 
-    public static void registerStandardSequence(SpellEffect effect, int baseElement)
+    public static Spellcast makeSpell(String sequence)
     {
-        registerSpell(new SpellBall(effect).power(1).amountMultiple(baseElement,1).cost(COST_ELEMENTARY));
-        registerSpell(new SpellBall(effect).power(2).amountMultiple(baseElement,2).cost(COST_SIMPLE));
-        registerSpell(new SpellBall(effect).power(3).amountMultiple(baseElement,3).cost(COST_AVERAGE));
-        registerSpell(new SpellBall(effect).power(4).amountMultiple(baseElement,4).cost(COST_COMPLEX));
-        registerSpell(new SpellBall(effect).power(5).amountMultiple(baseElement,5).cost(COST_EXTREME));
-
-        registerSpell(new SpellBeam(effect).power(1).amountMultiple(baseElement,1).darkness().cost(COST_SIMPLE * COMBO_COEF));
-        registerSpell(new SpellBeam(effect).power(2).amountMultiple(baseElement,2).darkness().cost(COST_AVERAGE * COMBO_COEF));
-        registerSpell(new SpellBeam(effect).power(3).amountMultiple(baseElement,3).darkness().cost(COST_COMPLEX * COMBO_COEF));
-        registerSpell(new SpellBeam(effect).power(4).amountMultiple(baseElement,4).darkness().cost(COST_EXTREME * COMBO_COEF));
+        SpellBuilder b = SpellBuilder.begin();
+        for (char c : sequence.toCharArray())
+        {
+            b.next(c);
+        }
+        return b.build(sequence);
     }
 
-    public static void registerSpell(Spell spell)
+    static class SpellBuilder
     {
-        spellRegistration.put(spell.getSequence(), spell);
-    }
+        enum Element
+        {
+            Fire(1, Shape.Sphere),
+            Water(0, Shape.Ball),
+            Air(3, Shape.Cone),
+            Earth(2, Shape.Ball),
+            Light(5, Shape.Beam),
+            Darkness(4, Shape.Beam),
+            Life(7, Shape.Self),
+            Death(6, Shape.Single);
 
-    public static Spell findSpell(String sequence)
-    {
-        return spellRegistration.get(sequence);
+            final int opposite;
+            final Shape shape;
+
+            public Element getOpposite()
+            {
+                return Element.values()[opposite];
+            }
+
+            Element(int opposite, Shape shape)
+            {
+                this.opposite = opposite;
+                this.shape = shape;
+            }
+
+            public Shape getShape()
+            {
+                return shape;
+            }
+        }
+
+        enum Shape
+        {
+            Sphere,
+            Ball,
+            Beam,
+            Cone,
+            Self,
+            Single
+        }
+
+        enum Effect
+        {
+            Flame,
+            Water,
+            Wind,
+            Dust,
+            Light,
+            Mining,
+            Healing,
+            Breaking,
+            Cushion,
+            Lava,
+            Resurrection,
+
+            WaterSource,
+            LavaSource
+        }
+
+        static final EnumMap<Effect, SpellEffect> effects = Maps.newEnumMap(Effect.class);
+        static final EnumMap<Shape, SpellShape> shapes = Maps.newEnumMap(Shape.class);
+
+        static
+        {
+            shapes.put(Shape.Sphere, sphere);
+            shapes.put(Shape.Ball, ball);
+            shapes.put(Shape.Beam, beam);
+            shapes.put(Shape.Cone, cone);
+            shapes.put(Shape.Self, self);
+            shapes.put(Shape.Single, single);
+            effects.put(Effect.Flame, flame);
+            effects.put(Effect.Water, water);
+            effects.put(Effect.Wind, wind);
+            effects.put(Effect.Dust, dust);
+            effects.put(Effect.Light, light);
+            effects.put(Effect.Mining, mining);
+            effects.put(Effect.Healing, healing);
+            effects.put(Effect.Breaking, breaking);
+            effects.put(Effect.Cushion, cushion);
+            effects.put(Effect.Lava, lava);
+            effects.put(Effect.Resurrection, resurrection);
+            effects.put(Effect.WaterSource, waterSource);
+            effects.put(Effect.LavaSource, lavaSource);
+        }
+
+        Element primary = null;
+        Element last = null;
+        Shape shape = null;
+        Effect effect = null;
+        int primaryPower = 0;
+        int empowering = 0; // can be negative!
+
+        List<Element> sequence = Lists.newArrayList();
+
+        private SpellBuilder()
+        {
+        }
+
+        public static SpellBuilder begin()
+        {
+            return new SpellBuilder();
+        }
+
+        public void next(char c)
+        {
+            switch (Character.toUpperCase(c))
+            {
+                case 'F':
+                    apply(Element.Fire);
+                    break;
+                case 'W':
+                    apply(Element.Water);
+                    break;
+                case 'A':
+                    apply(Element.Air);
+                    break;
+                case 'E':
+                    apply(Element.Earth);
+                    break;
+                case 'G':
+                    apply(Element.Light);
+                    break;
+                case 'K':
+                    apply(Element.Darkness);
+                    break;
+                case 'L':
+                    apply(Element.Life);
+                    break;
+                case 'D':
+                    apply(Element.Death);
+                    break;
+            }
+        }
+
+        public Spellcast build(String sequence)
+        {
+            if (this.effect == null)
+                return null;
+
+            SpellEffect effect = effects.get(this.effect);
+            SpellShape shape = shapes.get(this.shape);
+            Spellcast cast = new Spellcast(shape, effect, primaryPower, sequence);
+
+            if (empowering != 0)
+                cast.setEmpowering(empowering);
+
+            cast.setSpellCost(computeCost());
+
+            return cast;
+        }
+
+        private MagicAmounts computeCost()
+        {
+            MagicAmounts amounts = new MagicAmounts();
+
+            if (sequence.size() > 0)
+            {
+                HashMultiset<Element> multiset = HashMultiset.create();
+                multiset.addAll(sequence);
+
+                int elements = multiset.size();
+                for (Multiset.Entry<Element> e : multiset.entrySet())
+                {
+                    amounts.amounts[e.getElement().ordinal()] += elements * sequence.size() / e.getCount();
+                }
+            }
+
+            return amounts;
+        }
+
+        private void apply(Element e)
+        {
+            if (primary == null)
+            {
+                setPrimary(e);
+            }
+            else if (primary == e && last == e)
+            {
+                augmentPrimary();
+            }
+            else
+            {
+                addModifier(e);
+            }
+            last = e;
+        }
+
+        private void setPrimary(Element e)
+        {
+            primary = e;
+            primaryPower = 1;
+            switch (e)
+            {
+                case Fire:
+                    effect = Effect.Flame;
+                    break;
+                case Water:
+                    effect = Effect.Water;
+                    break;
+                case Air:
+                    effect = Effect.Wind;
+                    break;
+                case Earth:
+                    effect = Effect.Dust;
+                    break;
+                case Light:
+                    effect = Effect.Light;
+                    break;
+                case Darkness:
+                    effect = Effect.Mining;
+                    break;
+                case Life:
+                    effect = Effect.Healing;
+                    break;
+                case Death:
+                    effect = Effect.Breaking;
+                    break;
+            }
+            shape = e.getShape();
+            sequence.add(e);
+        }
+
+        private void augmentPrimary()
+        {
+            primaryPower++;
+            sequence.add(primary);
+        }
+
+        private void addModifier(Element e)
+        {
+            if (sequence.get(sequence.size() - 1) == e.getOpposite())
+            {
+                sequence.remove(sequence.size() - 1);
+                if (sequence.size() == 0)
+                {
+                    reset();
+                    return;
+                }
+            }
+
+            switch (e)
+            {
+                case Fire:
+                    empowering++;
+                    break;
+                case Water:
+                    empowering--;
+                    break;
+                case Air:
+                    switch (effect)
+                    {
+                        case Flame:
+                            reset();
+                            break;
+                        case Wind:
+                            break;
+                        case Dust:
+                            effect = Effect.Cushion;
+                            break;
+                        case Cushion:
+                            break;
+                        case Water: /* Mist */
+                            break;
+                        case Lava:
+                            effect = Effect.Flame;
+                            break;
+                        case Light:
+                            break;
+                        case Mining:
+                            break;
+                        case Healing:
+                            break;
+                        case Breaking:
+                            break;
+                        case Resurrection:
+                            break;
+                        case WaterSource:
+                            break;
+                        case LavaSource:
+                            break;
+                    }
+                    break;
+            }
+
+            shape = effect != null ? e.shape : null;
+            sequence.add(e);
+        }
+
+        private void reset()
+        {
+            effect = null;
+            shape = null;
+            last = null;
+            primaryPower = 0;
+            sequence.clear();
+        }
     }
 }

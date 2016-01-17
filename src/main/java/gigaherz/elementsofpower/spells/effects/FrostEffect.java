@@ -1,6 +1,6 @@
-package gigaherz.elementsofpower.spells.cast.effects;
+package gigaherz.elementsofpower.spells.effects;
 
-import gigaherz.elementsofpower.spells.cast.Spellcast;
+import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDynamicLiquid;
 import net.minecraft.block.BlockSnow;
@@ -59,10 +59,18 @@ public class FrostEffect extends SpellEffect
     }
 
     @Override
-    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, int layers)
+    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, float r, MovingObjectPosition mop)
     {
+        if (mop != null)
+        {
+            blockPos = blockPos.offset(mop.sideHit);
+            currentState = cast.world.getBlockState(blockPos);
+        }
+
         World world = cast.world;
         Block block = currentState.getBlock();
+
+        int layers = (int) Math.min(1 - r, 7);
 
         if (block == Blocks.fire)
         {

@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.renders.spellrender;
 
 import gigaherz.elementsofpower.renders.RenderingStuffs;
-import gigaherz.elementsofpower.spells.cast.shapes.SpellcastBeam;
+import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -11,15 +11,15 @@ import net.minecraft.util.Vec3;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
 import org.lwjgl.opengl.GL11;
 
-public class RenderCone extends RenderSpell<SpellcastBeam>
+public class RenderCone extends RenderSpell
 {
     @Override
-    public void doRender(SpellcastBeam spellcast, EntityPlayer player, RenderManager renderManager, double x, double y, double z, float partialTicks, Vec3 offset)
+    public void doRender(Spellcast cast, EntityPlayer player, RenderManager renderManager, double x, double y, double z, float partialTicks, Vec3 offset)
     {
         IFlexibleBakedModel modelCone = RenderingStuffs.loadModel("elementsofpower:entity/cone.obj");
 
-        int beam_color = spellcast.getColor();
-        float scale = 0.15f * spellcast.getEffect().getScale();
+        int beam_color = cast.getColor();
+        float scale = 0.15f * cast.getScale();
         float maxDistance = 10.0f;
 
         Vec3 start = player.getPositionEyes(partialTicks);
@@ -54,8 +54,8 @@ public class RenderCone extends RenderSpell<SpellcastBeam>
 
         for (int i = 0; i <= 4; i++)
         {
-            float scale_xy = scale * (float)Math.pow(0.8, i);
-            float scale_z = scale * (float)Math.pow(0.8, i);
+            float scale_xy = scale * (float) Math.pow(0.8, i);
+            float scale_z = scale * (float) Math.pow(0.8, i);
             float offset_z = 0.05f * i;
 
             GlStateManager.pushMatrix();

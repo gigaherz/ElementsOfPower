@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.renders.spellrender;
 
 import gigaherz.elementsofpower.renders.RenderingStuffs;
-import gigaherz.elementsofpower.spells.cast.shapes.SpellcastBeam;
+import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -11,33 +11,29 @@ import net.minecraft.util.Vec3;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
 import org.lwjgl.opengl.GL11;
 
-public class RenderBeam extends RenderSpell<SpellcastBeam>
+public class RenderBeam extends RenderSpell
 {
 
     @Override
-    public void doRender(SpellcastBeam spellcast, EntityPlayer player, RenderManager renderManager, double x, double y, double z, float partialTicks, Vec3 offset)
+    public void doRender(Spellcast cast, EntityPlayer player, RenderManager renderManager, double x, double y, double z, float partialTicks, Vec3 offset)
     {
         IFlexibleBakedModel modelSphere = RenderingStuffs.loadModel("elementsofpower:entity/sphere.obj");
         IFlexibleBakedModel modelCyl = RenderingStuffs.loadModel("elementsofpower:entity/cylinder.obj");
 
-        int beam_color = spellcast.getColor();
-        float scale = 0.15f * spellcast.getEffect().getScale();
-        float maxDistance = 10.0f;
+        int beam_color = cast.getColor();
+        float scale = 0.15f * cast.getScale();
 
-        Vec3 start = player.getPositionEyes(partialTicks);
-        Vec3 dir = player.getLook(partialTicks);
-        Vec3 end = start.addVector(dir.xCoord * maxDistance, dir.yCoord * maxDistance, dir.zCoord * maxDistance);
-        MovingObjectPosition mop = player.worldObj.rayTraceBlocks(start, end, false, true, false);
+        MovingObjectPosition mop = cast.getHitPosition();
 
-        if (mop != null && mop.hitVec != null)
-            end = mop.hitVec;
+        Vec3 start = cast.start;
+        Vec3 end = cast.end;
 
         Vec3 beam0 = end.subtract(start);
 
         start = start.add(offset);
 
         Vec3 beam = end.subtract(start);
-        dir = beam.normalize();
+        Vec3 dir = beam.normalize();
 
         double distance = beam.lengthVector();
 

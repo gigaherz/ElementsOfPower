@@ -1,6 +1,6 @@
-package gigaherz.elementsofpower.spells.cast.effects;
+package gigaherz.elementsofpower.spells.effects;
 
-import gigaherz.elementsofpower.spells.cast.Spellcast;
+import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -14,7 +14,7 @@ import net.minecraft.util.*;
 
 import java.util.List;
 
-public class FireEffect extends SpellEffect
+public class FlameEffect extends SpellEffect
 {
     @Override
     public int getBeamDuration(Spellcast cast)
@@ -95,8 +95,14 @@ public class FireEffect extends SpellEffect
     }
 
     @Override
-    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, int layers)
+    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, float r, MovingObjectPosition mop)
     {
+        if (mop != null)
+        {
+            blockPos = blockPos.offset(mop.sideHit);
+            currentState = cast.world.getBlockState(blockPos);
+        }
+
         Block block = currentState.getBlock();
 
         if (block == Blocks.air)

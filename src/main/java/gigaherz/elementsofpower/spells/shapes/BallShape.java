@@ -1,45 +1,45 @@
-package gigaherz.elementsofpower.spells.cast.shapes;
+package gigaherz.elementsofpower.spells.shapes;
 
-import gigaherz.elementsofpower.spells.SpellBall;
-import gigaherz.elementsofpower.spells.cast.Spellcast;
-import gigaherz.elementsofpower.spells.cast.effects.SpellEffect;
+import gigaherz.elementsofpower.entities.EntityBall;
+import gigaherz.elementsofpower.spells.Spellcast;
+import gigaherz.elementsofpower.spells.effects.SpellEffect;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.world.World;
 
-import java.util.Random;
-
-public class SpellcastBall extends Spellcast<SpellBall>
+public class BallShape extends SpellShape
 {
-    protected Random rand;
-
-    public SpellcastBall(SpellBall parent, SpellEffect effect)
+    @Override
+    public Spellcast castSpell(ItemStack stack, EntityPlayer player, Spellcast cast)
     {
-        super(parent, effect);
+        World world = player.worldObj;
+        EntityBall entity = new EntityBall(world, cast, player);
+
+        if (world.spawnEntityInWorld(entity))
+            return cast;
+
+        return null;
     }
 
-    public float getRandomForParticle()
+    public void onImpact(Spellcast cast, MovingObjectPosition mop)
     {
-        return (rand.nextFloat() - 0.5f) * spell.getPower() / 8;
-    }
-
-    public void onImpact(MovingObjectPosition mop, Random rand)
-    {
-        this.rand = rand;
+        SpellEffect effect = cast.effect;
 
         if (mop.entityHit != null)
         {
-            effect.processDirectHit(this, mop.entityHit);
+            effect.processDirectHit(cast, mop.entityHit);
         }
 
-        effect.spawnBallParticles(this, mop);
+        effect.spawnBallParticles(cast, mop);
 
-        if (!effect.processEntitiesAroundBefore(this, mop.hitVec))
+        if (!effect.processEntitiesAroundBefore(cast, mop.hitVec))
             return;
 
-        int force = getDamageForce();
-        if (!world.isRemote && force > 0)
+        int force = cast.getDamageForce();
+        if (force > 0)
         {
             BlockPos bp = mop.getBlockPos();
 
@@ -71,18 +71,16 @@ public class SpellcastBall extends Spellcast<SpellBall>
 
                         float r = (float) Math.sqrt(r2);
 
-                        int layers = (int) Math.min(force - r, 7);
-
                         BlockPos np = new BlockPos(x, y, z);
 
-                        IBlockState currentState = world.getBlockState(np);
+                        IBlockState currentState = cast.world.getBlockState(np);
 
-                        effect.processBlockWithinRadius(this, np, currentState, layers);
+                        effect.processBlockWithinRadius(cast, np, currentState, r, null);
                     }
                 }
             }
         }
 
-        effect.processEntitiesAroundAfter(this, mop.hitVec);
+        effect.processEntitiesAroundAfter(cast, mop.hitVec);
     }
 }

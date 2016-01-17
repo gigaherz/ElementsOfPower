@@ -5,7 +5,7 @@ import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.essentializer.BlockEssentializer;
 import gigaherz.elementsofpower.items.ItemRing;
 import gigaherz.elementsofpower.items.ItemWand;
-import gigaherz.elementsofpower.spells.cast.Spellcast;
+import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;

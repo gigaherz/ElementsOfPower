@@ -13,7 +13,6 @@ import gigaherz.elementsofpower.renders.*;
 import gigaherz.elementsofpower.util.Used;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;

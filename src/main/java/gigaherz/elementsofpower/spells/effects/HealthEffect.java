@@ -1,7 +1,6 @@
-package gigaherz.elementsofpower.spells.cast.effects;
+package gigaherz.elementsofpower.spells.effects;
 
-import gigaherz.elementsofpower.spells.cast.Spellcast;
-import gigaherz.elementsofpower.spells.cast.shapes.SpellcastBall;
+import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDirt;
 import net.minecraft.block.state.IBlockState;
@@ -14,7 +13,7 @@ import net.minecraft.util.*;
 
 import java.util.List;
 
-public class LifeEffect extends SpellEffect
+public class HealthEffect extends SpellEffect
 {
     @Override
     public int getColor(Spellcast cast)
@@ -34,7 +33,7 @@ public class LifeEffect extends SpellEffect
         return 8;
     }
 
-    private void burnEntities(Spellcast cast, Vec3 hitVec, List<? extends EntityLivingBase> living)
+    private void healEntities(Spellcast cast, Vec3 hitVec, List<? extends EntityLivingBase> living)
     {
         for (EntityLivingBase e : living)
         {
@@ -45,13 +44,18 @@ public class LifeEffect extends SpellEffect
             double dy = e.posY - hitVec.yCoord;
             double dz = e.posZ - hitVec.zCoord;
 
-            double ll = Math.sqrt(dx * dx + dy * dy + dz * dz);
+            double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-            double lv = Math.max(0, cast.getDamageForce() - ll);
-
-            causePotionEffect(cast, e, Potion.heal, 0, lv * 0.5, 0.0);
-            causePotionEffect(cast, e, Potion.regeneration, 0, lv, 100.0);
+            applyEffectsToEntity(cast, distance, e);
         }
+    }
+
+    private void applyEffectsToEntity(Spellcast cast, double distance, EntityLivingBase e)
+    {
+        double lv = Math.max(0, cast.getDamageForce() - distance);
+
+        causePotionEffect(cast, e, Potion.heal, 0, lv * 0.5, 0.0);
+        causePotionEffect(cast, e, Potion.regeneration, 0, lv, 100.0);
     }
 
     private void causePotionEffect(Spellcast cast, EntityLivingBase e, Potion potion, int amplifier, double distance, double durationBase)
@@ -75,7 +79,8 @@ public class LifeEffect extends SpellEffect
     @Override
     public void processDirectHit(Spellcast cast, Entity e)
     {
-
+        if (e instanceof EntityLivingBase)
+            applyEffectsToEntity(cast, 0, (EntityLivingBase) e);
     }
 
     @Override
@@ -96,7 +101,7 @@ public class LifeEffect extends SpellEffect
                 hitVec.zCoord + cast.getDamageForce());
 
         List<EntityLivingBase> living = cast.world.getEntitiesWithinAABB(EntityLivingBase.class, aabb);
-        burnEntities(cast, hitVec, living);
+        healEntities(cast, hitVec, living);
     }
 
     @Override
@@ -107,7 +112,7 @@ public class LifeEffect extends SpellEffect
     }
 
     @Override
-    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, int layers)
+    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, float r, MovingObjectPosition mop)
     {
         Block block = currentState.getBlock();
 
