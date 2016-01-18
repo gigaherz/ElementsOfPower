@@ -11,9 +11,9 @@ public abstract class SpellEffect
 {
     public abstract int getColor(Spellcast cast);
 
-    public abstract int getBeamDuration(Spellcast cast);
+    public abstract int getDuration(Spellcast cast);
 
-    public abstract int getBeamInterval(Spellcast cast);
+    public abstract int getInterval(Spellcast cast);
 
     public int getForceModifier(Spellcast cast)
     {

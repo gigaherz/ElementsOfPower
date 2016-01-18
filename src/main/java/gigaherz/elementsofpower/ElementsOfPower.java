@@ -73,6 +73,7 @@ public class ElementsOfPower
     // Block templates
     public static Block essentializer;
     public static Block dust;
+    public static Block mist;
     public static Block cushion;
 
     // Block Materials
@@ -192,6 +193,9 @@ public class ElementsOfPower
 
         dust = new BlockDust();
         GameRegistry.registerBlock(dust, "dust");
+
+        mist = new BlockDust();
+        GameRegistry.registerBlock(mist, "mist");
 
         cushion = new BlockCushion();
         GameRegistry.registerBlock(cushion, "cushion");

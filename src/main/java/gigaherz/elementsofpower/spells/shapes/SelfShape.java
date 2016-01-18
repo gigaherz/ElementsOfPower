@@ -11,4 +11,10 @@ public class SelfShape extends SpellShape
     {
         return cast;
     }
+
+    @Override
+    public boolean isInstant()
+    {
+        return true;
+    }
 }

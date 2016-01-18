@@ -16,12 +16,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Used
 public class ClientProxy implements ISideProxy
@@ -46,6 +49,13 @@ public class ClientProxy implements ISideProxy
         MinecraftForge.EVENT_BUS.register(new MagicTooltips());
         MinecraftForge.EVENT_BUS.register(new SpellRenderOverlay());
         MinecraftForge.EVENT_BUS.register(new TickEventWandControl());
+        MinecraftForge.EVENT_BUS.register(this);
+    }
+
+    @SubscribeEvent
+    public void onTextureStitchEvent(TextureStitchEvent.Pre event)
+    {
+        event.map.registerSprite(new ResourceLocation(ElementsOfPower.MODID + ":blocks/cone"));
     }
 
     @Override

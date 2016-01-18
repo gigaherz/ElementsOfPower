@@ -21,4 +21,6 @@ public abstract class SpellShape
     {
         return 1;
     }
+
+    public abstract boolean isInstant();
 }

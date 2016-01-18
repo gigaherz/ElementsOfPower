@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.entitydata;
 
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.database.SpellManager;
+import gigaherz.elementsofpower.spells.SpellManager;
 import gigaherz.elementsofpower.network.SpellcastSync;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.entity.Entity;

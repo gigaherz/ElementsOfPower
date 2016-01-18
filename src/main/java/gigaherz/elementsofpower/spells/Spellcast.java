@@ -24,8 +24,8 @@ public class Spellcast
     public Vec3 start;
     public Vec3 end;
 
-    public SpellShape shape;
-    public SpellEffect effect;
+    protected SpellShape shape;
+    protected SpellEffect effect;
 
     public World world;
     public EntityPlayer player;
@@ -44,8 +44,16 @@ public class Spellcast
         this.effect = effect;
         this.power = power;
         this.sequence = sequence;
-        remainingCastTime = effect.getBeamDuration(this);
-        remainingInterval = effect.getBeamInterval(this);
+        if(shape.isInstant())
+        {
+            remainingCastTime = 0;
+            remainingInterval = 0;
+        }
+        else
+        {
+            remainingCastTime = effect.getDuration(this);
+            remainingInterval = effect.getInterval(this);
+        }
     }
 
     public String getSequence()
@@ -90,16 +98,22 @@ public class Spellcast
 
     public void update()
     {
-        remainingCastTime--;
-        remainingInterval--;
-
-        if (remainingInterval <= 0)
+        if(shape.isInstant())
         {
-            remainingInterval = effect.getBeamInterval(this);
-
             if (!world.isRemote)
             {
                 shape.spellTick(this);
+            }
+        }
+        else
+        {
+            remainingCastTime--;
+            remainingInterval--;
+
+            if (remainingInterval <= 0)
+            {
+                remainingInterval = effect.getInterval(this);
+
             }
         }
 

@@ -1,0 +1,97 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "textures": {
+      "all": "ElementsOfPower:blocks/mist_16"
+    },
+    "model": "cube_all",
+    "uvlock": true
+  },
+  "variants": {
+    "inventory": [
+      {}
+    ],
+    "density": {
+      "1": {
+        "textures": {
+          "all": "ElementsOfPower:blocks/mist_1"
+        }
+      },
+      "2": {
+        "textures": {
+          "all": "ElementsOfPower:blocks/mist_2"
+        }
+      },
+      "3": {
+        "textures": {
+          "all": "ElementsOfPower:blocks/mist_3"
+        }
+      },
+      "4": {
+        "textures": {
+          "all": "ElementsOfPower:blocks/mist_4"
+        }
+      },
+      "5": {
+        "textures": {
+          "all": "ElementsOfPower:blocks/mist_5"
+        }
+      },
+      "6": {
+        "textures": {
+          "all": "ElementsOfPower:blocks/mist_6"
+        }
+      },
+      "7": {
+        "textures": {
+          "all": "ElementsOfPower:blocks/mist_7"
+        }
+      },
+      "8": {
+        "textures": {
+          "all": "ElementsOfPower:blocks/mist_8"
+        }
+      },
+      "9": {
+        "textures": {
+          "all": "ElementsOfPower:blocks/mist_9"
+        }
+      },
+      "10": {
+        "textures": {
+          "all": "ElementsOfPower:blocks/mist_10"
+        }
+      },
+      "11": {
+        "textures": {
+          "all": "ElementsOfPower:blocks/mist_11"
+        }
+      },
+      "12": {
+        "textures": {
+          "all": "ElementsOfPower:blocks/mist_12"
+        }
+      },
+      "13": {
+        "textures": {
+          "all": "ElementsOfPower:blocks/mist_13"
+        }
+      },
+      "14": {
+        "textures": {
+          "all": "ElementsOfPower:blocks/mist_14"
+        }
+      },
+      "15": {
+        "textures": {
+          "all": "ElementsOfPower:blocks/mist_15"
+        }
+      },
+      "16": {
+        "textures": {
+          "all": "ElementsOfPower:blocks/mist_16"
+        }
+      }
+    }
+  }
+}

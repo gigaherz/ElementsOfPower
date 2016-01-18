@@ -17,17 +17,17 @@ public class WindEffect extends SpellEffect
     @Override
     public int getColor(Spellcast cast)
     {
-        return 0xFFFFAA;
+        return 0xAAFFFF;
     }
 
     @Override
-    public int getBeamDuration(Spellcast cast)
+    public int getDuration(Spellcast cast)
     {
         return 20 * 5;
     }
 
     @Override
-    public int getBeamInterval(Spellcast cast)
+    public int getInterval(Spellcast cast)
     {
         return 2;
     }

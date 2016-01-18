@@ -26,7 +26,7 @@ public class BallShape extends SpellShape
 
     public void onImpact(Spellcast cast, MovingObjectPosition mop)
     {
-        SpellEffect effect = cast.effect;
+        SpellEffect effect = cast.getEffect();
 
         if (mop.entityHit != null)
         {
@@ -82,5 +82,11 @@ public class BallShape extends SpellShape
         }
 
         effect.processEntitiesAroundAfter(cast, mop.hitVec);
+    }
+
+    @Override
+    public boolean isInstant()
+    {
+        return true;
     }
 }

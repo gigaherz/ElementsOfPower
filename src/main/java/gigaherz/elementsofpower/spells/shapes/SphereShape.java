@@ -13,6 +13,12 @@ public class SphereShape extends SpellShape
     }
 
     @Override
+    public boolean isInstant()
+    {
+        return true;
+    }
+
+    @Override
     public void spellTick(Spellcast cast)
     {
     }

@@ -1,7 +1,8 @@
 package gigaherz.elementsofpower.renders;
 
 import com.google.common.collect.Maps;
-import gigaherz.elementsofpower.database.SpellManager;
+import gigaherz.elementsofpower.renders.spellrender.RenderCone;
+import gigaherz.elementsofpower.spells.SpellManager;
 import gigaherz.elementsofpower.entitydata.SpellcastEntityData;
 import gigaherz.elementsofpower.renders.spellrender.RenderBeam;
 import gigaherz.elementsofpower.renders.spellrender.RenderSpell;
@@ -24,6 +25,7 @@ public class SpellRenderOverlay
     static
     {
         rendererRegistry.put(SpellManager.beam, new RenderBeam());
+        rendererRegistry.put(SpellManager.cone, new RenderCone());
     }
 
     @SubscribeEvent

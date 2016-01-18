@@ -1,6 +1,6 @@
 package gigaherz.elementsofpower.entities;
 
-import gigaherz.elementsofpower.database.SpellManager;
+import gigaherz.elementsofpower.spells.SpellManager;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;

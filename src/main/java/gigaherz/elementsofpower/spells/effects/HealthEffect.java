@@ -22,13 +22,13 @@ public class HealthEffect extends SpellEffect
     }
 
     @Override
-    public int getBeamDuration(Spellcast cast)
+    public int getDuration(Spellcast cast)
     {
         return 20 * 5;
     }
 
     @Override
-    public int getBeamInterval(Spellcast cast)
+    public int getInterval(Spellcast cast)
     {
         return 8;
     }
@@ -54,8 +54,13 @@ public class HealthEffect extends SpellEffect
     {
         double lv = Math.max(0, cast.getDamageForce() - distance);
 
-        causePotionEffect(cast, e, Potion.heal, 0, lv * 0.5, 0.0);
-        causePotionEffect(cast, e, Potion.regeneration, 0, lv, 100.0);
+        int emp = cast.getEmpowering();
+
+        if(-emp < lv)
+            causePotionEffect(cast, e, Potion.heal, 0, (lv+emp) * 0.5, 0.0);
+
+        if(emp < lv)
+            causePotionEffect(cast, e, Potion.regeneration, 0, (lv-emp), 100.0);
     }
 
     private void causePotionEffect(Spellcast cast, EntityLivingBase e, Potion potion, int amplifier, double distance, double durationBase)

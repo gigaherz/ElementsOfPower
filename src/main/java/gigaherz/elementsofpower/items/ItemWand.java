@@ -3,7 +3,7 @@ package gigaherz.elementsofpower.items;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.database.MagicDatabase;
-import gigaherz.elementsofpower.database.SpellManager;
+import gigaherz.elementsofpower.spells.SpellManager;
 import gigaherz.elementsofpower.entitydata.SpellcastEntityData;
 import gigaherz.elementsofpower.network.SpellSequenceUpdate;
 import gigaherz.elementsofpower.progression.DiscoveryHandler;

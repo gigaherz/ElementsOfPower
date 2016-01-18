@@ -16,6 +16,12 @@ public class BeamShape extends SpellShape
     }
 
     @Override
+    public boolean isInstant()
+    {
+        return false;
+    }
+
+    @Override
     public void spellTick(Spellcast cast)
     {
         MovingObjectPosition mop = cast.getHitPosition();
@@ -24,13 +30,13 @@ public class BeamShape extends SpellShape
         {
             if (mop.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY)
             {
-                cast.effect.processDirectHit(cast, mop.entityHit);
+                cast.getEffect().processDirectHit(cast, mop.entityHit);
             }
             else if (mop.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK)
             {
                 BlockPos pos = mop.getBlockPos();
                 IBlockState state = cast.world.getBlockState(pos);
-                cast.effect.processBlockWithinRadius(cast, pos, state, 0, mop);
+                cast.getEffect().processBlockWithinRadius(cast, pos, state, 0, mop);
             }
         }
     }

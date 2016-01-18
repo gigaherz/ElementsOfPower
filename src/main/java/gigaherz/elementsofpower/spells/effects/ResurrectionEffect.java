@@ -21,13 +21,13 @@ public class ResurrectionEffect
     }
 
     @Override
-    public int getBeamDuration(Spellcast cast)
+    public int getDuration(Spellcast cast)
     {
         return 0;
     }
 
     @Override
-    public int getBeamInterval(Spellcast cast)
+    public int getInterval(Spellcast cast)
     {
         return 0;
     }

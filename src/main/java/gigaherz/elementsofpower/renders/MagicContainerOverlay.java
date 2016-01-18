@@ -4,7 +4,7 @@ import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.client.TickEventWandControl;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.database.MagicDatabase;
-import gigaherz.elementsofpower.database.SpellManager;
+import gigaherz.elementsofpower.spells.SpellManager;
 import gigaherz.elementsofpower.items.ItemWand;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;

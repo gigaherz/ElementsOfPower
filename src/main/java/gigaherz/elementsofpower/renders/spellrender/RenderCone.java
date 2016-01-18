@@ -18,22 +18,18 @@ public class RenderCone extends RenderSpell
     {
         IFlexibleBakedModel modelCone = RenderingStuffs.loadModel("elementsofpower:entity/cone.obj");
 
-        int beam_color = cast.getColor();
-        float scale = 0.15f * cast.getScale();
-        float maxDistance = 10.0f;
+        int color = cast.getColor();
+        float scale = 2 * cast.getScale();
 
-        Vec3 start = player.getPositionEyes(partialTicks);
-        Vec3 dir = player.getLook(partialTicks);
-        Vec3 end = start.addVector(dir.xCoord * maxDistance, dir.yCoord * maxDistance, dir.zCoord * maxDistance);
-        MovingObjectPosition mop = player.worldObj.rayTraceBlocks(start, end, false, true, false);
+        cast.getHitPosition();
 
-        if (mop != null && mop.hitVec != null)
-            end = mop.hitVec;
+        Vec3 start = cast.start;
+        Vec3 end = cast.end;
 
         start = start.add(offset);
 
         Vec3 beam = end.subtract(start);
-        dir = beam.normalize();
+        Vec3 dir = beam.normalize();
 
         double beamPlane = Math.sqrt(dir.xCoord * dir.xCoord + dir.zCoord * dir.zCoord);
         double beamYaw = Math.atan2(dir.zCoord, dir.xCoord);
@@ -42,6 +38,7 @@ public class RenderCone extends RenderSpell
         GlStateManager.disableLighting();
         GlStateManager.enableRescaleNormal();
         GlStateManager.enableBlend();
+        GlStateManager.disableAlpha();
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.depthMask(false);
 
@@ -49,22 +46,28 @@ public class RenderCone extends RenderSpell
 
         GlStateManager.pushMatrix();
 
-        int alpha = 64;
-        int color = (alpha << 24) | beam_color;
+        int alpha = 80; // 64;
+        color = (alpha << 24) | color;
+
+        float time = (player.ticksExisted + partialTicks);
 
         for (int i = 0; i <= 4; i++)
         {
             float scale_xy = scale * (float) Math.pow(0.8, i);
-            float scale_z = scale * (float) Math.pow(0.8, i);
-            float offset_z = 0.05f * i;
+            float scale_z = scale * (float) Math.pow(1.05, i);
+            float offset_z = 0.5f + 0.005f * i;
+
+            float angle = time * (6 + 3 * (4-i)) * ((i&1)==0?1:-1);
 
             GlStateManager.pushMatrix();
             GlStateManager.translate(
                     (float) (x + offset.xCoord),
                     (float) (y + offset.yCoord),
-                    (float) (z + offset.zCoord + offset_z));
-            GlStateManager.rotate(-(float) Math.toDegrees(beamYaw), 0, 1, 0);
-            GlStateManager.rotate((float) Math.toDegrees(beamPitch) - 90, 0, 0, 1);
+                    (float) (z + offset.zCoord));
+            GlStateManager.rotate(-(float) Math.toDegrees(beamYaw) + 90, 0, 1, 0);
+            GlStateManager.rotate(-(float) Math.toDegrees(beamPitch), 1, 0, 0);
+            GlStateManager.translate(0, -0.15f, offset_z);
+            GlStateManager.rotate(angle, 0, 0, 1);
             GlStateManager.scale(scale_xy, scale_xy, scale_z);
 
             RenderingStuffs.renderModel(modelCone, color);
@@ -78,5 +81,6 @@ public class RenderCone extends RenderSpell
         GlStateManager.disableBlend();
         GlStateManager.disableRescaleNormal();
         GlStateManager.enableLighting();
+        GlStateManager.enableAlpha();
     }
 }

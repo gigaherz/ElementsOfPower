@@ -1,8 +1,10 @@
 package gigaherz.elementsofpower.spells.effects;
 
+import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.blocks.BlockDust;
+import gigaherz.elementsofpower.blocks.BlockMist;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockDynamicLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
@@ -11,19 +13,12 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 
-public class WaterEffect extends SpellEffect
+public class MistEffect extends SpellEffect
 {
-    boolean spawnSourceBlocks;
-
-    public WaterEffect(boolean spawnSourceBlocks)
-    {
-        this.spawnSourceBlocks = spawnSourceBlocks;
-    }
-
     @Override
     public int getColor(Spellcast cast)
     {
-        return 0xFF0000;
+        return 0x000000;
     }
 
     @Override
@@ -35,13 +30,7 @@ public class WaterEffect extends SpellEffect
     @Override
     public int getInterval(Spellcast cast)
     {
-        return 4;
-    }
-
-    @Override
-    public int getForceModifier(Spellcast cast)
-    {
-        return cast.world.provider.doesWaterVaporize() ? -3 : 0;
+        return 10;
     }
 
     @Override
@@ -85,14 +74,7 @@ public class WaterEffect extends SpellEffect
 
         if (block == Blocks.air)
         {
-            if (spawnSourceBlocks)
-            {
-                cast.world.setBlockState(blockPos, Blocks.flowing_water.getDefaultState().withProperty(BlockDynamicLiquid.LEVEL, 0));
-            }
-            else
-            {
-                cast.world.setBlockState(blockPos, Blocks.flowing_water.getDefaultState().withProperty(BlockDynamicLiquid.LEVEL, 15));
-            }
+            cast.world.setBlockState(blockPos, ElementsOfPower.mist.getDefaultState().withProperty(BlockMist.DENSITY, 16));
         }
     }
 }

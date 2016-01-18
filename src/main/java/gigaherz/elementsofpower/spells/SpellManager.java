@@ -1,10 +1,10 @@
-package gigaherz.elementsofpower.database;
+package gigaherz.elementsofpower.spells;
 
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multiset;
-import gigaherz.elementsofpower.spells.Spellcast;
+import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.spells.effects.*;
 import gigaherz.elementsofpower.spells.shapes.*;
 
@@ -29,6 +29,7 @@ public class SpellManager
     public static final SpellEffect water = new WaterEffect(false);
     public static final SpellEffect wind = new WindEffect();
     public static final SpellEffect dust = new DustEffect();
+    public static final SpellEffect mist = new MistEffect();
     public static final SpellEffect light = new LightEffect();
     public static final SpellEffect mining = new MiningEffect();
     public static final SpellEffect healing = new HealthEffect();
@@ -106,6 +107,7 @@ public class SpellManager
             Water,
             Wind,
             Dust,
+            Mist,
             Light,
             Mining,
             Healing,
@@ -133,6 +135,7 @@ public class SpellManager
             effects.put(Effect.Water, water);
             effects.put(Effect.Wind, wind);
             effects.put(Effect.Dust, dust);
+            effects.put(Effect.Mist, mist);
             effects.put(Effect.Light, light);
             effects.put(Effect.Mining, mining);
             effects.put(Effect.Healing, healing);
@@ -219,10 +222,11 @@ public class SpellManager
                 HashMultiset<Element> multiset = HashMultiset.create();
                 multiset.addAll(sequence);
 
-                int elements = multiset.size();
+                float total = (float)Math.ceil(Math.pow(3,sequence.size()) * (1 + 0.6 * multiset.size()));
+
                 for (Multiset.Entry<Element> e : multiset.entrySet())
                 {
-                    amounts.amounts[e.getElement().ordinal()] += elements * sequence.size() / e.getCount();
+                    amounts.amounts[e.getElement().ordinal()] += total * e.getCount() / sequence.size();
                 }
             }
 
@@ -252,30 +256,14 @@ public class SpellManager
             primaryPower = 1;
             switch (e)
             {
-                case Fire:
-                    effect = Effect.Flame;
-                    break;
-                case Water:
-                    effect = Effect.Water;
-                    break;
-                case Air:
-                    effect = Effect.Wind;
-                    break;
-                case Earth:
-                    effect = Effect.Dust;
-                    break;
-                case Light:
-                    effect = Effect.Light;
-                    break;
-                case Darkness:
-                    effect = Effect.Mining;
-                    break;
-                case Life:
-                    effect = Effect.Healing;
-                    break;
-                case Death:
-                    effect = Effect.Breaking;
-                    break;
+                case Fire: effect = Effect.Flame; break;
+                case Water: effect = Effect.Water; break;
+                case Air: effect = Effect.Wind; break;
+                case Earth: effect = Effect.Dust; break;
+                case Light: effect = Effect.Light; break;
+                case Darkness: effect = Effect.Mining; break;
+                case Life: effect = Effect.Healing; break;
+                case Death: effect = Effect.Breaking; break;
             }
             shape = e.getShape();
             sequence.add(e);
@@ -310,35 +298,19 @@ public class SpellManager
                 case Air:
                     switch (effect)
                     {
-                        case Flame:
-                            reset();
-                            break;
-                        case Wind:
-                            break;
-                        case Dust:
-                            effect = Effect.Cushion;
-                            break;
-                        case Cushion:
-                            break;
-                        case Water: /* Mist */
-                            break;
-                        case Lava:
-                            effect = Effect.Flame;
-                            break;
-                        case Light:
-                            break;
-                        case Mining:
-                            break;
-                        case Healing:
-                            break;
-                        case Breaking:
-                            break;
-                        case Resurrection:
-                            break;
-                        case WaterSource:
-                            break;
-                        case LavaSource:
-                            break;
+                        case Flame: reset(); break;
+                        case Wind: break;
+                        case Dust: effect = Effect.Cushion; break;
+                        case Cushion: break;
+                        case Water: effect = Effect.Mist; break;
+                        case Lava: effect = Effect.Flame; break;
+                        case Light: reset(); break;
+                        case Mining: reset(); break;
+                        case Healing: reset(); break;
+                        case Breaking: reset(); break;
+                        case Resurrection: reset(); break;
+                        case WaterSource: reset(); break;
+                        case LavaSource: effect = Effect.Flame; break;
                     }
                     break;
             }
