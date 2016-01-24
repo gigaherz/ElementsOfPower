@@ -78,6 +78,9 @@ public class TickEventWandControl
         if (event.phase != TickEvent.Phase.END)
             return;
 
+        if (itemInUse == null)
+            return;
+
         EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
         if (player == null || player.inventory == null)
             return;
@@ -85,29 +88,27 @@ public class TickEventWandControl
         ItemStack heldItem = player.inventory.getCurrentItem();
         int slotNumber = player.inventory.currentItem;
 
-        if (itemInUse != null)
+
+        if (!Minecraft.getMinecraft().gameSettings.keyBindUseItem.isKeyDown())
         {
-            if (!Minecraft.getMinecraft().gameSettings.keyBindUseItem.isKeyDown())
-            {
-                endHoldingRightButton(false);
-                return;
-            }
+            endHoldingRightButton(false);
+            return;
+        }
 
-            if (heldItem == null ||
-                    heldItem.getItem().shouldCauseReequipAnimation(itemInUse, heldItem, slotNumber != slotInUse))
-            {
-                endHoldingRightButton(true);
-                return;
-            }
+        if (heldItem == null ||
+                heldItem.getItem().shouldCauseReequipAnimation(itemInUse, heldItem, slotNumber != slotInUse))
+        {
+            endHoldingRightButton(true);
+            return;
+        }
 
-            itemInUseCount--;
+        itemInUseCount--;
 
-            for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+        {
+            if (interceptKeys[i].retrieveClick())
             {
-                if (interceptKeys[i].retrieveClick())
-                {
-                    sequence += SpellManager.elementChars[i];
-                }
+                sequence += SpellManager.elementChars[i];
             }
         }
     }
