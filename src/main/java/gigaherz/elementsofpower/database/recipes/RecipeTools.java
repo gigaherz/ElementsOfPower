@@ -113,6 +113,12 @@ public class RecipeTools
             return;
         }
 
+        if(output.stackSize == 0)
+        {
+            ElementsOfPower.logger.warn("Found a recipe with result stack size 0. This recipe will be ignored. Result stack: " + output.toString());
+            return;
+        }
+
         if (Utils.stackIsInMap(itemSources, output))
         {
             return;
@@ -213,11 +219,11 @@ public class RecipeTools
     public static ItemStack applyExistingRecipes(ItemStack output, List<ItemStack> items, List<ItemStack> applied)
     {
         ItemStack result = output.copy();
+        int numProduced = output.stackSize;
         int totalMult = 1;
 
         for (ItemStack is : items)
         {
-
             Map.Entry<ItemStack, List<ItemStack>> r = findSources(is);
 
             if (r != null)
@@ -236,7 +242,6 @@ public class RecipeTools
             if (r != null)
             {
                 int numNeeded = is.stackSize;
-                int numProduced = output.stackSize;
                 int num = lcm(numNeeded, numProduced);
 
                 int mult = num / numNeeded;

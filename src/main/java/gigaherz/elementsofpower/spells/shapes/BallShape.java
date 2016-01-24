@@ -13,6 +13,12 @@ import net.minecraft.world.World;
 public class BallShape extends SpellShape
 {
     @Override
+    public float getScale(Spellcast cast)
+    {
+        return 1 + 0.25f * cast.getDamageForce();
+    }
+
+    @Override
     public Spellcast castSpell(ItemStack stack, EntityPlayer player, Spellcast cast)
     {
         World world = player.worldObj;

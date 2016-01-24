@@ -30,7 +30,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.config.Configuration;
@@ -259,7 +258,7 @@ public class ElementsOfPower
         logger.info("Registering entities...");
 
         int entityId = 1;
-        EntityRegistry.registerModEntity(EntityBall.class, "Airball", entityId++, this, 80, 3, true);
+        EntityRegistry.registerModEntity(EntityBall.class, "SpellBall", entityId++, this, 80, 3, true);
         EntityRegistry.registerModEntity(EntityEssence.class, "Essence", entityId++, this, 80, 3, true, 0x0000FF, 0xFFFF00);
         logger.debug("Next entity id: " + entityId);
 
@@ -344,8 +343,6 @@ public class ElementsOfPower
 
         // Gui
         NetworkRegistry.INSTANCE.registerGuiHandler(this, guiHandler);
-
-        ShapedRecipes r;
 
         MagicDatabase.initialize();
     }
