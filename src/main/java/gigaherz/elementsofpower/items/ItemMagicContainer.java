@@ -1,8 +1,8 @@
 package gigaherz.elementsofpower.items;
 
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.database.ContainerInformation;
 import gigaherz.elementsofpower.database.MagicAmounts;
-import gigaherz.elementsofpower.database.MagicDatabase;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumRarity;
@@ -63,7 +63,7 @@ public class ItemMagicContainer extends Item
         if (isInfinite(stack))
             return true;
 
-        MagicAmounts amounts = MagicDatabase.getContainedMagic(stack);
+        MagicAmounts amounts = ContainerInformation.getContainedMagic(stack);
 
         return amounts != null && !amounts.isEmpty();
     }
@@ -71,7 +71,6 @@ public class ItemMagicContainer extends Item
     @Override
     public EnumRarity getRarity(ItemStack stack)
     {
-
         if (hasEffect(stack))
             return EnumRarity.RARE;
         return EnumRarity.UNCOMMON;
@@ -80,7 +79,7 @@ public class ItemMagicContainer extends Item
     @Override
     public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltipList, boolean showAdvancedInfo)
     {
-        MagicAmounts amounts = MagicDatabase.getContainedMagic(stack);
+        MagicAmounts amounts = ContainerInformation.getContainedMagic(stack);
 
         if (amounts == null)
         {
@@ -101,9 +100,9 @@ public class ItemMagicContainer extends Item
                 continue;
             }
 
-            String magicName = MagicDatabase.getMagicName(i);
+            String magicName = MagicAmounts.getMagicName(i);
             String str;
-            if (MagicDatabase.isInfiniteContainer(stack))
+            if (ContainerInformation.isInfiniteContainer(stack))
                 str = String.format("%s  %s x\u221E", EnumChatFormatting.GRAY, magicName);
             else
                 str = String.format("%s  %s x%s", EnumChatFormatting.GRAY, magicName,

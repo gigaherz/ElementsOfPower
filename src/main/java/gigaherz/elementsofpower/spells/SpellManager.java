@@ -39,6 +39,7 @@ public class SpellManager
     public static final SpellEffect resurrection = new ResurrectionEffect();
     public static final SpellEffect waterSource = new WaterEffect(true);
     public static final SpellEffect lavaSource = new LavaEffect(true);
+    public static final SpellEffect teleport = new TeleportEffect();
 
     static
     {
@@ -115,7 +116,7 @@ public class SpellManager
             Cushion,
             Lava,
             Resurrection,
-
+            Teleport,
             WaterSource,
             LavaSource
         }
@@ -145,6 +146,7 @@ public class SpellManager
             effects.put(Effect.Resurrection, resurrection);
             effects.put(Effect.WaterSource, waterSource);
             effects.put(Effect.LavaSource, lavaSource);
+            effects.put(Effect.Teleport, teleport);
         }
 
         Element primary = null;
@@ -287,6 +289,8 @@ public class SpellManager
                 }
             }
 
+            shape = e.shape;
+
             switch (e)
             {
                 case Fire:
@@ -313,9 +317,15 @@ public class SpellManager
                         case LavaSource: effect = Effect.Flame; break;
                     }
                     break;
+                case Life:
+                    switch (effect)
+                    {
+                        default: break;
+                        case Mining: effect = Effect.Teleport; shape = Shape.Ball; break;
+                    }
+                    break;
             }
 
-            shape = effect != null ? e.shape : null;
             sequence.add(e);
         }
 

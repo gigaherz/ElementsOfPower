@@ -1,8 +1,10 @@
-package gigaherz.elementsofpower.database.recipes;
+package gigaherz.elementsofpower.database.recipes.furnace;
 
+import gigaherz.elementsofpower.database.recipes.IRecipeInfoProvider;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,12 +28,14 @@ public class FurnaceRecipeInfo implements IRecipeInfoProvider
         recipeOutput.stackSize *= 8;
     }
 
+    @Nonnull
     @Override
     public ItemStack getRecipeOutput()
     {
         return recipeOutput;
     }
 
+    @Nonnull
     @Override
     public List<ItemStack> getRecipeInputs()
     {

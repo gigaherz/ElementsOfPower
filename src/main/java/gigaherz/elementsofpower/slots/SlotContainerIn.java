@@ -1,6 +1,6 @@
 package gigaherz.elementsofpower.slots;
 
-import gigaherz.elementsofpower.database.MagicDatabase;
+import gigaherz.elementsofpower.database.ContainerInformation;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -15,7 +15,7 @@ public class SlotContainerIn extends Slot
     @Override
     public boolean isItemValid(ItemStack par1ItemStack)
     {
-        return MagicDatabase.itemContainsMagic(par1ItemStack);
+        return ContainerInformation.itemContainsMagic(par1ItemStack);
     }
 
     @Override

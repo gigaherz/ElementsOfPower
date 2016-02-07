@@ -3,81 +3,56 @@ package gigaherz.elementsofpower.database;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
-import java.util.List;
 import java.util.Map;
 
 public class Utils
 {
-    public static ItemStack getExistingInList(List<ItemStack> list, ItemStack stack)
+    public static <OType> boolean stackMapContainsKey(Map<ItemStack, OType> map, ItemStack stack)
     {
         if (stack == null)
-        {
-            return null;
-        }
-
-        for (ItemStack k : list)
-        {
-            if (stackFitsInSlot(stack, k))
-            {
-                return k;
-            }
-        }
-
-        return null;
-    }
-
-    public static <OType> OType getFromMap(Map<ItemStack, OType> map, ItemStack stack)
-    {
-        if (stack == null)
-        {
-            return null;
-        }
+            return false;
 
         for (ItemStack k : map.keySet())
         {
-            if (stackFitsInSlot(stack, k))
+            if (OreDictionary.itemMatches(stack, k, false))
             {
-                OType t = map.get(k);
-                return t;
+                return true;
             }
         }
 
-        return null;
+        return false;
     }
 
-    public static <OType> boolean stackIsInMap(Map<ItemStack, OType> map, ItemStack stack)
-    {
-        return stack != null && getFromMap(map, stack) != null;
-    }
-
-    public static ItemStack findKeyForValue(Map<ItemStack, ItemStack> map, ItemStack stack)
+    public static <OType> OType stackMapGet(Map<ItemStack, OType> map, ItemStack stack)
     {
         if (stack == null)
-        {
             return null;
-        }
 
-        for (ItemStack k : map.keySet())
+        for (Map.Entry<ItemStack, OType> entry : map.entrySet())
         {
-            ItemStack v = map.get(k);
-
-            if (compareItemStacksStrict(v, stack))
+            if (OreDictionary.itemMatches(stack, entry.getKey(), false))
             {
-                return k;
+                return entry.getValue();
             }
         }
 
         return null;
     }
 
-    public static boolean stackFitsInSlot(ItemStack test, ItemStack stack)
+    public static int gcd(int a, int b)
     {
-        int dmg = test.getItemDamage();
-        return test.getItem() == stack.getItem() && (dmg == OreDictionary.WILDCARD_VALUE || dmg == stack.getItemDamage());
+        for (; ; )
+        {
+            if (a == 0) return b;
+            b %= a;
+            if (b == 0) return a;
+            a %= b;
+        }
     }
 
-    public static boolean compareItemStacksStrict(ItemStack test, ItemStack stack)
+    public static int lcm(int a, int b)
     {
-        return test.getItem() == stack.getItem() && test.getItemDamage() == stack.getItemDamage();
+        int temp = gcd(a, b);
+        return temp > 0 ? (a / temp * b) : 0;
     }
 }

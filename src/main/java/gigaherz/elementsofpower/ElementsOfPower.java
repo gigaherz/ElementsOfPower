@@ -3,7 +3,7 @@ package gigaherz.elementsofpower;
 import com.google.common.collect.Lists;
 import gigaherz.elementsofpower.blocks.BlockCushion;
 import gigaherz.elementsofpower.blocks.BlockDust;
-import gigaherz.elementsofpower.database.MagicDatabase;
+import gigaherz.elementsofpower.database.*;
 import gigaherz.elementsofpower.entities.EntityBall;
 import gigaherz.elementsofpower.entities.EntityEssence;
 import gigaherz.elementsofpower.entitydata.SpellcastEntityData;
@@ -262,18 +262,8 @@ public class ElementsOfPower
         EntityRegistry.registerModEntity(EntityEssence.class, "Essence", entityId++, this, 80, 3, true, 0x0000FF, 0xFFFF00);
         logger.debug("Next entity id: " + entityId);
 
-        List<BiomeGenBase> biomes = Lists.newArrayList();
-
-        for (BiomeGenBase b : BiomeGenBase.getBiomeGenArray())
-        {
-            if (b != null)
-                biomes.add(b);
-        }
-
-        BiomeGenBase[] biomesArray = biomes.toArray(new BiomeGenBase[biomes.size()]);
-
         EntitySpawnPlacementRegistry.setPlacementType(EntityEssence.class, EntityLiving.SpawnPlacementType.IN_AIR);
-        EntityRegistry.addSpawn(EntityEssence.class, 50, 1, 4, EnumCreatureType.AMBIENT, biomesArray);
+        EntityRegistry.addSpawn(EntityEssence.class, 50, 1, 4, EnumCreatureType.AMBIENT, getBiomes());
 
         // Recipes
         logger.info("Registering recipes...");
@@ -344,12 +334,29 @@ public class ElementsOfPower
         // Gui
         NetworkRegistry.INSTANCE.registerGuiHandler(this, guiHandler);
 
-        MagicDatabase.initialize();
+        ContainerInformation.registerContainerConversions();
+        ContainerInformation.registerContainerCapacity();
+        StockConversions.registerEssenceSources();
+        EssenceOverrides.loadOverrides();
+    }
+
+    private BiomeGenBase[] getBiomes()
+    {
+        List<BiomeGenBase> biomes = Lists.newArrayList();
+
+        for (BiomeGenBase b : BiomeGenBase.getBiomeGenArray())
+        {
+            if (b != null)
+                biomes.add(b);
+        }
+
+        return biomes.toArray(new BiomeGenBase[biomes.size()]);
     }
 
     @EventHandler
     public void postInit(FMLPostInitializationEvent event)
     {
-        MagicDatabase.postInitialize();
+        EssenceConversions.registerEssencesForRecipes();
+        ContainerInformation.reverseContainerConversions();
     }
 }

@@ -2,9 +2,12 @@ package gigaherz.elementsofpower.database.recipes;
 
 import net.minecraft.item.crafting.IRecipe;
 
+import javax.annotation.Nonnull;
+
 public interface IRecipeHandler
 {
-    boolean accepts(IRecipe recipe);
+    boolean accepts(@Nonnull IRecipe recipe);
 
-    IRecipeInfoProvider handle(IRecipe recipe);
+    @Nonnull
+    IRecipeInfoProvider handle(@Nonnull IRecipe recipe);
 }

@@ -1,8 +1,9 @@
 package gigaherz.elementsofpower.essentializer;
 
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.database.ContainerInformation;
+import gigaherz.elementsofpower.database.EssenceConversions;
 import gigaherz.elementsofpower.database.MagicAmounts;
-import gigaherz.elementsofpower.database.MagicDatabase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.InventoryBasic;
@@ -177,7 +178,7 @@ public class TileEssentializer
             return false;
         }
 
-        MagicAmounts contained = MagicDatabase.getEssences(input, false);
+        MagicAmounts contained = EssenceConversions.getEssences(input, false);
 
         if (contained == null)
             return false;
@@ -208,12 +209,12 @@ public class TileEssentializer
             return false;
         }
 
-        if (!MagicDatabase.itemContainsMagic(input))
+        if (!ContainerInformation.itemContainsMagic(input))
             return false;
 
-        boolean isInfinite = MagicDatabase.isInfiniteContainer(input);
+        boolean isInfinite = ContainerInformation.isInfiniteContainer(input);
 
-        MagicAmounts contained = MagicDatabase.getContainedMagic(input);
+        MagicAmounts contained = ContainerInformation.getContainedMagic(input);
 
         if (contained == null)
             return false;
@@ -234,7 +235,7 @@ public class TileEssentializer
         if (totalAdded <= 0)
             return false;
 
-        input = MagicDatabase.setContainedMagic(input, contained);
+        input = ContainerInformation.setContainedMagic(input, contained);
 
         inventory.setInventorySlotContents(1, input);
         return true;
@@ -254,11 +255,11 @@ public class TileEssentializer
             return false;
         }
 
-        if (MagicDatabase.isInfiniteContainer(output))
+        if (ContainerInformation.isInfiniteContainer(output))
             return false;
 
-        MagicAmounts limits = MagicDatabase.getMagicLimits(output);
-        MagicAmounts contained = MagicDatabase.getContainedMagic(output);
+        MagicAmounts limits = ContainerInformation.getMagicLimits(output);
+        MagicAmounts contained = ContainerInformation.getContainedMagic(output);
 
         if (limits == null)
             return false;
@@ -284,7 +285,7 @@ public class TileEssentializer
         if (totalAdded <= 0)
             return false;
 
-        inventory.setInventorySlotContents(2, MagicDatabase.setContainedMagic(output, contained));
+        inventory.setInventorySlotContents(2, ContainerInformation.setContainedMagic(output, contained));
         return true;
     }
 
@@ -417,9 +418,9 @@ public class TileEssentializer
         switch (index)
         {
             case 0:
-                return MagicDatabase.itemContainsMagic(stack) || MagicDatabase.itemHasEssence(stack);
+                return ContainerInformation.itemContainsMagic(stack) || EssenceConversions.itemHasEssence(stack);
             case 1:
-                return MagicDatabase.canItemContainMagic(stack);
+                return ContainerInformation.canItemContainMagic(stack);
         }
         return false;
     }

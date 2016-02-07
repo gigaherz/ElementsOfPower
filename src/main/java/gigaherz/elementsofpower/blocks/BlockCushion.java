@@ -15,7 +15,6 @@ public class BlockCushion extends BlockDust
     {
         super(ElementsOfPower.materialCushion);
         setUnlocalizedName(ElementsOfPower.MODID + ".cushion");
-        setCreativeTab(CreativeTabs.tabMisc);
         setHardness(0.1F);
         setBlockUnbreakable();
         setStepSound(Block.soundTypeCloth);

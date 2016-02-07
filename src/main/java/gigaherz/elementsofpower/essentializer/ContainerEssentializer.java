@@ -1,8 +1,9 @@
 package gigaherz.elementsofpower.essentializer;
 
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.database.ContainerInformation;
+import gigaherz.elementsofpower.database.EssenceConversions;
 import gigaherz.elementsofpower.database.MagicAmounts;
-import gigaherz.elementsofpower.database.MagicDatabase;
 import gigaherz.elementsofpower.network.EssentializerAmountsUpdate;
 import gigaherz.elementsofpower.slots.SlotContainerIn;
 import gigaherz.elementsofpower.slots.SlotContainerOut;
@@ -106,9 +107,9 @@ public class ContainerEssentializer
 
         if (slotIndex >= 3)
         {
-            boolean itemIsContainer = MagicDatabase.canItemContainMagic(stack);
-            boolean itemContainsMagic = itemIsContainer && MagicDatabase.itemContainsMagic(stack);
-            boolean itemHasEssence = MagicDatabase.itemHasEssence(stack);
+            boolean itemIsContainer = ContainerInformation.canItemContainMagic(stack);
+            boolean itemContainsMagic = itemIsContainer && ContainerInformation.itemContainsMagic(stack);
+            boolean itemHasEssence = EssenceConversions.itemHasEssence(stack);
 
             if (itemContainsMagic)
             {

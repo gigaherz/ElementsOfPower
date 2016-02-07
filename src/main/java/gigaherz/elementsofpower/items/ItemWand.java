@@ -1,8 +1,8 @@
 package gigaherz.elementsofpower.items;
 
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.database.ContainerInformation;
 import gigaherz.elementsofpower.database.MagicAmounts;
-import gigaherz.elementsofpower.database.MagicDatabase;
 import gigaherz.elementsofpower.spells.SpellManager;
 import gigaherz.elementsofpower.entitydata.SpellcastEntityData;
 import gigaherz.elementsofpower.network.SpellSequenceUpdate;
@@ -151,10 +151,10 @@ public class ItemWand extends ItemMagicContainer
         if (cast == null)
             return false;
 
-        MagicAmounts amounts = MagicDatabase.getContainedMagic(stack);
+        MagicAmounts amounts = ContainerInformation.getContainedMagic(stack);
         MagicAmounts cost = cast.getSpellCost();
 
-        if (!MagicDatabase.isInfiniteContainer(stack) && !amounts.hasEnough(cost))
+        if (!ContainerInformation.isInfiniteContainer(stack) && !amounts.hasEnough(cost))
             return false;
 
         cast = cast.getShape().castSpell(stack, player, cast);
@@ -167,10 +167,10 @@ public class ItemWand extends ItemMagicContainer
             }
         }
 
-        if (!MagicDatabase.isInfiniteContainer(stack))
+        if (!ContainerInformation.isInfiniteContainer(stack))
             amounts.subtract(cost);
 
-        MagicDatabase.setContainedMagic(stack, amounts);
+        ContainerInformation.setContainedMagic(stack, amounts);
 
         DiscoveryHandler.instance.onSpellcast(player, cast);
         return updateSequenceOnWand;
@@ -183,7 +183,7 @@ public class ItemWand extends ItemMagicContainer
             NBTTagCompound nbt = stack.getTagCompound();
             if (nbt == null)
             {
-                if (!MagicDatabase.isInfiniteContainer(stack))
+                if (!ContainerInformation.isInfiniteContainer(stack))
                     return;
 
                 nbt = new NBTTagCompound();

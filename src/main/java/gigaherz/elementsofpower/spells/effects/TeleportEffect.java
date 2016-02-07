@@ -37,7 +37,7 @@ public class TeleportEffect extends SpellEffect
     @Override
     public boolean processEntitiesAroundBefore(Spellcast cast, Vec3 hitVec)
     {
-        if (cast.world.isRemote)
+        if (!cast.world.isRemote)
         {
             if (cast.player instanceof EntityPlayerMP)
             {
@@ -63,6 +63,7 @@ public class TeleportEffect extends SpellEffect
             }
         }
 
+        // Do not process the actual ball, we just want the hit target
         return false;
     }
 

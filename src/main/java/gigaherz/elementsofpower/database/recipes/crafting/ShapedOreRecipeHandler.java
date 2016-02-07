@@ -1,34 +1,38 @@
-package gigaherz.elementsofpower.database.recipes;
+package gigaherz.elementsofpower.database.recipes.crafting;
 
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.database.recipes.IRecipeHandler;
+import gigaherz.elementsofpower.database.recipes.IRecipeInfoProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ShapedOreRecipeHandler implements IRecipeHandler
 {
     @Override
-    public boolean accepts(IRecipe recipe)
+    public boolean accepts(@Nonnull IRecipe recipe)
     {
-        return recipe instanceof ShapedOreRecipe;
+        return recipe.getRecipeOutput() != null && recipe instanceof ShapedOreRecipe;
     }
 
+    @Nonnull
     @Override
-    public IRecipeInfoProvider handle(IRecipe recipe)
+    public IRecipeInfoProvider handle(@Nonnull IRecipe recipe)
     {
-        return new ShapedOreRecipeInfo((ShapedOreRecipe) recipe);
+        return new RecipeInfo((ShapedOreRecipe) recipe);
     }
 
-    private static class ShapedOreRecipeInfo implements IRecipeInfoProvider
+    private static class RecipeInfo implements IRecipeInfoProvider
     {
 
         ArrayList<ItemStack> recipeItems = new ArrayList<>();
         ShapedOreRecipe recipe;
 
-        public ShapedOreRecipeInfo(ShapedOreRecipe recipe)
+        public RecipeInfo(ShapedOreRecipe recipe)
         {
             this.recipe = recipe;
 
@@ -58,12 +62,14 @@ public class ShapedOreRecipeHandler implements IRecipeHandler
             }
         }
 
+        @Nonnull
         @Override
         public ItemStack getRecipeOutput()
         {
-            return recipe.getRecipeOutput();
+            return  recipe.getRecipeOutput();
         }
 
+        @Nonnull
         @Override
         public List<ItemStack> getRecipeInputs()
         {

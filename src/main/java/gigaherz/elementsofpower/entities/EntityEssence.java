@@ -2,8 +2,8 @@ package gigaherz.elementsofpower.entities;
 
 import baubles.api.BaublesApi;
 import com.google.common.collect.Lists;
+import gigaherz.elementsofpower.database.ContainerInformation;
 import gigaherz.elementsofpower.database.MagicAmounts;
-import gigaherz.elementsofpower.database.MagicDatabase;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -312,9 +312,9 @@ public class EntityEssence extends EntityAmbientCreature
             ItemStack s = b.getStackInSlot(i);
             if (s == null)
                 continue;
-            if (MagicDatabase.canItemContainMagic(s))
+            if (ContainerInformation.canItemContainMagic(s))
             {
-                if (MagicDatabase.canTransferAnything(s, self))
+                if (ContainerInformation.canTransferAnything(s, self))
                 {
                     stack = s;
                     inv = b;
@@ -334,9 +334,9 @@ public class EntityEssence extends EntityAmbientCreature
                     ItemStack s = b.getStackInSlot(i);
                     if (s == null)
                         continue;
-                    if (MagicDatabase.canItemContainMagic(s))
+                    if (ContainerInformation.canItemContainMagic(s))
                     {
-                        if (MagicDatabase.canTransferAnything(s, self))
+                        if (ContainerInformation.canTransferAnything(s, self))
                         {
                             stack = s;
                             inv = b;
@@ -350,8 +350,8 @@ public class EntityEssence extends EntityAmbientCreature
 
         if (stack != null)
         {
-            MagicAmounts limits = MagicDatabase.getMagicLimits(stack);
-            MagicAmounts amounts = MagicDatabase.getContainedMagic(stack);
+            MagicAmounts limits = ContainerInformation.getMagicLimits(stack);
+            MagicAmounts amounts = ContainerInformation.getContainedMagic(stack);
 
             if (limits != null)
             {
@@ -373,7 +373,7 @@ public class EntityEssence extends EntityAmbientCreature
 
                 if (totalTransfer > 0)
                 {
-                    stack = MagicDatabase.setContainedMagic(stack, amounts);
+                    stack = ContainerInformation.setContainedMagic(stack, amounts);
                     inv.setInventorySlotContents(slot, stack);
                 }
             }

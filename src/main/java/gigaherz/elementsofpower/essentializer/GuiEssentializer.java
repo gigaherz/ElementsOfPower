@@ -3,7 +3,6 @@ package gigaherz.elementsofpower.essentializer;
 import com.google.common.collect.Lists;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.MagicAmounts;
-import gigaherz.elementsofpower.database.MagicDatabase;
 import gigaherz.elementsofpower.renders.StackRenderingHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -169,7 +168,7 @@ public class GuiEssentializer extends GuiContainer
                 continue;
 
             List<String> tooltip = Lists.newArrayList();
-            tooltip.add(MagicDatabase.getMagicName(i));
+            tooltip.add(MagicAmounts.getMagicName(i));
 
             drawHoveringText(tooltip, mx - x0, my - y0);
         }

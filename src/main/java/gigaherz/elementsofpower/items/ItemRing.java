@@ -4,8 +4,8 @@ import baubles.api.BaubleType;
 import baubles.api.BaublesApi;
 import baubles.api.IBauble;
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.database.ContainerInformation;
 import gigaherz.elementsofpower.database.MagicAmounts;
-import gigaherz.elementsofpower.database.MagicDatabase;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -143,7 +143,7 @@ public class ItemRing extends ItemMagicContainer implements IBauble
 
     private void tryTransferToWands(ItemStack thisStack, EntityPlayer p)
     {
-        MagicAmounts self = MagicDatabase.getContainedMagic(thisStack);
+        MagicAmounts self = ContainerInformation.getContainedMagic(thisStack);
 
         if (self == null || self.isEmpty())
             return;
@@ -158,9 +158,9 @@ public class ItemRing extends ItemMagicContainer implements IBauble
             ItemStack s = b.getStackInSlot(i);
             if (s == null || s == thisStack)
                 continue;
-            if (MagicDatabase.canItemContainMagic(s))
+            if (ContainerInformation.canItemContainMagic(s))
             {
-                if (MagicDatabase.canTransferAnything(s, self))
+                if (ContainerInformation.canTransferAnything(s, self))
                 {
                     stack = s;
                     inv = b;
@@ -180,9 +180,9 @@ public class ItemRing extends ItemMagicContainer implements IBauble
                     ItemStack s = b.getStackInSlot(i);
                     if (s == null || s == thisStack)
                         continue;
-                    if (MagicDatabase.canItemContainMagic(s))
+                    if (ContainerInformation.canItemContainMagic(s))
                     {
-                        if (MagicDatabase.canTransferAnything(s, self))
+                        if (ContainerInformation.canTransferAnything(s, self))
                         {
                             stack = s;
                             inv = b;
@@ -197,8 +197,8 @@ public class ItemRing extends ItemMagicContainer implements IBauble
         if (stack == null)
             return;
 
-        MagicAmounts limits = MagicDatabase.getMagicLimits(stack);
-        MagicAmounts amounts = MagicDatabase.getContainedMagic(stack);
+        MagicAmounts limits = ContainerInformation.getMagicLimits(stack);
+        MagicAmounts amounts = ContainerInformation.getContainedMagic(stack);
 
         if (limits == null)
             return;
@@ -225,12 +225,12 @@ public class ItemRing extends ItemMagicContainer implements IBauble
 
         if (totalTransfer > 0)
         {
-            ItemStack stack2 = MagicDatabase.setContainedMagic(stack, amounts);
+            ItemStack stack2 = ContainerInformation.setContainedMagic(stack, amounts);
             if (stack2 != stack)
                 inv.setInventorySlotContents(slot, stack2);
 
             if (!isInfinite(thisStack))
-                MagicDatabase.setContainedMagic(thisStack, self);
+                ContainerInformation.setContainedMagic(thisStack, self);
         }
     }
 }

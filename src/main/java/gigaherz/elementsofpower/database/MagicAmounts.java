@@ -1,8 +1,10 @@
 package gigaherz.elementsofpower.database;
 
 import com.google.gson.*;
+import gigaherz.elementsofpower.ElementsOfPower;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.util.Constants;
 
 import java.lang.reflect.Type;
@@ -19,6 +21,22 @@ public class MagicAmounts
     public static final int DEATH = 7;
 
     public static final int ELEMENTS = 8;
+
+    public final static String[] magicNames = {
+            ElementsOfPower.MODID + ".element.fire",
+            ElementsOfPower.MODID + ".element.water",
+            ElementsOfPower.MODID + ".element.air",
+            ElementsOfPower.MODID + ".element.earth",
+            ElementsOfPower.MODID + ".element.light",
+            ElementsOfPower.MODID + ".element.darkness",
+            ElementsOfPower.MODID + ".element.life",
+            ElementsOfPower.MODID + ".element.death",
+    };
+
+    public static String getMagicName(int i)
+    {
+        return StatCollector.translateToLocal(magicNames[i]);
+    }
 
     public final float[] amounts = new float[ELEMENTS];
 
@@ -54,7 +72,7 @@ public class MagicAmounts
             else
                 b.append(", ");
 
-            String magicName = MagicDatabase.getMagicName(i);
+            String magicName = getMagicName(i);
             String str = String.format("%s: %f", magicName, amounts[i]);
             b.append(str);
 

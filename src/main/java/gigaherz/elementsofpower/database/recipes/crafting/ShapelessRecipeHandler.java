@@ -1,33 +1,37 @@
-package gigaherz.elementsofpower.database.recipes;
+package gigaherz.elementsofpower.database.recipes.crafting;
 
+import gigaherz.elementsofpower.database.recipes.IRecipeHandler;
+import gigaherz.elementsofpower.database.recipes.IRecipeInfoProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapelessRecipes;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ShapelessRecipeHandler implements IRecipeHandler
 {
     @Override
-    public boolean accepts(IRecipe recipe)
+    public boolean accepts(@Nonnull IRecipe recipe)
     {
-        return recipe instanceof ShapelessRecipes;
+        return recipe.getRecipeOutput() != null && recipe instanceof ShapelessRecipes;
     }
 
+    @Nonnull
     @Override
-    public IRecipeInfoProvider handle(IRecipe recipe)
+    public IRecipeInfoProvider handle(@Nonnull IRecipe recipe)
     {
-        return new ShapelessRecipeInfo((ShapelessRecipes) recipe);
+        return new RecipeInfo((ShapelessRecipes) recipe);
     }
 
-    private static class ShapelessRecipeInfo implements IRecipeInfoProvider
+    private static class RecipeInfo implements IRecipeInfoProvider
     {
 
         ArrayList<ItemStack> recipeItems = new ArrayList<>();
         ShapelessRecipes recipe;
 
-        public ShapelessRecipeInfo(ShapelessRecipes recipe)
+        public RecipeInfo(ShapelessRecipes recipe)
         {
             this.recipe = recipe;
 
@@ -43,12 +47,14 @@ public class ShapelessRecipeHandler implements IRecipeHandler
             }
         }
 
+        @Nonnull
         @Override
         public ItemStack getRecipeOutput()
         {
             return recipe.getRecipeOutput();
         }
 
+        @Nonnull
         @Override
         public List<ItemStack> getRecipeInputs()
         {

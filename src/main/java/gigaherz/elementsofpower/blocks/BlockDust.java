@@ -31,7 +31,6 @@ public class BlockDust extends Block
     {
         super(mat);
         setUnlocalizedName(ElementsOfPower.MODID + ".dust");
-        setCreativeTab(CreativeTabs.tabMisc);
         setHardness(0.1F);
         setBlockUnbreakable();
         setStepSound(Block.soundTypeCloth);
