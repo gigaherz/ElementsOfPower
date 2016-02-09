@@ -37,6 +37,12 @@ public class RecipeTools
         {
             ItemStack output = recipe.getRecipeOutput();
 
+            if(output == null)
+            {
+                ElementsOfPower.logger.warn("Recipe output is NULL! This should have been detected earlier!");
+                return;
+            }
+
             if (output.stackSize == 0)
             {
                 ElementsOfPower.logger.warn("Found a recipe with result stack size 0. This recipe will be ignored. Result stack: " + output.toString());

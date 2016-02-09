@@ -19,6 +19,7 @@ public class Spellcast
     public final String sequence;
     public int remainingCastTime;
     public int remainingInterval;
+    public int totalCastTime;
 
     // Rendering data;
     public Vec3 start;
@@ -46,7 +47,7 @@ public class Spellcast
         this.sequence = sequence;
         if(shape.isInstant())
         {
-            remainingCastTime = 0;
+            remainingCastTime = shape.getInstantAnimationLength();
             remainingInterval = 0;
         }
         else
@@ -54,6 +55,7 @@ public class Spellcast
             remainingCastTime = effect.getDuration(this);
             remainingInterval = effect.getInterval(this);
         }
+        totalCastTime = remainingCastTime;
     }
 
     public String getSequence()
@@ -98,22 +100,28 @@ public class Spellcast
 
     public void update()
     {
-        if(shape.isInstant())
+        if(shape.isInstant() && remainingCastTime == totalCastTime)
         {
             if (!world.isRemote)
             {
                 shape.spellTick(this);
             }
         }
-        else
+
+        remainingCastTime--;
+
+        if(!shape.isInstant())
         {
-            remainingCastTime--;
             remainingInterval--;
 
             if (remainingInterval <= 0)
             {
                 remainingInterval = effect.getInterval(this);
 
+                if (!world.isRemote)
+                {
+                    shape.spellTick(this);
+                }
             }
         }
 
@@ -131,12 +139,14 @@ public class Spellcast
     {
         remainingCastTime = tagData.getInteger("remainingCastTime");
         remainingInterval = tagData.getInteger("remainingInterval");
+        totalCastTime = tagData.getInteger("totalCastTime");
     }
 
     public void writeToNBT(NBTTagCompound tagData)
     {
         tagData.setInteger("remainingCastTime", remainingCastTime);
         tagData.setInteger("remainingInterval", remainingInterval);
+        tagData.setInteger("totalCastTime", totalCastTime);
     }
 
     public EntityPlayer getCastingPlayer()

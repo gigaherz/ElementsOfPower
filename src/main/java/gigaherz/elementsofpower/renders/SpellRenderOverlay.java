@@ -2,6 +2,7 @@ package gigaherz.elementsofpower.renders;
 
 import com.google.common.collect.Maps;
 import gigaherz.elementsofpower.renders.spellrender.RenderCone;
+import gigaherz.elementsofpower.renders.spellrender.RenderSphere;
 import gigaherz.elementsofpower.spells.SpellManager;
 import gigaherz.elementsofpower.entitydata.SpellcastEntityData;
 import gigaherz.elementsofpower.renders.spellrender.RenderBeam;
@@ -26,6 +27,7 @@ public class SpellRenderOverlay
     {
         rendererRegistry.put(SpellManager.beam, new RenderBeam());
         rendererRegistry.put(SpellManager.cone, new RenderCone());
+        rendererRegistry.put(SpellManager.sphere, new RenderSphere());
     }
 
     @SubscribeEvent

@@ -23,6 +23,12 @@ public class SphereShape extends SpellShape
     }
 
     @Override
+    public float getScale(Spellcast spellcast)
+    {
+        return 1 + spellcast.getDamageForce();
+    }
+
+    @Override
     public void spellTick(Spellcast cast)
     {
         SpellEffect effect = cast.getEffect();

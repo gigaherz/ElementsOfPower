@@ -22,5 +22,10 @@ public abstract class SpellShape
         return 1;
     }
 
+    public int getInstantAnimationLength()
+    {
+        return 8;
+    }
+
     public abstract boolean isInstant();
 }
