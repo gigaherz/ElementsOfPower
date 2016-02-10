@@ -2,6 +2,7 @@ package gigaherz.elementsofpower.renders.spellrender;
 
 import gigaherz.elementsofpower.renders.RenderingStuffs;
 import gigaherz.elementsofpower.spells.Spellcast;
+import gigaherz.elementsofpower.spells.effects.FlameEffect;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -15,13 +16,20 @@ public class RenderBeam extends RenderSpell
 {
 
     @Override
-    public void doRender(Spellcast cast, EntityPlayer player, RenderManager renderManager, double x, double y, double z, float partialTicks, Vec3 offset)
+    public void doRender(Spellcast cast, EntityPlayer player, RenderManager renderManager, double x, double y, double z, float partialTicks, Vec3 offset, String tex)
     {
-        IFlexibleBakedModel modelSphere = RenderingStuffs.loadModel("elementsofpower:entity/sphere.obj");
-        IFlexibleBakedModel modelCyl = RenderingStuffs.loadModel("elementsofpower:entity/cylinder.obj");
-
         int beam_color = cast.getColor();
         float scale = 0.15f * cast.getScale();
+
+        if (tex != null)
+        {
+            beam_color = 0xFFFFFF;
+        }
+
+        IFlexibleBakedModel modelSphere = RenderingStuffs.loadModelRetextured("elementsofpower:entity/sphere.obj",
+                "#Default", tex);
+        IFlexibleBakedModel modelCyl = RenderingStuffs.loadModelRetextured("elementsofpower:entity/cylinder.obj",
+                "#Default", tex);
 
         MovingObjectPosition mop = cast.getHitPosition();
 
@@ -51,16 +59,20 @@ public class RenderBeam extends RenderSpell
 
         GlStateManager.pushMatrix();
 
+        float time = (player.ticksExisted + partialTicks);
+
         for (int i = 0; i <= 4; i++)
         {
-            float tt = (i + (player.ticksExisted % 10 + partialTicks) / 11.0f) / 5.0f;
-            float scale_base = scale * (1 + 0.5f * tt);
+            //float tt = (i + (player.ticksExisted % 10 + partialTicks) / 11.0f) / 5.0f;
+            float scale_base = scale * (1 + 0.05f * i);
             float scale_start = scale_base * 0.3f;
             float scale_beam = scale_base * 0.3f;
             float scale_end = scale_base * 1.2f;
 
-            int alpha = 255 - (i == 0 ? 0 : (int) (tt * 255));
+            int alpha = 255 - i * 32;
             int color = (alpha << 24) | beam_color;
+
+            float angle = time * (6 + 3 * (4+i)) * ((i&1)==0?1:-1) * 0.1f;
 
             {
                 GlStateManager.pushMatrix();
@@ -68,8 +80,9 @@ public class RenderBeam extends RenderSpell
                         (float) (x + offset.xCoord),
                         (float) (y + offset.yCoord),
                         (float) (z + offset.zCoord));
-                GlStateManager.rotate(-(float) Math.toDegrees(beamYaw), 0, 1, 0);
-                GlStateManager.rotate((float) Math.toDegrees(beamPitch) - 90, 0, 0, 1);
+                GlStateManager.rotate(-(float) Math.toDegrees(beamYaw) + 90, 0, 1, 0);
+                GlStateManager.rotate(-(float) Math.toDegrees(beamPitch), 1, 0, 0);
+                GlStateManager.rotate(angle, 0, 0, 1);
                 GlStateManager.scale(scale_start, scale_start, scale_start);
 
                 RenderingStuffs.renderModel(modelSphere, color);
@@ -83,9 +96,10 @@ public class RenderBeam extends RenderSpell
                         (float) (x + offset.xCoord),
                         (float) (y + offset.yCoord),
                         (float) (z + offset.zCoord));
-                GlStateManager.rotate(-(float) Math.toDegrees(beamYaw), 0, 1, 0);
-                GlStateManager.rotate((float) Math.toDegrees(beamPitch) - 90, 0, 0, 1);
-                GlStateManager.scale(scale_beam, distance, scale_beam);
+                GlStateManager.rotate(-(float) Math.toDegrees(beamYaw) + 90, 0, 1, 0);
+                GlStateManager.rotate(-(float) Math.toDegrees(beamPitch), 1, 0, 0);
+                GlStateManager.rotate(angle, 0, 0, 1);
+                GlStateManager.scale(scale_beam, scale_beam, distance);
 
                 RenderingStuffs.renderModel(modelCyl, color);
 
@@ -99,8 +113,9 @@ public class RenderBeam extends RenderSpell
                         (float) (x + beam0.xCoord),
                         (float) (y + beam0.yCoord),
                         (float) (z + beam0.zCoord));
-                GlStateManager.rotate(-(float) Math.toDegrees(beamYaw), 0, 1, 0);
-                GlStateManager.rotate((float) Math.toDegrees(beamPitch) - 90, 0, 0, 1);
+                GlStateManager.rotate(-(float) Math.toDegrees(beamYaw) + 90, 0, 1, 0);
+                GlStateManager.rotate(-(float) Math.toDegrees(beamPitch), 1, 0, 0);
+                GlStateManager.rotate(angle, 0, 0, 1);
                 GlStateManager.scale(scale_end, scale_end, scale_end);
 
                 RenderingStuffs.renderModel(modelSphere, color);

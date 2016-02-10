@@ -14,12 +14,18 @@ import org.lwjgl.opengl.GL11;
 public class RenderCone extends RenderSpell
 {
     @Override
-    public void doRender(Spellcast cast, EntityPlayer player, RenderManager renderManager, double x, double y, double z, float partialTicks, Vec3 offset)
+    public void doRender(Spellcast cast, EntityPlayer player, RenderManager renderManager, double x, double y, double z, float partialTicks, Vec3 offset, String tex)
     {
-        IFlexibleBakedModel modelCone = RenderingStuffs.loadModel("elementsofpower:entity/cone.obj");
-
         int color = cast.getColor();
         float scale = 2 * cast.getScale();
+
+        if (tex != null)
+        {
+            color = 0xFFFFFF;
+        }
+
+        IFlexibleBakedModel modelCone = RenderingStuffs.loadModelRetextured("elementsofpower:entity/cone.obj",
+                "#Default", tex);
 
         cast.getHitPosition();
 

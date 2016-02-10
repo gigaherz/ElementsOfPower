@@ -1,7 +1,9 @@
 package gigaherz.elementsofpower.renders.spellrender;
 
 import gigaherz.elementsofpower.renders.RenderingStuffs;
+import gigaherz.elementsofpower.spells.SpellManager;
 import gigaherz.elementsofpower.spells.Spellcast;
+import gigaherz.elementsofpower.spells.effects.FlameEffect;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -13,12 +15,18 @@ import org.lwjgl.opengl.GL11;
 public class RenderSphere extends RenderSpell
 {
     @Override
-    public void doRender(Spellcast cast, EntityPlayer player, RenderManager renderManager, double x, double y, double z, float partialTicks, Vec3 offset)
+    public void doRender(Spellcast cast, EntityPlayer player, RenderManager renderManager, double x, double y, double z, float partialTicks, Vec3 offset, String tex)
     {
-        IFlexibleBakedModel modelSphere = RenderingStuffs.loadModel("elementsofpower:entity/sphere_hr.obj");
-
         int color = cast.getColor();
         float scale = cast.getScale();
+
+        if (tex != null)
+        {
+            color = 0xFFFFFF;
+        }
+
+        IFlexibleBakedModel modelSphere = RenderingStuffs.loadModelRetextured("elementsofpower:entity/sphere.obj",
+                "#Default", tex);
 
         float time = ((cast.totalCastTime-cast.remainingCastTime) + partialTicks);
         float progress = (time / cast.totalCastTime);
