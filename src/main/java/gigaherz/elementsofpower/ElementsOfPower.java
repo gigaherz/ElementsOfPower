@@ -370,6 +370,15 @@ public class ElementsOfPower
         FurnaceRecipes.instance().addSmeltingRecipe(oreSapphire, gemSapphire, 0);
         FurnaceRecipes.instance().addSmeltingRecipe(oreSerendibite, gemSerendibite, 0);
 
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(analyzer),
+                "glg",
+                "i  ",
+                "psp",
+                'g', "ingotGold",
+                'l', "paneGlass",
+                'i', "ingotIron",
+                's', "slabWood",
+                'p', "plankWood"));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(essentializer, 1),
                 "IQI",
                 "ONO",
