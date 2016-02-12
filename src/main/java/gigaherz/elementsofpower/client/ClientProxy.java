@@ -6,16 +6,24 @@ import gigaherz.elementsofpower.entities.EntityBall;
 import gigaherz.elementsofpower.entities.EntityEssence;
 import gigaherz.elementsofpower.entitydata.SpellcastEntityData;
 import gigaherz.elementsofpower.essentializer.ContainerEssentializer;
+import gigaherz.elementsofpower.essentializer.RenderEssentializer;
 import gigaherz.elementsofpower.essentializer.TileEssentializer;
+import gigaherz.elementsofpower.gemstones.Gemstone;
+import gigaherz.elementsofpower.gemstones.GemstoneBlockType;
+import gigaherz.elementsofpower.items.ItemGemContainer;
+import gigaherz.elementsofpower.items.ItemRing;
 import gigaherz.elementsofpower.network.EssentializerAmountsUpdate;
 import gigaherz.elementsofpower.network.SpellcastSync;
 import gigaherz.elementsofpower.renders.*;
-import gigaherz.elementsofpower.util.Used;
+import gigaherz.elementsofpower.Used;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ItemMeshDefinition;
+import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -106,29 +114,41 @@ public class ClientProxy implements ISideProxy
         registerBlockModelAsItem(ElementsOfPower.essentializer, "essentializer");
         registerBlockModelAsItem(ElementsOfPower.dust, "dust");
 
-        registerItemModel(ElementsOfPower.magicOrb, 0, "magicOrb", "element=fire");
-        registerItemModel(ElementsOfPower.magicOrb, 1, "magicOrb", "element=water");
-        registerItemModel(ElementsOfPower.magicOrb, 2, "magicOrb", "element=air");
-        registerItemModel(ElementsOfPower.magicOrb, 3, "magicOrb", "element=earth");
-        registerItemModel(ElementsOfPower.magicOrb, 4, "magicOrb", "element=light");
-        registerItemModel(ElementsOfPower.magicOrb, 5, "magicOrb", "element=dark");
-        registerItemModel(ElementsOfPower.magicOrb, 6, "magicOrb", "element=life");
-        registerItemModel(ElementsOfPower.magicOrb, 7, "magicOrb", "element=death");
-        registerItemModel(ElementsOfPower.magicWand, 0, "magicWand", "gem=lapis,type=wand");
-        registerItemModel(ElementsOfPower.magicWand, 1, "magicWand", "gem=emerald,type=wand");
-        registerItemModel(ElementsOfPower.magicWand, 2, "magicWand", "gem=diamond,type=wand");
-        registerItemModel(ElementsOfPower.magicWand, 3, "magicWand", "gem=creative,type=wand");
-        registerItemModel(ElementsOfPower.magicWand, 4, "magicWand", "gem=lapis,type=staff");
-        registerItemModel(ElementsOfPower.magicWand, 5, "magicWand", "gem=emerald,type=staff");
-        registerItemModel(ElementsOfPower.magicWand, 6, "magicWand", "gem=diamond,type=staff");
-        registerItemModel(ElementsOfPower.magicWand, 7, "magicWand", "gem=creative,type=staff");
-        registerItemModel(ElementsOfPower.magicContainer, 0, "magicContainer", "gem=lapis");
-        registerItemModel(ElementsOfPower.magicContainer, 1, "magicContainer", "gem=emerald");
-        registerItemModel(ElementsOfPower.magicContainer, 2, "magicContainer", "gem=diamond");
-        registerItemModel(ElementsOfPower.magicRing, 0, "magicRing", "gem=lapis");
-        registerItemModel(ElementsOfPower.magicRing, 1, "magicRing", "gem=emerald");
-        registerItemModel(ElementsOfPower.magicRing, 2, "magicRing", "gem=diamond");
-        registerItemModel(ElementsOfPower.magicRing, 3, "magicRing", "gem=creative");
+        registerItemModel(ElementsOfPower.analyzer, "analyzer");
+
+        registerItemModel(ElementsOfPower.fire, "magicOrb", "element=fire");
+        registerItemModel(ElementsOfPower.water, "magicOrb", "element=water");
+        registerItemModel(ElementsOfPower.air, "magicOrb", "element=air");
+        registerItemModel(ElementsOfPower.earth, "magicOrb", "element=earth");
+        registerItemModel(ElementsOfPower.light, "magicOrb", "element=light");
+        registerItemModel(ElementsOfPower.darkness, "magicOrb", "element=dark");
+        registerItemModel(ElementsOfPower.life, "magicOrb", "element=life");
+        registerItemModel(ElementsOfPower.death, "magicOrb", "element=death");
+
+        registerItemModel(ElementsOfPower.gemRuby, "gemstone", "gem=ruby");
+        registerItemModel(ElementsOfPower.gemSapphire, "gemstone", "gem=sapphire");
+        registerItemModel(ElementsOfPower.gemCitrine, "gemstone", "gem=citrine");
+        registerItemModel(ElementsOfPower.gemAgate, "gemstone", "gem=agate");
+        registerItemModel(ElementsOfPower.gemQuartz, "gemstone", "gem=quartz");
+        registerItemModel(ElementsOfPower.gemSerendibite, "gemstone", "gem=serendibite");
+        registerItemModel(ElementsOfPower.gemEmerald, "gemstone", "gem=emerald");
+        registerItemModel(ElementsOfPower.gemAmethyst, "gemstone", "gem=amethyst");
+        registerItemModel(ElementsOfPower.gemDiamond, "gemstone", "gem=diamond");
+
+        for(GemstoneBlockType b : GemstoneBlockType.values)
+        {
+            registerBlockModelAsItem(ElementsOfPower.gemstoneBlock, b.ordinal(), "gemstoneBlock", "type=" + b.getName());
+            registerBlockModelAsItem(ElementsOfPower.gemstoneOre, b.ordinal(), "gemstoneOre", "type=" + b.getName());
+        }
+
+        registerGemMeshDefinition(ElementsOfPower.magicRing, "magicRing");
+        registerGemMeshDefinition(ElementsOfPower.magicWand, "magicWand");
+        registerGemMeshDefinition(ElementsOfPower.magicStaff, "magicStaff");
+    }
+
+    private void registerGemMeshDefinition(Item item, String itemName)
+    {
+        ModelLoader.setCustomMeshDefinition(item, new GemContainerMeshDefinition(item, itemName));
     }
 
     public void registerBlockModelAsItem(final Block block, final String blockName)
@@ -138,12 +158,22 @@ public class ClientProxy implements ISideProxy
 
     public void registerBlockModelAsItem(final Block block, int meta, final String blockName)
     {
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block), meta, new ModelResourceLocation(ElementsOfPower.MODID + ":" + blockName, "inventory"));
+        registerBlockModelAsItem(block, meta, blockName, "inventory");
     }
 
-    public void registerItemModel(final Item item, int meta, final String itemName)
+    public void registerBlockModelAsItem(final Block block, int meta, final String blockName, final String variantName)
     {
-        ModelLoader.setCustomModelResourceLocation(item, meta, new ModelResourceLocation(ElementsOfPower.MODID + ":" + itemName, "inventory"));
+        registerItemModel(Item.getItemFromBlock(block), meta, blockName, variantName);
+    }
+
+    public void registerItemModel(final ItemStack stack, final String itemName, final String variantName)
+    {
+        registerItemModel(stack.getItem(), stack.getMetadata(), itemName, variantName);
+    }
+
+    public void registerItemModel(final Item item, final String itemName)
+    {
+        registerItemModel(item, 0, itemName, "inventory");
     }
 
     public void registerItemModel(final Item item, int meta, final String itemName, final String variantName)
@@ -160,5 +190,41 @@ public class ClientProxy implements ISideProxy
         RenderingRegistry.registerEntityRenderingHandler(EntityEssence.class, RenderEssence::new);
 
         RenderingStuffs.init();
+    }
+
+    private class GemContainerMeshDefinition implements ItemMeshDefinition
+    {
+        final String itemName;
+
+        private GemContainerMeshDefinition(Item item, String itemName)
+        {
+            this.itemName = itemName;
+
+            ResourceLocation[] resLocs = new ResourceLocation[Gemstone.values.length+1];
+            for(int i=0;i<Gemstone.values.length;i++)
+                resLocs[i] = getModelResourceLocation(Gemstone.values[i]);
+            resLocs[Gemstone.values.length] = getModelResourceLocation(null);
+            ModelBakery.registerItemVariants(item, resLocs);
+        }
+
+        @Override
+        public ModelResourceLocation getModelLocation(ItemStack stack)
+        {
+            Item item = stack.getItem();
+            if(!(item instanceof ItemGemContainer))
+                return null;
+            ItemGemContainer c = (ItemGemContainer)item;
+
+            Gemstone g = c.getGemstone(stack);
+
+            return getModelResourceLocation(g);
+        }
+
+        private ModelResourceLocation getModelResourceLocation(Gemstone g)
+        {
+            String variantName = "gem=" + (g != null ? g.getName() : "unbound");
+
+            return new ModelResourceLocation(ElementsOfPower.MODID + ":" + itemName, variantName);
+        }
     }
 }

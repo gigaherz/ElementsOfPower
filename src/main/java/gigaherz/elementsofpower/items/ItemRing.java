@@ -6,6 +6,8 @@ import baubles.api.IBauble;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.ContainerInformation;
 import gigaherz.elementsofpower.database.MagicAmounts;
+import gigaherz.elementsofpower.gemstones.Gemstone;
+import gigaherz.elementsofpower.gemstones.Quality;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -18,75 +20,33 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
-public class ItemRing extends ItemMagicContainer implements IBauble
+public class ItemRing extends ItemGemContainer implements IBauble
 {
     public static final float MAX_TRANSFER_TICK = 1 / 20.0f;
-
-    private static final String[] subNames = {
-            ".lapisRing", ".emeraldRing", ".diamondRing", ".creativeRing"
-    };
-
-    private static final EnumRarity rarities[] = {
-            EnumRarity.UNCOMMON, EnumRarity.RARE, EnumRarity.EPIC, EnumRarity.COMMON
-    };
-
-    private static final boolean areCreative[] = {
-            false, false, false, true
-    };
-
-    @Override
-    public boolean isInfinite(ItemStack stack)
-    {
-        int dmg = stack.getItemDamage();
-        return dmg <= areCreative.length && areCreative[dmg];
-    }
 
     public ItemRing()
     {
         super();
-        setHasSubtypes(true);
-        setUnlocalizedName(ElementsOfPower.MODID + ".magicWand");
+        setUnlocalizedName(ElementsOfPower.MODID + ".ring");
         setCreativeTab(ElementsOfPower.tabMagic);
     }
 
     @Override
-    public EnumRarity getRarity(ItemStack stack)
+    protected MagicAmounts adjustInsertedMagic(MagicAmounts am)
     {
-        return rarities[stack.getItemDamage()];
+        if(am == null)
+            return null;
+
+        return am.copy().multiply(1.5f);
     }
 
     @Override
-    public int getMetadata(int damageValue)
+    protected MagicAmounts adjustRemovedMagic(MagicAmounts am)
     {
-        return damageValue;
-    }
+        if(am == null)
+            return null;
 
-    @Override
-    public String getUnlocalizedName(ItemStack stack)
-    {
-        int sub = stack.getItemDamage();
-
-        if (sub >= subNames.length)
-        {
-            return getUnlocalizedName();
-        }
-
-        return "item." + ElementsOfPower.MODID + subNames[sub];
-    }
-
-    @Override
-    public ItemStack getStack(int count, int damageValue)
-    {
-        return new ItemStack(this, count, damageValue);
-    }
-
-    @Override
-    public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems)
-    {
-        for (int meta = 0; meta < subNames.length; meta++)
-        {
-            subItems.add(new ItemStack(itemIn, 1, meta));
-        }
+        return am.copy().multiply(1 / 1.5f);
     }
 
     @Override
@@ -143,6 +103,12 @@ public class ItemRing extends ItemMagicContainer implements IBauble
 
     private void tryTransferToWands(ItemStack thisStack, EntityPlayer p)
     {
+        Gemstone g = getGemstone(thisStack);
+        Quality q = getQuality(thisStack);
+
+        if (g == null || q == null)
+            return;
+
         MagicAmounts self = ContainerInformation.getContainedMagic(thisStack);
 
         if (self == null || self.isEmpty())
@@ -206,17 +172,30 @@ public class ItemRing extends ItemMagicContainer implements IBauble
         if (amounts == null)
             amounts = new MagicAmounts();
 
-        float maxTransfer = MAX_TRANSFER_TICK;
+        float boost = 1.0f;
+        switch(q)
+        {
+            case Rough: boost = 0.9f; break;
+            case Common: boost = 1.0f; break;
+            case Smooth: boost = 1.25f; break;
+            case Flawless: boost = 1.5f; break;
+            case Pure: boost = 2.0f; break;
+        }
+
         float totalTransfer = 0;
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
+            float maxTransfer = MAX_TRANSFER_TICK;
+
+            if(g == Gemstone.Diamond || g.ordinal() == i)
+                maxTransfer *= boost;
+
             float transfer = Math.min(maxTransfer, limits.amounts[i] - amounts.amounts[i]);
             if (!isInfinite(stack))
                 transfer = Math.min(self.amounts[i], transfer);
             if (transfer > 0)
             {
                 totalTransfer += transfer;
-                maxTransfer -= transfer;
                 amounts.amounts[i] += transfer;
                 if (!isInfinite(stack))
                     self.amounts[i] -= transfer;

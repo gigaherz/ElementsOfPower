@@ -1,5 +1,8 @@
 package gigaherz.elementsofpower.gui;
 
+import gigaherz.elementsofpower.analyzer.ContainerAnalyzer;
+import gigaherz.elementsofpower.analyzer.GuiAnalyzer;
+import gigaherz.elementsofpower.analyzer.ItemAnalyzer;
 import gigaherz.elementsofpower.essentializer.ContainerEssentializer;
 import gigaherz.elementsofpower.essentializer.GuiEssentializer;
 import gigaherz.elementsofpower.essentializer.TileEssentializer;
@@ -11,14 +14,25 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 
 public class GuiHandler implements IGuiHandler
 {
+    public static final int GUI_ESSENTIALIZER = 0;
+    public static final int GUI_ANALYZER = 1;
+
     @Override
     public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z)
     {
-        TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
-
-        if (tileEntity instanceof TileEssentializer)
+        switch(id)
         {
-            return new ContainerEssentializer((TileEssentializer) tileEntity, player.inventory);
+            case GUI_ESSENTIALIZER:
+                TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
+
+                if (tileEntity instanceof TileEssentializer)
+                {
+                    return new ContainerEssentializer((TileEssentializer) tileEntity, player.inventory);
+                }
+                break;
+            case GUI_ANALYZER:
+                if(player.inventory.getCurrentItem() != null && player.inventory.getCurrentItem().getItem() instanceof ItemAnalyzer)
+                    return new ContainerAnalyzer(player);
         }
 
         return null;
@@ -27,11 +41,19 @@ public class GuiHandler implements IGuiHandler
     @Override
     public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z)
     {
-        TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
-
-        if (tileEntity instanceof TileEssentializer)
+        switch(id)
         {
-            return new GuiEssentializer(player.inventory, (TileEssentializer) tileEntity);
+            case GUI_ESSENTIALIZER:
+                TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
+
+                if (tileEntity instanceof TileEssentializer)
+                {
+                    return new GuiEssentializer(player.inventory, (TileEssentializer) tileEntity);
+                }
+                break;
+            case GUI_ANALYZER:
+                if(player.inventory.getCurrentItem() != null && player.inventory.getCurrentItem().getItem() instanceof ItemAnalyzer)
+                    return new GuiAnalyzer(player);
         }
 
         return null;

@@ -3,30 +3,79 @@ elementsofpower.essentializer=Essentializer
 tile.elementsofpower.essentializer.name=Essentializer
 tile.elementsofpower.dust.name=Dust Block (disperses quickly)
 
-item.elementsofpower.magicContainer.name=Magic-imbued Container
-item.elementsofpower.lapisContainer.name=Magic-imbued Lapis Lazuli
-item.elementsofpower.emeraldContainer.name=Magic-imbued Emerald
-item.elementsofpower.diamondContainer.name=Magic-imbued Diamond
+item.elementsofpower.ring.name=Unbound Ring
+item.elementsofpower.ring.ruby.name=Ruby Ring
+item.elementsofpower.ring.sapphire.name=Sapphire Ring
+item.elementsofpower.ring.citrine.name=Citrine Ring
+item.elementsofpower.ring.agate.name=Agate Ring
+item.elementsofpower.ring.quartz.name=Quartz Ring
+item.elementsofpower.ring.serendibite.name=Serendibite Ring
+item.elementsofpower.ring.emerald.name=Emerald Ring
+item.elementsofpower.ring.amethyst.name=Amethyst Ring
+item.elementsofpower.ring.diamond.name=Diamond Ring
 
-item.elementsofpower.magicWand.name=Unknown Wand
-item.elementsofpower.lapisWand.name=Lapis Wand
-item.elementsofpower.emeraldWand.name=Emerald Wand
-item.elementsofpower.diamondWand.name=Diamond Wand
-item.elementsofpower.creativeWand.name=Creative Wand
-item.elementsofpower.lapisStaff.name=Lapis Staff
-item.elementsofpower.emeraldStaff.name=Emerald Staff
-item.elementsofpower.diamondStaff.name=Diamond Staff
-item.elementsofpower.creativeStaff.name=Creative Staff
+item.elementsofpower.wand.name=Unbound Wand
+item.elementsofpower.wand.ruby.name=Ruby Wand
+item.elementsofpower.wand.sapphire.name=Sapphire Wand
+item.elementsofpower.wand.citrine.name=Citrine Wand
+item.elementsofpower.wand.agate.name=Agate Wand
+item.elementsofpower.wand.quartz.name=Quartz Wand
+item.elementsofpower.wand.serendibite.name=Serendibite Wand
+item.elementsofpower.wand.emerald.name=Emerald Wand
+item.elementsofpower.wand.amethyst.name=Amethyst Wand
+item.elementsofpower.wand.diamond.name=Diamond Wand
 
-item.elementsofpower.magicRing.name=Unknown Ring
-item.elementsofpower.lapisRing.name=Lapis Ring
-item.elementsofpower.emeraldRing.name=Emerald Ring
-item.elementsofpower.diamondRing.name=Diamond Ring
-item.elementsofpower.creativeRing.name=Creative Ring
+item.elementsofpower.staff.name=Unbound Staff
+item.elementsofpower.staff.ruby.name=Ruby Staff
+item.elementsofpower.staff.sapphire.name=Sapphire Staff
+item.elementsofpower.staff.citrine.name=Citrine Staff
+item.elementsofpower.staff.agate.name=Agate Staff
+item.elementsofpower.staff.quartz.name=Quartz Staff
+item.elementsofpower.staff.serendibite.name=Serendibite Staff
+item.elementsofpower.staff.emerald.name=Emerald Staff
+item.elementsofpower.staff.amethyst.name=Amethyst Staff
+item.elementsofpower.staff.diamond.name=Diamond Staff
+
+item.elementsofpower.ruby.name=Ruby
+item.elementsofpower.sapphire.name=Sapphire
+item.elementsofpower.citrine.name=Citrine
+item.elementsofpower.agate.name=Agate
+item.elementsofpower.quartz.name=Quartz
+item.elementsofpower.serendibite.name=Serendibite
+item.elementsofpower.emerald.name=Emerald
+item.elementsofpower.amethyst.name=Amethyst
+item.elementsofpower.diamond.name=Diamond
+
+tile.elementsofpower.rubyOre.name=Ruby Ore
+tile.elementsofpower.sapphireOre.name=Sapphire Ore
+tile.elementsofpower.citrineOre.name=Citrine Ore
+tile.elementsofpower.agateOre.name=Agate Ore
+tile.elementsofpower.serendibiteOre.name=Serendibite Ore
+tile.elementsofpower.amethystOre.name=Amethyst Ore
+
+tile.elementsofpower.rubyBlock.name=Block of Ruby
+tile.elementsofpower.sapphireBlock.name=Block of Sapphire
+tile.elementsofpower.citrineBlock.name=Block of Citrine
+tile.elementsofpower.agateBlock.name=Block of Agate
+tile.elementsofpower.serendibiteBlock.name=Block of Serendibite
+tile.elementsofpower.amethystBlock.name=Block of Amethyst
 
 itemGroup.elementsofpower=Elements Of Power
 
 entity.elementsofpower.Essence.name=Living Essence
+
+elementsofpower.gemstone.quality.unknown=Unexamined
+elementsofpower.gemstone.quality.rough=Rough
+elementsofpower.gemstone.quality.common=Common
+elementsofpower.gemstone.quality.smooth=Smooth
+elementsofpower.gemstone.quality.flawless=Flawless
+elementsofpower.gemstone.quality.pure=Pure
+
+elementsofpower.gemContainer.quality.rough=Rudimentary
+elementsofpower.gemContainer.quality.common=Simple
+elementsofpower.gemContainer.quality.smooth=Polished
+elementsofpower.gemContainer.quality.flawless=Exceptional
+elementsofpower.gemContainer.quality.pure=Superb
 
 elementsofpower.element.fire=Fire
 elementsofpower.element.water=Water
@@ -36,6 +85,9 @@ elementsofpower.element.light=Light
 elementsofpower.element.darkness=Darkness
 elementsofpower.element.life=Life
 elementsofpower.element.death=Death
+
+item.elementsofpower.analyzer.name=Gem Analyzer
+text.elementsofpower.analyzer=Gem Analyzer
 
 achievement.elementsofpower.discoverGems=A vision in reflections
 achievement.elementsofpower.discoverGems.desc=You discover the hidden power of gemstones.

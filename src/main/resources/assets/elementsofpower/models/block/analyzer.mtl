@@ -1,0 +1,16 @@
+# Rhino
+newmtl Bottom
+map_Kd minecraft:blocks/planks_jungle
+
+newmtl Arm
+map_Kd minecraft:blocks/anvil_base
+
+newmtl Sides
+map_Kd minecraft:blocks/planks_big_oak
+
+newmtl Cover
+map_Kd minecraft:blocks/planks_jungle
+
+newmtl Ring
+map_Kd minecraft:blocks/gold_block
+

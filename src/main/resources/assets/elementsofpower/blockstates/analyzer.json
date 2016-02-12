@@ -1,0 +1,23 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "elementsofpower:analyzer.obj",
+    "transform": "forge:default-block"
+  },
+  "variants": {
+    "inventory": [{
+      "transform": {
+        "thirdperson": {
+          "rotation": [ {"y":135}, {"x":-10}, {"z":176} ],
+          "translation": [ 0, 0, -0.15625 ],
+          "scale": 0.375
+        },
+        "firstperson": {
+          "rotation": [ {"y":180}, {"z":-20} ],
+          "translation": [ 0, 0.3, 0 ],
+          "scale": 0.76
+        }
+      }
+    }]
+  }
+}

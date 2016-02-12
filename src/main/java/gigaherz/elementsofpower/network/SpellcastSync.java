@@ -3,7 +3,7 @@ package gigaherz.elementsofpower.network;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.spells.SpellManager;
 import gigaherz.elementsofpower.spells.Spellcast;
-import gigaherz.elementsofpower.util.Used;
+import gigaherz.elementsofpower.Used;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;

@@ -2,6 +2,7 @@ package gigaherz.elementsofpower.database;
 
 import com.google.gson.*;
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.gemstones.Element;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.StatCollector;
@@ -74,6 +75,33 @@ public class MagicAmounts
 
             String magicName = getMagicName(i);
             String str = String.format("%s: %f", magicName, amounts[i]);
+            b.append(str);
+
+            first = false;
+        }
+        b.append("}");
+
+        return b.toString();
+    }
+
+    public String toShortString()
+    {
+        if (isEmpty())
+            return "{Empty}";
+
+        StringBuilder b = new StringBuilder();
+        boolean first = true;
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+        {
+            if (amounts[i] == 0)
+                continue;
+
+            if (first)
+                b.append("{");
+            else
+                b.append(",");
+
+            String str = ElementsOfPower.prettyNumberFormatter2.format(amounts[i]);
             b.append(str);
 
             first = false;
@@ -174,7 +202,7 @@ public class MagicAmounts
         return this;
     }
 
-    public MagicAmounts all(int amount)
+    public MagicAmounts all(float amount)
     {
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
@@ -184,12 +212,33 @@ public class MagicAmounts
         return this;
     }
 
-    public void add(MagicAmounts other)
+    public MagicAmounts element(Element element, float amount)
+    {
+        amounts[element.ordinal()] += amount;
+        return this;
+    }
+
+    public MagicAmounts add(MagicAmounts other)
     {
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
             amounts[i] += other.amounts[i];
         }
+        return this;
+    }
+
+    public MagicAmounts multiply(float scale)
+    {
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+        {
+            amounts[i] *= scale;
+        }
+        return this;
+    }
+
+    public float amount(Element element)
+    {
+        return amounts[element.ordinal()];
     }
 
     public MagicAmounts copy()

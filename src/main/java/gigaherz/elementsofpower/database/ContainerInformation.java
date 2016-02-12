@@ -1,59 +1,79 @@
 package gigaherz.elementsofpower.database;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.items.ItemGemstone;
 import gigaherz.elementsofpower.items.ItemMagicContainer;
+import gigaherz.elementsofpower.gemstones.Quality;
 import net.minecraft.crash.CrashReport;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ReportedException;
+import net.minecraftforge.oredict.OreDictionary;
+import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class ContainerInformation
 {
-    public static Map<ItemStack, ItemStack> containerConversion = new HashMap<>();
-    public static Map<ItemStack, ItemStack> containerConversionReverse = new HashMap<>();
-    public static Map<ItemStack, MagicAmounts> containerCapacity = new HashMap<>();
+    static Random rand = new Random();
 
-    public static void reverseContainerConversions()
+    public static ItemStack identifyQuality(ItemStack stack)
     {
-        for(Map.Entry<ItemStack,ItemStack> conversion : containerConversion.entrySet())
+        if (stack == null)
+            return null;
+
+        Item item = stack.getItem();
+        if(item instanceof ItemGemstone)
         {
-            containerConversionReverse.put(conversion.getValue(), conversion.getKey());
+            if (((ItemGemstone)item).getQuality(stack) != null)
+                return stack;
         }
+
+        @SuppressWarnings("unchecked")
+        List<Pair<ItemStack, String>> gems = Lists.newArrayList(
+                Pair.of(ElementsOfPower.gemRuby, "gemRuby"),
+                Pair.of(ElementsOfPower.gemSapphire, "gemSapphire"),
+                Pair.of(ElementsOfPower.gemCitrine, "gemCitrine"),
+                Pair.of(ElementsOfPower.gemAgate, "gemAgate"),
+                Pair.of(ElementsOfPower.gemQuartz, "gemQuartz"),
+                Pair.of(ElementsOfPower.gemSerendibite, "gemSerendibite"),
+                Pair.of(ElementsOfPower.gemEmerald, "gemEmerald"),
+                Pair.of(ElementsOfPower.gemAmethyst, "gemAmethyst"),
+                Pair.of(ElementsOfPower.gemDiamond, "gemDiamond")
+        );
+
+        int[] ids = OreDictionary.getOreIDs(stack);
+        Set<String> names = Sets.newHashSet();
+        for(int i : ids)
+            names.add(OreDictionary.getOreName(i));
+
+        for (Pair<ItemStack, String> target : gems)
+        {
+            if (names.contains(target.getRight()))
+            {
+                return setRandomQualityVariant(target.getLeft().copy());
+            }
+        }
+
+        return stack;
     }
 
-    public static void registerContainerCapacity()
+    private static ItemStack setRandomQualityVariant(ItemStack target)
     {
-        containerCapacity.put(new ItemStack(Items.dye, 1, 4), new MagicAmounts().all(10));
-        containerCapacity.put(new ItemStack(Items.emerald, 1), new MagicAmounts().all(50));
-        containerCapacity.put(new ItemStack(Items.diamond, 1), new MagicAmounts().all(100));
+        float rnd = rand.nextFloat();
+        if(rnd > 0.5f)
+            return ElementsOfPower.gemstone.setQuality(target, Quality.Rough);
+        if(rnd > 0.25f)
+            return ElementsOfPower.gemstone.setQuality(target, Quality.Common);
+        if(rnd > 0.1f)
+            return ElementsOfPower.gemstone.setQuality(target, Quality.Smooth);
+        if(rnd > 0.01f)
+            return ElementsOfPower.gemstone.setQuality(target, Quality.Flawless);
 
-        containerCapacity.put(ElementsOfPower.containerLapis, new MagicAmounts().all(10));
-        containerCapacity.put(ElementsOfPower.containerEmerald, new MagicAmounts().all(50));
-        containerCapacity.put(ElementsOfPower.containerDiamond, new MagicAmounts().all(100));
-
-        containerCapacity.put(ElementsOfPower.wandLapis, new MagicAmounts().all(10));
-        containerCapacity.put(ElementsOfPower.wandEmerald, new MagicAmounts().all(50));
-        containerCapacity.put(ElementsOfPower.wandDiamond, new MagicAmounts().all(100));
-
-        containerCapacity.put(ElementsOfPower.staffLapis, new MagicAmounts().all(50));
-        containerCapacity.put(ElementsOfPower.staffEmerald, new MagicAmounts().all(250));
-        containerCapacity.put(ElementsOfPower.staffDiamond, new MagicAmounts().all(500));
-
-        containerCapacity.put(ElementsOfPower.ringLapis, new MagicAmounts().all(25));
-        containerCapacity.put(ElementsOfPower.ringEmerald, new MagicAmounts().all(100));
-        containerCapacity.put(ElementsOfPower.ringDiamond, new MagicAmounts().all(250));
-    }
-
-    public static void registerContainerConversions()
-    {
-        containerConversion.put(new ItemStack(Items.dye, 1, 4), ElementsOfPower.containerLapis);
-        containerConversion.put(new ItemStack(Items.emerald, 1), ElementsOfPower.containerEmerald);
-        containerConversion.put(new ItemStack(Items.diamond, 1), ElementsOfPower.containerDiamond);
+        return ElementsOfPower.gemstone.setQuality(target, Quality.Pure);
     }
 
     public static boolean canItemContainMagic(ItemStack stack)
@@ -63,7 +83,7 @@ public class ContainerInformation
             stack = stack.copy();
             stack.stackSize = 1;
         }
-        return Utils.stackMapContainsKey(containerCapacity, stack);
+        return getMagicLimits(stack) != null;
     }
 
     public static boolean itemContainsMagic(ItemStack stack)
@@ -79,11 +99,13 @@ public class ContainerInformation
     public static MagicAmounts getMagicLimits(ItemStack stack)
     {
         if (stack.stackSize != 1)
-        {
             return null;
-        }
 
-        MagicAmounts m = Utils.stackMapGet(containerCapacity, stack);
+        Item item = stack.getItem();
+        if(!(item instanceof ItemMagicContainer))
+            return null;
+
+        MagicAmounts m = ((ItemMagicContainer)item).getCapacity(stack);
         if (m == null)
             return null;
 
@@ -170,16 +192,11 @@ public class ContainerInformation
 
         if (amounts != null)
         {
-            NBTTagCompound nbt = output.getTagCompound();
+            output = identifyQuality(output);
 
+            NBTTagCompound nbt = output.getTagCompound();
             if (nbt == null)
             {
-                ItemStack output2 = Utils.stackMapGet(containerConversion, output);
-                if (output2 != null)
-                {
-                    output = output2.copy();
-                }
-
                 nbt = new NBTTagCompound();
                 output.setTagCompound(nbt);
             }
@@ -193,12 +210,17 @@ public class ContainerInformation
         }
         else
         {
-            output.setTagCompound(null);
+            NBTTagCompound nbt = output.getTagCompound();
 
-            ItemStack output2 = Utils.stackMapGet(containerConversion, output);
-            if (output2 != null)
+            if(nbt != null)
             {
-                output = output2.copy();
+                for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+                {
+                    nbt.removeTag("" + i);
+                }
+
+                if(nbt.getKeySet().size() == 0)
+                    output.setTagCompound(null);
             }
 
             return output;

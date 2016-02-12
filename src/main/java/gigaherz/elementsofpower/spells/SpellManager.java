@@ -7,6 +7,9 @@ import com.google.common.collect.Multiset;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.spells.effects.*;
 import gigaherz.elementsofpower.spells.shapes.*;
+import gigaherz.elementsofpower.gemstones.Effect;
+import gigaherz.elementsofpower.gemstones.Element;
+import gigaherz.elementsofpower.gemstones.Shape;
 
 import java.util.EnumMap;
 import java.util.Hashtable;
@@ -61,66 +64,6 @@ public class SpellManager
 
     static class SpellBuilder
     {
-        enum Element
-        {
-            Fire(1, Shape.Sphere),
-            Water(0, Shape.Ball),
-            Air(3, Shape.Cone),
-            Earth(2, Shape.Ball),
-            Light(5, Shape.Beam),
-            Darkness(4, Shape.Beam),
-            Life(7, Shape.Self),
-            Death(6, Shape.Single);
-
-            final int opposite;
-            final Shape shape;
-
-            public Element getOpposite()
-            {
-                return Element.values()[opposite];
-            }
-
-            Element(int opposite, Shape shape)
-            {
-                this.opposite = opposite;
-                this.shape = shape;
-            }
-
-            public Shape getShape()
-            {
-                return shape;
-            }
-        }
-
-        enum Shape
-        {
-            Sphere,
-            Ball,
-            Beam,
-            Cone,
-            Self,
-            Single
-        }
-
-        enum Effect
-        {
-            Flame,
-            Water,
-            Wind,
-            Dust,
-            Mist,
-            Light,
-            Mining,
-            Healing,
-            Breaking,
-            Cushion,
-            Lava,
-            Resurrection,
-            Teleport,
-            WaterSource,
-            LavaSource
-        }
-
         static final EnumMap<Effect, SpellEffect> effects = Maps.newEnumMap(Effect.class);
         static final EnumMap<Shape, SpellShape> shapes = Maps.newEnumMap(Shape.class);
 
@@ -289,7 +232,7 @@ public class SpellManager
                 }
             }
 
-            shape = e.shape;
+            shape = e.getShape();
 
             switch (e)
             {

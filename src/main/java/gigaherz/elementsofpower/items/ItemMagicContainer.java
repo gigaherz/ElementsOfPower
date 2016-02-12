@@ -13,16 +13,12 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class ItemMagicContainer extends Item
+public abstract class ItemMagicContainer extends Item
 {
-    private static final String[] subNames = {
-            ".lapisContainer", ".emeraldContainer", ".diamondContainer"
-    };
-
     public ItemMagicContainer()
     {
         setMaxStackSize(1);
-        setUnlocalizedName(ElementsOfPower.MODID + ".magicContainer");
+        setHasSubtypes(true);
     }
 
     public boolean isInfinite(ItemStack stack)
@@ -35,27 +31,7 @@ public class ItemMagicContainer extends Item
         return new ItemStack(this, count, damageValue);
     }
 
-    @Override
-    public String getUnlocalizedName(ItemStack stack)
-    {
-        int sub = stack.getItemDamage();
-
-        if (sub >= subNames.length)
-        {
-            return getUnlocalizedName();
-        }
-
-        return "item." + ElementsOfPower.MODID + subNames[sub];
-    }
-
-    @Override
-    public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems)
-    {
-        for (int meta = 0; meta < subNames.length; meta++)
-        {
-            subItems.add(new ItemStack(itemIn, 1, meta));
-        }
-    }
+    public abstract MagicAmounts getCapacity(ItemStack stack);
 
     @Override
     public boolean hasEffect(ItemStack stack)
@@ -66,14 +42,6 @@ public class ItemMagicContainer extends Item
         MagicAmounts amounts = ContainerInformation.getContainedMagic(stack);
 
         return amounts != null && !amounts.isEmpty();
-    }
-
-    @Override
-    public EnumRarity getRarity(ItemStack stack)
-    {
-        if (hasEffect(stack))
-            return EnumRarity.RARE;
-        return EnumRarity.UNCOMMON;
     }
 
     @Override

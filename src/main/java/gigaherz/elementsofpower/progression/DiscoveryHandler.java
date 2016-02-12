@@ -50,13 +50,13 @@ public class DiscoveryHandler
         discoverGems = newAchievement(".discoverGems", -3, 0, Items.diamond, null);
         discoverGems.initIndependentStat().registerStat();
 
-        acquireWand = newAchievement(".acquireWand", 0, 0, ElementsOfPower.wandDiamond, discoverGems);
+        acquireWand = newAchievement(".acquireWand", 0, 0, new ItemStack(ElementsOfPower.magicWand), discoverGems);
         acquireWand.registerStat();
 
-        acquireRing = newAchievement(".acquireRing", 1, -2, ElementsOfPower.ringDiamond, acquireWand);
+        acquireRing = newAchievement(".acquireRing", 1, -2, new ItemStack(ElementsOfPower.magicRing), acquireWand);
         acquireRing.registerStat();
 
-        acquireStaff = newAchievement(".acquireStaff", 2, 0, ElementsOfPower.staffDiamond, acquireWand);
+        acquireStaff = newAchievement(".acquireStaff", 2, 0, new ItemStack(ElementsOfPower.magicStaff), acquireWand);
         acquireStaff.registerStat();
 
         essentializing = newAchievement(".essentializing", 4, 0, ElementsOfPower.essentializer, acquireStaff);
@@ -142,11 +142,11 @@ public class DiscoveryHandler
         if (item instanceof ItemWand)
         {
             player.addStat(acquireWand, 1);
+        }
 
-            if (((ItemWand) item).isStaff(stack))
-            {
-                player.addStat(acquireStaff, 1);
-            }
+        if (item instanceof ItemWand)
+        {
+            player.addStat(acquireStaff, 1);
         }
 
         if (item instanceof ItemBlock)

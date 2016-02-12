@@ -1,19 +1,22 @@
 package gigaherz.elementsofpower;
 
 import com.google.common.collect.Lists;
+import gigaherz.elementsofpower.analyzer.ItemAnalyzer;
 import gigaherz.elementsofpower.blocks.BlockCushion;
 import gigaherz.elementsofpower.blocks.BlockDust;
+import gigaherz.elementsofpower.blocks.BlockGemstone;
+import gigaherz.elementsofpower.blocks.BlockGemstoneOre;
+import gigaherz.elementsofpower.capabilities.CapabilityMagicContainer;
 import gigaherz.elementsofpower.database.*;
 import gigaherz.elementsofpower.entities.EntityBall;
 import gigaherz.elementsofpower.entities.EntityEssence;
 import gigaherz.elementsofpower.entitydata.SpellcastEntityData;
 import gigaherz.elementsofpower.essentializer.BlockEssentializer;
 import gigaherz.elementsofpower.essentializer.TileEssentializer;
+import gigaherz.elementsofpower.gemstones.GemstoneBlockType;
+import gigaherz.elementsofpower.gemstones.GemstoneChangeRecipe;
+import gigaherz.elementsofpower.items.*;
 import gigaherz.elementsofpower.gui.GuiHandler;
-import gigaherz.elementsofpower.items.ItemMagicContainer;
-import gigaherz.elementsofpower.items.ItemMagicOrb;
-import gigaherz.elementsofpower.items.ItemRing;
-import gigaherz.elementsofpower.items.ItemWand;
 import gigaherz.elementsofpower.materials.MaterialCushion;
 import gigaherz.elementsofpower.network.EssentializerAmountsUpdate;
 import gigaherz.elementsofpower.network.SpellSequenceUpdate;
@@ -30,6 +33,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.config.Configuration;
@@ -45,6 +49,9 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.oredict.ShapedOreRecipe;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
@@ -75,37 +82,24 @@ public class ElementsOfPower
     public static Block mist;
     public static Block cushion;
 
+    public static BlockGemstoneOre gemstoneOre;
+    public static BlockGemstone gemstoneBlock;
+
     // Block Materials
     public static Material materialCushion;
 
     // Item templates
     public static ItemMagicOrb magicOrb;
 
-    public static ItemMagicContainer magicContainer;
-
     public static ItemWand magicWand;
-
+    public static ItemWand magicStaff;
     public static ItemRing magicRing;
 
+    public static ItemGemstone gemstone;
+
+    public static ItemAnalyzer analyzer;
+
     // Subitems
-    public static ItemStack containerLapis;
-    public static ItemStack containerEmerald;
-    public static ItemStack containerDiamond;
-
-    public static ItemStack wandLapis;
-    public static ItemStack wandEmerald;
-    public static ItemStack wandDiamond;
-    public static ItemStack wandCreative;
-
-    public static ItemStack staffLapis;
-    public static ItemStack staffEmerald;
-    public static ItemStack staffDiamond;
-    public static ItemStack staffCreative;
-
-    public static ItemStack ringLapis;
-    public static ItemStack ringEmerald;
-    public static ItemStack ringDiamond;
-    public static ItemStack ringCreative;
 
     public static ItemStack fire;
     public static ItemStack water;
@@ -116,6 +110,30 @@ public class ElementsOfPower
     public static ItemStack darkness;
     public static ItemStack life;
     public static ItemStack death;
+
+    public static ItemStack gemRuby;
+    public static ItemStack gemSapphire;
+    public static ItemStack gemCitrine;
+    public static ItemStack gemAgate;
+    public static ItemStack gemQuartz;
+    public static ItemStack gemSerendibite;
+    public static ItemStack gemEmerald;
+    public static ItemStack gemAmethyst;
+    public static ItemStack gemDiamond;
+
+    public static ItemStack blockAgate;
+    public static ItemStack blockAmethyst;
+    public static ItemStack blockCitrine;
+    public static ItemStack blockRuby;
+    public static ItemStack blockSapphire;
+    public static ItemStack blockSerendibite;
+
+    public static ItemStack oreAgate;
+    public static ItemStack oreAmethyst;
+    public static ItemStack oreCitrine;
+    public static ItemStack oreRuby;
+    public static ItemStack oreSapphire;
+    public static ItemStack oreSerendibite;
 
     // Handlers
     public static SimpleNetworkWrapper channel;
@@ -165,6 +183,8 @@ public class ElementsOfPower
 
         overrides = event.getModConfigurationDirectory() + File.separator + "elementsofpower_essences.json";
 
+        CapabilityMagicContainer.register();
+
         registerParticle();
 
         // Initialize Block Materials
@@ -177,11 +197,11 @@ public class ElementsOfPower
         magicOrb = new ItemMagicOrb();
         GameRegistry.registerItem(magicOrb, "magicOrb");
 
-        magicContainer = new ItemMagicContainer();
-        GameRegistry.registerItem(magicContainer, "magicContainer");
-
         magicWand = new ItemWand();
         GameRegistry.registerItem(magicWand, "magicWand");
+
+        magicStaff = new ItemStaff();
+        GameRegistry.registerItem(magicStaff, "magicStaff");
 
         magicRing = new ItemRing();
         GameRegistry.registerItem(magicRing, "magicRing");
@@ -199,24 +219,21 @@ public class ElementsOfPower
         cushion = new BlockCushion();
         GameRegistry.registerBlock(cushion, "cushion");
 
+        gemstoneBlock = new BlockGemstone();
+        GameRegistry.registerBlock(gemstoneBlock, BlockGemstone.Item.class, "gemstoneBlock");
+
+        gemstoneOre = new BlockGemstoneOre();
+        GameRegistry.registerBlock(gemstoneOre, BlockGemstoneOre.ItemForm.class,"gemstoneOre");
+
+        gemstone = new ItemGemstone();
+        GameRegistry.registerItem(gemstone, "gemstone");
+
+        analyzer = new ItemAnalyzer();
+        GameRegistry.registerItem(analyzer, "analyzer");
+
         // Template stacks
         logger.info("Generating template stacks...");
 
-        wandLapis = magicWand.getStack(1, 0);
-        wandEmerald = magicWand.getStack(1, 1);
-        wandDiamond = magicWand.getStack(1, 2);
-        wandCreative = magicWand.getStack(1, 3);
-        staffLapis = magicWand.getStack(1, 4);
-        staffEmerald = magicWand.getStack(1, 5);
-        staffDiamond = magicWand.getStack(1, 6);
-        staffCreative = magicWand.getStack(1, 7);
-        ringLapis = magicRing.getStack(1, 0);
-        ringEmerald = magicRing.getStack(1, 1);
-        ringDiamond = magicRing.getStack(1, 2);
-        ringCreative = magicRing.getStack(1, 3);
-        containerLapis = magicContainer.getStack(1, 0);
-        containerEmerald = magicContainer.getStack(1, 1);
-        containerDiamond = magicContainer.getStack(1, 2);
         fire = magicOrb.getStack(1, 0);
         water = magicOrb.getStack(1, 1);
         air = magicOrb.getStack(1, 2);
@@ -225,6 +242,66 @@ public class ElementsOfPower
         darkness = magicOrb.getStack(1, 5);
         life = magicOrb.getStack(1, 6);
         death = magicOrb.getStack(1, 7);
+
+        gemRuby = gemstone.getStack(1, 0);
+        gemSapphire = gemstone.getStack(1, 1);
+        gemCitrine = gemstone.getStack(1, 2);
+        gemAgate = gemstone.getStack(1, 3);
+        gemQuartz = gemstone.getStack(1, 4);
+        gemSerendibite = gemstone.getStack(1, 5);
+        gemEmerald = gemstone.getStack(1, 6);
+        gemAmethyst = gemstone.getStack(1, 7);
+        gemDiamond = gemstone.getStack(1, 8);
+
+        blockAgate = gemstoneBlock.getStack(1, GemstoneBlockType.Agate);
+        blockAmethyst = gemstoneBlock.getStack(1, GemstoneBlockType.Amethyst);
+        blockCitrine = gemstoneBlock.getStack(1, GemstoneBlockType.Citrine);
+        blockRuby = gemstoneBlock.getStack(1, GemstoneBlockType.Ruby);
+        blockSapphire = gemstoneBlock.getStack(1, GemstoneBlockType.Sapphire);
+        blockSerendibite = gemstoneBlock.getStack(1, GemstoneBlockType.Serendibite);
+
+        oreAgate = gemstoneOre.getStack(1, GemstoneBlockType.Agate);
+        oreAmethyst = gemstoneOre.getStack(1, GemstoneBlockType.Amethyst);
+        oreCitrine = gemstoneOre.getStack(1, GemstoneBlockType.Citrine);
+        oreRuby = gemstoneOre.getStack(1, GemstoneBlockType.Ruby);
+        oreSapphire = gemstoneOre.getStack(1, GemstoneBlockType.Sapphire);
+        oreSerendibite = gemstoneOre.getStack(1, GemstoneBlockType.Serendibite);
+
+        logger.info("Registering ore dictionary names...");
+
+        OreDictionary.registerOre("gemRuby", gemRuby);
+        OreDictionary.registerOre("gemSapphire", gemSapphire);
+        OreDictionary.registerOre("gemCitrine", gemCitrine);
+        OreDictionary.registerOre("gemAgate", gemAgate);
+        OreDictionary.registerOre("gemQuartz", gemQuartz);
+        OreDictionary.registerOre("gemSerendibite", gemSerendibite);
+        OreDictionary.registerOre("gemEmerald", gemEmerald);
+        OreDictionary.registerOre("gemAmethyst", gemAmethyst);
+        OreDictionary.registerOre("gemDiamond", gemDiamond);
+
+        OreDictionary.registerOre("magicGemstone", gemRuby);
+        OreDictionary.registerOre("magicGemstone", gemSapphire);
+        OreDictionary.registerOre("magicGemstone", gemCitrine);
+        OreDictionary.registerOre("magicGemstone", gemAgate);
+        OreDictionary.registerOre("magicGemstone", gemQuartz);
+        OreDictionary.registerOre("magicGemstone", gemSerendibite);
+        OreDictionary.registerOre("magicGemstone", gemEmerald);
+        OreDictionary.registerOre("magicGemstone", gemAmethyst);
+        OreDictionary.registerOre("magicGemstone", gemDiamond);
+
+        OreDictionary.registerOre("blockAgate", blockAgate);
+        OreDictionary.registerOre("blockAmethyst", blockAmethyst);
+        OreDictionary.registerOre("blockCitrine", blockCitrine);
+        OreDictionary.registerOre("blockRuby", blockRuby);
+        OreDictionary.registerOre("blockSapphire", blockSapphire);
+        OreDictionary.registerOre("blockSerendibite", blockSerendibite);
+
+        OreDictionary.registerOre("oreAgate", oreAgate);
+        OreDictionary.registerOre("oreAmethyst", oreAmethyst);
+        OreDictionary.registerOre("oreCitrine", oreCitrine);
+        OreDictionary.registerOre("oreRuby", oreRuby);
+        OreDictionary.registerOre("oreSapphire", oreSapphire);
+        OreDictionary.registerOre("oreSerendibite", oreSerendibite);
 
         // Network channels
         logger.info("Registering network channel...");
@@ -265,79 +342,73 @@ public class ElementsOfPower
         EntitySpawnPlacementRegistry.setPlacementType(EntityEssence.class, EntityLiving.SpawnPlacementType.IN_AIR);
         EntityRegistry.addSpawn(EntityEssence.class, 50, 1, 4, EnumCreatureType.AMBIENT, getBiomes());
 
+        // Worldgen
+
+        GameRegistry.registerWorldGenerator(new BlockGemstoneOre.Generator(), 1);
+
         // Recipes
         logger.info("Registering recipes...");
 
-        GameRegistry.addRecipe(new ItemStack(essentializer, 1),
+        GameRegistry.addRecipe(new ShapedOreRecipe(blockAgate, "aaa", "aaa", "aaa", 'a', "gemAgate"));
+        GameRegistry.addRecipe(new ShapedOreRecipe(blockAmethyst, "aaa", "aaa", "aaa", 'a', "gemAmethyst"));
+        GameRegistry.addRecipe(new ShapedOreRecipe(blockCitrine, "aaa", "aaa", "aaa", 'a', "gemCitrine"));
+        GameRegistry.addRecipe(new ShapedOreRecipe(blockRuby, "aaa", "aaa", "aaa", 'a', "gemRuby"));
+        GameRegistry.addRecipe(new ShapedOreRecipe(blockSapphire, "aaa", "aaa", "aaa", 'a', "gemSapphire"));
+        GameRegistry.addRecipe(new ShapedOreRecipe(blockSerendibite, "aaa", "aaa", "aaa", 'a', "gemSerendibite"));
+
+        GameRegistry.addRecipe(new ShapelessOreRecipe(copyStack(gemAgate,9), "blockAgate"));
+        GameRegistry.addRecipe(new ShapelessOreRecipe(copyStack(gemAmethyst,9), "blockAmethyst"));
+        GameRegistry.addRecipe(new ShapelessOreRecipe(copyStack(gemCitrine,9), "blockCitrine"));
+        GameRegistry.addRecipe(new ShapelessOreRecipe(copyStack(gemRuby,9), "blockRuby"));
+        GameRegistry.addRecipe(new ShapelessOreRecipe(copyStack(gemSapphire,9), "blockSapphire"));
+        GameRegistry.addRecipe(new ShapelessOreRecipe(copyStack(gemSerendibite,9), "blockSerendibite"));
+
+        FurnaceRecipes.instance().addSmeltingRecipe(oreAgate, gemAgate, 0);
+        FurnaceRecipes.instance().addSmeltingRecipe(oreAmethyst, gemAmethyst, 0);
+        FurnaceRecipes.instance().addSmeltingRecipe(oreCitrine, gemCitrine, 0);
+        FurnaceRecipes.instance().addSmeltingRecipe(oreRuby, gemRuby, 0);
+        FurnaceRecipes.instance().addSmeltingRecipe(oreSapphire, gemSapphire, 0);
+        FurnaceRecipes.instance().addSmeltingRecipe(oreSerendibite, gemSerendibite, 0);
+
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(essentializer, 1),
                 "IQI",
                 "ONO",
                 "IOI",
                 'I', Items.iron_ingot,
                 'O', Blocks.obsidian,
-                'Q', Items.quartz,
-                'N', Items.nether_star);
-        GameRegistry.addRecipe(wandLapis,
+                'Q', "magicGemstone",
+                'N', Items.nether_star));
+        GameRegistry.addShapedRecipe(new ItemStack(magicWand),
                 " G",
                 "S ",
-                'G', new ItemStack(Items.dye, 1, 4),
+                'G', Items.gold_ingot,
                 'S', Items.stick);
-        GameRegistry.addRecipe(wandEmerald,
-                " G",
-                "S ",
-                'G', Items.emerald,
-                'S', Items.stick);
-        GameRegistry.addRecipe(wandDiamond,
-                " G",
-                "S ",
-                'G', Items.diamond,
-                'S', Items.stick);
-        GameRegistry.addRecipe(staffLapis,
+        GameRegistry.addRecipe(new ItemStack(magicStaff),
                 " GW",
                 " SG",
                 "S  ",
-                'W', wandLapis,
-                'G', Blocks.quartz_block,
+                'W', new ItemStack(magicWand, 1, OreDictionary.WILDCARD_VALUE),
+                'G', Items.gold_ingot,
                 'S', Items.stick);
-        GameRegistry.addRecipe(staffEmerald,
-                " GW",
-                " SG",
-                "S  ",
-                'W', wandEmerald,
-                'G', Blocks.quartz_block,
-                'S', Items.stick);
-        GameRegistry.addRecipe(staffDiamond,
-                " GW",
-                " SG",
-                "S  ",
-                'W', wandDiamond,
-                'G', Blocks.quartz_block,
-                'S', Items.stick);
-        GameRegistry.addRecipe(ringLapis,
-                " GL",
+        GameRegistry.addRecipe(new ItemStack(magicRing),
+                " GG",
                 "G G",
                 " G ",
-                'G', Items.gold_ingot,
-                'L', new ItemStack(Items.dye, 1, 4));
-        GameRegistry.addRecipe(ringDiamond,
-                " GL",
-                "G G",
-                " G ",
-                'G', Items.gold_ingot,
-                'L', Items.diamond);
-        GameRegistry.addRecipe(ringEmerald,
-                " GL",
-                "G G",
-                " G ",
-                'G', Items.gold_ingot,
-                'L', Items.emerald);
+                'G', Items.gold_ingot);
+        GameRegistry.addRecipe(new GemstoneChangeRecipe());
 
         // Gui
         NetworkRegistry.INSTANCE.registerGuiHandler(this, guiHandler);
 
-        ContainerInformation.registerContainerConversions();
-        ContainerInformation.registerContainerCapacity();
         StockConversions.registerEssenceSources();
         EssenceOverrides.loadOverrides();
+    }
+
+    private ItemStack copyStack(ItemStack original, int quantity)
+    {
+        ItemStack copy = original.copy();
+        copy.stackSize = quantity;
+        return copy;
     }
 
     private BiomeGenBase[] getBiomes()
@@ -357,6 +428,5 @@ public class ElementsOfPower
     public void postInit(FMLPostInitializationEvent event)
     {
         EssenceConversions.registerEssencesForRecipes();
-        ContainerInformation.reverseContainerConversions();
     }
 }

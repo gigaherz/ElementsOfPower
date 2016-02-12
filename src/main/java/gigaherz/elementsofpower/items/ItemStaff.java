@@ -3,13 +3,13 @@ package gigaherz.elementsofpower.items;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.ContainerInformation;
 import gigaherz.elementsofpower.database.MagicAmounts;
+import gigaherz.elementsofpower.entitydata.SpellcastEntityData;
 import gigaherz.elementsofpower.gemstones.Element;
 import gigaherz.elementsofpower.gemstones.Gemstone;
 import gigaherz.elementsofpower.gemstones.Quality;
-import gigaherz.elementsofpower.spells.SpellManager;
-import gigaherz.elementsofpower.entitydata.SpellcastEntityData;
 import gigaherz.elementsofpower.network.SpellSequenceUpdate;
 import gigaherz.elementsofpower.progression.DiscoveryHandler;
+import gigaherz.elementsofpower.spells.SpellManager;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,12 +24,42 @@ import net.minecraftforge.common.util.Constants;
 
 import java.util.List;
 
-public class ItemWand extends ItemGemContainer
+public class ItemStaff extends ItemWand
 {
-    public ItemWand()
+    public ItemStaff()
     {
         super();
-        setUnlocalizedName(ElementsOfPower.MODID + ".wand");
+        setUnlocalizedName(ElementsOfPower.MODID + ".staff");
         setCreativeTab(ElementsOfPower.tabMagic);
     }
+
+    @Override
+    public MagicAmounts getCapacity(ItemStack stack)
+    {
+        MagicAmounts magic = super.getCapacity(stack);
+        if(magic == null)
+            return null;
+
+        magic.add(magic.copy());
+        return magic;
+    }
+
+    @Override
+    protected MagicAmounts adjustInsertedMagic(MagicAmounts am)
+    {
+        if(am == null)
+            return null;
+
+        return am.copy().multiply(2.0f);
+    }
+
+    @Override
+    protected MagicAmounts adjustRemovedMagic(MagicAmounts am)
+    {
+        if(am == null)
+            return null;
+
+        return am.copy().multiply(0.5f);
+    }
+
 }
