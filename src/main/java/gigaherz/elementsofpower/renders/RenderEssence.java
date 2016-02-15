@@ -26,9 +26,9 @@ public class RenderEssence extends Render<EntityEssence>
         GlStateManager.disableLighting();
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.enableRescaleNormal();
         GlStateManager.pushMatrix();
         GlStateManager.translate((float) x, (float) y, (float) z);
-        GlStateManager.enableRescaleNormal();
         GlStateManager.scale(scale, scale, scale);
 
         bindTexture(TextureMap.locationBlocksTexture);
@@ -55,9 +55,9 @@ public class RenderEssence extends Render<EntityEssence>
             GlStateManager.popMatrix();
         }
 
-        GlStateManager.disableRescaleNormal();
         GlStateManager.popMatrix();
 
+        GlStateManager.disableRescaleNormal();
         GlStateManager.enableLighting();
 
         super.doRender(entity, x, y, z, p_76986_8_, partialTicks);

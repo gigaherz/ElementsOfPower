@@ -6,10 +6,12 @@ import gigaherz.elementsofpower.gemstones.Element;
 import gigaherz.elementsofpower.gemstones.Gemstone;
 import gigaherz.elementsofpower.gemstones.Quality;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.util.Constants;
 
@@ -40,7 +42,7 @@ public class ItemGemstone extends ItemMagicContainer
     {
         int sub = stack.getItemDamage();
 
-        if(sub >= Gemstone.values.length)
+        if (sub >= Gemstone.values.length)
             return getUnlocalizedName();
 
         return "item." + ElementsOfPower.MODID + Gemstone.values[sub].getUnlocalizedName();
@@ -49,16 +51,17 @@ public class ItemGemstone extends ItemMagicContainer
     @Override
     public String getItemStackDisplayName(ItemStack stack)
     {
+        String gemPart = StatCollector.translateToLocal(getUnlocalizedName(stack) + ".name");
+
         Quality q = getQuality(stack);
 
         String qName = ElementsOfPower.MODID + ".gemstone.quality";
-        if(q != null)
-            qName += q.getUnlocalizedName();
-        else
-            qName += ".unknown";
+        if (q == null)
+            return gemPart.trim();
+
+        qName += q.getUnlocalizedName();
 
         String qualityPart = StatCollector.translateToLocal(qName);
-        String gemPart = StatCollector.translateToLocal(getUnlocalizedName(stack) + ".name");
 
         return (qualityPart + " " + gemPart).trim();
     }
@@ -68,10 +71,18 @@ public class ItemGemstone extends ItemMagicContainer
     {
         for (int meta = 0; meta < Gemstone.values.length; meta++)
         {
-            for(Quality q : Quality.values)
+            for (Quality q : Quality.values)
             {
                 subItems.add(setQuality(new ItemStack(itemIn, 1, meta), q));
             }
+        }
+    }
+
+    public void getUnexamined(List<ItemStack> subItems)
+    {
+        for (int meta = 0; meta < Gemstone.values.length; meta++)
+        {
+            subItems.add(new ItemStack(this, 1, meta));
         }
     }
 
@@ -80,13 +91,13 @@ public class ItemGemstone extends ItemMagicContainer
     {
         Gemstone g = getGemstone(stack);
         Quality q = getQuality(stack);
-        if(q == null)
+        if (q == null)
             return null;
 
         MagicAmounts magic = capacities[q.ordinal()].copy();
 
         Element e = g.getElement();
-        if(e == null)
+        if (e == null)
             magic.all(magic.amounts[0] * 0.1f);
         else
             magic.element(g.getElement(), magic.amount(g.getElement()) * 0.25f);
@@ -98,7 +109,7 @@ public class ItemGemstone extends ItemMagicContainer
     public EnumRarity getRarity(ItemStack stack)
     {
         Quality q = getQuality(stack);
-        if(q == null)
+        if (q == null)
             return EnumRarity.COMMON;
         return q.getRarity();
     }
@@ -107,7 +118,7 @@ public class ItemGemstone extends ItemMagicContainer
     {
         int meta = stack.getMetadata();
 
-        if(meta >= Gemstone.values.length)
+        if (meta >= Gemstone.values.length)
             return null;
 
         return Gemstone.values[meta];
@@ -119,7 +130,7 @@ public class ItemGemstone extends ItemMagicContainer
         if (tag == null)
             return null;
 
-        if(!tag.hasKey("quality", Constants.NBT.TAG_INT))
+        if (!tag.hasKey("quality", Constants.NBT.TAG_INT))
             return null;
 
         int q = tag.getInteger("quality");
@@ -141,5 +152,11 @@ public class ItemGemstone extends ItemMagicContainer
         tag.setInteger("quality", q.ordinal());
 
         return stack;
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced)
+    {
+        tooltip.add(EnumChatFormatting.DARK_GRAY + "" + EnumChatFormatting.ITALIC + StatCollector.translateToLocal("text." + ElementsOfPower.MODID + ".gemstone.use"));
     }
 }

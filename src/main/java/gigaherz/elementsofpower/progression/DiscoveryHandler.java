@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.essentializer.BlockEssentializer;
 import gigaherz.elementsofpower.items.ItemRing;
+import gigaherz.elementsofpower.items.ItemStaff;
 import gigaherz.elementsofpower.items.ItemWand;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.block.Block;
@@ -42,9 +43,10 @@ public class DiscoveryHandler
         MinecraftForge.EVENT_BUS.register(instance);
 
         // Prepare item comparisons
-        gemTypes.add(new ItemStack(Items.dye, 1, 4));
         gemTypes.add(new ItemStack(Items.emerald));
         gemTypes.add(new ItemStack(Items.diamond));
+        ElementsOfPower.gemstone.getUnexamined(gemTypes);
+        ElementsOfPower.gemstone.getSubItems(ElementsOfPower.gemstone, null, gemTypes);
 
         // Initialize achievements
         discoverGems = newAchievement(".discoverGems", -3, 0, Items.diamond, null);
@@ -144,7 +146,7 @@ public class DiscoveryHandler
             player.addStat(acquireWand, 1);
         }
 
-        if (item instanceof ItemWand)
+        if (item instanceof ItemStaff)
         {
             player.addStat(acquireStaff, 1);
         }

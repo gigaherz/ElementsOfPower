@@ -1,0 +1,40 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "elementsofpower:cocoon.obj",
+    "transform": "forge:default-block"
+  },
+  "variants": {
+    "inventory": [{ }],
+    "facing": {
+      "up": {
+        "x": 90
+      },
+      "down": {
+        "x": 270
+      },
+      "east": {
+        "y": 270
+      },
+      "west": {
+        "y": 90
+      },
+      "north": {
+        "y": 180
+      },
+      "south": {
+      }
+    },
+    "color": {
+      "0": { "textures": { "#Default": "elementsofpower:misc/orb_fire" } },
+      "1": { "textures": { "#Default": "elementsofpower:misc/orb_water" } },
+      "2": { "textures": { "#Default": "elementsofpower:misc/orb_air" } },
+      "3": { "textures": { "#Default": "elementsofpower:misc/orb_earth" } },
+      "4": { "textures": { "#Default": "elementsofpower:misc/orb_light" } },
+      "5": { "textures": { "#Default": "elementsofpower:misc/orb_darkness" } },
+      "6": { "textures": { "#Default": "elementsofpower:misc/orb_life" } },
+      "7": { "textures": { "#Default": "elementsofpower:misc/orb_death" } },
+      "8": { }
+    }
+  }
+}

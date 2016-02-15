@@ -1,12 +1,12 @@
 package gigaherz.elementsofpower.renders;
 
 import com.google.common.collect.Maps;
-import gigaherz.elementsofpower.renders.spellrender.RenderCone;
-import gigaherz.elementsofpower.renders.spellrender.RenderSphere;
-import gigaherz.elementsofpower.spells.SpellManager;
 import gigaherz.elementsofpower.entitydata.SpellcastEntityData;
 import gigaherz.elementsofpower.renders.spellrender.RenderBeam;
+import gigaherz.elementsofpower.renders.spellrender.RenderCone;
 import gigaherz.elementsofpower.renders.spellrender.RenderSpell;
+import gigaherz.elementsofpower.renders.spellrender.RenderSphere;
+import gigaherz.elementsofpower.spells.SpellManager;
 import gigaherz.elementsofpower.spells.Spellcast;
 import gigaherz.elementsofpower.spells.shapes.SpellShape;
 import net.minecraft.client.Minecraft;

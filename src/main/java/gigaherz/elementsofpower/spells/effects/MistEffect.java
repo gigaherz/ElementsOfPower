@@ -1,7 +1,6 @@
 package gigaherz.elementsofpower.spells.effects;
 
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.blocks.BlockDust;
 import gigaherz.elementsofpower.blocks.BlockMist;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.block.Block;

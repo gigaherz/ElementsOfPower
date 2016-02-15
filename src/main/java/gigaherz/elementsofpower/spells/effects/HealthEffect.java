@@ -56,11 +56,11 @@ public class HealthEffect extends SpellEffect
 
         int emp = cast.getEmpowering();
 
-        if(-emp < lv)
-            causePotionEffect(cast, e, Potion.heal, 0, (lv+emp) * 0.5, 0.0);
+        if (-emp < lv)
+            causePotionEffect(cast, e, Potion.heal, 0, (lv + emp) * 0.5, 0.0);
 
-        if(emp < lv)
-            causePotionEffect(cast, e, Potion.regeneration, 0, (lv-emp), 100.0);
+        if (emp < lv)
+            causePotionEffect(cast, e, Potion.regeneration, 0, (lv - emp), 100.0);
     }
 
     private void causePotionEffect(Spellcast cast, EntityLivingBase e, Potion potion, int amplifier, double distance, double durationBase)

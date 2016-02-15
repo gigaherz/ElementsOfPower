@@ -20,7 +20,7 @@ public class GuiHandler implements IGuiHandler
     @Override
     public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z)
     {
-        switch(id)
+        switch (id)
         {
             case GUI_ESSENTIALIZER:
                 TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
@@ -31,7 +31,7 @@ public class GuiHandler implements IGuiHandler
                 }
                 break;
             case GUI_ANALYZER:
-                if(player.inventory.getCurrentItem() != null && player.inventory.getCurrentItem().getItem() instanceof ItemAnalyzer)
+                if (player.inventory.getCurrentItem() != null && player.inventory.getCurrentItem().getItem() instanceof ItemAnalyzer)
                     return new ContainerAnalyzer(player);
         }
 
@@ -41,7 +41,7 @@ public class GuiHandler implements IGuiHandler
     @Override
     public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z)
     {
-        switch(id)
+        switch (id)
         {
             case GUI_ESSENTIALIZER:
                 TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
@@ -52,7 +52,7 @@ public class GuiHandler implements IGuiHandler
                 }
                 break;
             case GUI_ANALYZER:
-                if(player.inventory.getCurrentItem() != null && player.inventory.getCurrentItem().getItem() instanceof ItemAnalyzer)
+                if (player.inventory.getCurrentItem() != null && player.inventory.getCurrentItem().getItem() instanceof ItemAnalyzer)
                     return new GuiAnalyzer(player);
         }
 

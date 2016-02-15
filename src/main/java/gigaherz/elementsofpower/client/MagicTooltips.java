@@ -4,7 +4,10 @@ import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.ContainerInformation;
 import gigaherz.elementsofpower.database.EssenceConversions;
 import gigaherz.elementsofpower.database.MagicAmounts;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.StatCollector;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.input.Keyboard;
@@ -16,6 +19,13 @@ public class MagicTooltips
     {
         if (ContainerInformation.itemContainsMagic(event.itemStack))
             return;
+
+        Item item = event.itemStack.getItem();
+
+        if (item == Items.diamond || item == Items.emerald || item == Items.quartz)
+        {
+            event.toolTip.add(1, EnumChatFormatting.DARK_GRAY + "" + EnumChatFormatting.ITALIC + StatCollector.translateToLocal("text." + ElementsOfPower.MODID + ".gemstone.use"));
+        }
 
         MagicAmounts amounts = EssenceConversions.getEssences(event.itemStack, false);
         if (amounts == null || amounts.isEmpty())

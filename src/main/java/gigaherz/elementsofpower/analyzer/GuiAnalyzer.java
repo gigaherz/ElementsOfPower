@@ -1,9 +1,10 @@
 package gigaherz.elementsofpower.analyzer;
 
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.items.ItemGemstone;
+import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.gemstones.Gemstone;
 import gigaherz.elementsofpower.gemstones.Quality;
+import gigaherz.elementsofpower.items.ItemGemstone;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
@@ -46,27 +47,31 @@ public class GuiAnalyzer extends GuiContainer
 
         Slot slotAnalyze = inventorySlots.inventorySlots.get(0);
         ItemStack stack = slotAnalyze.getStack();
-        if(stack != null)
+        if (stack != null)
         {
             Item item = stack.getItem();
             if (item instanceof ItemGemstone)
             {
                 mc.fontRendererObj.drawString("Item: Gemstone", 32, 18, 0xffffff);
 
-                ItemGemstone gemstone = (ItemGemstone)item;
+                ItemGemstone gemstone = (ItemGemstone) item;
                 Gemstone gem = gemstone.getGemstone(stack);
                 Quality q = gemstone.getQuality(stack);
+                MagicAmounts am = gemstone.getCapacity(stack);
 
                 mc.fontRendererObj.drawString("Gemstone type: " + gem.toString(), 32, 30, 0xffffff);
-                mc.fontRendererObj.drawString("Quality level: " + q.toString(), 32, 40, 0xffffff);
-                mc.fontRendererObj.drawString("Effective Capacity:", 32, 50, 0xffffff);
-                mc.fontRendererObj.drawString(gemstone.getCapacity(stack).toShortString(), 40, 60, 0xffffff);
+                mc.fontRendererObj.drawString("Quality level: " + (q != null ? q.toString() : "Unknown"), 32, 40, 0xffffff);
+                if (am != null)
+                {
+                    mc.fontRendererObj.drawString("Effective Capacity:", 32, 50, 0xffffff);
+                    mc.fontRendererObj.drawString(am.toShortString(), 40, 60, 0xffffff);
+                }
             }
             else
             {
                 mc.fontRendererObj.drawString("Item: " + stack.getDisplayName(), 32, 18, 0xffffff);
 
-                mc.fontRendererObj.drawSplitString("Does not look like a useful gemstone.", 32, 30, 166-32, 0xffffff);
+                mc.fontRendererObj.drawSplitString("Does not look like a useful gemstone.", 32, 30, 166 - 32, 0xffffff);
             }
         }
     }

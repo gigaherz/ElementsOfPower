@@ -3,9 +3,9 @@ package gigaherz.elementsofpower.database;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.gemstones.Quality;
 import gigaherz.elementsofpower.items.ItemGemstone;
 import gigaherz.elementsofpower.items.ItemMagicContainer;
-import gigaherz.elementsofpower.gemstones.Quality;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -14,7 +14,9 @@ import net.minecraft.util.ReportedException;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.*;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 public class ContainerInformation
 {
@@ -26,9 +28,9 @@ public class ContainerInformation
             return null;
 
         Item item = stack.getItem();
-        if(item instanceof ItemGemstone)
+        if (item instanceof ItemGemstone)
         {
-            if (((ItemGemstone)item).getQuality(stack) != null)
+            if (((ItemGemstone) item).getQuality(stack) != null)
                 return stack;
         }
 
@@ -47,8 +49,8 @@ public class ContainerInformation
 
         int[] ids = OreDictionary.getOreIDs(stack);
         Set<String> names = Sets.newHashSet();
-        for(int i : ids)
-            names.add(OreDictionary.getOreName(i));
+        for (int i : ids)
+        { names.add(OreDictionary.getOreName(i)); }
 
         for (Pair<ItemStack, String> target : gems)
         {
@@ -64,13 +66,13 @@ public class ContainerInformation
     private static ItemStack setRandomQualityVariant(ItemStack target)
     {
         float rnd = rand.nextFloat();
-        if(rnd > 0.5f)
+        if (rnd > 0.5f)
             return ElementsOfPower.gemstone.setQuality(target, Quality.Rough);
-        if(rnd > 0.25f)
+        if (rnd > 0.25f)
             return ElementsOfPower.gemstone.setQuality(target, Quality.Common);
-        if(rnd > 0.1f)
+        if (rnd > 0.1f)
             return ElementsOfPower.gemstone.setQuality(target, Quality.Smooth);
-        if(rnd > 0.01f)
+        if (rnd > 0.01f)
             return ElementsOfPower.gemstone.setQuality(target, Quality.Flawless);
 
         return ElementsOfPower.gemstone.setQuality(target, Quality.Pure);
@@ -102,10 +104,10 @@ public class ContainerInformation
             return null;
 
         Item item = stack.getItem();
-        if(!(item instanceof ItemMagicContainer))
+        if (!(item instanceof ItemMagicContainer))
             return null;
 
-        MagicAmounts m = ((ItemMagicContainer)item).getCapacity(stack);
+        MagicAmounts m = ((ItemMagicContainer) item).getCapacity(stack);
         if (m == null)
             return null;
 
@@ -212,14 +214,14 @@ public class ContainerInformation
         {
             NBTTagCompound nbt = output.getTagCompound();
 
-            if(nbt != null)
+            if (nbt != null)
             {
                 for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
                 {
                     nbt.removeTag("" + i);
                 }
 
-                if(nbt.getKeySet().size() == 0)
+                if (nbt.getKeySet().size() == 0)
                     output.setTagCompound(null);
             }
 

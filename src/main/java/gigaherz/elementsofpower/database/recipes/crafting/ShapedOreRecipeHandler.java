@@ -66,7 +66,7 @@ public class ShapedOreRecipeHandler implements IRecipeHandler
         @Override
         public ItemStack getRecipeOutput()
         {
-            return  recipe.getRecipeOutput();
+            return recipe.getRecipeOutput();
         }
 
         @Nonnull

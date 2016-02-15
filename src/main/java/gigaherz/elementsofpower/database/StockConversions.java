@@ -1,5 +1,7 @@
 package gigaherz.elementsofpower.database;
 
+import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.gemstones.Element;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -16,6 +18,9 @@ public class StockConversions
 
     public static void registerEssenceSources()
     {
+        for (Element e : Element.values())
+        { essences(ElementsOfPower.magicOrb, e.ordinal()).element(e, 8); }
+
         essences(Blocks.cactus).life(3);
         essences(Blocks.chest).earth(2).light(1);
 
@@ -29,7 +34,7 @@ public class StockConversions
         essences(Items.brick).earth(1).fire(1);
         essences(Blocks.brick_block).earth(4).fire(4);
 
-        essences(Blocks.dirt,0).earth(3).life(1);
+        essences(Blocks.dirt, 0).earth(3).life(1);
         essences(Blocks.gravel).earth(3).air(1);
         essences(Blocks.sand, 0, 1).earth(2).air(2);
         essences(Blocks.sandstone, 0, 1, 2).earth(8).air(8);
@@ -42,7 +47,7 @@ public class StockConversions
         essences(Blocks.stained_hardened_clay).earth(5).fire(1);
 
         essences(Blocks.grass).earth(2).life(2);
-        essences(Blocks.dirt,2).earth(3).life(2);
+        essences(Blocks.dirt, 2).earth(3).life(2);
 
         collection(
                 essences(Blocks.yellow_flower),
@@ -55,11 +60,11 @@ public class StockConversions
         ).life(1);
 
         collection(
-            essences(Blocks.log, 0, 1, 2, 3),
-            essences(Blocks.log2, 0, 1)
+                essences(Blocks.log, 0, 1, 2, 3),
+                essences(Blocks.log2, 0, 1)
         ).life(16);
-        essences(Blocks.planks,0,1,2,3,4,5).life(4);
-        essences(Blocks.wooden_slab,0,1,2,3,4,5).life(2);
+        essences(Blocks.planks, 0, 1, 2, 3, 4, 5).life(4);
+        essences(Blocks.wooden_slab, 0, 1, 2, 3, 4, 5).life(2);
         collection(
                 essences(Blocks.oak_stairs),
                 essences(Blocks.birch_stairs),
@@ -91,7 +96,7 @@ public class StockConversions
 
         essences(Items.blaze_rod).fire(12).life(8);
 
-        essences(Items.fish,0,1,2,3).life(4).water(2);
+        essences(Items.fish, 0, 1, 2, 3).life(4).water(2);
 
         essences(Items.diamond).earth(128);
         essences(Items.emerald).earth(100).life(50);
@@ -219,6 +224,8 @@ public class StockConversions
 
         ItemEssenceConversion death(int amount);
 
+        ItemEssenceConversion element(Element l, int amount);
+
         void apply();
     }
 
@@ -299,6 +306,13 @@ public class StockConversions
         public ItemEssenceEntry death(int amount)
         {
             amounts.death(amount);
+            return this;
+        }
+
+        @Override
+        public ItemEssenceEntry element(Element l, int amount)
+        {
+            amounts.element(l, amount);
             return this;
         }
     }
@@ -397,6 +411,17 @@ public class StockConversions
             for (ItemEssenceConversion e : this)
             {
                 e.death(amount);
+            }
+            return this;
+        }
+
+
+        @Override
+        public ItemEssenceCollection element(Element l, int amount)
+        {
+            for (ItemEssenceConversion e : this)
+            {
+                e.element(l, amount);
             }
             return this;
         }

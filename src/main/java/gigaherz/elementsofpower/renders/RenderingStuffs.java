@@ -92,15 +92,15 @@ public class RenderingStuffs
 
     public static IFlexibleBakedModel loadModelRetextured(String resourceName, String... textureSwaps)
     {
-        if(textureSwaps.length % 2 != 0)
+        if (textureSwaps.length % 2 != 0)
         {
             throw new ReportedException(new CrashReport("Retexturing model", new IllegalArgumentException("textureSwaps must have and even number of elements")));
         }
 
         String key = resourceName;
-        for(int i = 0;i<textureSwaps.length;i+=2)
+        for (int i = 0; i < textureSwaps.length; i += 2)
         {
-            key += "//" +textureSwaps[i] + "/" + textureSwaps[i+1];
+            key += "//" + textureSwaps[i] + "/" + textureSwaps[i + 1];
         }
 
         IFlexibleBakedModel model = loadedModels.get(key);
@@ -111,13 +111,13 @@ public class RenderingStuffs
         {
             TextureMap textures = Minecraft.getMinecraft().getTextureMapBlocks();
             IModel mod = ModelLoaderRegistry.getModel(new ResourceLocation(resourceName));
-            if(mod instanceof IRetexturableModel)
+            if (mod instanceof IRetexturableModel)
             {
-                IRetexturableModel rtm = (IRetexturableModel)mod;
+                IRetexturableModel rtm = (IRetexturableModel) mod;
                 Map<String, String> s = Maps.newHashMap();
-                for(int i = 0;i<textureSwaps.length;i+=2)
+                for (int i = 0; i < textureSwaps.length; i += 2)
                 {
-                    s.put(textureSwaps[i], textureSwaps[i+1]);
+                    s.put(textureSwaps[i], textureSwaps[i + 1]);
                 }
                 mod = rtm.retexture(ImmutableMap.copyOf(s));
             }

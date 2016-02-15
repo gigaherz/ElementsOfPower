@@ -3,6 +3,8 @@ elementsofpower.essentializer=Essentializer
 tile.elementsofpower.essentializer.name=Essentializer
 tile.elementsofpower.dust.name=Dust Block (disperses quickly)
 
+tile.elementsofpower.cocoon.name=Elemental Cocoon
+
 item.elementsofpower.ring.name=Unbound Ring
 item.elementsofpower.ring.ruby.name=Ruby Ring
 item.elementsofpower.ring.sapphire.name=Sapphire Ring
@@ -86,8 +88,22 @@ elementsofpower.element.darkness=Darkness
 elementsofpower.element.life=Life
 elementsofpower.element.death=Death
 
+item.elementsofpower.magicOrb.fire.name=Fire Orb
+item.elementsofpower.magicOrb.water.name=Water Orb
+item.elementsofpower.magicOrb.air.name=Air Orb
+item.elementsofpower.magicOrb.earth.name=Earth Orb
+item.elementsofpower.magicOrb.light.name=Light Orb
+item.elementsofpower.magicOrb.darkness.name=Darkness Orb
+item.elementsofpower.magicOrb.life.name=Life Orb
+item.elementsofpower.magicOrb.death.name=Death Orb
+
 item.elementsofpower.analyzer.name=Gem Analyzer
 text.elementsofpower.analyzer=Gem Analyzer
+
+text.elementsofpower.magicOrb.use=Use to charge your magic items
+text.elementsofpower.magicOrb.cocoon=Right-click on a cocoon to add one essence
+
+text.elementsofpower.gemstone.use=Use a Gem Analyzer to discover its quality
 
 achievement.elementsofpower.discoverGems=A vision in reflections
 achievement.elementsofpower.discoverGems.desc=You discover the hidden power of gemstones.

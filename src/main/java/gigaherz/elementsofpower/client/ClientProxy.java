@@ -2,6 +2,7 @@ package gigaherz.elementsofpower.client;
 
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.ISideProxy;
+import gigaherz.elementsofpower.Used;
 import gigaherz.elementsofpower.entities.EntityBall;
 import gigaherz.elementsofpower.entities.EntityEssence;
 import gigaherz.elementsofpower.entitydata.SpellcastEntityData;
@@ -11,11 +12,9 @@ import gigaherz.elementsofpower.essentializer.TileEssentializer;
 import gigaherz.elementsofpower.gemstones.Gemstone;
 import gigaherz.elementsofpower.gemstones.GemstoneBlockType;
 import gigaherz.elementsofpower.items.ItemGemContainer;
-import gigaherz.elementsofpower.items.ItemRing;
 import gigaherz.elementsofpower.network.EssentializerAmountsUpdate;
 import gigaherz.elementsofpower.network.SpellcastSync;
 import gigaherz.elementsofpower.renders.*;
-import gigaherz.elementsofpower.Used;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemMeshDefinition;
@@ -112,7 +111,7 @@ public class ClientProxy implements ISideProxy
     public void registerModels()
     {
         registerBlockModelAsItem(ElementsOfPower.essentializer, "essentializer");
-        registerBlockModelAsItem(ElementsOfPower.dust, "dust");
+        registerBlockModelAsItem(ElementsOfPower.cocoon, "cocoon", "color=8,facing=down");
 
         registerItemModel(ElementsOfPower.analyzer, "analyzer");
 
@@ -135,7 +134,7 @@ public class ClientProxy implements ISideProxy
         registerItemModel(ElementsOfPower.gemAmethyst, "gemstone", "gem=amethyst");
         registerItemModel(ElementsOfPower.gemDiamond, "gemstone", "gem=diamond");
 
-        for(GemstoneBlockType b : GemstoneBlockType.values)
+        for (GemstoneBlockType b : GemstoneBlockType.values)
         {
             registerBlockModelAsItem(ElementsOfPower.gemstoneBlock, b.ordinal(), "gemstoneBlock", "type=" + b.getName());
             registerBlockModelAsItem(ElementsOfPower.gemstoneOre, b.ordinal(), "gemstoneOre", "type=" + b.getName());
@@ -154,6 +153,11 @@ public class ClientProxy implements ISideProxy
     public void registerBlockModelAsItem(final Block block, final String blockName)
     {
         registerBlockModelAsItem(block, 0, blockName);
+    }
+
+    public void registerBlockModelAsItem(final Block block, final String blockName, final String variantName)
+    {
+        registerBlockModelAsItem(block, 0, blockName, variantName);
     }
 
     public void registerBlockModelAsItem(final Block block, int meta, final String blockName)
@@ -200,9 +204,9 @@ public class ClientProxy implements ISideProxy
         {
             this.itemName = itemName;
 
-            ResourceLocation[] resLocs = new ResourceLocation[Gemstone.values.length+1];
-            for(int i=0;i<Gemstone.values.length;i++)
-                resLocs[i] = getModelResourceLocation(Gemstone.values[i]);
+            ResourceLocation[] resLocs = new ResourceLocation[Gemstone.values.length + 1];
+            for (int i = 0; i < Gemstone.values.length; i++)
+            { resLocs[i] = getModelResourceLocation(Gemstone.values[i]); }
             resLocs[Gemstone.values.length] = getModelResourceLocation(null);
             ModelBakery.registerItemVariants(item, resLocs);
         }
@@ -211,9 +215,9 @@ public class ClientProxy implements ISideProxy
         public ModelResourceLocation getModelLocation(ItemStack stack)
         {
             Item item = stack.getItem();
-            if(!(item instanceof ItemGemContainer))
+            if (!(item instanceof ItemGemContainer))
                 return null;
-            ItemGemContainer c = (ItemGemContainer)item;
+            ItemGemContainer c = (ItemGemContainer) item;
 
             Gemstone g = c.getGemstone(stack);
 

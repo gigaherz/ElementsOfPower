@@ -3,9 +3,8 @@ package gigaherz.elementsofpower.items;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.ContainerInformation;
 import gigaherz.elementsofpower.database.MagicAmounts;
-import net.minecraft.creativetab.CreativeTabs;
+import gigaherz.elementsofpower.gemstones.Element;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
@@ -77,5 +76,25 @@ public abstract class ItemMagicContainer extends Item
                         ElementsOfPower.prettyNumberFormatter2.format(amounts.amounts[i]));
             tooltipList.add(str);
         }
+    }
+
+    public ItemStack addContainedMagic(ItemStack stack, ItemStack orb)
+    {
+        if (stack == null)
+            return null;
+        if (orb == null)
+            return stack;
+        MagicAmounts am = new MagicAmounts();
+        am.add(ContainerInformation.getContainedMagic(stack));
+        am.element(Element.values()[orb.getMetadata()], 8);
+
+        MagicAmounts lm = ContainerInformation.getMagicLimits(stack);
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+        {
+            if (lm.amounts[i] < am.amounts[i])
+                return null;
+        }
+
+        return ContainerInformation.setContainedMagic(stack, am);
     }
 }

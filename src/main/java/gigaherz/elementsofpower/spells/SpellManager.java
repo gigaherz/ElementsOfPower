@@ -5,11 +5,11 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multiset;
 import gigaherz.elementsofpower.database.MagicAmounts;
-import gigaherz.elementsofpower.spells.effects.*;
-import gigaherz.elementsofpower.spells.shapes.*;
 import gigaherz.elementsofpower.gemstones.Effect;
 import gigaherz.elementsofpower.gemstones.Element;
 import gigaherz.elementsofpower.gemstones.Shape;
+import gigaherz.elementsofpower.spells.effects.*;
+import gigaherz.elementsofpower.spells.shapes.*;
 
 import java.util.EnumMap;
 import java.util.Hashtable;
@@ -167,7 +167,7 @@ public class SpellManager
                 HashMultiset<Element> multiset = HashMultiset.create();
                 multiset.addAll(sequence);
 
-                float total = (float)Math.ceil(Math.pow(3,sequence.size()) * (1 + 0.6 * multiset.size()));
+                float total = (float) Math.ceil(Math.pow(3, sequence.size()) * (1 + 0.6 * multiset.size()));
 
                 for (Multiset.Entry<Element> e : multiset.entrySet())
                 {
@@ -201,14 +201,30 @@ public class SpellManager
             primaryPower = 1;
             switch (e)
             {
-                case Fire: effect = Effect.Flame; break;
-                case Water: effect = Effect.Water; break;
-                case Air: effect = Effect.Wind; break;
-                case Earth: effect = Effect.Dust; break;
-                case Light: effect = Effect.Light; break;
-                case Darkness: effect = Effect.Mining; break;
-                case Life: effect = Effect.Healing; break;
-                case Death: effect = Effect.Breaking; break;
+                case Fire:
+                    effect = Effect.Flame;
+                    break;
+                case Water:
+                    effect = Effect.Water;
+                    break;
+                case Air:
+                    effect = Effect.Wind;
+                    break;
+                case Earth:
+                    effect = Effect.Dust;
+                    break;
+                case Light:
+                    effect = Effect.Light;
+                    break;
+                case Darkness:
+                    effect = Effect.Mining;
+                    break;
+                case Life:
+                    effect = Effect.Healing;
+                    break;
+                case Death:
+                    effect = Effect.Breaking;
+                    break;
             }
             shape = e.getShape();
             sequence.add(e);
@@ -245,26 +261,54 @@ public class SpellManager
                 case Air:
                     switch (effect)
                     {
-                        case Flame: reset(); break;
-                        case Wind: break;
-                        case Dust: effect = Effect.Cushion; break;
-                        case Cushion: break;
-                        case Water: effect = Effect.Mist; break;
-                        case Lava: effect = Effect.Flame; break;
-                        case Light: reset(); break;
-                        case Mining: reset(); break;
-                        case Healing: reset(); break;
-                        case Breaking: reset(); break;
-                        case Resurrection: reset(); break;
-                        case WaterSource: reset(); break;
-                        case LavaSource: effect = Effect.Flame; break;
+                        case Flame:
+                            reset();
+                            break;
+                        case Wind:
+                            break;
+                        case Dust:
+                            effect = Effect.Cushion;
+                            break;
+                        case Cushion:
+                            break;
+                        case Water:
+                            effect = Effect.Mist;
+                            break;
+                        case Lava:
+                            effect = Effect.Flame;
+                            break;
+                        case Light:
+                            reset();
+                            break;
+                        case Mining:
+                            reset();
+                            break;
+                        case Healing:
+                            reset();
+                            break;
+                        case Breaking:
+                            reset();
+                            break;
+                        case Resurrection:
+                            reset();
+                            break;
+                        case WaterSource:
+                            reset();
+                            break;
+                        case LavaSource:
+                            effect = Effect.Flame;
+                            break;
                     }
                     break;
                 case Life:
                     switch (effect)
                     {
-                        default: break;
-                        case Mining: effect = Effect.Teleport; shape = Shape.Ball; break;
+                        default:
+                            break;
+                        case Mining:
+                            effect = Effect.Teleport;
+                            shape = Shape.Ball;
+                            break;
                     }
                     break;
             }

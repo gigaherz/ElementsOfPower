@@ -8,7 +8,6 @@ import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -62,7 +61,7 @@ public class BlockGemstoneOre extends Block
     @Override
     public void getSubBlocks(net.minecraft.item.Item itemIn, CreativeTabs tab, List<ItemStack> list)
     {
-        for(GemstoneBlockType type : GemstoneBlockType.values)
+        for (GemstoneBlockType type : GemstoneBlockType.values)
         {
             list.add(getStack(1, type));
         }
@@ -77,22 +76,21 @@ public class BlockGemstoneOre extends Block
     @Override
     public int quantityDropped(Random random)
     {
-        return this == Blocks.lapis_ore ? 4 + random.nextInt(5) : 1;
+        return 1;
     }
 
     @Override
     public int quantityDroppedWithBonus(int fortune, Random random)
     {
-        int multiplier = (fortune > 0)
-                ? 1
-                : Math.max(0, random.nextInt(fortune + 2) - 1);
-        return this.quantityDropped(random) * multiplier;
+        int multiplier = fortune <= 0 ? 0 : Math.max(0, random.nextInt(fortune + 2) - 1);
+
+        return this.quantityDropped(random) * (multiplier + 1);
     }
 
     @Override
     public int getExpDrop(net.minecraft.world.IBlockAccess world, BlockPos pos, int fortune)
     {
-        Random rand = world instanceof World ? ((World)world).rand : new Random();
+        Random rand = world instanceof World ? ((World) world).rand : new Random();
         return MathHelper.getRandomIntegerInRange(rand, 3, 7);
     }
 
@@ -125,7 +123,7 @@ public class BlockGemstoneOre extends Block
         @Override
         public String getUnlocalizedName(ItemStack stack)
         {
-            if(stack.getMetadata() > GemstoneBlockType.values.length)
+            if (stack.getMetadata() > GemstoneBlockType.values.length)
                 return block.getUnlocalizedName();
             return "tile." + ElementsOfPower.MODID + "." + GemstoneBlockType.values[stack.getMetadata()] + "Ore";
         }
@@ -134,8 +132,9 @@ public class BlockGemstoneOre extends Block
     public static class Generator implements IWorldGenerator
     {
         @Override
-        public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
-            switch(world.provider.getDimensionId())
+        public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider)
+        {
+            switch (world.provider.getDimensionId())
             {
                 case -1:
                     break;
@@ -149,7 +148,7 @@ public class BlockGemstoneOre extends Block
 
         private void generateSurface(World world, Random rand, int chunkX, int chunkZ)
         {
-            for(GemstoneBlockType g : GemstoneBlockType.values)
+            for (GemstoneBlockType g : GemstoneBlockType.values)
             {
                 for (int k = 0; k < 2; k++)
                 {

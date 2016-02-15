@@ -7,7 +7,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class RecipeTools
 {
@@ -37,7 +40,7 @@ public class RecipeTools
         {
             ItemStack output = recipe.getRecipeOutput();
 
-            if(output == null)
+            if (output == null)
             {
                 ElementsOfPower.logger.warn("Recipe output is NULL! This should have been detected earlier!");
                 return;
@@ -59,7 +62,7 @@ public class RecipeTools
 
             output = applyExistingRecipes(output, inputs, expandedInputs);
 
-            if(!isRecipeAggregating(expandedInputs, output))
+            if (!isRecipeAggregating(expandedInputs, output))
                 replaceExistingSources(output, expandedInputs);
 
             itemSources.put(output, expandedInputs);

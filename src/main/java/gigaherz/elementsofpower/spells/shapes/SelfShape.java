@@ -17,4 +17,10 @@ public class SelfShape extends SpellShape
     {
         return true;
     }
+
+    @Override
+    public void spellTick(Spellcast cast)
+    {
+        cast.getEffect().processDirectHit(cast, cast.player);
+    }
 }

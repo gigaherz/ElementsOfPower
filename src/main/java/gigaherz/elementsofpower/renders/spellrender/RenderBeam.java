@@ -2,7 +2,6 @@ package gigaherz.elementsofpower.renders.spellrender;
 
 import gigaherz.elementsofpower.renders.RenderingStuffs;
 import gigaherz.elementsofpower.spells.Spellcast;
-import gigaherz.elementsofpower.spells.effects.FlameEffect;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -72,7 +71,7 @@ public class RenderBeam extends RenderSpell
             int alpha = 255 - i * 32;
             int color = (alpha << 24) | beam_color;
 
-            float angle = time * (6 + 3 * (4+i)) * ((i&1)==0?1:-1) * 0.1f;
+            float angle = time * (6 + 3 * (4 + i)) * ((i & 1) == 0 ? 1 : -1) * 0.1f;
 
             {
                 GlStateManager.pushMatrix();

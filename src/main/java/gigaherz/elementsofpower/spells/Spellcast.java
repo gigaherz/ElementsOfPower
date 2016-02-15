@@ -45,7 +45,7 @@ public class Spellcast
         this.effect = effect;
         this.power = power;
         this.sequence = sequence;
-        if(shape.isInstant())
+        if (shape.isInstant())
         {
             remainingCastTime = shape.getInstantAnimationLength();
             remainingInterval = 0;
@@ -100,7 +100,7 @@ public class Spellcast
 
     public void update()
     {
-        if(shape.isInstant() && remainingCastTime == totalCastTime)
+        if (shape.isInstant() && remainingCastTime == totalCastTime)
         {
             if (!world.isRemote)
             {
@@ -110,7 +110,7 @@ public class Spellcast
 
         remainingCastTime--;
 
-        if(!shape.isInstant())
+        if (!shape.isInstant())
         {
             remainingInterval--;
 

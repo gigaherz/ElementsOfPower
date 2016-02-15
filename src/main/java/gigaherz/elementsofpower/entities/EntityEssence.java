@@ -22,6 +22,17 @@ import java.util.List;
 
 public class EntityEssence extends EntityAmbientCreature
 {
+    public static final float[][] EssenceColors = {
+            {1.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 1.0f},
+            {1.0f, 1.0f, 0.0f},
+            {0.6f, 0.4f, 0.1f},
+            {1.0f, 1.0f, 1.0f},
+            {0.0f, 0.0f, 0.0f},
+            {0.5f, 1.0f, 0.5f},
+            {0.6f, 0.0f, 0.0f},
+    };
+
     private float scale;
     float[][] sequence;
     private BlockPos spawnPosition;
@@ -36,19 +47,24 @@ public class EntityEssence extends EntityAmbientCreature
     {
         super(worldIn);
 
-        int numEssences = 5 + rand.nextInt(15);
-        MagicAmounts am = new MagicAmounts();
-
-        int j = 0;
-        for (int i = 0; i < numEssences; i++)
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            j = (j + rand.nextInt(8)) % 8;
-            am.amounts[j] += 1;
+            dataWatcher.addObject(16 + i, 0.0f);
         }
+
+        setEntityBoundingBox(null);
+    }
+
+    public EntityEssence(World worldIn, MagicAmounts am)
+    {
+        super(worldIn);
+
+        int numEssences = 0;
 
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
             dataWatcher.addObject(16 + i, am.amounts[i]);
+            numEssences += am.amounts[i];
         }
 
         scale = 0.025f * numEssences;
@@ -60,17 +76,6 @@ public class EntityEssence extends EntityAmbientCreature
     {
         return scale;
     }
-
-    static float[][] essenceColors = {
-            {1.0f, 0.0f, 0.0f},
-            {0.0f, 0.0f, 1.0f},
-            {1.0f, 1.0f, 0.0f},
-            {0.6f, 0.4f, 0.1f},
-            {1.0f, 1.0f, 1.0f},
-            {0.0f, 0.0f, 0.0f},
-            {0.5f, 1.0f, 0.5f},
-            {0.6f, 0.0f, 0.0f},
-    };
 
     public static float lerp(float a, float b, float t)
     {
@@ -110,7 +115,7 @@ public class EntityEssence extends EntityAmbientCreature
             float am = amounts.amounts[i];
             while (am > 0)
             {
-                seq.add(essenceColors[i]);
+                seq.add(EssenceColors[i]);
                 am -= 1;
                 total -= 1;
             }
@@ -164,6 +169,13 @@ public class EntityEssence extends EntityAmbientCreature
     {
         super.onUpdate();
 
+        int numEssences = 0;
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+        {
+            numEssences += dataWatcher.getWatchableObjectFloat(16 + i);
+        }
+        scale = 0.025f * numEssences;
+
         if (worldObj.isRemote)
             return;
 
@@ -200,6 +212,8 @@ public class EntityEssence extends EntityAmbientCreature
             }
         }
     }
+
+    BlockPos p = new BlockPos(0, 0, 0);
 
     @Override
     protected void updateAITasks()
@@ -262,7 +276,7 @@ public class EntityEssence extends EntityAmbientCreature
         double factor = Math.sqrt(currentDistance / wantedDistance);
         double r = MathHelper.clamp_double(1 + rand.nextGaussian() - factor, 0, 2); // 0: point home. 1: stay forward. 2: move outward.
 
-        double speedMax = (entity != null ? 0.1f : 0.025) / scale;
+        double speedMax = (entity != null ? 0.1f : 0.01) / scale;
 
         double sa = entity != null ? 0.1 : 0.01f;
         double sm = entity != null ? 0.8 : 0.25f;

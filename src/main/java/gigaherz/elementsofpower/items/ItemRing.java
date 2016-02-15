@@ -8,17 +8,12 @@ import gigaherz.elementsofpower.database.ContainerInformation;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.gemstones.Gemstone;
 import gigaherz.elementsofpower.gemstones.Quality;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.item.EnumRarity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-
-import java.util.List;
 
 public class ItemRing extends ItemGemContainer implements IBauble
 {
@@ -34,7 +29,7 @@ public class ItemRing extends ItemGemContainer implements IBauble
     @Override
     protected MagicAmounts adjustInsertedMagic(MagicAmounts am)
     {
-        if(am == null)
+        if (am == null)
             return null;
 
         return am.copy().multiply(1.5f);
@@ -43,7 +38,7 @@ public class ItemRing extends ItemGemContainer implements IBauble
     @Override
     protected MagicAmounts adjustRemovedMagic(MagicAmounts am)
     {
-        if(am == null)
+        if (am == null)
             return null;
 
         return am.copy().multiply(1 / 1.5f);
@@ -173,13 +168,23 @@ public class ItemRing extends ItemGemContainer implements IBauble
             amounts = new MagicAmounts();
 
         float boost = 1.0f;
-        switch(q)
+        switch (q)
         {
-            case Rough: boost = 0.9f; break;
-            case Common: boost = 1.0f; break;
-            case Smooth: boost = 1.25f; break;
-            case Flawless: boost = 1.5f; break;
-            case Pure: boost = 2.0f; break;
+            case Rough:
+                boost = 0.9f;
+                break;
+            case Common:
+                boost = 1.0f;
+                break;
+            case Smooth:
+                boost = 1.25f;
+                break;
+            case Flawless:
+                boost = 1.5f;
+                break;
+            case Pure:
+                boost = 2.0f;
+                break;
         }
 
         float totalTransfer = 0;
@@ -187,7 +192,7 @@ public class ItemRing extends ItemGemContainer implements IBauble
         {
             float maxTransfer = MAX_TRANSFER_TICK;
 
-            if(g == Gemstone.Diamond || g.ordinal() == i)
+            if (g == Gemstone.Diamond || g.ordinal() == i)
                 maxTransfer *= boost;
 
             float transfer = Math.min(maxTransfer, limits.amounts[i] - amounts.amounts[i]);

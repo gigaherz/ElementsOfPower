@@ -42,7 +42,7 @@ public class CapabilityMagicContainer
         @Override
         public void readNBT(Capability<IMagicContainer> capability, IMagicContainer instance, EnumFacing side, NBTBase nbt)
         {
-            NBTTagCompound tag = (NBTTagCompound)nbt;
+            NBTTagCompound tag = (NBTTagCompound) nbt;
 
             MagicAmounts amounts = new MagicAmounts();
 

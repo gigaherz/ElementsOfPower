@@ -1,22 +1,26 @@
 package gigaherz.elementsofpower;
 
-import com.google.common.collect.Lists;
 import gigaherz.elementsofpower.analyzer.ItemAnalyzer;
 import gigaherz.elementsofpower.blocks.BlockCushion;
 import gigaherz.elementsofpower.blocks.BlockDust;
 import gigaherz.elementsofpower.blocks.BlockGemstone;
 import gigaherz.elementsofpower.blocks.BlockGemstoneOre;
 import gigaherz.elementsofpower.capabilities.CapabilityMagicContainer;
-import gigaherz.elementsofpower.database.*;
+import gigaherz.elementsofpower.cocoons.BlockCocoon;
+import gigaherz.elementsofpower.cocoons.TileCocoon;
+import gigaherz.elementsofpower.database.EssenceConversions;
+import gigaherz.elementsofpower.database.EssenceOverrides;
+import gigaherz.elementsofpower.database.StockConversions;
 import gigaherz.elementsofpower.entities.EntityBall;
 import gigaherz.elementsofpower.entities.EntityEssence;
 import gigaherz.elementsofpower.entitydata.SpellcastEntityData;
 import gigaherz.elementsofpower.essentializer.BlockEssentializer;
 import gigaherz.elementsofpower.essentializer.TileEssentializer;
+import gigaherz.elementsofpower.gemstones.ContainerChargeRecipe;
 import gigaherz.elementsofpower.gemstones.GemstoneBlockType;
 import gigaherz.elementsofpower.gemstones.GemstoneChangeRecipe;
-import gigaherz.elementsofpower.items.*;
 import gigaherz.elementsofpower.gui.GuiHandler;
+import gigaherz.elementsofpower.items.*;
 import gigaherz.elementsofpower.materials.MaterialCushion;
 import gigaherz.elementsofpower.network.EssentializerAmountsUpdate;
 import gigaherz.elementsofpower.network.SpellSequenceUpdate;
@@ -26,16 +30,12 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntitySpawnPlacementRegistry;
-import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.common.Mod;
@@ -57,7 +57,6 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.Format;
-import java.util.List;
 
 @Mod(modid = ElementsOfPower.MODID, name = ElementsOfPower.MODNAME, version = ElementsOfPower.VERSION)
 public class ElementsOfPower
@@ -81,6 +80,7 @@ public class ElementsOfPower
     public static Block dust;
     public static Block mist;
     public static Block cushion;
+    public static Block cocoon;
 
     public static BlockGemstoneOre gemstoneOre;
     public static BlockGemstone gemstoneBlock;
@@ -219,11 +219,15 @@ public class ElementsOfPower
         cushion = new BlockCushion();
         GameRegistry.registerBlock(cushion, "cushion");
 
+        cocoon = new BlockCocoon();
+        GameRegistry.registerBlock(cocoon, "cocoon");
+        GameRegistry.registerTileEntity(TileCocoon.class, "cocoonTile");
+
         gemstoneBlock = new BlockGemstone();
         GameRegistry.registerBlock(gemstoneBlock, BlockGemstone.Item.class, "gemstoneBlock");
 
         gemstoneOre = new BlockGemstoneOre();
-        GameRegistry.registerBlock(gemstoneOre, BlockGemstoneOre.ItemForm.class,"gemstoneOre");
+        GameRegistry.registerBlock(gemstoneOre, BlockGemstoneOre.ItemForm.class, "gemstoneOre");
 
         gemstone = new ItemGemstone();
         GameRegistry.registerItem(gemstone, "gemstone");
@@ -339,12 +343,10 @@ public class ElementsOfPower
         EntityRegistry.registerModEntity(EntityEssence.class, "Essence", entityId++, this, 80, 3, true, 0x0000FF, 0xFFFF00);
         logger.debug("Next entity id: " + entityId);
 
-        EntitySpawnPlacementRegistry.setPlacementType(EntityEssence.class, EntityLiving.SpawnPlacementType.IN_AIR);
-        EntityRegistry.addSpawn(EntityEssence.class, 50, 1, 4, EnumCreatureType.AMBIENT, getBiomes());
-
         // Worldgen
 
         GameRegistry.registerWorldGenerator(new BlockGemstoneOre.Generator(), 1);
+        GameRegistry.registerWorldGenerator(new BlockCocoon.Generator(), 1);
 
         // Recipes
         logger.info("Registering recipes...");
@@ -356,12 +358,12 @@ public class ElementsOfPower
         GameRegistry.addRecipe(new ShapedOreRecipe(blockSapphire, "aaa", "aaa", "aaa", 'a', "gemSapphire"));
         GameRegistry.addRecipe(new ShapedOreRecipe(blockSerendibite, "aaa", "aaa", "aaa", 'a', "gemSerendibite"));
 
-        GameRegistry.addRecipe(new ShapelessOreRecipe(copyStack(gemAgate,9), "blockAgate"));
-        GameRegistry.addRecipe(new ShapelessOreRecipe(copyStack(gemAmethyst,9), "blockAmethyst"));
-        GameRegistry.addRecipe(new ShapelessOreRecipe(copyStack(gemCitrine,9), "blockCitrine"));
-        GameRegistry.addRecipe(new ShapelessOreRecipe(copyStack(gemRuby,9), "blockRuby"));
-        GameRegistry.addRecipe(new ShapelessOreRecipe(copyStack(gemSapphire,9), "blockSapphire"));
-        GameRegistry.addRecipe(new ShapelessOreRecipe(copyStack(gemSerendibite,9), "blockSerendibite"));
+        GameRegistry.addRecipe(new ShapelessOreRecipe(copyStack(gemAgate, 9), "blockAgate"));
+        GameRegistry.addRecipe(new ShapelessOreRecipe(copyStack(gemAmethyst, 9), "blockAmethyst"));
+        GameRegistry.addRecipe(new ShapelessOreRecipe(copyStack(gemCitrine, 9), "blockCitrine"));
+        GameRegistry.addRecipe(new ShapelessOreRecipe(copyStack(gemRuby, 9), "blockRuby"));
+        GameRegistry.addRecipe(new ShapelessOreRecipe(copyStack(gemSapphire, 9), "blockSapphire"));
+        GameRegistry.addRecipe(new ShapelessOreRecipe(copyStack(gemSerendibite, 9), "blockSerendibite"));
 
         FurnaceRecipes.instance().addSmeltingRecipe(oreAgate, gemAgate, 0);
         FurnaceRecipes.instance().addSmeltingRecipe(oreAmethyst, gemAmethyst, 0);
@@ -405,6 +407,7 @@ public class ElementsOfPower
                 " G ",
                 'G', Items.gold_ingot);
         GameRegistry.addRecipe(new GemstoneChangeRecipe());
+        GameRegistry.addRecipe(new ContainerChargeRecipe());
 
         // Gui
         NetworkRegistry.INSTANCE.registerGuiHandler(this, guiHandler);
@@ -418,19 +421,6 @@ public class ElementsOfPower
         ItemStack copy = original.copy();
         copy.stackSize = quantity;
         return copy;
-    }
-
-    private BiomeGenBase[] getBiomes()
-    {
-        List<BiomeGenBase> biomes = Lists.newArrayList();
-
-        for (BiomeGenBase b : BiomeGenBase.getBiomeGenArray())
-        {
-            if (b != null)
-                biomes.add(b);
-        }
-
-        return biomes.toArray(new BiomeGenBase[biomes.size()]);
     }
 
     @EventHandler

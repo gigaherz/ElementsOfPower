@@ -1,13 +1,13 @@
 package gigaherz.elementsofpower.analyzer;
 
+import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.ContainerInformation;
 import gigaherz.elementsofpower.slots.SlotAnalyzerIn;
 import gigaherz.elementsofpower.slots.SlotReadonly;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.InventoryBasic;
-import net.minecraft.inventory.Slot;
+import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
 
 public class ContainerAnalyzer extends Container
@@ -24,7 +24,7 @@ public class ContainerAnalyzer extends Container
         this.playerInventory = player.inventory;
         this.slotNumber = playerInventory.currentItem;
 
-        addSlotToContainer(new SlotAnalyzerIn(internalInventory, 0, 8, 16, player.worldObj.isRemote));
+        addSlotToContainer(new SlotAnalyzerIn(internalInventory, 0, 8, 16));
 
         bindPlayerInventory(playerInventory);
     }
@@ -38,7 +38,7 @@ public class ContainerAnalyzer extends Container
                 int slot = j + i * 9 + 9;
                 int x = 8 + j * 18;
                 int y = 94 + i * 18;
-                if(slot == slotNumber)
+                if (slot == slotNumber)
                     addSlotToContainer(new SlotReadonly(playerInventory, slot, x, y));
                 else
                     addSlotToContainer(new Slot(playerInventory, slot, x, y));
@@ -48,7 +48,7 @@ public class ContainerAnalyzer extends Container
         for (int i = 0; i < 9; i++)
         {
             int x = 8 + i * 18;
-            if(i == slotNumber)
+            if (i == slotNumber)
                 addSlotToContainer(new SlotReadonly(playerInventory, i, x, 152));
             else
                 addSlotToContainer(new Slot(playerInventory, i, x, 152));
@@ -200,6 +200,80 @@ public class ContainerAnalyzer extends Container
         }
 
         return flag;
+    }
+
+    @Override
+    public void detectAndSendChanges()
+    {
+        Slot s = inventorySlots.get(0);
+        ItemStack stack = s.getStack();
+        if (stack != null && !player.worldObj.isRemote)
+        {
+            ItemStack stack2 = ContainerInformation.identifyQuality(stack);
+
+            if (!ItemStack.areItemStacksEqual(stack, stack2))
+            {
+                internalInventory.setInventorySlotContents(0, stack2);
+                this.inventoryItemStacks.set(0, stack2);
+
+                for (int j = 0; j < this.crafters.size(); ++j)
+                {
+                    boolean prev = false;
+                    EntityPlayerMP p = null;
+                    ICrafting c = crafters.get(j);
+                    if (c instanceof EntityPlayerMP)
+                    {
+                        p = (EntityPlayerMP) c;
+                        prev = p.isChangingQuantityOnly;
+                        p.isChangingQuantityOnly = false;
+                    }
+
+                    c.sendSlotContents(this, 0, stack2);
+
+                    if (prev)
+                    {
+                        p.isChangingQuantityOnly = true;
+                    }
+                }
+            }
+        }
+
+        super.detectAndSendChanges();
+    }
+
+    @Override
+    public void putStackInSlot(int slotID, ItemStack stack)
+    {
+        ElementsOfPower.logger.warn("putStackInSlot " + stack + " client=" + player.worldObj.isRemote);
+        super.putStackInSlot(slotID, stack);
+    }
+
+    @Override
+    public void putStacksInSlots(ItemStack[] stacks)
+    {
+        ElementsOfPower.logger.warn("putStacksInSlots " + stacks[0] + " client=" + player.worldObj.isRemote);
+        super.putStacksInSlots(stacks);
+    }
+
+    @Override
+    public void onContainerClosed(EntityPlayer playerIn)
+    {
+        super.onContainerClosed(playerIn);
+
+        if (!player.worldObj.isRemote)
+        {
+            ItemStack itemstack = internalInventory.removeStackFromSlot(0);
+            if (itemstack != null)
+            {
+                playerIn.dropPlayerItemWithRandomChoice(itemstack, false);
+            }
+        }
+    }
+
+    @Override
+    public void onCraftMatrixChanged(IInventory inventoryIn)
+    {
+        super.onCraftMatrixChanged(inventoryIn);
     }
 
     class InventoryInternal extends InventoryBasic

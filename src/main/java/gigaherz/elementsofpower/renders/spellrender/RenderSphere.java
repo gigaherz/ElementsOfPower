@@ -1,9 +1,7 @@
 package gigaherz.elementsofpower.renders.spellrender;
 
 import gigaherz.elementsofpower.renders.RenderingStuffs;
-import gigaherz.elementsofpower.spells.SpellManager;
 import gigaherz.elementsofpower.spells.Spellcast;
-import gigaherz.elementsofpower.spells.effects.FlameEffect;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -28,7 +26,7 @@ public class RenderSphere extends RenderSpell
         IFlexibleBakedModel modelSphere = RenderingStuffs.loadModelRetextured("elementsofpower:entity/sphere.obj",
                 "#Default", tex);
 
-        float time = ((cast.totalCastTime-cast.remainingCastTime) + partialTicks);
+        float time = ((cast.totalCastTime - cast.remainingCastTime) + partialTicks);
         float progress = (time / cast.totalCastTime);
 
         scale = scale * progress;
@@ -36,7 +34,7 @@ public class RenderSphere extends RenderSpell
         if (scale <= 0)
             return;
 
-        int alpha = (int)(255*(1-progress));
+        int alpha = (int) (255 * (1 - progress));
         color = (alpha << 24) | color;
 
         GlStateManager.disableLighting();

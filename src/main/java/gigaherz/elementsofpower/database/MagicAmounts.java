@@ -101,7 +101,7 @@ public class MagicAmounts
             else
                 b.append(",");
 
-            String str = ElementsOfPower.prettyNumberFormatter2.format(amounts[i]);
+            String str = ElementsOfPower.prettyNumberFormatter.format(amounts[i]);
             b.append(str);
 
             first = false;
@@ -154,49 +154,49 @@ public class MagicAmounts
         }
     }
 
-    public MagicAmounts fire(int amount)
+    public MagicAmounts fire(float amount)
     {
         amounts[0] += amount;
         return this;
     }
 
-    public MagicAmounts water(int amount)
+    public MagicAmounts water(float amount)
     {
         amounts[1] += amount;
         return this;
     }
 
-    public MagicAmounts air(int amount)
+    public MagicAmounts air(float amount)
     {
         amounts[2] += amount;
         return this;
     }
 
-    public MagicAmounts earth(int amount)
+    public MagicAmounts earth(float amount)
     {
         amounts[3] += amount;
         return this;
     }
 
-    public MagicAmounts light(int amount)
+    public MagicAmounts light(float amount)
     {
         amounts[4] += amount;
         return this;
     }
 
-    public MagicAmounts darkness(int amount)
+    public MagicAmounts darkness(float amount)
     {
         amounts[5] += amount;
         return this;
     }
 
-    public MagicAmounts life(int amount)
+    public MagicAmounts life(float amount)
     {
         amounts[6] += amount;
         return this;
     }
 
-    public MagicAmounts death(int amount)
+    public MagicAmounts death(float amount)
     {
         amounts[7] += amount;
         return this;
@@ -220,6 +220,8 @@ public class MagicAmounts
 
     public MagicAmounts add(MagicAmounts other)
     {
+        if (other == null)
+            return this;
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
             amounts[i] += other.amounts[i];
@@ -280,6 +282,23 @@ public class MagicAmounts
     public static MagicAmounts copyOf(MagicAmounts amounts)
     {
         return amounts == null ? null : amounts.copy();
+    }
+
+    public int getDominantElement()
+    {
+        float domAmount = 0;
+        int dominant = MagicAmounts.ELEMENTS;
+
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+        {
+            if (amounts[i] > domAmount)
+            {
+                domAmount = amounts[i];
+                dominant = i;
+            }
+        }
+
+        return dominant;
     }
 
     public static class Serializer

@@ -1,6 +1,5 @@
 package gigaherz.elementsofpower.essentializer;
 
-import gigaherz.elementsofpower.essentializer.TileEssentializer;
 import gigaherz.elementsofpower.renders.RenderingStuffs;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureMap;

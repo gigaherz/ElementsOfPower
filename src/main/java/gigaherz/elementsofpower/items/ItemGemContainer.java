@@ -11,18 +11,14 @@ import gigaherz.elementsofpower.network.SpellSequenceUpdate;
 import gigaherz.elementsofpower.progression.DiscoveryHandler;
 import gigaherz.elementsofpower.spells.SpellManager;
 import gigaherz.elementsofpower.spells.Spellcast;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.EnumRarity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
-
-import java.util.List;
 
 public class ItemGemContainer extends ItemMagicContainer
 {
@@ -39,13 +35,13 @@ public class ItemGemContainer extends ItemMagicContainer
     {
         Gemstone g = getGemstone(stack);
         Quality q = getQuality(stack);
-        if(q == null)
+        if (q == null)
             return null;
 
         MagicAmounts magic = ItemGemstone.capacities[q.ordinal()].copy();
 
         Element e = g.getElement();
-        if(e == null)
+        if (e == null)
             magic.all(magic.amounts[0] * 0.1f);
         else
             magic.element(g.getElement(), magic.amount(g.getElement()) * 0.25f);
@@ -57,7 +53,7 @@ public class ItemGemContainer extends ItemMagicContainer
     public EnumRarity getRarity(ItemStack stack)
     {
         Quality q = getQuality(stack);
-        if(q == null)
+        if (q == null)
             return EnumRarity.COMMON;
         return q.getRarity();
     }
@@ -68,7 +64,7 @@ public class ItemGemContainer extends ItemMagicContainer
         if (tag == null)
             return null;
 
-        if(!tag.hasKey("gemstone", Constants.NBT.TAG_INT))
+        if (!tag.hasKey("gemstone", Constants.NBT.TAG_INT))
             return null;
 
         int g = tag.getInteger("gemstone");
@@ -81,12 +77,12 @@ public class ItemGemContainer extends ItemMagicContainer
     public ItemStack setGemstone(ItemStack stack, Gemstone gemstone)
     {
         NBTTagCompound tag = stack.getTagCompound();
-        if(gemstone == null)
+        if (gemstone == null)
         {
-            if(tag != null)
+            if (tag != null)
             {
                 tag.removeTag("gemstone");
-                if(tag.getKeySet().size() == 0)
+                if (tag.getKeySet().size() == 0)
                 {
                     stack.setTagCompound(null);
                 }
@@ -111,7 +107,7 @@ public class ItemGemContainer extends ItemMagicContainer
         if (tag == null)
             return null;
 
-        if(!tag.hasKey("quality", Constants.NBT.TAG_INT))
+        if (!tag.hasKey("quality", Constants.NBT.TAG_INT))
             return null;
 
         int q = tag.getInteger("quality");
@@ -125,12 +121,12 @@ public class ItemGemContainer extends ItemMagicContainer
     {
         NBTTagCompound tag = stack.getTagCompound();
 
-        if(q == null)
+        if (q == null)
         {
-            if(tag != null)
+            if (tag != null)
             {
                 tag.removeTag("quality");
-                if(tag.getKeySet().size() == 0)
+                if (tag.getKeySet().size() == 0)
                 {
                     stack.setTagCompound(null);
                 }
@@ -154,19 +150,19 @@ public class ItemGemContainer extends ItemMagicContainer
         Gemstone gem = getGemstone(stack);
         Quality q = getQuality(stack);
 
-        if(gem == null)
+        if (gem == null)
             return null;
 
         ItemStack t = ElementsOfPower.gemstone.getStack(1, gem.ordinal());
 
-        if(q != null)
+        if (q != null)
         {
             t = ElementsOfPower.gemstone.setQuality(t, q);
         }
 
         MagicAmounts am = ContainerInformation.getContainedMagic(stack);
 
-        if(am != null)
+        if (am != null)
         {
             am = adjustRemovedMagic(am);
 
@@ -178,15 +174,15 @@ public class ItemGemContainer extends ItemMagicContainer
 
     public ItemStack setContainedGemstone(ItemStack stack, ItemStack gemstone)
     {
-        if(gemstone == null)
+        if (gemstone == null)
         {
             return ContainerInformation.setContainedMagic(setQuality(setGemstone(stack, null), null), null);
         }
 
-        if(!(gemstone.getItem() instanceof ItemGemstone))
+        if (!(gemstone.getItem() instanceof ItemGemstone))
             return null;
 
-        ItemGemstone g = ((ItemGemstone)gemstone.getItem());
+        ItemGemstone g = ((ItemGemstone) gemstone.getItem());
         Gemstone gem = g.getGemstone(gemstone);
         Quality q = g.getQuality(gemstone);
 
@@ -219,7 +215,7 @@ public class ItemGemContainer extends ItemMagicContainer
     {
         Gemstone g = getGemstone(stack);
 
-        if(g == null)
+        if (g == null)
             return getUnlocalizedName();
 
         return getUnlocalizedName() + g.getUnlocalizedName();
@@ -232,7 +228,7 @@ public class ItemGemContainer extends ItemMagicContainer
 
         String namePart = StatCollector.translateToLocal(getUnlocalizedName(stack) + ".name");
 
-        if(q == null)
+        if (q == null)
             return namePart;
 
         String quality = StatCollector.translateToLocal(ElementsOfPower.MODID + ".gemContainer.quality" + q.getUnlocalizedName());

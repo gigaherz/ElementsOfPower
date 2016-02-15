@@ -6,7 +6,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
 import org.lwjgl.opengl.GL11;
@@ -63,7 +62,7 @@ public class RenderCone extends RenderSpell
             float scale_z = scale * (float) Math.pow(1.05, i);
             float offset_z = 0.5f + 0.005f * i;
 
-            float angle = time * (6 + 3 * (4-i)) * ((i&1)==0?1:-1);
+            float angle = time * (6 + 3 * (4 - i)) * ((i & 1) == 0 ? 1 : -1);
 
             GlStateManager.pushMatrix();
             GlStateManager.translate(
