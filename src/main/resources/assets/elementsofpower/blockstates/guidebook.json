@@ -1,0 +1,10 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "elementsofpower:book.obj",
+    "transform": "forge:default-item"
+  },
+  "variants": {
+    "inventory": [{ }]
+  }
+}

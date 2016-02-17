@@ -115,6 +115,8 @@ public class ClientProxy implements ISideProxy
 
         registerItemModel(ElementsOfPower.analyzer, "analyzer");
 
+        registerItemModel(ElementsOfPower.guidebook, "guidebook");
+
         registerItemModel(ElementsOfPower.fire, "magicOrb", "element=fire");
         registerItemModel(ElementsOfPower.water, "magicOrb", "element=water");
         registerItemModel(ElementsOfPower.air, "magicOrb", "element=air");

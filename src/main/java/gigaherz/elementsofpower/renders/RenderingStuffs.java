@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.resources.IReloadableResourceManager;
@@ -71,6 +72,10 @@ public class RenderingStuffs
 
     public static IFlexibleBakedModel loadModel(String resourceName)
     {
+        return loadModel(resourceName, Attributes.DEFAULT_BAKED_FORMAT);
+    }
+    public static IFlexibleBakedModel loadModel(String resourceName, VertexFormat fmt)
+    {
         IFlexibleBakedModel model = loadedModels.get(resourceName);
         if (model != null)
             return model;
@@ -79,7 +84,7 @@ public class RenderingStuffs
         {
             TextureMap textures = Minecraft.getMinecraft().getTextureMapBlocks();
             IModel mod = ModelLoaderRegistry.getModel(new ResourceLocation(resourceName));
-            model = mod.bake(mod.getDefaultState(), Attributes.DEFAULT_BAKED_FORMAT,
+            model = mod.bake(mod.getDefaultState(), fmt,
                     (location) -> textures.getAtlasSprite(location.toString()));
             loadedModels.put(resourceName, model);
             return model;

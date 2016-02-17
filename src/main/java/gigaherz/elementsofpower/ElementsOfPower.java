@@ -20,6 +20,7 @@ import gigaherz.elementsofpower.gemstones.ContainerChargeRecipe;
 import gigaherz.elementsofpower.gemstones.GemstoneBlockType;
 import gigaherz.elementsofpower.gemstones.GemstoneChangeRecipe;
 import gigaherz.elementsofpower.gui.GuiHandler;
+import gigaherz.elementsofpower.guidebook.ItemGuidebook;
 import gigaherz.elementsofpower.items.*;
 import gigaherz.elementsofpower.materials.MaterialCushion;
 import gigaherz.elementsofpower.network.EssentializerAmountsUpdate;
@@ -98,6 +99,8 @@ public class ElementsOfPower
     public static ItemGemstone gemstone;
 
     public static ItemAnalyzer analyzer;
+
+    public static ItemGuidebook guidebook;
 
     // Subitems
 
@@ -234,6 +237,9 @@ public class ElementsOfPower
 
         analyzer = new ItemAnalyzer();
         GameRegistry.registerItem(analyzer, "analyzer");
+
+        guidebook = new ItemGuidebook();
+        GameRegistry.registerItem(guidebook, "guidebook");
 
         // Template stacks
         logger.info("Generating template stacks...");
