@@ -1,25 +1,11 @@
-# Rhino
-newmtl Default
-Ka 0.0000 0.0000 0.0000
-Kd 1.0000 1.0000 1.0000
-Ks 1.0000 1.0000 1.0000
-Tf 0.0000 0.0000 0.0000
-d 1.0000
-Ns 0
+# 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware
+# File Created: 18.02.2016 01:24:16
 
-newmtl New material 001
-Ka 0.0000 0.0000 0.0000
+newmtl New_material_001
 Kd 0.4510 0.3412 0.2627
-Ks 1.0000 1.0000 1.0000
-Tf 0.0000 0.0000 0.0000
-d 1.0000
-Ns 0
 
-newmtl New material 002
-Ka 0.0000 0.0000 0.0000
+newmtl Default
+Kd 1.0000 1.0000 1.0000
+
+newmtl New_material_002
 Kd 0.9843 0.8000 0.2510
-Ks 1.0000 1.0000 1.0000
-Tf 0.0000 0.0000 0.0000
-d 1.0000
-Ns 0
-

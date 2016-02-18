@@ -66,13 +66,13 @@ public class ContainerInformation
     private static ItemStack setRandomQualityVariant(ItemStack target)
     {
         float rnd = rand.nextFloat();
-        if (rnd > 0.5f)
+        if (rnd > 0.3f)
             return ElementsOfPower.gemstone.setQuality(target, Quality.Rough);
-        if (rnd > 0.25f)
-            return ElementsOfPower.gemstone.setQuality(target, Quality.Common);
         if (rnd > 0.1f)
-            return ElementsOfPower.gemstone.setQuality(target, Quality.Smooth);
+            return ElementsOfPower.gemstone.setQuality(target, Quality.Common);
         if (rnd > 0.01f)
+            return ElementsOfPower.gemstone.setQuality(target, Quality.Smooth);
+        if (rnd > 0.001f)
             return ElementsOfPower.gemstone.setQuality(target, Quality.Flawless);
 
         return ElementsOfPower.gemstone.setQuality(target, Quality.Pure);

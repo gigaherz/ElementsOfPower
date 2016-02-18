@@ -25,7 +25,7 @@ public class ItemGuidebook extends Item
         {
             Minecraft.getMinecraft().displayGuiScreen(new GuiGuidebook());
         }
-        return true;
+        return false;
     }
 
     @Override
