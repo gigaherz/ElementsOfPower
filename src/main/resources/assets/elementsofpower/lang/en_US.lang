@@ -5,6 +5,8 @@ tile.elementsofpower.dust.name=Dust Block (disperses quickly)
 
 tile.elementsofpower.cocoon.name=Elemental Cocoon
 
+item.elementsofpower.guidebook.name=Book of Elements
+
 item.elementsofpower.ring.name=Unbound Ring
 item.elementsofpower.ring.ruby.name=Ruby Ring
 item.elementsofpower.ring.sapphire.name=Sapphire Ring

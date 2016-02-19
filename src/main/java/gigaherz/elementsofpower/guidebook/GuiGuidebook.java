@@ -1,5 +1,8 @@
 package gigaherz.elementsofpower.guidebook;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.primitives.Ints;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.renders.RenderingStuffs;
@@ -13,44 +16,74 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.client.resources.IResource;
+import net.minecraft.crash.CrashReport;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.JsonToNBT;
+import net.minecraft.nbt.NBTException;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.IChatComponent;
+import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.Rectangle;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class GuiGuidebook extends GuiScreen
 {
-    private static final ResourceLocation bookGuiTextures = new ResourceLocation("textures/gui/book.png");
+    private static final ResourceLocation bookGuiTextures = new ResourceLocation("elementsofpower:textures/gui/book.png");
 
     private static final int bookWidth = 276;
-    private static final int bookHeight = 182;
+    private static final int bookHeight = 198;
     private static final int innerMargin = 22;
     private static final int outerMargin = 10;
     private static final int verticalMargin = 18;
     private static final int pageWidth = bookWidth/2 - innerMargin - outerMargin;
     private static final int pageHeight = bookHeight - verticalMargin;
 
-    private GuiButton buttonDone;
+    private GuiButton buttonClose;
     private GuiButton buttonNextPage;
     private GuiButton buttonPreviousPage;
+    private GuiButton buttonNextChapter;
+    private GuiButton buttonPreviousChapter;
+    private GuiButton buttonBack;
 
-    private int currentPage = 0;
-    private static final int pageCount = 10;
+    private int currentChapter = 0;
+    private int currentPair = 0;
+    private int totalPairs = 0;
 
     private static float angleSpeed = (1/0.35f) / 20;
     private float angleT = 1;
 
-    boolean closing = false;
+    private boolean closing = false;
+
+    private ItemModelMesher mesher = Minecraft.getMinecraft().getRenderItem().getItemModelMesher();
+    private TextureManager renderEngine = Minecraft.getMinecraft().renderEngine;
+
+    private ResourceLocation bookLocation = new ResourceLocation("elementsofpower:xml/guidebook.xml");
+
+    private List<ChapterData> chapters = Lists.newArrayList();
+
+    private Map<String, Integer> chaptersByName = Maps.newHashMap();
+    private Map<String, PageRef> pagesByName = Maps.newHashMap();
 
     @Override
     public boolean doesGuiPauseGame()
@@ -63,34 +96,82 @@ public class GuiGuidebook extends GuiScreen
     {
         this.buttonList.clear();
 
+        int btnId = 0;
 
-        int cx = this.width/2;
-        int cy = this.height/2 - 24 + bookHeight/2;
-        this.buttonList.add(this.buttonNextPage = new NextPageButton(1, cx + bookWidth /2 - 23, cy, true));
-        this.buttonList.add(this.buttonPreviousPage = new NextPageButton(2, cx - bookWidth /2, cy, false));
-
-        this.buttonList.add(this.buttonDone = new GuiButton(0, 0, this.height - 20, 80, 20, I18n.format("gui.done")));
+        int left = (this.width - bookWidth)/2;
+        int right = left + bookWidth;
+        int top = (this.height - bookHeight)/2 - 9;
+        int bottom = top+bookHeight;
+        this.buttonList.add(this.buttonBack = new SpriteButton(btnId++, left-9, top-5, 2));
+        this.buttonList.add(this.buttonClose = new SpriteButton(btnId++, right-6, top-6, 3));
+        this.buttonList.add(this.buttonPreviousPage = new SpriteButton(btnId++, left+24, bottom-13, 1));
+        this.buttonList.add(this.buttonNextPage = new SpriteButton(btnId++, right-42, bottom-13, 0));
+        this.buttonList.add(this.buttonPreviousChapter = new SpriteButton(btnId++, left+2, bottom-13, 5));
+        this.buttonList.add(this.buttonNextChapter = new SpriteButton(btnId++, right-23, bottom-13, 4));
+        ElementsOfPower.logger.info("Showing gui with " + btnId + " buttons.");
 
         updateButtonStates();
+
+        new BookHelper().parseBook();
     }
 
     protected void actionPerformed(GuiButton button) throws IOException
     {
         if (button.enabled)
         {
-            if (button.id == buttonDone.id)
+            if (button.id == buttonClose.id)
             {
                 closing = true;
             }
+            else if (button.id == buttonBack.id)
+            {
+                navigateBack();
+            }
             else if (button.id == buttonNextPage.id)
             {
-                if (currentPage + 1 < pageCount)
-                    currentPage++;
+                if (currentPair + 1 < chapters.get(currentChapter).pagePairs)
+                {
+                    pushHistory();
+                    currentPair ++;
+                }
+                else if (currentChapter + 1 < chapters.size())
+                {
+                    pushHistory();
+                    currentPair = 0;
+                    currentChapter ++;
+                }
             }
             else if (button.id == buttonPreviousPage.id)
             {
-                if (currentPage > 0)
-                    currentPage--;
+                if (currentPair > 0)
+                {
+                    pushHistory();
+                    currentPair --;
+                }
+                else if(currentChapter > 0)
+                {
+                    pushHistory();
+                    currentChapter--;
+                    currentPair = chapters.get(currentChapter).pagePairs - 1;
+                }
+            }
+            else if (button.id == buttonNextChapter.id)
+            {
+                if (currentChapter + 1 < chapters.size())
+                {
+                    pushHistory();
+                    currentPair = 0;
+                    currentChapter ++;
+                }
+            }
+            else if (button.id == buttonPreviousChapter.id)
+            {
+                if (currentChapter > 0)
+                {
+                    pushHistory();
+                    currentPair = 0;
+                    currentChapter --;
+                }
             }
 
             updateButtonStates();
@@ -99,11 +180,24 @@ public class GuiGuidebook extends GuiScreen
 
     private void updateButtonStates()
     {
-        buttonNextPage.enabled = angleT == 0 && currentPage + 1 < pageCount;
-        buttonPreviousPage.enabled = angleT == 0 && currentPage > 0;
+        buttonClose.enabled = angleT == 0;
+        buttonBack.enabled = angleT == 0 &&
+                (currentPair > 0 || currentChapter > 0);
+        buttonNextPage.enabled = angleT == 0 &&
+                (currentPair + 1 < chapters.get(currentChapter).pagePairs || currentChapter + 1 < chapters.size());
+        buttonPreviousPage.enabled = angleT == 0 &&
+                (currentPair > 0 || currentChapter > 0);
+        buttonNextChapter.enabled = angleT == 0 &&
+                (currentChapter + 1 < chapters.size());
+        buttonPreviousChapter.enabled = angleT == 0 &&
+                (currentChapter > 0);
 
+        buttonClose.visible = buttonClose.enabled;
+        buttonBack.visible = buttonBack.enabled;
         buttonNextPage.visible = buttonNextPage.enabled;
         buttonPreviousPage.visible = buttonPreviousPage.enabled;
+        buttonNextChapter.visible = buttonNextChapter.enabled;
+        buttonPreviousChapter.visible = buttonPreviousChapter.enabled;
     }
 
     @Override
@@ -133,7 +227,43 @@ public class GuiGuidebook extends GuiScreen
             closing = true;
             return;
         }
+        else if(keyCode == Keyboard.KEY_BACK)
+        {
+            navigateBack();
+            return;
+        }
         super.keyTyped(typedChar, keyCode);
+    }
+
+    java.util.Stack<PageRef> history = new java.util.Stack<>();
+    void navigateTo(final PageRef target)
+    {
+        pushHistory();
+
+        target.resolve();
+        currentChapter = Math.max(0, Math.min(chapters.size()-1, target.chapter));
+        currentPair = Math.max(0, Math.min(chapters.get(currentChapter).pagePairs-1, target.page/2));
+    }
+
+    private void pushHistory()
+    {
+        history.push(new PageRef(currentChapter, currentPair*2));
+    }
+
+    void navigateBack()
+    {
+        if(history.size() > 0)
+        {
+            PageRef target = history.pop();
+            target.resolve();
+            currentChapter = target.chapter;
+            currentPair = target.page/2;
+        }
+        else
+        {
+            currentChapter = 0;
+            currentPair = 0;
+        }
     }
 
     @Override
@@ -149,111 +279,80 @@ public class GuiGuidebook extends GuiScreen
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
+    @Override
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException
+    {
+        if (mouseButton == 0)
+        {
+            int mX = mouseX;
+            int mY = mouseY;
+
+            ChapterData ch = chapters.get(currentChapter);
+            PageData pg = ch.pages.get(currentPair*2);
+            for(IPageElement e : pg.elements)
+            {
+                if(e instanceof Link)
+                {
+                    Link l = (Link)e;
+                    Rectangle b = l.getBounds();
+                    if (mX >= b.getX() && mX <= (b.getX()+b.getWidth()) &&
+                            mY >= b.getY() && mY <= (b.getY()+b.getHeight()))
+                    {
+                        l.click();
+                        return;
+                    }
+                }
+            }
+
+            if(currentPair*2 + 1 < ch.pages.size())
+            {
+                pg = ch.pages.get(currentPair * 2 + 1);
+                for (IPageElement e : pg.elements)
+                {
+                    if (e instanceof Link)
+                    {
+                        Link l = (Link) e;
+                        Rectangle b = l.getBounds();
+                        if (mX >= b.getX() && mX <= (b.getX() + b.getWidth()) &&
+                                mY >= b.getY() && mY <= (b.getY() + b.getHeight()))
+                        {
+                            l.click();
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+        super.mouseClicked(mouseX, mouseY, mouseButton);
+    }
+
     private void drawCurrentPages()
     {
-        int cx = this.width/2;
-        int cy = this.height/2 - 10;
+        int left = this.width/2 - pageWidth - innerMargin;
+        int right = this.width/2 + innerMargin;
+        int top = (this.height - pageHeight)/2 - 9;
+        int bottom = top+pageHeight;
 
-        int top = cy - 16 - pageHeight/2;
-        {
-            int left = cx - pageWidth - innerMargin;
+        drawPage(left, top, currentPair*2);
+        drawPage(right, top, currentPair*2 + 1);
 
-            drawPage(left, top, currentPage*2);
-
-            String cnt = "" + (currentPage+1) + "/" + pageCount;
-            int w = fontRendererObj.getStringWidth(cnt);
-            fontRendererObj.drawString(cnt, left+(pageWidth-w)/2 ,top+pageHeight + 15, 0xFF000000);
-        }
-
-        {
-            int left = cx + innerMargin;
-
-            drawPage(left, top, currentPage*2 + 1);
-        }
+        String cnt = "" + ((chapters.get(currentChapter).startPair + currentPair)*2 + 1) + "/" + (totalPairs*2);
+        addStringWrapping(left, bottom, cnt, 0xFF000000, 1);
     }
 
     private void drawPage(int left, int top, int page)
     {
-        if (page == 0)
+        ChapterData ch = chapters.get(currentChapter);
+        if (page >= ch.pages.size())
+            return;
+
+        PageData pg = ch.pages.get(page);
+
+        for(IPageElement e : pg.elements)
         {
-            top += addStringWrapping(left, top, "This book is a work in progress.", 0xFF606060, 0);
+            top += e.apply(left, top);
         }
-        else if (page == 1)
-        {
-            top += pageHeight/3;
-            top += addStringWrappingCenter(left, top, "The Book");
-            top += addStringWrappingCenter(left, top, "of");
-            top += addStringWrappingCenter(left, top, "Elements");
-            top += 35;
-            top += addStringWrappingCenter(left, top, "by Gigaherz");
-        }
-        else if (page == 2)
-        {
-            top += addStringWrapping(left, top,
-                    "In front of you is the power of raw elemental magic. " +
-                    "In the world exist the following elements: "
-            );
-
-            int top_icons = top + 3;
-            int spacing_icons = fontRendererObj.FONT_HEIGHT + 4;
-
-            top += 8;
-            top += 4 + addStringWrapping(left + 22, top, "Fire");
-            top += 4 + addStringWrapping(left + 22, top, "Water");
-            top += 4 + addStringWrapping(left + 22, top, "Air");
-            top += 4 + addStringWrapping(left + 22, top, "Earth");
-            top += 4 + addStringWrapping(left + 22, top, "Light");
-            top += 4 + addStringWrapping(left + 22, top, "Darkness");
-            top += 4 + addStringWrapping(left + 22, top, "Life");
-            top += 4 + addStringWrapping(left + 22, top, "Death");
-
-            ItemModelMesher mesher = Minecraft.getMinecraft().getRenderItem().getItemModelMesher();
-            TextureManager renderEngine = Minecraft.getMinecraft().renderEngine;
-            for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-            {
-                ItemStack stack = ElementsOfPower.magicOrb.getStack(1, i);
-
-                StackRenderingHelper.renderItemStack(mesher, renderEngine, left + 4, top_icons + spacing_icons * i, stack, 0xFFFFFFFF, true);
-            }
-
-        }
-        else if (page == 3)
-        {
-            top += addStringWrapping(left, top,
-                    "Each element has an associated effect and shape. " +
-                            "For example, Fire causes Flames, in the shape of a Sphere around caster."
-            );
-            top += fontRendererObj.FONT_HEIGHT/2;
-            top += addStringWrapping(left, top,
-                    "Spells take on the effect of the first element of the sequence. " +
-                            "Subsequent elements of the same type will increase the power."
-            );
-            top += fontRendererObj.FONT_HEIGHT/2;
-            top += addStringWrapping(left, top,
-                    "The shape of the spell will depend on the last element in the sequence."
-            );
-        }
-        else if (page == 4)
-        {
-            top += addStringWrapping(left, top,
-                    "TBC..."
-            );
-        }
-    }
-
-    private int addStringWrapping(int left, int top, String s)
-    {
-        return addStringWrapping(left, top, s, 0xFF000000, 0);
-    }
-
-    private int addStringWrappingCenter(int left, int top, String s)
-    {
-        return addStringWrapping(left, top, s, 0xFF000000, 1);
-    }
-
-    private int addStringWrappingRight(int left, int top, String s)
-    {
-        return addStringWrapping(left, top, s, 0xFF000000, 2);
     }
 
     private int addStringWrapping(int left, int top, String s, int color, int align)
@@ -407,14 +506,19 @@ public class GuiGuidebook extends GuiScreen
     }
 
     @SideOnly(Side.CLIENT)
-    static class NextPageButton extends GuiButton
+    static class SpriteButton extends GuiButton
     {
-        private final boolean field_146151_o;
+        private final int whichIcon;
 
-        public NextPageButton(int p_i46316_1_, int p_i46316_2_, int p_i46316_3_, boolean p_i46316_4_)
+        private static final int[] xPixel = { 5, 5, 4, 4, 4, 4};
+        private static final int[] yPixel = { 2, 16, 30, 64, 79, 93};
+        private static final int[] xSize = { 17, 17, 18, 13, 21, 21};
+        private static final int[] ySize = { 11, 11, 11, 13, 11, 11};
+
+        public SpriteButton(int buttonId, int x, int y, int back)
         {
-            super(p_i46316_1_, p_i46316_2_, p_i46316_3_, 23, 13, "");
-            this.field_146151_o = p_i46316_4_;
+            super(buttonId, x, y, xSize[back], ySize[back], "");
+            this.whichIcon = back;
         }
 
         /**
@@ -424,24 +528,518 @@ public class GuiGuidebook extends GuiScreen
         {
             if (this.visible)
             {
-                boolean flag = mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
+                boolean hover =
+                        mouseX >= this.xPosition &&
+                        mouseY >= this.yPosition &&
+                        mouseX < this.xPosition + this.width &&
+                        mouseY < this.yPosition + this.height;
+
                 GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
                 mc.getTextureManager().bindTexture(bookGuiTextures);
-                int i = 0;
-                int j = 192;
+                int x = xPixel[whichIcon];
+                int y = yPixel[whichIcon];
+                int w = xSize[whichIcon];
+                int h = ySize[whichIcon];
 
-                if (flag)
+                if (hover)
                 {
-                    i += 23;
+                    x += 25;
                 }
 
-                if (!this.field_146151_o)
-                {
-                    j += 13;
-                }
-
-                this.drawTexturedModalRect(this.xPosition, this.yPosition, i, j, 23, 13);
+                this.drawTexturedModalRect(this.xPosition, this.yPosition, x, y, w, h);
             }
+        }
+    }
+
+    class BookHelper
+    {
+        private void parseBook()
+        {
+            try
+            {
+                IResource res = Minecraft.getMinecraft().getResourceManager().getResource(bookLocation);
+
+                DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+                Document doc = dBuilder.parse(res.getInputStream());
+
+                doc.getDocumentElement().normalize();
+
+                NodeList chaptersList = doc.getChildNodes().item(0).getChildNodes();
+                for (int i = 0; i < chaptersList.getLength(); i++)
+                {
+                    Node chapterItem = chaptersList.item(i);
+
+                    parseChapter(chapterItem);
+                }
+
+                int prevCount = 0;
+                for (int i = 0; i < chapters.size(); i++)
+                {
+                    ChapterData chapter = chapters.get(i);
+                    chapter.startPair = prevCount;
+                    prevCount += chapter.pagePairs;
+                }
+                totalPairs = prevCount;
+            }
+            catch (IOException | ParserConfigurationException | SAXException e)
+            {
+                throw new ReportedException(new CrashReport("Loading book xml", e));
+            }
+        }
+
+        private void parseChapter(Node chapterItem)
+        {
+            if (!chapterItem.getNodeName().equals("chapter"))
+            {
+                return;
+            }
+
+            ChapterData chapter = new ChapterData(chapters.size());
+            chapters.add(chapter);
+
+            if (chapterItem.hasAttributes())
+            {
+                NamedNodeMap chapterAttributes = chapterItem.getAttributes();
+                Node n = chapterAttributes.getNamedItem("id");
+                if (n != null)
+                {
+                    chapter.id = n.getTextContent();
+                    chaptersByName.put(chapter.id, chapter.num);
+                }
+            }
+
+            NodeList pagesList = chapterItem.getChildNodes();
+            for (int j = 0; j < pagesList.getLength(); j++)
+            {
+                Node pageItem = pagesList.item(j);
+
+                parsePage(chapter, pageItem);
+            }
+
+            chapter.pagePairs = (chapter.pages.size()+1)/2;
+        }
+
+        private void parsePage(ChapterData chapter, Node pageItem)
+        {
+            if (!pageItem.getNodeName().equals("page"))
+            {
+                return;
+            }
+
+            PageData page = new PageData(chapter.pages.size());
+            chapter.pages.add(page);
+
+            if (pageItem.hasAttributes())
+            {
+                NamedNodeMap pageAttributes = pageItem.getAttributes();
+                Node n = pageAttributes.getNamedItem("id");
+                if (n != null)
+                {
+                    page.id = n.getTextContent();
+                    pagesByName.put(page.id, new PageRef(chapter.num, page.num));
+                }
+            }
+
+            NodeList elementsList = pageItem.getChildNodes();
+            for (int k = 0; k < elementsList.getLength(); k++)
+            {
+                Node elementItem = elementsList.item(k);
+
+                if (elementItem.getNodeName().equals("p"))
+                {
+                    Paragraph p = new Paragraph(elementItem.getTextContent());
+                    page.elements.add(p);
+
+                    if (elementItem.hasAttributes())
+                    {
+                        NamedNodeMap pageAttributes = elementItem.getAttributes();
+                        parseParagraphAttributes(p, pageAttributes);
+                    }
+                }
+                else if (elementItem.getNodeName().equals("title"))
+                {
+                    Title title = new Title(elementItem.getTextContent());
+                    page.elements.add(title);
+
+                    if (elementItem.hasAttributes())
+                    {
+                        NamedNodeMap pageAttributes = elementItem.getAttributes();
+                        parseParagraphAttributes(title, pageAttributes);
+                    }
+                }
+                else if (elementItem.getNodeName().equals("link"))
+                {
+                    Link link = new Link(elementItem.getTextContent());
+                    page.elements.add(link);
+
+                    if (elementItem.hasAttributes())
+                    {
+                        NamedNodeMap pageAttributes = elementItem.getAttributes();
+
+                        parseLinkAttributes(link, pageAttributes);
+                    }
+                }
+                else if (elementItem.getNodeName().equals("space"))
+                {
+                    Space s = new Space();
+                    page.elements.add(s);
+
+                    if (elementItem.hasAttributes())
+                    {
+                        NamedNodeMap pageAttributes = elementItem.getAttributes();
+
+                        parseSpaceAttributes(s, pageAttributes);
+                    }
+                }
+                else if (elementItem.getNodeName().equals("stack"))
+                {
+                    Stack s = new Stack();
+                    page.elements.add(s);
+
+                    if (elementItem.hasAttributes())
+                    {
+                        NamedNodeMap pageAttributes = elementItem.getAttributes();
+
+                        parseStackAttributes(s, pageAttributes);
+                    }
+                }
+            }
+        }
+
+        private void parseStackAttributes(Stack s, NamedNodeMap pageAttributes)
+        {
+            int meta = 0;
+            int stackSize = 1;
+            NBTTagCompound tag = null;
+
+            Node attr = pageAttributes.getNamedItem("meta");
+            if (attr != null)
+            {
+                meta = Ints.tryParse(attr.getTextContent());
+            }
+
+            attr = pageAttributes.getNamedItem("count");
+            if (attr != null)
+            {
+                stackSize = Ints.tryParse(attr.getTextContent());
+            }
+
+            attr = pageAttributes.getNamedItem("tag");
+            if (attr != null)
+            {
+                try
+                {
+                    tag = JsonToNBT.getTagFromJson(attr.getTextContent());
+                }
+                catch (NBTException e)
+                {
+                    ElementsOfPower.logger.warn("Invalid tag format: " + e.getMessage());
+                }
+            }
+
+            attr = pageAttributes.getNamedItem("item");
+            if (attr != null)
+            {
+                String itemName = attr.getTextContent();
+
+                Item item = Item.itemRegistry.getObject(new ResourceLocation(itemName));
+
+                s.stack = new ItemStack(item, stackSize, meta);
+                s.stack.setTagCompound(tag);
+            }
+
+            attr = pageAttributes.getNamedItem("x");
+            if (attr != null)
+            {
+                s.x = Ints.tryParse(attr.getTextContent());
+            }
+
+            attr = pageAttributes.getNamedItem("y");
+            if (attr != null)
+            {
+                s.y = Ints.tryParse(attr.getTextContent());
+            }
+        }
+
+        private void parseSpaceAttributes(Space s, NamedNodeMap pageAttributes)
+        {
+            Node attr = pageAttributes.getNamedItem("height");
+            if (attr != null)
+            {
+                String t = attr.getTextContent();
+                if(t.endsWith("%"))
+                {
+                    s.asPercent = true;
+                    t = t.substring(0, t.length()-1);
+                }
+
+                s.space = Ints.tryParse(t);
+            }
+        }
+
+        private void parseLinkAttributes(Link link, NamedNodeMap pageAttributes)
+        {
+            parseParagraphAttributes(link, pageAttributes);
+
+            Node attr = pageAttributes.getNamedItem("ref");
+            if (attr != null)
+            {
+                String ref = attr.getTextContent();
+
+                if (ref.indexOf(':') >= 0)
+                {
+                    String[] parts = ref.split(":");
+                    link.target = new PageRef(parts[0], parts[1]);
+                }
+                else
+                {
+                    link.target = new PageRef(ref, null);
+                }
+            }
+        }
+
+        private void parseParagraphAttributes(Paragraph p, NamedNodeMap pageAttributes)
+        {
+            Node attr = pageAttributes.getNamedItem("align");
+            if (attr != null)
+            {
+                String a = attr.getTextContent();
+                if(a.equals("left"))
+                    p.alignment = 0;
+                else if(a.equals("center"))
+                    p.alignment = 1;
+                else if(a.equals("right"))
+                    p.alignment = 2;
+            }
+
+            attr = pageAttributes.getNamedItem("indent");
+            if (attr != null)
+            {
+                p.indent = Ints.tryParse(attr.getTextContent());
+            }
+
+            attr = pageAttributes.getNamedItem("space");
+            if (attr != null)
+            {
+                p.space = Ints.tryParse(attr.getTextContent());
+            }
+
+            attr = pageAttributes.getNamedItem("color");
+            if (attr != null)
+            {
+                String c = attr.getTextContent();
+
+                if (c.startsWith("#"))
+                    c = c.substring(1);
+
+                try
+                {
+                    if (c.length() <= 6)
+                    {
+                        p.color = 0xFF000000 | Integer.parseInt(c, 16);
+                    }
+                    else
+                    {
+                        p.color = Integer.parseInt(c, 16);
+                    }
+                }
+                catch (NumberFormatException e)
+                {
+                    // ignored
+                }
+            }
+        }
+    }
+
+    private class PageRef
+    {
+        public int chapter;
+        public int page;
+
+        public boolean resolvedNames = false;
+        public String chapterName;
+        public String pageName;
+
+        private PageRef(int chapter, int page)
+        {
+            this.chapter = chapter;
+            this.page = page;
+            resolvedNames = true;
+        }
+
+        private PageRef(String chapter, String page)
+        {
+            this.chapterName = chapter;
+            this.pageName = page;
+        }
+
+        public void resolve()
+        {
+            if(!resolvedNames)
+            {
+                if(chapterName != null)
+                {
+                    Integer ch = Ints.tryParse(chapterName);
+                    if (ch != null)
+                    {
+                        chapter = ch;
+                    }
+                    else
+                    {
+                        chapter = chaptersByName.get(chapterName);
+                    }
+
+                    if(pageName != null)
+                    {
+                        Integer pg = Ints.tryParse(pageName);
+                        if (pg != null)
+                        {
+                            page = pg;
+                        }
+                    }
+                }
+                else if(pageName != null)
+                {
+                    PageRef temp = pagesByName.get(pageName);
+                    temp.resolve();
+                    chapter = temp.chapter;
+                    page = temp.page;
+                }
+            }
+        }
+    }
+
+    private class ChapterData
+    {
+        public final int num;
+        public String id;
+
+        public final List<PageData> pages = Lists.newArrayList();
+
+        public int pagePairs;
+        public int startPair;
+
+        private ChapterData(int num)
+        {
+            this.num = num;
+        }
+    }
+
+    private class PageData
+    {
+        public final int num;
+        public String id;
+
+        public final List<IPageElement> elements = Lists.newArrayList();
+
+        private PageData(int num)
+        {
+            this.num = num;
+        }
+    }
+
+    private interface IPageElement
+    {
+        int apply(int left, int top);
+    }
+
+    private class Paragraph implements IPageElement
+    {
+        public final String text;
+        public int alignment = 0;
+        public int color = 0xFF000000;
+        public int indent = 0;
+        public int space = 2;
+
+        public Paragraph(String text)
+        {
+            this.text = text;
+        }
+
+        @Override
+        public int apply(int left, int top)
+        {
+            return addStringWrapping(left + indent, top, text, color, alignment) + space;
+        }
+    }
+
+    private class Link extends Paragraph
+    {
+        public PageRef target;
+        public int colorHover = 0xFF77cc66;
+
+        public boolean isHovering;
+        public Rectangle bounds;
+
+        public Link(String text)
+        {
+            super(EnumChatFormatting.UNDERLINE + text);
+            color = 0xFF7766cc;
+        }
+
+        public Rectangle getBounds()
+        {
+            return bounds;
+        }
+
+        public void click()
+        {
+            navigateTo(target);
+        }
+
+        @Override
+        public int apply(int left, int top)
+        {
+            int height = fontRendererObj.splitStringWidth(text, pageWidth);
+            int width = height > fontRendererObj.FONT_HEIGHT ? pageWidth : fontRendererObj.getStringWidth(text);
+            bounds = new Rectangle(left, top, width, height);
+
+            return addStringWrapping(left + indent, top, text, isHovering ? colorHover : color, alignment) + space;
+        }
+    }
+
+    private class Title extends Paragraph
+    {
+        public Title(String text)
+        {
+            super(EnumChatFormatting.ITALIC + "" + EnumChatFormatting.UNDERLINE + text);
+            alignment = 1;
+            space = 4;
+        }
+    }
+
+    private class Space implements IPageElement
+    {
+        public boolean asPercent;
+        public int space;
+
+        public Space()
+        {
+        }
+
+        @Override
+        public int apply(int left, int top)
+        {
+            return asPercent ? pageHeight * space / 100 : space;
+        }
+    }
+
+    private class Stack implements IPageElement
+    {
+        public ItemStack stack;
+        public int x = 0;
+        public int y = 0;
+
+        public Stack()
+        {
+        }
+
+        @Override
+        public int apply(int left, int top)
+        {
+            StackRenderingHelper.renderItemStack(mesher, renderEngine, left + x, top + y, stack, 0xFFFFFFFF, true);
+            return 0;
         }
     }
 }
