@@ -106,6 +106,7 @@ text.elementsofpower.magicOrb.use=Use to charge your magic items
 text.elementsofpower.magicOrb.cocoon=Right-click on a cocoon to add one essence
 
 text.elementsofpower.gemstone.use=Use a Gem Analyzer to discover its quality
+text.elementsofpower.gemstone.combine=Combine with a magic item to set
 
 achievement.elementsofpower.discoverGems=A vision in reflections
 achievement.elementsofpower.discoverGems.desc=You discover the hidden power of gemstones.

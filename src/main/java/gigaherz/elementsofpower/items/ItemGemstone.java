@@ -157,6 +157,10 @@ public class ItemGemstone extends ItemMagicContainer
     @Override
     public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced)
     {
-        tooltip.add(EnumChatFormatting.DARK_GRAY + "" + EnumChatFormatting.ITALIC + StatCollector.translateToLocal("text." + ElementsOfPower.MODID + ".gemstone.use"));
+        if(getQuality(stack) == null)
+            tooltip.add(EnumChatFormatting.DARK_GRAY + "" + EnumChatFormatting.ITALIC + StatCollector.translateToLocal("text." + ElementsOfPower.MODID + ".gemstone.use"));
+        else
+            tooltip.add(EnumChatFormatting.DARK_GRAY + "" + EnumChatFormatting.ITALIC + StatCollector.translateToLocal("text." + ElementsOfPower.MODID + ".gemstone.combine"));
+        super.addInformation(stack, playerIn, tooltip, advanced);
     }
 }
