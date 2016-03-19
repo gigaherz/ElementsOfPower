@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.primitives.Ints;
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.renders.RenderingStuffs;
 import gigaherz.elementsofpower.renders.StackRenderingHelper;
 import net.minecraft.client.Minecraft;
@@ -17,15 +16,12 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.IResource;
-import net.minecraft.crash.CrashReport;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.IChatComponent;
-import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.fml.relauncher.Side;
@@ -56,7 +52,7 @@ public class GuiGuidebook extends GuiScreen
     private static final int innerMargin = 22;
     private static final int outerMargin = 10;
     private static final int verticalMargin = 18;
-    private static final int pageWidth = bookWidth/2 - innerMargin - outerMargin;
+    private static final int pageWidth = bookWidth / 2 - innerMargin - outerMargin;
     private static final int pageHeight = bookHeight - verticalMargin;
 
     private GuiButton buttonClose;
@@ -70,7 +66,7 @@ public class GuiGuidebook extends GuiScreen
     private int currentPair = 0;
     private int totalPairs = 0;
 
-    private static float angleSpeed = (1/0.35f) / 20;
+    private static float angleSpeed = (1 / 0.35f) / 20;
     private float angleT = 1;
 
     private boolean closing = false;
@@ -98,16 +94,16 @@ public class GuiGuidebook extends GuiScreen
 
         int btnId = 0;
 
-        int left = (this.width - bookWidth)/2;
+        int left = (this.width - bookWidth) / 2;
         int right = left + bookWidth;
-        int top = (this.height - bookHeight)/2 - 9;
-        int bottom = top+bookHeight;
-        this.buttonList.add(this.buttonBack = new SpriteButton(btnId++, left-9, top-5, 2));
-        this.buttonList.add(this.buttonClose = new SpriteButton(btnId++, right-6, top-6, 3));
-        this.buttonList.add(this.buttonPreviousPage = new SpriteButton(btnId++, left+24, bottom-13, 1));
-        this.buttonList.add(this.buttonNextPage = new SpriteButton(btnId++, right-42, bottom-13, 0));
-        this.buttonList.add(this.buttonPreviousChapter = new SpriteButton(btnId++, left+2, bottom-13, 5));
-        this.buttonList.add(this.buttonNextChapter = new SpriteButton(btnId++, right-23, bottom-13, 4));
+        int top = (this.height - bookHeight) / 2 - 9;
+        int bottom = top + bookHeight;
+        this.buttonList.add(this.buttonBack = new SpriteButton(btnId++, left - 9, top - 5, 2));
+        this.buttonList.add(this.buttonClose = new SpriteButton(btnId++, right - 6, top - 6, 3));
+        this.buttonList.add(this.buttonPreviousPage = new SpriteButton(btnId++, left + 24, bottom - 13, 1));
+        this.buttonList.add(this.buttonNextPage = new SpriteButton(btnId++, right - 42, bottom - 13, 0));
+        this.buttonList.add(this.buttonPreviousChapter = new SpriteButton(btnId++, left + 2, bottom - 13, 5));
+        this.buttonList.add(this.buttonNextChapter = new SpriteButton(btnId++, right - 23, bottom - 13, 4));
         ElementsOfPower.logger.info("Showing gui with " + btnId + " buttons.");
 
         updateButtonStates();
@@ -132,13 +128,13 @@ public class GuiGuidebook extends GuiScreen
                 if (currentPair + 1 < chapters.get(currentChapter).pagePairs)
                 {
                     pushHistory();
-                    currentPair ++;
+                    currentPair++;
                 }
                 else if (currentChapter + 1 < chapters.size())
                 {
                     pushHistory();
                     currentPair = 0;
-                    currentChapter ++;
+                    currentChapter++;
                 }
             }
             else if (button.id == buttonPreviousPage.id)
@@ -146,9 +142,9 @@ public class GuiGuidebook extends GuiScreen
                 if (currentPair > 0)
                 {
                     pushHistory();
-                    currentPair --;
+                    currentPair--;
                 }
-                else if(currentChapter > 0)
+                else if (currentChapter > 0)
                 {
                     pushHistory();
                     currentChapter--;
@@ -161,7 +157,7 @@ public class GuiGuidebook extends GuiScreen
                 {
                     pushHistory();
                     currentPair = 0;
-                    currentChapter ++;
+                    currentChapter++;
                 }
             }
             else if (button.id == buttonPreviousChapter.id)
@@ -170,7 +166,7 @@ public class GuiGuidebook extends GuiScreen
                 {
                     pushHistory();
                     currentPair = 0;
-                    currentChapter --;
+                    currentChapter--;
                 }
             }
 
@@ -203,15 +199,15 @@ public class GuiGuidebook extends GuiScreen
     @Override
     public void updateScreen()
     {
-        if(closing)
+        if (closing)
         {
             angleT += angleSpeed;
-            if(angleT >= 1)
+            if (angleT >= 1)
             {
                 this.mc.displayGuiScreen(null);
             }
         }
-        else if(angleT > 0)
+        else if (angleT > 0)
         {
             angleT = Math.max(0, angleT - angleSpeed);
         }
@@ -222,12 +218,12 @@ public class GuiGuidebook extends GuiScreen
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException
     {
-        if(keyCode == Keyboard.KEY_ESCAPE)
+        if (keyCode == Keyboard.KEY_ESCAPE)
         {
             closing = true;
             return;
         }
-        else if(keyCode == Keyboard.KEY_BACK)
+        else if (keyCode == Keyboard.KEY_BACK)
         {
             navigateBack();
             return;
@@ -236,28 +232,29 @@ public class GuiGuidebook extends GuiScreen
     }
 
     java.util.Stack<PageRef> history = new java.util.Stack<>();
+
     void navigateTo(final PageRef target)
     {
         pushHistory();
 
         target.resolve();
-        currentChapter = Math.max(0, Math.min(chapters.size()-1, target.chapter));
-        currentPair = Math.max(0, Math.min(chapters.get(currentChapter).pagePairs-1, target.page/2));
+        currentChapter = Math.max(0, Math.min(chapters.size() - 1, target.chapter));
+        currentPair = Math.max(0, Math.min(chapters.get(currentChapter).pagePairs - 1, target.page / 2));
     }
 
     private void pushHistory()
     {
-        history.push(new PageRef(currentChapter, currentPair*2));
+        history.push(new PageRef(currentChapter, currentPair * 2));
     }
 
     void navigateBack()
     {
-        if(history.size() > 0)
+        if (history.size() > 0)
         {
             PageRef target = history.pop();
             target.resolve();
             currentChapter = target.chapter;
-            currentPair = target.page/2;
+            currentPair = target.page / 2;
         }
         else
         {
@@ -271,7 +268,7 @@ public class GuiGuidebook extends GuiScreen
     {
         drawBackgroundModel(partialTicks);
 
-        if(angleT <= 0)
+        if (angleT <= 0)
         {
             drawCurrentPages();
         }
@@ -288,15 +285,15 @@ public class GuiGuidebook extends GuiScreen
             int mY = mouseY;
 
             ChapterData ch = chapters.get(currentChapter);
-            PageData pg = ch.pages.get(currentPair*2);
-            for(IPageElement e : pg.elements)
+            PageData pg = ch.pages.get(currentPair * 2);
+            for (IPageElement e : pg.elements)
             {
-                if(e instanceof Link)
+                if (e instanceof Link)
                 {
-                    Link l = (Link)e;
+                    Link l = (Link) e;
                     Rectangle b = l.getBounds();
-                    if (mX >= b.getX() && mX <= (b.getX()+b.getWidth()) &&
-                            mY >= b.getY() && mY <= (b.getY()+b.getHeight()))
+                    if (mX >= b.getX() && mX <= (b.getX() + b.getWidth()) &&
+                            mY >= b.getY() && mY <= (b.getY() + b.getHeight()))
                     {
                         l.click();
                         return;
@@ -304,7 +301,7 @@ public class GuiGuidebook extends GuiScreen
                 }
             }
 
-            if(currentPair*2 + 1 < ch.pages.size())
+            if (currentPair * 2 + 1 < ch.pages.size())
             {
                 pg = ch.pages.get(currentPair * 2 + 1);
                 for (IPageElement e : pg.elements)
@@ -329,15 +326,15 @@ public class GuiGuidebook extends GuiScreen
 
     private void drawCurrentPages()
     {
-        int left = this.width/2 - pageWidth - innerMargin;
-        int right = this.width/2 + innerMargin;
-        int top = (this.height - pageHeight)/2 - 9;
-        int bottom = top+pageHeight;
+        int left = this.width / 2 - pageWidth - innerMargin;
+        int right = this.width / 2 + innerMargin;
+        int top = (this.height - pageHeight) / 2 - 9;
+        int bottom = top + pageHeight;
 
-        drawPage(left, top, currentPair*2);
-        drawPage(right, top, currentPair*2 + 1);
+        drawPage(left, top, currentPair * 2);
+        drawPage(right, top, currentPair * 2 + 1);
 
-        String cnt = "" + ((chapters.get(currentChapter).startPair + currentPair)*2 + 1) + "/" + (totalPairs*2);
+        String cnt = "" + ((chapters.get(currentChapter).startPair + currentPair) * 2 + 1) + "/" + (totalPairs * 2);
         addStringWrapping(left, bottom, cnt, 0xFF000000, 1);
     }
 
@@ -349,7 +346,7 @@ public class GuiGuidebook extends GuiScreen
 
         PageData pg = ch.pages.get(page);
 
-        for(IPageElement e : pg.elements)
+        for (IPageElement e : pg.elements)
         {
             top += e.apply(left, top);
         }
@@ -359,14 +356,14 @@ public class GuiGuidebook extends GuiScreen
     {
         if (align == 1)
         {
-            left += (pageWidth - fontRendererObj.getStringWidth(s))/2;
+            left += (pageWidth - fontRendererObj.getStringWidth(s)) / 2;
         }
-        else if(align == 2)
+        else if (align == 2)
         {
             left += pageWidth - fontRendererObj.getStringWidth(s);
         }
 
-        fontRendererObj.drawSplitString(s, left, top, pageWidth,color);
+        fontRendererObj.drawSplitString(s, left, top, pageWidth, color);
         return fontRendererObj.splitStringWidth(s, pageWidth);
     }
 
@@ -382,31 +379,30 @@ public class GuiGuidebook extends GuiScreen
             angleX = (angleT - partialTicks * angleSpeed) * 90;
 
         float blend = 0;
-        if(angleX <= 0)
+        if (angleX <= 0)
         {
             angleX = 0;
             modelBookA = RenderingStuffs.loadModel("elementsofpower:gui/book.obj", DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
             modelBookB = null;
             blend = 0;
         }
-        else if(angleX < 30)
+        else if (angleX < 30)
         {
             modelBookA = RenderingStuffs.loadModel("elementsofpower:gui/book.obj", DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
             modelBookB = RenderingStuffs.loadModel("elementsofpower:gui/book30.obj", DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
-            blend = (angleX)/30.0f;
-
+            blend = (angleX) / 30.0f;
         }
-        else if(angleX < 60)
+        else if (angleX < 60)
         {
             modelBookA = RenderingStuffs.loadModel("elementsofpower:gui/book30.obj", DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
             modelBookB = RenderingStuffs.loadModel("elementsofpower:gui/book60.obj", DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
-            blend = (angleX-30)/30.0f;
+            blend = (angleX - 30) / 30.0f;
         }
-        else if(angleX < 90)
+        else if (angleX < 90)
         {
             modelBookA = RenderingStuffs.loadModel("elementsofpower:gui/book60.obj", DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
             modelBookB = RenderingStuffs.loadModel("elementsofpower:gui/book90.obj", DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
-            blend = (angleX-60)/30.0f;
+            blend = (angleX - 60) / 30.0f;
         }
         else
         {
@@ -423,7 +419,7 @@ public class GuiGuidebook extends GuiScreen
 
         GlStateManager.pushMatrix();
 
-        GlStateManager.translate(this.width * 0.5 * (1 + angleX / 130.0f), this.height * 0.5 * (1 + angleX / 110.0f) + bookHeight/2 - 4, 50);
+        GlStateManager.translate(this.width * 0.5 * (1 + angleX / 130.0f), this.height * 0.5 * (1 + angleX / 110.0f) + bookHeight / 2 - 4, 50);
         GlStateManager.rotate(180, 0, 1, 0);
         GlStateManager.rotate(-130, 1, 0, 0);
         GlStateManager.scale(2.0f, 2.0f, 2.5f);
@@ -437,7 +433,7 @@ public class GuiGuidebook extends GuiScreen
 
         mc.renderEngine.bindTexture(TextureMap.locationBlocksTexture);
 
-        if(modelBookB != null)
+        if (modelBookB != null)
         {
             renderModelInterpolate(modelBookA, modelBookB, blend);
         }
@@ -489,14 +485,14 @@ public class GuiGuidebook extends GuiScreen
 
             int[] blended = Arrays.copyOf(dataA, dataA.length);
 
-            for(int j = 0; j < 4; j++)
+            for (int j = 0; j < 4; j++)
             {
-                int o = (length/4) * j;
-                for(int k = 0; k < 3; k++)
+                int o = (length / 4) * j;
+                for (int k = 0; k < 3; k++)
                 {
-                    float ax = Float.intBitsToFloat(dataA[o+k]);
-                    float bx = Float.intBitsToFloat(dataB[o+k]);
-                    blended[o+k] = Float.floatToRawIntBits(ax + blend * (bx-ax));
+                    float ax = Float.intBitsToFloat(dataA[o + k]);
+                    float bx = Float.intBitsToFloat(dataB[o + k]);
+                    blended[o + k] = Float.floatToRawIntBits(ax + blend * (bx - ax));
                 }
             }
 
@@ -510,10 +506,10 @@ public class GuiGuidebook extends GuiScreen
     {
         private final int whichIcon;
 
-        private static final int[] xPixel = { 5, 5, 4, 4, 4, 4};
-        private static final int[] yPixel = { 2, 16, 30, 64, 79, 93};
-        private static final int[] xSize = { 17, 17, 18, 13, 21, 21};
-        private static final int[] ySize = { 11, 11, 11, 13, 11, 11};
+        private static final int[] xPixel = {5, 5, 4, 4, 4, 4};
+        private static final int[] yPixel = {2, 16, 30, 64, 79, 93};
+        private static final int[] xSize = {17, 17, 18, 13, 21, 21};
+        private static final int[] ySize = {11, 11, 11, 13, 11, 11};
 
         public SpriteButton(int buttonId, int x, int y, int back)
         {
@@ -530,9 +526,9 @@ public class GuiGuidebook extends GuiScreen
             {
                 boolean hover =
                         mouseX >= this.xPosition &&
-                        mouseY >= this.yPosition &&
-                        mouseX < this.xPosition + this.width &&
-                        mouseY < this.yPosition + this.height;
+                                mouseY >= this.yPosition &&
+                                mouseX < this.xPosition + this.width &&
+                                mouseY < this.yPosition + this.height;
 
                 GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
                 mc.getTextureManager().bindTexture(bookGuiTextures);
@@ -584,7 +580,14 @@ public class GuiGuidebook extends GuiScreen
             }
             catch (IOException | ParserConfigurationException | SAXException e)
             {
-                throw new ReportedException(new CrashReport("Loading book xml", e));
+                ChapterData ch = new ChapterData(0);
+                chapters.add(ch);
+
+                PageData pg = new PageData(0);
+                ch.pages.add(pg);
+
+                pg.elements.add(new Paragraph("Error loading book:"));
+                pg.elements.add(new Paragraph(EnumChatFormatting.RED + e.toString()));
             }
         }
 
@@ -617,7 +620,7 @@ public class GuiGuidebook extends GuiScreen
                 parsePage(chapter, pageItem);
             }
 
-            chapter.pagePairs = (chapter.pages.size()+1)/2;
+            chapter.pagePairs = (chapter.pages.size() + 1) / 2;
         }
 
         private void parsePage(ChapterData chapter, Node pageItem)
@@ -768,10 +771,10 @@ public class GuiGuidebook extends GuiScreen
             if (attr != null)
             {
                 String t = attr.getTextContent();
-                if(t.endsWith("%"))
+                if (t.endsWith("%"))
                 {
                     s.asPercent = true;
-                    t = t.substring(0, t.length()-1);
+                    t = t.substring(0, t.length() - 1);
                 }
 
                 s.space = Ints.tryParse(t);
@@ -805,11 +808,11 @@ public class GuiGuidebook extends GuiScreen
             if (attr != null)
             {
                 String a = attr.getTextContent();
-                if(a.equals("left"))
+                if (a.equals("left"))
                     p.alignment = 0;
-                else if(a.equals("center"))
+                else if (a.equals("center"))
                     p.alignment = 1;
-                else if(a.equals("right"))
+                else if (a.equals("right"))
                     p.alignment = 2;
             }
 
@@ -876,9 +879,9 @@ public class GuiGuidebook extends GuiScreen
 
         public void resolve()
         {
-            if(!resolvedNames)
+            if (!resolvedNames)
             {
-                if(chapterName != null)
+                if (chapterName != null)
                 {
                     Integer ch = Ints.tryParse(chapterName);
                     if (ch != null)
@@ -890,7 +893,7 @@ public class GuiGuidebook extends GuiScreen
                         chapter = chaptersByName.get(chapterName);
                     }
 
-                    if(pageName != null)
+                    if (pageName != null)
                     {
                         Integer pg = Ints.tryParse(pageName);
                         if (pg != null)
@@ -899,7 +902,7 @@ public class GuiGuidebook extends GuiScreen
                         }
                     }
                 }
-                else if(pageName != null)
+                else if (pageName != null)
                 {
                     PageRef temp = pagesByName.get(pageName);
                     temp.resolve();

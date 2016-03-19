@@ -4,6 +4,7 @@ import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.ContainerInformation;
 import gigaherz.elementsofpower.database.EssenceConversions;
 import gigaherz.elementsofpower.database.MagicAmounts;
+import gigaherz.elementsofpower.network.EssentializerTileUpdate;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.InventoryBasic;
@@ -18,12 +19,13 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ITickable;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 public class TileEssentializer
         extends TileEntity
         implements ISidedInventory, ITickable
 {
-    public static final int MaxEssentializerMagic = 1000;
+    public static final int MaxEssentializerMagic = 32768;
     public static final float MaxConvertPerTick = 5 / 20.0f;
 
     public final InventoryBasic inventory = new InventoryBasic(ElementsOfPower.MODID + ".essentializer", false, 3);
@@ -80,6 +82,7 @@ public class TileEssentializer
     {
         NBTTagList tagList = tagCompound.getTagList("Inventory", Constants.NBT.TAG_COMPOUND);
 
+        inventory.clear();
         for (int i = 0; i < tagList.tagCount(); i++)
         {
             NBTTagCompound tag = (NBTTagCompound) tagList.get(i);
@@ -138,7 +141,13 @@ public class TileEssentializer
             boolean b2 = getMagicFromInput(inventory);
             boolean b3 = addMagicToOutput(inventory);
             if (b0 || b1 || b2 || b3)
+            {
+                ElementsOfPower.channel.sendToAllAround(new EssentializerTileUpdate(this), new NetworkRegistry.TargetPoint(worldObj.provider.getDimensionId(), pos.getX(), pos.getY(), pos.getZ(), 50));
+            }
+            if (b1 || b2 || b3)
+            {
                 markDirty();
+            }
         }
     }
 

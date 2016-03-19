@@ -32,60 +32,16 @@ public class EssentializerAmountsUpdate
     public void fromBytes(ByteBuf buf)
     {
         windowId = buf.readInt();
-        contained = readAmounts(buf);
-        remaining = readAmounts(buf);
+        contained = MagicAmounts.readAmounts(buf);
+        remaining = MagicAmounts.readAmounts(buf);
     }
 
     @Override
     public void toBytes(ByteBuf buf)
     {
         buf.writeInt(windowId);
-        writeAmounts(buf, contained);
-        writeAmounts(buf, remaining);
-    }
-
-    private MagicAmounts readAmounts(ByteBuf buf)
-    {
-        MagicAmounts amounts = null;
-        int numElements = buf.readByte();
-        if (numElements > 0)
-        {
-            amounts = new MagicAmounts();
-            for (int i = 0; i < numElements; i++)
-            {
-                int which = buf.readByte();
-                float amount = buf.readFloat();
-                amounts.amounts[which] = amount;
-            }
-        }
-        return amounts;
-    }
-
-    private void writeAmounts(ByteBuf buf, MagicAmounts amounts)
-    {
-        if (amounts != null)
-        {
-            int count = 0;
-            for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-            {
-                if (amounts.amounts[i] > 0) count++;
-            }
-
-            buf.writeByte(count);
-
-            for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-            {
-                if (amounts.amounts[i] > 0)
-                {
-                    buf.writeByte(i);
-                    buf.writeFloat(amounts.amounts[i]);
-                }
-            }
-        }
-        else
-        {
-            buf.writeByte(0);
-        }
+        MagicAmounts.writeAmounts(buf, contained);
+        MagicAmounts.writeAmounts(buf, remaining);
     }
 
     public static class Handler implements IMessageHandler<EssentializerAmountsUpdate, IMessage>

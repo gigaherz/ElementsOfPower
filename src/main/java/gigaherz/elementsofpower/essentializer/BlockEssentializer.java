@@ -1,6 +1,7 @@
 package gigaherz.elementsofpower.essentializer;
 
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.gui.GuiHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -41,7 +42,7 @@ public class BlockEssentializer
         if (tileEntity == null || playerIn.isSneaking())
             return false;
 
-        playerIn.openGui(ElementsOfPower.instance, 0, worldIn, pos.getX(), pos.getY(), pos.getZ());
+        playerIn.openGui(ElementsOfPower.instance, GuiHandler.GUI_ESSENTIALIZER, worldIn, pos.getX(), pos.getY(), pos.getZ());
 
         return true;
     }
@@ -61,26 +62,34 @@ public class BlockEssentializer
     @Override
     public void randomDisplayTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
     {
-        double x = (double) pos.getX() + 0.5;
-        double y = (double) pos.getY() + (8.5 / 16.0);
-        double z = (double) pos.getZ() + 0.5;
-        double rx = rand.nextDouble() * 0.2D - 0.1D;
-        double rz = rand.nextDouble() * 0.2D - 0.1D;
-
-        switch (rand.nextInt(4))
+        TileEntity te = worldIn.getTileEntity(pos);
+        if(te instanceof TileEssentializer)
         {
-            case 0:
-                worldIn.spawnParticle(ElementsOfPower.SMALL_CLOUD_PARTICLE, x + rx + 0.4, y, z + rz, 0.0D, 0.05D, 0.0D);
-                break;
-            case 1:
-                worldIn.spawnParticle(ElementsOfPower.SMALL_CLOUD_PARTICLE, x + rx - 0.4, y, z + rz, 0.0D, 0.05D, 0.0D);
-                break;
-            case 2:
-                worldIn.spawnParticle(ElementsOfPower.SMALL_CLOUD_PARTICLE, x + rx, y, z + rz + 0.4, 0.0D, 0.05D, 0.0D);
-                break;
-            case 3:
-                worldIn.spawnParticle(ElementsOfPower.SMALL_CLOUD_PARTICLE, x + rx, y, z + rz - 0.4, 0.0D, 0.05D, 0.0D);
-                break;
+            TileEssentializer essentializer = (TileEssentializer)te;
+            if (essentializer.remainingToConvert != null)
+            {
+                double x = (double) pos.getX() + 0.5;
+                double y = (double) pos.getY() + (8.5 / 16.0);
+                double z = (double) pos.getZ() + 0.5;
+                double rx = rand.nextDouble() * 0.2D - 0.1D;
+                double rz = rand.nextDouble() * 0.2D - 0.1D;
+
+                switch (rand.nextInt(4))
+                {
+                    case 0:
+                        worldIn.spawnParticle(ElementsOfPower.SMALL_CLOUD_PARTICLE, x + rx + 0.4, y, z + rz, 0.0D, 0.05D, 0.0D);
+                        break;
+                    case 1:
+                        worldIn.spawnParticle(ElementsOfPower.SMALL_CLOUD_PARTICLE, x + rx - 0.4, y, z + rz, 0.0D, 0.05D, 0.0D);
+                        break;
+                    case 2:
+                        worldIn.spawnParticle(ElementsOfPower.SMALL_CLOUD_PARTICLE, x + rx, y, z + rz + 0.4, 0.0D, 0.05D, 0.0D);
+                        break;
+                    case 3:
+                        worldIn.spawnParticle(ElementsOfPower.SMALL_CLOUD_PARTICLE, x + rx, y, z + rz - 0.4, 0.0D, 0.05D, 0.0D);
+                        break;
+                }
+            }
         }
     }
 }

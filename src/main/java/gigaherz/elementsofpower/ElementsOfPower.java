@@ -24,6 +24,7 @@ import gigaherz.elementsofpower.guidebook.ItemGuidebook;
 import gigaherz.elementsofpower.items.*;
 import gigaherz.elementsofpower.materials.MaterialCushion;
 import gigaherz.elementsofpower.network.EssentializerAmountsUpdate;
+import gigaherz.elementsofpower.network.EssentializerTileUpdate;
 import gigaherz.elementsofpower.network.SpellSequenceUpdate;
 import gigaherz.elementsofpower.network.SpellcastSync;
 import gigaherz.elementsofpower.progression.DiscoveryHandler;
@@ -43,7 +44,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLInterModComms;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -323,6 +323,7 @@ public class ElementsOfPower
         channel.registerMessage(SpellSequenceUpdate.Handler.class, SpellSequenceUpdate.class, messageNumber++, Side.SERVER);
         channel.registerMessage(SpellcastSync.Handler.class, SpellcastSync.class, messageNumber++, Side.CLIENT);
         channel.registerMessage(EssentializerAmountsUpdate.Handler.class, EssentializerAmountsUpdate.class, messageNumber++, Side.CLIENT);
+        channel.registerMessage(EssentializerTileUpdate.Handler.class, EssentializerTileUpdate.class, messageNumber++, Side.CLIENT);
         logger.debug("Final message number: " + messageNumber);
 
         logger.info("Registering extended entity properties...");

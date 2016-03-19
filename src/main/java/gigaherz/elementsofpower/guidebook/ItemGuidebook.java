@@ -21,7 +21,7 @@ public class ItemGuidebook extends Item
     @Override
     public boolean onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
     {
-        if(worldIn.isRemote)
+        if (worldIn.isRemote)
         {
             Minecraft.getMinecraft().displayGuiScreen(new GuiGuidebook());
         }
@@ -31,7 +31,7 @@ public class ItemGuidebook extends Item
     @Override
     public ItemStack onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn)
     {
-        if(worldIn.isRemote)
+        if (worldIn.isRemote)
         {
             Minecraft.getMinecraft().displayGuiScreen(new GuiGuidebook());
         }

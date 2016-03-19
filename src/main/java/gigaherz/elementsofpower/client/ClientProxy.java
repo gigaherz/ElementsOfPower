@@ -13,23 +13,30 @@ import gigaherz.elementsofpower.gemstones.Gemstone;
 import gigaherz.elementsofpower.gemstones.GemstoneBlockType;
 import gigaherz.elementsofpower.items.ItemGemContainer;
 import gigaherz.elementsofpower.network.EssentializerAmountsUpdate;
+import gigaherz.elementsofpower.network.EssentializerTileUpdate;
 import gigaherz.elementsofpower.network.SpellcastSync;
 import gigaherz.elementsofpower.renders.*;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemMeshDefinition;
+import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -99,6 +106,24 @@ public class ClientProxy implements ISideProxy
             if (!(player.openContainer instanceof ContainerEssentializer))
                 return;
             ((ContainerEssentializer) player.openContainer).updateAmounts(message.contained, message.remaining);
+        }
+    }
+
+
+    @Override
+    public void handleEssentializerTileUpdate(EssentializerTileUpdate message)
+    {
+        Minecraft.getMinecraft().addScheduledTask(() -> handleEssentializerTileUpdate2(message));
+    }
+
+    public void handleEssentializerTileUpdate2(EssentializerTileUpdate message)
+    {
+        TileEntity te = Minecraft.getMinecraft().theWorld.getTileEntity(message.pos);
+        if(te instanceof TileEssentializer)
+        {
+            TileEssentializer essentializer = (TileEssentializer)te;
+            essentializer.setInventorySlotContents(0, message.activeItem);
+            essentializer.remainingToConvert = message.remaining;
         }
     }
 
@@ -194,6 +219,8 @@ public class ClientProxy implements ISideProxy
 
         RenderingRegistry.registerEntityRenderingHandler(EntityBall.class, RenderBall::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityEssence.class, RenderEssence::new);
+
+        ForgeHooksClient.registerTESRItemStack();
 
         RenderingStuffs.init();
     }

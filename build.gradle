@@ -11,17 +11,19 @@ buildscript {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
     }
 }
-apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = "0.6.0-alpha"
+apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'maven-publish'
+
+version = "0.6.1-alpha"
 group = "gigaherz.elementsofpower" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "ElementsOfPower"
 
 minecraft {
-    version = "1.8.9-11.15.1.1732"
+    version = "1.8.9-11.15.1.1764"
     runDir = "run"
 
-    mappings = "snapshot_20160206"
+    mappings = "stable_22"
 
     replace "@VERSION@", project.version
     replaceIn "ElementsOfPower.java"
@@ -50,6 +52,22 @@ processResources
     // copy everything else, thats not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            artifact sourceJar
+        }
+    }
+
+    repositories {
+        maven {
+            url "$buildDir/repo"
+        }
     }
 }
 

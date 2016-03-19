@@ -2,6 +2,7 @@ package gigaherz.elementsofpower.server;
 
 import gigaherz.elementsofpower.ISideProxy;
 import gigaherz.elementsofpower.network.EssentializerAmountsUpdate;
+import gigaherz.elementsofpower.network.EssentializerTileUpdate;
 import gigaherz.elementsofpower.network.SpellcastSync;
 
 public class ServerProxy implements ISideProxy
@@ -24,6 +25,12 @@ public class ServerProxy implements ISideProxy
 
     @Override
     public void handleRemainingAmountsUpdate(EssentializerAmountsUpdate message)
+    {
+        // Nothing here
+    }
+
+    @Override
+    public void handleEssentializerTileUpdate(EssentializerTileUpdate message)
     {
         // Nothing here
     }

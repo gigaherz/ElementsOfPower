@@ -3,6 +3,7 @@ package gigaherz.elementsofpower.database;
 import com.google.gson.*;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.gemstones.Element;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.StatCollector;
@@ -299,6 +300,50 @@ public class MagicAmounts
         }
 
         return dominant;
+    }
+
+    public static MagicAmounts readAmounts(ByteBuf buf)
+    {
+        MagicAmounts amounts = null;
+        int numElements = buf.readByte();
+        if (numElements > 0)
+        {
+            amounts = new MagicAmounts();
+            for (int i = 0; i < numElements; i++)
+            {
+                int which = buf.readByte();
+                float amount = buf.readFloat();
+                amounts.amounts[which] = amount;
+            }
+        }
+        return amounts;
+    }
+
+    public static void writeAmounts(ByteBuf buf, MagicAmounts amounts)
+    {
+        if (amounts != null)
+        {
+            int count = 0;
+            for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+            {
+                if (amounts.amounts[i] > 0) count++;
+            }
+
+            buf.writeByte(count);
+
+            for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+            {
+                if (amounts.amounts[i] > 0)
+                {
+                    buf.writeByte(i);
+                    buf.writeFloat(amounts.amounts[i]);
+                }
+            }
+        }
+        else
+        {
+            buf.writeByte(0);
+        }
     }
 
     public static class Serializer

@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 
@@ -137,12 +138,19 @@ public class GuiEssentializer extends GuiContainer
             int x0 = magicOrbs[i * 2];
             int y0 = magicOrbs[i * 2 + 1];
 
-            String formatted = ElementsOfPower.prettyNumberFormatter2.format(am.amounts[i]);
+            float count = (int) am.amounts[i];
+            String suffix = "";
+            if (count >= 900)
+            {
+                suffix = "k";
+                count /= 1000;
+            }
+
+            String formatted = ElementsOfPower.prettyNumberFormatter.format(count) + suffix;
 
             float x1 = (x0 + 16) * 1.5f - font.getStringWidth(formatted);
             float y1 = (y0 + 10.5f) * 1.5f;
 
-            //font.drawString(formatted, x1+1, y1+1, 0xFF3F3F3F, true);
             font.drawString(formatted, x1, y1, 0xFFFFFFFF, true);
         }
         GlStateManager.popMatrix();
@@ -157,6 +165,10 @@ public class GuiEssentializer extends GuiContainer
         int x0 = (width - xSize) / 2;
         int y0 = (height - ySize) / 2;
 
+        MagicAmounts am = tile.containedMagic;
+        if (am == null)
+            am = new MagicAmounts();
+
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
             int x = magicOrbs[i * 2];
@@ -169,6 +181,7 @@ public class GuiEssentializer extends GuiContainer
 
             List<String> tooltip = Lists.newArrayList();
             tooltip.add(MagicAmounts.getMagicName(i));
+            tooltip.add(EnumChatFormatting.GRAY + ElementsOfPower.prettyNumberFormatter2.format(am.amounts[i]) + " / " + TileEssentializer.MaxEssentializerMagic);
 
             drawHoveringText(tooltip, mx - x0, my - y0);
         }

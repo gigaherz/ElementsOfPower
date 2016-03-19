@@ -1,6 +1,7 @@
 package gigaherz.elementsofpower;
 
 import gigaherz.elementsofpower.network.EssentializerAmountsUpdate;
+import gigaherz.elementsofpower.network.EssentializerTileUpdate;
 import gigaherz.elementsofpower.network.SpellcastSync;
 
 public interface ISideProxy
@@ -12,4 +13,6 @@ public interface ISideProxy
     void handleSpellcastSync(SpellcastSync message);
 
     void handleRemainingAmountsUpdate(EssentializerAmountsUpdate message);
+
+    void handleEssentializerTileUpdate(EssentializerTileUpdate message);
 }

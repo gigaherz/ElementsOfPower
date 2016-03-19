@@ -7,7 +7,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.resources.IReloadableResourceManager;
@@ -28,20 +27,6 @@ public class RenderingStuffs
 {
     static Map<String, IFlexibleBakedModel> loadedModels = new HashMap<>();
 
-    // A vertex format with normals that doesn't break the OBJ loader.
-    // FIXME: Replace with DefaultvertexFormats.POSITION_TEX_COLOR_NORMAL when it works.
-    public static final VertexFormat CUSTOM_FORMAT;
-
-    static
-    {
-        CUSTOM_FORMAT = new VertexFormat();
-        CUSTOM_FORMAT.addElement(new VertexFormatElement(0, VertexFormatElement.EnumType.FLOAT, VertexFormatElement.EnumUsage.POSITION, 3));
-        CUSTOM_FORMAT.addElement(new VertexFormatElement(0, VertexFormatElement.EnumType.UBYTE, VertexFormatElement.EnumUsage.COLOR, 4));
-        CUSTOM_FORMAT.addElement(new VertexFormatElement(0, VertexFormatElement.EnumType.FLOAT, VertexFormatElement.EnumUsage.UV, 2));
-        CUSTOM_FORMAT.addElement(new VertexFormatElement(0, VertexFormatElement.EnumType.BYTE, VertexFormatElement.EnumUsage.NORMAL, 3));
-        CUSTOM_FORMAT.addElement(new VertexFormatElement(0, VertexFormatElement.EnumType.BYTE, VertexFormatElement.EnumUsage.PADDING, 1));
-    }
-
     public static void init()
     {
         IResourceManager rm = Minecraft.getMinecraft().getResourceManager();
@@ -56,6 +41,18 @@ public class RenderingStuffs
                 }
             });
         }
+    }
+
+    public static void renderModel(IFlexibleBakedModel model)
+    {
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+        worldrenderer.begin(GL11.GL_QUADS, model.getFormat());
+        for (BakedQuad bakedquad : model.getGeneralQuads())
+        {
+            worldrenderer.addVertexData(bakedquad.getVertexData());
+        }
+        tessellator.draw();
     }
 
     public static void renderModel(IFlexibleBakedModel model, int color)
@@ -74,6 +71,7 @@ public class RenderingStuffs
     {
         return loadModel(resourceName, Attributes.DEFAULT_BAKED_FORMAT);
     }
+
     public static IFlexibleBakedModel loadModel(String resourceName, VertexFormat fmt)
     {
         IFlexibleBakedModel model = loadedModels.get(resourceName);
