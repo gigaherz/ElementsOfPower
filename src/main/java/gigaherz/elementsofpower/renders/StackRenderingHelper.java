@@ -2,12 +2,11 @@ package gigaherz.elementsofpower.renders;
 
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.pipeline.LightUtil;
 import org.lwjgl.opengl.GL11;
 
@@ -46,15 +45,11 @@ public class StackRenderingHelper
 
     private static void renderItem(IBakedModel model, int color)
     {
-        IFlexibleBakedModel fbm = null;
-        if (model instanceof IFlexibleBakedModel)
-            fbm = (IFlexibleBakedModel) model;
-
         Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-        worldrenderer.begin(GL11.GL_QUADS, fbm != null ? fbm.getFormat() : DefaultVertexFormats.ITEM);
+        VertexBuffer worldrenderer = tessellator.getBuffer();
+        worldrenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
 
-        for (BakedQuad bakedquad : model.getGeneralQuads())
+        for (BakedQuad bakedquad : model.getQuads(null, null, 0))
         {
             LightUtil.renderQuadColor(worldrenderer, bakedquad, color);
         }

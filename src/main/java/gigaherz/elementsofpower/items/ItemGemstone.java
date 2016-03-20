@@ -11,8 +11,8 @@ import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.List;
@@ -51,7 +51,7 @@ public class ItemGemstone extends ItemMagicContainer
     @Override
     public String getItemStackDisplayName(ItemStack stack)
     {
-        String gemPart = StatCollector.translateToLocal(getUnlocalizedName(stack) + ".name");
+        String gemPart = I18n.translateToLocal(getUnlocalizedName(stack) + ".name");
 
         Quality q = getQuality(stack);
 
@@ -61,7 +61,7 @@ public class ItemGemstone extends ItemMagicContainer
 
         qName += q.getUnlocalizedName();
 
-        String qualityPart = StatCollector.translateToLocal(qName);
+        String qualityPart = I18n.translateToLocal(qName);
 
         return (qualityPart + " " + gemPart).trim();
     }
@@ -158,9 +158,9 @@ public class ItemGemstone extends ItemMagicContainer
     public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced)
     {
         if (getQuality(stack) == null)
-            tooltip.add(EnumChatFormatting.DARK_GRAY + "" + EnumChatFormatting.ITALIC + StatCollector.translateToLocal("text." + ElementsOfPower.MODID + ".gemstone.use"));
+            tooltip.add(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + I18n.translateToLocal("text." + ElementsOfPower.MODID + ".gemstone.use"));
         else
-            tooltip.add(EnumChatFormatting.DARK_GRAY + "" + EnumChatFormatting.ITALIC + StatCollector.translateToLocal("text." + ElementsOfPower.MODID + ".gemstone.combine"));
+            tooltip.add(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + I18n.translateToLocal("text." + ElementsOfPower.MODID + ".gemstone.combine"));
         super.addInformation(stack, playerIn, tooltip, advanced);
     }
 }

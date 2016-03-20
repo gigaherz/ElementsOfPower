@@ -3,19 +3,19 @@ package gigaherz.elementsofpower.essentializer;
 import gigaherz.elementsofpower.renders.RenderingStuffs;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.MathHelper;
-import net.minecraftforge.client.model.IFlexibleBakedModel;
+import net.minecraft.util.math.MathHelper;
 
 public class RenderEssentializer extends TileEntitySpecialRenderer<TileEssentializer>
 {
     @Override
     public void renderTileEntityAt(TileEssentializer te, double x, double y, double z, float partialTicks, int destroyStage)
     {
-        IFlexibleBakedModel model = RenderingStuffs.loadModel("elementsofpower:block/essentializer_2.obj");
+        IBakedModel model = RenderingStuffs.loadModel("elementsofpower:block/essentializer_2.obj");
 
         bindTexture(TextureMap.locationBlocksTexture);
 

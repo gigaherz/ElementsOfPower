@@ -4,11 +4,12 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
@@ -19,13 +20,12 @@ import net.minecraftforge.client.model.*;
 import net.minecraftforge.client.model.pipeline.LightUtil;
 import org.lwjgl.opengl.GL11;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class RenderingStuffs
 {
-    static Map<String, IFlexibleBakedModel> loadedModels = new HashMap<>();
+    static Map<String, IBakedModel> loadedModels = new HashMap<>();
 
     public static void init()
     {
@@ -43,38 +43,43 @@ public class RenderingStuffs
         }
     }
 
-    public static void renderModel(IFlexibleBakedModel model)
+    public static void renderModel(IBakedModel model)
+    {
+        renderModel(model, DefaultVertexFormats.ITEM);
+    }
+
+    public static void renderModel(IBakedModel model, VertexFormat fmt)
     {
         Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-        worldrenderer.begin(GL11.GL_QUADS, model.getFormat());
-        for (BakedQuad bakedquad : model.getGeneralQuads())
+        VertexBuffer worldrenderer = tessellator.getBuffer();
+        worldrenderer.begin(GL11.GL_QUADS, fmt);
+        for (BakedQuad bakedquad : model.getQuads(null, null, 0))
         {
             worldrenderer.addVertexData(bakedquad.getVertexData());
         }
         tessellator.draw();
     }
 
-    public static void renderModel(IFlexibleBakedModel model, int color)
+    public static void renderModel(IBakedModel model, int color)
     {
         Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-        worldrenderer.begin(GL11.GL_QUADS, model.getFormat());
-        for (BakedQuad bakedquad : model.getGeneralQuads())
+        VertexBuffer worldrenderer = tessellator.getBuffer();
+        worldrenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
+        for (BakedQuad bakedquad : model.getQuads(null, null, 0))
         {
             LightUtil.renderQuadColor(worldrenderer, bakedquad, color);
         }
         tessellator.draw();
     }
 
-    public static IFlexibleBakedModel loadModel(String resourceName)
+    public static IBakedModel loadModel(String resourceName)
     {
-        return loadModel(resourceName, Attributes.DEFAULT_BAKED_FORMAT);
+        return loadModel(resourceName, DefaultVertexFormats.ITEM);
     }
 
-    public static IFlexibleBakedModel loadModel(String resourceName, VertexFormat fmt)
+    public static IBakedModel loadModel(String resourceName, VertexFormat fmt)
     {
-        IFlexibleBakedModel model = loadedModels.get(resourceName);
+        IBakedModel model = loadedModels.get(resourceName);
         if (model != null)
             return model;
 
@@ -87,13 +92,13 @@ public class RenderingStuffs
             loadedModels.put(resourceName, model);
             return model;
         }
-        catch (IOException e)
+        catch (Exception e)
         {
             throw new ReportedException(new CrashReport("Error loading custom model " + resourceName, e));
         }
     }
 
-    public static IFlexibleBakedModel loadModelRetextured(String resourceName, String... textureSwaps)
+    public static IBakedModel loadModelRetextured(String resourceName, String... textureSwaps)
     {
         if (textureSwaps.length % 2 != 0)
         {
@@ -106,7 +111,7 @@ public class RenderingStuffs
             key += "//" + textureSwaps[i] + "/" + textureSwaps[i + 1];
         }
 
-        IFlexibleBakedModel model = loadedModels.get(key);
+        IBakedModel model = loadedModels.get(key);
         if (model != null)
             return model;
 
@@ -129,7 +134,7 @@ public class RenderingStuffs
             loadedModels.put(key, model);
             return model;
         }
-        catch (IOException e)
+        catch (Exception e)
         {
             throw new ReportedException(new CrashReport("Error loading custom model " + resourceName, e));
         }

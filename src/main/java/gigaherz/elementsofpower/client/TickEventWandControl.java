@@ -11,6 +11,7 @@ import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -20,7 +21,8 @@ public class TickEventWandControl
     public static TickEventWandControl instance;
 
     public String sequence;
-    public ItemStack itemInUse = null;
+    public EnumHand handInUse = null;
+    public ItemStack activeStack = null;
     public int slotInUse;
     public int itemInUseCount;
 
@@ -62,12 +64,15 @@ public class TickEventWandControl
     {
         if (event.phase == TickEvent.Phase.START)
         {
-            if (itemInUse != null)
+            if (handInUse != null)
             {
                 EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-                if (player.getItemInUse() == null
+                if (player.isHandActive()
                         || player.getItemInUseCount() > itemInUseCount)
-                    player.setItemInUse(itemInUse, itemInUseCount);
+                {
+                    player.setActiveHand(handInUse);
+                    // FIXME: SET USE COUNTER
+                }
             }
         }
     }
@@ -78,7 +83,7 @@ public class TickEventWandControl
         if (event.phase != TickEvent.Phase.END)
             return;
 
-        if (itemInUse == null)
+        if (handInUse == null)
             return;
 
         EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
@@ -96,7 +101,7 @@ public class TickEventWandControl
         }
 
         if (heldItem == null ||
-                heldItem.getItem().shouldCauseReequipAnimation(itemInUse, heldItem, slotNumber != slotInUse))
+                heldItem.getItem().shouldCauseReequipAnimation(activeStack, heldItem, slotNumber != slotInUse))
         {
             endHoldingRightButton(true);
             return;
@@ -120,7 +125,7 @@ public class TickEventWandControl
             return;
 
         if (event.action == PlayerInteractEvent.Action.RIGHT_CLICK_AIR
-                && itemInUse == null)
+                && handInUse == null)
         {
             EntityPlayer player = Minecraft.getMinecraft().thePlayer;
             int slotNumber = player.inventory.currentItem;
@@ -128,23 +133,27 @@ public class TickEventWandControl
             if (itemUsing == null || !(itemUsing.getItem() instanceof ItemWand))
                 return;
 
-            beginHoldingRightButton(slotNumber, itemUsing);
+            // FIXME: Needs new playerInteract implementation
+            EnumHand hand = null;
+
+            beginHoldingRightButton(slotNumber, hand, itemUsing);
 
             event.setCanceled(true);
         }
     }
 
-    private void beginHoldingRightButton(int slotNumber, ItemStack itemUsing)
+    private void beginHoldingRightButton(int slotNumber, EnumHand hand, ItemStack itemUsing)
     {
         EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-        itemInUse = itemUsing;
-        itemInUseCount = itemInUse.getMaxItemUseDuration();
+        activeStack = itemUsing;
+        handInUse = hand;
+        itemInUseCount = activeStack.getMaxItemUseDuration();
         slotInUse = slotNumber;
 
-        player.setItemInUse(itemInUse, itemInUseCount);
+        player.setActiveHand(handInUse);
 
         sequence = "";
-        ElementsOfPower.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.BEGIN, player, slotInUse, null));
+        ElementsOfPower.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.BEGIN, slotInUse, null));
 
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
@@ -157,13 +166,14 @@ public class TickEventWandControl
         EntityPlayer player = Minecraft.getMinecraft().thePlayer;
         if (cancelMagicSetting)
         {
-            ElementsOfPower.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.CANCEL, player, slotInUse, null));
+            ElementsOfPower.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.CANCEL, slotInUse, null));
         }
         else
         {
-            ElementsOfPower.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.COMMIT, player, slotInUse, sequence.toString()));
+            ElementsOfPower.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.COMMIT, slotInUse, sequence));
         }
-        itemInUse = null;
+        handInUse = null;
+        activeStack = null;
         itemInUseCount = 0;
         slotInUse = -1;
         sequence = null;

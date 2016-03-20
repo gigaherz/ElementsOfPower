@@ -16,7 +16,10 @@ import net.minecraft.item.EnumAction;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
@@ -226,12 +229,12 @@ public class ItemGemContainer extends ItemMagicContainer
     {
         Quality q = getQuality(stack);
 
-        String namePart = StatCollector.translateToLocal(getUnlocalizedName(stack) + ".name");
+        String namePart = I18n.translateToLocal(getUnlocalizedName(stack) + ".name");
 
         if (q == null)
             return namePart;
 
-        String quality = StatCollector.translateToLocal(ElementsOfPower.MODID + ".gemContainer.quality" + q.getUnlocalizedName());
+        String quality = I18n.translateToLocal(ElementsOfPower.MODID + ".gemContainer.quality" + q.getUnlocalizedName());
 
         return quality + " " + namePart;
     }
@@ -243,19 +246,19 @@ public class ItemGemContainer extends ItemMagicContainer
     }
 
     @Override
-    public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player)
+    public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand)
     {
-        if (!world.isRemote)
+        if (!worldIn.isRemote)
         {
-            if (player.isSneaking())
+            if (playerIn.isSneaking())
             {
-                stack.getTagCompound().removeTag(SPELL_SEQUENCE_TAG);
+                itemStackIn.getTagCompound().removeTag(SPELL_SEQUENCE_TAG);
             }
         }
 
         // itemInUse handled by TickEventWandControl
 
-        return stack;
+        return ActionResult.newResult(EnumActionResult.SUCCESS, itemStackIn);
     }
 
     @Override

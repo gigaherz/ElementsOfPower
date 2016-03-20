@@ -6,8 +6,8 @@ import gigaherz.elementsofpower.spells.effects.SpellEffect;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
 public class BallShape extends SpellShape
@@ -30,7 +30,7 @@ public class BallShape extends SpellShape
         return null;
     }
 
-    public void onImpact(Spellcast cast, MovingObjectPosition mop)
+    public void onImpact(Spellcast cast, RayTraceResult mop)
     {
         SpellEffect effect = cast.getEffect();
 

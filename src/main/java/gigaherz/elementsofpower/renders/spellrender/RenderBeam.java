@@ -3,19 +3,19 @@ package gigaherz.elementsofpower.renders.spellrender;
 import gigaherz.elementsofpower.renders.RenderingStuffs;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
-import net.minecraftforge.client.model.IFlexibleBakedModel;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import org.lwjgl.opengl.GL11;
 
 public class RenderBeam extends RenderSpell
 {
 
     @Override
-    public void doRender(Spellcast cast, EntityPlayer player, RenderManager renderManager, double x, double y, double z, float partialTicks, Vec3 offset, String tex)
+    public void doRender(Spellcast cast, EntityPlayer player, RenderManager renderManager, double x, double y, double z, float partialTicks, Vec3d offset, String tex)
     {
         int beam_color = cast.getColor();
         float scale = 0.15f * cast.getScale();
@@ -25,22 +25,22 @@ public class RenderBeam extends RenderSpell
             beam_color = 0xFFFFFF;
         }
 
-        IFlexibleBakedModel modelSphere = RenderingStuffs.loadModelRetextured("elementsofpower:entity/sphere.obj",
+        IBakedModel modelSphere = RenderingStuffs.loadModelRetextured("elementsofpower:entity/sphere.obj",
                 "#Default", tex);
-        IFlexibleBakedModel modelCyl = RenderingStuffs.loadModelRetextured("elementsofpower:entity/cylinder.obj",
+        IBakedModel modelCyl = RenderingStuffs.loadModelRetextured("elementsofpower:entity/cylinder.obj",
                 "#Default", tex);
 
-        MovingObjectPosition mop = cast.getHitPosition();
+        RayTraceResult mop = cast.getHitPosition();
 
-        Vec3 start = cast.start;
-        Vec3 end = cast.end;
+        Vec3d start = cast.start;
+        Vec3d end = cast.end;
 
-        Vec3 beam0 = end.subtract(start);
+        Vec3d beam0 = end.subtract(start);
 
         start = start.add(offset);
 
-        Vec3 beam = end.subtract(start);
-        Vec3 dir = beam.normalize();
+        Vec3d beam = end.subtract(start);
+        Vec3d dir = beam.normalize();
 
         double distance = beam.lengthVector();
 

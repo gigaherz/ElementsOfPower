@@ -6,13 +6,13 @@ import gigaherz.elementsofpower.spells.effects.WaterEffect;
 import gigaherz.elementsofpower.spells.effects.WindEffect;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 
 public abstract class RenderSpell
 {
-    public abstract void doRender(Spellcast spellcast, EntityPlayer player, RenderManager renderManager, double x, double y, double z, float partialTicks, Vec3 offset, String tex);
+    public abstract void doRender(Spellcast spellcast, EntityPlayer player, RenderManager renderManager, double x, double y, double z, float partialTicks, Vec3d offset, String tex);
 
-    public void doRender(Spellcast spellcast, EntityPlayer player, RenderManager renderManager, double x, double y, double z, float partialTicks, Vec3 offset)
+    public void doRender(Spellcast spellcast, EntityPlayer player, RenderManager renderManager, double x, double y, double z, float partialTicks, Vec3d offset)
     {
         String tex = "minecraft:white";
 

@@ -3,17 +3,17 @@ package gigaherz.elementsofpower.renders.spellrender;
 import gigaherz.elementsofpower.renders.RenderingStuffs;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.Vec3;
-import net.minecraftforge.client.model.IFlexibleBakedModel;
+import net.minecraft.util.math.Vec3d;
 import org.lwjgl.opengl.GL11;
 
 public class RenderCone extends RenderSpell
 {
     @Override
-    public void doRender(Spellcast cast, EntityPlayer player, RenderManager renderManager, double x, double y, double z, float partialTicks, Vec3 offset, String tex)
+    public void doRender(Spellcast cast, EntityPlayer player, RenderManager renderManager, double x, double y, double z, float partialTicks, Vec3d offset, String tex)
     {
         int color = cast.getColor();
         float scale = 2 * cast.getScale();
@@ -23,18 +23,18 @@ public class RenderCone extends RenderSpell
             color = 0xFFFFFF;
         }
 
-        IFlexibleBakedModel modelCone = RenderingStuffs.loadModelRetextured("elementsofpower:entity/cone.obj",
+        IBakedModel modelCone = RenderingStuffs.loadModelRetextured("elementsofpower:entity/cone.obj",
                 "#Default", tex);
 
         cast.getHitPosition();
 
-        Vec3 start = cast.start;
-        Vec3 end = cast.end;
+        Vec3d start = cast.start;
+        Vec3d end = cast.end;
 
         start = start.add(offset);
 
-        Vec3 beam = end.subtract(start);
-        Vec3 dir = beam.normalize();
+        Vec3d beam = end.subtract(start);
+        Vec3d dir = beam.normalize();
 
         double beamPlane = Math.sqrt(dir.xCoord * dir.xCoord + dir.zCoord * dir.zCoord);
         double beamYaw = Math.atan2(dir.zCoord, dir.xCoord);

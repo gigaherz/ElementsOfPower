@@ -6,7 +6,7 @@ import gigaherz.elementsofpower.gemstones.Element;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.common.util.Constants;
 
 import java.lang.reflect.Type;
@@ -37,7 +37,7 @@ public class MagicAmounts
 
     public static String getMagicName(int i)
     {
-        return StatCollector.translateToLocal(magicNames[i]);
+        return I18n.translateToLocal(magicNames[i]);
     }
 
     public final float[] amounts = new float[ELEMENTS];

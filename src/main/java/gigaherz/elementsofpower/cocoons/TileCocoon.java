@@ -2,11 +2,12 @@ package gigaherz.elementsofpower.cocoons;
 
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.gemstones.Element;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 
@@ -44,7 +45,9 @@ public class TileCocoon extends TileEntity implements ITickable
     public void addEssences(ItemStack stack)
     {
         essenceContained.element(Element.values()[stack.getMetadata()], 1);
-        worldObj.markBlockForUpdate(pos);
+
+        IBlockState state = worldObj.getBlockState(pos);
+        worldObj.notifyBlockUpdate(pos, state, state, 4);
     }
 
     @Override
@@ -52,11 +55,11 @@ public class TileCocoon extends TileEntity implements ITickable
     {
         NBTTagCompound tag = new NBTTagCompound();
         this.writeToNBT(tag);
-        return new S35PacketUpdateTileEntity(this.pos, 0, tag);
+        return new SPacketUpdateTileEntity(this.pos, 0, tag);
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet)
+    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet)
     {
         super.onDataPacket(net, packet);
         readFromNBT(packet.getNbtCompound());

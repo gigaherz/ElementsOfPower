@@ -4,8 +4,8 @@ import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 
 public class BeamShape extends SpellShape
 {
@@ -30,15 +30,15 @@ public class BeamShape extends SpellShape
     @Override
     public void spellTick(Spellcast cast)
     {
-        MovingObjectPosition mop = cast.getHitPosition();
+        RayTraceResult mop = cast.getHitPosition();
 
         if (mop != null)
         {
-            if (mop.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY)
+            if (mop.typeOfHit == RayTraceResult.Type.ENTITY)
             {
                 cast.getEffect().processDirectHit(cast, mop.entityHit);
             }
-            else if (mop.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK)
+            else if (mop.typeOfHit == RayTraceResult.Type.BLOCK)
             {
                 BlockPos pos = mop.getBlockPos();
                 IBlockState state = cast.world.getBlockState(pos);

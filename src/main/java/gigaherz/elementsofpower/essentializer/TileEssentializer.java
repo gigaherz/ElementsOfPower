@@ -5,6 +5,7 @@ import gigaherz.elementsofpower.database.ContainerInformation;
 import gigaherz.elementsofpower.database.EssenceConversions;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.network.EssentializerTileUpdate;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.InventoryBasic;
@@ -13,11 +14,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
@@ -119,16 +120,18 @@ public class TileEssentializer
     public Packet getDescriptionPacket()
     {
         NBTTagCompound tag = new NBTTagCompound();
-        this.writeToNBT(tag);
-        return new S35PacketUpdateTileEntity(this.pos, 0, tag);
+        writeToNBT(tag);
+        return new SPacketUpdateTileEntity(pos, 0, tag);
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet)
+    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet)
     {
         super.onDataPacket(net, packet);
         readFromNBT(packet.getNbtCompound());
-        this.worldObj.markBlockForUpdate(this.pos);
+
+        IBlockState state = worldObj.getBlockState(pos);
+        worldObj.notifyBlockUpdate(pos, state, state, 4);
     }
 
     @Override
@@ -142,7 +145,7 @@ public class TileEssentializer
             boolean b3 = addMagicToOutput(inventory);
             if (b0 || b1 || b2 || b3)
             {
-                ElementsOfPower.channel.sendToAllAround(new EssentializerTileUpdate(this), new NetworkRegistry.TargetPoint(worldObj.provider.getDimensionId(), pos.getX(), pos.getY(), pos.getZ(), 50));
+                ElementsOfPower.channel.sendToAllAround(new EssentializerTileUpdate(this), new NetworkRegistry.TargetPoint(worldObj.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 50));
             }
             if (b1 || b2 || b3)
             {
@@ -330,7 +333,7 @@ public class TileEssentializer
     }
 
     @Override
-    public IChatComponent getDisplayName()
+    public ITextComponent getDisplayName()
     {
         return inventory.getDisplayName();
     }

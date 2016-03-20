@@ -2,16 +2,18 @@ package gigaherz.elementsofpower.blocks;
 
 import gigaherz.elementsofpower.ElementsOfPower;
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
+import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyInteger;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -32,15 +34,14 @@ public class BlockDust extends Block
         setUnlocalizedName(ElementsOfPower.MODID + ".dust");
         setHardness(0.1F);
         setBlockUnbreakable();
-        setStepSound(Block.soundTypeCloth);
+        setStepSound(SoundType.CLOTH);
         setDefaultState(this.blockState.getBaseState()
                 .withProperty(DENSITY, 16));
     }
 
     @Override
-    public int getLightOpacity(IBlockAccess world, BlockPos pos)
+    public int getLightOpacity(IBlockState state)
     {
-        IBlockState state = world.getBlockState(pos);
         if (state.getBlock() != this)
             return 16;
         return state.getValue(DENSITY);
@@ -53,22 +54,22 @@ public class BlockDust extends Block
     }
 
     @Override
-    public EnumWorldBlockLayer getBlockLayer()
+    public BlockRenderLayer getBlockLayer()
     {
-        return EnumWorldBlockLayer.TRANSLUCENT;
+        return BlockRenderLayer.TRANSLUCENT;
     }
 
     @Override
-    public boolean isOpaqueCube()
+    public boolean isOpaqueCube(IBlockState state)
     {
         return false;
     }
 
     @Override
-    public boolean shouldSideBeRendered(IBlockAccess worldIn, BlockPos pos, EnumFacing side)
+    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side)
     {
-        IBlockState current = worldIn.getBlockState(pos);
-        IBlockState opposite = worldIn.getBlockState(pos.offset(side.getOpposite()));
+        IBlockState current = blockAccess.getBlockState(pos);
+        IBlockState opposite = blockAccess.getBlockState(pos.offset(side.getOpposite()));
 
         return opposite != current;
     }
@@ -83,7 +84,7 @@ public class BlockDust extends Block
         {
             BlockPos bp = pos.offset(f);
             IBlockState neighbour = worldIn.getBlockState(bp);
-            if (neighbour.getBlock().isAir(worldIn, bp)
+            if (neighbour.getBlock().isAir(neighbour, worldIn, bp)
                     || neighbour.getBlock() == Blocks.fire)
             {
                 boolean given = false;
@@ -132,9 +133,9 @@ public class BlockDust extends Block
     }
 
     @Override
-    public int getMobilityFlag()
+    public EnumPushReaction getMobilityFlag(IBlockState state)
     {
-        return 1;
+        return EnumPushReaction.IGNORE;
     }
 
     @Override
@@ -158,13 +159,13 @@ public class BlockDust extends Block
     }
 
     @Override
-    protected BlockState createBlockState()
+    protected BlockStateContainer createBlockState()
     {
-        return new BlockState(this, DENSITY);
+        return new BlockStateContainer(this, DENSITY);
     }
 
     @Override
-    public boolean isReplaceable(World worldIn, BlockPos pos)
+    public boolean isReplaceable(IBlockAccess worldIn, BlockPos pos)
     {
         return true;
     }
@@ -176,7 +177,7 @@ public class BlockDust extends Block
     }
 
     @Override
-    public AxisAlignedBB getCollisionBoundingBox(World worldIn, BlockPos pos, IBlockState state)
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
     {
         return null;
     }

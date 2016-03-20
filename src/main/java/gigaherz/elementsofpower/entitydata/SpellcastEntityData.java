@@ -7,19 +7,22 @@ import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.common.IExtendedEntityProperties;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.*;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.event.entity.EntityEvent;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
-public class SpellcastEntityData implements IExtendedEntityProperties
+public class SpellcastEntityData
 {
-    public static final String PROP_NAME = ElementsOfPower.MODID + "_SpellcastData";
+    public static final ResourceLocation PROP_KEY = new ResourceLocation(ElementsOfPower.MODID, "SpellcastData");
 
     EntityPlayer player;
     World world;
@@ -27,7 +30,7 @@ public class SpellcastEntityData implements IExtendedEntityProperties
 
     public static SpellcastEntityData get(EntityPlayer p)
     {
-        return (SpellcastEntityData) p.getExtendedProperties(PROP_NAME);
+        return p.getCapability(Handler.SPELLCAST, null);
     }
 
     public static void register()
@@ -35,7 +38,6 @@ public class SpellcastEntityData implements IExtendedEntityProperties
         MinecraftForge.EVENT_BUS.register(new Handler());
     }
 
-    @Override
     public void saveNBTData(NBTTagCompound compound)
     {
         if (currentCasting != null)
@@ -47,7 +49,6 @@ public class SpellcastEntityData implements IExtendedEntityProperties
         }
     }
 
-    @Override
     public void loadNBTData(NBTTagCompound compound)
     {
         if (compound.hasKey("currentSpell", Constants.NBT.TAG_COMPOUND))
@@ -61,7 +62,6 @@ public class SpellcastEntityData implements IExtendedEntityProperties
         }
     }
 
-    @Override
     public void init(Entity entity, World world)
     {
         this.player = (EntityPlayer) entity;
@@ -181,13 +181,75 @@ public class SpellcastEntityData implements IExtendedEntityProperties
 
     public static class Handler
     {
-        @SubscribeEvent
-        public void entityConstruct(EntityEvent.EntityConstructing e)
+        @CapabilityInject(SpellcastEntityData.class)
+        public static Capability<SpellcastEntityData> SPELLCAST;
+
+        public Handler()
         {
-            if (e.entity instanceof EntityPlayer)
+            CapabilityManager.INSTANCE.register(SpellcastEntityData.class, new Capability.IStorage<SpellcastEntityData>()
             {
-                if (e.entity.getExtendedProperties(PROP_NAME) == null)
-                    e.entity.registerExtendedProperties(PROP_NAME, new SpellcastEntityData());
+                @Override
+                public NBTBase writeNBT(Capability<SpellcastEntityData> capability, SpellcastEntityData instance, EnumFacing side)
+                {
+                    return null;
+                }
+
+                @Override
+                public void readNBT(Capability<SpellcastEntityData> capability, SpellcastEntityData instance, EnumFacing side, NBTBase nbt)
+                {
+
+                }
+            }, () -> null);
+
+        }
+
+        @SubscribeEvent
+        public void attachCapabilities(AttachCapabilitiesEvent.Entity e)
+        {
+            final Entity entity = e.getEntity();
+
+            if (entity instanceof EntityPlayer)
+            {
+                if (entity.getCapability(SPELLCAST, null) == null)
+                {
+                    e.addCapability(PROP_KEY, new ICapabilitySerializable<NBTTagCompound>()
+                    {
+                        SpellcastEntityData cap = new SpellcastEntityData();
+
+                        {
+                            cap.init(entity, entity.worldObj);
+                        }
+
+                        @Override
+                        public boolean hasCapability(Capability<?> capability, EnumFacing facing)
+                        {
+                            return capability == SPELLCAST;
+                        }
+
+                        @SuppressWarnings("unchecked")
+                        @Override
+                        public <T> T getCapability(Capability<T> capability, EnumFacing facing)
+                        {
+                            if (capability == SPELLCAST)
+                                return (T)cap;
+                            return null;
+                        }
+
+                        @Override
+                        public NBTTagCompound serializeNBT()
+                        {
+                            NBTTagCompound tag = new NBTTagCompound();
+                            cap.saveNBTData(tag);
+                            return tag;
+                        }
+
+                        @Override
+                        public void deserializeNBT(NBTTagCompound nbt)
+                        {
+                            cap.loadNBTData(nbt);
+                        }
+                    });
+                }
             }
         }
 

@@ -3,10 +3,11 @@ package gigaherz.elementsofpower.blocks;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.gemstones.GemstoneBlockType;
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemBlock;
@@ -24,15 +25,15 @@ public class BlockGemstone extends Block
 
         setHardness(5.0F);
         setResistance(10.0F);
-        setStepSound(soundTypeMetal);
+        setStepSound(SoundType.METAL);
         setCreativeTab(CreativeTabs.tabBlock);
         setUnlocalizedName(ElementsOfPower.MODID + ".gemstoneBlock");
     }
 
     @Override
-    protected BlockState createBlockState()
+    protected BlockStateContainer createBlockState()
     {
-        return new BlockState(this, TYPE);
+        return new BlockStateContainer(this, TYPE);
     }
 
     @Override

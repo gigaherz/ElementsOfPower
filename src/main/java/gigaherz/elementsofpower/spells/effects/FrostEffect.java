@@ -8,6 +8,9 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.*;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 public class FrostEffect extends SpellEffect
@@ -37,19 +40,19 @@ public class FrostEffect extends SpellEffect
     }
 
     @Override
-    public boolean processEntitiesAroundBefore(Spellcast cast, Vec3 hitVec)
+    public boolean processEntitiesAroundBefore(Spellcast cast, Vec3d hitVec)
     {
         return true;
     }
 
     @Override
-    public void processEntitiesAroundAfter(Spellcast cast, Vec3 hitVec)
+    public void processEntitiesAroundAfter(Spellcast cast, Vec3d hitVec)
     {
 
     }
 
     @Override
-    public void spawnBallParticles(Spellcast cast, MovingObjectPosition mop)
+    public void spawnBallParticles(Spellcast cast, RayTraceResult mop)
     {
         for (int i = 0; i < 8; ++i)
         {
@@ -59,7 +62,7 @@ public class FrostEffect extends SpellEffect
     }
 
     @Override
-    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, float r, MovingObjectPosition mop)
+    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, float r, RayTraceResult mop)
     {
         if (mop != null)
         {

@@ -10,20 +10,20 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraft.client.renderer.vertex.*;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.IFlexibleBakedModel;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -369,7 +369,7 @@ public class GuiGuidebook extends GuiScreen
 
     private void drawBackgroundModel(float partialTicks)
     {
-        IFlexibleBakedModel modelBookA, modelBookB;
+        IBakedModel modelBookA, modelBookB;
 
         float angleX;
 
@@ -452,26 +452,26 @@ public class GuiGuidebook extends GuiScreen
         GlStateManager.disableDepth();
     }
 
-    public static void renderModel(IFlexibleBakedModel model)
+    public static void renderModel(IBakedModel model)
     {
         Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-        worldrenderer.begin(GL11.GL_QUADS, model.getFormat());
-        for (BakedQuad quad : model.getGeneralQuads())
+        VertexBuffer worldrenderer = tessellator.getBuffer();
+        worldrenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
+        for (BakedQuad quad : model.getQuads(null, null, 0))
         {
             worldrenderer.addVertexData(quad.getVertexData());
         }
         tessellator.draw();
     }
 
-    public static void renderModelInterpolate(IFlexibleBakedModel modelA, IFlexibleBakedModel modelB, float blend)
+    public static void renderModelInterpolate(IBakedModel modelA, IBakedModel modelB, float blend)
     {
-        VertexFormat fmt = modelA.getFormat();
+        VertexFormat fmt = DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL;
         Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+        VertexBuffer worldrenderer = tessellator.getBuffer();
         worldrenderer.begin(GL11.GL_QUADS, fmt);
-        List<BakedQuad> generalQuadsA = modelA.getGeneralQuads();
-        List<BakedQuad> generalQuadsB = modelB.getGeneralQuads();
+        List<BakedQuad> generalQuadsA = modelA.getQuads(null, null, 0);
+        List<BakedQuad> generalQuadsB = modelB.getQuads(null, null, 0);
 
         int length = fmt.getNextOffset();
 
@@ -587,7 +587,7 @@ public class GuiGuidebook extends GuiScreen
                 ch.pages.add(pg);
 
                 pg.elements.add(new Paragraph("Error loading book:"));
-                pg.elements.add(new Paragraph(EnumChatFormatting.RED + e.toString()));
+                pg.elements.add(new Paragraph(TextFormatting.RED + e.toString()));
             }
         }
 
@@ -977,7 +977,7 @@ public class GuiGuidebook extends GuiScreen
 
         public Link(String text)
         {
-            super(EnumChatFormatting.UNDERLINE + text);
+            super(TextFormatting.UNDERLINE + text);
             color = 0xFF7766cc;
         }
 
@@ -1006,7 +1006,7 @@ public class GuiGuidebook extends GuiScreen
     {
         public Title(String text)
         {
-            super(EnumChatFormatting.ITALIC + "" + EnumChatFormatting.UNDERLINE + text);
+            super(TextFormatting.ITALIC + "" + TextFormatting.UNDERLINE + text);
             alignment = 1;
             space = 4;
         }

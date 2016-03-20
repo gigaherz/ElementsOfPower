@@ -63,7 +63,7 @@ public class MagicContainerOverlay extends Gui
 
             String formatted = ContainerInformation.isInfiniteContainer(heldItem) ? "\u221E" : ElementsOfPower.prettyNumberFormatter.format(amounts.amounts[i]);
             this.drawCenteredString(font, formatted, xPos + 8, yPos + 11, 0xFFC0C0C0);
-            if (TickEventWandControl.instance.itemInUse != null)
+            if (TickEventWandControl.instance.handInUse != null)
                 this.drawCenteredString(font, "K:" + (i + 1), xPos + 8, yPos + 24, 0xFFC0C0C0);
 
             xPos += 28;
@@ -97,7 +97,7 @@ public class MagicContainerOverlay extends Gui
             // New spell sequence
             xPos = (rescaledWidth - 6 * (TickEventWandControl.instance.sequence.length() - 1) - 14) / 2;
             yPos = rescaledHeight / 2 + 16;
-            for (char c : TickEventWandControl.instance.sequence.toString().toCharArray())
+            for (char c : TickEventWandControl.instance.sequence.toCharArray())
             {
                 int i = SpellManager.elementIndices.get(c);
 

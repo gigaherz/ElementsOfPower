@@ -12,9 +12,9 @@ import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.translation.I18n;
 
 import java.util.List;
 
@@ -79,8 +79,8 @@ public class GuiEssentializer extends GuiContainer
     @Override
     protected void drawGuiContainerForegroundLayer(int x, int y)
     {
-        mc.fontRendererObj.drawString(StatCollector.translateToLocal(this.tile.getName()), 8, 6, 0x404040);
-        mc.fontRendererObj.drawString(StatCollector.translateToLocal(this.player.getName()), 8, ySize - 96 + 3, 0x404040);
+        mc.fontRendererObj.drawString(I18n.translateToLocal(this.tile.getName()), 8, 6, 0x404040);
+        mc.fontRendererObj.drawString(I18n.translateToLocal(this.player.getName()), 8, ySize - 96 + 3, 0x404040);
 
         float opaqueLevel = TileEssentializer.MaxConvertPerTick * 20; // approx 3s fadeout
 
@@ -181,7 +181,7 @@ public class GuiEssentializer extends GuiContainer
 
             List<String> tooltip = Lists.newArrayList();
             tooltip.add(MagicAmounts.getMagicName(i));
-            tooltip.add(EnumChatFormatting.GRAY + ElementsOfPower.prettyNumberFormatter2.format(am.amounts[i]) + " / " + TileEssentializer.MaxEssentializerMagic);
+            tooltip.add(TextFormatting.GRAY + ElementsOfPower.prettyNumberFormatter2.format(am.amounts[i]) + " / " + TileEssentializer.MaxEssentializerMagic);
 
             drawHoveringText(tooltip, mx - x0, my - y0);
         }

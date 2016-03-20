@@ -12,7 +12,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.text.translation.I18n;
 
 public class GuiAnalyzer extends GuiContainer
 {
@@ -41,9 +41,9 @@ public class GuiAnalyzer extends GuiContainer
     @Override
     protected void drawGuiContainerForegroundLayer(int x, int y)
     {
-        String name = StatCollector.translateToLocal(guiTitle);
+        String name = I18n.translateToLocal(guiTitle);
         mc.fontRendererObj.drawString(name, (xSize - mc.fontRendererObj.getStringWidth(name)) / 2, 6, 0x404040);
-        mc.fontRendererObj.drawString(StatCollector.translateToLocal(this.player.inventory.getName()), 8, ySize - 96 + 3, 0x404040);
+        mc.fontRendererObj.drawString(I18n.translateToLocal(this.player.inventory.getName()), 8, ySize - 96 + 3, 0x404040);
 
         Slot slotAnalyze = inventorySlots.inventorySlots.get(0);
         ItemStack stack = slotAnalyze.getStack();

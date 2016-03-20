@@ -2,11 +2,11 @@ package gigaherz.elementsofpower.renders;
 
 import gigaherz.elementsofpower.entities.EntityEssence;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.IFlexibleBakedModel;
 import org.lwjgl.opengl.GL11;
 
 public class RenderEssence extends Render<EntityEssence>
@@ -19,7 +19,7 @@ public class RenderEssence extends Render<EntityEssence>
     @Override
     public void doRender(EntityEssence entity, double x, double y, double z, float p_76986_8_, float partialTicks)
     {
-        IFlexibleBakedModel model = RenderingStuffs.loadModel("elementsofpower:entity/sphere.obj");
+        IBakedModel model = RenderingStuffs.loadModel("elementsofpower:entity/sphere.obj");
 
         float scale = entity.getScale();
 

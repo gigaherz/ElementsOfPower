@@ -2,11 +2,11 @@ package gigaherz.elementsofpower.renders;
 
 import gigaherz.elementsofpower.entities.EntityBall;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.IFlexibleBakedModel;
 
 public class RenderBall extends Render<EntityBall>
 {
@@ -18,7 +18,7 @@ public class RenderBall extends Render<EntityBall>
     @Override
     public void doRender(EntityBall entity, double x, double y, double z, float p_76986_8_, float partialTicks)
     {
-        IFlexibleBakedModel model = RenderingStuffs.loadModel("elementsofpower:entity/sphere.obj");
+        IBakedModel model = RenderingStuffs.loadModel("elementsofpower:entity/sphere.obj");
 
         float scale = entity.getScale() * 0.25f;
 

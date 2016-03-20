@@ -7,9 +7,14 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.MobEffects;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.*;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 
 import java.util.List;
 
@@ -33,7 +38,7 @@ public class HealthEffect extends SpellEffect
         return 8;
     }
 
-    private void healEntities(Spellcast cast, Vec3 hitVec, List<? extends EntityLivingBase> living)
+    private void healEntities(Spellcast cast, Vec3d hitVec, List<? extends EntityLivingBase> living)
     {
         for (EntityLivingBase e : living)
         {
@@ -57,28 +62,10 @@ public class HealthEffect extends SpellEffect
         int emp = cast.getEmpowering();
 
         if (-emp < lv)
-            causePotionEffect(cast, e, Potion.heal, 0, (lv + emp) * 0.5, 0.0);
+            causePotionEffect(cast, e, MobEffects.heal, 0, (lv + emp) * 0.5, 0.0);
 
         if (emp < lv)
-            causePotionEffect(cast, e, Potion.regeneration, 0, (lv - emp), 100.0);
-    }
-
-    private void causePotionEffect(Spellcast cast, EntityLivingBase e, Potion potion, int amplifier, double distance, double durationBase)
-    {
-        int id = potion.getId();
-        if (Potion.potionTypes[id].isInstant())
-        {
-            Potion.potionTypes[id].affectEntity(cast.projectile, cast.player, e, amplifier, distance);
-        }
-        else
-        {
-            int j = (int) (distance * durationBase + 0.5D);
-
-            if (j > 20)
-            {
-                e.addPotionEffect(new PotionEffect(id, j, amplifier));
-            }
-        }
+            causePotionEffect(cast, e, MobEffects.regeneration, 0, (lv - emp), 100.0);
     }
 
     @Override
@@ -89,13 +76,13 @@ public class HealthEffect extends SpellEffect
     }
 
     @Override
-    public boolean processEntitiesAroundBefore(Spellcast cast, Vec3 hitVec)
+    public boolean processEntitiesAroundBefore(Spellcast cast, Vec3d hitVec)
     {
         return true;
     }
 
     @Override
-    public void processEntitiesAroundAfter(Spellcast cast, Vec3 hitVec)
+    public void processEntitiesAroundAfter(Spellcast cast, Vec3d hitVec)
     {
         AxisAlignedBB aabb = new AxisAlignedBB(
                 hitVec.xCoord - cast.getDamageForce(),
@@ -110,14 +97,14 @@ public class HealthEffect extends SpellEffect
     }
 
     @Override
-    public void spawnBallParticles(Spellcast cast, MovingObjectPosition mop)
+    public void spawnBallParticles(Spellcast cast, RayTraceResult mop)
     {
         cast.spawnRandomParticle(EnumParticleTypes.FLAME,
                 mop.hitVec.xCoord, mop.hitVec.yCoord, mop.hitVec.zCoord);
     }
 
     @Override
-    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, float r, MovingObjectPosition mop)
+    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, float r, RayTraceResult mop)
     {
         Block block = currentState.getBlock();
 

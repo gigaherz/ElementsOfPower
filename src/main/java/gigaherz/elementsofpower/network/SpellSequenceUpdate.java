@@ -7,6 +7,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -24,8 +25,6 @@ public class SpellSequenceUpdate
         public static final ChangeMode values[] = values();
     }
 
-    public int dimension;
-    public int entityId;
     public int slotNumber;
 
     public ChangeMode changeMode;
@@ -36,11 +35,9 @@ public class SpellSequenceUpdate
     {
     }
 
-    public SpellSequenceUpdate(ChangeMode mode, EntityPlayer entity, int slotNumber, String sequence)
+    public SpellSequenceUpdate(ChangeMode mode, int slotNumber, String sequence)
     {
         changeMode = mode;
-        this.entityId = entity.getEntityId();
-        this.dimension = entity.dimension;
         this.sequence = sequence;
         this.slotNumber = slotNumber;
     }
@@ -48,10 +45,8 @@ public class SpellSequenceUpdate
     @Override
     public void fromBytes(ByteBuf buf)
     {
-        dimension = buf.readInt();
         int r = buf.readInt();
         changeMode = ChangeMode.values[r];
-        entityId = buf.readInt();
         slotNumber = buf.readByte();
         sequence = ByteBufUtils.readUTF8String(buf);
         if (sequence.length() == 0)
@@ -63,9 +58,7 @@ public class SpellSequenceUpdate
     @Override
     public void toBytes(ByteBuf buf)
     {
-        buf.writeInt(dimension);
         buf.writeInt(changeMode.ordinal());
-        buf.writeInt(entityId);
         buf.writeByte(slotNumber);
         if (sequence != null)
         {
@@ -83,10 +76,10 @@ public class SpellSequenceUpdate
         public IMessage onMessage(SpellSequenceUpdate message, MessageContext ctx)
         {
             final SpellSequenceUpdate msg = message;
-            final WorldServer ws = MinecraftServer.getServer().worldServerForDimension(message.dimension);
+            final WorldServer ws = (WorldServer)ctx.getServerHandler().playerEntity.worldObj;
 
             ws.addScheduledTask(() -> {
-                EntityPlayer player = (EntityPlayer) ws.getEntityByID(message.entityId);
+                EntityPlayer player = ctx.getServerHandler().playerEntity;
 
                 ItemStack stack = player.inventory.mainInventory[msg.slotNumber];
 

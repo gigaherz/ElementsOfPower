@@ -1,10 +1,10 @@
 package gigaherz.elementsofpower.blocks;
 
 import gigaherz.elementsofpower.ElementsOfPower;
-import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -16,7 +16,7 @@ public class BlockCushion extends BlockDust
         setUnlocalizedName(ElementsOfPower.MODID + ".cushion");
         setHardness(0.1F);
         setBlockUnbreakable();
-        setStepSound(Block.soundTypeCloth);
+        setStepSound(SoundType.CLOTH);
         setDefaultState(this.blockState.getBaseState()
                 .withProperty(DENSITY, 16));
     }
@@ -28,7 +28,7 @@ public class BlockCushion extends BlockDust
     }
 
     @Override
-    public int getLightOpacity(IBlockAccess world, BlockPos pos)
+    public int getLightOpacity(IBlockState state)
     {
         return 0;
     }

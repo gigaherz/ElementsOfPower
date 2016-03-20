@@ -3,9 +3,12 @@ package gigaherz.elementsofpower.spells.effects;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 
 public abstract class SpellEffect
 {
@@ -22,11 +25,28 @@ public abstract class SpellEffect
 
     public abstract void processDirectHit(Spellcast cast, Entity e);
 
-    public abstract boolean processEntitiesAroundBefore(Spellcast cast, Vec3 hitVec);
+    public abstract boolean processEntitiesAroundBefore(Spellcast cast, Vec3d hitVec);
 
-    public abstract void processEntitiesAroundAfter(Spellcast cast, Vec3 hitVec);
+    public abstract void processEntitiesAroundAfter(Spellcast cast, Vec3d hitVec);
 
-    public abstract void spawnBallParticles(Spellcast cast, MovingObjectPosition mop);
+    public abstract void spawnBallParticles(Spellcast cast, RayTraceResult mop);
 
-    public abstract void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, float distance, MovingObjectPosition mop);
+    public abstract void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, float distance, RayTraceResult mop);
+
+    protected static void causePotionEffect(Spellcast cast, EntityLivingBase e, Potion potion, int amplifier, double distance, double durationBase)
+    {
+        if (potion.isInstant())
+        {
+            potion.affectEntity(cast.projectile, cast.player, e, amplifier, distance);
+        }
+        else
+        {
+            int j = (int) (distance * durationBase + 0.5D);
+
+            if (j > 20)
+            {
+                e.addPotionEffect(new PotionEffect(potion, j, amplifier));
+            }
+        }
+    }
 }

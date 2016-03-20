@@ -4,7 +4,7 @@ import baubles.api.BaublesApi;
 import com.google.common.collect.Lists;
 import gigaherz.elementsofpower.database.ContainerInformation;
 import gigaherz.elementsofpower.database.MagicAmounts;
-import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.passive.EntityAmbientCreature;
@@ -12,10 +12,14 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -33,6 +37,18 @@ public class EntityEssence extends EntityAmbientCreature
             {0.6f, 0.0f, 0.0f},
     };
 
+    @SuppressWarnings("unchecked")
+    private static final DataParameter<Float>[] ELEMENTS = new DataParameter[] {
+            EntityDataManager.createKey(EntityEssence.class, DataSerializers.FLOAT),
+            EntityDataManager.createKey(EntityEssence.class, DataSerializers.FLOAT),
+            EntityDataManager.createKey(EntityEssence.class, DataSerializers.FLOAT),
+            EntityDataManager.createKey(EntityEssence.class, DataSerializers.FLOAT),
+            EntityDataManager.createKey(EntityEssence.class, DataSerializers.FLOAT),
+            EntityDataManager.createKey(EntityEssence.class, DataSerializers.FLOAT),
+            EntityDataManager.createKey(EntityEssence.class, DataSerializers.FLOAT),
+            EntityDataManager.createKey(EntityEssence.class, DataSerializers.FLOAT)
+    } ;
+
     private float scale;
     float[][] sequence;
     private BlockPos spawnPosition;
@@ -49,7 +65,7 @@ public class EntityEssence extends EntityAmbientCreature
 
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            dataWatcher.addObject(16 + i, 0.0f);
+            dataWatcher.register(ELEMENTS[i], 0.0f);
         }
 
         setEntityBoundingBox(null);
@@ -63,7 +79,7 @@ public class EntityEssence extends EntityAmbientCreature
 
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            dataWatcher.addObject(16 + i, am.amounts[i]);
+            dataWatcher.register(ELEMENTS[i], am.amounts[i]);
             numEssences += am.amounts[i];
         }
 
@@ -94,7 +110,7 @@ public class EntityEssence extends EntityAmbientCreature
         MagicAmounts amounts = new MagicAmounts();
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            amounts.amounts[i] = dataWatcher.getWatchableObjectFloat(16 + i);
+            amounts.amounts[i] = dataWatcher.get(ELEMENTS[i]);
         }
 
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
@@ -161,7 +177,7 @@ public class EntityEssence extends EntityAmbientCreature
     protected void applyEntityAttributes()
     {
         super.applyEntityAttributes();
-        getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(2.0D);
+        getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(2.0D);
     }
 
     @Override
@@ -172,7 +188,7 @@ public class EntityEssence extends EntityAmbientCreature
         int numEssences = 0;
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            numEssences += dataWatcher.getWatchableObjectFloat(16 + i);
+            numEssences += dataWatcher.get(ELEMENTS[i]);
         }
         scale = 0.025f * numEssences;
 
@@ -185,7 +201,7 @@ public class EntityEssence extends EntityAmbientCreature
             MagicAmounts amounts = new MagicAmounts();
             for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
             {
-                amounts.amounts[i] = dataWatcher.getWatchableObjectFloat(16 + i);
+                amounts.amounts[i] = dataWatcher.get(ELEMENTS[i]);
             }
 
             if (amounts.getTotalMagic() > 0)
@@ -200,7 +216,7 @@ public class EntityEssence extends EntityAmbientCreature
                         j++;
                 }
                 amounts.amounts[i] = Math.max(0, amounts.amounts[i] - 1);
-                dataWatcher.updateObject(16 + i, amounts.amounts[i]);
+                dataWatcher.set(ELEMENTS[i], amounts.amounts[i]);
             }
 
             if (amounts.getTotalMagic() <= 0)
@@ -213,8 +229,6 @@ public class EntityEssence extends EntityAmbientCreature
         }
     }
 
-    BlockPos p = new BlockPos(0, 0, 0);
-
     @Override
     protected void updateAITasks()
     {
@@ -223,7 +237,7 @@ public class EntityEssence extends EntityAmbientCreature
         if (worldObj.isRemote)
             return;
 
-        Vec3 followPos = new Vec3(posX, posY, posZ);
+        Vec3d followPos = new Vec3d(posX, posY, posZ);
 
         double dp = Double.POSITIVE_INFINITY;
 
@@ -236,7 +250,7 @@ public class EntityEssence extends EntityAmbientCreature
                 tryAbosrbInto(entity);
                 if (isDead) return;
             }
-            followPos = new Vec3(entity.posX, entity.posY + entity.getEyeHeight(), entity.posZ);
+            followPos = new Vec3d(entity.posX, entity.posY + entity.getEyeHeight(), entity.posZ);
             spawnPosition = null;
         }
         else
@@ -259,16 +273,16 @@ public class EntityEssence extends EntityAmbientCreature
             }
 
             if (spawnPosition != null)
-                new Vec3(spawnPosition.getX(), spawnPosition.getY() + 1, spawnPosition.getZ());
+                new Vec3d(spawnPosition.getX(), spawnPosition.getY() + 1, spawnPosition.getZ());
         }
 
         double dx = followPos.xCoord - posX;
         double dy = followPos.yCoord - posY;
         double dz = followPos.zCoord - posZ;
 
-        Vec3 home = new Vec3(dx, dy, dz);
-        Vec3 forward = getLookVec();
-        Vec3 random = new Vec3(rand.nextGaussian(), rand.nextGaussian(), rand.nextGaussian());
+        Vec3d home = new Vec3d(dx, dy, dz);
+        Vec3d forward = getLookVec();
+        Vec3d random = new Vec3d(rand.nextGaussian(), rand.nextGaussian(), rand.nextGaussian());
 
         double wantedDistance = Math.min(dp * 0.5f, 2.0f * scale);
         double currentDistance = home.lengthVector();
@@ -312,7 +326,7 @@ public class EntityEssence extends EntityAmbientCreature
         MagicAmounts self = new MagicAmounts();
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            self.amounts[i] = dataWatcher.getWatchableObjectFloat(16 + i);
+            self.amounts[i] = dataWatcher.get(ELEMENTS[i]);
         }
 
         EntityPlayer p = (EntityPlayer) entity;
@@ -381,7 +395,7 @@ public class EntityEssence extends EntityAmbientCreature
                         totalTransfer += transfer;
                         amounts.amounts[i] = Math.min(amounts.amounts[i] + transfer, limits.amounts[i]);
                         self.amounts[i] -= transfer;
-                        dataWatcher.updateObject(16 + i, self.amounts[i]);
+                        dataWatcher.set(ELEMENTS[i], self.amounts[i]);
                     }
                 }
 
@@ -404,7 +418,7 @@ public class EntityEssence extends EntityAmbientCreature
         super.readEntityFromNBT(tag);
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            dataWatcher.updateObject(16 + i, tag.getFloat("Essence" + i));
+            dataWatcher.set(ELEMENTS[i], tag.getFloat("Essence" + i));
         }
         entityAge2 = tag.getInteger("Age2");
         accelX = tag.getDouble("accelX");
@@ -418,7 +432,7 @@ public class EntityEssence extends EntityAmbientCreature
         super.writeEntityToNBT(tag);
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            tag.setFloat("Essence" + i, dataWatcher.getWatchableObjectFloat(16 + i));
+            tag.setFloat("Essence" + i, dataWatcher.get(ELEMENTS[i]));
         }
         tag.setInteger("Age2", entityAge2);
         tag.setDouble("accelX", accelX);
@@ -490,13 +504,13 @@ public class EntityEssence extends EntityAmbientCreature
     }
 
     @Override
-    public boolean allowLeashing()
+    public boolean canBeLeashedTo(EntityPlayer player)
     {
         return false;
     }
 
     @Override
-    protected boolean interact(EntityPlayer player)
+    protected boolean processInteract(EntityPlayer player, EnumHand p_184645_2_, ItemStack stack)
     {
         return false;
     }
@@ -511,24 +525,6 @@ public class EntityEssence extends EntityAmbientCreature
     protected float getSoundPitch()
     {
         return super.getSoundPitch();
-    }
-
-    @Override
-    protected String getLivingSound()
-    {
-        return null;
-    }
-
-    @Override
-    protected String getHurtSound()
-    {
-        return null;
-    }
-
-    @Override
-    protected String getDeathSound()
-    {
-        return null;
     }
 
     @Override
@@ -560,7 +556,7 @@ public class EntityEssence extends EntityAmbientCreature
     }
 
     @Override
-    protected void updateFallState(double y, boolean onGroundIn, Block blockIn, BlockPos pos)
+    protected void updateFallState(double y, boolean onGroundIn, IBlockState state, BlockPos pos)
     {
     }
 

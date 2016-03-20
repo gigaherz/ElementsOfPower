@@ -5,12 +5,17 @@ import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityThrowable;
-import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
 public class EntityBall extends EntityThrowable
 {
     Spellcast spellcast;
+
+    private static final DataParameter<String> SEQ = EntityDataManager.createKey(EntityEssence.class, DataSerializers.STRING);
 
     public EntityBall(World worldIn)
     {
@@ -22,9 +27,10 @@ public class EntityBall extends EntityThrowable
         super(worldIn, thrower);
         this.spellcast = spellcast;
         spellcast.setProjectile(this);
-        getDataWatcher().addObjectByDataType(10, 4);
-        getDataWatcher().updateObject(10, spellcast.getSequence());
-        this.getDataWatcher().setObjectWatched(10);
+        
+        getDataManager().register(SEQ, "");
+        getDataManager().set(SEQ, spellcast.getSequence());
+        this.getDataManager().setDirty(SEQ);
     }
 
     @Override
@@ -32,10 +38,11 @@ public class EntityBall extends EntityThrowable
     {
         super.entityInit();
 
-        getDataWatcher().addObjectByDataType(10, 4);
+        getDataManager().register(SEQ, "");
     }
 
-    @Override
+    // FIXME
+    //@Override
     protected float getVelocity()
     {
         return 2.0F;
@@ -48,7 +55,7 @@ public class EntityBall extends EntityThrowable
     }
 
     @Override
-    protected void onImpact(MovingObjectPosition pos)
+    protected void onImpact(RayTraceResult pos)
     {
         if (!this.worldObj.isRemote)
         {
@@ -68,7 +75,7 @@ public class EntityBall extends EntityThrowable
     {
         if (spellcast == null)
         {
-            String sequence = getDataWatcher().getWatchableObjectString(10);
+            String sequence = getDataManager().get(SEQ);
             if (sequence != null)
             {
                 spellcast = SpellManager.makeSpell(sequence);

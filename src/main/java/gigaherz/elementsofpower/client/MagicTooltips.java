@@ -6,8 +6,8 @@ import gigaherz.elementsofpower.database.EssenceConversions;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.input.Keyboard;
@@ -24,17 +24,17 @@ public class MagicTooltips
 
         if (item == Items.diamond || item == Items.emerald || item == Items.quartz)
         {
-            event.toolTip.add(1, EnumChatFormatting.DARK_GRAY + "" + EnumChatFormatting.ITALIC + StatCollector.translateToLocal("text." + ElementsOfPower.MODID + ".gemstone.use"));
+            event.toolTip.add(1, TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + I18n.translateToLocal("text." + ElementsOfPower.MODID + ".gemstone.use"));
         }
 
         MagicAmounts amounts = EssenceConversions.getEssences(event.itemStack, false);
         if (amounts == null || amounts.isEmpty())
             return;
 
-        event.toolTip.add(EnumChatFormatting.YELLOW + "Converts to Essences:");
+        event.toolTip.add(TextFormatting.YELLOW + "Converts to Essences:");
         if (!Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) && !Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
         {
-            event.toolTip.add(EnumChatFormatting.GRAY + "  (Hold SHIFT)");
+            event.toolTip.add(TextFormatting.GRAY + "  (Hold SHIFT)");
             return;
         }
 
@@ -49,13 +49,13 @@ public class MagicTooltips
 
             String str;
             if (ContainerInformation.isInfiniteContainer(event.itemStack))
-                str = String.format("%s  %s x\u221E", EnumChatFormatting.GRAY, magicName);
+                str = String.format("%s  %s x\u221E", TextFormatting.GRAY, magicName);
             else if (event.itemStack.stackSize > 1)
-                str = String.format("%s  %s x%s (stack %s)", EnumChatFormatting.GRAY, magicName,
+                str = String.format("%s  %s x%s (stack %s)", TextFormatting.GRAY, magicName,
                         ElementsOfPower.prettyNumberFormatter2.format(amounts.amounts[i]),
                         ElementsOfPower.prettyNumberFormatter2.format(amounts.amounts[i] * event.itemStack.stackSize));
             else
-                str = String.format("%s  %s x%s", EnumChatFormatting.GRAY, magicName,
+                str = String.format("%s  %s x%s", TextFormatting.GRAY, magicName,
                         ElementsOfPower.prettyNumberFormatter2.format(amounts.amounts[i]));
             event.toolTip.add(str);
         }

@@ -7,7 +7,7 @@ import gigaherz.elementsofpower.gemstones.Element;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
@@ -53,10 +53,10 @@ public abstract class ItemMagicContainer extends Item
             return;
         }
 
-        tooltipList.add(EnumChatFormatting.YELLOW + "Contains magic:");
+        tooltipList.add(TextFormatting.YELLOW + "Contains magic:");
         if (!Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) && !Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
         {
-            tooltipList.add(EnumChatFormatting.GRAY + "  (Hold SHIFT)");
+            tooltipList.add(TextFormatting.GRAY + "  (Hold SHIFT)");
             return;
         }
 
@@ -70,9 +70,9 @@ public abstract class ItemMagicContainer extends Item
             String magicName = MagicAmounts.getMagicName(i);
             String str;
             if (ContainerInformation.isInfiniteContainer(stack))
-                str = String.format("%s  %s x\u221E", EnumChatFormatting.GRAY, magicName);
+                str = String.format("%s  %s x\u221E", TextFormatting.GRAY, magicName);
             else
-                str = String.format("%s  %s x%s", EnumChatFormatting.GRAY, magicName,
+                str = String.format("%s  %s x%s", TextFormatting.GRAY, magicName,
                         ElementsOfPower.prettyNumberFormatter2.format(amounts.amounts[i]));
             tooltipList.add(str);
         }

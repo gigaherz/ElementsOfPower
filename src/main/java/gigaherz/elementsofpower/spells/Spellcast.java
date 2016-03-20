@@ -9,6 +9,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -22,8 +25,8 @@ public class Spellcast
     public int totalCastTime;
 
     // Rendering data;
-    public Vec3 start;
-    public Vec3 end;
+    public Vec3d start;
+    public Vec3d end;
 
     protected SpellShape shape;
     protected SpellEffect effect;
@@ -89,7 +92,7 @@ public class Spellcast
         return Math.max(0, power - effect.getForceModifier(this));
     }
 
-    public void onImpact(MovingObjectPosition mop, Random rand)
+    public void onImpact(RayTraceResult mop, Random rand)
     {
         this.rand = rand;
         if (!world.isRemote)
@@ -175,8 +178,8 @@ public class Spellcast
     }
 
     // Butchered from the player getMouseOver()
-    public MovingObjectPosition getEntityIntercept(Vec3 start, Vec3 look, Vec3 end,
-                                                   MovingObjectPosition mop)
+    public RayTraceResult getEntityIntercept(Vec3d start, Vec3d look, Vec3d end,
+                                                   RayTraceResult mop)
     {
         double distance = end.distanceTo(start);
 
@@ -185,14 +188,14 @@ public class Spellcast
             distance = mop.hitVec.distanceTo(start);
         }
 
-        Vec3 direction = new Vec3(
+        Vec3d direction = new Vec3d(
                 look.xCoord * distance,
                 look.yCoord * distance,
                 look.zCoord * distance);
 
         end = start.add(direction);
 
-        Vec3 hitPosition = null;
+        Vec3d hitPosition = null;
         List<Entity> list = world.getEntitiesInAABBexcluding(player,
                 player.getEntityBoundingBox()
                         .addCoord(direction.xCoord, direction.yCoord, direction.zCoord)
@@ -205,7 +208,7 @@ public class Spellcast
         {
             double border = entity.getCollisionBorderSize();
             AxisAlignedBB bounds = entity.getEntityBoundingBox().expand(border, border, border);
-            MovingObjectPosition intercept = bounds.calculateIntercept(start, end);
+            RayTraceResult intercept = bounds.calculateIntercept(start, end);
 
             if (bounds.isVecInside(start))
             {
@@ -222,7 +225,7 @@ public class Spellcast
 
                 if (interceptDistance < distanceToEntity || distanceToEntity == 0.0D)
                 {
-                    if (entity == player.ridingEntity && !player.canRiderInteract())
+                    if (entity == player.getRidingEntity() && !player.canRiderInteract())
                     {
                         if (distanceToEntity == 0.0D)
                         {
@@ -246,7 +249,7 @@ public class Spellcast
             {
                 if (start.distanceTo(hitPosition) < distance)
                 {
-                    return new MovingObjectPosition(pointedEntity, hitPosition);
+                    return new RayTraceResult(pointedEntity, hitPosition);
                 }
             }
         }
@@ -255,13 +258,13 @@ public class Spellcast
     }
 
     // Called by the client on render, and by the server as needed
-    public MovingObjectPosition getHitPosition()
+    public RayTraceResult getHitPosition()
     {
         float maxDistance = 10;
-        start = new Vec3(player.posX, player.posY + (double) player.getEyeHeight(), player.posZ);
-        Vec3 look = player.getLookVec();
+        start = new Vec3d(player.posX, player.posY + (double) player.getEyeHeight(), player.posZ);
+        Vec3d look = player.getLookVec();
         end = start.addVector(look.xCoord * maxDistance, look.yCoord * maxDistance, look.zCoord * maxDistance);
-        MovingObjectPosition mop = player.worldObj.rayTraceBlocks(start, end, false, true, false);
+        RayTraceResult mop = player.worldObj.rayTraceBlocks(start, end, false, true, false);
 
         mop = getEntityIntercept(start, look, end, mop);
 

@@ -9,16 +9,18 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.properties.PropertyInteger;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.fml.common.IWorldGenerator;
 
@@ -43,7 +45,7 @@ public class BlockCocoon extends Block
     }
 
     @Override
-    public boolean isOpaqueCube()
+    public boolean isOpaqueCube(IBlockState state)
     {
         return false;
     }
@@ -61,9 +63,9 @@ public class BlockCocoon extends Block
     }
 
     @Override
-    protected BlockState createBlockState()
+    protected BlockStateContainer createBlockState()
     {
-        return new BlockState(this, FACING, COLOR);
+        return new BlockStateContainer(this, FACING, COLOR);
     }
 
     @Override
@@ -124,29 +126,28 @@ public class BlockCocoon extends Block
     }
 
     @Override
-    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ)
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
     {
-        ItemStack stack = playerIn.getHeldItem();
-        if (stack != null && stack.getItem() == ElementsOfPower.magicOrb)
+        if (heldItem != null && heldItem.getItem() == ElementsOfPower.magicOrb)
         {
             TileEntity te = worldIn.getTileEntity(pos);
 
-            ((TileCocoon) te).addEssences(stack);
+            ((TileCocoon) te).addEssences(heldItem);
 
             if (!playerIn.capabilities.isCreativeMode)
-                stack.stackSize--;
+                heldItem.stackSize--;
 
             return true;
         }
 
-        return super.onBlockActivated(worldIn, pos, state, playerIn, side, hitX, hitY, hitZ);
+        return super.onBlockActivated(worldIn, pos, state, playerIn, hand, heldItem, side, hitX, hitY, hitZ);
     }
 
     @Override
-    public boolean removedByPlayer(World world, BlockPos pos, EntityPlayer player, boolean willHarvest)
+    public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest)
     {
         //If it will harvest, delay deletion of the block until after getDrops
-        return willHarvest || super.removedByPlayer(world, pos, player, false);
+        return willHarvest || super.removedByPlayer(state, world, pos, player, false);
     }
 
     @Override
@@ -184,16 +185,16 @@ public class BlockCocoon extends Block
     }
 
     @Override
-    public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, TileEntity te)
+    public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, TileEntity te, ItemStack stack)
     {
-        super.harvestBlock(worldIn, player, pos, state, te);
+        super.harvestBlock(worldIn, player, pos, state, te, stack);
         worldIn.setBlockToAir(pos);
     }
 
     public static class Generator implements IWorldGenerator
     {
         @Override
-        public void generate(Random rand, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider)
+        public void generate(Random rand, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider)
         {
             List<BlockPos> positions = Lists.newArrayList();
             for (int y = 0; y < 255; y++)

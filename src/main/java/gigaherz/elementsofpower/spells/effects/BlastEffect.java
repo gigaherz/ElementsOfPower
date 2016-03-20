@@ -3,9 +3,9 @@ package gigaherz.elementsofpower.spells.effects;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 
 public class BlastEffect extends SpellEffect
 {
@@ -34,7 +34,7 @@ public class BlastEffect extends SpellEffect
     }
 
     @Override
-    public boolean processEntitiesAroundBefore(Spellcast cast, Vec3 hitVec)
+    public boolean processEntitiesAroundBefore(Spellcast cast, Vec3d hitVec)
     {
         if (!cast.world.isRemote)
         {
@@ -47,19 +47,19 @@ public class BlastEffect extends SpellEffect
     }
 
     @Override
-    public void processEntitiesAroundAfter(Spellcast cast, Vec3 hitVec)
+    public void processEntitiesAroundAfter(Spellcast cast, Vec3d hitVec)
     {
 
     }
 
     @Override
-    public void spawnBallParticles(Spellcast cast, MovingObjectPosition mop)
+    public void spawnBallParticles(Spellcast cast, RayTraceResult mop)
     {
 
     }
 
     @Override
-    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, float r, MovingObjectPosition mop)
+    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, float r, RayTraceResult mop)
     {
 
     }

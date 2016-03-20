@@ -3,7 +3,7 @@ package gigaherz.elementsofpower.spells.shapes;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.math.RayTraceResult;
 
 public abstract class SpellShape
 {
@@ -13,7 +13,7 @@ public abstract class SpellShape
 
     public abstract Spellcast castSpell(ItemStack stack, EntityPlayer player, Spellcast cast);
 
-    public void onImpact(Spellcast spellcast, MovingObjectPosition mop)
+    public void onImpact(Spellcast spellcast, RayTraceResult mop)
     {
     }
 

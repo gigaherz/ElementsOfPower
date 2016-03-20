@@ -3,17 +3,20 @@ package gigaherz.elementsofpower.blocks;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.gemstones.GemstoneBlockType;
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.feature.WorldGenMinable;
 import net.minecraftforge.fml.common.IWorldGenerator;
@@ -30,15 +33,15 @@ public class BlockGemstoneOre extends Block
         super(Material.rock, Material.rock.getMaterialMapColor());
         setHardness(3.0F);
         setResistance(5.0F);
-        setStepSound(soundTypePiston);
+        setStepSound(SoundType.STONE);
         setCreativeTab(CreativeTabs.tabBlock);
         setUnlocalizedName(ElementsOfPower.MODID + ".gemstoneOre");
     }
 
     @Override
-    protected BlockState createBlockState()
+    protected BlockStateContainer createBlockState()
     {
-        return new BlockState(this, TYPE);
+        return new BlockStateContainer(this, TYPE);
     }
 
     @Override
@@ -74,12 +77,6 @@ public class BlockGemstoneOre extends Block
     }
 
     @Override
-    public int quantityDropped(Random random)
-    {
-        return 1;
-    }
-
-    @Override
     public int quantityDroppedWithBonus(int fortune, Random random)
     {
         int multiplier = fortune <= 0 ? 0 : Math.max(0, random.nextInt(fortune + 2) - 1);
@@ -88,16 +85,16 @@ public class BlockGemstoneOre extends Block
     }
 
     @Override
-    public int getExpDrop(net.minecraft.world.IBlockAccess world, BlockPos pos, int fortune)
+    public int getExpDrop(IBlockState state, IBlockAccess world, BlockPos pos, int fortune)
     {
         Random rand = world instanceof World ? ((World) world).rand : new Random();
         return MathHelper.getRandomIntegerInRange(rand, 3, 7);
     }
 
     @Override
-    public int getDamageValue(World worldIn, BlockPos pos)
+    public int quantityDropped(Random random)
     {
-        return worldIn.getBlockState(pos).getValue(TYPE).ordinal();
+        return 1;
     }
 
     @Override
@@ -132,16 +129,16 @@ public class BlockGemstoneOre extends Block
     public static class Generator implements IWorldGenerator
     {
         @Override
-        public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider)
+        public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider)
         {
-            switch (world.provider.getDimensionId())
+            switch (world.provider.getDimensionType())
             {
-                case -1:
+                case NETHER:
                     break;
-                case 0:
+                case OVERWORLD:
                     generateSurface(world, random, chunkX * 16, chunkZ * 16);
                     break;
-                case 1:
+                case THE_END:
                     break;
             }
         }
