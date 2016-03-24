@@ -12,6 +12,7 @@ import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
+import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -25,6 +26,8 @@ public class TickEventWandControl
     public ItemStack activeStack = null;
     public int slotInUse;
     public int itemInUseCount;
+    
+    private Minecraft mc;
 
     final KeyBindingInterceptor[] interceptKeys = new KeyBindingInterceptor[8];
 
@@ -32,7 +35,9 @@ public class TickEventWandControl
     {
         instance = this;
 
-        GameSettings s = Minecraft.getMinecraft().gameSettings;
+        mc = Minecraft.getMinecraft();
+
+        GameSettings s = mc.gameSettings;
 
         int l = s.keyBindings.length;
         int[] indices = new int[MagicAmounts.ELEMENTS];
@@ -67,13 +72,33 @@ public class TickEventWandControl
             if (handInUse != null)
             {
                 EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-                if (player.isHandActive()
+                if (!player.isHandActive()
                         || player.getItemInUseCount() > itemInUseCount)
                 {
                     player.setActiveHand(handInUse);
-                    // FIXME: SET USE COUNTER
                 }
             }
+        }
+    }
+
+    @SubscribeEvent
+    public void onLivingUseItem(LivingEntityUseItemEvent.Start e)
+    {
+        if(activeStack == null)
+        {
+            EntityPlayer player = mc.thePlayer;
+            int slotNumber = player.inventory.currentItem;
+            ItemStack itemUsing = player.inventory.getCurrentItem();
+            if (itemUsing == null || !(itemUsing.getItem() instanceof ItemWand))
+                return;
+
+            EnumHand hand = handInUse;
+
+            beginHoldingRightButton(slotNumber, hand, itemUsing);
+        }
+        else if(e.item.getItem() == activeStack.getItem())
+        {
+            e.duration = itemInUseCount;
         }
     }
 
@@ -86,7 +111,7 @@ public class TickEventWandControl
         if (handInUse == null)
             return;
 
-        EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
+        EntityPlayerSP player = mc.thePlayer;
         if (player == null || player.inventory == null)
             return;
 
@@ -94,7 +119,7 @@ public class TickEventWandControl
         int slotNumber = player.inventory.currentItem;
 
 
-        if (!Minecraft.getMinecraft().gameSettings.keyBindUseItem.isKeyDown())
+        if (!mc.gameSettings.keyBindUseItem.isKeyDown())
         {
             endHoldingRightButton(false);
             return;
@@ -118,41 +143,14 @@ public class TickEventWandControl
         }
     }
 
-    @SubscribeEvent
-    public void onPlayerInteract(PlayerInteractEvent event)
-    {
-        if (!event.entityPlayer.worldObj.isRemote)
-            return;
-
-        if (event.action == PlayerInteractEvent.Action.RIGHT_CLICK_AIR
-                && handInUse == null)
-        {
-            EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-            int slotNumber = player.inventory.currentItem;
-            ItemStack itemUsing = player.inventory.getCurrentItem();
-            if (itemUsing == null || !(itemUsing.getItem() instanceof ItemWand))
-                return;
-
-            // FIXME: Needs new playerInteract implementation
-            EnumHand hand = null;
-
-            beginHoldingRightButton(slotNumber, hand, itemUsing);
-
-            event.setCanceled(true);
-        }
-    }
-
     private void beginHoldingRightButton(int slotNumber, EnumHand hand, ItemStack itemUsing)
     {
-        EntityPlayer player = Minecraft.getMinecraft().thePlayer;
         activeStack = itemUsing;
         handInUse = hand;
         itemInUseCount = activeStack.getMaxItemUseDuration();
         slotInUse = slotNumber;
-
-        player.setActiveHand(handInUse);
-
         sequence = "";
+
         ElementsOfPower.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.BEGIN, slotInUse, null));
 
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
@@ -163,7 +161,6 @@ public class TickEventWandControl
 
     private void endHoldingRightButton(boolean cancelMagicSetting)
     {
-        EntityPlayer player = Minecraft.getMinecraft().thePlayer;
         if (cancelMagicSetting)
         {
             ElementsOfPower.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.CANCEL, slotInUse, null));
@@ -172,11 +169,15 @@ public class TickEventWandControl
         {
             ElementsOfPower.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.COMMIT, slotInUse, sequence));
         }
+        
         handInUse = null;
         activeStack = null;
         itemInUseCount = 0;
         slotInUse = -1;
         sequence = null;
+
+        mc.thePlayer.resetActiveHand();
+        
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
             interceptKeys[i].setInterceptionActive(false);

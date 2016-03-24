@@ -41,7 +41,7 @@ public class ClientProxy implements ISideProxy
 {
     public void preInit()
     {
-        OBJLoader.instance.addDomain(ElementsOfPower.MODID);
+        OBJLoader.INSTANCE.addDomain(ElementsOfPower.MODID);
 
         registerClientEvents();
         registerModels();

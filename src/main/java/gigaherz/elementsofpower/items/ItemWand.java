@@ -1,6 +1,13 @@
 package gigaherz.elementsofpower.items;
 
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.client.TickEventWandControl;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumHand;
+import net.minecraft.world.World;
 
 public class ItemWand extends ItemGemContainer
 {
@@ -9,5 +16,13 @@ public class ItemWand extends ItemGemContainer
         super();
         setUnlocalizedName(ElementsOfPower.MODID + ".wand");
         setCreativeTab(ElementsOfPower.tabMagic);
+    }
+
+    @Override
+    public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand)
+    {
+        TickEventWandControl.instance.handInUse = hand;
+        playerIn.setActiveHand(hand);
+        return ActionResult.newResult(EnumActionResult.SUCCESS, itemStackIn);
     }
 }

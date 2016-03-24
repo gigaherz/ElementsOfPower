@@ -117,7 +117,7 @@ public class TileEssentializer
     }
 
     @Override
-    public Packet getDescriptionPacket()
+    public Packet<?> getDescriptionPacket()
     {
         NBTTagCompound tag = new NBTTagCompound();
         writeToNBT(tag);
@@ -131,7 +131,7 @@ public class TileEssentializer
         readFromNBT(packet.getNbtCompound());
 
         IBlockState state = worldObj.getBlockState(pos);
-        worldObj.notifyBlockUpdate(pos, state, state, 4);
+        worldObj.notifyBlockUpdate(pos, state, state, 3);
     }
 
     @Override

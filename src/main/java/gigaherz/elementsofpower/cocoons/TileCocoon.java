@@ -47,7 +47,7 @@ public class TileCocoon extends TileEntity implements ITickable
         essenceContained.element(Element.values()[stack.getMetadata()], 1);
 
         IBlockState state = worldObj.getBlockState(pos);
-        worldObj.notifyBlockUpdate(pos, state, state, 4);
+        worldObj.notifyBlockUpdate(pos, state, state, 3);
     }
 
     @Override
