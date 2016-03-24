@@ -3,20 +3,30 @@
   "defaults": {
     "model": "elementsofpower:ring.obj",
     "transform": {
-      "thirdperson": {
-        "rotation": [{"y":-80},{"z":90}],
-        "translation": [0, 0.1, -0.1],
+      "thirdperson_righthand": {
+        "rotation": [{"y":-20},{"z":90}],
+        "translation": [0, 0.03, 0],
         "scale": 0.2
       },
-      "firstperson": {
-        "rotation": [{"y":-100},{"x":10},{"z":30}],
+      "thirdperson_lefthand": {
+        "rotation": [{"y":-20}],
+        "translation": [0, 0.03, 0],
+        "scale": 0.2
+      },
+      "firstperson_righthand": {
+        "rotation": [{"y":200}],
         "translation": [0, 0.1, 0],
-        "scale": 0.6
+        "scale": 0.2
+      },
+      "firstperson_lefthand": {
+        "rotation": [{"y":20}],
+        "translation": [0, 0.1, 0],
+        "scale": 0.2
       },
       "gui": {
-        "rotation": [{"y":-80},{"z":90}],
+        "rotation": [{"z":90}],
         "translation": [0, 0, 0],
-        "scale": 1.5
+        "scale": 0.9
       }
     }
   },

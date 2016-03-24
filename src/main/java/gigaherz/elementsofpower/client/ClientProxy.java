@@ -132,7 +132,7 @@ public class ClientProxy implements ISideProxy
     public void registerModels()
     {
         registerBlockModelAsItem(ElementsOfPower.essentializer, "essentializer");
-        registerBlockModelAsItem(ElementsOfPower.cocoon, "cocoon", "color=8,facing=down");
+        registerBlockModelAsItem(ElementsOfPower.cocoon, "cocoon", "color=8,facing=north");
 
         registerItemModel(ElementsOfPower.analyzer, "analyzer");
 
