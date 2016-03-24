@@ -21,8 +21,13 @@ public class ItemWand extends ItemGemContainer
     @Override
     public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand)
     {
-        TickEventWandControl.instance.handInUse = hand;
-        playerIn.setActiveHand(hand);
-        return ActionResult.newResult(EnumActionResult.SUCCESS, itemStackIn);
+        if (hand == EnumHand.MAIN_HAND)
+        {
+            TickEventWandControl.instance.handInUse = hand;
+            playerIn.setActiveHand(hand);
+            return ActionResult.newResult(EnumActionResult.SUCCESS, itemStackIn);
+        }
+
+        return ActionResult.newResult(EnumActionResult.FAIL, itemStackIn);
     }
 }
