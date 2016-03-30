@@ -1,7 +1,6 @@
 package gigaherz.elementsofpower.items;
 
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.client.TickEventWandControl;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
@@ -23,8 +22,7 @@ public class ItemWand extends ItemGemContainer
     {
         if (hand == EnumHand.MAIN_HAND)
         {
-            TickEventWandControl.instance.handInUse = hand;
-            playerIn.setActiveHand(hand);
+            ElementsOfPower.proxy.beginTracking(playerIn, hand);
             return ActionResult.newResult(EnumActionResult.SUCCESS, itemStackIn);
         }
 

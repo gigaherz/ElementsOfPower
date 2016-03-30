@@ -52,6 +52,7 @@ import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 import org.apache.logging.log4j.Logger;
@@ -416,6 +417,9 @@ public class ElementsOfPower
                 'G', Items.gold_ingot);
         GameRegistry.addRecipe(new GemstoneChangeRecipe());
         GameRegistry.addRecipe(new ContainerChargeRecipe());
+
+        RecipeSorter.register("gemstoneChangeRecipe", GemstoneChangeRecipe.class, RecipeSorter.Category.SHAPELESS, "");
+        RecipeSorter.register("containerChargeRecipe", GemstoneChangeRecipe.class, RecipeSorter.Category.SHAPELESS, "");
 
         // Gui
         NetworkRegistry.INSTANCE.registerGuiHandler(this, guiHandler);

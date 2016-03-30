@@ -4,6 +4,8 @@ import gigaherz.elementsofpower.ISideProxy;
 import gigaherz.elementsofpower.network.EssentializerAmountsUpdate;
 import gigaherz.elementsofpower.network.EssentializerTileUpdate;
 import gigaherz.elementsofpower.network.SpellcastSync;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.EnumHand;
 
 public class ServerProxy implements ISideProxy
 {
@@ -33,5 +35,17 @@ public class ServerProxy implements ISideProxy
     public void handleEssentializerTileUpdate(EssentializerTileUpdate message)
     {
         // Nothing here
+    }
+
+    @Override
+    public void displayBook()
+    {
+
+    }
+
+    @Override
+    public void beginTracking(EntityPlayer playerIn, EnumHand hand)
+    {
+
     }
 }

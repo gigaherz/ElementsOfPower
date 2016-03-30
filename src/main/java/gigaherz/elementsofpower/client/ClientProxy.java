@@ -11,6 +11,7 @@ import gigaherz.elementsofpower.essentializer.RenderEssentializer;
 import gigaherz.elementsofpower.essentializer.TileEssentializer;
 import gigaherz.elementsofpower.gemstones.Gemstone;
 import gigaherz.elementsofpower.gemstones.GemstoneBlockType;
+import gigaherz.elementsofpower.guidebook.GuiGuidebook;
 import gigaherz.elementsofpower.items.ItemGemContainer;
 import gigaherz.elementsofpower.network.EssentializerAmountsUpdate;
 import gigaherz.elementsofpower.network.EssentializerTileUpdate;
@@ -25,6 +26,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -109,6 +111,19 @@ public class ClientProxy implements ISideProxy
     public void handleEssentializerTileUpdate(EssentializerTileUpdate message)
     {
         Minecraft.getMinecraft().addScheduledTask(() -> handleEssentializerTileUpdate2(message));
+    }
+
+    @Override
+    public void displayBook()
+    {
+        Minecraft.getMinecraft().displayGuiScreen(new GuiGuidebook());
+    }
+
+    @Override
+    public void beginTracking(EntityPlayer playerIn, EnumHand hand)
+    {
+        TickEventWandControl.instance.handInUse = hand;
+        playerIn.setActiveHand(hand);
     }
 
     public void handleEssentializerTileUpdate2(EssentializerTileUpdate message)

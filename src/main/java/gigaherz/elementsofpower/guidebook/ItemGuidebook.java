@@ -26,7 +26,7 @@ public class ItemGuidebook extends Item
     {
         if (worldIn.isRemote)
         {
-            Minecraft.getMinecraft().displayGuiScreen(new GuiGuidebook());
+            ElementsOfPower.proxy.displayBook();
         }
         return EnumActionResult.SUCCESS;
     }
@@ -36,7 +36,7 @@ public class ItemGuidebook extends Item
     {
         if (worldIn.isRemote)
         {
-            Minecraft.getMinecraft().displayGuiScreen(new GuiGuidebook());
+            ElementsOfPower.proxy.displayBook();
         }
         return ActionResult.newResult(EnumActionResult.SUCCESS, itemStackIn);
     }
