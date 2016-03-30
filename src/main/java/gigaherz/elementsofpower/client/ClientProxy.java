@@ -227,8 +227,6 @@ public class ClientProxy implements ISideProxy
         RenderingRegistry.registerEntityRenderingHandler(EntityBall.class, RenderBall::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityEssence.class, RenderEssence::new);
 
-        ForgeHooksClient.registerTESRItemStack();
-
         RenderingStuffs.init();
     }
 
