@@ -11,6 +11,7 @@ import gigaherz.elementsofpower.essentializer.RenderEssentializer;
 import gigaherz.elementsofpower.essentializer.TileEssentializer;
 import gigaherz.elementsofpower.gemstones.Gemstone;
 import gigaherz.elementsofpower.gemstones.GemstoneBlockType;
+import gigaherz.elementsofpower.guidebook.GuiGuidebook;
 import gigaherz.elementsofpower.items.ItemGemContainer;
 import gigaherz.elementsofpower.network.EssentializerAmountsUpdate;
 import gigaherz.elementsofpower.network.EssentializerTileUpdate;
@@ -114,6 +115,12 @@ public class ClientProxy implements ISideProxy
     public void handleEssentializerTileUpdate(EssentializerTileUpdate message)
     {
         Minecraft.getMinecraft().addScheduledTask(() -> handleEssentializerTileUpdate2(message));
+    }
+
+    @Override
+    public void displayBook()
+    {
+        Minecraft.getMinecraft().displayGuiScreen(new GuiGuidebook());
     }
 
     public void handleEssentializerTileUpdate2(EssentializerTileUpdate message)

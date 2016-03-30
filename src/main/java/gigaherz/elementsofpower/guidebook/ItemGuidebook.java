@@ -23,7 +23,7 @@ public class ItemGuidebook extends Item
     {
         if (worldIn.isRemote)
         {
-            Minecraft.getMinecraft().displayGuiScreen(new GuiGuidebook());
+            ElementsOfPower.proxy.displayBook();
         }
         return false;
     }
@@ -33,7 +33,7 @@ public class ItemGuidebook extends Item
     {
         if (worldIn.isRemote)
         {
-            Minecraft.getMinecraft().displayGuiScreen(new GuiGuidebook());
+            ElementsOfPower.proxy.displayBook();
         }
         return super.onItemRightClick(itemStackIn, worldIn, playerIn);
     }

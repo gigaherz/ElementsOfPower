@@ -15,4 +15,6 @@ public interface ISideProxy
     void handleRemainingAmountsUpdate(EssentializerAmountsUpdate message);
 
     void handleEssentializerTileUpdate(EssentializerTileUpdate message);
+
+    void displayBook();
 }
