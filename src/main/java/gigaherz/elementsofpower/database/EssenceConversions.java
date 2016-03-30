@@ -105,6 +105,12 @@ public class EssenceConversions
 
     public static void addConversion(ItemStack item, MagicAmounts amounts)
     {
+        if (item == null)
+        {
+            ElementsOfPower.logger.error("Stack is null!");
+            return;
+        }
+
         if (Utils.stackMapContainsKey(itemEssences, item))
         {
             ElementsOfPower.logger.error("Stack already inserted! " + item.toString());

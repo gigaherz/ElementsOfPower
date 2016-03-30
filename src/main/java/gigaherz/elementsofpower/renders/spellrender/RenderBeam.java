@@ -30,7 +30,7 @@ public class RenderBeam extends RenderSpell
         IBakedModel modelCyl = RenderingStuffs.loadModelRetextured("elementsofpower:entity/cylinder.obj",
                 "#Default", tex);
 
-        RayTraceResult mop = cast.getHitPosition();
+        RayTraceResult mop = cast.getHitPosition(partialTicks);
 
         Vec3d start = cast.start;
         Vec3d end = cast.end;

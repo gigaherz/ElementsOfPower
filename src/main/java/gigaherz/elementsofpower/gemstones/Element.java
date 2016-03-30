@@ -16,7 +16,7 @@ public enum Element
 
     public Element getOpposite()
     {
-        return Element.values()[opposite];
+        return values[opposite];
     }
 
     Element(int opposite, Shape shape)
@@ -29,4 +29,6 @@ public enum Element
     {
         return shape;
     }
+
+    public static final Element[] values = values();
 }

@@ -4,7 +4,8 @@ import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.*;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -30,11 +31,11 @@ public class TeleportEffect extends SpellEffect
     }
 
     @Override
-    public void processDirectHit(Spellcast cast, Entity e)
+    public void processDirectHit(Spellcast cast, Entity entity, Vec3d hitVec)
     {
-        if (e == cast.player)
+        if (entity == cast.player)
             return;
-        e.attackEntityFrom(DamageSource.causeThrownDamage(cast.projectile, cast.player), 0.0F);
+        entity.attackEntityFrom(DamageSource.causeThrownDamage(cast.projectile, cast.player), 0.0F);
     }
 
     @Override

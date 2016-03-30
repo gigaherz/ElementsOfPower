@@ -13,7 +13,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
@@ -26,7 +25,7 @@ public class TickEventWandControl
     public ItemStack activeStack = null;
     public int slotInUse;
     public int itemInUseCount;
-    
+
     private Minecraft mc;
 
     final KeyBindingInterceptor[] interceptKeys = new KeyBindingInterceptor[8];
@@ -84,7 +83,7 @@ public class TickEventWandControl
     @SubscribeEvent
     public void onLivingUseItem(LivingEntityUseItemEvent.Start e)
     {
-        if(activeStack == null)
+        if (activeStack == null)
         {
             EntityPlayer player = mc.thePlayer;
             int slotNumber = player.inventory.currentItem;
@@ -96,9 +95,9 @@ public class TickEventWandControl
 
             beginHoldingRightButton(slotNumber, hand, itemUsing);
         }
-        else if(e.item.getItem() == activeStack.getItem())
+        else if (e.getItem().getItem() == activeStack.getItem())
         {
-            e.duration = itemInUseCount;
+            e.setDuration(itemInUseCount);
         }
     }
 
@@ -169,7 +168,7 @@ public class TickEventWandControl
         {
             ElementsOfPower.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.COMMIT, slotInUse, sequence));
         }
-        
+
         handInUse = null;
         activeStack = null;
         itemInUseCount = 0;
@@ -177,7 +176,7 @@ public class TickEventWandControl
         sequence = null;
 
         mc.thePlayer.resetActiveHand();
-        
+
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
             interceptKeys[i].setInterceptionActive(false);

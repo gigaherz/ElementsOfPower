@@ -13,7 +13,10 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.*;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -200,7 +203,6 @@ public class SpellcastEntityData
 
                 }
             }, () -> null);
-
         }
 
         @SubscribeEvent
@@ -231,7 +233,7 @@ public class SpellcastEntityData
                         public <T> T getCapability(Capability<T> capability, EnumFacing facing)
                         {
                             if (capability == SPELLCAST)
-                                return (T)cap;
+                                return (T) cap;
                             return null;
                         }
 

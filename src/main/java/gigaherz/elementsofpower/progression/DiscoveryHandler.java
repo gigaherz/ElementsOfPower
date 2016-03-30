@@ -103,10 +103,10 @@ public class DiscoveryHandler
     @SubscribeEvent
     public void onItemPickUp(EntityItemPickupEvent event)
     {
-        if (event.entityPlayer.worldObj.isRemote)
+        if (event.getEntityPlayer().worldObj.isRemote)
             return;
 
-        checkItem(event.entityPlayer, event.item.getEntityItem());
+        checkItem(event.getEntityPlayer(), event.getItem().getEntityItem());
     }
 
     @SubscribeEvent

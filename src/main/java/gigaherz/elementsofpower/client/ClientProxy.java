@@ -27,7 +27,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.obj.OBJLoader;
@@ -65,7 +64,7 @@ public class ClientProxy implements ISideProxy
     @SubscribeEvent
     public void onTextureStitchEvent(TextureStitchEvent.Pre event)
     {
-        event.map.registerSprite(new ResourceLocation(ElementsOfPower.MODID + ":blocks/cone"));
+        event.getMap().registerSprite(new ResourceLocation(ElementsOfPower.MODID + ":blocks/cone"));
     }
 
     @Override
@@ -115,9 +114,9 @@ public class ClientProxy implements ISideProxy
     public void handleEssentializerTileUpdate2(EssentializerTileUpdate message)
     {
         TileEntity te = Minecraft.getMinecraft().theWorld.getTileEntity(message.pos);
-        if(te instanceof TileEssentializer)
+        if (te instanceof TileEssentializer)
         {
-            TileEssentializer essentializer = (TileEssentializer)te;
+            TileEssentializer essentializer = (TileEssentializer) te;
             essentializer.setInventorySlotContents(0, message.activeItem);
             essentializer.remainingToConvert = message.remaining;
         }

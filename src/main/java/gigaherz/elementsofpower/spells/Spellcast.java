@@ -8,7 +8,8 @@ import gigaherz.elementsofpower.spells.shapes.SpellShape;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.*;
+import net.minecraft.util.EntitySelectors;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -179,7 +180,7 @@ public class Spellcast
 
     // Butchered from the player getMouseOver()
     public RayTraceResult getEntityIntercept(Vec3d start, Vec3d look, Vec3d end,
-                                                   RayTraceResult mop)
+                                             RayTraceResult mop)
     {
         double distance = end.distanceTo(start);
 
@@ -260,10 +261,28 @@ public class Spellcast
     // Called by the client on render, and by the server as needed
     public RayTraceResult getHitPosition()
     {
+        return getHitPosition(1);
+    }
+
+    public RayTraceResult getHitPosition(float partialTicks)
+    {
         float maxDistance = 10;
-        start = new Vec3d(player.posX, player.posY + (double) player.getEyeHeight(), player.posZ);
-        Vec3d look = player.getLookVec();
+
+        if (partialTicks < 1)
+        {
+            double sx = player.prevPosX + (player.posX - player.prevPosX) * partialTicks;
+            double sy = player.prevPosY + (player.posY - player.prevPosY) * partialTicks + player.getEyeHeight();
+            double sz = player.prevPosZ + (player.posZ - player.prevPosZ) * partialTicks;
+            start = new Vec3d(sx, sy, sz);
+        }
+        else
+        {
+            start = new Vec3d(player.posX, player.posY + player.getEyeHeight(), player.posZ);
+        }
+
+        Vec3d look = player.getLook(partialTicks);
         end = start.addVector(look.xCoord * maxDistance, look.yCoord * maxDistance, look.zCoord * maxDistance);
+
         RayTraceResult mop = player.worldObj.rayTraceBlocks(start, end, false, true, false);
 
         mop = getEntityIntercept(start, look, end, mop);

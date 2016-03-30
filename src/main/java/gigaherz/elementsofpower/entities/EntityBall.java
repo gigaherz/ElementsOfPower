@@ -25,12 +25,11 @@ public class EntityBall extends EntityThrowable
     public EntityBall(World worldIn, Spellcast spellcast, EntityLivingBase thrower)
     {
         super(worldIn, thrower);
+
         this.spellcast = spellcast;
         spellcast.setProjectile(this);
-        
-        getDataManager().register(SEQ, "");
+
         getDataManager().set(SEQ, spellcast.getSequence());
-        this.getDataManager().setDirty(SEQ);
     }
 
     @Override
@@ -68,7 +67,16 @@ public class EntityBall extends EntityThrowable
 
     public float getScale()
     {
-        return 0.6f * (1 + getSpellcast().getDamageForce());
+        if (getSpellcast() != null)
+            return 0.6f * (1 + spellcast.getDamageForce());
+        return 0;
+    }
+
+    public int getColor()
+    {
+        if (getSpellcast() != null)
+            return spellcast.getColor();
+        return 0xFFFFFF;
     }
 
     public Spellcast getSpellcast()
@@ -76,7 +84,7 @@ public class EntityBall extends EntityThrowable
         if (spellcast == null)
         {
             String sequence = getDataManager().get(SEQ);
-            if (sequence != null)
+            if (sequence != null && sequence.length() > 0)
             {
                 spellcast = SpellManager.makeSpell(sequence);
                 spellcast.init(worldObj, (EntityPlayer) getThrower());

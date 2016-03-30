@@ -40,6 +40,12 @@ public class BlockDust extends Block
     }
 
     @Override
+    public boolean isOpaqueCube(IBlockState state)
+    {
+        return false;
+    }
+
+    @Override
     public int getLightOpacity(IBlockState state)
     {
         if (state.getBlock() != this)
@@ -57,12 +63,6 @@ public class BlockDust extends Block
     public BlockRenderLayer getBlockLayer()
     {
         return BlockRenderLayer.TRANSLUCENT;
-    }
-
-    @Override
-    public boolean isOpaqueCube(IBlockState state)
-    {
-        return false;
     }
 
     @Override
@@ -177,8 +177,19 @@ public class BlockDust extends Block
     }
 
     @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
+    public AxisAlignedBB getSelectedBoundingBox(IBlockState blockState, World worldIn, BlockPos pos)
     {
         return null;
+    }
+
+    //@Override
+    //public boolean canCollideCheck(IBlockState state, boolean hitIfLiquid)
+    //{
+    //    return false;
+    //}
+
+    @Override
+    public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
+    {
     }
 }

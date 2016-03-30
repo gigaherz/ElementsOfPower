@@ -17,24 +17,24 @@ public class MagicTooltips
     @SubscribeEvent
     public void onTooltip(ItemTooltipEvent event)
     {
-        if (ContainerInformation.itemContainsMagic(event.itemStack))
+        if (ContainerInformation.itemContainsMagic(event.getItemStack()))
             return;
 
-        Item item = event.itemStack.getItem();
+        Item item = event.getItemStack().getItem();
 
         if (item == Items.diamond || item == Items.emerald || item == Items.quartz)
         {
-            event.toolTip.add(1, TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + I18n.translateToLocal("text." + ElementsOfPower.MODID + ".gemstone.use"));
+            event.getToolTip().add(1, TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + I18n.translateToLocal("text." + ElementsOfPower.MODID + ".gemstone.use"));
         }
 
-        MagicAmounts amounts = EssenceConversions.getEssences(event.itemStack, false);
+        MagicAmounts amounts = EssenceConversions.getEssences(event.getItemStack(), false);
         if (amounts == null || amounts.isEmpty())
             return;
 
-        event.toolTip.add(TextFormatting.YELLOW + "Converts to Essences:");
+        event.getToolTip().add(TextFormatting.YELLOW + "Converts to Essences:");
         if (!Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) && !Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
         {
-            event.toolTip.add(TextFormatting.GRAY + "  (Hold SHIFT)");
+            event.getToolTip().add(TextFormatting.GRAY + "  (Hold SHIFT)");
             return;
         }
 
@@ -48,16 +48,16 @@ public class MagicTooltips
             String magicName = MagicAmounts.getMagicName(i);
 
             String str;
-            if (ContainerInformation.isInfiniteContainer(event.itemStack))
+            if (ContainerInformation.isInfiniteContainer(event.getItemStack()))
                 str = String.format("%s  %s x\u221E", TextFormatting.GRAY, magicName);
-            else if (event.itemStack.stackSize > 1)
+            else if (event.getItemStack().stackSize > 1)
                 str = String.format("%s  %s x%s (stack %s)", TextFormatting.GRAY, magicName,
                         ElementsOfPower.prettyNumberFormatter2.format(amounts.amounts[i]),
-                        ElementsOfPower.prettyNumberFormatter2.format(amounts.amounts[i] * event.itemStack.stackSize));
+                        ElementsOfPower.prettyNumberFormatter2.format(amounts.amounts[i] * event.getItemStack().stackSize));
             else
                 str = String.format("%s  %s x%s", TextFormatting.GRAY, magicName,
                         ElementsOfPower.prettyNumberFormatter2.format(amounts.amounts[i]));
-            event.toolTip.add(str);
+            event.getToolTip().add(str);
         }
     }
 }

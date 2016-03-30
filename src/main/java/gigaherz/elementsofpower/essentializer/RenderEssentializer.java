@@ -52,20 +52,20 @@ public class RenderEssentializer extends TileEntitySpecialRenderer<TileEssential
         GlStateManager.popMatrix();
 
         ItemStack stack = te.getStackInSlot(0);
-        if(stack != null)
+        if (stack != null)
         {
             float angle3 = time * 1.5f;
-            float bob2 = (float) (1+Math.sin(time * (Math.PI / 180) * 0.91)) * 0.03f;
+            float bob2 = (float) (1 + Math.sin(time * (Math.PI / 180) * 0.91)) * 0.03f;
 
             GlStateManager.pushMatrix();
 
-            GlStateManager.translate(x+0.5,y+0.55+bob2,z+0.5);
+            GlStateManager.translate(x + 0.5, y + 0.55 + bob2, z + 0.5);
 
             GlStateManager.rotate(angle3, 0, 1, 0);
             GlStateManager.rotate(90, 1, 0, 0);
 
-            GlStateManager.color(1f,1f,1f,1f);
-            GlStateManager.scale(0.35,0.35,0.35);
+            GlStateManager.color(1f, 1f, 1f, 1f);
+            GlStateManager.scale(0.35, 0.35, 0.35);
 
             Minecraft mc = Minecraft.getMinecraft();
             mc.renderEngine.bindTexture(TextureMap.locationBlocksTexture);

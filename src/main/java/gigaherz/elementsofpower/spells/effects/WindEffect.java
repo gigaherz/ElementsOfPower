@@ -8,7 +8,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.*;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -37,8 +37,28 @@ public class WindEffect extends SpellEffect
     }
 
     @Override
-    public void processDirectHit(Spellcast cast, Entity e)
+    public void processDirectHit(Spellcast cast, Entity entity, Vec3d hitVec)
     {
+        int force = cast.getDamageForce();
+
+        if ((!(entity instanceof EntityLivingBase) && !(entity instanceof EntityItem))
+                || !entity.isEntityAlive())
+            return;
+
+        double dx = entity.posX - hitVec.xCoord;
+        double dy = entity.posY - hitVec.yCoord;
+        double dz = entity.posZ - hitVec.zCoord;
+
+        double ll = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+        double vx = 0, vy = 0, vz = 0;
+        if (ll > 0.0001f)
+        {
+            vx = dx * force / ll;
+            vy = dy * force / ll;
+            vz = dz * force / ll;
+        }
+        entity.addVelocity(vx, vy + force, vz);
     }
 
     @Override
@@ -68,9 +88,9 @@ public class WindEffect extends SpellEffect
     {
     }
 
-    private void pushEntities(int force, Vec3d hitVec, List<? extends Entity> living)
+    private void pushEntities(int force, Vec3d hitVec, List<? extends Entity> entities)
     {
-        for (Entity e : living)
+        for (Entity e : entities)
         {
             if (!e.isEntityAlive())
                 continue;
@@ -81,15 +101,17 @@ public class WindEffect extends SpellEffect
 
             double ll = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-            if (ll < 0.0001f)
-                continue;
-
             double lv = Math.max(0, force - ll);
 
-            double vx = dx * lv / ll;
-            double vy = dy * lv / ll;
-            double vz = dz * lv / ll;
-            e.addVelocity(vx, vy, vz);
+            double vx = 0, vy = 0, vz = 0;
+            if (ll > 0.0001f)
+            {
+                vx = dx * lv / ll;
+                vy = dy * lv / ll;
+                vz = dz * lv / ll;
+            }
+
+            e.addVelocity(vx, vy + lv, vz);
         }
     }
 

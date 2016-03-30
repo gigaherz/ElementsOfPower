@@ -66,9 +66,9 @@ public class BlockEssentializer
     public void randomDisplayTick(IBlockState state, World worldIn, BlockPos pos, Random rand)
     {
         TileEntity te = worldIn.getTileEntity(pos);
-        if(te instanceof TileEssentializer)
+        if (te instanceof TileEssentializer)
         {
-            TileEssentializer essentializer = (TileEssentializer)te;
+            TileEssentializer essentializer = (TileEssentializer) te;
             if (essentializer.remainingToConvert != null)
             {
                 double x = (double) pos.getX() + 0.5;

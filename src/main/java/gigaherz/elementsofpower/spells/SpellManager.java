@@ -262,7 +262,6 @@ public class SpellManager
                     switch (effect)
                     {
                         case Flame:
-                            reset();
                             break;
                         case Wind:
                             break;

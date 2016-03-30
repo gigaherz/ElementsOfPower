@@ -10,7 +10,8 @@ import net.minecraft.entity.monster.EntityBlaze;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.entity.projectile.EntitySmallFireball;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.*;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -39,13 +40,12 @@ public class FlameEffect extends SpellEffect
     }
 
     @Override
-    public void processDirectHit(Spellcast cast, Entity e)
+    public void processDirectHit(Spellcast cast, Entity entity, Vec3d hitVec)
     {
-        float damage = (e instanceof EntityBlaze) ? 3 + cast.getDamageForce() : cast.getDamageForce();
+        float damage = (entity instanceof EntityBlaze) ? 3 + cast.getDamageForce() : cast.getDamageForce();
 
-        e.attackEntityFrom(DamageSource.causeThrownDamage(cast.projectile, cast.player), damage);
-
-        e.setFire(cast.getDamageForce());
+        entity.attackEntityFrom(DamageSource.causeThrownDamage(cast.projectile, cast.player), damage);
+        entity.setFire(cast.getDamageForce());
     }
 
     @Override

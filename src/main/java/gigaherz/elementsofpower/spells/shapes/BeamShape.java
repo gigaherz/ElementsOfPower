@@ -36,7 +36,7 @@ public class BeamShape extends SpellShape
         {
             if (mop.typeOfHit == RayTraceResult.Type.ENTITY)
             {
-                cast.getEffect().processDirectHit(cast, mop.entityHit);
+                cast.getEffect().processDirectHit(cast, mop.entityHit, mop.hitVec);
             }
             else if (mop.typeOfHit == RayTraceResult.Type.BLOCK)
             {

@@ -38,7 +38,7 @@ public class EntityEssence extends EntityAmbientCreature
     };
 
     @SuppressWarnings("unchecked")
-    private static final DataParameter<Float>[] ELEMENTS = new DataParameter[] {
+    private static final DataParameter<Float>[] ELEMENTS = new DataParameter[]{
             EntityDataManager.createKey(EntityEssence.class, DataSerializers.FLOAT),
             EntityDataManager.createKey(EntityEssence.class, DataSerializers.FLOAT),
             EntityDataManager.createKey(EntityEssence.class, DataSerializers.FLOAT),
@@ -47,7 +47,7 @@ public class EntityEssence extends EntityAmbientCreature
             EntityDataManager.createKey(EntityEssence.class, DataSerializers.FLOAT),
             EntityDataManager.createKey(EntityEssence.class, DataSerializers.FLOAT),
             EntityDataManager.createKey(EntityEssence.class, DataSerializers.FLOAT)
-    } ;
+    };
 
     private float scale;
     float[][] sequence;

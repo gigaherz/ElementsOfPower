@@ -36,28 +36,32 @@ public class SpellRenderOverlay
         EntityPlayer player = Minecraft.getMinecraft().thePlayer;
         RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
 
-        float ppitch = player.prevRotationPitch + event.partialTicks * (player.rotationPitch - player.prevRotationPitch);
-        float pyaw = player.prevRotationYawHead + event.partialTicks * (player.rotationYawHead - player.prevRotationYawHead);
+        float partialTicks = event.getPartialTicks();
+
+        float ppitch = player.prevRotationPitch + partialTicks * (player.rotationPitch - player.prevRotationPitch);
+        float pyaw = player.prevRotationYawHead + partialTicks * (player.rotationYawHead - player.prevRotationYawHead);
 
         Vec3d off = new Vec3d(0, -0.15, 0);
         off = off.rotatePitch(-(float) Math.toRadians(ppitch));
         off = off.rotateYaw(-(float) Math.toRadians(pyaw));
 
-        drawSpellsOnPlayer(player, renderManager, 0, player.getEyeHeight(), 0, event.partialTicks, off);
+        drawSpellsOnPlayer(player, renderManager, 0, player.getEyeHeight(), 0, partialTicks, off);
     }
 
     @SubscribeEvent
     public void playerRenderPost(RenderPlayerEvent.Post event)
     {
-        if (event.entityPlayer == Minecraft.getMinecraft().thePlayer)
+        if (event.getEntityPlayer() == Minecraft.getMinecraft().thePlayer)
             return;
 
-        boolean isSelf = event.entityPlayer.getEntityId() == Minecraft.getMinecraft().thePlayer.getEntityId();
-        EntityPlayer player = event.entityPlayer;
-        RenderManager renderManager = event.renderer.getRenderManager();
+        boolean isSelf = event.getEntityPlayer().getEntityId() == Minecraft.getMinecraft().thePlayer.getEntityId();
+        EntityPlayer player = event.getEntityPlayer();
+        RenderManager renderManager = event.getRenderer().getRenderManager();
 
-        float ppitch = player.prevRotationPitch + event.partialRenderTick * (player.rotationPitch - player.prevRotationPitch);
-        float pyaw = player.prevRotationYawHead + event.partialRenderTick * (player.rotationYawHead - player.prevRotationYawHead);
+        float partialTicks = event.getPartialRenderTick();
+
+        float ppitch = player.prevRotationPitch + partialTicks * (player.rotationPitch - player.prevRotationPitch);
+        float pyaw = player.prevRotationYawHead + partialTicks * (player.rotationYawHead - player.prevRotationYawHead);
 
         Vec3d off;
         if (isSelf)
@@ -74,7 +78,7 @@ public class SpellRenderOverlay
             off = off.add(new Vec3d(0, -0.25, 0));
         }
 
-        drawSpellsOnPlayer(player, renderManager, event.x, event.y + player.getEyeHeight(), event.z, event.partialRenderTick, off);
+        drawSpellsOnPlayer(player, renderManager, event.getX(), event.getY() + player.getEyeHeight(), event.getZ(), partialTicks, off);
     }
 
     @SuppressWarnings("unchecked")

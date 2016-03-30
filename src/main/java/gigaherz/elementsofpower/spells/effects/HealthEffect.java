@@ -8,9 +8,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.MobEffects;
-import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.*;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -69,10 +67,10 @@ public class HealthEffect extends SpellEffect
     }
 
     @Override
-    public void processDirectHit(Spellcast cast, Entity e)
+    public void processDirectHit(Spellcast cast, Entity entity, Vec3d hitVec)
     {
-        if (e instanceof EntityLivingBase)
-            applyEffectsToEntity(cast, 0, (EntityLivingBase) e);
+        if (entity instanceof EntityLivingBase)
+            applyEffectsToEntity(cast, 0, (EntityLivingBase) entity);
     }
 
     @Override

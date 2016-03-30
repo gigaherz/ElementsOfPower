@@ -26,7 +26,7 @@ public class RenderCone extends RenderSpell
         IBakedModel modelCone = RenderingStuffs.loadModelRetextured("elementsofpower:entity/cone.obj",
                 "#Default", tex);
 
-        cast.getHitPosition();
+        cast.getHitPosition(partialTicks);
 
         Vec3d start = cast.start;
         Vec3d end = cast.end;

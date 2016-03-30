@@ -5,9 +5,7 @@ import gigaherz.elementsofpower.items.ItemWand;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -76,11 +74,10 @@ public class SpellSequenceUpdate
         public IMessage onMessage(SpellSequenceUpdate message, MessageContext ctx)
         {
             final SpellSequenceUpdate msg = message;
-            final WorldServer ws = (WorldServer)ctx.getServerHandler().playerEntity.worldObj;
+            final EntityPlayer player = ctx.getServerHandler().playerEntity;
+            final WorldServer ws = (WorldServer) player.worldObj;
 
             ws.addScheduledTask(() -> {
-                EntityPlayer player = ctx.getServerHandler().playerEntity;
-
                 ItemStack stack = player.inventory.mainInventory[msg.slotNumber];
 
                 if (stack != null && stack.getItem() instanceof ItemWand)

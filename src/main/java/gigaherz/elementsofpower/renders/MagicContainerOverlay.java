@@ -10,6 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -23,7 +24,7 @@ public class MagicContainerOverlay extends Gui
     @SubscribeEvent
     public void onRenderGameOverlay(RenderGameOverlayEvent.Post event)
     {
-        if (event.type != RenderGameOverlayEvent.ElementType.EXPERIENCE)
+        if (event.getType() != RenderGameOverlayEvent.ElementType.EXPERIENCE)
         {
             return;
         }
@@ -39,8 +40,9 @@ public class MagicContainerOverlay extends Gui
         FontRenderer font = Minecraft.getMinecraft().fontRendererObj;
 
         float rescale = 1;
-        int rescaledWidth = (int) (event.resolution.getScaledWidth() / rescale);
-        int rescaledHeight = (int) (event.resolution.getScaledHeight() / rescale);
+        ScaledResolution res = event.getResolution();
+        int rescaledWidth = (int) (res.getScaledWidth() / rescale);
+        int rescaledHeight = (int) (res.getScaledHeight() / rescale);
 
         GlStateManager.pushAttrib();
         GlStateManager.pushMatrix();
