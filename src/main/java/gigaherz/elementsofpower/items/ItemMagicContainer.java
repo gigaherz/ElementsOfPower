@@ -86,7 +86,7 @@ public abstract class ItemMagicContainer extends Item
             return stack;
         MagicAmounts am = new MagicAmounts();
         am.add(ContainerInformation.getContainedMagic(stack));
-        am.element(Element.values()[orb.getMetadata()], 8);
+        am.element(Element.values[orb.getMetadata()], 8);
 
         MagicAmounts lm = ContainerInformation.getMagicLimits(stack);
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)

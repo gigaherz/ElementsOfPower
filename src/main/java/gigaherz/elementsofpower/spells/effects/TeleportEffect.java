@@ -27,11 +27,11 @@ public class TeleportEffect extends SpellEffect
     }
 
     @Override
-    public void processDirectHit(Spellcast cast, Entity e)
+    public void processDirectHit(Spellcast cast, Entity entity, Vec3 hitVec)
     {
-        if (e == cast.player)
+        if (entity == cast.player)
             return;
-        e.attackEntityFrom(DamageSource.causeThrownDamage(cast.projectile, cast.player), 0.0F);
+        entity.attackEntityFrom(DamageSource.causeThrownDamage(cast.projectile, cast.player), 0.0F);
     }
 
     @Override

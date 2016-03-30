@@ -43,7 +43,7 @@ public class TileCocoon extends TileEntity implements ITickable
 
     public void addEssences(ItemStack stack)
     {
-        essenceContained.element(Element.values()[stack.getMetadata()], 1);
+        essenceContained.element(Element.values[stack.getMetadata()], 1);
         worldObj.markBlockForUpdate(pos);
     }
 

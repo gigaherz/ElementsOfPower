@@ -82,10 +82,10 @@ public class HealthEffect extends SpellEffect
     }
 
     @Override
-    public void processDirectHit(Spellcast cast, Entity e)
+    public void processDirectHit(Spellcast cast, Entity entity, Vec3 hitVec)
     {
-        if (e instanceof EntityLivingBase)
-            applyEffectsToEntity(cast, 0, (EntityLivingBase) e);
+        if (entity instanceof EntityLivingBase)
+            applyEffectsToEntity(cast, 0, (EntityLivingBase) entity);
     }
 
     @Override

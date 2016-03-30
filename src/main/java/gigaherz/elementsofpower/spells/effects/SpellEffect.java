@@ -20,7 +20,7 @@ public abstract class SpellEffect
         return 0;
     }
 
-    public abstract void processDirectHit(Spellcast cast, Entity e);
+    public abstract void processDirectHit(Spellcast cast, Entity entity, Vec3 hitVec);
 
     public abstract boolean processEntitiesAroundBefore(Spellcast cast, Vec3 hitVec);
 

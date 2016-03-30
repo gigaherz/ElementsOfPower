@@ -30,7 +30,7 @@ public class RenderBeam extends RenderSpell
         IFlexibleBakedModel modelCyl = RenderingStuffs.loadModelRetextured("elementsofpower:entity/cylinder.obj",
                 "#Default", tex);
 
-        MovingObjectPosition mop = cast.getHitPosition();
+        MovingObjectPosition mop = cast.getHitPosition(partialTicks);
 
         Vec3 start = cast.start;
         Vec3 end = cast.end;

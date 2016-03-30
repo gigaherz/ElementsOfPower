@@ -36,7 +36,7 @@ public class BallShape extends SpellShape
 
         if (mop.entityHit != null)
         {
-            effect.processDirectHit(cast, mop.entityHit);
+            effect.processDirectHit(cast, mop.entityHit, mop.hitVec);
         }
 
         effect.spawnBallParticles(cast, mop);

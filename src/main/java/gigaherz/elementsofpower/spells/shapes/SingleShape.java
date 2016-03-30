@@ -30,7 +30,7 @@ public class SingleShape extends SpellShape
         {
             if (mop.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY)
             {
-                cast.getEffect().processDirectHit(cast, mop.entityHit);
+                cast.getEffect().processDirectHit(cast, mop.entityHit, mop.hitVec);
             }
             else if (mop.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK)
             {

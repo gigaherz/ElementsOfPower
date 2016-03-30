@@ -33,8 +33,28 @@ public class WindEffect extends SpellEffect
     }
 
     @Override
-    public void processDirectHit(Spellcast cast, Entity e)
+    public void processDirectHit(Spellcast cast, Entity entity, Vec3 hitVec)
     {
+        int force = cast.getDamageForce();
+
+        if ((!(entity instanceof EntityLivingBase) && !(entity instanceof EntityItem))
+                || !entity.isEntityAlive())
+            return;
+
+        double dx = entity.posX - hitVec.xCoord;
+        double dy = entity.posY - hitVec.yCoord;
+        double dz = entity.posZ - hitVec.zCoord;
+
+        double ll = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+        double vx = 0, vy = 0, vz = 0;
+        if (ll > 0.0001f)
+        {
+            vx = dx * force / ll;
+            vy = dy * force / ll;
+            vz = dz * force / ll;
+        }
+        entity.addVelocity(vx, vy + force, vz);
     }
 
     @Override
@@ -77,15 +97,17 @@ public class WindEffect extends SpellEffect
 
             double ll = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-            if (ll < 0.0001f)
-                continue;
-
             double lv = Math.max(0, force - ll);
 
-            double vx = dx * lv / ll;
-            double vy = dy * lv / ll;
-            double vz = dz * lv / ll;
-            e.addVelocity(vx, vy, vz);
+            double vx = 0, vy = 0, vz = 0;
+            if (ll > 0.0001f)
+            {
+                vx = dx * lv / ll;
+                vy = dy * lv / ll;
+                vz = dz * lv / ll;
+            }
+
+            e.addVelocity(vx, vy + lv, vz);
         }
     }
 

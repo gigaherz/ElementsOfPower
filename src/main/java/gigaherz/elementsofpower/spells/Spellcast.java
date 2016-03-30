@@ -257,9 +257,26 @@ public class Spellcast
     // Called by the client on render, and by the server as needed
     public MovingObjectPosition getHitPosition()
     {
+        return getHitPosition(1);
+    }
+
+    public MovingObjectPosition getHitPosition(float partialTicks)
+    {
         float maxDistance = 10;
-        start = new Vec3(player.posX, player.posY + (double) player.getEyeHeight(), player.posZ);
-        Vec3 look = player.getLookVec();
+
+        if (partialTicks < 1)
+        {
+            double sx = player.prevPosX + (player.posX - player.prevPosX) * partialTicks;
+            double sy = player.prevPosY + (player.posY - player.prevPosY) * partialTicks + player.getEyeHeight();
+            double sz = player.prevPosZ + (player.posZ - player.prevPosZ) * partialTicks;
+            start = new Vec3(sx, sy, sz);
+        }
+        else
+        {
+            start = new Vec3(player.posX, player.posY + player.getEyeHeight(), player.posZ);
+        }
+
+        Vec3 look = player.getLook(partialTicks);
         end = start.addVector(look.xCoord * maxDistance, look.yCoord * maxDistance, look.zCoord * maxDistance);
         MovingObjectPosition mop = player.worldObj.rayTraceBlocks(start, end, false, true, false);
 

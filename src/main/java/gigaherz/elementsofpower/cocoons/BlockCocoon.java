@@ -195,6 +195,10 @@ public class BlockCocoon extends Block
         @Override
         public void generate(Random rand, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider)
         {
+            int num = Math.max(0, rand.nextInt(8) - 6);
+            if (num == 0)
+                return;
+
             List<BlockPos> positions = Lists.newArrayList();
             for (int y = 0; y < 255; y++)
             {
@@ -225,7 +229,6 @@ public class BlockCocoon extends Block
             if (positions.size() == 0)
                 return;
 
-            int num = Math.max(0, rand.nextInt(8) - 6);
             for (int k = 0; k < num; k++)
             {
                 generateOne(positions, rand, world);
@@ -297,7 +300,7 @@ public class BlockCocoon extends Block
                             }
                         }
 
-                        Element e = Element.values()[am.getDominantElement()];
+                        Element e = Element.values[am.getDominantElement()];
 
                         List<Element> elements = Lists.newArrayList(Element.values());
 

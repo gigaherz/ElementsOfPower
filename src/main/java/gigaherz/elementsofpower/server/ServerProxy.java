@@ -4,8 +4,6 @@ import gigaherz.elementsofpower.ISideProxy;
 import gigaherz.elementsofpower.network.EssentializerAmountsUpdate;
 import gigaherz.elementsofpower.network.EssentializerTileUpdate;
 import gigaherz.elementsofpower.network.SpellcastSync;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.EnumHand;
 
 public class ServerProxy implements ISideProxy
 {

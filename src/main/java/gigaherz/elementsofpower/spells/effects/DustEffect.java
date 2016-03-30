@@ -33,7 +33,7 @@ public class DustEffect extends SpellEffect
     }
 
     @Override
-    public void processDirectHit(Spellcast cast, Entity e)
+    public void processDirectHit(Spellcast cast, Entity entity, Vec3 hitVec)
     {
 
     }

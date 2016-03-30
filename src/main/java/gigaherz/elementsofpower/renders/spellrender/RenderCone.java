@@ -26,7 +26,7 @@ public class RenderCone extends RenderSpell
         IFlexibleBakedModel modelCone = RenderingStuffs.loadModelRetextured("elementsofpower:entity/cone.obj",
                 "#Default", tex);
 
-        cast.getHitPosition();
+        cast.getHitPosition(partialTicks);
 
         Vec3 start = cast.start;
         Vec3 end = cast.end;
