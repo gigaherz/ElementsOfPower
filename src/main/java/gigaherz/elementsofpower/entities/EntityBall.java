@@ -15,7 +15,7 @@ public class EntityBall extends EntityThrowable
 {
     Spellcast spellcast;
 
-    private static final DataParameter<String> SEQ = EntityDataManager.createKey(EntityEssence.class, DataSerializers.STRING);
+    private static final DataParameter<String> SEQ = EntityDataManager.createKey(EntityBall.class, DataSerializers.STRING);
 
     public EntityBall(World worldIn)
     {

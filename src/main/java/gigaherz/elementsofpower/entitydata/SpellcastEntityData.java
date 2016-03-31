@@ -228,12 +228,11 @@ public class SpellcastEntityData
                             return capability == SPELLCAST;
                         }
 
-                        @SuppressWarnings("unchecked")
                         @Override
                         public <T> T getCapability(Capability<T> capability, EnumFacing facing)
                         {
                             if (capability == SPELLCAST)
-                                return (T) cap;
+                                return SPELLCAST.cast(cap);
                             return null;
                         }
 
