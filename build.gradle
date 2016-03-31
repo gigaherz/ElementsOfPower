@@ -15,9 +15,9 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'maven-publish'
 
-version = "0.7.2-alpha"
+version = "0.7.3-alpha"
 group = "gigaherz.elementsofpower" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "ElementsOfPower"
+archivesBaseName = "ElementsOfPower-1.9"
 
 minecraft {
     version = "1.9-12.16.0.1809-1.9"

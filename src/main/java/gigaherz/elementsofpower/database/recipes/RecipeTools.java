@@ -46,6 +46,12 @@ public class RecipeTools
                 return;
             }
 
+            if (output.getItem() == null)
+            {
+                ElementsOfPower.logger.warn("Recipe has non-null itemstack but the item is NULL! WHY woudl anyone do that?!");
+                return;
+            }
+
             if (output.stackSize == 0)
             {
                 ElementsOfPower.logger.warn("Found a recipe with result stack size 0. This recipe will be ignored. Result stack: " + output.toString());
