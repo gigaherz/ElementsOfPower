@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.gemstones;
 
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.gemstones.GemstoneBlockType;
+import gigaherz.elementsofpower.blocks.BlockRegistered;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
@@ -21,18 +21,17 @@ import net.minecraftforge.fml.common.IWorldGenerator;
 import java.util.List;
 import java.util.Random;
 
-public class BlockGemstoneOre extends Block
+public class BlockGemstoneOre extends BlockRegistered
 {
     public static final PropertyEnum<GemstoneBlockType> TYPE = PropertyEnum.create("type", GemstoneBlockType.class);
 
-    public BlockGemstoneOre()
+    public BlockGemstoneOre(String name)
     {
-        super(Material.rock, Material.rock.getMaterialMapColor());
+        super(name, Material.rock);
         setHardness(3.0F);
         setResistance(5.0F);
         setStepSound(soundTypePiston);
         setCreativeTab(CreativeTabs.tabBlock);
-        setUnlocalizedName(ElementsOfPower.MODID + ".gemstoneOre");
     }
 
     @Override
@@ -53,6 +52,11 @@ public class BlockGemstoneOre extends Block
         if(meta > GemstoneBlockType.values.length)
             return getDefaultState();
         return getDefaultState().withProperty(TYPE, GemstoneBlockType.values[meta]);
+    }
+
+    public ItemStack getStack(GemstoneBlockType gemstoneBlockType)
+    {
+        return getStack(1, gemstoneBlockType);
     }
 
     public ItemStack getStack(int quantity, GemstoneBlockType gemstoneBlockType)

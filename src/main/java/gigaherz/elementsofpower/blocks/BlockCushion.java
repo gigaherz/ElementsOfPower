@@ -10,15 +10,9 @@ import net.minecraft.world.World;
 
 public class BlockCushion extends BlockDust
 {
-    public BlockCushion()
+    public BlockCushion(String name)
     {
-        super(ElementsOfPower.materialCushion);
-        setUnlocalizedName(ElementsOfPower.MODID + ".cushion");
-        setHardness(0.1F);
-        setBlockUnbreakable();
-        setStepSound(Block.soundTypeCloth);
-        setDefaultState(this.blockState.getBaseState()
-                .withProperty(DENSITY, 16));
+        super(name, ElementsOfPower.materialCushion);
     }
 
     @Override

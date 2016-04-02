@@ -20,7 +20,7 @@ group = "gigaherz.elementsofpower" // http://maven.apache.org/guides/mini/guide-
 archivesBaseName = "ElementsOfPower-1.8.9"
 
 minecraft {
-    version = "1.8.9-11.15.1.1764"
+    version = "1.8.9-11.15.1.1808"
     runDir = "run"
 
     mappings = "stable_22"

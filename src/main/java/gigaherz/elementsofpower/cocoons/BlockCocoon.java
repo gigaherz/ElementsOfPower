@@ -2,6 +2,7 @@ package gigaherz.elementsofpower.cocoons;
 
 import com.google.common.collect.Lists;
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.blocks.BlockRegistered;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.entities.EntityEssence;
 import gigaherz.elementsofpower.gemstones.Element;
@@ -26,20 +27,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class BlockCocoon extends Block
+public class BlockCocoon extends BlockRegistered
 {
     public static final PropertyEnum<EnumFacing> FACING = PropertyEnum.create("facing", EnumFacing.class);
     public static final PropertyInteger COLOR = PropertyInteger.create("color", 0, MagicAmounts.ELEMENTS);
 
-    public BlockCocoon()
+    public BlockCocoon(String name)
     {
-        super(Material.cactus);
+        super(name, Material.cactus);
         setTickRandomly(true);
         setCreativeTab(ElementsOfPower.tabMagic);
         setLightOpacity(0);
         setLightLevel(5);
         setHardness(1);
-        setUnlocalizedName(ElementsOfPower.MODID + ".cocoon");
     }
 
     @Override

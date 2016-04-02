@@ -14,9 +14,7 @@ import gigaherz.elementsofpower.entities.EntityEssence;
 import gigaherz.elementsofpower.entitydata.SpellcastEntityData;
 import gigaherz.elementsofpower.essentializer.BlockEssentializer;
 import gigaherz.elementsofpower.essentializer.TileEssentializer;
-import gigaherz.elementsofpower.gemstones.BlockGemstone;
-import gigaherz.elementsofpower.gemstones.BlockGemstoneOre;
-import gigaherz.elementsofpower.gemstones.GemstoneBlockType;
+import gigaherz.elementsofpower.gemstones.*;
 import gigaherz.elementsofpower.gui.GuiHandler;
 import gigaherz.elementsofpower.guidebook.ItemGuidebook;
 import gigaherz.elementsofpower.items.*;
@@ -173,7 +171,7 @@ public class ElementsOfPower
         }
         SMALL_CLOUD_PARTICLE = EnumHelper.addEnum(EnumParticleTypes.class, "SMALL_CLOUD",
                 new Class<?>[]{String.class, int.class, boolean.class},
-                new Object[]{"small_cloud", SMALL_CLOUD_PARTICLE_ID, false});
+                "small_cloud", SMALL_CLOUD_PARTICLE_ID, false);
 
         // Client-side rendering registered in: proxy.registerParticle();
     }
@@ -199,85 +197,85 @@ public class ElementsOfPower
         // Block and Item registration
         logger.info("Initializing blocks and items...");
 
-        magicOrb = new ItemMagicOrb();
-        GameRegistry.registerItem(magicOrb, "magicOrb");
+        magicOrb = new ItemMagicOrb("magicOrb");
+        GameRegistry.registerItem(magicOrb);
 
-        magicWand = new ItemWand();
-        GameRegistry.registerItem(magicWand, "magicWand");
+        magicWand = new ItemWand("magicWand");
+        GameRegistry.registerItem(magicWand);
 
-        magicStaff = new ItemStaff();
-        GameRegistry.registerItem(magicStaff, "magicStaff");
+        magicStaff = new ItemStaff("magicStaff");
+        GameRegistry.registerItem(magicStaff);
 
-        magicRing = new ItemRing();
-        GameRegistry.registerItem(magicRing, "magicRing");
+        magicRing = new ItemRing("magicRing");
+        GameRegistry.registerItem(magicRing);
 
-        essentializer = new BlockEssentializer();
-        GameRegistry.registerBlock(essentializer, "essentializer");
+        essentializer = new BlockEssentializer("essentializer");
+        GameRegistry.registerBlock(essentializer);
         GameRegistry.registerTileEntity(TileEssentializer.class, "essentializerTile");
 
-        dust = new BlockDust();
-        GameRegistry.registerBlock(dust, "dust");
+        dust = new BlockDust("dust");
+        GameRegistry.registerBlock(dust);
 
-        mist = new BlockDust();
-        GameRegistry.registerBlock(mist, "mist");
+        mist = new BlockDust("mist");
+        GameRegistry.registerBlock(mist);
 
-        cushion = new BlockCushion();
-        GameRegistry.registerBlock(cushion, "cushion");
+        cushion = new BlockCushion("cushion");
+        GameRegistry.registerBlock(cushion);
 
-        cocoon = new BlockCocoon();
-        GameRegistry.registerBlock(cocoon, "cocoon");
+        cocoon = new BlockCocoon("cocoon");
+        GameRegistry.registerBlock(cocoon);
         GameRegistry.registerTileEntity(TileCocoon.class, "cocoonTile");
 
-        gemstoneBlock = new BlockGemstone();
-        GameRegistry.registerBlock(gemstoneBlock, BlockGemstone.Item.class, "gemstoneBlock");
+        gemstoneBlock = new BlockGemstone("gemstoneBlock");
+        GameRegistry.registerBlock(gemstoneBlock, BlockGemstone.Item.class);
 
-        gemstoneOre = new BlockGemstoneOre();
-        GameRegistry.registerBlock(gemstoneOre, BlockGemstoneOre.ItemForm.class, "gemstoneOre");
+        gemstoneOre = new BlockGemstoneOre("gemstoneOre");
+        GameRegistry.registerBlock(gemstoneOre, BlockGemstoneOre.ItemForm.class);
 
-        gemstone = new ItemGemstone();
-        GameRegistry.registerItem(gemstone, "gemstone");
+        gemstone = new ItemGemstone("gemstone");
+        GameRegistry.registerItem(gemstone);
 
-        analyzer = new ItemAnalyzer();
-        GameRegistry.registerItem(analyzer, "analyzer");
+        analyzer = new ItemAnalyzer("analyzer");
+        GameRegistry.registerItem(analyzer);
 
-        guidebook = new ItemGuidebook();
-        GameRegistry.registerItem(guidebook, "guidebook");
+        guidebook = new ItemGuidebook("guidebook");
+        GameRegistry.registerItem(guidebook);
 
         // Template stacks
         logger.info("Generating template stacks...");
 
-        fire = magicOrb.getStack(1, 0);
-        water = magicOrb.getStack(1, 1);
-        air = magicOrb.getStack(1, 2);
-        earth = magicOrb.getStack(1, 3);
-        light = magicOrb.getStack(1, 4);
-        darkness = magicOrb.getStack(1, 5);
-        life = magicOrb.getStack(1, 6);
-        death = magicOrb.getStack(1, 7);
+        fire = magicOrb.getStack(Element.Fire);
+        water = magicOrb.getStack(Element.Water);
+        air = magicOrb.getStack(Element.Air);
+        earth = magicOrb.getStack(Element.Earth);
+        light = magicOrb.getStack(Element.Light);
+        darkness = magicOrb.getStack(Element.Darkness);
+        life = magicOrb.getStack(Element.Life);
+        death = magicOrb.getStack(Element.Death);
 
-        gemRuby = gemstone.getStack(1, 0);
-        gemSapphire = gemstone.getStack(1, 1);
-        gemCitrine = gemstone.getStack(1, 2);
-        gemAgate = gemstone.getStack(1, 3);
-        gemQuartz = gemstone.getStack(1, 4);
-        gemSerendibite = gemstone.getStack(1, 5);
-        gemEmerald = gemstone.getStack(1, 6);
-        gemAmethyst = gemstone.getStack(1, 7);
-        gemDiamond = gemstone.getStack(1, 8);
+        gemRuby = gemstone.getStack(Gemstone.Ruby);
+        gemSapphire = gemstone.getStack(Gemstone.Sapphire);
+        gemCitrine = gemstone.getStack(Gemstone.Citrine);
+        gemAgate = gemstone.getStack(Gemstone.Agate);
+        gemQuartz = gemstone.getStack(Gemstone.Quartz);
+        gemSerendibite = gemstone.getStack(Gemstone.Serendibite);
+        gemEmerald = gemstone.getStack(Gemstone.Emerald);
+        gemAmethyst = gemstone.getStack(Gemstone.Amethyst);
+        gemDiamond = gemstone.getStack(Gemstone.Diamond);
 
-        blockAgate = gemstoneBlock.getStack(1, GemstoneBlockType.Agate);
-        blockAmethyst = gemstoneBlock.getStack(1, GemstoneBlockType.Amethyst);
-        blockCitrine = gemstoneBlock.getStack(1, GemstoneBlockType.Citrine);
-        blockRuby = gemstoneBlock.getStack(1, GemstoneBlockType.Ruby);
-        blockSapphire = gemstoneBlock.getStack(1, GemstoneBlockType.Sapphire);
-        blockSerendibite = gemstoneBlock.getStack(1, GemstoneBlockType.Serendibite);
+        blockAgate = gemstoneBlock.getStack(GemstoneBlockType.Agate);
+        blockAmethyst = gemstoneBlock.getStack(GemstoneBlockType.Amethyst);
+        blockCitrine = gemstoneBlock.getStack(GemstoneBlockType.Citrine);
+        blockRuby = gemstoneBlock.getStack(GemstoneBlockType.Ruby);
+        blockSapphire = gemstoneBlock.getStack(GemstoneBlockType.Sapphire);
+        blockSerendibite = gemstoneBlock.getStack(GemstoneBlockType.Serendibite);
 
-        oreAgate = gemstoneOre.getStack(1, GemstoneBlockType.Agate);
-        oreAmethyst = gemstoneOre.getStack(1, GemstoneBlockType.Amethyst);
-        oreCitrine = gemstoneOre.getStack(1, GemstoneBlockType.Citrine);
-        oreRuby = gemstoneOre.getStack(1, GemstoneBlockType.Ruby);
-        oreSapphire = gemstoneOre.getStack(1, GemstoneBlockType.Sapphire);
-        oreSerendibite = gemstoneOre.getStack(1, GemstoneBlockType.Serendibite);
+        oreAgate = gemstoneOre.getStack(GemstoneBlockType.Agate);
+        oreAmethyst = gemstoneOre.getStack(GemstoneBlockType.Amethyst);
+        oreCitrine = gemstoneOre.getStack(GemstoneBlockType.Citrine);
+        oreRuby = gemstoneOre.getStack(GemstoneBlockType.Ruby);
+        oreSapphire = gemstoneOre.getStack(GemstoneBlockType.Sapphire);
+        oreSerendibite = gemstoneOre.getStack(GemstoneBlockType.Serendibite);
 
         logger.info("Registering ore dictionary names...");
 

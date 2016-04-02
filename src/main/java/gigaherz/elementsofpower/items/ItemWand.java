@@ -4,9 +4,9 @@ import gigaherz.elementsofpower.ElementsOfPower;
 
 public class ItemWand extends ItemGemContainer
 {
-    public ItemWand()
+    public ItemWand(String name)
     {
-        super();
+        super(name);
         setUnlocalizedName(ElementsOfPower.MODID + ".wand");
         setCreativeTab(ElementsOfPower.tabMagic);
     }

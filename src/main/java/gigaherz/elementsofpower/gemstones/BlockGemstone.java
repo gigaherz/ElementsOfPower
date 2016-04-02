@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.gemstones;
 
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.gemstones.GemstoneBlockType;
+import gigaherz.elementsofpower.blocks.BlockRegistered;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
@@ -15,19 +15,18 @@ import net.minecraft.util.EnumFacing;
 
 import java.util.List;
 
-public class BlockGemstone extends Block
+public class BlockGemstone extends BlockRegistered
 {
     public static final PropertyEnum<GemstoneBlockType> TYPE = PropertyEnum.create("type", GemstoneBlockType.class);
 
-    public BlockGemstone()
+    public BlockGemstone(String name)
     {
-        super(Material.iron, MapColor.diamondColor);
+        super(name, Material.iron, MapColor.diamondColor);
 
         setHardness(5.0F);
         setResistance(10.0F);
         setStepSound(soundTypeMetal);
         setCreativeTab(CreativeTabs.tabBlock);
-        setUnlocalizedName(ElementsOfPower.MODID + ".gemstoneBlock");
     }
 
     @Override
@@ -48,6 +47,11 @@ public class BlockGemstone extends Block
         if(meta > GemstoneBlockType.values.length)
             return getDefaultState();
         return getDefaultState().withProperty(TYPE, GemstoneBlockType.values[meta]);
+    }
+
+    public ItemStack getStack(GemstoneBlockType gemstoneBlockType)
+    {
+        return getStack(1, gemstoneBlockType);
     }
 
     public ItemStack getStack(int quantity, GemstoneBlockType gemstoneBlockType)

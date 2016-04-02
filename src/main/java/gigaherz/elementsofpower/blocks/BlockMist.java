@@ -1,6 +1,5 @@
 package gigaherz.elementsofpower.blocks;
 
-import gigaherz.elementsofpower.ElementsOfPower;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyInteger;
@@ -17,14 +16,13 @@ import net.minecraft.world.World;
 
 import java.util.Random;
 
-public class BlockMist extends Block
+public class BlockMist extends BlockRegistered
 {
     public static final PropertyInteger DENSITY = PropertyInteger.create("density", 1, 16);
 
-    public BlockMist()
+    public BlockMist(String name)
     {
-        super(Material.air);
-        setUnlocalizedName(ElementsOfPower.MODID + ".dust");
+        super(name, Material.air);
         setHardness(0.1F);
         setBlockUnbreakable();
         setStepSound(Block.soundTypeCloth);

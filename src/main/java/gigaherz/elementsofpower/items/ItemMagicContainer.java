@@ -4,18 +4,19 @@ import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.ContainerInformation;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.gemstones.Element;
+import gigaherz.elementsofpower.gemstones.Gemstone;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public abstract class ItemMagicContainer extends Item
+public abstract class ItemMagicContainer extends ItemRegistered
 {
-    public ItemMagicContainer()
+    public ItemMagicContainer(String name)
     {
+        super(name);
         setMaxStackSize(1);
         setHasSubtypes(true);
     }
@@ -25,9 +26,14 @@ public abstract class ItemMagicContainer extends Item
         return false;
     }
 
-    public ItemStack getStack(int count, int damageValue)
+    public ItemStack getStack(Gemstone gemstone)
     {
-        return new ItemStack(this, count, damageValue);
+        return getStack(1, gemstone);
+    }
+
+    public ItemStack getStack(int count, Gemstone gemstone)
+    {
+        return new ItemStack(this, count, gemstone.ordinal());
     }
 
     public abstract MagicAmounts getCapacity(ItemStack stack);

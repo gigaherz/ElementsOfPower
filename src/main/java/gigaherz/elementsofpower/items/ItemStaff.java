@@ -6,9 +6,9 @@ import net.minecraft.item.ItemStack;
 
 public class ItemStaff extends ItemWand
 {
-    public ItemStaff()
+    public ItemStaff(String name)
     {
-        super();
+        super(name);
         setUnlocalizedName(ElementsOfPower.MODID + ".staff");
         setCreativeTab(ElementsOfPower.tabMagic);
     }

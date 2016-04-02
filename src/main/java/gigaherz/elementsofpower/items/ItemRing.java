@@ -19,9 +19,9 @@ public class ItemRing extends ItemGemContainer implements IBauble
 {
     public static final float MAX_TRANSFER_TICK = 1 / 20.0f;
 
-    public ItemRing()
+    public ItemRing(String name)
     {
-        super();
+        super(name);
         setUnlocalizedName(ElementsOfPower.MODID + ".ring");
         setCreativeTab(ElementsOfPower.tabMagic);
     }

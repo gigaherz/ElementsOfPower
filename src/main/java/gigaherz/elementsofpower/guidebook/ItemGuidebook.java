@@ -1,17 +1,18 @@
 package gigaherz.elementsofpower.guidebook;
 
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.items.ItemRegistered;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
-public class ItemGuidebook extends Item
+public class ItemGuidebook extends ItemRegistered
 {
-    public ItemGuidebook()
+    public ItemGuidebook(String name)
     {
+        super(name);
         setMaxStackSize(1);
         setUnlocalizedName(ElementsOfPower.MODID + ".guidebook");
         setCreativeTab(ElementsOfPower.tabMagic);

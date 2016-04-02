@@ -27,11 +27,11 @@ public class ItemGemstone extends ItemMagicContainer
             new MagicAmounts().all(500),
     };
 
-    public ItemGemstone()
+    public ItemGemstone(String name)
     {
+        super(name);
         setMaxStackSize(64);
         setHasSubtypes(true);
-        setUnlocalizedName(ElementsOfPower.MODID + ".gemstone");
 
         // FIXME: Change to a gemstones tab
         setCreativeTab(ElementsOfPower.tabMagic);
