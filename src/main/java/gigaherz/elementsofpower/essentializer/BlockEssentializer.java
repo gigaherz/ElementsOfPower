@@ -25,7 +25,7 @@ public class BlockEssentializer
         super(name, Material.iron);
         setCreativeTab(ElementsOfPower.tabMagic);
         setHardness(15.0F);
-        setStepSound(SoundType.METAL);
+        setSoundType(SoundType.METAL);
         setLightLevel(1);
         setLightOpacity(0);
     }

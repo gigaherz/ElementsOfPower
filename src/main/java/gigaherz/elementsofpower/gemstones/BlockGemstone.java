@@ -10,6 +10,7 @@ import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 
@@ -22,10 +23,9 @@ public class BlockGemstone extends BlockRegistered
     public BlockGemstone(String name)
     {
         super(name, Material.iron, MapColor.diamondColor);
-
         setHardness(5.0F);
         setResistance(10.0F);
-        setStepSound(SoundType.METAL);
+        setSoundType(SoundType.METAL);
         setCreativeTab(CreativeTabs.tabBlock);
     }
 
@@ -58,7 +58,7 @@ public class BlockGemstone extends BlockRegistered
     }
 
     @Override
-    public void getSubBlocks(net.minecraft.item.Item itemIn, CreativeTabs tab, List<ItemStack> list)
+    public void getSubBlocks(Item itemIn, CreativeTabs tab, List<ItemStack> list)
     {
         for (GemstoneBlockType type : GemstoneBlockType.values)
         {
@@ -66,9 +66,15 @@ public class BlockGemstone extends BlockRegistered
         }
     }
 
-    public static class Item extends ItemBlock
+    @Override
+    public ItemBlock createItemBlock()
     {
-        public Item(Block block)
+        return (ItemBlock)new ItemForm(this).setRegistryName(getRegistryName());
+    }
+
+    public static class ItemForm extends ItemBlock
+    {
+        public ItemForm(Block block)
         {
             super(block);
             setHasSubtypes(true);

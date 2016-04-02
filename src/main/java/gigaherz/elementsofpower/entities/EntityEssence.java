@@ -65,7 +65,7 @@ public class EntityEssence extends EntityAmbientCreature
 
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            dataWatcher.register(ELEMENTS[i], 0.0f);
+            getDataManager().register(ELEMENTS[i], 0.0f);
         }
 
         setEntityBoundingBox(null);
@@ -79,7 +79,7 @@ public class EntityEssence extends EntityAmbientCreature
 
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            dataWatcher.register(ELEMENTS[i], am.amounts[i]);
+            getDataManager().register(ELEMENTS[i], am.amounts[i]);
             numEssences += am.amounts[i];
         }
 
@@ -110,7 +110,7 @@ public class EntityEssence extends EntityAmbientCreature
         MagicAmounts amounts = new MagicAmounts();
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            amounts.amounts[i] = dataWatcher.get(ELEMENTS[i]);
+            amounts.amounts[i] = getDataManager().get(ELEMENTS[i]);
         }
 
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
@@ -188,7 +188,7 @@ public class EntityEssence extends EntityAmbientCreature
         int numEssences = 0;
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            numEssences += dataWatcher.get(ELEMENTS[i]);
+            numEssences += getDataManager().get(ELEMENTS[i]);
         }
         scale = 0.025f * numEssences;
 
@@ -201,7 +201,7 @@ public class EntityEssence extends EntityAmbientCreature
             MagicAmounts amounts = new MagicAmounts();
             for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
             {
-                amounts.amounts[i] = dataWatcher.get(ELEMENTS[i]);
+                amounts.amounts[i] = getDataManager().get(ELEMENTS[i]);
             }
 
             if (amounts.getTotalMagic() > 0)
@@ -216,7 +216,7 @@ public class EntityEssence extends EntityAmbientCreature
                         j++;
                 }
                 amounts.amounts[i] = Math.max(0, amounts.amounts[i] - 1);
-                dataWatcher.set(ELEMENTS[i], amounts.amounts[i]);
+                getDataManager().set(ELEMENTS[i], amounts.amounts[i]);
             }
 
             if (amounts.getTotalMagic() <= 0)
@@ -326,7 +326,7 @@ public class EntityEssence extends EntityAmbientCreature
         MagicAmounts self = new MagicAmounts();
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            self.amounts[i] = dataWatcher.get(ELEMENTS[i]);
+            self.amounts[i] = getDataManager().get(ELEMENTS[i]);
         }
 
         EntityPlayer p = (EntityPlayer) entity;
@@ -395,7 +395,7 @@ public class EntityEssence extends EntityAmbientCreature
                         totalTransfer += transfer;
                         amounts.amounts[i] = Math.min(amounts.amounts[i] + transfer, limits.amounts[i]);
                         self.amounts[i] -= transfer;
-                        dataWatcher.set(ELEMENTS[i], self.amounts[i]);
+                        getDataManager().set(ELEMENTS[i], self.amounts[i]);
                     }
                 }
 
@@ -418,7 +418,7 @@ public class EntityEssence extends EntityAmbientCreature
         super.readEntityFromNBT(tag);
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            dataWatcher.set(ELEMENTS[i], tag.getFloat("Essence" + i));
+            getDataManager().set(ELEMENTS[i], tag.getFloat("Essence" + i));
         }
         entityAge2 = tag.getInteger("Age2");
         accelX = tag.getDouble("accelX");
@@ -432,7 +432,7 @@ public class EntityEssence extends EntityAmbientCreature
         super.writeEntityToNBT(tag);
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            tag.setFloat("Essence" + i, dataWatcher.get(ELEMENTS[i]));
+            tag.setFloat("Essence" + i, getDataManager().get(ELEMENTS[i]));
         }
         tag.setInteger("Age2", entityAge2);
         tag.setDouble("accelX", accelX);

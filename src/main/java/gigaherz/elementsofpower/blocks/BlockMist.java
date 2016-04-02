@@ -28,7 +28,7 @@ public class BlockMist extends BlockRegistered
         super(name, Material.air);
         setHardness(0.1F);
         setBlockUnbreakable();
-        setStepSound(SoundType.CLOTH);
+        setSoundType(SoundType.CLOTH);
         setDefaultState(this.blockState.getBaseState()
                 .withProperty(DENSITY, 16));
         setTickRandomly(true);

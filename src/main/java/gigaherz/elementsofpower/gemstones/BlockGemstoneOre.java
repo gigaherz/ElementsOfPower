@@ -33,7 +33,7 @@ public class BlockGemstoneOre extends BlockRegistered
         super(name, Material.rock);
         setHardness(3.0F);
         setResistance(5.0F);
-        setStepSound(SoundType.STONE);
+        setSoundType(SoundType.STONE);
         setCreativeTab(CreativeTabs.tabBlock);
     }
 
@@ -105,6 +105,13 @@ public class BlockGemstoneOre extends BlockRegistered
     public int damageDropped(IBlockState state)
     {
         return state.getValue(TYPE).getGemstone().ordinal();
+    }
+
+
+    @Override
+    public ItemBlock createItemBlock()
+    {
+        return (ItemBlock)new ItemForm(this).setRegistryName(getRegistryName());
     }
 
     public static class ItemForm extends ItemBlock

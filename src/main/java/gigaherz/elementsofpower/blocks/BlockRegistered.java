@@ -4,6 +4,7 @@ import gigaherz.elementsofpower.ElementsOfPower;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
+import net.minecraft.item.ItemBlock;
 
 public class BlockRegistered extends Block
 {
@@ -19,5 +20,10 @@ public class BlockRegistered extends Block
         super(materialIn);
         setRegistryName(name);
         setUnlocalizedName(ElementsOfPower.MODID + "." + name);
+    }
+
+    public ItemBlock createItemBlock()
+    {
+        return (ItemBlock)new ItemBlock(this).setRegistryName(getRegistryName());
     }
 }

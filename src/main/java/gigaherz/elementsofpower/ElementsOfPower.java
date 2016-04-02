@@ -3,6 +3,7 @@ package gigaherz.elementsofpower;
 import gigaherz.elementsofpower.analyzer.ItemAnalyzer;
 import gigaherz.elementsofpower.blocks.BlockCushion;
 import gigaherz.elementsofpower.blocks.BlockDust;
+import gigaherz.elementsofpower.blocks.BlockRegistered;
 import gigaherz.elementsofpower.capabilities.CapabilityMagicContainer;
 import gigaherz.elementsofpower.cocoons.BlockCocoon;
 import gigaherz.elementsofpower.cocoons.TileCocoon;
@@ -26,7 +27,8 @@ import gigaherz.elementsofpower.network.SpellcastSync;
 import gigaherz.elementsofpower.progression.DiscoveryHandler;
 import gigaherz.elementsofpower.recipes.ContainerChargeRecipe;
 import gigaherz.elementsofpower.recipes.GemstoneChangeRecipe;
-import net.minecraft.block.Block;
+import gigaherz.elementsofpower.spelldust.BlockSpelldust;
+import gigaherz.elementsofpower.spelldust.ItemSpelldust;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
@@ -77,11 +79,12 @@ public class ElementsOfPower
     public static ISideProxy proxy;
 
     // Block templates
-    public static Block essentializer;
-    public static Block dust;
-    public static Block mist;
-    public static Block cushion;
-    public static Block cocoon;
+    public static BlockRegistered essentializer;
+    public static BlockRegistered dust;
+    public static BlockRegistered mist;
+    public static BlockRegistered cushion;
+    public static BlockRegistered cocoon;
+    public static BlockRegistered spell_wire;
 
     public static BlockGemstoneOre gemstoneOre;
     public static BlockGemstone gemstoneBlock;
@@ -101,6 +104,8 @@ public class ElementsOfPower
     public static ItemAnalyzer analyzer;
 
     public static ItemGuidebook guidebook;
+
+    public static ItemSpelldust spelldust;
 
     // Subitems
 
@@ -190,58 +195,93 @@ public class ElementsOfPower
 
         registerParticle();
 
-        // Initialize Block Materials
-        logger.info("Initializing block materials...");
-        materialCushion = new MaterialCushion(MapColor.blackColor);
+        registerItems();
 
-        // Block and Item registration
-        logger.info("Initializing blocks and items...");
+        registerBlocks();
+
+        loadTemplateStacks();
+
+        registerOreDictionaryNames();
+
+        registerNetwork();
+
+        logger.info("Registering extended entity properties...");
+
+        SpellcastEntityData.register();
+        DiscoveryHandler.init();
+
+        logger.info("Performing pre-initialization proxy tasks...");
+
+        proxy.preInit();
+    }
+
+    private void registerItems()
+    {
+        logger.info("Initializing items...");
 
         magicOrb = new ItemMagicOrb("magicOrb");
-        GameRegistry.registerItem(magicOrb);
+        GameRegistry.register(magicOrb);
 
         magicWand = new ItemWand("magicWand");
-        GameRegistry.registerItem(magicWand);
+        GameRegistry.register(magicWand);
 
         magicStaff = new ItemStaff("magicStaff");
-        GameRegistry.registerItem(magicStaff);
+        GameRegistry.register(magicStaff);
 
         magicRing = new ItemRing("magicRing");
-        GameRegistry.registerItem(magicRing);
+        GameRegistry.register(magicRing);
+
+        gemstone = new ItemGemstone("gemstone");
+        GameRegistry.register(gemstone);
+
+        analyzer = new ItemAnalyzer("analyzer");
+        GameRegistry.register(analyzer);
+
+        guidebook = new ItemGuidebook("guidebook");
+        GameRegistry.register(guidebook);
+
+        spelldust = new ItemSpelldust("spelldust");
+        GameRegistry.register(spelldust);
+    }
+
+    private void registerBlocks()
+    {
+        logger.info("Initializing blocks...");
 
         essentializer = new BlockEssentializer("essentializer");
-        GameRegistry.registerBlock(essentializer);
+        GameRegistry.register(essentializer);
+        GameRegistry.register(essentializer.createItemBlock());
         GameRegistry.registerTileEntity(TileEssentializer.class, "essentializerTile");
 
         dust = new BlockDust("dust");
-        GameRegistry.registerBlock(dust);
+        GameRegistry.register(dust);
 
         mist = new BlockDust("mist");
-        GameRegistry.registerBlock(mist);
+        GameRegistry.register(mist);
 
+        spell_wire = new BlockSpelldust("spell_wire");
+        GameRegistry.register(spell_wire);
+
+        materialCushion = new MaterialCushion(MapColor.blackColor);
         cushion = new BlockCushion("cushion");
-        GameRegistry.registerBlock(cushion);
+        GameRegistry.register(cushion);
 
         cocoon = new BlockCocoon("cocoon");
-        GameRegistry.registerBlock(cocoon);
+        GameRegistry.register(cocoon);
+        GameRegistry.register(cocoon.createItemBlock());
         GameRegistry.registerTileEntity(TileCocoon.class, "cocoonTile");
 
         gemstoneBlock = new BlockGemstone("gemstoneBlock");
-        GameRegistry.registerBlock(gemstoneBlock, BlockGemstone.Item.class);
+        GameRegistry.register(gemstoneBlock);
+        GameRegistry.register(gemstoneBlock.createItemBlock());
 
         gemstoneOre = new BlockGemstoneOre("gemstoneOre");
-        GameRegistry.registerBlock(gemstoneOre, BlockGemstoneOre.ItemForm.class);
+        GameRegistry.register(gemstoneOre);
+        GameRegistry.register(gemstoneOre.createItemBlock());
+    }
 
-        gemstone = new ItemGemstone("gemstone");
-        GameRegistry.registerItem(gemstone);
-
-        analyzer = new ItemAnalyzer("analyzer");
-        GameRegistry.registerItem(analyzer);
-
-        guidebook = new ItemGuidebook("guidebook");
-        GameRegistry.registerItem(guidebook);
-
-        // Template stacks
+    private void loadTemplateStacks()
+    {
         logger.info("Generating template stacks...");
 
         fire = magicOrb.getStack(Element.Fire);
@@ -276,7 +316,24 @@ public class ElementsOfPower
         oreRuby = gemstoneOre.getStack(GemstoneBlockType.Ruby);
         oreSapphire = gemstoneOre.getStack(GemstoneBlockType.Sapphire);
         oreSerendibite = gemstoneOre.getStack(GemstoneBlockType.Serendibite);
+    }
 
+    private void registerNetwork()
+    {
+        logger.info("Registering network channel...");
+
+        channel = NetworkRegistry.INSTANCE.newSimpleChannel(CHANNEL);
+
+        int messageNumber = 0;
+        channel.registerMessage(SpellSequenceUpdate.Handler.class, SpellSequenceUpdate.class, messageNumber++, Side.SERVER);
+        channel.registerMessage(SpellcastSync.Handler.class, SpellcastSync.class, messageNumber++, Side.CLIENT);
+        channel.registerMessage(EssentializerAmountsUpdate.Handler.class, EssentializerAmountsUpdate.class, messageNumber++, Side.CLIENT);
+        channel.registerMessage(EssentializerTileUpdate.Handler.class, EssentializerTileUpdate.class, messageNumber++, Side.CLIENT);
+        logger.debug("Final message number: " + messageNumber);
+    }
+
+    private void registerOreDictionaryNames()
+    {
         logger.info("Registering ore dictionary names...");
 
         OreDictionary.registerOre("gemRuby", gemRuby);
@@ -312,27 +369,6 @@ public class ElementsOfPower
         OreDictionary.registerOre("oreRuby", oreRuby);
         OreDictionary.registerOre("oreSapphire", oreSapphire);
         OreDictionary.registerOre("oreSerendibite", oreSerendibite);
-
-        // Network channels
-        logger.info("Registering network channel...");
-
-        channel = NetworkRegistry.INSTANCE.newSimpleChannel(CHANNEL);
-
-        int messageNumber = 0;
-        channel.registerMessage(SpellSequenceUpdate.Handler.class, SpellSequenceUpdate.class, messageNumber++, Side.SERVER);
-        channel.registerMessage(SpellcastSync.Handler.class, SpellcastSync.class, messageNumber++, Side.CLIENT);
-        channel.registerMessage(EssentializerAmountsUpdate.Handler.class, EssentializerAmountsUpdate.class, messageNumber++, Side.CLIENT);
-        channel.registerMessage(EssentializerTileUpdate.Handler.class, EssentializerTileUpdate.class, messageNumber++, Side.CLIENT);
-        logger.debug("Final message number: " + messageNumber);
-
-        logger.info("Registering extended entity properties...");
-
-        SpellcastEntityData.register();
-        DiscoveryHandler.init();
-
-        logger.info("Performing pre-initialization proxy tasks...");
-
-        proxy.preInit();
     }
 
     @EventHandler
