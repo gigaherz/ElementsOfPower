@@ -61,7 +61,7 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.text.Format;
 
-@Mod(modid = ElementsOfPower.MODID, name = ElementsOfPower.MODNAME, version = ElementsOfPower.VERSION)
+@Mod(modid = ElementsOfPower.MODID, name = ElementsOfPower.MODNAME, version = ElementsOfPower.VERSION, dependencies = "required-after:Forge@[12.16.0.1825,)")
 public class ElementsOfPower
 {
     public static final String MODID = "elementsofpower";
