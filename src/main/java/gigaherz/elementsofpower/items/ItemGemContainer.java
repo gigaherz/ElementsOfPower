@@ -27,6 +27,11 @@ public class ItemGemContainer extends ItemMagicContainer
 {
     public static final String SPELL_SEQUENCE_TAG = "SpellSequence";
 
+    public ItemGemContainer(String name)
+    {
+        super(name);
+    }
+
     @Override
     public boolean isInfinite(ItemStack stack)
     {
@@ -156,7 +161,7 @@ public class ItemGemContainer extends ItemMagicContainer
         if (gem == null)
             return null;
 
-        ItemStack t = ElementsOfPower.gemstone.getStack(1, gem.ordinal());
+        ItemStack t = ElementsOfPower.gemstone.getStack(gem);
 
         if (q != null)
         {
@@ -237,12 +242,6 @@ public class ItemGemContainer extends ItemMagicContainer
         String quality = I18n.translateToLocal(ElementsOfPower.MODID + ".gemContainer.quality" + q.getUnlocalizedName());
 
         return quality + " " + namePart;
-    }
-
-    @Override
-    public ItemStack getStack(int count, int damageValue)
-    {
-        return new ItemStack(this, count, damageValue);
     }
 
     @Override

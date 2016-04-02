@@ -1,4 +1,4 @@
-package gigaherz.elementsofpower.gemstones;
+package gigaherz.elementsofpower.recipes;
 
 import gigaherz.elementsofpower.items.ItemGemContainer;
 import gigaherz.elementsofpower.items.ItemGemstone;

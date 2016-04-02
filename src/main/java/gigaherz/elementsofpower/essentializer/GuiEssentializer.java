@@ -3,6 +3,7 @@ package gigaherz.elementsofpower.essentializer;
 import com.google.common.collect.Lists;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.MagicAmounts;
+import gigaherz.elementsofpower.gemstones.Element;
 import gigaherz.elementsofpower.renders.StackRenderingHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -126,7 +127,7 @@ public class GuiEssentializer extends GuiContainer
             int x0 = magicOrbs[i * 2];
             int y0 = magicOrbs[i * 2 + 1];
 
-            ItemStack stack = ElementsOfPower.magicOrb.getStack((int) am.amounts[i], i);
+            ItemStack stack = ElementsOfPower.magicOrb.getStack((int) am.amounts[i], Element.values[i]);
 
             StackRenderingHelper.renderItemStack(mesher, renderEngine, x0, y0, stack, alpha, true);
         }

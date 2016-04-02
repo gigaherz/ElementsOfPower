@@ -1,7 +1,6 @@
 package gigaherz.elementsofpower.blocks;
 
 import gigaherz.elementsofpower.ElementsOfPower;
-import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
@@ -9,15 +8,9 @@ import net.minecraft.world.World;
 
 public class BlockCushion extends BlockDust
 {
-    public BlockCushion()
+    public BlockCushion(String name)
     {
-        super(ElementsOfPower.materialCushion);
-        setUnlocalizedName(ElementsOfPower.MODID + ".cushion");
-        setHardness(0.1F);
-        setBlockUnbreakable();
-        setStepSound(SoundType.CLOTH);
-        setDefaultState(this.blockState.getBaseState()
-                .withProperty(DENSITY, 16));
+        super(name, ElementsOfPower.materialCushion);
     }
 
     @Override

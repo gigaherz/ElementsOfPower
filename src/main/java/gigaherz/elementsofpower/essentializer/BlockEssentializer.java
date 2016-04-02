@@ -1,8 +1,8 @@
 package gigaherz.elementsofpower.essentializer;
 
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.blocks.BlockRegistered;
 import gigaherz.elementsofpower.gui.GuiHandler;
-import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -17,13 +17,12 @@ import net.minecraft.world.World;
 import java.util.Random;
 
 public class BlockEssentializer
-        extends Block
+        extends BlockRegistered
 {
 
-    public BlockEssentializer()
+    public BlockEssentializer(String name)
     {
-        super(Material.iron);
-        setUnlocalizedName(ElementsOfPower.MODID + ".essentializer");
+        super(name, Material.iron);
         setCreativeTab(ElementsOfPower.tabMagic);
         setHardness(15.0F);
         setStepSound(SoundType.METAL);

@@ -1,4 +1,4 @@
-package gigaherz.elementsofpower.gemstones;
+package gigaherz.elementsofpower.recipes;
 
 import com.google.common.collect.Lists;
 import gigaherz.elementsofpower.items.ItemMagicContainer;

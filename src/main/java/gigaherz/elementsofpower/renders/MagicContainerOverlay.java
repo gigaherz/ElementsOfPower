@@ -4,6 +4,7 @@ import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.client.TickEventWandControl;
 import gigaherz.elementsofpower.database.ContainerInformation;
 import gigaherz.elementsofpower.database.MagicAmounts;
+import gigaherz.elementsofpower.gemstones.Element;
 import gigaherz.elementsofpower.items.ItemWand;
 import gigaherz.elementsofpower.spells.SpellManager;
 import net.minecraft.client.Minecraft;
@@ -59,7 +60,7 @@ public class MagicContainerOverlay extends Gui
         {
             int alpha = (amounts.amounts[i] < 0.001) ? 0x3FFFFFFF : 0xFFFFFFFF;
 
-            ItemStack stack = ElementsOfPower.magicOrb.getStack((int) amounts.amounts[i], i);
+            ItemStack stack = ElementsOfPower.magicOrb.getStack((int) amounts.amounts[i], Element.values[i]);
 
             StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yPos, stack, alpha, false);
 
@@ -85,7 +86,7 @@ public class MagicContainerOverlay extends Gui
                 {
                     int i = SpellManager.elementIndices.get(c);
 
-                    ItemStack stack = ElementsOfPower.magicOrb.getStack(1, i);
+                    ItemStack stack = ElementsOfPower.magicOrb.getStack(1, Element.values[i]);
 
                     StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yPos, stack, 0xFFFFFFFF, false);
 
@@ -103,7 +104,7 @@ public class MagicContainerOverlay extends Gui
             {
                 int i = SpellManager.elementIndices.get(c);
 
-                ItemStack stack = ElementsOfPower.magicOrb.getStack(1, i);
+                ItemStack stack = ElementsOfPower.magicOrb.getStack(1, Element.values[i]);
 
                 StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yPos, stack, 0xFFFFFFFF, false);
 

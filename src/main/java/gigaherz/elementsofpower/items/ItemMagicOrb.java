@@ -1,6 +1,7 @@
 package gigaherz.elementsofpower.items;
 
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.gemstones.Element;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -10,16 +11,16 @@ import net.minecraft.util.text.translation.I18n;
 
 import java.util.List;
 
-public class ItemMagicOrb extends Item
+public class ItemMagicOrb extends ItemRegistered
 {
     private final static String[] subNames =
             {"fire", "water", "air", "earth", "light", "darkness", "life", "death"};
 
-    public ItemMagicOrb()
+    public ItemMagicOrb(String name)
     {
+        super(name);
         setMaxStackSize(64);
         setHasSubtypes(true);
-        setUnlocalizedName(ElementsOfPower.MODID + ".magicOrb");
         setCreativeTab(ElementsOfPower.tabMagic);
     }
 
@@ -58,11 +59,13 @@ public class ItemMagicOrb extends Item
         tooltip.add(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + I18n.translateToLocal("text." + ElementsOfPower.MODID + ".magicOrb.cocoon"));
     }
 
-    // CUSTOM STUFF
-    public ItemStack getStack(int count, int damageValue)
+    public ItemStack getStack(Element element)
     {
-        ItemStack stack = new ItemStack(this, count);
-        stack.setItemDamage(damageValue);
-        return stack;
+        return getStack(1, element);
+    }
+
+    public ItemStack getStack(int count, Element element)
+    {
+        return new ItemStack(this, count, element.ordinal());
     }
 }

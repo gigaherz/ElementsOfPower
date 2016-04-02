@@ -2,8 +2,8 @@ package gigaherz.elementsofpower.analyzer;
 
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.gui.GuiHandler;
+import gigaherz.elementsofpower.items.ItemRegistered;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
@@ -12,12 +12,12 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class ItemAnalyzer extends Item
+public class ItemAnalyzer extends ItemRegistered
 {
-    public ItemAnalyzer()
+    public ItemAnalyzer(String name)
     {
+        super(name);
         setMaxStackSize(1);
-        setUnlocalizedName(ElementsOfPower.MODID + ".analyzer");
         setCreativeTab(ElementsOfPower.tabMagic);
     }
 
