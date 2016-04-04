@@ -61,7 +61,10 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.text.Format;
 
-@Mod(modid = ElementsOfPower.MODID, name = ElementsOfPower.MODNAME, version = ElementsOfPower.VERSION, dependencies = "required-after:Forge@[12.16.0.1825,)")
+@Mod(modid = ElementsOfPower.MODID,
+        name = ElementsOfPower.MODNAME, version = ElementsOfPower.VERSION,
+        dependencies = "required-after:Forge@[12.16.0.1825,)",
+        updateJSON="https://raw.githubusercontent.com/gigaherz/ElementsOfPower/master/update.json")
 public class ElementsOfPower
 {
     public static final String MODID = "elementsofpower";

@@ -1,0 +1,17 @@
+{
+  "homepage": "https://github.com/gigaherz/ElementsOfPower",
+  "promos": {
+    "1.9-latest": "0.7.6",
+    "1.9-recommended": "0.7.6",
+    "1.8.9-latest": "0.7.6",
+    "1.8.9-recommended": "0.7.6"
+  },
+  "1.9": {
+    "0.7.6": "Update Checker support",
+    "0.7.5": "Avoid crash if a block contains invalid metadata values"
+  },
+  "1.8.9": {
+    "0.7.6": "Update Checker support",
+    "0.7.5": "Avoid crash if a block contains invalid metadata values"
+  }
+}
