@@ -26,7 +26,7 @@ public class ItemSpelldust extends ItemRegistered
         boolean flag = worldIn.getBlockState(pos).getBlock().isReplaceable(worldIn, pos);
         BlockPos blockpos = flag ? pos : pos.offset(facing);
 
-        if (playerIn.canPlayerEdit(blockpos, facing, stack) && worldIn.canBlockBePlaced(worldIn.getBlockState(blockpos).getBlock(), blockpos, false, facing, (Entity)null, stack) && Blocks.redstone_wire.canPlaceBlockAt(worldIn, blockpos))
+        if (playerIn.canPlayerEdit(blockpos, facing, stack) && worldIn.canBlockBePlaced(worldIn.getBlockState(blockpos).getBlock(), blockpos, false, facing, (Entity) null, stack) && Blocks.redstone_wire.canPlaceBlockAt(worldIn, blockpos))
         {
             --stack.stackSize;
             worldIn.setBlockState(blockpos, ElementsOfPower.spell_wire.getDefaultState());

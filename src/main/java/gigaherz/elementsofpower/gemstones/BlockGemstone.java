@@ -13,7 +13,6 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
 
 import java.util.List;
 
@@ -45,7 +44,7 @@ public class BlockGemstone extends BlockRegistered
     @Override
     public IBlockState getStateFromMeta(int meta)
     {
-        if(meta > GemstoneBlockType.values.length)
+        if (meta > GemstoneBlockType.values.length)
             return getDefaultState();
         return getDefaultState().withProperty(TYPE, GemstoneBlockType.values[meta]);
     }
@@ -72,7 +71,7 @@ public class BlockGemstone extends BlockRegistered
     @Override
     public ItemBlock createItemBlock()
     {
-        return (ItemBlock)new ItemForm(this).setRegistryName(getRegistryName());
+        return (ItemBlock) new ItemForm(this).setRegistryName(getRegistryName());
     }
 
     public static class ItemForm extends ItemBlock

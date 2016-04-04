@@ -52,7 +52,7 @@ public class BlockGemstoneOre extends BlockRegistered
     @Override
     public IBlockState getStateFromMeta(int meta)
     {
-        if(meta > GemstoneBlockType.values.length)
+        if (meta > GemstoneBlockType.values.length)
             return getDefaultState();
         return getDefaultState().withProperty(TYPE, GemstoneBlockType.values[meta]);
     }
@@ -113,7 +113,7 @@ public class BlockGemstoneOre extends BlockRegistered
     @Override
     public ItemBlock createItemBlock()
     {
-        return (ItemBlock)new ItemForm(this).setRegistryName(getRegistryName());
+        return (ItemBlock) new ItemForm(this).setRegistryName(getRegistryName());
     }
 
     public static class ItemForm extends ItemBlock
