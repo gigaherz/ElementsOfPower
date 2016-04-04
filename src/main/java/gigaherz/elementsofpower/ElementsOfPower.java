@@ -3,8 +3,6 @@ package gigaherz.elementsofpower;
 import gigaherz.elementsofpower.analyzer.ItemAnalyzer;
 import gigaherz.elementsofpower.blocks.BlockCushion;
 import gigaherz.elementsofpower.blocks.BlockDust;
-import gigaherz.elementsofpower.blocks.BlockGemstone;
-import gigaherz.elementsofpower.blocks.BlockGemstoneOre;
 import gigaherz.elementsofpower.capabilities.CapabilityMagicContainer;
 import gigaherz.elementsofpower.cocoons.BlockCocoon;
 import gigaherz.elementsofpower.cocoons.TileCocoon;
@@ -16,9 +14,9 @@ import gigaherz.elementsofpower.entities.EntityEssence;
 import gigaherz.elementsofpower.entitydata.SpellcastEntityData;
 import gigaherz.elementsofpower.essentializer.BlockEssentializer;
 import gigaherz.elementsofpower.essentializer.TileEssentializer;
-import gigaherz.elementsofpower.gemstones.ContainerChargeRecipe;
+import gigaherz.elementsofpower.gemstones.BlockGemstone;
+import gigaherz.elementsofpower.gemstones.BlockGemstoneOre;
 import gigaherz.elementsofpower.gemstones.GemstoneBlockType;
-import gigaherz.elementsofpower.gemstones.GemstoneChangeRecipe;
 import gigaherz.elementsofpower.gui.GuiHandler;
 import gigaherz.elementsofpower.guidebook.ItemGuidebook;
 import gigaherz.elementsofpower.items.*;
@@ -28,6 +26,8 @@ import gigaherz.elementsofpower.network.EssentializerTileUpdate;
 import gigaherz.elementsofpower.network.SpellSequenceUpdate;
 import gigaherz.elementsofpower.network.SpellcastSync;
 import gigaherz.elementsofpower.progression.DiscoveryHandler;
+import gigaherz.elementsofpower.recipes.ContainerChargeRecipe;
+import gigaherz.elementsofpower.recipes.GemstoneChangeRecipe;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
@@ -419,7 +419,7 @@ public class ElementsOfPower
         GameRegistry.addRecipe(new ContainerChargeRecipe());
 
         RecipeSorter.register("gemstoneChangeRecipe", GemstoneChangeRecipe.class, RecipeSorter.Category.SHAPELESS, "");
-        RecipeSorter.register("containerChargeRecipe", GemstoneChangeRecipe.class, RecipeSorter.Category.SHAPELESS, "");
+        RecipeSorter.register("containerChargeRecipe", ContainerChargeRecipe.class, RecipeSorter.Category.SHAPELESS, "");
 
         // Gui
         NetworkRegistry.INSTANCE.registerGuiHandler(this, guiHandler);

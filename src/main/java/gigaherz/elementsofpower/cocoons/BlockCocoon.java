@@ -75,6 +75,8 @@ public class BlockCocoon extends Block
     @Override
     public IBlockState getStateFromMeta(int meta)
     {
+        if(meta > EnumFacing.VALUES.length)
+            return getDefaultState();
         return getDefaultState().withProperty(FACING, EnumFacing.VALUES[meta]);
     }
 

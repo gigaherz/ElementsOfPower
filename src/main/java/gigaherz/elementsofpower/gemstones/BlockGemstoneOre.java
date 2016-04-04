@@ -1,4 +1,4 @@
-package gigaherz.elementsofpower.blocks;
+package gigaherz.elementsofpower.gemstones;
 
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.gemstones.GemstoneBlockType;
@@ -50,6 +50,8 @@ public class BlockGemstoneOre extends Block
     @Override
     public IBlockState getStateFromMeta(int meta)
     {
+        if(meta > GemstoneBlockType.values.length)
+            return getDefaultState();
         return getDefaultState().withProperty(TYPE, GemstoneBlockType.values[meta]);
     }
 

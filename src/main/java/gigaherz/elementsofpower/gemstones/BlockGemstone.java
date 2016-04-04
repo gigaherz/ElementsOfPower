@@ -1,4 +1,4 @@
-package gigaherz.elementsofpower.blocks;
+package gigaherz.elementsofpower.gemstones;
 
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.gemstones.GemstoneBlockType;
@@ -11,6 +11,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 
 import java.util.List;
 
@@ -44,6 +45,8 @@ public class BlockGemstone extends Block
     @Override
     public IBlockState getStateFromMeta(int meta)
     {
+        if(meta > GemstoneBlockType.values.length)
+            return getDefaultState();
         return getDefaultState().withProperty(TYPE, GemstoneBlockType.values[meta]);
     }
 
