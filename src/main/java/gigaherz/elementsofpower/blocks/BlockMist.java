@@ -39,12 +39,6 @@ public class BlockMist extends BlockRegistered
     }
 
     @Override
-    public boolean isBlockNormalCube()
-    {
-        return super.isBlockNormalCube();
-    }
-
-    @Override
     public boolean isNormalCube(IBlockAccess world, BlockPos pos)
     {
         return false;

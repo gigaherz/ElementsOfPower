@@ -36,6 +36,12 @@ public class BlockDust extends BlockRegistered
     }
 
     @Override
+    public boolean isOpaqueCube()
+    {
+        return false;
+    }
+
+    @Override
     public int getLightOpacity(IBlockAccess world, BlockPos pos)
     {
         IBlockState state = world.getBlockState(pos);
@@ -54,12 +60,6 @@ public class BlockDust extends BlockRegistered
     public EnumWorldBlockLayer getBlockLayer()
     {
         return EnumWorldBlockLayer.TRANSLUCENT;
-    }
-
-    @Override
-    public boolean isOpaqueCube()
-    {
-        return false;
     }
 
     @Override

@@ -49,7 +49,7 @@ public class BlockGemstoneOre extends BlockRegistered
     @Override
     public IBlockState getStateFromMeta(int meta)
     {
-        if(meta > GemstoneBlockType.values.length)
+        if (meta > GemstoneBlockType.values.length)
             return getDefaultState();
         return getDefaultState().withProperty(TYPE, GemstoneBlockType.values[meta]);
     }

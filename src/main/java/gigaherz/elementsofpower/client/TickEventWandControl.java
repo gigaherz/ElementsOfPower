@@ -144,7 +144,7 @@ public class TickEventWandControl
         player.setItemInUse(itemInUse, itemInUseCount);
 
         sequence = "";
-        ElementsOfPower.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.BEGIN, player, slotInUse, null));
+        ElementsOfPower.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.BEGIN, slotInUse, null));
 
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
@@ -154,14 +154,13 @@ public class TickEventWandControl
 
     private void endHoldingRightButton(boolean cancelMagicSetting)
     {
-        EntityPlayer player = Minecraft.getMinecraft().thePlayer;
         if (cancelMagicSetting)
         {
-            ElementsOfPower.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.CANCEL, player, slotInUse, null));
+            ElementsOfPower.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.CANCEL, slotInUse, null));
         }
         else
         {
-            ElementsOfPower.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.COMMIT, player, slotInUse, sequence.toString()));
+            ElementsOfPower.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.COMMIT, slotInUse, sequence));
         }
         itemInUse = null;
         itemInUseCount = 0;
