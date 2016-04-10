@@ -40,6 +40,17 @@ item.elementsofpower.staff.emerald.name=Emerald Staff
 item.elementsofpower.staff.amethyst.name=Amethyst Staff
 item.elementsofpower.staff.diamond.name=Diamond Staff
 
+item.elementsofpower.spelldust.name=Unknown Spellust
+item.elementsofpower.spelldust.ruby.name=Ruby Spellust
+item.elementsofpower.spelldust.sapphire.name=Sapphire Spellust
+item.elementsofpower.spelldust.citrine.name=Citrine Spellust
+item.elementsofpower.spelldust.agate.name=Agate Spellust
+item.elementsofpower.spelldust.quartz.name=Quartz Spellust
+item.elementsofpower.spelldust.serendibite.name=Serendibite Spellust
+item.elementsofpower.spelldust.emerald.name=Emerald Spellust
+item.elementsofpower.spelldust.amethyst.name=Amethyst Spellust
+item.elementsofpower.spelldust.diamond.name=Diamond Spellust
+
 item.elementsofpower.ruby.name=Ruby
 item.elementsofpower.sapphire.name=Sapphire
 item.elementsofpower.citrine.name=Citrine

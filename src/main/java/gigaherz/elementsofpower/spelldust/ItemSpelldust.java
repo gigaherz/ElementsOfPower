@@ -1,10 +1,11 @@
 package gigaherz.elementsofpower.spelldust;
 
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.gemstones.Gemstone;
 import gigaherz.elementsofpower.items.ItemRegistered;
-import net.minecraft.entity.Entity;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
@@ -12,12 +13,35 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import java.util.List;
+
 public class ItemSpelldust extends ItemRegistered
 {
     public ItemSpelldust(String name)
     {
         super(name);
         setCreativeTab(ElementsOfPower.tabMagic);
+        setHasSubtypes(true);
+    }
+
+    @Override
+    public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems)
+    {
+        for (Gemstone g : Gemstone.values)
+        {
+            subItems.add(new ItemStack(this, 1, g.ordinal()));
+        }
+    }
+
+    @Override
+    public String getUnlocalizedName(ItemStack stack)
+    {
+        int sub = stack.getItemDamage();
+
+        if (sub >= Gemstone.values.length)
+            return getUnlocalizedName();
+
+        return getUnlocalizedName() + Gemstone.values[sub].getUnlocalizedName();
     }
 
     @Override
@@ -26,10 +50,12 @@ public class ItemSpelldust extends ItemRegistered
         boolean flag = worldIn.getBlockState(pos).getBlock().isReplaceable(worldIn, pos);
         BlockPos blockpos = flag ? pos : pos.offset(facing);
 
-        if (playerIn.canPlayerEdit(blockpos, facing, stack) && worldIn.canBlockBePlaced(worldIn.getBlockState(blockpos).getBlock(), blockpos, false, facing, (Entity) null, stack) && Blocks.redstone_wire.canPlaceBlockAt(worldIn, blockpos))
+        if (playerIn.canPlayerEdit(blockpos, facing, stack) &&
+                worldIn.canBlockBePlaced(worldIn.getBlockState(blockpos).getBlock(), blockpos, false, facing, null, stack) &&
+                ElementsOfPower.spell_wire.canPlaceBlockAt(worldIn, blockpos))
         {
             --stack.stackSize;
-            worldIn.setBlockState(blockpos, ElementsOfPower.spell_wire.getDefaultState());
+            worldIn.setBlockState(blockpos, ElementsOfPower.spell_wire.getStateFromMeta(stack.getMetadata()));
             return EnumActionResult.SUCCESS;
         }
         else

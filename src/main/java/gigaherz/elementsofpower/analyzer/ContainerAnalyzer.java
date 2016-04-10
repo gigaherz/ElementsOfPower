@@ -216,11 +216,11 @@ public class ContainerAnalyzer extends Container
                 internalInventory.setInventorySlotContents(0, stack2);
                 this.inventoryItemStacks.set(0, stack2);
 
-                for (int j = 0; j < this.crafters.size(); ++j)
+                for (int j = 0; j < this.listeners.size(); ++j)
                 {
                     boolean prev = false;
                     EntityPlayerMP p = null;
-                    ICrafting c = crafters.get(j);
+                    ICrafting c = listeners.get(j);
                     if (c instanceof EntityPlayerMP)
                     {
                         p = (EntityPlayerMP) c;
@@ -265,7 +265,7 @@ public class ContainerAnalyzer extends Container
             ItemStack itemstack = internalInventory.removeStackFromSlot(0);
             if (itemstack != null)
             {
-                playerIn.dropPlayerItemWithRandomChoice(itemstack, false);
+                playerIn.dropItem(itemstack, false);
             }
         }
     }

@@ -2,9 +2,11 @@ package gigaherz.elementsofpower.spelldust;
 
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.blocks.BlockRegistered;
+import gigaherz.elementsofpower.gemstones.Gemstone;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,6 +17,7 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
@@ -28,6 +31,26 @@ public class BlockSpelldust extends BlockRegistered
     public static final PropertyBool EAST = PropertyBool.create("east");
     public static final PropertyBool SOUTH = PropertyBool.create("south");
     public static final PropertyBool WEST = PropertyBool.create("west");
+    public static final PropertyEnum<Gemstone> VARIANT = PropertyEnum.create("variant", Gemstone.class);
+
+    protected static final AxisAlignedBB[] REDSTONE_WIRE_AABB = new AxisAlignedBB[]{
+            new AxisAlignedBB(0.1875D, 0.0D, 0.1875D, 0.8125D, 0.0625D, 0.8125D),
+            new AxisAlignedBB(0.1875D, 0.0D, 0.1875D, 0.8125D, 0.0625D, 1.0D),
+            new AxisAlignedBB(0.0D, 0.0D, 0.1875D, 0.8125D, 0.0625D, 0.8125D),
+            new AxisAlignedBB(0.0D, 0.0D, 0.1875D, 0.8125D, 0.0625D, 1.0D),
+            new AxisAlignedBB(0.1875D, 0.0D, 0.0D, 0.8125D, 0.0625D, 0.8125D),
+            new AxisAlignedBB(0.1875D, 0.0D, 0.0D, 0.8125D, 0.0625D, 1.0D),
+            new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.8125D, 0.0625D, 0.8125D),
+            new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.8125D, 0.0625D, 1.0D),
+            new AxisAlignedBB(0.1875D, 0.0D, 0.1875D, 1.0D, 0.0625D, 0.8125D),
+            new AxisAlignedBB(0.1875D, 0.0D, 0.1875D, 1.0D, 0.0625D, 1.0D),
+            new AxisAlignedBB(0.0D, 0.0D, 0.1875D, 1.0D, 0.0625D, 0.8125D),
+            new AxisAlignedBB(0.0D, 0.0D, 0.1875D, 1.0D, 0.0625D, 1.0D),
+            new AxisAlignedBB(0.1875D, 0.0D, 0.0D, 1.0D, 0.0625D, 0.8125D),
+            new AxisAlignedBB(0.1875D, 0.0D, 0.0D, 1.0D, 0.0625D, 1.0D),
+            new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.0625D, 0.8125D),
+            new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.0625D, 1.0D)
+    };
 
     public BlockSpelldust(String name)
     {
@@ -36,13 +59,14 @@ public class BlockSpelldust extends BlockRegistered
                 .withProperty(NORTH, false)
                 .withProperty(EAST, false)
                 .withProperty(SOUTH, false)
-                .withProperty(WEST, false));
+                .withProperty(WEST, false)
+                .withProperty(VARIANT, Gemstone.Diamond));
     }
 
     @Override
     protected BlockStateContainer createBlockState()
     {
-        return new BlockStateContainer(this, NORTH, EAST, SOUTH, WEST);
+        return new BlockStateContainer(this, NORTH, EAST, SOUTH, WEST, VARIANT);
     }
 
     @Override
@@ -66,8 +90,11 @@ public class BlockSpelldust extends BlockRegistered
     @Override
     public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
     {
-        return worldIn.getBlockState(pos.down()).isSideSolid(worldIn, pos.down(), EnumFacing.UP)
-                || worldIn.getBlockState(pos.down()).getBlock() == Blocks.glowstone;
+        BlockPos down = pos.down();
+        IBlockState state = worldIn.getBlockState(down);
+        Block b = state.getBlock();
+        return state.isSideSolid(worldIn, down, EnumFacing.UP)
+                || b == Blocks.glowstone || b == Blocks.glass;
     }
 
     @Override
@@ -90,6 +117,12 @@ public class BlockSpelldust extends BlockRegistered
     }
 
     @Override
+    public int damageDropped(IBlockState state)
+    {
+        return state.getValue(VARIANT).ordinal();
+    }
+
+    @Override
     public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player)
     {
         return new ItemStack(ElementsOfPower.spelldust);
@@ -98,22 +131,25 @@ public class BlockSpelldust extends BlockRegistered
     @Override
     public int getMetaFromState(IBlockState state)
     {
-        return 0;
+        return state.getValue(VARIANT).ordinal();
     }
 
     @Override
     public IBlockState getStateFromMeta(int meta)
     {
-        return this.getDefaultState();
+        if (meta >= Gemstone.values.length)
+            return this.getDefaultState();
+        return this.getDefaultState().withProperty(VARIANT, Gemstone.values[meta]);
     }
 
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos)
     {
-        state = state.withProperty(WEST, canConnectTo(worldIn, pos.offset(EnumFacing.WEST)));
-        state = state.withProperty(EAST, canConnectTo(worldIn, pos.offset(EnumFacing.EAST)));
-        state = state.withProperty(NORTH, canConnectTo(worldIn, pos.offset(EnumFacing.NORTH)));
-        state = state.withProperty(SOUTH, canConnectTo(worldIn, pos.offset(EnumFacing.SOUTH)));
+        Gemstone gem = state.getValue(VARIANT);
+        state = state.withProperty(WEST, canConnectTo(gem, worldIn, pos.offset(EnumFacing.WEST)));
+        state = state.withProperty(EAST, canConnectTo(gem, worldIn, pos.offset(EnumFacing.EAST)));
+        state = state.withProperty(NORTH, canConnectTo(gem, worldIn, pos.offset(EnumFacing.NORTH)));
+        state = state.withProperty(SOUTH, canConnectTo(gem, worldIn, pos.offset(EnumFacing.SOUTH)));
         return state;
     }
 
@@ -147,11 +183,54 @@ public class BlockSpelldust extends BlockRegistered
         }
     }
 
-    protected boolean canConnectTo(IBlockAccess world, BlockPos pos)
+    protected boolean canConnectTo(Gemstone gem, IBlockAccess world, BlockPos pos)
     {
         IBlockState blockState = world.getBlockState(pos);
         Block block = blockState.getBlock();
 
-        return block == this;
+        return block == this && blockState.getValue(VARIANT) == gem;
+    }
+
+    @Override
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
+    {
+        return REDSTONE_WIRE_AABB[func_185699_x(state.getActualState(source, pos))];
+    }
+
+    @Override
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos)
+    {
+        return NULL_AABB;
+    }
+
+    private static int func_185699_x(IBlockState state)
+    {
+        int i = 0;
+        boolean north = state.getValue(NORTH);
+        boolean east = state.getValue(EAST);
+        boolean south = state.getValue(SOUTH);
+        boolean west = state.getValue(WEST);
+
+        if (north || south && !east && !west)
+        {
+            i |= 1 << EnumFacing.NORTH.getHorizontalIndex();
+        }
+
+        if (east || west && !north && !south)
+        {
+            i |= 1 << EnumFacing.EAST.getHorizontalIndex();
+        }
+
+        if (south || north && !east && !west)
+        {
+            i |= 1 << EnumFacing.SOUTH.getHorizontalIndex();
+        }
+
+        if (west || east && !north && !south)
+        {
+            i |= 1 << EnumFacing.WEST.getHorizontalIndex();
+        }
+
+        return i;
     }
 }

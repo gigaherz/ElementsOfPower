@@ -66,7 +66,7 @@ public class ContainerEssentializer
         if (!MagicAmounts.areAmountsEqual(prevContained, tile.containedMagic)
                 || !MagicAmounts.areAmountsEqual(prevRemaining, tile.remainingToConvert))
         {
-            for (ICrafting watcher : this.crafters)
+            for (ICrafting watcher : this.listeners)
             {
                 if (watcher instanceof EntityPlayerMP)
                 {

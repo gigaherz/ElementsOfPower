@@ -1,0 +1,37 @@
+{
+  "multipart": [
+    {   "when": { "OR": [
+      {"north": "false", "east": "false", "south": "false", "west": "false"},
+      {"north": "true", "east": "true" },
+      {"east": "true", "south": "true" },
+      {"south": "true", "west": "true"},
+      {"west": "true", "north": "true"}
+    ]},
+      "apply": { "model": "redstone_dot" }
+    },
+    {   "when": { "OR": [
+      { "north": "true" },
+      { "north": "false", "east": "false", "south": "true", "west": "false" }
+    ]},
+      "apply": { "model": "redstone_side0" }
+    },
+    {   "when": { "OR": [
+      { "south": "true" },
+      { "north": "true", "east": "false", "south": "false", "west": "false" }
+    ]},
+      "apply": { "model": "redstone_side_alt0" }
+    },
+    {   "when": { "OR": [
+      { "east": "true" },
+      { "north": "false", "east": "false", "south": "false", "west": "true" }
+    ]},
+      "apply": { "model": "redstone_side_alt1", "y": 270 }
+    },
+    {   "when": { "OR": [
+      { "west": "true" },
+      { "north": "false", "east": "true", "south": "false", "west": "false" }
+    ]},
+      "apply": { "model": "redstone_side1", "y": 270 }
+    }
+  ]
+}

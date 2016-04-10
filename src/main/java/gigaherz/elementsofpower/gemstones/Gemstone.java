@@ -1,27 +1,31 @@
 package gigaherz.elementsofpower.gemstones;
 
-public enum Gemstone
-{
-    Ruby(Element.Fire, "ruby"), // red
-    Sapphire(Element.Water, "sapphire"), // blue
-    Citrine(Element.Air, "citrine"), // yellow
-    Agate(Element.Earth, "agate"), // brown
-    Quartz(Element.Light, "quartz"), // white
-    Serendibite(Element.Darkness, "serendibite"), // black
-    Emerald(Element.Life, "emerald"), // green
-    Amethyst(Element.Death, "amethyst"), // purple
+import net.minecraft.util.IStringSerializable;
 
-    Diamond(null, "diamond"); // clear
+public enum Gemstone implements IStringSerializable
+{
+    Ruby(Element.Fire, "ruby", 0xFFFF0000), // red
+    Sapphire(Element.Water, "sapphire", 0xFF0000FF), // blue
+    Citrine(Element.Air, "citrine", 0xFFFFFF00), // yellow
+    Agate(Element.Earth, "agate", 0xFF7F3F00), // brown
+    Quartz(Element.Light, "quartz", 0xFFFFFFFF), // white
+    Serendibite(Element.Darkness, "serendibite", 0xFF0F0F0F), // black
+    Emerald(Element.Life, "emerald", 0xFF00FF00), // green
+    Amethyst(Element.Death, "amethyst", 0xFFAF00FF), // purple
+
+    Diamond(null, "diamond", 0xFF7FFFCF); // clear
 
     private final Element element;
     private final String name;
     private final String unlocalizedName;
+    private final int tintColor;
 
-    Gemstone(Element element, String name)
+    Gemstone(Element element, String name, int tintColor)
     {
         this.element = element;
         this.name = name;
         this.unlocalizedName = "." + name;
+        this.tintColor = tintColor;
     }
 
     public Element getElement()
@@ -39,5 +43,11 @@ public enum Gemstone
         return name;
     }
 
+    public int getTintColor()
+    {
+        return tintColor;
+    }
+
     public static final Gemstone[] values = values();
+
 }

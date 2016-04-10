@@ -1,0 +1,24 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "builtin/generated",
+    "textures": {
+      "layer0": "elementsofpower:items/spelldust",
+      "layer1": "elementsofpower:items/spelldust1"
+    },
+    "transform": "forge:default-item"
+  },
+  "variants": {
+    "gem": {
+      "ruby": { },
+      "sapphire": { },
+      "citrine": { },
+      "agate": { },
+      "quartz": { },
+      "serendibite": { },
+      "emerald": { },
+      "amethyst": { },
+      "diamond": { }
+    }
+  }
+}

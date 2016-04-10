@@ -17,17 +17,23 @@ import gigaherz.elementsofpower.network.EssentializerAmountsUpdate;
 import gigaherz.elementsofpower.network.EssentializerTileUpdate;
 import gigaherz.elementsofpower.network.SpellcastSync;
 import gigaherz.elementsofpower.renders.*;
+import gigaherz.elementsofpower.spelldust.BlockSpelldust;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.color.IBlockColor;
+import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoader;
@@ -52,6 +58,35 @@ public class ClientProxy implements ISideProxy
     public void init()
     {
         registerParticle();
+
+        Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(
+                new IBlockColor()
+                {
+                    public int colorMultiplier(IBlockState state, IBlockAccess world, BlockPos pos, int tintIndex)
+                    {
+                        Gemstone gem = state.getValue(BlockSpelldust.VARIANT);
+
+                        return gem.getTintColor();
+                    }
+                }, ElementsOfPower.spell_wire);
+        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(
+                new IItemColor()
+                {
+                    @Override
+                    public int getColorFromItemstack(ItemStack stack, int tintIndex)
+                    {
+                        if (tintIndex != 0)
+                            return 0xFFFFFFFF;
+
+                        int index = stack.getItemDamage();
+
+                        if (index >= Gemstone.values.length)
+
+                            return 0xFFFFFFFF;
+
+                        return Gemstone.values[index].getTintColor();
+                    }
+                }, ElementsOfPower.spelldust);
     }
 
     public void registerClientEvents()
@@ -145,36 +180,41 @@ public class ClientProxy implements ISideProxy
     // ----------------------------------------------------------- Item/Block Models
     public void registerModels()
     {
-        registerBlockModelAsItem(ElementsOfPower.essentializer, "essentializer");
-        registerBlockModelAsItem(ElementsOfPower.cocoon, "cocoon", "color=8,facing=north");
+        registerBlockModelAsItem(ElementsOfPower.essentializer);
+        registerBlockModelAsItem(ElementsOfPower.cocoon, "color=8,facing=north");
 
-        registerItemModel(ElementsOfPower.analyzer, "analyzer");
+        registerItemModel(ElementsOfPower.analyzer);
 
-        registerItemModel(ElementsOfPower.guidebook, "guidebook");
+        registerItemModel(ElementsOfPower.guidebook);
 
-        registerItemModel(ElementsOfPower.fire, "magicOrb", "element=fire");
-        registerItemModel(ElementsOfPower.water, "magicOrb", "element=water");
-        registerItemModel(ElementsOfPower.air, "magicOrb", "element=air");
-        registerItemModel(ElementsOfPower.earth, "magicOrb", "element=earth");
-        registerItemModel(ElementsOfPower.light, "magicOrb", "element=light");
-        registerItemModel(ElementsOfPower.darkness, "magicOrb", "element=dark");
-        registerItemModel(ElementsOfPower.life, "magicOrb", "element=life");
-        registerItemModel(ElementsOfPower.death, "magicOrb", "element=death");
+        registerItemModel(ElementsOfPower.fire, "element=fire");
+        registerItemModel(ElementsOfPower.water, "element=water");
+        registerItemModel(ElementsOfPower.air, "element=air");
+        registerItemModel(ElementsOfPower.earth, "element=earth");
+        registerItemModel(ElementsOfPower.light, "element=light");
+        registerItemModel(ElementsOfPower.darkness, "element=dark");
+        registerItemModel(ElementsOfPower.life, "element=life");
+        registerItemModel(ElementsOfPower.death, "element=death");
 
-        registerItemModel(ElementsOfPower.gemRuby, "gemstone", "gem=ruby");
-        registerItemModel(ElementsOfPower.gemSapphire, "gemstone", "gem=sapphire");
-        registerItemModel(ElementsOfPower.gemCitrine, "gemstone", "gem=citrine");
-        registerItemModel(ElementsOfPower.gemAgate, "gemstone", "gem=agate");
-        registerItemModel(ElementsOfPower.gemQuartz, "gemstone", "gem=quartz");
-        registerItemModel(ElementsOfPower.gemSerendibite, "gemstone", "gem=serendibite");
-        registerItemModel(ElementsOfPower.gemEmerald, "gemstone", "gem=emerald");
-        registerItemModel(ElementsOfPower.gemAmethyst, "gemstone", "gem=amethyst");
-        registerItemModel(ElementsOfPower.gemDiamond, "gemstone", "gem=diamond");
+        registerItemModel(ElementsOfPower.gemRuby, "gem=ruby");
+        registerItemModel(ElementsOfPower.gemSapphire, "gem=sapphire");
+        registerItemModel(ElementsOfPower.gemCitrine, "gem=citrine");
+        registerItemModel(ElementsOfPower.gemAgate, "gem=agate");
+        registerItemModel(ElementsOfPower.gemQuartz, "gem=quartz");
+        registerItemModel(ElementsOfPower.gemSerendibite, "gem=serendibite");
+        registerItemModel(ElementsOfPower.gemEmerald, "gem=emerald");
+        registerItemModel(ElementsOfPower.gemAmethyst, "gem=amethyst");
+        registerItemModel(ElementsOfPower.gemDiamond, "gem=diamond");
+
+        for (Gemstone g : Gemstone.values)
+        {
+            registerItemModel(ElementsOfPower.spelldust, g.ordinal(), "gem=" + g.getName());
+        }
 
         for (GemstoneBlockType b : GemstoneBlockType.values)
         {
-            registerBlockModelAsItem(ElementsOfPower.gemstoneBlock, b.ordinal(), "gemstoneBlock", "type=" + b.getName());
-            registerBlockModelAsItem(ElementsOfPower.gemstoneOre, b.ordinal(), "gemstoneOre", "type=" + b.getName());
+            registerBlockModelAsItem(ElementsOfPower.gemstoneBlock, b.ordinal(), "type=" + b.getName());
+            registerBlockModelAsItem(ElementsOfPower.gemstoneOre, b.ordinal(), "type=" + b.getName());
         }
 
         registerGemMeshDefinition(ElementsOfPower.magicRing, "magicRing");
@@ -187,39 +227,39 @@ public class ClientProxy implements ISideProxy
         ModelLoader.setCustomMeshDefinition(item, new GemContainerMeshDefinition(item, itemName));
     }
 
-    public void registerBlockModelAsItem(final Block block, final String blockName)
+    public void registerBlockModelAsItem(final Block block)
     {
-        registerBlockModelAsItem(block, 0, blockName);
+        registerItemModel(Item.getItemFromBlock(block));
     }
 
-    public void registerBlockModelAsItem(final Block block, final String blockName, final String variantName)
+    public void registerItemModel(final Item item)
     {
-        registerBlockModelAsItem(block, 0, blockName, variantName);
+        registerItemModel(item, "inventory");
     }
 
-    public void registerBlockModelAsItem(final Block block, int meta, final String blockName)
+    public void registerBlockModelAsItem(final Block block, final String variant)
     {
-        registerBlockModelAsItem(block, meta, blockName, "inventory");
+        registerItemModel(Item.getItemFromBlock(block), variant);
     }
 
-    public void registerBlockModelAsItem(final Block block, int meta, final String blockName, final String variantName)
+    public void registerItemModel(final ItemStack stack, final String variant)
     {
-        registerItemModel(Item.getItemFromBlock(block), meta, blockName, variantName);
+        registerItemModel(stack.getItem(), stack.getMetadata(), variant);
     }
 
-    public void registerItemModel(final ItemStack stack, final String itemName, final String variantName)
+    public void registerItemModel(final Item item, final String variant)
     {
-        registerItemModel(stack.getItem(), stack.getMetadata(), itemName, variantName);
+        registerItemModel(item, 0, variant);
     }
 
-    public void registerItemModel(final Item item, final String itemName)
+    public void registerBlockModelAsItem(final Block block, final int meta, final String variant)
     {
-        registerItemModel(item, 0, itemName, "inventory");
+        registerItemModel(Item.getItemFromBlock(block), meta, variant);
     }
 
-    public void registerItemModel(final Item item, int meta, final String itemName, final String variantName)
+    public void registerItemModel(final Item item, final int meta, final String variant)
     {
-        ModelLoader.setCustomModelResourceLocation(item, meta, new ModelResourceLocation(ElementsOfPower.MODID + ":" + itemName, variantName));
+        ModelLoader.setCustomModelResourceLocation(item, meta, new ModelResourceLocation(item.getRegistryName(), variant));
     }
 
     // ----------------------------------------------------------- Entity Renderers

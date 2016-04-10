@@ -6,13 +6,13 @@
   },
   "variants": {
     "gem": {
-      "ruby":  { "textures": { "layer0": "elementsofpower:items/ruby" } },
-      "sapphire":   { "textures": { "layer0": "elementsofpower:items/sapphire" } },
+      "ruby": { "textures": { "layer0": "elementsofpower:items/ruby" } },
+      "sapphire": { "textures": { "layer0": "elementsofpower:items/sapphire" } },
       "citrine": { "textures": { "layer0": "elementsofpower:items/citrine" } },
       "agate": { "textures": { "layer0": "elementsofpower:items/agate" } },
       "quartz": { "textures": { "layer0": "minecraft:items/quartz" } },
-      "serendibite":  { "textures": { "layer0": "elementsofpower:items/serendibite" } },
-      "emerald":  { "textures": { "layer0": "minecraft:items/emerald" } },
+      "serendibite": { "textures": { "layer0": "elementsofpower:items/serendibite" } },
+      "emerald": { "textures": { "layer0": "minecraft:items/emerald" } },
       "amethyst": { "textures": { "layer0": "elementsofpower:items/amethyst" } },
       "diamond": { "textures": { "layer0": "minecraft:items/diamond" } }
     }
