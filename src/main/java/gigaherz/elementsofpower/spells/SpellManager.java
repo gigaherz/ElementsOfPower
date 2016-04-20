@@ -12,14 +12,12 @@ import gigaherz.elementsofpower.spells.effects.*;
 import gigaherz.elementsofpower.spells.shapes.*;
 
 import java.util.EnumMap;
-import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
 
 public class SpellManager
 {
     public final static char[] elementChars = {'F', 'W', 'A', 'E', 'G', 'K', 'L', 'D'};
-    public final static Map<Character, Integer> elementIndices = new Hashtable<>();
+    public final static int[] elementIndices = new int['Z'-'A'+1];
 
     public static final SpellShape sphere = new SphereShape();
     public static final SpellShape ball = new BallShape();
@@ -46,9 +44,14 @@ public class SpellManager
 
     static
     {
+        for (int i = 0; i < elementIndices.length; i++)
+        {
+            elementIndices[i] = -1;
+        }
+
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            elementIndices.put(elementChars[i], i);
+            elementIndices[elementChars[i]-'A'] = i;
         }
     }
 

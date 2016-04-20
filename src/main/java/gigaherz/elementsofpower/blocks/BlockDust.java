@@ -23,7 +23,7 @@ public class BlockDust extends BlockRegistered
 
     public BlockDust(String name)
     {
-        this(name, Material.clay);
+        this(name, Material.CLAY);
     }
 
     public BlockDust(String name, Material mat)
@@ -82,7 +82,7 @@ public class BlockDust extends BlockRegistered
             BlockPos bp = pos.offset(f);
             IBlockState neighbour = worldIn.getBlockState(bp);
             if (neighbour.getBlock().isAir(neighbour, worldIn, bp)
-                    || neighbour.getBlock() == Blocks.fire)
+                    || neighbour.getBlock() == Blocks.FIRE)
             {
                 boolean given = false;
                 if (density > maxGive)

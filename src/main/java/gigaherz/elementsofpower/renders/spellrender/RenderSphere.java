@@ -44,7 +44,7 @@ public class RenderSphere extends RenderSpell
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.depthMask(false);
 
-        renderManager.renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+        renderManager.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
         GlStateManager.pushMatrix();
 

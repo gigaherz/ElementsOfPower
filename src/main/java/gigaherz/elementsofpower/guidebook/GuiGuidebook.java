@@ -431,7 +431,7 @@ public class GuiGuidebook extends GuiScreen
 
         RenderHelper.enableStandardItemLighting();
 
-        mc.renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+        mc.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
         if (modelBookB != null)
         {
@@ -746,7 +746,7 @@ public class GuiGuidebook extends GuiScreen
             {
                 String itemName = attr.getTextContent();
 
-                Item item = Item.itemRegistry.getObject(new ResourceLocation(itemName));
+                Item item = Item.REGISTRY.getObject(new ResourceLocation(itemName));
 
                 s.stack = new ItemStack(item, stackSize, meta);
                 s.stack.setTagCompound(tag);

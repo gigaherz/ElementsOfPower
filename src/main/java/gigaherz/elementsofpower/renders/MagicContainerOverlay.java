@@ -84,7 +84,7 @@ public class MagicContainerOverlay extends Gui
                 yPos = rescaledHeight / 2 - 16 - 16;
                 for (char c : savedSequence.toCharArray())
                 {
-                    int i = SpellManager.elementIndices.get(c);
+                    int i = SpellManager.elementIndices[c-'A'];
 
                     ItemStack stack = ElementsOfPower.magicOrb.getStack(1, Element.values[i]);
 
@@ -102,7 +102,7 @@ public class MagicContainerOverlay extends Gui
             yPos = rescaledHeight / 2 + 16;
             for (char c : TickEventWandControl.instance.sequence.toCharArray())
             {
-                int i = SpellManager.elementIndices.get(c);
+                int i = SpellManager.elementIndices[c-'A'];
 
                 ItemStack stack = ElementsOfPower.magicOrb.getStack(1, Element.values[i]);
 

@@ -71,7 +71,7 @@ public class MistEffect extends SpellEffect
 
         Block block = currentState.getBlock();
 
-        if (block == Blocks.air)
+        if (block == Blocks.AIR)
         {
             cast.world.setBlockState(blockPos, ElementsOfPower.mist.getDefaultState().withProperty(BlockMist.DENSITY, 16));
         }

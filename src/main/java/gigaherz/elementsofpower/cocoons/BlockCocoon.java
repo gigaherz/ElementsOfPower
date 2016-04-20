@@ -36,7 +36,7 @@ public class BlockCocoon extends BlockRegistered
 
     public BlockCocoon(String name)
     {
-        super(name, Material.cactus);
+        super(name, Material.CACTUS);
         setTickRandomly(true);
         setCreativeTab(ElementsOfPower.tabMagic);
         setLightOpacity(0);
@@ -267,27 +267,27 @@ public class BlockCocoon extends BlockRegistered
                                     am.light(Math.max(0, 0.25f * Math.min(1, (y - 64) / 64.0f)));
                                     am.darkness(Math.max(0, 0.25f * (64 - y) / 64.0f));
 
-                                    if (b == Blocks.water || b == Blocks.flowing_water)
+                                    if (b == Blocks.WATER || b == Blocks.FLOWING_WATER)
                                     {
                                         am.water(1.5f);
                                     }
-                                    else if (b == Blocks.lava || b == Blocks.flowing_lava)
+                                    else if (b == Blocks.LAVA || b == Blocks.FLOWING_LAVA)
                                     {
                                         am.fire(1);
                                     }
-                                    else if (b == Blocks.netherrack)
+                                    else if (b == Blocks.NETHERRACK)
                                     {
                                         am.fire(0.5f);
                                         am.earth(1);
                                     }
-                                    else if (b == Blocks.soul_sand)
+                                    else if (b == Blocks.SOUL_SAND)
                                     {
                                         am.death(1);
                                     }
-                                    else if (b == Blocks.log || b == Blocks.log2
-                                            || b == Blocks.leaves || b == Blocks.leaves2
-                                            || b == Blocks.red_flower || b == Blocks.yellow_flower
-                                            || b == Blocks.grass || b == Blocks.tallgrass)
+                                    else if (b == Blocks.LOG || b == Blocks.LOG2
+                                            || b == Blocks.LEAVES || b == Blocks.LEAVES2
+                                            || b == Blocks.RED_FLOWER || b == Blocks.YELLOW_FLOWER
+                                            || b == Blocks.GRASS || b == Blocks.TALLGRASS)
                                     {
                                         am.life(1);
                                     }

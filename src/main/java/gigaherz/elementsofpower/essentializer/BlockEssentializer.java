@@ -22,7 +22,7 @@ public class BlockEssentializer
 
     public BlockEssentializer(String name)
     {
-        super(name, Material.iron);
+        super(name, Material.IRON);
         setCreativeTab(ElementsOfPower.tabMagic);
         setHardness(15.0F);
         setSoundType(SoundType.METAL);

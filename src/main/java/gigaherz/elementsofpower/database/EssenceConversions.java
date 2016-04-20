@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower.database;
 
+import com.google.common.collect.Maps;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.recipes.RecipeTools;
 import net.minecraft.item.ItemStack;
@@ -10,7 +11,7 @@ import java.util.Map;
 
 public class EssenceConversions
 {
-    public static Map<ItemStack, MagicAmounts> itemEssences = new HashMap<>();
+    public static Map<ItemStack, MagicAmounts> itemEssences = Maps.newHashMap();
 
     public static void registerEssencesForRecipes()
     {

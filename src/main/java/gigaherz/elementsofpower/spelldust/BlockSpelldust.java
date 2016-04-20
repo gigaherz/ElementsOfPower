@@ -54,7 +54,7 @@ public class BlockSpelldust extends BlockRegistered
 
     public BlockSpelldust(String name)
     {
-        super(name, Material.circuits);
+        super(name, Material.CIRCUITS);
         this.setDefaultState(this.blockState.getBaseState()
                 .withProperty(NORTH, false)
                 .withProperty(EAST, false)
@@ -94,7 +94,7 @@ public class BlockSpelldust extends BlockRegistered
         IBlockState state = worldIn.getBlockState(down);
         Block b = state.getBlock();
         return state.isSideSolid(worldIn, down, EnumFacing.UP)
-                || b == Blocks.glowstone || b == Blocks.glass;
+                || b == Blocks.GLOWSTONE || b == Blocks.GLASS;
     }
 
     @Override

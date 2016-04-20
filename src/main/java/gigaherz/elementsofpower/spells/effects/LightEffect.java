@@ -71,7 +71,7 @@ public class LightEffect extends SpellEffect
 
         Block block = currentState.getBlock();
 
-        if (block == Blocks.air)
+        if (block == Blocks.AIR)
         {
             cast.world.setBlockState(blockPos, ElementsOfPower.dust.getDefaultState().withProperty(BlockDust.DENSITY, 16));
         }

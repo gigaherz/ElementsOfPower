@@ -447,7 +447,7 @@ public class EntityEssence extends EntityAmbientCreature
             float f = 0.91F;
 
             float f1 = 0.16277136F / (f * f * f);
-            this.moveFlying(strafe, forward, this.onGround ? 0.1F * f1 : 0.02F);
+            this.moveRelative(strafe, forward, this.onGround ? 0.1F * f1 : 0.02F);
             f = 0.91F;
 
             this.moveEntity(this.motionX, this.motionY, this.motionZ);

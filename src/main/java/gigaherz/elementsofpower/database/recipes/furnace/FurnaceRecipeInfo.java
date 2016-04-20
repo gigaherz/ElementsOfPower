@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower.database.recipes.furnace;
 
+import com.google.common.collect.Lists;
 import gigaherz.elementsofpower.database.recipes.IRecipeInfoProvider;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -17,9 +18,9 @@ public class FurnaceRecipeInfo implements IRecipeInfoProvider
     {
         ItemStack recipeInput = input.copy();
 
-        ArrayList<ItemStack> inputs = new ArrayList<>();
+        ArrayList<ItemStack> inputs = Lists.newArrayList();
         inputs.add(recipeInput);
-        inputs.add(new ItemStack(Items.coal));
+        inputs.add(new ItemStack(Items.COAL));
 
         recipeItems = inputs;
         recipeOutput = output.copy();

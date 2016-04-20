@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower.database;
 
+import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -18,7 +19,7 @@ public class EssenceOverrides
     private static final Gson SERIALIZER = new GsonBuilder()
             .registerTypeAdapter(MagicAmounts.class, new MagicAmounts.Serializer()).create();
 
-    public static Map<String, MagicAmounts> essenceOverrides = new HashMap<>();
+    public static Map<String, MagicAmounts> essenceOverrides = Maps.newHashMap();
 
     public static void loadOverrides()
     {
@@ -66,7 +67,7 @@ public class EssenceOverrides
     {
         loadConfigOverrides();
 
-        String itemName = Item.itemRegistry.getNameForObject(stack.getItem()).toString();
+        String itemName = Item.REGISTRY.getNameForObject(stack.getItem()).toString();
         String entryName = String.format("%s@%d", itemName, stack.getMetadata());
 
         essenceOverrides.put(entryName, amounts);
@@ -93,7 +94,7 @@ public class EssenceOverrides
                 meta = Integer.parseInt(entryName.substring(pos + 1));
             }
 
-            Item item = Item.itemRegistry.getObject(new ResourceLocation(itemName));
+            Item item = Item.REGISTRY.getObject(new ResourceLocation(itemName));
 
             ItemStack stack = new ItemStack(item, 1, meta);
             MagicAmounts m = e.getValue();

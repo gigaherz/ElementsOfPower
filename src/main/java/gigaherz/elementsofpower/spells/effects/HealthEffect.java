@@ -60,10 +60,10 @@ public class HealthEffect extends SpellEffect
         int emp = cast.getEmpowering();
 
         if (-emp < lv)
-            causePotionEffect(cast, e, MobEffects.heal, 0, (lv + emp) * 0.5, 0.0);
+            causePotionEffect(cast, e, MobEffects.INSTANT_HEALTH, 0, (lv + emp) * 0.5, 0.0);
 
         if (emp < lv)
-            causePotionEffect(cast, e, MobEffects.regeneration, 0, (lv - emp), 100.0);
+            causePotionEffect(cast, e, MobEffects.REGENERATION, 0, (lv - emp), 100.0);
     }
 
     @Override
@@ -106,15 +106,15 @@ public class HealthEffect extends SpellEffect
     {
         Block block = currentState.getBlock();
 
-        if (block == Blocks.dirt)
+        if (block == Blocks.DIRT)
         {
             switch (currentState.getValue(BlockDirt.VARIANT))
             {
                 case COARSE_DIRT:
-                    cast.world.setBlockState(blockPos, Blocks.dirt.getDefaultState());
+                    cast.world.setBlockState(blockPos, Blocks.DIRT.getDefaultState());
                     break;
                 case DIRT:
-                    cast.world.setBlockState(blockPos, Blocks.grass.getDefaultState());
+                    cast.world.setBlockState(blockPos, Blocks.GRASS.getDefaultState());
                     break;
             }
         }

@@ -25,7 +25,7 @@ public class BlockMist extends BlockRegistered
 
     public BlockMist(String name)
     {
-        super(name, Material.air);
+        super(name, Material.AIR);
         setHardness(0.1F);
         setBlockUnbreakable();
         setSoundType(SoundType.CLOTH);
@@ -103,7 +103,7 @@ public class BlockMist extends BlockRegistered
             BlockPos bp = pos.offset(f);
             IBlockState neighbour = worldIn.getBlockState(bp);
             if (neighbour.getBlock().isAir(neighbour, worldIn, bp)
-                    || neighbour.getBlock() == Blocks.fire)
+                    || neighbour.getBlock() == Blocks.FIRE)
             {
                 boolean given = false;
                 if (density > maxGive)

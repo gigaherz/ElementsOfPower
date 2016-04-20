@@ -43,13 +43,13 @@ public class DiscoveryHandler
         MinecraftForge.EVENT_BUS.register(instance);
 
         // Prepare item comparisons
-        gemTypes.add(new ItemStack(Items.emerald));
-        gemTypes.add(new ItemStack(Items.diamond));
+        gemTypes.add(new ItemStack(Items.EMERALD));
+        gemTypes.add(new ItemStack(Items.DIAMOND));
         ElementsOfPower.gemstone.getUnexamined(gemTypes);
         ElementsOfPower.gemstone.getSubItems(ElementsOfPower.gemstone, null, gemTypes);
 
         // Initialize achievements
-        discoverGems = newAchievement(".discoverGems", -3, 0, Items.diamond, null);
+        discoverGems = newAchievement(".discoverGems", -3, 0, Items.DIAMOND, null);
         discoverGems.initIndependentStat().registerStat();
 
         acquireWand = newAchievement(".acquireWand", 0, 0, new ItemStack(ElementsOfPower.magicWand), discoverGems);

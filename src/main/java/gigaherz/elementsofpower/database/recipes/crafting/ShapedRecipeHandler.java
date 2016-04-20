@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower.database.recipes.crafting;
 
+import com.google.common.collect.Lists;
 import gigaherz.elementsofpower.database.recipes.IRecipeHandler;
 import gigaherz.elementsofpower.database.recipes.IRecipeInfoProvider;
 import net.minecraft.item.ItemStack;
@@ -15,7 +16,7 @@ public class ShapedRecipeHandler implements IRecipeHandler
     @Override
     public boolean accepts(@Nonnull IRecipe recipe)
     {
-        return recipe.getRecipeOutput() != null && recipe instanceof ShapedRecipes;
+        return recipe instanceof ShapedRecipes;
     }
 
     @Nonnull
@@ -27,7 +28,7 @@ public class ShapedRecipeHandler implements IRecipeHandler
 
     private static class RecipeInfo implements IRecipeInfoProvider
     {
-        ArrayList<ItemStack> recipeItems = new ArrayList<>();
+        ArrayList<ItemStack> recipeItems = Lists.newArrayList();
         ShapedRecipes recipe;
 
         public RecipeInfo(ShapedRecipes recipe)

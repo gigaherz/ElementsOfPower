@@ -22,11 +22,11 @@ public class BlockGemstone extends BlockRegistered
 
     public BlockGemstone(String name)
     {
-        super(name, Material.iron, MapColor.diamondColor);
+        super(name, Material.IRON, MapColor.DIAMOND);
         setHardness(5.0F);
         setResistance(10.0F);
         setSoundType(SoundType.METAL);
-        setCreativeTab(CreativeTabs.tabBlock);
+        setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
     }
 
     @Override

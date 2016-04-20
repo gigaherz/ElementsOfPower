@@ -76,43 +76,43 @@ public class FrostEffect extends SpellEffect
 
         int layers = (int) Math.min(1 - r, 7);
 
-        if (block == Blocks.fire)
+        if (block == Blocks.FIRE)
         {
             world.setBlockToAir(blockPos);
         }
         else if (layers > 0)
         {
-            if (block == Blocks.flowing_lava || block == Blocks.lava)
+            if (block == Blocks.LAVA || block == Blocks.FLOWING_LAVA)
             {
                 if (currentState.getValue(BlockDynamicLiquid.LEVEL) > 0)
                 {
-                    world.setBlockState(blockPos, Blocks.cobblestone.getDefaultState());
+                    world.setBlockState(blockPos, Blocks.COBBLESTONE.getDefaultState());
                 }
                 else
                 {
-                    world.setBlockState(blockPos, Blocks.obsidian.getDefaultState());
+                    world.setBlockState(blockPos, Blocks.OBSIDIAN.getDefaultState());
                 }
                 return;
             }
-            else if (block == Blocks.flowing_water || block == Blocks.water)
+            else if (block == Blocks.WATER || block == Blocks.FLOWING_WATER)
             {
                 if (currentState.getValue(BlockDynamicLiquid.LEVEL) > 0)
                 {
-                    world.setBlockState(blockPos, Blocks.ice.getDefaultState());
+                    world.setBlockState(blockPos, Blocks.ICE.getDefaultState());
                 }
                 else
                 {
-                    world.setBlockState(blockPos, Blocks.packed_ice.getDefaultState());
+                    world.setBlockState(blockPos, Blocks.PACKED_ICE.getDefaultState());
                 }
                 return;
             }
-            else if (!Blocks.snow_layer.canPlaceBlockOnSide(world, blockPos, EnumFacing.UP))
+            else if (!Blocks.SNOW_LAYER.canPlaceBlockOnSide(world, blockPos, EnumFacing.UP))
             {
                 return;
             }
 
             IBlockState below = world.getBlockState(blockPos.down());
-            if (below.getBlock() == Blocks.snow_layer)
+            if (below.getBlock() == Blocks.SNOW_LAYER)
             {
                 if (below.getValue(BlockSnow.LAYERS) < 8)
                 {
@@ -125,7 +125,7 @@ public class FrostEffect extends SpellEffect
                 currentState = world.getBlockState(blockPos);
                 block = currentState.getBlock();
 
-                if (block == Blocks.snow_layer)
+                if (block == Blocks.SNOW_LAYER)
                 {
                     int l = currentState.getValue(BlockSnow.LAYERS);
                     if (l == 8)
@@ -135,10 +135,10 @@ public class FrostEffect extends SpellEffect
                     world.setBlockState(blockPos, currentState.withProperty(BlockSnow.LAYERS, l));
                     layers -= add;
                 }
-                else if (block == Blocks.air)
+                else if (block == Blocks.AIR)
                 {
                     int add = Math.min(8, layers);
-                    world.setBlockState(blockPos, Blocks.snow_layer.getDefaultState().withProperty(BlockSnow.LAYERS, add));
+                    world.setBlockState(blockPos, Blocks.SNOW_LAYER.getDefaultState().withProperty(BlockSnow.LAYERS, add));
                     layers -= add;
                 }
                 else

@@ -65,7 +65,7 @@ public class ResurrectionEffect
 
         IBlockState state = world.getBlockState(blockPos);
 
-        if (state.getBlock() == Blocks.dragon_egg)
+        if (state.getBlock() == Blocks.DRAGON_EGG)
         {
             EntityDragon dragon = new EntityDragon(world);
 

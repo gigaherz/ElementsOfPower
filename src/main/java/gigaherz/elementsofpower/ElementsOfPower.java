@@ -265,7 +265,7 @@ public class ElementsOfPower
         spell_wire = new BlockSpelldust("spell_wire");
         GameRegistry.register(spell_wire);
 
-        materialCushion = new MaterialCushion(MapColor.blackColor);
+        materialCushion = new MaterialCushion(MapColor.BLACK);
         cushion = new BlockCushion("cushion");
         GameRegistry.register(cushion);
 
@@ -431,27 +431,27 @@ public class ElementsOfPower
                 "IQI",
                 "ONO",
                 "IOI",
-                'I', Items.iron_ingot,
-                'O', Blocks.obsidian,
+                'I', Items.IRON_INGOT,
+                'O', Blocks.OBSIDIAN,
                 'Q', "magicGemstone",
-                'N', Items.nether_star));
+                'N', Items.NETHER_STAR));
         GameRegistry.addShapedRecipe(new ItemStack(magicWand),
                 " G",
                 "S ",
-                'G', Items.gold_ingot,
-                'S', Items.stick);
+                'G', Items.GOLD_INGOT,
+                'S', Items.STICK);
         GameRegistry.addRecipe(new ItemStack(magicStaff),
                 " GW",
                 " SG",
                 "S  ",
                 'W', new ItemStack(magicWand, 1, OreDictionary.WILDCARD_VALUE),
-                'G', Items.gold_ingot,
-                'S', Items.stick);
+                'G', Items.GOLD_INGOT,
+                'S', Items.STICK);
         GameRegistry.addRecipe(new ItemStack(magicRing),
                 " GG",
                 "G G",
                 " G ",
-                'G', Items.gold_ingot);
+                'G', Items.GOLD_INGOT);
         GameRegistry.addRecipe(new GemstoneChangeRecipe());
         GameRegistry.addRecipe(new ContainerChargeRecipe());
 

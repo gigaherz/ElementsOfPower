@@ -1,5 +1,7 @@
 package gigaherz.elementsofpower.database.recipes;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.recipes.crafting.ShapedOreRecipeHandler;
 import gigaherz.elementsofpower.database.recipes.crafting.ShapedRecipeHandler;
@@ -16,7 +18,7 @@ import java.util.*;
 
 public abstract class RecipeEnumerator
 {
-    public static List<IRecipeHandler> craftingRecipeHandlers = new ArrayList<>();
+    public static List<IRecipeHandler> craftingRecipeHandlers = Lists.newArrayList();
 
     static
     {
@@ -33,10 +35,13 @@ public abstract class RecipeEnumerator
         @Override
         void enumerate(@Nonnull IRecipeInfoConsumer consumer)
         {
-            Set<Class<? extends IRecipe>> seenClasses = new HashSet<>();
+            Set<Class<? extends IRecipe>> seenClasses = Sets.newHashSet();
 
             for (IRecipe recipe : CraftingManager.getInstance().getRecipeList())
             {
+                if(recipe.getRecipeOutput() == null || recipe.getRecipeOutput().getItem() == null)
+                    continue;
+
                 IRecipeInfoProvider provider = null;
 
                 for (IRecipeHandler h : craftingRecipeHandlers)
@@ -71,6 +76,8 @@ public abstract class RecipeEnumerator
         {
             for (Map.Entry<ItemStack, ItemStack> entry : FurnaceRecipes.instance().getSmeltingList().entrySet())
             {
+                if(entry.getValue() == null || entry.getValue().getItem() == null)
+                    continue;
                 consumer.process(new FurnaceRecipeInfo(entry.getKey(), entry.getValue()));
             }
         }

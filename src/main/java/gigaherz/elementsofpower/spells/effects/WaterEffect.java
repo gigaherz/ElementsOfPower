@@ -83,15 +83,15 @@ public class WaterEffect extends SpellEffect
 
         Block block = currentState.getBlock();
 
-        if (block == Blocks.air)
+        if (block == Blocks.AIR)
         {
             if (spawnSourceBlocks)
             {
-                cast.world.setBlockState(blockPos, Blocks.flowing_water.getDefaultState().withProperty(BlockDynamicLiquid.LEVEL, 0));
+                cast.world.setBlockState(blockPos, Blocks.FLOWING_WATER.getDefaultState().withProperty(BlockDynamicLiquid.LEVEL, 0));
             }
             else
             {
-                cast.world.setBlockState(blockPos, Blocks.flowing_water.getDefaultState().withProperty(BlockDynamicLiquid.LEVEL, 15));
+                cast.world.setBlockState(blockPos, Blocks.FLOWING_WATER.getDefaultState().withProperty(BlockDynamicLiquid.LEVEL, 15));
             }
         }
     }

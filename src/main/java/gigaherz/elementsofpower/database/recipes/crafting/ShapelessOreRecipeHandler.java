@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower.database.recipes.crafting;
 
+import com.google.common.collect.Lists;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.recipes.IRecipeHandler;
 import gigaherz.elementsofpower.database.recipes.IRecipeInfoProvider;
@@ -16,7 +17,7 @@ public class ShapelessOreRecipeHandler implements IRecipeHandler
     @Override
     public boolean accepts(@Nonnull IRecipe recipe)
     {
-        return recipe.getRecipeOutput() != null && recipe instanceof ShapelessOreRecipe;
+        return recipe instanceof ShapelessOreRecipe;
     }
 
     @Nonnull
@@ -28,7 +29,7 @@ public class ShapelessOreRecipeHandler implements IRecipeHandler
 
     private static class RecipeInfo implements IRecipeInfoProvider
     {
-        ArrayList<ItemStack> recipeItems = new ArrayList<>();
+        ArrayList<ItemStack> recipeItems = Lists.newArrayList();
         ShapelessOreRecipe recipe;
 
         public RecipeInfo(ShapelessOreRecipe recipe)

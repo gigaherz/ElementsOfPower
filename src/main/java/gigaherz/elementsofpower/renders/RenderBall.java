@@ -29,7 +29,7 @@ public class RenderBall extends Render<EntityBall>
         GlStateManager.enableRescaleNormal();
         GlStateManager.scale(scale, scale, scale);
 
-        bindTexture(TextureMap.locationBlocksTexture);
+        bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
         int ball_color = entity.getColor();
         for (int i = 0; i <= 4; i++)
@@ -59,6 +59,6 @@ public class RenderBall extends Render<EntityBall>
     @Override
     protected ResourceLocation getEntityTexture(EntityBall entity)
     {
-        return TextureMap.locationBlocksTexture;
+        return TextureMap.LOCATION_BLOCKS_TEXTURE;
     }
 }

@@ -22,7 +22,7 @@ public class MagicTooltips
 
         Item item = event.getItemStack().getItem();
 
-        if (item == Items.diamond || item == Items.emerald || item == Items.quartz)
+        if (item == Items.DIAMOND || item == Items.EMERALD || item == Items.QUARTZ)
         {
             event.getToolTip().add(1, TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + I18n.translateToLocal("text." + ElementsOfPower.MODID + ".gemstone.use"));
         }

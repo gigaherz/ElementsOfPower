@@ -30,11 +30,11 @@ public class BlockGemstoneOre extends BlockRegistered
 
     public BlockGemstoneOre(String name)
     {
-        super(name, Material.rock);
+        super(name, Material.ROCK);
         setHardness(3.0F);
         setResistance(5.0F);
         setSoundType(SoundType.STONE);
-        setCreativeTab(CreativeTabs.tabBlock);
+        setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
     }
 
     @Override

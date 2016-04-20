@@ -146,11 +146,11 @@ public class WindEffect extends SpellEffect
 
         Block block = currentState.getBlock();
 
-        if (block == Blocks.fire)
+        if (block == Blocks.FIRE)
         {
             cast.world.setBlockToAir(blockPos);
         }
-        else if (block == Blocks.flowing_water || block == Blocks.water)
+        else if (block == Blocks.FLOWING_WATER || block == Blocks.WATER)
         {
             if (currentState.getValue(BlockDynamicLiquid.LEVEL) > 0)
             {

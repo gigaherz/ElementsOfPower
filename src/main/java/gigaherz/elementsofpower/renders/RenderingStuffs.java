@@ -28,7 +28,7 @@ import java.util.Map;
 
 public class RenderingStuffs
 {
-    static Map<String, IBakedModel> loadedModels = new HashMap<>();
+    static Map<String, IBakedModel> loadedModels = Maps.newHashMap();
 
     public static void init()
     {

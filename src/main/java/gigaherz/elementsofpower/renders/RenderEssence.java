@@ -31,7 +31,7 @@ public class RenderEssence extends Render<EntityEssence>
         GlStateManager.translate((float) x, (float) y, (float) z);
         GlStateManager.scale(scale, scale, scale);
 
-        bindTexture(TextureMap.locationBlocksTexture);
+        bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
         float cycle = (entity.ticksExisted % 10 + partialTicks) / 11.0f;
 
@@ -66,6 +66,6 @@ public class RenderEssence extends Render<EntityEssence>
     @Override
     protected ResourceLocation getEntityTexture(EntityEssence entity)
     {
-        return TextureMap.locationBlocksTexture;
+        return TextureMap.LOCATION_BLOCKS_TEXTURE;
     }
 }

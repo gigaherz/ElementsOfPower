@@ -17,7 +17,7 @@ public class RenderEssentializer extends TileEntitySpecialRenderer<TileEssential
     {
         IBakedModel model = RenderingStuffs.loadModel("elementsofpower:block/essentializer_2.obj");
 
-        bindTexture(TextureMap.locationBlocksTexture);
+        bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
         GlStateManager.disableLighting();
 
@@ -68,7 +68,7 @@ public class RenderEssentializer extends TileEntitySpecialRenderer<TileEssential
             GlStateManager.scale(0.35, 0.35, 0.35);
 
             Minecraft mc = Minecraft.getMinecraft();
-            mc.renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+            mc.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
             mc.getRenderItem().renderItem(stack, TransformType.GROUND);
 
             GlStateManager.popMatrix();

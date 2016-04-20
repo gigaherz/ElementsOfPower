@@ -22,8 +22,8 @@ public class StackRenderingHelper
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
-        renderEngine.bindTexture(TextureMap.locationBlocksTexture);
-        renderEngine.getTexture(TextureMap.locationBlocksTexture).setBlurMipmap(false, false);
+        renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        renderEngine.getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
 
         GlStateManager.pushMatrix();
 
@@ -37,8 +37,8 @@ public class StackRenderingHelper
 
         GlStateManager.popMatrix();
 
-        renderEngine.bindTexture(TextureMap.locationBlocksTexture);
-        renderEngine.getTexture(TextureMap.locationBlocksTexture).restoreLastBlurMipmap();
+        renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        renderEngine.getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
 
         RenderHelper.disableStandardItemLighting();
     }

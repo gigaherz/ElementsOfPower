@@ -57,8 +57,8 @@ public class BreakingEffect extends SpellEffect
     {
         double lv = Math.max(0, cast.getDamageForce() - distance);
 
-        causePotionEffect(cast, e, MobEffects.harm, 0, lv * 0.5, 0.0);
-        causePotionEffect(cast, e, MobEffects.wither, 0, lv, 100.0);
+        causePotionEffect(cast, e, MobEffects.INSTANT_DAMAGE, 0, lv * 0.5, 0.0);
+        causePotionEffect(cast, e, MobEffects.WITHER, 0, lv, 100.0);
     }
 
     @Override
@@ -101,16 +101,16 @@ public class BreakingEffect extends SpellEffect
     {
         Block block = currentState.getBlock();
 
-        if (block == Blocks.grass)
+        if (block == Blocks.GRASS)
         {
-            cast.world.setBlockState(blockPos, Blocks.dirt.getDefaultState());
+            cast.world.setBlockState(blockPos, Blocks.DIRT.getDefaultState());
         }
-        else if (block == Blocks.dirt)
+        else if (block == Blocks.DIRT)
         {
             switch (currentState.getValue(BlockDirt.VARIANT))
             {
                 case DIRT:
-                    cast.world.setBlockState(blockPos, Blocks.dirt.getDefaultState().withProperty(BlockDirt.VARIANT, BlockDirt.DirtType.COARSE_DIRT));
+                    cast.world.setBlockState(blockPos, Blocks.DIRT.getDefaultState().withProperty(BlockDirt.VARIANT, BlockDirt.DirtType.COARSE_DIRT));
                     break;
             }
         }

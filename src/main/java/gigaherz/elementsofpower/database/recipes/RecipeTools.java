@@ -1,6 +1,7 @@
 package gigaherz.elementsofpower.database.recipes;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.Utils;
 import net.minecraft.item.ItemStack;
@@ -34,17 +35,11 @@ public class RecipeTools
 
     private static class Processor
     {
-        public Map<ItemStack, List<ItemStack>> itemSources = new HashMap<>();
+        public Map<ItemStack, List<ItemStack>> itemSources = Maps.newHashMap();
 
         private void processRecipe(@Nonnull IRecipeInfoProvider recipe)
         {
             ItemStack output = recipe.getRecipeOutput();
-
-            if (output == null)
-            {
-                ElementsOfPower.logger.warn("Recipe output is NULL! This should have been detected earlier!");
-                return;
-            }
 
             if (output.getItem() == null)
             {
@@ -64,7 +59,7 @@ public class RecipeTools
             }
 
             List<ItemStack> inputs = reduceItemsList(recipe.getRecipeInputs());
-            List<ItemStack> expandedInputs = new ArrayList<>();
+            List<ItemStack> expandedInputs = Lists.newArrayList();
 
             output = applyExistingRecipes(output, inputs, expandedInputs);
 
@@ -89,13 +84,13 @@ public class RecipeTools
 
         private void replaceExistingSources(@Nonnull ItemStack output, @Nonnull List<ItemStack> items)
         {
-            List<ItemStack> stacksToRemove = new ArrayList<>();
-            Map<ItemStack, List<ItemStack>> stacksToAdd = new HashMap<>();
+            List<ItemStack> stacksToRemove = Lists.newArrayList();
+            Map<ItemStack, List<ItemStack>> stacksToAdd = Maps.newHashMap();
 
             for (Map.Entry<ItemStack, List<ItemStack>> entry : itemSources.entrySet())
             {
                 ItemStack result = entry.getKey().copy();
-                List<ItemStack> stacks = new ArrayList<>();
+                List<ItemStack> stacks = Lists.newArrayList();
                 int totalMult = 1;
                 boolean anythingChanged = false;
 
@@ -237,7 +232,7 @@ public class RecipeTools
         @Nonnull
         public List<ItemStack> reduceItemsList(@Nonnull List<ItemStack> items)
         {
-            List<ItemStack> itemsResolved = new ArrayList<>();
+            List<ItemStack> itemsResolved = Lists.newArrayList();
 
             for (ItemStack is : items)
             {
