@@ -239,6 +239,15 @@ public class MagicAmounts
         return this;
     }
 
+    public MagicAmounts infinite()
+    {
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+        {
+            amounts[i] = Integer.MAX_VALUE;
+        }
+        return this;
+    }
+
     public float amount(Element element)
     {
         return amounts[element.ordinal()];

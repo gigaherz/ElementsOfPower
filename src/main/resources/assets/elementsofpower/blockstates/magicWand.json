@@ -37,7 +37,8 @@
       "serendibite":  { "textures": { "#gem": "elementsofpower:blocks/block_serendibite" } },
       "emerald":  { "textures": { "#gem": "minecraft:blocks/emerald_block" } },
       "amethyst": { "textures": { "#gem": "elementsofpower:blocks/block_amethyst" } },
-      "diamond": { "textures": { "#gem": "minecraft:blocks/diamond_block" } }
+      "diamond": { "textures": { "#gem": "minecraft:blocks/diamond_block" } },
+      "creative": { "textures": { "#gem": "minecraft:blocks/bedrock" } }
     }
   }
 }

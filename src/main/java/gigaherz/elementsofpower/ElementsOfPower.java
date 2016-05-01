@@ -20,10 +20,7 @@ import gigaherz.elementsofpower.gui.GuiHandler;
 import gigaherz.elementsofpower.guidebook.ItemGuidebook;
 import gigaherz.elementsofpower.items.*;
 import gigaherz.elementsofpower.materials.MaterialCushion;
-import gigaherz.elementsofpower.network.EssentializerAmountsUpdate;
-import gigaherz.elementsofpower.network.EssentializerTileUpdate;
-import gigaherz.elementsofpower.network.SpellSequenceUpdate;
-import gigaherz.elementsofpower.network.SpellcastSync;
+import gigaherz.elementsofpower.network.*;
 import gigaherz.elementsofpower.progression.DiscoveryHandler;
 import gigaherz.elementsofpower.recipes.ContainerChargeRecipe;
 import gigaherz.elementsofpower.recipes.GemstoneChangeRecipe;
@@ -332,6 +329,7 @@ public class ElementsOfPower
         channel.registerMessage(SpellcastSync.Handler.class, SpellcastSync.class, messageNumber++, Side.CLIENT);
         channel.registerMessage(EssentializerAmountsUpdate.Handler.class, EssentializerAmountsUpdate.class, messageNumber++, Side.CLIENT);
         channel.registerMessage(EssentializerTileUpdate.Handler.class, EssentializerTileUpdate.class, messageNumber++, Side.CLIENT);
+        channel.registerMessage(AddVelocityPlayer.Handler.class, AddVelocityPlayer.class, messageNumber++, Side.CLIENT);
         logger.debug("Final message number: " + messageNumber);
     }
 

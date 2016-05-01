@@ -57,7 +57,7 @@ public class KeyBindingInterceptor extends KeyBinding
 
     private static void getKeybindArrayFromSuper()
     {
-        keybindArray = ReflectionHelper.getPrivateValue(KeyBinding.class, null, "field_74516_a", "keybindArray");
+        keybindArray = ReflectionHelper.getPrivateValue(KeyBinding.class, null, "field_74516_a", "KEYBIND_ARRAY");
     }
 
     /**

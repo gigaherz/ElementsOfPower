@@ -13,7 +13,9 @@ public enum Gemstone implements IStringSerializable
     Emerald(Element.Life, "emerald", 0xFF00FF00), // green
     Amethyst(Element.Death, "amethyst", 0xFFAF00FF), // purple
 
-    Diamond(null, "diamond", 0xFF7FFFCF); // clear
+    Diamond(null, "diamond", 0xFF7FFFCF), // clear
+
+    Creativite(null, "creative", 0xFF000000);
 
     private final Element element;
     private final String name;

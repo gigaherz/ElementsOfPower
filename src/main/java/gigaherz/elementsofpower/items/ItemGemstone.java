@@ -25,6 +25,7 @@ public class ItemGemstone extends ItemMagicContainer
             new MagicAmounts().all(100),
             new MagicAmounts().all(250),
             new MagicAmounts().all(500),
+            new MagicAmounts().infinite(),
     };
 
     public ItemGemstone(String name)

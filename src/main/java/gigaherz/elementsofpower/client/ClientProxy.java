@@ -50,6 +50,8 @@ public class ClientProxy implements ISideProxy
     {
         OBJLoader.INSTANCE.addDomain(ElementsOfPower.MODID);
 
+        RenderingStuffs.init();
+
         registerClientEvents();
         registerModels();
         registerEntityRenderers();
@@ -208,7 +210,8 @@ public class ClientProxy implements ISideProxy
 
         for (Gemstone g : Gemstone.values)
         {
-            registerItemModel(ElementsOfPower.spelldust, g.ordinal(), "gem=" + g.getName());
+            if(g != Gemstone.Creativite)
+                registerItemModel(ElementsOfPower.spelldust, g.ordinal(), "gem=" + g.getName());
         }
 
         for (GemstoneBlockType b : GemstoneBlockType.values)
@@ -269,8 +272,6 @@ public class ClientProxy implements ISideProxy
 
         RenderingRegistry.registerEntityRenderingHandler(EntityBall.class, RenderBall::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityEssence.class, RenderEssence::new);
-
-        RenderingStuffs.init();
     }
 
     private class GemContainerMeshDefinition implements ItemMeshDefinition
@@ -283,7 +284,10 @@ public class ClientProxy implements ISideProxy
 
             ResourceLocation[] resLocs = new ResourceLocation[Gemstone.values.length + 1];
             for (int i = 0; i < Gemstone.values.length; i++)
-            { resLocs[i] = getModelResourceLocation(Gemstone.values[i]); }
+            {
+                Gemstone g = Gemstone.values[i];
+                resLocs[i] = getModelResourceLocation(g);
+            }
             resLocs[Gemstone.values.length] = getModelResourceLocation(null);
             ModelBakery.registerItemVariants(item, resLocs);
         }

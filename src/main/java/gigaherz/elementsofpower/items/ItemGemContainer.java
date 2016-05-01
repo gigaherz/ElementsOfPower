@@ -35,7 +35,7 @@ public class ItemGemContainer extends ItemMagicContainer
     @Override
     public boolean isInfinite(ItemStack stack)
     {
-        return stack.getMetadata() == Gemstone.values.length;
+        return getGemstone(stack) == Gemstone.Creativite;
     }
 
     @Override

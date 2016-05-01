@@ -29,7 +29,8 @@ public class ItemSpelldust extends ItemRegistered
     {
         for (Gemstone g : Gemstone.values)
         {
-            subItems.add(new ItemStack(this, 1, g.ordinal()));
+            if(g != Gemstone.Creativite)
+                subItems.add(new ItemStack(this, 1, g.ordinal()));
         }
     }
 

@@ -1,5 +1,7 @@
 package gigaherz.elementsofpower.spells.effects;
 
+import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.network.AddVelocityPlayer;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDynamicLiquid;
@@ -7,12 +9,10 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 
 import java.util.List;
 
@@ -45,20 +45,7 @@ public class WindEffect extends SpellEffect
                 || !entity.isEntityAlive())
             return;
 
-        double dx = entity.posX - hitVec.xCoord;
-        double dy = entity.posY - hitVec.yCoord;
-        double dz = entity.posZ - hitVec.zCoord;
-
-        double ll = Math.sqrt(dx * dx + dy * dy + dz * dz);
-
-        double vx = 0, vy = 0, vz = 0;
-        if (ll > 0.0001f)
-        {
-            vx = dx * force / ll;
-            vy = dy * force / ll;
-            vz = dz * force / ll;
-        }
-        entity.addVelocity(vx, vy + force, vz);
+        applyVelocity(cast, force, hitVec, entity, false);
     }
 
     @Override
@@ -75,10 +62,10 @@ public class WindEffect extends SpellEffect
                 hitVec.zCoord + force);
 
         List<EntityLivingBase> living = cast.world.getEntitiesWithinAABB(EntityLivingBase.class, aabb);
-        pushEntities(force, hitVec, living);
+        pushEntities(cast, force, hitVec, living);
 
         List<EntityItem> items = cast.world.getEntitiesWithinAABB(EntityItem.class, aabb);
-        pushEntities(force, hitVec, items);
+        pushEntities(cast, force, hitVec, items);
 
         return true;
     }
@@ -88,30 +75,51 @@ public class WindEffect extends SpellEffect
     {
     }
 
-    private void pushEntities(int force, Vec3d hitVec, List<? extends Entity> entities)
+    private void pushEntities(Spellcast cast, int force, Vec3d hitVec, List<? extends Entity> entities)
     {
         for (Entity e : entities)
         {
             if (!e.isEntityAlive())
                 continue;
 
+            applyVelocity(cast, force, hitVec, e, true);
+        }
+    }
+
+    private void applyVelocity(Spellcast cast, int force, Vec3d hitVec, Entity e, boolean distanceForce)
+    {
+        double vx = 0, vy = 0, vz = 0;
+
+        if (e == cast.player && !distanceForce)
+        {
+            Vec3d look = e.getLookVec();
+
+            vx += force * look.xCoord;
+            vy += force * look.yCoord;
+            vz += force * look.zCoord;
+        }
+        else
+        {
             double dx = e.posX - hitVec.xCoord;
             double dy = e.posY - hitVec.yCoord;
             double dz = e.posZ - hitVec.zCoord;
 
             double ll = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-            double lv = Math.max(0, force - ll);
+            double lv = distanceForce ? Math.max(0, force - ll) : force;
 
-            double vx = 0, vy = 0, vz = 0;
-            if (ll > 0.0001f)
+            if (lv > 0.0001f)
             {
-                vx = dx * lv / ll;
-                vy = dy * lv / ll;
-                vz = dz * lv / ll;
+                vx = dx * ll / lv;
+                vy = dy * ll / lv;
+                vz = dz * ll / lv;
             }
+        }
 
-            e.addVelocity(vx, vy + lv, vz);
+        e.addVelocity(vx, vy, vz);
+        if(e instanceof EntityPlayerMP)
+        {
+            ElementsOfPower.channel.sendTo(new AddVelocityPlayer(vx, vy, vz), (EntityPlayerMP) e);
         }
     }
 
