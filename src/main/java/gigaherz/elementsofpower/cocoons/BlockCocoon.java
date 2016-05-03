@@ -1,6 +1,7 @@
 package gigaherz.elementsofpower.cocoons;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.blocks.BlockRegistered;
 import gigaherz.elementsofpower.database.MagicAmounts;
@@ -25,9 +26,7 @@ import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.fml.common.IWorldGenerator;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class BlockCocoon extends BlockRegistered
 {
@@ -198,50 +197,41 @@ public class BlockCocoon extends BlockRegistered
         @Override
         public void generate(Random rand, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider)
         {
-            int num = Math.max(0, rand.nextInt(8) - 6);
+            int num = Math.max(0, rand.nextInt(7) - 5);
             if (num == 0)
                 return;
 
-            List<BlockPos> positions = Lists.newArrayList();
-            for (int y = 0; y < 255; y++)
+            Set<BlockPos> positions = Sets.newHashSet();
+            for(int i=0;i<250 && positions.size() < num;i++)
             {
-                for (int z = 1; z < 15; z++)
+                int x = rand.nextInt(16);
+                int z = rand.nextInt(16);
+                int y = rand.nextInt(255);
+                BlockPos pos = new BlockPos(chunkX * 16 + x, y, chunkZ * 16 + z);
+                if (!positions.contains(pos))
                 {
-                    for (int x = 1; x < 15; x++)
+                    if (world.isAirBlock(pos))
                     {
-                        BlockPos pos = new BlockPos(chunkX * 16 + x, y, chunkZ * 16 + z);
-                        if (world.isAirBlock(pos))
+                        for (EnumFacing f : EnumFacing.VALUES)
                         {
-                            for (EnumFacing f : EnumFacing.VALUES)
+                            BlockPos pos1 = pos.offset(f);
+                            if (!world.isAirBlock(pos1))
                             {
-                                BlockPos pos1 = pos.offset(f);
-                                if (!world.isAirBlock(pos1))
+                                //if(world.isSideSolid(pos1, f.getOpposite()))
                                 {
-                                    //if(world.isSideSolid(pos1, f.getOpposite()))
-                                    {
-                                        positions.add(pos);
-                                        break;
-                                    }
+                                    positions.add(pos);
+                                    generateOne(pos, rand, world);
+                                    break;
                                 }
                             }
                         }
                     }
                 }
             }
-
-            if (positions.size() == 0)
-                return;
-
-            for (int k = 0; k < num; k++)
-            {
-                generateOne(positions, rand, world);
-            }
         }
 
-        private void generateOne(List<BlockPos> positions, Random rand, World world)
+        private void generateOne(BlockPos pos, Random rand, World world)
         {
-            BlockPos pos = positions.get(rand.nextInt(positions.size()));
-
             for (EnumFacing f : EnumFacing.VALUES)
             {
                 BlockPos pos1 = pos.offset(f);
