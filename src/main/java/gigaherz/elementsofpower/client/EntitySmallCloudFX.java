@@ -28,15 +28,15 @@ public class EntitySmallCloudFX extends EntityCloudFX
         }
 
         this.setParticleTextureIndex(7 - this.particleAge * 8 / this.particleMaxAge);
-        this.moveEntity(this.xSpeed, this.ySpeed, this.zSpeed);
-        this.xSpeed *= 0.9599999785423279D;
-        this.ySpeed *= 0.9599999785423279D;
-        this.zSpeed *= 0.9599999785423279D;
+        this.moveEntity(this.motionX, this.motionY, this.motionZ);
+        this.motionX *= 0.9599999785423279D;
+        this.motionY *= 0.9599999785423279D;
+        this.motionZ *= 0.9599999785423279D;
 
         if (this.isCollided)
         {
-            this.ySpeed *= 0.699999988079071D;
-            this.zSpeed *= 0.699999988079071D;
+            this.motionY *= 0.699999988079071D;
+            this.motionZ *= 0.699999988079071D;
         }
     }
 
