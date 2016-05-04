@@ -23,7 +23,6 @@ import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.pipeline.LightUtil;
 import org.lwjgl.opengl.GL11;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class RenderingStuffs
@@ -75,71 +74,87 @@ public class RenderingStuffs
         tessellator.draw();
     }
 
-    public static IBakedModel loadModel(String resourceName)
+    public static IBakedModel loadModel(ModelHandle handle)
     {
-        return loadModel(resourceName, DefaultVertexFormats.ITEM);
-    }
-
-    public static IBakedModel loadModel(String resourceName, VertexFormat fmt)
-    {
-        IBakedModel model = loadedModels.get(resourceName);
+        IBakedModel model = loadedModels.get(handle.getKey());
         if (model != null)
             return model;
 
         try
         {
             TextureMap textures = Minecraft.getMinecraft().getTextureMapBlocks();
-            IModel mod = ModelLoaderRegistry.getModel(new ResourceLocation(resourceName));
-            model = mod.bake(mod.getDefaultState(), fmt,
-                    (location) -> textures.getAtlasSprite(location.toString()));
-            loadedModels.put(resourceName, model);
-            return model;
-        }
-        catch (Exception e)
-        {
-            throw new ReportedException(new CrashReport("Error loading custom model " + resourceName, e));
-        }
-    }
-
-    public static IBakedModel loadModelRetextured(String resourceName, String... textureSwaps)
-    {
-        if (textureSwaps.length % 2 != 0)
-        {
-            throw new ReportedException(new CrashReport("Retexturing model", new IllegalArgumentException("textureSwaps must have and even number of elements")));
-        }
-
-        String key = resourceName;
-        for (int i = 0; i < textureSwaps.length; i += 2)
-        {
-            key += "//" + textureSwaps[i] + "/" + textureSwaps[i + 1];
-        }
-
-        IBakedModel model = loadedModels.get(key);
-        if (model != null)
-            return model;
-
-        try
-        {
-            TextureMap textures = Minecraft.getMinecraft().getTextureMapBlocks();
-            IModel mod = ModelLoaderRegistry.getModel(new ResourceLocation(resourceName));
-            if (mod instanceof IRetexturableModel)
+            IModel mod = ModelLoaderRegistry.getModel(new ResourceLocation(handle.getModel()));
+            if (mod instanceof IRetexturableModel && handle.getTextureReplacements().size() > 0)
             {
                 IRetexturableModel rtm = (IRetexturableModel) mod;
-                Map<String, String> s = Maps.newHashMap();
-                for (int i = 0; i < textureSwaps.length; i += 2)
-                {
-                    s.put(textureSwaps[i], textureSwaps[i + 1]);
-                }
-                mod = rtm.retexture(ImmutableMap.copyOf(s));
+                mod = rtm.retexture(ImmutableMap.copyOf(handle.getTextureReplacements()));
             }
-            model = mod.bake(mod.getDefaultState(), Attributes.DEFAULT_BAKED_FORMAT,
+            model = mod.bake(mod.getDefaultState(), handle.getVertexFormat(),
                     (location) -> textures.getAtlasSprite(location.toString()));
-            loadedModels.put(key, model);
+            loadedModels.put(handle.getKey(), model);
             return model;
         }
         catch (Exception e)
         {
-            throw new ReportedException(new CrashReport("Error loading custom model " + resourceName, e));
+            throw new ReportedException(new CrashReport("Error loading custom model " + handle.getModel(), e));
+        }
+    }
+
+    public static ModelHandle handle(String model)
+    {
+        return new ModelHandle(model);
+    }
+
+    public static class ModelHandle
+    {
+        private String model;
+        private String key;
+        private final Map<String, String> textureReplacements = Maps.newHashMap();
+        private VertexFormat vertexFormat = Attributes.DEFAULT_BAKED_FORMAT;
+
+        ModelHandle(String model)
+        {
+            this.model = model;
+            this.key = model;
+        }
+
+        public ModelHandle replace(String texChannel, String resloc)
+        {
+            key += "//" + texChannel + "/" + resloc;
+            textureReplacements.put(texChannel, resloc);
+            return this;
+        }
+
+        public ModelHandle vertexFormat(VertexFormat fmt)
+        {
+            key += "//VF:" + fmt.hashCode();
+            vertexFormat = fmt;
+            return this;
+        }
+
+        public String getModel()
+        {
+            return model;
+        }
+
+        public String getKey()
+        {
+            return key;
+        }
+
+        public Map<String, String> getTextureReplacements()
+        {
+            return textureReplacements;
+        }
+
+        public VertexFormat getVertexFormat()
+        {
+            return vertexFormat;
+        }
+
+        public void setVertexFormat(VertexFormat vertexFormat)
+        {
+            this.vertexFormat = vertexFormat;
         }
     }
 }

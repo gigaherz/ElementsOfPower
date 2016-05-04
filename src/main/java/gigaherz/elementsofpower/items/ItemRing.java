@@ -14,6 +14,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import org.apache.commons.lang3.tuple.Triple;
 
 public class ItemRing extends ItemGemContainer implements IBauble
 {
@@ -98,66 +99,30 @@ public class ItemRing extends ItemGemContainer implements IBauble
 
     private void tryTransferToWands(ItemStack thisStack, EntityPlayer p)
     {
-        Gemstone g = getGemstone(thisStack);
-        Quality q = getQuality(thisStack);
+        MagicAmounts available = ContainerInformation.getContainedMagic(thisStack);
 
-        if (g == null || q == null)
+        if (available == null || available.isEmpty())
             return;
 
-        MagicAmounts self = ContainerInformation.getContainedMagic(thisStack);
+        Triple<ItemStack, IInventory, Integer> triple;
 
-        if (self == null || self.isEmpty())
-            return;
+        triple = findInInventory(thisStack, p.inventory, available);
 
-        IInventory inv = null;
-        int slot = 0;
-        ItemStack stack = null;
-
-        IInventory b = p.inventory;
-        for (int i = 0; i < b.getSizeInventory(); i++)
+        if (triple == null)
         {
-            ItemStack s = b.getStackInSlot(i);
-            if (s == null || s == thisStack)
-                continue;
-            if (ContainerInformation.canItemContainMagic(s))
-            {
-                if (ContainerInformation.canTransferAnything(s, self))
-                {
-                    stack = s;
-                    inv = b;
-                    slot = i;
-                    break;
-                }
-            }
+            triple = findInInventory(thisStack, BaublesApi.getBaubles(p), available);
         }
 
-        if (stack == null)
-        {
-            b = BaublesApi.getBaubles(p);
-            if (b != null)
-            {
-                for (int i = 0; i < b.getSizeInventory(); i++)
-                {
-                    ItemStack s = b.getStackInSlot(i);
-                    if (s == null || s == thisStack)
-                        continue;
-                    if (ContainerInformation.canItemContainMagic(s))
-                    {
-                        if (ContainerInformation.canTransferAnything(s, self))
-                        {
-                            stack = s;
-                            inv = b;
-                            slot = i;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        if (stack == null)
+        if (triple == null)
             return;
 
+        doTransfer(thisStack, available, triple);
+    }
+
+    private void doTransfer(ItemStack thisStack, MagicAmounts available,
+                            Triple<ItemStack, IInventory, Integer> triple)
+    {
+        ItemStack stack = triple.getLeft();
         MagicAmounts limits = ContainerInformation.getMagicLimits(stack);
         MagicAmounts amounts = ContainerInformation.getContainedMagic(stack);
 
@@ -167,25 +132,30 @@ public class ItemRing extends ItemGemContainer implements IBauble
         if (amounts == null)
             amounts = new MagicAmounts();
 
-        float boost = 1.0f;
-        switch (q)
+        float totalTransfer = getTotalTransfer(thisStack, available, stack, limits, amounts);
+
+        if (totalTransfer > 0)
         {
-            case Rough:
-                boost = 0.9f;
-                break;
-            case Common:
-                boost = 1.0f;
-                break;
-            case Smooth:
-                boost = 1.25f;
-                break;
-            case Flawless:
-                boost = 1.5f;
-                break;
-            case Pure:
-                boost = 2.0f;
-                break;
+            ItemStack stack2 = ContainerInformation.setContainedMagic(stack, amounts);
+            if (stack2 != stack)
+                triple.getMiddle().setInventorySlotContents(triple.getRight(), stack2);
+
+            if (!isInfinite(thisStack))
+                ContainerInformation.setContainedMagic(thisStack, available);
         }
+    }
+
+    private float getTotalTransfer(ItemStack thisStack,
+            MagicAmounts available, ItemStack stack,
+                                   MagicAmounts limits, MagicAmounts amounts)
+    {
+        Gemstone g = getGemstone(thisStack);
+        Quality q = getQuality(thisStack);
+
+        if (g == null || q == null)
+            return 0;
+
+        float boost = q.getTransferSpeed();
 
         float totalTransfer = 0;
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
@@ -197,24 +167,39 @@ public class ItemRing extends ItemGemContainer implements IBauble
 
             float transfer = Math.min(maxTransfer, limits.amounts[i] - amounts.amounts[i]);
             if (!isInfinite(stack))
-                transfer = Math.min(self.amounts[i], transfer);
+                transfer = Math.min(available.amounts[i], transfer);
             if (transfer > 0)
             {
                 totalTransfer += transfer;
                 amounts.amounts[i] += transfer;
                 if (!isInfinite(stack))
-                    self.amounts[i] -= transfer;
+                    available.amounts[i] -= transfer;
             }
         }
 
-        if (totalTransfer > 0)
-        {
-            ItemStack stack2 = ContainerInformation.setContainedMagic(stack, amounts);
-            if (stack2 != stack)
-                inv.setInventorySlotContents(slot, stack2);
+        return totalTransfer;
+    }
 
-            if (!isInfinite(thisStack))
-                ContainerInformation.setContainedMagic(thisStack, self);
+    private static Triple<ItemStack, IInventory, Integer>
+    findInInventory(ItemStack thisStack, IInventory b, MagicAmounts available)
+    {
+        if(b == null)
+            return null;
+
+        for (int i = 0; i < b.getSizeInventory(); i++)
+        {
+            ItemStack s = b.getStackInSlot(i);
+            if (s == null || s == thisStack)
+                continue;
+            if (ContainerInformation.canItemContainMagic(s))
+            {
+                if (ContainerInformation.canTransferAnything(s, available))
+                {
+                    return Triple.of(s, b, i);
+                }
+            }
         }
+
+        return null;
     }
 }

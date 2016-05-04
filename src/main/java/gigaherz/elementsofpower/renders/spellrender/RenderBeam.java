@@ -13,7 +13,6 @@ import org.lwjgl.opengl.GL11;
 
 public class RenderBeam extends RenderSpell
 {
-
     @Override
     public void doRender(Spellcast cast, EntityPlayer player, RenderManager renderManager, double x, double y, double z, float partialTicks, Vec3d offset, String tex)
     {
@@ -25,10 +24,8 @@ public class RenderBeam extends RenderSpell
             beam_color = 0xFFFFFF;
         }
 
-        IBakedModel modelSphere = RenderingStuffs.loadModelRetextured("elementsofpower:entity/sphere.obj",
-                "#Default", tex);
-        IBakedModel modelCyl = RenderingStuffs.loadModelRetextured("elementsofpower:entity/cylinder.obj",
-                "#Default", tex);
+        IBakedModel modelSphere = getSphere(tex);
+        IBakedModel modelCyl = getCylinder(tex);
 
         RayTraceResult mop = cast.getHitPosition(partialTicks);
 

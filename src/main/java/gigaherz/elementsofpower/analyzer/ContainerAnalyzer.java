@@ -216,19 +216,18 @@ public class ContainerAnalyzer extends Container
                 internalInventory.setInventorySlotContents(0, stack2);
                 this.inventoryItemStacks.set(0, stack2);
 
-                for (int j = 0; j < this.listeners.size(); ++j)
+                for (ICrafting listener : this.listeners)
                 {
                     boolean prev = false;
                     EntityPlayerMP p = null;
-                    ICrafting c = listeners.get(j);
-                    if (c instanceof EntityPlayerMP)
+                    if (listener instanceof EntityPlayerMP)
                     {
-                        p = (EntityPlayerMP) c;
+                        p = (EntityPlayerMP) listener;
                         prev = p.isChangingQuantityOnly;
                         p.isChangingQuantityOnly = false;
                     }
 
-                    c.sendSlotContents(this, 0, stack2);
+                    listener.sendSlotContents(this, 0, stack2);
 
                     if (prev)
                     {

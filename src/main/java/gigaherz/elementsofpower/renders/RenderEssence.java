@@ -16,10 +16,12 @@ public class RenderEssence extends Render<EntityEssence>
         super(renderManager);
     }
 
+    RenderingStuffs.ModelHandle handle = RenderingStuffs.handle("elementsofpower:entity/sphere.obj");
+
     @Override
     public void doRender(EntityEssence entity, double x, double y, double z, float p_76986_8_, float partialTicks)
     {
-        IBakedModel model = RenderingStuffs.loadModel("elementsofpower:entity/sphere.obj");
+        IBakedModel model = RenderingStuffs.loadModel(handle);
 
         float scale = entity.getScale();
 

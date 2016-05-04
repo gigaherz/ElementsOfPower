@@ -95,10 +95,13 @@ public abstract class ItemMagicContainer extends ItemRegistered
         am.element(Element.values[orb.getMetadata()], 8);
 
         MagicAmounts lm = ContainerInformation.getMagicLimits(stack);
-        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+        if (lm != null)
         {
-            if (lm.amounts[i] < am.amounts[i])
-                return null;
+            for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+            {
+                if (lm.amounts[i] < am.amounts[i])
+                    return null;
+            }
         }
 
         return ContainerInformation.setContainedMagic(stack, am);

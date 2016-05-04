@@ -71,6 +71,11 @@ public class GuiGuidebook extends GuiScreen
 
     private boolean closing = false;
 
+    RenderingStuffs.ModelHandle book00 = RenderingStuffs.handle("elementsofpower:gui/book.obj").vertexFormat(DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
+    RenderingStuffs.ModelHandle book30 = RenderingStuffs.handle("elementsofpower:gui/book30.obj").vertexFormat(DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
+    RenderingStuffs.ModelHandle book60 = RenderingStuffs.handle("elementsofpower:gui/book60.obj").vertexFormat(DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
+    RenderingStuffs.ModelHandle book90 = RenderingStuffs.handle("elementsofpower:gui/book90.obj").vertexFormat(DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
+
     private ItemModelMesher mesher = Minecraft.getMinecraft().getRenderItem().getItemModelMesher();
     private TextureManager renderEngine = Minecraft.getMinecraft().renderEngine;
 
@@ -281,8 +286,6 @@ public class GuiGuidebook extends GuiScreen
     {
         if (mouseButton == 0)
         {
-            int mX = mouseX;
-            int mY = mouseY;
 
             ChapterData ch = chapters.get(currentChapter);
             PageData pg = ch.pages.get(currentPair * 2);
@@ -292,8 +295,8 @@ public class GuiGuidebook extends GuiScreen
                 {
                     Link l = (Link) e;
                     Rectangle b = l.getBounds();
-                    if (mX >= b.getX() && mX <= (b.getX() + b.getWidth()) &&
-                            mY >= b.getY() && mY <= (b.getY() + b.getHeight()))
+                    if (mouseX >= b.getX() && mouseX <= (b.getX() + b.getWidth()) &&
+                        mouseY >= b.getY() && mouseY <= (b.getY() + b.getHeight()))
                     {
                         l.click();
                         return;
@@ -310,8 +313,8 @@ public class GuiGuidebook extends GuiScreen
                     {
                         Link l = (Link) e;
                         Rectangle b = l.getBounds();
-                        if (mX >= b.getX() && mX <= (b.getX() + b.getWidth()) &&
-                                mY >= b.getY() && mY <= (b.getY() + b.getHeight()))
+                        if (mouseX >= b.getX() && mouseX <= (b.getX() + b.getWidth()) &&
+                                mouseY >= b.getY() && mouseY <= (b.getY() + b.getHeight()))
                         {
                             l.click();
                             return;
@@ -378,36 +381,36 @@ public class GuiGuidebook extends GuiScreen
         else
             angleX = (angleT - partialTicks * angleSpeed) * 90;
 
-        float blend = 0;
+        float blend;
         if (angleX <= 0)
         {
             angleX = 0;
-            modelBookA = RenderingStuffs.loadModel("elementsofpower:gui/book.obj", DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
+            modelBookA = RenderingStuffs.loadModel(book00);
             modelBookB = null;
             blend = 0;
         }
         else if (angleX < 30)
         {
-            modelBookA = RenderingStuffs.loadModel("elementsofpower:gui/book.obj", DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
-            modelBookB = RenderingStuffs.loadModel("elementsofpower:gui/book30.obj", DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
+            modelBookA = RenderingStuffs.loadModel(book00);
+            modelBookB = RenderingStuffs.loadModel(book30);
             blend = (angleX) / 30.0f;
         }
         else if (angleX < 60)
         {
-            modelBookA = RenderingStuffs.loadModel("elementsofpower:gui/book30.obj", DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
-            modelBookB = RenderingStuffs.loadModel("elementsofpower:gui/book60.obj", DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
+            modelBookA = RenderingStuffs.loadModel(book30);
+            modelBookB = RenderingStuffs.loadModel(book60);
             blend = (angleX - 30) / 30.0f;
         }
         else if (angleX < 90)
         {
-            modelBookA = RenderingStuffs.loadModel("elementsofpower:gui/book60.obj", DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
-            modelBookB = RenderingStuffs.loadModel("elementsofpower:gui/book90.obj", DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
+            modelBookA = RenderingStuffs.loadModel(book60);
+            modelBookB = RenderingStuffs.loadModel(book90);
             blend = (angleX - 60) / 30.0f;
         }
         else
         {
             angleX = 90;
-            modelBookA = RenderingStuffs.loadModel("elementsofpower:gui/book90.obj", DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
+            modelBookA = RenderingStuffs.loadModel(book90);
             modelBookB = null;
             blend = 0;
         }
@@ -570,9 +573,8 @@ public class GuiGuidebook extends GuiScreen
                 }
 
                 int prevCount = 0;
-                for (int i = 0; i < chapters.size(); i++)
+                for (ChapterData chapter : chapters)
                 {
-                    ChapterData chapter = chapters.get(i);
                     chapter.startPair = prevCount;
                     prevCount += chapter.pagePairs;
                 }
@@ -808,12 +810,18 @@ public class GuiGuidebook extends GuiScreen
             if (attr != null)
             {
                 String a = attr.getTextContent();
-                if (a.equals("left"))
-                    p.alignment = 0;
-                else if (a.equals("center"))
-                    p.alignment = 1;
-                else if (a.equals("right"))
-                    p.alignment = 2;
+                switch (a)
+                {
+                    case "left":
+                        p.alignment = 0;
+                        break;
+                    case "center":
+                        p.alignment = 1;
+                        break;
+                    case "right":
+                        p.alignment = 2;
+                        break;
+                }
             }
 
             attr = pageAttributes.getNamedItem("indent");

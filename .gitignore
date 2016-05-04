@@ -2,6 +2,7 @@
 /.idea
 /eclipse
 /build
+/classes
 
 /*-fml.txt
 /MinecraftForge-*.txt

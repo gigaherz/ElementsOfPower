@@ -23,8 +23,7 @@ public class RenderSphere extends RenderSpell
             color = 0xFFFFFF;
         }
 
-        IBakedModel modelSphere = RenderingStuffs.loadModelRetextured("elementsofpower:entity/sphere.obj",
-                "#Default", tex);
+        IBakedModel modelSphere = getSphere(tex);
 
         float time = ((cast.totalCastTime - cast.remainingCastTime) + partialTicks);
         float progress = (time / cast.totalCastTime);

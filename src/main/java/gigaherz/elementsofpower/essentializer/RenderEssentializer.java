@@ -12,10 +12,12 @@ import net.minecraft.util.math.MathHelper;
 
 public class RenderEssentializer extends TileEntitySpecialRenderer<TileEssentializer>
 {
+    RenderingStuffs.ModelHandle handle = RenderingStuffs.handle("elementsofpower:block/essentializer_2.obj");
+
     @Override
     public void renderTileEntityAt(TileEssentializer te, double x, double y, double z, float partialTicks, int destroyStage)
     {
-        IBakedModel model = RenderingStuffs.loadModel("elementsofpower:block/essentializer_2.obj");
+        IBakedModel model = RenderingStuffs.loadModel(handle);
 
         bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 

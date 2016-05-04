@@ -108,7 +108,6 @@ public class ElementsOfPower
     public static ItemSpelldust spelldust;
 
     // Subitems
-
     public static ItemStack fire;
     public static ItemStack water;
     public static ItemStack air;
@@ -167,20 +166,6 @@ public class ElementsOfPower
     public static int SMALL_CLOUD_PARTICLE_ID;
     public static EnumParticleTypes SMALL_CLOUD_PARTICLE;
 
-    void registerParticle()
-    {
-        SMALL_CLOUD_PARTICLE_ID = -1;
-        for (EnumParticleTypes t : EnumParticleTypes.values())
-        {
-            SMALL_CLOUD_PARTICLE_ID = Math.max(SMALL_CLOUD_PARTICLE_ID, t.getParticleID() + 1);
-        }
-        SMALL_CLOUD_PARTICLE = EnumHelper.addEnum(EnumParticleTypes.class, "SMALL_CLOUD",
-                new Class<?>[]{String.class, int.class, boolean.class},
-                "small_cloud", SMALL_CLOUD_PARTICLE_ID, false);
-
-        // Client-side rendering registered in: proxy.registerParticle();
-    }
-
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
@@ -213,6 +198,46 @@ public class ElementsOfPower
         logger.info("Performing pre-initialization proxy tasks...");
 
         proxy.preInit();
+    }
+
+    @EventHandler
+    public void init(FMLInitializationEvent event)
+    {
+        logger.info("Performing initialization proxy tasks...");
+
+        proxy.init();
+
+        registerEntities();
+
+        registerWorldGenerators();
+
+        registerRecipes();
+
+        // Gui
+        NetworkRegistry.INSTANCE.registerGuiHandler(this, guiHandler);
+
+        StockConversions.registerEssenceSources();
+        EssenceOverrides.loadOverrides();
+    }
+
+    @EventHandler
+    public void postInit(FMLPostInitializationEvent event)
+    {
+        EssenceConversions.registerEssencesForRecipes();
+    }
+
+    private void registerParticle()
+    {
+        SMALL_CLOUD_PARTICLE_ID = -1;
+        for (EnumParticleTypes t : EnumParticleTypes.values())
+        {
+            SMALL_CLOUD_PARTICLE_ID = Math.max(SMALL_CLOUD_PARTICLE_ID, t.getParticleID() + 1);
+        }
+        SMALL_CLOUD_PARTICLE = EnumHelper.addEnum(EnumParticleTypes.class, "SMALL_CLOUD",
+                new Class<?>[]{String.class, int.class, boolean.class},
+                "small_cloud", SMALL_CLOUD_PARTICLE_ID, false);
+
+        // Client-side rendering registered in: proxy.registerParticle();
     }
 
     private void registerItems()
@@ -372,13 +397,8 @@ public class ElementsOfPower
         OreDictionary.registerOre("oreSerendibite", oreSerendibite);
     }
 
-    @EventHandler
-    public void init(FMLInitializationEvent event)
+    private void registerEntities()
     {
-        logger.info("Performing initialization proxy tasks...");
-
-        proxy.init();
-
         // Entities
         logger.info("Registering entities...");
 
@@ -386,12 +406,17 @@ public class ElementsOfPower
         EntityRegistry.registerModEntity(EntityBall.class, "SpellBall", entityId++, this, 80, 3, true);
         EntityRegistry.registerModEntity(EntityEssence.class, "Essence", entityId++, this, 80, 3, true, 0x0000FF, 0xFFFF00);
         logger.debug("Next entity id: " + entityId);
+    }
 
+    private void registerWorldGenerators()
+    {
         // Worldgen
-
         GameRegistry.registerWorldGenerator(new BlockGemstoneOre.Generator(), 1);
         GameRegistry.registerWorldGenerator(new BlockCocoon.Generator(), 1);
+    }
 
+    private void registerRecipes()
+    {
         // Recipes
         logger.info("Registering recipes...");
 
@@ -455,12 +480,6 @@ public class ElementsOfPower
 
         RecipeSorter.register("gemstoneChangeRecipe", GemstoneChangeRecipe.class, RecipeSorter.Category.SHAPELESS, "");
         RecipeSorter.register("containerChargeRecipe", ContainerChargeRecipe.class, RecipeSorter.Category.SHAPELESS, "");
-
-        // Gui
-        NetworkRegistry.INSTANCE.registerGuiHandler(this, guiHandler);
-
-        StockConversions.registerEssenceSources();
-        EssenceOverrides.loadOverrides();
     }
 
     private ItemStack copyStack(ItemStack original, int quantity)
@@ -468,11 +487,5 @@ public class ElementsOfPower
         ItemStack copy = original.copy();
         copy.stackSize = quantity;
         return copy;
-    }
-
-    @EventHandler
-    public void postInit(FMLPostInitializationEvent event)
-    {
-        EssenceConversions.registerEssencesForRecipes();
     }
 }

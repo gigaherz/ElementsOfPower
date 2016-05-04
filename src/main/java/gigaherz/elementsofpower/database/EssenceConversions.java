@@ -5,7 +5,6 @@ import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.recipes.RecipeTools;
 import net.minecraft.item.ItemStack;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

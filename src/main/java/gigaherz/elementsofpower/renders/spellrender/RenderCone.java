@@ -23,8 +23,7 @@ public class RenderCone extends RenderSpell
             color = 0xFFFFFF;
         }
 
-        IBakedModel modelCone = RenderingStuffs.loadModelRetextured("elementsofpower:entity/cone.obj",
-                "#Default", tex);
+        IBakedModel modelCone = getCone(tex);
 
         cast.getHitPosition(partialTicks);
 
