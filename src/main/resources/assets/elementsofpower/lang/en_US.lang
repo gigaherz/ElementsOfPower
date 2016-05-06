@@ -119,6 +119,9 @@ text.elementsofpower.magicOrb.cocoon=Right-click on a cocoon to add one essence
 text.elementsofpower.gemstone.use=Use a Gem Analyzer to discover its quality
 text.elementsofpower.gemstone.combine=Combine with a magic item to set
 
+text.elementsofpower.jei.container=Container Charge
+text.elementsofpower.jei.gemstone=Gemstone Change
+
 achievement.elementsofpower.discoverGems=A vision in reflections
 achievement.elementsofpower.discoverGems.desc=You discover the hidden power of gemstones.
 achievement.elementsofpower.acquireWand=A show of power
