@@ -71,6 +71,10 @@ public abstract class RecipeEnumerator
         {
             for (Map.Entry<ItemStack, ItemStack> entry : FurnaceRecipes.instance().getSmeltingList().entrySet())
             {
+
+                if(entry.getKey() == null || entry.getKey().getItem() == null)
+                    continue;
+
                 consumer.process(new FurnaceRecipeInfo(entry.getKey(), entry.getValue()));
             }
         }
