@@ -12,6 +12,13 @@ buildscript {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
     }
 }
+
+repositories {
+    maven {
+        url "http://dvs1.progwml6.com/files/maven"
+    }
+}
+
 apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'maven-publish'
 
@@ -27,6 +34,12 @@ minecraft {
 
     replace "@VERSION@", project.version
     replaceIn "ElementsOfPower.java"
+
+    useDepAts = true
+}
+
+dependencies {
+    deobfCompile "mezz.jei:jei_1.9:3.2.14.190"
 }
 
 compileJava {
