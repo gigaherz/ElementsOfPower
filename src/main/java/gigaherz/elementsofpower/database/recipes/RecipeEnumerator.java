@@ -78,6 +78,10 @@ public abstract class RecipeEnumerator
             {
                 if(entry.getValue() == null || entry.getValue().getItem() == null)
                     continue;
+
+                if(entry.getKey() == null || entry.getKey().getItem() == null)
+                    continue;
+
                 consumer.process(new FurnaceRecipeInfo(entry.getKey(), entry.getValue()));
             }
         }

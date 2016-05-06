@@ -8,8 +8,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,14 +41,32 @@ public class RecipeTools
 
             if (output.getItem() == null)
             {
-                ElementsOfPower.logger.warn("Recipe has non-null itemstack but the item is NULL! WHY woudl anyone do that?!");
+                ElementsOfPower.logger.warn("A Recipe has non-null itemstack but the item is NULL! This recipe can NOT be processed!");
                 return;
             }
 
             if (output.stackSize == 0)
             {
-                ElementsOfPower.logger.warn("Found a recipe with result stack size 0. This recipe will be ignored. Result stack: " + output.toString());
+                ElementsOfPower.logger.warn("Recipe with output '" + output + "' has stack size 0. This recipe will be ignored.");
                 return;
+            }
+
+            for(ItemStack s : recipe.getRecipeInputs())
+            {
+                if (s != null)
+                {
+                    if(s.getItem() == null)
+                    {
+                        ElementsOfPower.logger.warn("Recipe with output '" + output + "' has invalid input stack. This recipe will be ignored.");
+                        return;
+                    }
+
+                    if (s.stackSize == 0)
+                    {
+                        ElementsOfPower.logger.warn("Recipe with output '" + output + "' has input stack of size 0. This recipe will be ignored.");
+                        return;
+                    }
+                }
             }
 
             if (Utils.stackMapContainsKey(itemSources, output))
