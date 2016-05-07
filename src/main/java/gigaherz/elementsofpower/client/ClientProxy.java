@@ -198,18 +198,10 @@ public class ClientProxy implements ISideProxy
         registerItemModel(ElementsOfPower.life, "element=life");
         registerItemModel(ElementsOfPower.death, "element=death");
 
-        registerItemModel(ElementsOfPower.gemRuby, "gem=ruby");
-        registerItemModel(ElementsOfPower.gemSapphire, "gem=sapphire");
-        registerItemModel(ElementsOfPower.gemCitrine, "gem=citrine");
-        registerItemModel(ElementsOfPower.gemAgate, "gem=agate");
-        registerItemModel(ElementsOfPower.gemQuartz, "gem=quartz");
-        registerItemModel(ElementsOfPower.gemSerendibite, "gem=serendibite");
-        registerItemModel(ElementsOfPower.gemEmerald, "gem=emerald");
-        registerItemModel(ElementsOfPower.gemAmethyst, "gem=amethyst");
-        registerItemModel(ElementsOfPower.gemDiamond, "gem=diamond");
-
         for (Gemstone g : Gemstone.values)
         {
+            registerItemModel(ElementsOfPower.gemstone, g.ordinal(), "gem=" + g.getName());
+
             if(g != Gemstone.Creativite)
                 registerItemModel(ElementsOfPower.spelldust, g.ordinal(), "gem=" + g.getName());
         }
