@@ -12,7 +12,7 @@ public class EntitySmallCloudFX extends EntityCloudFX
     {
         super(worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);
         particleScale *= 0.45f;
-        ReflectionHelper.setPrivateValue(EntityCloudFX.class, this, particleScale, "field_70569_a");
+        ReflectionHelper.setPrivateValue(EntityCloudFX.class, this, particleScale, "field_70569_a", "oSize");
     }
 
     @Override

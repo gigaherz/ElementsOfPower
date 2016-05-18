@@ -80,7 +80,7 @@ public class MiningEffect extends SpellEffect
                 {
                     TileEntity tileentity = world.getTileEntity(blockPos);
 
-                    world.playAuxSFXAtEntity(playermp, 2001, blockPos, Block.getStateId(currentState));
+                    world.playEvent(playermp, 2001, blockPos, Block.getStateId(currentState));
 
                     if (mgr.isCreative())
                     {

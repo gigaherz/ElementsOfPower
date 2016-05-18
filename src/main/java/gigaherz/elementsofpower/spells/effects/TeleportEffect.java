@@ -47,7 +47,7 @@ public class TeleportEffect extends SpellEffect
             {
                 EntityPlayerMP playerMP = (EntityPlayerMP) cast.player;
 
-                if (playerMP.playerNetServerHandler.getNetworkManager().isChannelOpen()
+                if (playerMP.connection.getNetworkManager().isChannelOpen()
                         && playerMP.worldObj == cast.world
                         && !playerMP.isPlayerSleeping())
                 {
