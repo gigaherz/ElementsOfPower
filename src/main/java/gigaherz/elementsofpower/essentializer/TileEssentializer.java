@@ -46,12 +46,13 @@ public class TileEssentializer
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound)
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound)
     {
-        super.writeToNBT(tagCompound);
+        tagCompound = super.writeToNBT(tagCompound);
         writeInventoryToNBT(tagCompound);
         writeAmountsToNBT(tagCompound, "Contained", containedMagic);
         writeAmountsToNBT(tagCompound, "Remaining", remainingToConvert);
+        return tagCompound;
     }
 
     private MagicAmounts readAmountsFromNBT(NBTTagCompound tagCompound, String key)
@@ -117,7 +118,7 @@ public class TileEssentializer
     }
 
     @Override
-    public Packet<?> getDescriptionPacket()
+    public SPacketUpdateTileEntity getUpdatePacket()
     {
         NBTTagCompound tag = new NBTTagCompound();
         writeToNBT(tag);

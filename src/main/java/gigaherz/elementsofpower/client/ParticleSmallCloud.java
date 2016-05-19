@@ -1,18 +1,21 @@
 package gigaherz.elementsofpower.client;
 
-import net.minecraft.client.particle.EntityCloudFX;
-import net.minecraft.client.particle.EntityFX;
+import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.client.particle.IParticleFactory;
+import net.minecraft.client.particle.Particle;
+import net.minecraft.client.particle.ParticleCloud;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
-public class EntitySmallCloudFX extends EntityCloudFX
+import javax.annotation.ParametersAreNonnullByDefault;
+
+public class ParticleSmallCloud extends ParticleCloud
 {
-    protected EntitySmallCloudFX(World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn)
+    protected ParticleSmallCloud(World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn)
     {
         super(worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);
         particleScale *= 0.45f;
-        ReflectionHelper.setPrivateValue(EntityCloudFX.class, this, particleScale, "field_70569_a", "oSize");
+        ReflectionHelper.setPrivateValue(ParticleCloud.class, this, particleScale, "field_70569_a", "oSize");
     }
 
     @Override
@@ -42,9 +45,16 @@ public class EntitySmallCloudFX extends EntityCloudFX
 
     public static class Factory implements IParticleFactory
     {
-        public EntityFX getEntityFX(int particleID, World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn, int... p_178902_15_)
+        @Override
+        @MethodsReturnNonnullByDefault
+        @ParametersAreNonnullByDefault
+        public Particle getEntityFX(int particleID,
+                                    World worldIn,
+                                    double xCoordIn, double yCoordIn, double zCoordIn,
+                                    double xSpeedIn, double ySpeedIn, double zSpeedIn,
+                                    int... p_178902_15_)
         {
-            return new EntitySmallCloudFX(worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);
+            return new ParticleSmallCloud(worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);
         }
     }
 }

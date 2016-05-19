@@ -98,7 +98,7 @@ public class BlockSpelldust extends BlockRegistered
     }
 
     @Override
-    public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock)
+    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block block)
     {
         if (worldIn.isRemote)
             return;

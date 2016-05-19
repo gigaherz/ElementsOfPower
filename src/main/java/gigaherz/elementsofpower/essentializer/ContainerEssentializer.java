@@ -12,7 +12,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.ICrafting;
+import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
@@ -66,7 +66,7 @@ public class ContainerEssentializer
         if (!MagicAmounts.areAmountsEqual(prevContained, tile.containedMagic)
                 || !MagicAmounts.areAmountsEqual(prevRemaining, tile.remainingToConvert))
         {
-            for (ICrafting watcher : this.listeners)
+            for (IContainerListener watcher : this.listeners)
             {
                 if (watcher instanceof EntityPlayerMP)
                 {

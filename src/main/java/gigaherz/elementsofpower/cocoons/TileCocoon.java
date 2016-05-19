@@ -24,11 +24,13 @@ public class TileCocoon extends TileEntity implements ITickable
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound compound)
+    public NBTTagCompound writeToNBT(NBTTagCompound compound)
     {
-        super.writeToNBT(compound);
+        compound = super.writeToNBT(compound);
 
         essenceContained.writeToNBT(compound);
+
+        return compound;
     }
 
     @Override
@@ -51,7 +53,7 @@ public class TileCocoon extends TileEntity implements ITickable
     }
 
     @Override
-    public Packet getDescriptionPacket()
+    public SPacketUpdateTileEntity getUpdatePacket()
     {
         NBTTagCompound tag = new NBTTagCompound();
         this.writeToNBT(tag);

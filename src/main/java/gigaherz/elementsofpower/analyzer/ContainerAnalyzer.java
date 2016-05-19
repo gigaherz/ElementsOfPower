@@ -216,7 +216,7 @@ public class ContainerAnalyzer extends Container
                 internalInventory.setInventorySlotContents(0, stack2);
                 this.inventoryItemStacks.set(0, stack2);
 
-                for (ICrafting listener : this.listeners)
+                for (IContainerListener listener : this.listeners)
                 {
                     boolean prev = false;
                     EntityPlayerMP p = null;

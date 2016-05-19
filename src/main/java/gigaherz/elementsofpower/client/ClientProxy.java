@@ -176,7 +176,7 @@ public class ClientProxy implements ISideProxy
 
     public void registerParticle()
     {
-        Minecraft.getMinecraft().effectRenderer.registerParticle(ElementsOfPower.SMALL_CLOUD_PARTICLE_ID, new EntitySmallCloudFX.Factory());
+        Minecraft.getMinecraft().effectRenderer.registerParticle(ElementsOfPower.SMALL_CLOUD_PARTICLE_ID, new ParticleSmallCloud.Factory());
     }
 
     // ----------------------------------------------------------- Item/Block Models
@@ -202,7 +202,7 @@ public class ClientProxy implements ISideProxy
         {
             registerItemModel(ElementsOfPower.gemstone, g.ordinal(), "gem=" + g.getName());
 
-            if(g != Gemstone.Creativite)
+            if (g != Gemstone.Creativite)
                 registerItemModel(ElementsOfPower.spelldust, g.ordinal(), "gem=" + g.getName());
         }
 
