@@ -100,6 +100,7 @@ public class ContainerEssentializer
         }
 
         ItemStack stack = slot.getStack();
+        assert stack != null;
         ItemStack stackCopy = stack.copy();
 
         int startIndex;

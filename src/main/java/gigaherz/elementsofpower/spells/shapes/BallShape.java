@@ -51,7 +51,7 @@ public class BallShape extends SpellShape
         {
             BlockPos bp = mop.getBlockPos();
 
-            if (bp != null)
+            if (mop.typeOfHit == RayTraceResult.Type.BLOCK)
             {
                 bp = bp.offset(mop.sideHit);
             }

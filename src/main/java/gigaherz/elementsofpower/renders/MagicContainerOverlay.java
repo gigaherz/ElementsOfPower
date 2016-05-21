@@ -33,9 +33,12 @@ public class MagicContainerOverlay extends Gui
         EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
         ItemStack heldItem = player.inventory.getCurrentItem();
 
+        if(heldItem == null)
+            return;
+
         // Contained essences
         MagicAmounts amounts = ContainerInformation.getContainedMagic(heldItem);
-        if (amounts == null)
+        if (amounts.isEmpty())
             return;
 
         FontRenderer font = Minecraft.getMinecraft().fontRendererObj;
@@ -77,14 +80,14 @@ public class MagicContainerOverlay extends Gui
         {
             String savedSequence = nbt.getString(ItemWand.SPELL_SEQUENCE_TAG);
 
-            if (savedSequence != null && savedSequence.length() > 0)
+            if (savedSequence.length() > 0)
             {
                 // Saved spell sequence
                 xPos = (rescaledWidth - 6 * (savedSequence.length() - 1) - 14) / 2;
                 yPos = rescaledHeight / 2 - 16 - 16;
                 for (char c : savedSequence.toCharArray())
                 {
-                    int i = SpellManager.elementIndices[c-'A'];
+                    int i = SpellManager.elementIndices[c - 'A'];
 
                     ItemStack stack = ElementsOfPower.magicOrb.getStack(1, Element.values[i]);
 
@@ -102,7 +105,7 @@ public class MagicContainerOverlay extends Gui
             yPos = rescaledHeight / 2 + 16;
             for (char c : TickEventWandControl.instance.sequence.toCharArray())
             {
-                int i = SpellManager.elementIndices[c-'A'];
+                int i = SpellManager.elementIndices[c - 'A'];
 
                 ItemStack stack = ElementsOfPower.magicOrb.getStack(1, Element.values[i]);
 

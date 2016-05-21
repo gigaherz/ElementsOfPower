@@ -19,7 +19,6 @@ public class ShapelessRecipeHandler implements IRecipeHandler
         return recipe instanceof ShapelessRecipes;
     }
 
-    @Nonnull
     @Override
     public IRecipeInfoProvider handle(@Nonnull IRecipe recipe)
     {
@@ -28,13 +27,12 @@ public class ShapelessRecipeHandler implements IRecipeHandler
 
     private static class RecipeInfo implements IRecipeInfoProvider
     {
-
         ArrayList<ItemStack> recipeItems = Lists.newArrayList();
-        ShapelessRecipes recipe;
+        ItemStack output;
 
         public RecipeInfo(ShapelessRecipes recipe)
         {
-            this.recipe = recipe;
+            output = recipe.getRecipeOutput();
 
             List<ItemStack> inputs = recipe.recipeItems;
             for (ItemStack input : inputs)
@@ -48,14 +46,12 @@ public class ShapelessRecipeHandler implements IRecipeHandler
             }
         }
 
-        @Nonnull
         @Override
         public ItemStack getRecipeOutput()
         {
-            return recipe.getRecipeOutput();
+            return output;
         }
 
-        @Nonnull
         @Override
         public List<ItemStack> getRecipeInputs()
         {

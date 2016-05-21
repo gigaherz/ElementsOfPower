@@ -46,7 +46,7 @@ public class DiscoveryHandler
         gemTypes.add(new ItemStack(Items.EMERALD));
         gemTypes.add(new ItemStack(Items.DIAMOND));
         ElementsOfPower.gemstone.getUnexamined(gemTypes);
-        ElementsOfPower.gemstone.getSubItems(ElementsOfPower.gemstone, null, gemTypes);
+        ElementsOfPower.gemstone.getSubItems(ElementsOfPower.gemstone, ElementsOfPower.gemstone.getCreativeTab(), gemTypes);
 
         // Initialize achievements
         discoverGems = newAchievement(".discoverGems", -3, 0, Items.DIAMOND, null);

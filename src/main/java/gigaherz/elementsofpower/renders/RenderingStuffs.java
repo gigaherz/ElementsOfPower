@@ -23,6 +23,7 @@ import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.pipeline.LightUtil;
 import org.lwjgl.opengl.GL11;
 
+import javax.annotation.Nonnull;
 import java.util.Map;
 
 public class RenderingStuffs
@@ -100,6 +101,7 @@ public class RenderingStuffs
         }
     }
 
+    @Nonnull
     public static ModelHandle handle(String model)
     {
         return new ModelHandle(model);

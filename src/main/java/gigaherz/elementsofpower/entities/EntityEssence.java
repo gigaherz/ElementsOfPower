@@ -17,11 +17,13 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class EntityEssence extends EntityAmbientCreature
@@ -68,7 +70,7 @@ public class EntityEssence extends EntityAmbientCreature
             getDataManager().register(ELEMENTS[i], 0.0f);
         }
 
-        setEntityBoundingBox(null);
+        setEntityBoundingBox(new AxisAlignedBB(0,0,0,0,0,0));
     }
 
     public EntityEssence(World worldIn, MagicAmounts am)
@@ -85,7 +87,7 @@ public class EntityEssence extends EntityAmbientCreature
 
         scale = 0.025f * numEssences;
 
-        setEntityBoundingBox(null);
+        setEntityBoundingBox(new AxisAlignedBB(0,0,0,0,0,0));
     }
 
     public float getScale()
@@ -381,11 +383,8 @@ public class EntityEssence extends EntityAmbientCreature
             MagicAmounts limits = ContainerInformation.getMagicLimits(stack);
             MagicAmounts amounts = ContainerInformation.getContainedMagic(stack);
 
-            if (limits != null)
+            if (!limits.isEmpty())
             {
-                if (amounts == null)
-                    amounts = new MagicAmounts();
-
                 float totalTransfer = 0;
                 for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
                 {
@@ -510,7 +509,7 @@ public class EntityEssence extends EntityAmbientCreature
     }
 
     @Override
-    protected boolean processInteract(EntityPlayer player, EnumHand p_184645_2_, ItemStack stack)
+    protected boolean processInteract(EntityPlayer player, EnumHand p_184645_2_, @Nullable ItemStack stack)
     {
         return false;
     }
@@ -519,12 +518,6 @@ public class EntityEssence extends EntityAmbientCreature
     protected float getSoundVolume()
     {
         return 0.1F;
-    }
-
-    @Override
-    protected float getSoundPitch()
-    {
-        return super.getSoundPitch();
     }
 
     @Override

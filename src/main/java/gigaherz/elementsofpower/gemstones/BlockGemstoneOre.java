@@ -49,6 +49,7 @@ public class BlockGemstoneOre extends BlockRegistered
         return state.getValue(TYPE).ordinal();
     }
 
+    @Deprecated
     @Override
     public IBlockState getStateFromMeta(int meta)
     {
@@ -64,11 +65,11 @@ public class BlockGemstoneOre extends BlockRegistered
 
     public ItemStack getStack(int quantity, GemstoneBlockType gemstoneBlockType)
     {
-        return new ItemStack(ItemForm.getItemFromBlock(this), quantity, getMetaFromState(getDefaultState().withProperty(TYPE, gemstoneBlockType)));
+        return new ItemStack(this, quantity, getMetaFromState(getDefaultState().withProperty(TYPE, gemstoneBlockType)));
     }
 
     @Override
-    public void getSubBlocks(net.minecraft.item.Item itemIn, CreativeTabs tab, List<ItemStack> list)
+    public void getSubBlocks(Item itemIn, CreativeTabs tab, List<ItemStack> list)
     {
         for (GemstoneBlockType type : GemstoneBlockType.values)
         {

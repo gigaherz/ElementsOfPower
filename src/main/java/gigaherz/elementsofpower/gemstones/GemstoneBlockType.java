@@ -20,6 +20,11 @@ public enum GemstoneBlockType implements IStringSerializable
         this.gemstone = gemstone;
     }
 
+    public Gemstone getGemstone()
+    {
+        return gemstone;
+    }
+
     @Override
     public String toString()
     {
@@ -34,8 +39,4 @@ public enum GemstoneBlockType implements IStringSerializable
 
     public static GemstoneBlockType[] values = values();
 
-    public Gemstone getGemstone()
-    {
-        return gemstone;
-    }
 }

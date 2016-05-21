@@ -10,6 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.input.Keyboard;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public abstract class ItemMagicContainer extends ItemRegistered
@@ -36,6 +37,7 @@ public abstract class ItemMagicContainer extends ItemRegistered
         return new ItemStack(this, count, gemstone.ordinal());
     }
 
+    @Nullable
     public abstract MagicAmounts getCapacity(ItemStack stack);
 
     @Override
@@ -46,7 +48,7 @@ public abstract class ItemMagicContainer extends ItemRegistered
 
         MagicAmounts amounts = ContainerInformation.getContainedMagic(stack);
 
-        return amounts != null && !amounts.isEmpty();
+        return !amounts.isEmpty();
     }
 
     @Override
@@ -54,7 +56,7 @@ public abstract class ItemMagicContainer extends ItemRegistered
     {
         MagicAmounts amounts = ContainerInformation.getContainedMagic(stack);
 
-        if (amounts == null)
+        if (amounts.isEmpty())
         {
             return;
         }
@@ -84,7 +86,8 @@ public abstract class ItemMagicContainer extends ItemRegistered
         }
     }
 
-    public ItemStack addContainedMagic(ItemStack stack, ItemStack orb)
+    @Nullable
+    public ItemStack addContainedMagic(@Nullable ItemStack stack, @Nullable ItemStack orb)
     {
         if (stack == null)
             return null;
@@ -95,7 +98,7 @@ public abstract class ItemMagicContainer extends ItemRegistered
         am.element(Element.values[orb.getMetadata()], 8);
 
         MagicAmounts lm = ContainerInformation.getMagicLimits(stack);
-        if (lm != null)
+        if (!lm.isEmpty())
         {
             for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
             {

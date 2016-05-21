@@ -19,6 +19,7 @@ public class BlockCushion extends BlockDust
         return false;
     }
 
+    @Deprecated
     @Override
     public int getLightOpacity(IBlockState state)
     {

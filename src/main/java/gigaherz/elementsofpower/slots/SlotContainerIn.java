@@ -5,6 +5,8 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
+import javax.annotation.Nullable;
+
 public class SlotContainerIn extends Slot
 {
     public SlotContainerIn(IInventory par1iInventory, int par2, int par3, int par4)
@@ -13,9 +15,9 @@ public class SlotContainerIn extends Slot
     }
 
     @Override
-    public boolean isItemValid(ItemStack par1ItemStack)
+    public boolean isItemValid(@Nullable ItemStack stack)
     {
-        return ContainerInformation.itemContainsMagic(par1ItemStack);
+        return stack == null || ContainerInformation.itemContainsMagic(stack);
     }
 
     @Override

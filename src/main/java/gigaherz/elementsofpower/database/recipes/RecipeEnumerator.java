@@ -14,7 +14,9 @@ import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public abstract class RecipeEnumerator
 {
@@ -39,7 +41,8 @@ public abstract class RecipeEnumerator
 
             for (IRecipe recipe : CraftingManager.getInstance().getRecipeList())
             {
-                if(recipe.getRecipeOutput() == null || recipe.getRecipeOutput().getItem() == null)
+                ItemStack recipeOutput = recipe.getRecipeOutput();
+                if (recipeOutput == null || recipeOutput.getItem() == null)
                     continue;
 
                 IRecipeInfoProvider provider = null;
@@ -76,13 +79,15 @@ public abstract class RecipeEnumerator
         {
             for (Map.Entry<ItemStack, ItemStack> entry : FurnaceRecipes.instance().getSmeltingList().entrySet())
             {
-                if(entry.getValue() == null || entry.getValue().getItem() == null)
+                ItemStack output = entry.getValue();
+                if (output == null || output.getItem() == null)
                     continue;
 
-                if(entry.getKey() == null || entry.getKey().getItem() == null)
+                ItemStack input = entry.getKey();
+                if (input == null || input.getItem() == null)
                     continue;
 
-                consumer.process(new FurnaceRecipeInfo(entry.getKey(), entry.getValue()));
+                consumer.process(new FurnaceRecipeInfo(input, output));
             }
         }
     }

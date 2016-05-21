@@ -16,6 +16,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Random;
 
@@ -47,6 +48,7 @@ public class BlockMist extends BlockRegistered
         return false;
     }
 
+    @Deprecated
     @Override
     public boolean isOpaqueCube(IBlockState state)
     {
@@ -59,6 +61,7 @@ public class BlockMist extends BlockRegistered
         return new BlockStateContainer(this, DENSITY);
     }
 
+    @Deprecated
     @Override
     public IBlockState getStateFromMeta(int meta)
     {
@@ -83,6 +86,7 @@ public class BlockMist extends BlockRegistered
         return BlockRenderLayer.TRANSLUCENT;
     }
 
+    @Deprecated
     @Override
     public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side)
     {
@@ -150,6 +154,7 @@ public class BlockMist extends BlockRegistered
         worldIn.scheduleUpdate(pos, this, rand.nextInt(10));
     }
 
+    @Deprecated
     @Override
     public EnumPushReaction getMobilityFlag(IBlockState state)
     {
@@ -168,14 +173,9 @@ public class BlockMist extends BlockRegistered
         return null;
     }
 
+    @Deprecated
     @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
-    {
-        return super.getBoundingBox(state, source, pos);
-    }
-
-    @Override
-    public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB p_185477_4_, List<AxisAlignedBB> p_185477_5_, Entity p_185477_6_)
+    public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB p_185477_4_, List<AxisAlignedBB> p_185477_5_, @Nullable Entity p_185477_6_)
     {
         //super.addCollisionBoxToList(state, worldIn, pos, p_185477_4_, p_185477_5_, p_185477_6_);
     }

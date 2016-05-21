@@ -13,15 +13,10 @@ import org.lwjgl.opengl.GL11;
 public class RenderSphere extends RenderSpell
 {
     @Override
-    public void doRender(Spellcast cast, EntityPlayer player, RenderManager renderManager, double x, double y, double z, float partialTicks, Vec3d offset, String tex)
+    public void doRender(Spellcast cast, EntityPlayer player, RenderManager renderManager,
+                         double x, double y, double z, float partialTicks, Vec3d offset, String tex, int color)
     {
-        int color = cast.getColor();
         float scale = cast.getScale();
-
-        if (tex != null)
-        {
-            color = 0xFFFFFF;
-        }
 
         IBakedModel modelSphere = getSphere(tex);
 

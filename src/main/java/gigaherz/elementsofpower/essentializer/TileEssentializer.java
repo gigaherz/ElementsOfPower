@@ -13,7 +13,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -21,6 +20,8 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+
+import javax.annotation.Nullable;
 
 public class TileEssentializer
         extends TileEntity
@@ -55,6 +56,7 @@ public class TileEssentializer
         return tagCompound;
     }
 
+    @Nullable
     private MagicAmounts readAmountsFromNBT(NBTTagCompound tagCompound, String key)
     {
         MagicAmounts amounts = null;
@@ -68,7 +70,7 @@ public class TileEssentializer
         return amounts;
     }
 
-    private void writeAmountsToNBT(NBTTagCompound tagCompound, String key, MagicAmounts amounts)
+    private void writeAmountsToNBT(NBTTagCompound tagCompound, String key, @Nullable MagicAmounts amounts)
     {
         if (amounts != null)
         {
@@ -229,7 +231,7 @@ public class TileEssentializer
 
         MagicAmounts contained = ContainerInformation.getContainedMagic(input);
 
-        if (contained == null)
+        if (contained.isEmpty())
             return false;
 
         float totalAdded = 0;
@@ -274,13 +276,8 @@ public class TileEssentializer
         MagicAmounts limits = ContainerInformation.getMagicLimits(output);
         MagicAmounts contained = ContainerInformation.getContainedMagic(output);
 
-        if (limits == null)
+        if (limits.isEmpty())
             return false;
-
-        if (contained == null)
-        {
-            contained = new MagicAmounts();
-        }
 
         float totalAdded = 0;
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
@@ -352,7 +349,7 @@ public class TileEssentializer
     }
 
     @Override
-    public void setInventorySlotContents(int slot, ItemStack stack)
+    public void setInventorySlotContents(int slot, @Nullable ItemStack stack)
     {
         inventory.setInventorySlotContents(slot, stack);
     }

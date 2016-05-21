@@ -66,7 +66,9 @@ public class EssenceOverrides
     {
         loadConfigOverrides();
 
-        String itemName = Item.REGISTRY.getNameForObject(stack.getItem()).toString();
+        ResourceLocation resloc = Item.REGISTRY.getNameForObject(stack.getItem());
+        assert resloc != null;
+        String itemName = resloc.toString();
         String entryName = String.format("%s@%d", itemName, stack.getMetadata());
 
         essenceOverrides.put(entryName, amounts);
@@ -94,11 +96,13 @@ public class EssenceOverrides
             }
 
             Item item = Item.REGISTRY.getObject(new ResourceLocation(itemName));
+            if(item != null)
+            {
+                ItemStack stack = new ItemStack(item, 1, meta);
+                MagicAmounts m = e.getValue();
 
-            ItemStack stack = new ItemStack(item, 1, meta);
-            MagicAmounts m = e.getValue();
-
-            EssenceConversions.addConversion(stack, m);
+                EssenceConversions.addConversion(stack, m);
+            }
         }
     }
 }

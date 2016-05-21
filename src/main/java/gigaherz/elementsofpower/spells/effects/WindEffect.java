@@ -12,8 +12,12 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class WindEffect extends SpellEffect
@@ -117,7 +121,7 @@ public class WindEffect extends SpellEffect
         }
 
         e.addVelocity(vx, vy, vz);
-        if(e instanceof EntityPlayerMP)
+        if (e instanceof EntityPlayerMP)
         {
             ElementsOfPower.channel.sendTo(new AddVelocityPlayer(vx, vy, vz), (EntityPlayerMP) e);
         }
@@ -144,7 +148,7 @@ public class WindEffect extends SpellEffect
     }
 
     @Override
-    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, float r, RayTraceResult mop)
+    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, float r, @Nullable RayTraceResult mop)
     {
         if (mop != null)
         {
@@ -165,7 +169,7 @@ public class WindEffect extends SpellEffect
                 cast.world.setBlockToAir(blockPos);
             }
         }
-        else if (!block.getMaterial(currentState).blocksMovement() && !block.getMaterial(currentState).isLiquid())
+        else if (!currentState.getMaterial().blocksMovement() && !currentState.getMaterial().isLiquid())
         {
             block.dropBlockAsItem(cast.world, blockPos, currentState, 0);
             cast.world.setBlockToAir(blockPos);

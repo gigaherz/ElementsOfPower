@@ -43,6 +43,10 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.security.InvalidParameterException;
+
 @Used
 public class ClientProxy implements ISideProxy
 {
@@ -64,7 +68,7 @@ public class ClientProxy implements ISideProxy
         Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(
                 new IBlockColor()
                 {
-                    public int colorMultiplier(IBlockState state, IBlockAccess world, BlockPos pos, int tintIndex)
+                    public int colorMultiplier(@Nonnull IBlockState state, @Nullable IBlockAccess world, @Nullable BlockPos pos, int tintIndex)
                     {
                         Gemstone gem = state.getValue(BlockSpelldust.VARIANT);
 
@@ -75,7 +79,7 @@ public class ClientProxy implements ISideProxy
                 new IItemColor()
                 {
                     @Override
-                    public int getColorFromItemstack(ItemStack stack, int tintIndex)
+                    public int getColorFromItemstack(@Nonnull ItemStack stack, int tintIndex)
                     {
                         if (tintIndex != 0)
                             return 0xFFFFFFFF;
@@ -118,8 +122,7 @@ public class ClientProxy implements ISideProxy
         EntityPlayer player = (EntityPlayer) world.getEntityByID(message.casterID);
         SpellcastEntityData data = SpellcastEntityData.get(player);
 
-        if (data != null)
-            data.sync(message.changeMode, message.spellcast);
+        data.sync(message.changeMode, message.spellcast);
     }
 
     @Override
@@ -224,7 +227,9 @@ public class ClientProxy implements ISideProxy
 
     public void registerBlockModelAsItem(final Block block)
     {
-        registerItemModel(Item.getItemFromBlock(block));
+        Item item = Item.getItemFromBlock(block);
+        assert item != null;
+        registerItemModel(item);
     }
 
     public void registerItemModel(final Item item)
@@ -234,7 +239,9 @@ public class ClientProxy implements ISideProxy
 
     public void registerBlockModelAsItem(final Block block, final String variant)
     {
-        registerItemModel(Item.getItemFromBlock(block), variant);
+        Item item = Item.getItemFromBlock(block);
+        assert item != null;
+        registerItemModel(item, variant);
     }
 
     public void registerItemModel(final ItemStack stack, final String variant)
@@ -249,7 +256,9 @@ public class ClientProxy implements ISideProxy
 
     public void registerBlockModelAsItem(final Block block, final int meta, final String variant)
     {
-        registerItemModel(Item.getItemFromBlock(block), meta, variant);
+        Item item = Item.getItemFromBlock(block);
+        assert item != null;
+        registerItemModel(item, meta, variant);
     }
 
     public void registerItemModel(final Item item, final int meta, final String variant)
@@ -289,7 +298,8 @@ public class ClientProxy implements ISideProxy
         {
             Item item = stack.getItem();
             if (!(item instanceof ItemGemContainer))
-                return null;
+                throw new InvalidParameterException("stack is not a gem container");
+
             ItemGemContainer c = (ItemGemContainer) item;
 
             Gemstone g = c.getGemstone(stack);
@@ -297,7 +307,7 @@ public class ClientProxy implements ISideProxy
             return getModelResourceLocation(g);
         }
 
-        private ModelResourceLocation getModelResourceLocation(Gemstone g)
+        private ModelResourceLocation getModelResourceLocation(@Nullable Gemstone g)
         {
             String variantName = "gem=" + (g != null ? g.getName() : "unbound");
 

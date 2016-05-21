@@ -120,25 +120,17 @@ public class ConeShape extends SpellShape
         List<Entity> entities = cast.world.getEntitiesInAABBexcluding(cast.player, aabb, (e) -> {
             Vec3d pt;
             AxisAlignedBB aabb_ = e.getEntityBoundingBox();
-            if (aabb_ != null)
-            {
-                pt = new Vec3d(
-                        (aabb_.minX + aabb_.maxX) * 0.5,
-                        (aabb_.minY + aabb_.maxY) * 0.5,
-                        (aabb_.minZ + aabb_.maxZ) * 0.5);
-            }
-            else
-            {
-                pt = new Vec3d(e.posX, e.posY + e.getEyeHeight() * 0.5, e.posZ);
-            }
-
+            pt = new Vec3d(
+                    (aabb_.minX + aabb_.maxX) * 0.5,
+                    (aabb_.minY + aabb_.maxY) * 0.5,
+                    (aabb_.minZ + aabb_.maxZ) * 0.5);
             return isPointInCone(cast, pt);
         });
 
         for (Entity e : entities)
         {
 
-                cast.getEffect().processDirectHit(cast, e, hitVec);
+            cast.getEffect().processDirectHit(cast, e, hitVec);
         }
 
         int nx = (int) Math.floor(aabb.minX);

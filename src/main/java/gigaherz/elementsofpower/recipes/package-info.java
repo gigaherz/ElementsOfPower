@@ -1,0 +1,8 @@
+
+@MethodsReturnNonnullByDefault
+@ParametersAreNonnullByDefault
+package gigaherz.elementsofpower.recipes;
+
+import mcp.MethodsReturnNonnullByDefault;
+
+import javax.annotation.ParametersAreNonnullByDefault;

@@ -11,6 +11,8 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
+
 public class EntityBall extends EntityThrowable
 {
     Spellcast spellcast;
@@ -38,13 +40,6 @@ public class EntityBall extends EntityThrowable
         super.entityInit();
 
         getDataManager().register(SEQ, "");
-    }
-
-    // FIXME
-    //@Override
-    protected float getVelocity()
-    {
-        return 2.0F;
     }
 
     @Override
@@ -79,12 +74,13 @@ public class EntityBall extends EntityThrowable
         return 0xFFFFFF;
     }
 
+    @Nullable
     public Spellcast getSpellcast()
     {
         if (spellcast == null)
         {
             String sequence = getDataManager().get(SEQ);
-            if (sequence != null && sequence.length() > 0)
+            if (sequence.length() > 0)
             {
                 spellcast = SpellManager.makeSpell(sequence);
                 spellcast.init(worldObj, (EntityPlayer) getThrower());

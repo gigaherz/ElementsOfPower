@@ -36,7 +36,7 @@ public class CapabilityMagicContainer
                 nbt.setFloat("" + i, amounts.amounts[i]);
             }
 
-            return null;
+            return nbt;
         }
 
         @Override

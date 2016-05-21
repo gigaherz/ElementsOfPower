@@ -33,7 +33,7 @@ public class SpellcastEntityData
 
     public static SpellcastEntityData get(EntityPlayer p)
     {
-        return p.getCapability(Handler.SPELLCAST, null);
+        return p.getCapability(Handler.SPELLCAST, EnumFacing.UP);
     }
 
     public static void register()
@@ -212,45 +212,42 @@ public class SpellcastEntityData
 
             if (entity instanceof EntityPlayer)
             {
-                if (entity.getCapability(SPELLCAST, null) == null)
+                e.addCapability(PROP_KEY, new ICapabilitySerializable<NBTTagCompound>()
                 {
-                    e.addCapability(PROP_KEY, new ICapabilitySerializable<NBTTagCompound>()
+                    SpellcastEntityData cap = new SpellcastEntityData();
+
                     {
-                        SpellcastEntityData cap = new SpellcastEntityData();
+                        cap.init(entity, entity.worldObj);
+                    }
 
-                        {
-                            cap.init(entity, entity.worldObj);
-                        }
+                    @Override
+                    public boolean hasCapability(Capability<?> capability, EnumFacing facing)
+                    {
+                        return capability == SPELLCAST;
+                    }
 
-                        @Override
-                        public boolean hasCapability(Capability<?> capability, EnumFacing facing)
-                        {
-                            return capability == SPELLCAST;
-                        }
+                    @Override
+                    public <T> T getCapability(Capability<T> capability, EnumFacing facing)
+                    {
+                        if (capability == SPELLCAST)
+                            return SPELLCAST.cast(cap);
+                        return null;
+                    }
 
-                        @Override
-                        public <T> T getCapability(Capability<T> capability, EnumFacing facing)
-                        {
-                            if (capability == SPELLCAST)
-                                return SPELLCAST.cast(cap);
-                            return null;
-                        }
+                    @Override
+                    public NBTTagCompound serializeNBT()
+                    {
+                        NBTTagCompound tag = new NBTTagCompound();
+                        cap.saveNBTData(tag);
+                        return tag;
+                    }
 
-                        @Override
-                        public NBTTagCompound serializeNBT()
-                        {
-                            NBTTagCompound tag = new NBTTagCompound();
-                            cap.saveNBTData(tag);
-                            return tag;
-                        }
-
-                        @Override
-                        public void deserializeNBT(NBTTagCompound nbt)
-                        {
-                            cap.loadNBTData(nbt);
-                        }
-                    });
-                }
+                    @Override
+                    public void deserializeNBT(NBTTagCompound nbt)
+                    {
+                        cap.loadNBTData(nbt);
+                    }
+                });
             }
         }
 
@@ -260,8 +257,7 @@ public class SpellcastEntityData
             if (e.phase == TickEvent.Phase.END)
             {
                 SpellcastEntityData data = SpellcastEntityData.get(e.player);
-                if (data != null)
-                    data.updateSpell();
+                data.updateSpell();
             }
         }
     }

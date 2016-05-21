@@ -75,12 +75,14 @@ public class BlockSpelldust extends BlockRegistered
         return BlockRenderLayer.CUTOUT;
     }
 
+    @Deprecated
     @Override
     public boolean isOpaqueCube(IBlockState state)
     {
         return false;
     }
 
+    @Deprecated
     @Override
     public boolean isFullCube(IBlockState state)
     {
@@ -97,6 +99,7 @@ public class BlockSpelldust extends BlockRegistered
                 || b == Blocks.GLOWSTONE || b == Blocks.GLASS;
     }
 
+    @Deprecated
     @Override
     public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block block)
     {
@@ -134,6 +137,7 @@ public class BlockSpelldust extends BlockRegistered
         return state.getValue(VARIANT).ordinal();
     }
 
+    @Deprecated
     @Override
     public IBlockState getStateFromMeta(int meta)
     {
@@ -142,6 +146,7 @@ public class BlockSpelldust extends BlockRegistered
         return this.getDefaultState().withProperty(VARIANT, Gemstone.values[meta]);
     }
 
+    @Deprecated
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos)
     {
@@ -153,6 +158,7 @@ public class BlockSpelldust extends BlockRegistered
         return state;
     }
 
+    @Deprecated
     @Override
     public IBlockState withRotation(IBlockState state, Rotation rot)
     {
@@ -169,6 +175,7 @@ public class BlockSpelldust extends BlockRegistered
         }
     }
 
+    @Deprecated
     @Override
     public IBlockState withMirror(IBlockState state, Mirror mirrorIn)
     {
@@ -191,12 +198,14 @@ public class BlockSpelldust extends BlockRegistered
         return block == this && blockState.getValue(VARIANT) == gem;
     }
 
+    @Deprecated
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
     {
         return REDSTONE_WIRE_AABB[func_185699_x(state.getActualState(source, pos))];
     }
 
+    @Deprecated
     @Override
     public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos)
     {

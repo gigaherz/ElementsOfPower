@@ -7,21 +7,19 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapedRecipes;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ShapedRecipeHandler implements IRecipeHandler
 {
     @Override
-    public boolean accepts(@Nonnull IRecipe recipe)
+    public boolean accepts(IRecipe recipe)
     {
         return recipe instanceof ShapedRecipes;
     }
 
-    @Nonnull
     @Override
-    public IRecipeInfoProvider handle(@Nonnull IRecipe recipe)
+    public IRecipeInfoProvider handle(IRecipe recipe)
     {
         return new RecipeInfo((ShapedRecipes) recipe);
     }
@@ -29,11 +27,11 @@ public class ShapedRecipeHandler implements IRecipeHandler
     private static class RecipeInfo implements IRecipeInfoProvider
     {
         ArrayList<ItemStack> recipeItems = Lists.newArrayList();
-        ShapedRecipes recipe;
+        ItemStack output;
 
         public RecipeInfo(ShapedRecipes recipe)
         {
-            this.recipe = recipe;
+            output = recipe.getRecipeOutput();
 
             ItemStack[] inputs = recipe.recipeItems;
             for (ItemStack input : inputs)
@@ -47,14 +45,12 @@ public class ShapedRecipeHandler implements IRecipeHandler
             }
         }
 
-        @Nonnull
         @Override
         public ItemStack getRecipeOutput()
         {
-            return recipe.getRecipeOutput();
+            return output;
         }
 
-        @Nonnull
         @Override
         public List<ItemStack> getRecipeInputs()
         {

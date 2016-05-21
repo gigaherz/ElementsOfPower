@@ -20,6 +20,7 @@ import java.util.Random;
 public class BlockDust extends BlockRegistered
 {
     public static final PropertyInteger DENSITY = PropertyInteger.create("density", 1, 16);
+    private static final AxisAlignedBB DUMMY_AABB = new AxisAlignedBB(0, 0, 0, 0, 0, 0);
 
     public BlockDust(String name)
     {
@@ -36,12 +37,14 @@ public class BlockDust extends BlockRegistered
                 .withProperty(DENSITY, 16));
     }
 
+    @Deprecated
     @Override
     public boolean isOpaqueCube(IBlockState state)
     {
         return false;
     }
 
+    @Deprecated
     @Override
     public int getLightOpacity(IBlockState state)
     {
@@ -62,6 +65,7 @@ public class BlockDust extends BlockRegistered
         return BlockRenderLayer.TRANSLUCENT;
     }
 
+    @Deprecated
     @Override
     public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side)
     {
@@ -129,6 +133,7 @@ public class BlockDust extends BlockRegistered
         worldIn.scheduleUpdate(pos, this, rand.nextInt(10));
     }
 
+    @Deprecated
     @Override
     public EnumPushReaction getMobilityFlag(IBlockState state)
     {
@@ -143,6 +148,7 @@ public class BlockDust extends BlockRegistered
         worldIn.scheduleUpdate(pos, this, worldIn.rand.nextInt(10));
     }
 
+    @Deprecated
     @Override
     public IBlockState getStateFromMeta(int meta)
     {
@@ -173,17 +179,12 @@ public class BlockDust extends BlockRegistered
         return null;
     }
 
+    @Deprecated
     @Override
     public AxisAlignedBB getSelectedBoundingBox(IBlockState blockState, World worldIn, BlockPos pos)
     {
-        return null;
+        return DUMMY_AABB;
     }
-
-    //@Override
-    //public boolean canCollideCheck(IBlockState state, boolean hitIfLiquid)
-    //{
-    //    return false;
-    //}
 
     @Override
     public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)

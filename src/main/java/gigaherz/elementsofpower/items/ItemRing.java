@@ -16,6 +16,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.tuple.Triple;
 
+import javax.annotation.Nullable;
+
 public class ItemRing extends ItemGemContainer implements IBauble
 {
     public static final float MAX_TRANSFER_TICK = 1 / 20.0f;
@@ -27,21 +29,13 @@ public class ItemRing extends ItemGemContainer implements IBauble
         setCreativeTab(ElementsOfPower.tabMagic);
     }
 
-    @Override
     protected MagicAmounts adjustInsertedMagic(MagicAmounts am)
     {
-        if (am == null)
-            return null;
-
         return am.copy().multiply(1.5f);
     }
 
-    @Override
     protected MagicAmounts adjustRemovedMagic(MagicAmounts am)
     {
-        if (am == null)
-            return null;
-
         return am.copy().multiply(1 / 1.5f);
     }
 
@@ -101,7 +95,7 @@ public class ItemRing extends ItemGemContainer implements IBauble
     {
         MagicAmounts available = ContainerInformation.getContainedMagic(thisStack);
 
-        if (available == null || available.isEmpty())
+        if (available.isEmpty())
             return;
 
         Triple<ItemStack, IInventory, Integer> triple;
@@ -126,11 +120,8 @@ public class ItemRing extends ItemGemContainer implements IBauble
         MagicAmounts limits = ContainerInformation.getMagicLimits(stack);
         MagicAmounts amounts = ContainerInformation.getContainedMagic(stack);
 
-        if (limits == null)
+        if (limits.isEmpty())
             return;
-
-        if (amounts == null)
-            amounts = new MagicAmounts();
 
         float totalTransfer = getTotalTransfer(thisStack, available, stack, limits, amounts);
 
@@ -146,7 +137,7 @@ public class ItemRing extends ItemGemContainer implements IBauble
     }
 
     private float getTotalTransfer(ItemStack thisStack,
-            MagicAmounts available, ItemStack stack,
+                                   MagicAmounts available, ItemStack stack,
                                    MagicAmounts limits, MagicAmounts amounts)
     {
         Gemstone g = getGemstone(thisStack);
@@ -180,10 +171,11 @@ public class ItemRing extends ItemGemContainer implements IBauble
         return totalTransfer;
     }
 
+    @Nullable
     private static Triple<ItemStack, IInventory, Integer>
-    findInInventory(ItemStack thisStack, IInventory b, MagicAmounts available)
+        findInInventory(ItemStack thisStack, @Nullable IInventory b, MagicAmounts available)
     {
-        if(b == null)
+        if (b == null)
             return null;
 
         for (int i = 0; i < b.getSizeInventory(); i++)

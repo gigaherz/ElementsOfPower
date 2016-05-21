@@ -188,7 +188,9 @@ public class StockConversions
 
     private static ItemEssenceCollection essences(Block block, int... itemMetaValues)
     {
-        return essences(Item.getItemFromBlock(block), itemMetaValues);
+        Item item = Item.getItemFromBlock(block);
+        assert item != null;
+        return essences(item, itemMetaValues);
     }
 
     private static ItemEssenceEntry essences(Item item, int meta)

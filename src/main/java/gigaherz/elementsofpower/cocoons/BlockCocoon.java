@@ -26,7 +26,11 @@ import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.fml.common.IWorldGenerator;
 
-import java.util.*;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 public class BlockCocoon extends BlockRegistered
 {
@@ -43,6 +47,7 @@ public class BlockCocoon extends BlockRegistered
         setHardness(1);
     }
 
+    @Deprecated
     @Override
     public boolean isOpaqueCube(IBlockState state)
     {
@@ -73,6 +78,7 @@ public class BlockCocoon extends BlockRegistered
         return state.getValue(FACING).ordinal();
     }
 
+    @Deprecated
     @Override
     public IBlockState getStateFromMeta(int meta)
     {
@@ -81,6 +87,7 @@ public class BlockCocoon extends BlockRegistered
         return getDefaultState().withProperty(FACING, EnumFacing.VALUES[meta]);
     }
 
+    @Deprecated
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos)
     {
@@ -101,6 +108,8 @@ public class BlockCocoon extends BlockRegistered
         if (!worldIn.isRemote)
         {
             TileCocoon te = (TileCocoon) worldIn.getTileEntity(pos);
+
+            assert te != null;
 
             if (!te.essenceContained.isEmpty())
             {
@@ -127,11 +136,13 @@ public class BlockCocoon extends BlockRegistered
     }
 
     @Override
-    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
     {
         if (heldItem != null && heldItem.getItem() == ElementsOfPower.magicOrb)
         {
             TileEntity te = worldIn.getTileEntity(pos);
+
+            assert te != null;
 
             ((TileCocoon) te).addEssences(heldItem);
 
@@ -186,7 +197,7 @@ public class BlockCocoon extends BlockRegistered
     }
 
     @Override
-    public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, TileEntity te, ItemStack stack)
+    public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, @Nullable TileEntity te, @Nullable ItemStack stack)
     {
         super.harvestBlock(worldIn, player, pos, state, te, stack);
         worldIn.setBlockToAir(pos);
@@ -202,7 +213,7 @@ public class BlockCocoon extends BlockRegistered
                 return;
 
             Set<BlockPos> positions = Sets.newHashSet();
-            for(int i=0;i<250 && positions.size() < num;i++)
+            for (int i = 0; i < 250 && positions.size() < num; i++)
             {
                 int x = rand.nextInt(16);
                 int z = rand.nextInt(16);
@@ -317,6 +328,9 @@ public class BlockCocoon extends BlockRegistered
                         {
                             world.setBlockState(pos, ElementsOfPower.cocoon.getDefaultState().withProperty(FACING, f), 2);
                             TileCocoon te = (TileCocoon) world.getTileEntity(pos);
+
+                            assert te != null;
+
                             te.essenceContained.add(am2);
 
                             ElementsOfPower.logger.warn("Generated at: " + pos + " near " + world.getBlockState(pos1).getBlock().getLocalizedName() + " with " + te.essenceContained);

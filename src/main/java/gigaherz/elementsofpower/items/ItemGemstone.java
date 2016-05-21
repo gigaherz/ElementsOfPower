@@ -5,6 +5,7 @@ import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.gemstones.Element;
 import gigaherz.elementsofpower.gemstones.Gemstone;
 import gigaherz.elementsofpower.gemstones.Quality;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumRarity;
@@ -12,9 +13,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.common.util.Constants;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class ItemGemstone extends ItemMagicContainer
@@ -49,10 +50,11 @@ public class ItemGemstone extends ItemMagicContainer
         return "item." + ElementsOfPower.MODID + Gemstone.values[sub].getUnlocalizedName();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public String getItemStackDisplayName(ItemStack stack)
     {
-        String gemPart = I18n.translateToLocal(getUnlocalizedName(stack) + ".name");
+        String gemPart = net.minecraft.util.text.translation.I18n.translateToLocal(getUnlocalizedName(stack) + ".name");
 
         Quality q = getQuality(stack);
 
@@ -62,7 +64,7 @@ public class ItemGemstone extends ItemMagicContainer
 
         qName += q.getUnlocalizedName();
 
-        String qualityPart = I18n.translateToLocal(qName);
+        String qualityPart = net.minecraft.util.text.translation.I18n.translateToLocal(qName);
 
         return (qualityPart + " " + gemPart).trim();
     }
@@ -87,10 +89,14 @@ public class ItemGemstone extends ItemMagicContainer
         }
     }
 
+    @Nullable
     @Override
     public MagicAmounts getCapacity(ItemStack stack)
     {
         Gemstone g = getGemstone(stack);
+        if (g == null)
+            return null;
+
         Quality q = getQuality(stack);
         if (q == null)
             return null;
@@ -115,6 +121,7 @@ public class ItemGemstone extends ItemMagicContainer
         return q.getRarity();
     }
 
+    @Nullable
     public Gemstone getGemstone(ItemStack stack)
     {
         int meta = stack.getMetadata();
@@ -125,6 +132,7 @@ public class ItemGemstone extends ItemMagicContainer
         return Gemstone.values[meta];
     }
 
+    @Nullable
     public Quality getQuality(ItemStack stack)
     {
         NBTTagCompound tag = stack.getTagCompound();
@@ -159,9 +167,9 @@ public class ItemGemstone extends ItemMagicContainer
     public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced)
     {
         if (getQuality(stack) == null)
-            tooltip.add(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + I18n.translateToLocal("text." + ElementsOfPower.MODID + ".gemstone.use"));
+            tooltip.add(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + I18n.format("text." + ElementsOfPower.MODID + ".gemstone.use"));
         else
-            tooltip.add(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + I18n.translateToLocal("text." + ElementsOfPower.MODID + ".gemstone.combine"));
+            tooltip.add(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + I18n.format("text." + ElementsOfPower.MODID + ".gemstone.combine"));
         super.addInformation(stack, playerIn, tooltip, advanced);
     }
 }

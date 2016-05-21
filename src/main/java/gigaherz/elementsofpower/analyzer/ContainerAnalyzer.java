@@ -71,6 +71,7 @@ public class ContainerAnalyzer extends Container
         }
 
         ItemStack stack = slot.getStack();
+        assert stack != null;
         ItemStack stackCopy = stack.copy();
 
         int startIndex;
@@ -227,6 +228,7 @@ public class ContainerAnalyzer extends Container
                         p.isChangingQuantityOnly = false;
                     }
 
+                    //noinspection ConstantConditions
                     listener.sendSlotContents(this, 0, stack2);
 
                     if (prev)
@@ -269,17 +271,11 @@ public class ContainerAnalyzer extends Container
         }
     }
 
-    @Override
-    public void onCraftMatrixChanged(IInventory inventoryIn)
-    {
-        super.onCraftMatrixChanged(inventoryIn);
-    }
-
     class InventoryInternal extends InventoryBasic
     {
         public InventoryInternal()
         {
-            super(null, false, 1);
+            super("analyzer", false, 1);
         }
 
         @Override

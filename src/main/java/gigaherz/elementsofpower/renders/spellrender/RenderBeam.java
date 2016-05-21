@@ -14,15 +14,10 @@ import org.lwjgl.opengl.GL11;
 public class RenderBeam extends RenderSpell
 {
     @Override
-    public void doRender(Spellcast cast, EntityPlayer player, RenderManager renderManager, double x, double y, double z, float partialTicks, Vec3d offset, String tex)
+    public void doRender(Spellcast cast, EntityPlayer player, RenderManager renderManager,
+                         double x, double y, double z, float partialTicks, Vec3d offset, String tex, int beam_color)
     {
-        int beam_color = cast.getColor();
         float scale = 0.15f * cast.getScale();
-
-        if (tex != null)
-        {
-            beam_color = 0xFFFFFF;
-        }
 
         IBakedModel modelSphere = getSphere(tex);
         IBakedModel modelCyl = getCylinder(tex);

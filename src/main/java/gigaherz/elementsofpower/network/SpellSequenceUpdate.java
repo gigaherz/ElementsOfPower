@@ -11,6 +11,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
+import javax.annotation.Nullable;
+
 public class SpellSequenceUpdate
         implements IMessage
 {
@@ -33,7 +35,7 @@ public class SpellSequenceUpdate
     {
     }
 
-    public SpellSequenceUpdate(ChangeMode mode, int slotNumber, String sequence)
+    public SpellSequenceUpdate(ChangeMode mode, int slotNumber, @Nullable String sequence)
     {
         changeMode = mode;
         this.sequence = sequence;
@@ -70,6 +72,7 @@ public class SpellSequenceUpdate
 
     public static class Handler implements IMessageHandler<SpellSequenceUpdate, IMessage>
     {
+        @Nullable
         @Override
         public IMessage onMessage(SpellSequenceUpdate message, MessageContext ctx)
         {

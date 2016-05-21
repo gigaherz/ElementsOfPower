@@ -9,9 +9,6 @@ public class Utils
 {
     public static <OType> boolean stackMapContainsKey(Map<ItemStack, OType> map, ItemStack stack)
     {
-        if (stack == null)
-            return false;
-
         for (ItemStack k : map.keySet())
         {
             if (OreDictionary.itemMatches(stack, k, false))
@@ -25,9 +22,6 @@ public class Utils
 
     public static <OType> OType stackMapGet(Map<ItemStack, OType> map, ItemStack stack)
     {
-        if (stack == null)
-            return null;
-
         for (Map.Entry<ItemStack, OType> entry : map.entrySet())
         {
             if (OreDictionary.itemMatches(stack, entry.getKey(), false))

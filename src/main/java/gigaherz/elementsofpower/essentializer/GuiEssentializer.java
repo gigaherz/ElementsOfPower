@@ -11,11 +11,11 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.translation.I18n;
 
 import java.util.List;
 
@@ -80,8 +80,8 @@ public class GuiEssentializer extends GuiContainer
     @Override
     protected void drawGuiContainerForegroundLayer(int x, int y)
     {
-        mc.fontRendererObj.drawString(I18n.translateToLocal(this.tile.getName()), 8, 6, 0x404040);
-        mc.fontRendererObj.drawString(I18n.translateToLocal(this.player.getName()), 8, ySize - 96 + 3, 0x404040);
+        mc.fontRendererObj.drawString(I18n.format(this.tile.getName()), 8, 6, 0x404040);
+        mc.fontRendererObj.drawString(I18n.format(this.player.getName()), 8, ySize - 96 + 3, 0x404040);
 
         float opaqueLevel = TileEssentializer.MaxConvertPerTick * 20; // approx 3s fadeout
 

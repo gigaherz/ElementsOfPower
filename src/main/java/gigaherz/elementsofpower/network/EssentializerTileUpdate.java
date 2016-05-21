@@ -12,6 +12,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
+import javax.annotation.Nullable;
+
 public class EssentializerTileUpdate
         implements IMessage
 {
@@ -54,6 +56,7 @@ public class EssentializerTileUpdate
 
     public static class Handler implements IMessageHandler<EssentializerTileUpdate, IMessage>
     {
+        @Nullable
         @Override
         public IMessage onMessage(EssentializerTileUpdate message, MessageContext ctx)
         {

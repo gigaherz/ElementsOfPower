@@ -35,6 +35,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import javax.annotation.Nullable;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -296,7 +297,7 @@ public class GuiGuidebook extends GuiScreen
                     Link l = (Link) e;
                     Rectangle b = l.getBounds();
                     if (mouseX >= b.getX() && mouseX <= (b.getX() + b.getWidth()) &&
-                        mouseY >= b.getY() && mouseY <= (b.getY() + b.getHeight()))
+                            mouseY >= b.getY() && mouseY <= (b.getY() + b.getHeight()))
                     {
                         l.click();
                         return;
@@ -716,7 +717,7 @@ public class GuiGuidebook extends GuiScreen
         {
             int meta = 0;
             int stackSize = 1;
-            NBTTagCompound tag = null;
+            NBTTagCompound tag = new NBTTagCompound();
 
             Node attr = pageAttributes.getNamedItem("meta");
             if (attr != null)
@@ -750,8 +751,11 @@ public class GuiGuidebook extends GuiScreen
 
                 Item item = Item.REGISTRY.getObject(new ResourceLocation(itemName));
 
-                s.stack = new ItemStack(item, stackSize, meta);
-                s.stack.setTagCompound(tag);
+                if(item != null)
+                {
+                    s.stack = new ItemStack(item, stackSize, meta);
+                    s.stack.setTagCompound(tag);
+                }
             }
 
             attr = pageAttributes.getNamedItem("x");
@@ -879,7 +883,7 @@ public class GuiGuidebook extends GuiScreen
             resolvedNames = true;
         }
 
-        private PageRef(String chapter, String page)
+        private PageRef(String chapter, @Nullable String page)
         {
             this.chapterName = chapter;
             this.pageName = page;

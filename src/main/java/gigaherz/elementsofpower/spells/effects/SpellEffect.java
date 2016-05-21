@@ -10,6 +10,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 
+import javax.annotation.Nullable;
+
 public abstract class SpellEffect
 {
     public abstract int getColor(Spellcast cast);
@@ -31,7 +33,7 @@ public abstract class SpellEffect
 
     public abstract void spawnBallParticles(Spellcast cast, RayTraceResult mop);
 
-    public abstract void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, float distance, RayTraceResult mop);
+    public abstract void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, float distance, @Nullable RayTraceResult mop);
 
     protected static void causePotionEffect(Spellcast cast, EntityLivingBase e, Potion potion, int amplifier, double distance, double durationBase)
     {

@@ -14,6 +14,8 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
+
 public class MiningEffect extends SpellEffect
 {
     @Override
@@ -59,14 +61,14 @@ public class MiningEffect extends SpellEffect
     }
 
     @Override
-    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, float r, RayTraceResult mop)
+    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, float r, @Nullable RayTraceResult mop)
     {
         EntityPlayer player = cast.player;
         World world = cast.world;
         Block block = currentState.getBlock();
         IBlockState state = world.getBlockState(blockPos);
 
-        float hardness = block.getBlockHardness(state, world, blockPos);
+        float hardness = state.getBlockHardness(world, blockPos);
 
         if (!block.isAir(state, world, blockPos) && hardness >= 0 && hardness <= (cast.getDamageForce() / 3.0f))
         {

@@ -29,7 +29,7 @@ public class ItemSpelldust extends ItemRegistered
     {
         for (Gemstone g : Gemstone.values)
         {
-            if(g != Gemstone.Creativite)
+            if (g != Gemstone.Creativite)
                 subItems.add(new ItemStack(this, 1, g.ordinal()));
         }
     }
@@ -56,7 +56,7 @@ public class ItemSpelldust extends ItemRegistered
                 ElementsOfPower.spell_wire.canPlaceBlockAt(worldIn, blockpos))
         {
             --stack.stackSize;
-            worldIn.setBlockState(blockpos, ElementsOfPower.spell_wire.getStateFromMeta(stack.getMetadata()));
+            worldIn.setBlockState(blockpos, ElementsOfPower.spell_wire.onBlockPlaced(worldIn, blockpos, facing, hitX, hitY, hitZ, stack.getMetadata(), playerIn));
             return EnumActionResult.SUCCESS;
         }
         else

@@ -17,7 +17,7 @@ import java.util.List;
 public class SpellManager
 {
     public final static char[] elementChars = {'F', 'W', 'A', 'E', 'G', 'K', 'L', 'D'};
-    public final static int[] elementIndices = new int['Z'-'A'+1];
+    public final static int[] elementIndices = new int['Z' - 'A' + 1];
 
     public static final SpellShape sphere = new SphereShape();
     public static final SpellShape ball = new BallShape();
@@ -51,7 +51,7 @@ public class SpellManager
 
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            elementIndices[elementChars[i]-'A'] = i;
+            elementIndices[elementChars[i] - 'A'] = i;
         }
     }
 

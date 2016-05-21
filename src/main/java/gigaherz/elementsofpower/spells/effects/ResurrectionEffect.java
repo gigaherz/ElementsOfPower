@@ -10,6 +10,8 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
+
 public class ResurrectionEffect
         extends SpellEffect
 {
@@ -56,7 +58,7 @@ public class ResurrectionEffect
     }
 
     @Override
-    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, float distance, RayTraceResult mop)
+    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, float distance, @Nullable RayTraceResult mop)
     {
         // Resurrecting players could be done by
         // sending dimension packet or maybe respawn keeping items

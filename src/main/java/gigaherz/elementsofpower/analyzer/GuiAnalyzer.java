@@ -7,12 +7,12 @@ import gigaherz.elementsofpower.gemstones.Quality;
 import gigaherz.elementsofpower.items.ItemGemstone;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.translation.I18n;
 
 public class GuiAnalyzer extends GuiContainer
 {
@@ -41,24 +41,31 @@ public class GuiAnalyzer extends GuiContainer
     @Override
     protected void drawGuiContainerForegroundLayer(int x, int y)
     {
-        String name = I18n.translateToLocal(guiTitle);
+        String name = I18n.format(guiTitle);
         mc.fontRendererObj.drawString(name, (xSize - mc.fontRendererObj.getStringWidth(name)) / 2, 6, 0x404040);
-        mc.fontRendererObj.drawString(I18n.translateToLocal(this.player.inventory.getName()), 8, ySize - 96 + 3, 0x404040);
+        mc.fontRendererObj.drawString(I18n.format(this.player.inventory.getName()), 8, ySize - 96 + 3, 0x404040);
 
         Slot slotAnalyze = inventorySlots.inventorySlots.get(0);
         ItemStack stack = slotAnalyze.getStack();
         if (stack != null)
         {
+            Gemstone gem = null;
+            Quality q = null;
+            MagicAmounts am = null;
+
             Item item = stack.getItem();
             if (item instanceof ItemGemstone)
             {
                 mc.fontRendererObj.drawString("Item: Gemstone", 32, 18, 0xffffff);
 
                 ItemGemstone gemstone = (ItemGemstone) item;
-                Gemstone gem = gemstone.getGemstone(stack);
-                Quality q = gemstone.getQuality(stack);
-                MagicAmounts am = gemstone.getCapacity(stack);
+                gem = gemstone.getGemstone(stack);
+                q = gemstone.getQuality(stack);
+                am = gemstone.getCapacity(stack);
+            }
 
+            if(gem != null)
+            {
                 mc.fontRendererObj.drawString("Gemstone type: " + gem.toString(), 32, 30, 0xffffff);
                 mc.fontRendererObj.drawString("Quality level: " + (q != null ? q.toString() : "Unknown"), 32, 40, 0xffffff);
                 if (am != null)

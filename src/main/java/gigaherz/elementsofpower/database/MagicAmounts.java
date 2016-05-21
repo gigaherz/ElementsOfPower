@@ -4,11 +4,12 @@ import com.google.gson.*;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.gemstones.Element;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.common.util.Constants;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Type;
 
 public class MagicAmounts
@@ -28,12 +29,12 @@ public class MagicAmounts
 
     public static String getMagicName(int i)
     {
-        return I18n.translateToLocal(magicNames[i]);
+        return I18n.format(magicNames[i]);
     }
 
     public final float[] amounts = new float[ELEMENTS];
 
-    public static boolean areAmountsEqual(MagicAmounts a1, MagicAmounts a2)
+    public static boolean areAmountsEqual(@Nullable MagicAmounts a1, @Nullable MagicAmounts a2)
     {
         return (a1 == null && a2 == null) || (a1 != null && a1.equals(a2));
     }
@@ -210,7 +211,7 @@ public class MagicAmounts
         return this;
     }
 
-    public MagicAmounts add(MagicAmounts other)
+    public MagicAmounts add(@Nullable MagicAmounts other)
     {
         if (other == null)
             return this;
@@ -280,7 +281,8 @@ public class MagicAmounts
         tagCompound.setTag("Essences", itemList);
     }
 
-    public static MagicAmounts copyOf(MagicAmounts amounts)
+    @Nullable
+    public static MagicAmounts copyOf(@Nullable MagicAmounts amounts)
     {
         return amounts == null ? null : amounts.copy();
     }
@@ -302,6 +304,7 @@ public class MagicAmounts
         return dominant;
     }
 
+    @Nullable
     public static MagicAmounts readAmounts(ByteBuf buf)
     {
         MagicAmounts amounts = null;
@@ -319,7 +322,7 @@ public class MagicAmounts
         return amounts;
     }
 
-    public static void writeAmounts(ByteBuf buf, MagicAmounts amounts)
+    public static void writeAmounts(ByteBuf buf, @Nullable MagicAmounts amounts)
     {
         if (amounts != null)
         {
@@ -344,6 +347,11 @@ public class MagicAmounts
         {
             buf.writeByte(0);
         }
+    }
+
+    public static MagicAmounts empty()
+    {
+        return new MagicAmounts();
     }
 
     public static class Serializer

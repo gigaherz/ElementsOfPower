@@ -9,7 +9,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EntitySelectors;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
@@ -133,10 +132,7 @@ public class Spellcast
         if (remainingCastTime <= 0)
         {
             SpellcastEntityData data = SpellcastEntityData.get(player);
-            if (data != null)
-            {
-                data.end();
-            }
+            data.end();
         }
     }
 
@@ -280,9 +276,6 @@ public class Spellcast
         {
             start = new Vec3d(player.posX, player.posY + player.getEyeHeight(), player.posZ);
         }
-
-        EnumFacing g;
-
 
         Vec3d look = player.getLook(partialTicks);
         end = start.addVector(look.xCoord * maxDistance, look.yCoord * maxDistance, look.zCoord * maxDistance);

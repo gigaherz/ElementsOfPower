@@ -2,6 +2,8 @@ package gigaherz.elementsofpower.gemstones;
 
 import net.minecraft.util.IStringSerializable;
 
+import javax.annotation.Nullable;
+
 public enum Gemstone implements IStringSerializable
 {
     Ruby(Element.Fire, "ruby", 0xFFFF0000), // red
@@ -30,6 +32,7 @@ public enum Gemstone implements IStringSerializable
         this.tintColor = tintColor;
     }
 
+    @Nullable
     public Element getElement()
     {
         return element;
@@ -40,6 +43,7 @@ public enum Gemstone implements IStringSerializable
         return unlocalizedName;
     }
 
+    @Override
     public String getName()
     {
         return name;

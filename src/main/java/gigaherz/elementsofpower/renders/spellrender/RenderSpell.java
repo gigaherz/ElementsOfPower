@@ -22,7 +22,7 @@ public abstract class RenderSpell
     protected IBakedModel getCone(String tex)
     {
         RenderingStuffs.ModelHandle h = cones.get(tex);
-        if(h == null)
+        if (h == null)
         {
             h = RenderingStuffs.handle("elementsofpower:entity/cone.obj").replace("#Default", tex);
             cones.put(tex, h);
@@ -34,7 +34,7 @@ public abstract class RenderSpell
     protected IBakedModel getSphere(String tex)
     {
         RenderingStuffs.ModelHandle h = spheres.get(tex);
-        if(h == null)
+        if (h == null)
         {
             h = RenderingStuffs.handle("elementsofpower:entity/sphere.obj").replace("#Default", tex);
             spheres.put(tex, h);
@@ -46,7 +46,7 @@ public abstract class RenderSpell
     protected IBakedModel getCylinder(String tex)
     {
         RenderingStuffs.ModelHandle h = cylinders.get(tex);
-        if(h == null)
+        if (h == null)
         {
             h = RenderingStuffs.handle("elementsofpower:entity/cylinder.obj").replace("#Default", tex);
             cylinders.put(tex, h);
@@ -55,25 +55,30 @@ public abstract class RenderSpell
         return RenderingStuffs.loadModel(h);
     }
 
-    public abstract void doRender(Spellcast spellcast, EntityPlayer player, RenderManager renderManager, double x, double y, double z, float partialTicks, Vec3d offset, String tex);
+    public abstract void doRender(Spellcast spellcast, EntityPlayer player, RenderManager renderManager, double x, double y, double z, float partialTicks, Vec3d offset, String tex, int color);
 
     public void doRender(Spellcast spellcast, EntityPlayer player, RenderManager renderManager, double x, double y, double z, float partialTicks, Vec3d offset)
     {
+        int color = spellcast.getColor();
+
         String tex = "minecraft:white";
 
         if (spellcast.getEffect() instanceof FlameEffect)
         {
             tex = "minecraft:blocks/lava_still";
+            color = 0xFFFFFF;
         }
         else if (spellcast.getEffect() instanceof WaterEffect)
         {
             tex = "minecraft:blocks/water_still";
+            color = 0xFFFFFF;
         }
         else if (spellcast.getEffect() instanceof WindEffect)
         {
             tex = "elementsofpower:blocks/cone";
+            color = 0xFFFFFF;
         }
 
-        doRender(spellcast, player, renderManager, x, y, z, partialTicks, offset, tex);
+        doRender(spellcast, player, renderManager, x, y, z, partialTicks, offset, tex, color);
     }
 }

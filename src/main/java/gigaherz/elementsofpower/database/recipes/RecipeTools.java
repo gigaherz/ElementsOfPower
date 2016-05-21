@@ -51,11 +51,11 @@ public class RecipeTools
                 return;
             }
 
-            for(ItemStack s : recipe.getRecipeInputs())
+            for (ItemStack s : recipe.getRecipeInputs())
             {
                 if (s != null)
                 {
-                    if(s.getItem() == null)
+                    if (s.getItem() == null)
                     {
                         ElementsOfPower.logger.warn("Recipe with output '" + output + "' has invalid input stack. This recipe will be ignored.");
                         return;

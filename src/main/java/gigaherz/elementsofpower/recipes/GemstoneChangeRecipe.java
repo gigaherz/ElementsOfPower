@@ -97,6 +97,8 @@ public class GemstoneChangeRecipe implements IRecipe
     @Override
     public ItemStack[] getRemainingItems(InventoryCrafting inv)
     {
+        ItemStack[] arr = new ItemStack[inv.getSizeInventory()];
+
         ItemGemContainer gemContainerItem = null;
 
         ItemStack gemContainer = null;
@@ -110,7 +112,7 @@ public class GemstoneChangeRecipe implements IRecipe
             if (item instanceof ItemGemContainer)
             {
                 if (gemContainer != null)
-                    return null;
+                    return arr;
                 gemContainer = current;
                 gemContainerItem = (ItemGemContainer) item;
             }
@@ -118,11 +120,10 @@ public class GemstoneChangeRecipe implements IRecipe
 
         if (gemContainer != null)
         {
-            ItemStack[] arr = new ItemStack[inv.getSizeInventory()];
             arr[0] = gemContainerItem.getContainedGemstone(gemContainer);
             return arr;
         }
 
-        return new ItemStack[0];
+        return arr;
     }
 }

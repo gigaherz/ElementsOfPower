@@ -9,6 +9,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
+import javax.annotation.Nullable;
+
 public class EssentializerAmountsUpdate
         implements IMessage
 {
@@ -46,6 +48,7 @@ public class EssentializerAmountsUpdate
 
     public static class Handler implements IMessageHandler<EssentializerAmountsUpdate, IMessage>
     {
+        @Nullable
         @Override
         public IMessage onMessage(EssentializerAmountsUpdate message, MessageContext ctx)
         {

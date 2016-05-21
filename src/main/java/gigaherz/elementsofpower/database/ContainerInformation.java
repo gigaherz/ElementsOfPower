@@ -14,6 +14,7 @@ import net.minecraft.util.ReportedException;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -22,7 +23,8 @@ public class ContainerInformation
 {
     static Random rand = new Random();
 
-    public static ItemStack identifyQuality(ItemStack stack)
+    @Nullable
+    public static ItemStack identifyQuality(@Nullable ItemStack stack)
     {
         if (stack == null)
             return null;
@@ -85,7 +87,7 @@ public class ContainerInformation
             stack = stack.copy();
             stack.stackSize = 1;
         }
-        return getMagicLimits(stack) != null;
+        return !getMagicLimits(stack).isEmpty();
     }
 
     public static boolean itemContainsMagic(ItemStack stack)
@@ -95,48 +97,48 @@ public class ContainerInformation
 
         MagicAmounts amounts = getContainedMagic(stack);
 
-        return amounts != null && !amounts.isEmpty();
+        return !amounts.isEmpty();
     }
 
     public static MagicAmounts getMagicLimits(ItemStack stack)
     {
         if (stack.stackSize != 1)
-            return null;
+            return MagicAmounts.empty();
 
         Item item = stack.getItem();
         if (!(item instanceof ItemMagicContainer))
-            return null;
+            return MagicAmounts.empty();
 
         MagicAmounts m = ((ItemMagicContainer) item).getCapacity(stack);
         if (m == null)
-            return null;
+            return MagicAmounts.empty();
 
         return m.copy();
     }
 
-    public static MagicAmounts getContainedMagic(ItemStack output)
+    public static MagicAmounts getContainedMagic(@Nullable ItemStack output)
     {
         if (output == null)
         {
-            return null;
+            return MagicAmounts.empty();
         }
 
         if (output.stackSize != 1)
         {
-            return null;
+            return MagicAmounts.empty();
         }
 
         if (isInfiniteContainer(output))
             return new MagicAmounts().all(999);
 
         if (!(output.getItem() instanceof ItemMagicContainer))
-            return null;
+            return MagicAmounts.empty();
 
         NBTTagCompound nbt = output.getTagCompound();
 
         if (nbt == null)
         {
-            return null;
+            return MagicAmounts.empty();
         }
 
         MagicAmounts amounts = new MagicAmounts();
@@ -166,10 +168,11 @@ public class ContainerInformation
             return amounts;
         }
 
-        return null;
+        return MagicAmounts.empty();
     }
 
-    public static ItemStack setContainedMagic(ItemStack output, MagicAmounts amounts)
+    @Nullable
+    public static ItemStack setContainedMagic(@Nullable ItemStack output, MagicAmounts amounts)
     {
         if (output == null)
         {
@@ -184,17 +187,11 @@ public class ContainerInformation
         if (isInfiniteContainer(output))
             return output;
 
-        if (amounts != null)
-        {
-            if (amounts.isEmpty())
-            {
-                amounts = null;
-            }
-        }
-
-        if (amounts != null)
+        if (!amounts.isEmpty())
         {
             output = identifyQuality(output);
+            if (output == null)
+                return null;
 
             NBTTagCompound nbt = output.getTagCompound();
             if (nbt == null)
@@ -220,9 +217,6 @@ public class ContainerInformation
                 {
                     nbt.removeTag("" + i);
                 }
-
-                if (nbt.getKeySet().size() == 0)
-                    output.setTagCompound(null);
             }
 
             return output;
@@ -233,12 +227,6 @@ public class ContainerInformation
     {
         MagicAmounts limits = getMagicLimits(stack);
         MagicAmounts amounts = getContainedMagic(stack);
-
-        if (amounts == null)
-            return false;
-
-        if (limits == null)
-            return true;
 
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
@@ -257,12 +245,6 @@ public class ContainerInformation
         MagicAmounts limits = getMagicLimits(stack);
         MagicAmounts amounts = getContainedMagic(stack);
 
-        if (limits == null)
-            return true;
-
-        if (amounts == null)
-            return true;
-
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
             if (self.amounts[i] > 0 && amounts.amounts[i] < limits.amounts[i])
@@ -272,8 +254,10 @@ public class ContainerInformation
         return false;
     }
 
-    public static boolean isInfiniteContainer(ItemStack stack)
+    public static boolean isInfiniteContainer(@Nullable ItemStack stack)
     {
+        if(stack == null)
+            return false;
         Item item = stack.getItem();
         return item instanceof ItemMagicContainer
                 && ((ItemMagicContainer) item).isInfinite(stack);

@@ -27,18 +27,12 @@ public class ItemStaff extends ItemWand
     @Override
     protected MagicAmounts adjustInsertedMagic(MagicAmounts am)
     {
-        if (am == null)
-            return null;
-
         return am.copy().multiply(2.0f);
     }
 
     @Override
     protected MagicAmounts adjustRemovedMagic(MagicAmounts am)
     {
-        if (am == null)
-            return null;
-
         return am.copy().multiply(0.5f);
     }
 }
