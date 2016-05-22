@@ -71,11 +71,6 @@ public class ModelHandle
         return vertexFormat;
     }
 
-    public void setVertexFormat(VertexFormat vertexFormat)
-    {
-        this.vertexFormat = vertexFormat;
-    }
-
     public IBakedModel get()
     {
         return loadModel(this);
