@@ -1,4 +1,4 @@
-package gigaherz.elementsofpower.renders;
+package gigaherz.elementsofpower.client.renderers;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -7,7 +7,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.IReloadableResourceManager;
@@ -23,9 +22,66 @@ import org.lwjgl.opengl.GL11;
 import javax.annotation.Nonnull;
 import java.util.Map;
 
-public class RenderingStuffs
+public class ModelHandle
 {
     static Map<String, IBakedModel> loadedModels = Maps.newHashMap();
+
+    private String model;
+    private String key;
+    private final Map<String, String> textureReplacements = Maps.newHashMap();
+    private VertexFormat vertexFormat = Attributes.DEFAULT_BAKED_FORMAT;
+
+    private ModelHandle(String model)
+    {
+        this.model = model;
+        this.key = model;
+    }
+
+    public ModelHandle replace(String texChannel, String resloc)
+    {
+        key += "//" + texChannel + "/" + resloc;
+        textureReplacements.put(texChannel, resloc);
+        return this;
+    }
+
+    public ModelHandle vertexFormat(VertexFormat fmt)
+    {
+        key += "//VF:" + fmt.hashCode();
+        vertexFormat = fmt;
+        return this;
+    }
+
+    public String getModel()
+    {
+        return model;
+    }
+
+    public String getKey()
+    {
+        return key;
+    }
+
+    public Map<String, String> getTextureReplacements()
+    {
+        return textureReplacements;
+    }
+
+    public VertexFormat getVertexFormat()
+    {
+        return vertexFormat;
+    }
+
+    public void setVertexFormat(VertexFormat vertexFormat)
+    {
+        this.vertexFormat = vertexFormat;
+    }
+
+    public IBakedModel get()
+    {
+        return loadModel(this);
+    }
+
+    // ========================================================= STATIC METHODS
 
     public static void init()
     {
@@ -41,6 +97,12 @@ public class RenderingStuffs
                 }
             });
         }
+    }
+
+    @Nonnull
+    public static ModelHandle of(String model)
+    {
+        return new ModelHandle(model);
     }
 
     public static void renderModel(IBakedModel model)
@@ -72,7 +134,7 @@ public class RenderingStuffs
         tessellator.draw();
     }
 
-    public static IBakedModel loadModel(ModelHandle handle)
+    private static IBakedModel loadModel(ModelHandle handle)
     {
         IBakedModel model = loadedModels.get(handle.getKey());
         if (model != null)
@@ -94,65 +156,6 @@ public class RenderingStuffs
         catch (Exception e)
         {
             throw new ReportedException(new CrashReport("Error loading custom model " + handle.getModel(), e));
-        }
-    }
-
-    @Nonnull
-    public static ModelHandle handle(String model)
-    {
-        return new ModelHandle(model);
-    }
-
-    public static class ModelHandle
-    {
-        private String model;
-        private String key;
-        private final Map<String, String> textureReplacements = Maps.newHashMap();
-        private VertexFormat vertexFormat = Attributes.DEFAULT_BAKED_FORMAT;
-
-        ModelHandle(String model)
-        {
-            this.model = model;
-            this.key = model;
-        }
-
-        public ModelHandle replace(String texChannel, String resloc)
-        {
-            key += "//" + texChannel + "/" + resloc;
-            textureReplacements.put(texChannel, resloc);
-            return this;
-        }
-
-        public ModelHandle vertexFormat(VertexFormat fmt)
-        {
-            key += "//VF:" + fmt.hashCode();
-            vertexFormat = fmt;
-            return this;
-        }
-
-        public String getModel()
-        {
-            return model;
-        }
-
-        public String getKey()
-        {
-            return key;
-        }
-
-        public Map<String, String> getTextureReplacements()
-        {
-            return textureReplacements;
-        }
-
-        public VertexFormat getVertexFormat()
-        {
-            return vertexFormat;
-        }
-
-        public void setVertexFormat(VertexFormat vertexFormat)
-        {
-            this.vertexFormat = vertexFormat;
         }
     }
 }

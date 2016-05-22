@@ -1,6 +1,6 @@
-package gigaherz.elementsofpower.essentializer;
+package gigaherz.elementsofpower.client.renderers;
 
-import gigaherz.elementsofpower.renders.RenderingStuffs;
+import gigaherz.elementsofpower.essentializer.TileEssentializer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -12,12 +12,12 @@ import net.minecraft.util.math.MathHelper;
 
 public class RenderEssentializer extends TileEntitySpecialRenderer<TileEssentializer>
 {
-    RenderingStuffs.ModelHandle handle = RenderingStuffs.handle("elementsofpower:block/essentializer_2.obj");
+    ModelHandle handle = ModelHandle.of("elementsofpower:block/essentializer_2.obj");
 
     @Override
     public void renderTileEntityAt(TileEssentializer te, double x, double y, double z, float partialTicks, int destroyStage)
     {
-        IBakedModel model = RenderingStuffs.loadModel(handle);
+        IBakedModel model = handle.get();
 
         bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
@@ -47,7 +47,7 @@ public class RenderEssentializer extends TileEntitySpecialRenderer<TileEssential
 
             GlStateManager.rotate(angle1, 0, 1, 0);
 
-            RenderingStuffs.renderModel(model, 0xFFFFFFFF);
+            ModelHandle.renderModel(model, 0xFFFFFFFF);
 
             GlStateManager.popMatrix();
         }

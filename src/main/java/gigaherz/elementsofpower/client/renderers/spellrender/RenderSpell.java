@@ -1,7 +1,7 @@
-package gigaherz.elementsofpower.renders.spellrender;
+package gigaherz.elementsofpower.client.renderers.spellrender;
 
 import com.google.common.collect.Maps;
-import gigaherz.elementsofpower.renders.RenderingStuffs;
+import gigaherz.elementsofpower.client.renderers.ModelHandle;
 import gigaherz.elementsofpower.spells.Spellcast;
 import gigaherz.elementsofpower.spells.effects.FlameEffect;
 import gigaherz.elementsofpower.spells.effects.WaterEffect;
@@ -13,46 +13,47 @@ import net.minecraft.util.math.Vec3d;
 
 import java.util.Map;
 
+
 public abstract class RenderSpell
 {
-    Map<String, RenderingStuffs.ModelHandle> cones = Maps.newHashMap();
-    Map<String, RenderingStuffs.ModelHandle> spheres = Maps.newHashMap();
-    Map<String, RenderingStuffs.ModelHandle> cylinders = Maps.newHashMap();
+    Map<String, ModelHandle> cones = Maps.newHashMap();
+    Map<String, ModelHandle> spheres = Maps.newHashMap();
+    Map<String, ModelHandle> cylinders = Maps.newHashMap();
 
     protected IBakedModel getCone(String tex)
     {
-        RenderingStuffs.ModelHandle h = cones.get(tex);
+        ModelHandle h = cones.get(tex);
         if (h == null)
         {
-            h = RenderingStuffs.handle("elementsofpower:entity/cone.obj").replace("#Default", tex);
+            h = ModelHandle.of("elementsofpower:entity/cone.obj").replace("#Default", tex);
             cones.put(tex, h);
         }
 
-        return RenderingStuffs.loadModel(h);
+        return h.get();
     }
 
     protected IBakedModel getSphere(String tex)
     {
-        RenderingStuffs.ModelHandle h = spheres.get(tex);
+        ModelHandle h = spheres.get(tex);
         if (h == null)
         {
-            h = RenderingStuffs.handle("elementsofpower:entity/sphere.obj").replace("#Default", tex);
+            h = ModelHandle.of("elementsofpower:entity/sphere.obj").replace("#Default", tex);
             spheres.put(tex, h);
         }
 
-        return RenderingStuffs.loadModel(h);
+        return h.get();
     }
 
     protected IBakedModel getCylinder(String tex)
     {
-        RenderingStuffs.ModelHandle h = cylinders.get(tex);
+        ModelHandle h = cylinders.get(tex);
         if (h == null)
         {
-            h = RenderingStuffs.handle("elementsofpower:entity/cylinder.obj").replace("#Default", tex);
+            h = ModelHandle.of("elementsofpower:entity/cylinder.obj").replace("#Default", tex);
             cylinders.put(tex, h);
         }
 
-        return RenderingStuffs.loadModel(h);
+        return h.get();
     }
 
     public abstract void doRender(Spellcast spellcast, EntityPlayer player, RenderManager renderManager, double x, double y, double z, float partialTicks, Vec3d offset, String tex, int color);

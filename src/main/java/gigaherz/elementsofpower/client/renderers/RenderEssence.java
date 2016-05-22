@@ -1,4 +1,4 @@
-package gigaherz.elementsofpower.renders;
+package gigaherz.elementsofpower.client.renderers;
 
 import gigaherz.elementsofpower.entities.EntityEssence;
 import net.minecraft.client.renderer.GlStateManager;
@@ -16,12 +16,12 @@ public class RenderEssence extends Render<EntityEssence>
         super(renderManager);
     }
 
-    RenderingStuffs.ModelHandle handle = RenderingStuffs.handle("elementsofpower:entity/sphere.obj");
+    ModelHandle handle = ModelHandle.of("elementsofpower:entity/sphere.obj");
 
     @Override
     public void doRender(EntityEssence entity, double x, double y, double z, float p_76986_8_, float partialTicks)
     {
-        IBakedModel model = RenderingStuffs.loadModel(handle);
+        IBakedModel model = handle.get();
 
         float scale = entity.getScale();
 
@@ -52,7 +52,7 @@ public class RenderEssence extends Render<EntityEssence>
             GlStateManager.pushMatrix();
             GlStateManager.scale(subScale, subScale, subScale);
 
-            RenderingStuffs.renderModel(model, color);
+            ModelHandle.renderModel(model, color);
 
             GlStateManager.popMatrix();
         }

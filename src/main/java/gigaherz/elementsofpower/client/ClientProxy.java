@@ -8,7 +8,6 @@ import gigaherz.elementsofpower.entities.EntityBall;
 import gigaherz.elementsofpower.entities.EntityEssence;
 import gigaherz.elementsofpower.entitydata.SpellcastEntityData;
 import gigaherz.elementsofpower.essentializer.ContainerEssentializer;
-import gigaherz.elementsofpower.essentializer.RenderEssentializer;
 import gigaherz.elementsofpower.essentializer.TileEssentializer;
 import gigaherz.elementsofpower.gemstones.Gemstone;
 import gigaherz.elementsofpower.gemstones.GemstoneBlockType;
@@ -17,7 +16,7 @@ import gigaherz.elementsofpower.items.ItemGemContainer;
 import gigaherz.elementsofpower.network.EssentializerAmountsUpdate;
 import gigaherz.elementsofpower.network.EssentializerTileUpdate;
 import gigaherz.elementsofpower.network.SpellcastSync;
-import gigaherz.elementsofpower.renders.*;
+import gigaherz.elementsofpower.client.renderers.*;
 import gigaherz.elementsofpower.spelldust.BlockSpelldust;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -58,7 +57,7 @@ public class ClientProxy implements ISideProxy
     {
         OBJLoader.INSTANCE.addDomain(ElementsOfPower.MODID);
 
-        RenderingStuffs.init();
+        ModelHandle.init();
 
         registerClientEvents();
         registerModels();
@@ -111,7 +110,7 @@ public class ClientProxy implements ISideProxy
     @SubscribeEvent
     public void onTextureStitchEvent(TextureStitchEvent.Pre event)
     {
-        event.getMap().registerSprite(new ResourceLocation(ElementsOfPower.MODID + ":blocks/cone"));
+        event.getMap().registerSprite(ElementsOfPower.location("blocks/cone"));
     }
 
     @Override

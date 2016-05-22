@@ -1,4 +1,4 @@
-package gigaherz.elementsofpower.renders;
+package gigaherz.elementsofpower.client.renderers;
 
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.client.TickEventWandControl;

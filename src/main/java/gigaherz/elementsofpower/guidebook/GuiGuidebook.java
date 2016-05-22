@@ -4,8 +4,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.primitives.Ints;
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.renders.RenderingStuffs;
-import gigaherz.elementsofpower.renders.StackRenderingHelper;
+import gigaherz.elementsofpower.client.renderers.ModelHandle;
+import gigaherz.elementsofpower.client.renderers.StackRenderingHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -72,10 +72,10 @@ public class GuiGuidebook extends GuiScreen
 
     private boolean closing = false;
 
-    RenderingStuffs.ModelHandle book00 = RenderingStuffs.handle("elementsofpower:gui/book.obj").vertexFormat(DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
-    RenderingStuffs.ModelHandle book30 = RenderingStuffs.handle("elementsofpower:gui/book30.obj").vertexFormat(DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
-    RenderingStuffs.ModelHandle book60 = RenderingStuffs.handle("elementsofpower:gui/book60.obj").vertexFormat(DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
-    RenderingStuffs.ModelHandle book90 = RenderingStuffs.handle("elementsofpower:gui/book90.obj").vertexFormat(DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
+    ModelHandle book00 = ModelHandle.of("elementsofpower:gui/book.obj").vertexFormat(DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
+    ModelHandle book30 = ModelHandle.of("elementsofpower:gui/book30.obj").vertexFormat(DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
+    ModelHandle book60 = ModelHandle.of("elementsofpower:gui/book60.obj").vertexFormat(DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
+    ModelHandle book90 = ModelHandle.of("elementsofpower:gui/book90.obj").vertexFormat(DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
 
     private ItemModelMesher mesher = Minecraft.getMinecraft().getRenderItem().getItemModelMesher();
     private TextureManager renderEngine = Minecraft.getMinecraft().renderEngine;
@@ -386,32 +386,32 @@ public class GuiGuidebook extends GuiScreen
         if (angleX <= 0)
         {
             angleX = 0;
-            modelBookA = RenderingStuffs.loadModel(book00);
+            modelBookA = book00.get();
             modelBookB = null;
             blend = 0;
         }
         else if (angleX < 30)
         {
-            modelBookA = RenderingStuffs.loadModel(book00);
-            modelBookB = RenderingStuffs.loadModel(book30);
+            modelBookA = book00.get();
+            modelBookB = book30.get();
             blend = (angleX) / 30.0f;
         }
         else if (angleX < 60)
         {
-            modelBookA = RenderingStuffs.loadModel(book30);
-            modelBookB = RenderingStuffs.loadModel(book60);
+            modelBookA = book30.get();
+            modelBookB = book60.get();
             blend = (angleX - 30) / 30.0f;
         }
         else if (angleX < 90)
         {
-            modelBookA = RenderingStuffs.loadModel(book60);
-            modelBookB = RenderingStuffs.loadModel(book90);
+            modelBookA = book60.get();
+            modelBookB = book90.get();
             blend = (angleX - 60) / 30.0f;
         }
         else
         {
             angleX = 90;
-            modelBookA = RenderingStuffs.loadModel(book90);
+            modelBookA = book90.get();
             modelBookB = null;
             blend = 0;
         }

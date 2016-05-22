@@ -1,4 +1,4 @@
-package gigaherz.elementsofpower.renders;
+package gigaherz.elementsofpower.client.renderers;
 
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.block.model.BakedQuad;

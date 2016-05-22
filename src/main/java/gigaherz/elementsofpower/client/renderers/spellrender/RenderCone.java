@@ -1,6 +1,6 @@
-package gigaherz.elementsofpower.renders.spellrender;
+package gigaherz.elementsofpower.client.renderers.spellrender;
 
-import gigaherz.elementsofpower.renders.RenderingStuffs;
+import gigaherz.elementsofpower.client.renderers.ModelHandle;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -69,7 +69,7 @@ public class RenderCone extends RenderSpell
             GlStateManager.rotate(angle, 0, 0, 1);
             GlStateManager.scale(scale_xy, scale_xy, scale_z);
 
-            RenderingStuffs.renderModel(modelCone, color);
+            ModelHandle.renderModel(modelCone, color);
 
             GlStateManager.popMatrix();
         }

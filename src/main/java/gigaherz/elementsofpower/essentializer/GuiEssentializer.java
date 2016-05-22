@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.gemstones.Element;
-import gigaherz.elementsofpower.renders.StackRenderingHelper;
+import gigaherz.elementsofpower.client.renderers.StackRenderingHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.inventory.GuiContainer;

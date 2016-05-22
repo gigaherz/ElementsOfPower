@@ -1,6 +1,6 @@
-package gigaherz.elementsofpower.renders.spellrender;
+package gigaherz.elementsofpower.client.renderers.spellrender;
 
-import gigaherz.elementsofpower.renders.RenderingStuffs;
+import gigaherz.elementsofpower.client.renderers.ModelHandle;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -76,7 +76,7 @@ public class RenderBeam extends RenderSpell
                 GlStateManager.rotate(angle, 0, 0, 1);
                 GlStateManager.scale(scale_start, scale_start, scale_start);
 
-                RenderingStuffs.renderModel(modelSphere, color);
+                ModelHandle.renderModel(modelSphere, color);
 
                 GlStateManager.popMatrix();
             }
@@ -92,7 +92,7 @@ public class RenderBeam extends RenderSpell
                 GlStateManager.rotate(angle, 0, 0, 1);
                 GlStateManager.scale(scale_beam, scale_beam, distance);
 
-                RenderingStuffs.renderModel(modelCyl, color);
+                ModelHandle.renderModel(modelCyl, color);
 
                 GlStateManager.popMatrix();
             }
@@ -109,7 +109,7 @@ public class RenderBeam extends RenderSpell
                 GlStateManager.rotate(angle, 0, 0, 1);
                 GlStateManager.scale(scale_end, scale_end, scale_end);
 
-                RenderingStuffs.renderModel(modelSphere, color);
+                ModelHandle.renderModel(modelSphere, color);
 
                 GlStateManager.popMatrix();
             }

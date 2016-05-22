@@ -1,7 +1,7 @@
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-package gigaherz.elementsofpower.renders.spellrender;
+package gigaherz.elementsofpower.client.renderers;
 
 import mcp.MethodsReturnNonnullByDefault;
 

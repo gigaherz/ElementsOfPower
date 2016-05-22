@@ -1,6 +1,6 @@
-package gigaherz.elementsofpower.renders.spellrender;
+package gigaherz.elementsofpower.client.renderers.spellrender;
 
-import gigaherz.elementsofpower.renders.RenderingStuffs;
+import gigaherz.elementsofpower.client.renderers.ModelHandle;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -49,9 +49,9 @@ public class RenderSphere extends RenderSpell
         GlStateManager.scale(scale, scale, scale);
 
         GlStateManager.cullFace(GlStateManager.CullFace.FRONT);
-        RenderingStuffs.renderModel(modelSphere, color);
+        ModelHandle.renderModel(modelSphere, color);
         GlStateManager.cullFace(GlStateManager.CullFace.BACK);
-        RenderingStuffs.renderModel(modelSphere, color);
+        ModelHandle.renderModel(modelSphere, color);
 
         GlStateManager.popMatrix();
 
