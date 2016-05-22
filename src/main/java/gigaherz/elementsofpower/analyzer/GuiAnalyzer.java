@@ -18,7 +18,7 @@ public class GuiAnalyzer extends GuiContainer
 {
     EntityPlayer player;
 
-    static final ResourceLocation guiTextureLocation = new ResourceLocation(ElementsOfPower.MODID, "textures/gui/analyzer.png");
+    static final ResourceLocation guiTextureLocation = ElementsOfPower.location("textures/gui/analyzer.png");
     static final String guiTitle = "text." + ElementsOfPower.MODID + ".analyzer";
 
     public GuiAnalyzer(EntityPlayer playerInventory)

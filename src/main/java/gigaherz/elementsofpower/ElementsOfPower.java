@@ -35,6 +35,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.common.Mod;
@@ -487,5 +488,10 @@ public class ElementsOfPower
         ItemStack copy = original.copy();
         copy.stackSize = quantity;
         return copy;
+    }
+
+    public static ResourceLocation location(String location)
+    {
+        return new ResourceLocation(MODID, location);
     }
 }

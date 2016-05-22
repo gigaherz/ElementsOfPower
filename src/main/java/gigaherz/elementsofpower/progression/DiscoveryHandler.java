@@ -8,6 +8,7 @@ import gigaherz.elementsofpower.items.ItemStaff;
 import gigaherz.elementsofpower.items.ItemWand;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.block.Block;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -46,7 +47,7 @@ public class DiscoveryHandler
         gemTypes.add(new ItemStack(Items.EMERALD));
         gemTypes.add(new ItemStack(Items.DIAMOND));
         ElementsOfPower.gemstone.getUnexamined(gemTypes);
-        ElementsOfPower.gemstone.getSubItems(ElementsOfPower.gemstone, ElementsOfPower.gemstone.getCreativeTab(), gemTypes);
+        ElementsOfPower.gemstone.getSubItems(ElementsOfPower.gemstone, CreativeTabs.SEARCH, gemTypes);
 
         // Initialize achievements
         discoverGems = newAchievement(".discoverGems", -3, 0, Items.DIAMOND, null);

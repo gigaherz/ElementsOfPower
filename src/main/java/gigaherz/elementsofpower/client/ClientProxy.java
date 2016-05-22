@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower.client;
 
+import com.google.common.collect.ImmutableMap;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.ISideProxy;
 import gigaherz.elementsofpower.Used;
@@ -37,8 +38,11 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.animation.ITimeValue;
+import net.minecraftforge.common.model.animation.IAnimationStateMachine;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -128,29 +132,34 @@ public class ClientProxy implements ISideProxy
     @Override
     public void handleRemainingAmountsUpdate(EssentializerAmountsUpdate message)
     {
-        Minecraft.getMinecraft().addScheduledTask(() -> handleRemainingAmountsUpdate2(message));
+        Minecraft.getMinecraft().addScheduledTask(() -> {
+            EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+
+            if (message.windowId != -1)
+            {
+                if (message.windowId == player.openContainer.windowId)
+                {
+                    if ((player.openContainer instanceof ContainerEssentializer))
+                    {
+                        ((ContainerEssentializer) player.openContainer).updateAmounts(message.contained, message.remaining);
+                    }
+                }
+            }
+        });
     }
-
-    private void handleRemainingAmountsUpdate2(EssentializerAmountsUpdate message)
-    {
-        EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-
-        if (message.windowId == -1)
-            return;
-
-        if (message.windowId == player.openContainer.windowId)
-        {
-            if (!(player.openContainer instanceof ContainerEssentializer))
-                return;
-            ((ContainerEssentializer) player.openContainer).updateAmounts(message.contained, message.remaining);
-        }
-    }
-
 
     @Override
     public void handleEssentializerTileUpdate(EssentializerTileUpdate message)
     {
-        Minecraft.getMinecraft().addScheduledTask(() -> handleEssentializerTileUpdate2(message));
+        Minecraft.getMinecraft().addScheduledTask(() -> {
+            TileEntity te = Minecraft.getMinecraft().theWorld.getTileEntity(message.pos);
+            if (te instanceof TileEssentializer)
+            {
+                TileEssentializer essentializer = (TileEssentializer) te;
+                essentializer.setInventorySlotContents(0, message.activeItem);
+                essentializer.remainingToConvert = message.remaining;
+            }
+        });
     }
 
     @Override
@@ -166,15 +175,10 @@ public class ClientProxy implements ISideProxy
         playerIn.setActiveHand(hand);
     }
 
-    public void handleEssentializerTileUpdate2(EssentializerTileUpdate message)
+    @Override
+    public IAnimationStateMachine load(ResourceLocation location, ImmutableMap<String, ITimeValue> parameters)
     {
-        TileEntity te = Minecraft.getMinecraft().theWorld.getTileEntity(message.pos);
-        if (te instanceof TileEssentializer)
-        {
-            TileEssentializer essentializer = (TileEssentializer) te;
-            essentializer.setInventorySlotContents(0, message.activeItem);
-            essentializer.remainingToConvert = message.remaining;
-        }
+        return ModelLoaderRegistry.loadASM(location, parameters);
     }
 
     public void registerParticle()

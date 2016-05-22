@@ -16,10 +16,7 @@ import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.Attributes;
-import net.minecraftforge.client.model.IModel;
-import net.minecraftforge.client.model.IRetexturableModel;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.client.model.*;
 import net.minecraftforge.client.model.pipeline.LightUtil;
 import org.lwjgl.opengl.GL11;
 
@@ -83,7 +80,6 @@ public class RenderingStuffs
 
         try
         {
-            TextureMap textures = Minecraft.getMinecraft().getTextureMapBlocks();
             IModel mod = ModelLoaderRegistry.getModel(new ResourceLocation(handle.getModel()));
             if (mod instanceof IRetexturableModel && handle.getTextureReplacements().size() > 0)
             {
@@ -91,7 +87,7 @@ public class RenderingStuffs
                 mod = rtm.retexture(ImmutableMap.copyOf(handle.getTextureReplacements()));
             }
             model = mod.bake(mod.getDefaultState(), handle.getVertexFormat(),
-                    (location) -> textures.getAtlasSprite(location.toString()));
+                    ModelLoader.defaultTextureGetter());
             loadedModels.put(handle.getKey(), model);
             return model;
         }

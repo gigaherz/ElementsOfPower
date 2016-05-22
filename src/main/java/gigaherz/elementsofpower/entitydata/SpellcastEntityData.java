@@ -25,7 +25,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 public class SpellcastEntityData
 {
-    public static final ResourceLocation PROP_KEY = new ResourceLocation(ElementsOfPower.MODID, "SpellcastData");
+    public static final ResourceLocation PROP_KEY = ElementsOfPower.location("SpellcastData");
 
     EntityPlayer player;
     World world;

@@ -64,7 +64,7 @@ public class GuiEssentializer extends GuiContainer
         this.player = playerInventory;
         this.tile = tileEntity;
         ySize = 176;
-        guiTextureLocation = new ResourceLocation(ElementsOfPower.MODID, "textures/gui/essentializer.png");
+        guiTextureLocation = ElementsOfPower.location("textures/gui/essentializer.png");
     }
 
     @Override
