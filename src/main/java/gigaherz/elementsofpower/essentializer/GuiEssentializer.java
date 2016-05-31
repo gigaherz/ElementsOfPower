@@ -112,9 +112,7 @@ public class GuiEssentializer extends GuiContainer
 
         GlStateManager.depthMask(false);
 
-        FontRenderer font = Minecraft.getMinecraft().fontRendererObj;
-        ItemModelMesher mesher = Minecraft.getMinecraft().getRenderItem().getItemModelMesher();
-        TextureManager renderEngine = Minecraft.getMinecraft().renderEngine;
+        ItemModelMesher mesher = mc.getRenderItem().getItemModelMesher();
 
         am = tile.containedMagic;
         if (am == null)
@@ -129,7 +127,7 @@ public class GuiEssentializer extends GuiContainer
 
             ItemStack stack = ElementsOfPower.magicOrb.getStack((int) am.amounts[i], Element.values[i]);
 
-            StackRenderingHelper.renderItemStack(mesher, renderEngine, x0, y0, stack, alpha, true);
+            StackRenderingHelper.renderItemStack(mesher, mc.renderEngine, x0, y0, stack, alpha, true);
         }
 
         GlStateManager.pushMatrix();
@@ -149,10 +147,10 @@ public class GuiEssentializer extends GuiContainer
 
             String formatted = ElementsOfPower.prettyNumberFormatter.format(count) + suffix;
 
-            float x1 = (x0 + 16) * 1.5f - font.getStringWidth(formatted);
+            float x1 = (x0 + 16) * 1.5f - mc.fontRendererObj.getStringWidth(formatted);
             float y1 = (y0 + 10.5f) * 1.5f;
 
-            font.drawString(formatted, x1, y1, 0xFFFFFFFF, true);
+            mc.fontRendererObj.drawString(formatted, x1, y1, 0xFFFFFFFF, true);
         }
         GlStateManager.popMatrix();
 

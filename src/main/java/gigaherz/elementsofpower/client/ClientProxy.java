@@ -66,6 +66,7 @@ public class ClientProxy implements ISideProxy
 
     public void init()
     {
+
         registerParticle();
 
         Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(

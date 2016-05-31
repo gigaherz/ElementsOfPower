@@ -27,7 +27,6 @@ public class KeyBindingInterceptor extends KeyBinding
             if (field == null)
             {
                 field = ReflectionHelper.findField(target, names);
-                field.setAccessible(true);
             }
         }
 
