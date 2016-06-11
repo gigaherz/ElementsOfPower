@@ -751,7 +751,7 @@ public class GuiGuidebook extends GuiScreen
 
                 Item item = Item.REGISTRY.getObject(new ResourceLocation(itemName));
 
-                if(item != null)
+                if (item != null)
                 {
                     s.stack = new ItemStack(item, stackSize, meta);
                     s.stack.setTagCompound(tag);
@@ -1053,7 +1053,7 @@ public class GuiGuidebook extends GuiScreen
         @Override
         public int apply(int left, int top)
         {
-            StackRenderingHelper.renderItemStack(mesher, renderEngine, left + x, top + y, stack, 0xFFFFFFFF, true);
+            StackRenderingHelper.renderItemStack(mesher, renderEngine, left + x, top + y, stack, 0xFFFFFFFF);
             return 0;
         }
     }

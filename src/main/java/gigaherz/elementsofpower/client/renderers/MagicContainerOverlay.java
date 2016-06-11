@@ -33,7 +33,7 @@ public class MagicContainerOverlay extends Gui
         EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
         ItemStack heldItem = player.inventory.getCurrentItem();
 
-        if(heldItem == null)
+        if (heldItem == null)
             return;
 
         // Contained essences
@@ -65,7 +65,7 @@ public class MagicContainerOverlay extends Gui
 
             ItemStack stack = ElementsOfPower.magicOrb.getStack((int) amounts.amounts[i], Element.values[i]);
 
-            StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yPos, stack, alpha, false);
+            StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yPos, stack, alpha);
 
             String formatted = ContainerInformation.isInfiniteContainer(heldItem) ? "\u221E" : ElementsOfPower.prettyNumberFormatter.format(amounts.amounts[i]);
             this.drawCenteredString(font, formatted, xPos + 8, yPos + 11, 0xFFC0C0C0);
@@ -91,7 +91,7 @@ public class MagicContainerOverlay extends Gui
 
                     ItemStack stack = ElementsOfPower.magicOrb.getStack(1, Element.values[i]);
 
-                    StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yPos, stack, 0xFFFFFFFF, false);
+                    StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yPos, stack, 0xFFFFFFFF);
 
                     xPos += 6;
                 }
@@ -109,7 +109,7 @@ public class MagicContainerOverlay extends Gui
 
                 ItemStack stack = ElementsOfPower.magicOrb.getStack(1, Element.values[i]);
 
-                StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yPos, stack, 0xFFFFFFFF, false);
+                StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yPos, stack, 0xFFFFFFFF);
 
                 xPos += 6;
             }

@@ -2,15 +2,12 @@ package gigaherz.elementsofpower.essentializer;
 
 import com.google.common.collect.Lists;
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.client.renderers.StackRenderingHelper;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.gemstones.Element;
-import gigaherz.elementsofpower.client.renderers.StackRenderingHelper;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.ItemModelMesher;
-import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
@@ -21,11 +18,12 @@ import java.util.List;
 
 public class GuiEssentializer extends GuiContainer
 {
+    public static final ResourceLocation GUI_TEXTURE_LOCATION = ElementsOfPower.location("textures/gui/essentializer.png");
+
     protected InventoryPlayer player;
     protected TileEssentializer tile;
-    protected ResourceLocation guiTextureLocation;
 
-    final static int[] magicOrbs = {
+    public final static int[] MAGIC_ORBS = {
             50, 32,
             68, 16,
             92, 16,
@@ -36,7 +34,7 @@ public class GuiEssentializer extends GuiContainer
             110, 56,
     };
 
-    final static int[] transferRects = {
+    final static int[] TRANSFER_RECTS = {
             66, 39, 182, 8, 14, 10,
             75, 32, 177, 1, 10, 12,
             91, 32, 201, 1, 10, 12,
@@ -47,7 +45,7 @@ public class GuiEssentializer extends GuiContainer
             96, 55, 176, 8, 14, 10,
     };
 
-    final static float[] colors = {
+    final static float[] COLORS = {
             255 / 255.0f, 62 / 255.0f, 0 / 255.0f, // FF3E00
             0 / 255.0f, 93 / 255.0f, 255 / 255.0f, // 005DFF
             255 / 255.0f, 237 / 255.0f, 150 / 255.0f, // FFED96
@@ -64,13 +62,12 @@ public class GuiEssentializer extends GuiContainer
         this.player = playerInventory;
         this.tile = tileEntity;
         ySize = 176;
-        guiTextureLocation = ElementsOfPower.location("textures/gui/essentializer.png");
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float f, int i, int j)
     {
-        mc.renderEngine.bindTexture(guiTextureLocation);
+        mc.renderEngine.bindTexture(GUI_TEXTURE_LOCATION);
         GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
         int x = (width - xSize) / 2;
         int y = (height - ySize) / 2;
@@ -88,23 +85,23 @@ public class GuiEssentializer extends GuiContainer
         MagicAmounts am = tile.remainingToConvert;
         if (am != null)
         {
-            mc.renderEngine.bindTexture(guiTextureLocation);
+            mc.renderEngine.bindTexture(GUI_TEXTURE_LOCATION);
             for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
             {
                 float alpha = (float) (0.9 + 0.1 * Math.sin(Math.PI * 8 * am.amounts[i] / opaqueLevel))
                         * Math.min(1, am.amounts[i] / opaqueLevel);
 
-                float r = colors[i * 3];
-                float g = colors[i * 3 + 1];
-                float b = colors[i * 3 + 2];
+                float r = COLORS[i * 3];
+                float g = COLORS[i * 3 + 1];
+                float b = COLORS[i * 3 + 2];
                 GlStateManager.color(r, g, b, alpha);
 
-                int x0 = transferRects[i * 6];
-                int y0 = transferRects[i * 6 + 1];
-                int x1 = transferRects[i * 6 + 2];
-                int y1 = transferRects[i * 6 + 3];
-                int sx = transferRects[i * 6 + 4];
-                int sy = transferRects[i * 6 + 5];
+                int x0 = TRANSFER_RECTS[i * 6];
+                int y0 = TRANSFER_RECTS[i * 6 + 1];
+                int x1 = TRANSFER_RECTS[i * 6 + 2];
+                int y1 = TRANSFER_RECTS[i * 6 + 3];
+                int sx = TRANSFER_RECTS[i * 6 + 4];
+                int sy = TRANSFER_RECTS[i * 6 + 5];
 
                 this.drawTexturedModalRect(x0, y0, x1, y1, sx, sy);
             }
@@ -122,20 +119,20 @@ public class GuiEssentializer extends GuiContainer
         {
             int alpha = am.amounts[i] > 0 ? 0xFFFFFFFF : 0x3FFFFFFF;
 
-            int x0 = magicOrbs[i * 2];
-            int y0 = magicOrbs[i * 2 + 1];
+            int x0 = MAGIC_ORBS[i * 2];
+            int y0 = MAGIC_ORBS[i * 2 + 1];
 
             ItemStack stack = ElementsOfPower.magicOrb.getStack((int) am.amounts[i], Element.values[i]);
 
-            StackRenderingHelper.renderItemStack(mesher, mc.renderEngine, x0, y0, stack, alpha, true);
+            StackRenderingHelper.renderItemStack(mesher, mc.renderEngine, x0, y0, stack, alpha);
         }
 
         GlStateManager.pushMatrix();
         GlStateManager.scale(1 / 1.5, 1 / 1.5, 1);
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            int x0 = magicOrbs[i * 2];
-            int y0 = magicOrbs[i * 2 + 1];
+            int x0 = MAGIC_ORBS[i * 2];
+            int y0 = MAGIC_ORBS[i * 2 + 1];
 
             float count = (int) am.amounts[i];
             String suffix = "";
@@ -170,8 +167,8 @@ public class GuiEssentializer extends GuiContainer
 
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            int x = magicOrbs[i * 2];
-            int y = magicOrbs[i * 2 + 1];
+            int x = MAGIC_ORBS[i * 2];
+            int y = MAGIC_ORBS[i * 2 + 1];
             int rx = mx - x0 - x;
             int ry = my - y0 - y;
 
