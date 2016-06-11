@@ -1,21 +1,8 @@
 package gigaherz.elementsofpower.items;
 
-import com.google.common.collect.ImmutableMap;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.animation.ITimeValue;
-import net.minecraftforge.common.animation.TimeValues;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.model.animation.CapabilityAnimation;
-import net.minecraftforge.common.model.animation.IAnimationStateMachine;
-
-import javax.annotation.Nullable;
 
 public class ItemStaff extends ItemWand
 {

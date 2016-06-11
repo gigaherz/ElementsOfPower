@@ -7,7 +7,6 @@ import gigaherz.elementsofpower.integration.essentializer.EssentializerRecipeWra
 import mezz.jei.api.IJeiRuntime;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.IModRegistry;
-import mezz.jei.api.INbtIgnoreList;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -26,12 +25,6 @@ public class JEIPlugin implements IModPlugin
                 new ContainerChargeRecipeHandler(),
                 new GemstoneChangeRecipeHandler(),
                 new EssentializerRecipeHandler());
-
-        INbtIgnoreList nbtIgnoreList = registry.getJeiHelpers().getNbtIgnoreList();
-        nbtIgnoreList.ignoreNbtTagNames(ElementsOfPower.magicWand, "gemstone", "quality");
-        nbtIgnoreList.ignoreNbtTagNames(ElementsOfPower.magicStaff, "gemstone", "quality");
-        nbtIgnoreList.ignoreNbtTagNames(ElementsOfPower.magicRing, "gemstone", "quality");
-        nbtIgnoreList.ignoreNbtTagNames(ElementsOfPower.gemstone, "quality");
 
         ItemStack orb = new ItemStack(ElementsOfPower.magicOrb, 1, OreDictionary.WILDCARD_VALUE);
         ItemStack gemstone = new ItemStack(ElementsOfPower.gemstone, 1, OreDictionary.WILDCARD_VALUE);

@@ -70,7 +70,7 @@ public class EntityEssence extends EntityAmbientCreature
             getDataManager().register(ELEMENTS[i], 0.0f);
         }
 
-        setEntityBoundingBox(new AxisAlignedBB(0,0,0,0,0,0));
+        setEntityBoundingBox(new AxisAlignedBB(0, 0, 0, 0, 0, 0));
     }
 
     public EntityEssence(World worldIn, MagicAmounts am)
@@ -87,7 +87,7 @@ public class EntityEssence extends EntityAmbientCreature
 
         scale = 0.025f * numEssences;
 
-        setEntityBoundingBox(new AxisAlignedBB(0,0,0,0,0,0));
+        setEntityBoundingBox(new AxisAlignedBB(0, 0, 0, 0, 0, 0));
     }
 
     public float getScale()

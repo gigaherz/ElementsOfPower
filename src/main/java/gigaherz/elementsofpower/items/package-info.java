@@ -1,4 +1,3 @@
-
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 package gigaherz.elementsofpower.items;

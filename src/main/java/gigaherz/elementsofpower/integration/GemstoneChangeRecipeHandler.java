@@ -24,6 +24,13 @@ public class GemstoneChangeRecipeHandler implements IRecipeHandler<GemstoneChang
 
     @Nonnull
     @Override
+    public String getRecipeCategoryUid(@Nonnull GemstoneChangeRecipeWrapper recipe)
+    {
+        return getRecipeCategoryUid();
+    }
+
+    @Nonnull
+    @Override
     public IRecipeWrapper getRecipeWrapper(@Nonnull GemstoneChangeRecipeWrapper recipe)
     {
         return recipe;

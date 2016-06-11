@@ -64,7 +64,7 @@ public class GuiAnalyzer extends GuiContainer
                 am = gemstone.getCapacity(stack);
             }
 
-            if(gem != null)
+            if (gem != null)
             {
                 mc.fontRendererObj.drawString("Gemstone type: " + gem.toString(), 32, 30, 0xffffff);
                 mc.fontRendererObj.drawString("Quality level: " + (q != null ? q.toString() : "Unknown"), 32, 40, 0xffffff);

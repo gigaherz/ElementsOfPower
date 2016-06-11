@@ -1,6 +1,8 @@
 package gigaherz.elementsofpower.integration.essentializer;
 
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.client.renderers.StackRenderingHelper;
+import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.essentializer.GuiEssentializer;
 import gigaherz.elementsofpower.gemstones.Element;
 import mezz.jei.api.IGuiHelper;
@@ -8,26 +10,30 @@ import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.gui.IGuiItemStackGroup;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.recipe.IRecipeCategory;
-import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.ItemModelMesher;
+import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
+import java.util.Collections;
 import java.util.List;
 
-public class EssentializerCategory implements IRecipeCategory
+public class EssentializerCategory implements IRecipeCategory<EssentializerRecipeWrapper>
 {
     static final String UID = ElementsOfPower.MODID + "_essentializer";
 
+    static EssentializerCategory INSTANCE;
+
     @Nonnull
     private final IDrawable background;
-    @Nonnull
-    private final IDrawable slotDrawable;
+
+    MagicAmounts essenceAmounts;
 
     public EssentializerCategory(IGuiHelper guiHelper)
     {
+        INSTANCE = this;
         background = guiHelper.createDrawable(GuiEssentializer.GUI_TEXTURE_LOCATION, 7, 15, 162, 74, 0, 0, 0, 0);
-
-        slotDrawable = guiHelper.getSlotDrawable();
     }
 
     @Nonnull
@@ -54,7 +60,6 @@ public class EssentializerCategory implements IRecipeCategory
     @Override
     public void drawExtras(@Nonnull Minecraft minecraft)
     {
-        //slotDrawable.draw(minecraft, 80, 29);
     }
 
     @Override
@@ -63,7 +68,7 @@ public class EssentializerCategory implements IRecipeCategory
     }
 
     @Override
-    public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull IRecipeWrapper recipeWrapper)
+    public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull EssentializerRecipeWrapper recipeWrapper)
     {
         IGuiItemStackGroup itemStacks = recipeLayout.getItemStacks();
 
@@ -75,16 +80,75 @@ public class EssentializerCategory implements IRecipeCategory
                     GuiEssentializer.MAGIC_ORBS[ord * 2 + 1] - 16);
         }
 
-        if (recipeWrapper instanceof EssentializerRecipeWrapper)
-        {
-            List inputs = recipeWrapper.getInputs();
-            List outputs = recipeWrapper.getOutputs();
+        List inputs = recipeWrapper.getInputs();
+        essenceAmounts = recipeWrapper.getEssences();
 
-            itemStacks.setFromRecipe(0, inputs.get(0));
-            for (int ord = 0; ord < Element.values.length; ord++)
-            {
-                itemStacks.setFromRecipe(ord + 1, outputs.get(ord));
-            }
+        itemStacks.setFromRecipe(0, inputs.get(0));
+    }
+
+    public List<String> getTooltipStrings(int mouseX, int mouseY)
+    {
+        for (int ord = 0; ord < Element.values.length; ord++)
+        {
+            int x = GuiEssentializer.MAGIC_ORBS[ord * 2] - 8;
+            int y = GuiEssentializer.MAGIC_ORBS[ord * 2 + 1] - 16;
+            if (mouseX >= x && mouseX < (x + 16) &&
+                    mouseY >= y && mouseY < (y + 16))
+                return Collections.singletonList(MagicAmounts.getMagicName(ord));
         }
+        return null;
+    }
+
+    public void drawEssenceSlots(Minecraft mc)
+    {
+        if (essenceAmounts == null)
+            return;
+
+        ItemModelMesher mesher = mc.getRenderItem().getItemModelMesher();
+
+        GlStateManager.disableDepth();
+
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+        {
+            float am = essenceAmounts.amounts[i];
+
+            int alpha = am > 0 ? 0xFFFFFFFF : 0x3FFFFFFF;
+
+            int x0 = GuiEssentializer.MAGIC_ORBS[i * 2] - 7;
+            int y0 = GuiEssentializer.MAGIC_ORBS[i * 2 + 1] - 15;
+
+            ItemStack stack = ElementsOfPower.magicOrb.getStack(1, Element.values[i]);
+
+            StackRenderingHelper.renderItemStack(mesher, mc.renderEngine, x0, y0, stack, alpha);
+        }
+
+        GlStateManager.pushMatrix();
+        GlStateManager.scale(1 / 1.5, 1 / 1.5, 1);
+        GlStateManager.translate(0, 0, 150);
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+        {
+            float am = essenceAmounts.amounts[i];
+
+            int x0 = GuiEssentializer.MAGIC_ORBS[i * 2] - 7;
+            int y0 = GuiEssentializer.MAGIC_ORBS[i * 2 + 1] - 15;
+
+            float count = am;
+            String suffix = "";
+            if (count >= 900)
+            {
+                suffix = "k";
+                count /= 1000;
+            }
+
+            String formatted = ElementsOfPower.prettyNumberFormatter.format(count) + suffix;
+
+            float x1 = (x0 + 16) * 1.5f - mc.fontRendererObj.getStringWidth(formatted);
+            float y1 = (y0 + 10.5f) * 1.5f;
+
+            mc.fontRendererObj.drawString(formatted, x1, y1, 0xFFFFFFFF, true);
+        }
+        GlStateManager.popMatrix();
+
+        GlStateManager.enableDepth();
     }
 }

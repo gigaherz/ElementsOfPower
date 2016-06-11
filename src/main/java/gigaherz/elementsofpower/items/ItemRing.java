@@ -173,7 +173,7 @@ public class ItemRing extends ItemGemContainer implements IBauble
 
     @Nullable
     private static Triple<ItemStack, IInventory, Integer>
-        findInInventory(ItemStack thisStack, @Nullable IInventory b, MagicAmounts available)
+    findInInventory(ItemStack thisStack, @Nullable IInventory b, MagicAmounts available)
     {
         if (b == null)
             return null;

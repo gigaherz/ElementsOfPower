@@ -256,7 +256,7 @@ public class ContainerInformation
 
     public static boolean isInfiniteContainer(@Nullable ItemStack stack)
     {
-        if(stack == null)
+        if (stack == null)
             return false;
         Item item = stack.getItem();
         return item instanceof ItemMagicContainer

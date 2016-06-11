@@ -96,7 +96,7 @@ public class EssenceOverrides
             }
 
             Item item = Item.REGISTRY.getObject(new ResourceLocation(itemName));
-            if(item != null)
+            if (item != null)
             {
                 ItemStack stack = new ItemStack(item, 1, meta);
                 MagicAmounts m = e.getValue();
