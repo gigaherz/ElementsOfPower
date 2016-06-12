@@ -13,6 +13,7 @@ import mezz.jei.api.recipe.IRecipeCategory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.ItemModelMesher;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
@@ -47,7 +48,7 @@ public class EssentializerCategory implements IRecipeCategory<EssentializerRecip
     @Override
     public String getTitle()
     {
-        return "Essentializer Breakdown";
+        return I18n.format("text." + ElementsOfPower.MODID + ".jei.category.essentializer");
     }
 
     @Nonnull

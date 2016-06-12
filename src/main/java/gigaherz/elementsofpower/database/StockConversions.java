@@ -3,6 +3,7 @@ package gigaherz.elementsofpower.database;
 import com.google.common.collect.Lists;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.gemstones.Element;
+import gigaherz.elementsofpower.gemstones.Gemstone;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -101,6 +102,17 @@ public class StockConversions
 
         essences(Items.DIAMOND).earth(128);
         essences(Items.EMERALD).earth(100).life(50);
+        essences(Items.QUARTZ).earth(100).light(50);
+
+        essences(ElementsOfPower.gemRuby).earth(100).fire(50);
+        essences(ElementsOfPower.gemSapphire).earth(100).water(50);
+        essences(ElementsOfPower.gemCitrine).earth(100).air(50);
+        essences(ElementsOfPower.gemAgate).earth(100).earth(50);
+        essences(ElementsOfPower.gemQuartz).earth(100).light(50);
+        essences(ElementsOfPower.gemSerendibite).earth(100).darkness(50);
+        essences(ElementsOfPower.gemEmerald).earth(100).life(50);
+        essences(ElementsOfPower.gemAmethyst).earth(100).death(50);
+        essences(ElementsOfPower.gemDiamond).earth(128);
 
         essences(Items.CLAY_BALL).earth(8).water(2);
 
@@ -146,6 +158,7 @@ public class StockConversions
         //essences(Items.SLIME_BALL,0);
         //essences(Items.SPIDER_EYE,0);
         //essences(Items.GLOWSTONE_DUST,0);
+
 
         stockEntries.forEach(ItemEssenceConversion::apply);
     }
@@ -203,6 +216,13 @@ public class StockConversions
     private static ItemEssenceEntry essences(Block block, int meta)
     {
         ItemEssenceEntry ee = new ItemEssenceEntry(new ItemStack(block, 1, meta), new MagicAmounts());
+        stockEntries.add(ee);
+        return ee;
+    }
+
+    private static ItemEssenceEntry essences(ItemStack stack)
+    {
+        ItemEssenceEntry ee = new ItemEssenceEntry(stack, new MagicAmounts());
         stockEntries.add(ee);
         return ee;
     }

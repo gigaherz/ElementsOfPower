@@ -9,6 +9,7 @@ import mezz.jei.api.gui.IGuiItemStackGroup;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.recipe.IRecipeCategory;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -20,16 +21,6 @@ public class AnalyzerCategory implements IRecipeCategory<AnalyzerRecipeWrapper>
     static AnalyzerCategory INSTANCE;
 
     String[] qualityChances = {
-            /*
-            if (rnd > 0.3f)
-            return ElementsOfPower.gemstone.setQuality(target, Quality.Rough);
-        if (rnd > 0.1f)
-            return ElementsOfPower.gemstone.setQuality(target, Quality.Common);
-        if (rnd > 0.01f)
-            return ElementsOfPower.gemstone.setQuality(target, Quality.Smooth);
-        if (rnd > 0.001f)
-            return ElementsOfPower.gemstone.setQuality(target, Quality.Flawless);
-            * */
       "70%", "20%", "9%", "0.9%", "0.1%"
     };
 
@@ -53,7 +44,7 @@ public class AnalyzerCategory implements IRecipeCategory<AnalyzerRecipeWrapper>
     @Override
     public String getTitle()
     {
-        return "Gemstone Analyzer";
+        return I18n.format("text." + ElementsOfPower.MODID + ".jei.category.analyzer");
     }
 
     @Nonnull

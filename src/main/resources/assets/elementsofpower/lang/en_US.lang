@@ -139,3 +139,6 @@ achievement.elementsofpower.advancedSpell=A way of life
 achievement.elementsofpower.advancedSpell.desc=complex magic for interesting purposes.
 achievement.elementsofpower.masterSpell=Changing the World
 achievement.elementsofpower.masterSpell.desc=... or breaking it, I'm not quite sure which.
+
+text.elementsofpower.jei.category.essentializer=Essentializer Breakdown
+text.elementsofpower.jei.category.analyzer=Gemstone Analyzer
