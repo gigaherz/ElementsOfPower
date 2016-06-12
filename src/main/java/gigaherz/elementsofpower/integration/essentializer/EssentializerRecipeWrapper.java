@@ -28,9 +28,9 @@ public class EssentializerRecipeWrapper extends BlankRecipeWrapper
     List<ItemStack> inputs;
     MagicAmounts outputs;
 
-    private EssentializerRecipeWrapper(ItemStack output, MagicAmounts am)
+    private EssentializerRecipeWrapper(ItemStack input, MagicAmounts am)
     {
-        inputs = Collections.singletonList(output);
+        inputs = Collections.singletonList(input);
         outputs = am.copy();
     }
 

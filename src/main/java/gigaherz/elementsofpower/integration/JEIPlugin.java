@@ -1,6 +1,9 @@
 package gigaherz.elementsofpower.integration;
 
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.integration.analyzer.AnalyzerCategory;
+import gigaherz.elementsofpower.integration.analyzer.AnalyzerRecipeHandler;
+import gigaherz.elementsofpower.integration.analyzer.AnalyzerRecipeWrapper;
 import gigaherz.elementsofpower.integration.essentializer.EssentializerCategory;
 import gigaherz.elementsofpower.integration.essentializer.EssentializerRecipeHandler;
 import gigaherz.elementsofpower.integration.essentializer.EssentializerRecipeWrapper;
@@ -19,13 +22,24 @@ public class JEIPlugin implements IModPlugin
     @Override
     public void register(@Nonnull IModRegistry registry)
     {
-        registry.addRecipeCategories(new EssentializerCategory(registry.getJeiHelpers().getGuiHelper()));
+        registry.addRecipeCategories(
+                new EssentializerCategory(registry.getJeiHelpers().getGuiHelper()),
+                new AnalyzerCategory(registry.getJeiHelpers().getGuiHelper()));
 
         registry.addRecipeHandlers(
                 new ContainerChargeRecipeHandler(),
                 new GemstoneChangeRecipeHandler(),
-                new EssentializerRecipeHandler());
+                new EssentializerRecipeHandler(),
+                new AnalyzerRecipeHandler());
 
+        addContainerRecipes(registry);
+
+        registry.addRecipes(EssentializerRecipeWrapper.getRecipes());
+        registry.addRecipes(AnalyzerRecipeWrapper.getRecipes());
+    }
+
+    private void addContainerRecipes(@Nonnull IModRegistry registry)
+    {
         ItemStack orb = new ItemStack(ElementsOfPower.magicOrb, 1, OreDictionary.WILDCARD_VALUE);
         ItemStack gemstone = new ItemStack(ElementsOfPower.gemstone, 1, OreDictionary.WILDCARD_VALUE);
         for (ItemStack stack : Arrays.asList(
@@ -47,8 +61,6 @@ public class JEIPlugin implements IModPlugin
                             new ContainerChargeRecipeWrapper(stack, stack, orb, orb, orb, orb, orb, orb, orb, orb)
                     ));
         }
-
-        registry.addRecipes(EssentializerRecipeWrapper.getRecipes());
     }
 
     @Override

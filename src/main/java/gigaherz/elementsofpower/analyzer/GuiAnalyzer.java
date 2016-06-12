@@ -18,7 +18,7 @@ public class GuiAnalyzer extends GuiContainer
 {
     EntityPlayer player;
 
-    static final ResourceLocation guiTextureLocation = ElementsOfPower.location("textures/gui/analyzer.png");
+    public static final ResourceLocation GUI_TEXTURE_LOCATION = ElementsOfPower.location("textures/gui/analyzer.png");
     static final String guiTitle = "text." + ElementsOfPower.MODID + ".analyzer";
 
     public GuiAnalyzer(EntityPlayer playerInventory)
@@ -31,7 +31,7 @@ public class GuiAnalyzer extends GuiContainer
     @Override
     protected void drawGuiContainerBackgroundLayer(float f, int i, int j)
     {
-        mc.renderEngine.bindTexture(guiTextureLocation);
+        mc.renderEngine.bindTexture(GUI_TEXTURE_LOCATION);
         GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
         int x = (width - xSize) / 2;
         int y = (height - ySize) / 2;
