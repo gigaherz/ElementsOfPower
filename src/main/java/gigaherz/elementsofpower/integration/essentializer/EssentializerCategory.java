@@ -1,8 +1,10 @@
 package gigaherz.elementsofpower.integration.essentializer;
 
+import com.google.common.collect.Lists;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.client.renderers.StackRenderingHelper;
 import gigaherz.elementsofpower.database.MagicAmounts;
+import gigaherz.elementsofpower.essentializer.ContainerEssentializer;
 import gigaherz.elementsofpower.essentializer.GuiEssentializer;
 import gigaherz.elementsofpower.gemstones.Element;
 import mezz.jei.api.IGuiHelper;
@@ -10,13 +12,22 @@ import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.gui.IGuiItemStackGroup;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.recipe.IRecipeCategory;
+import mezz.jei.api.recipe.transfer.IRecipeTransferError;
+import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
+import mezz.jei.api.recipe.transfer.IRecipeTransferInfo;
+import mezz.jei.transfer.BasicRecipeTransferHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.swing.*;
 import java.util.Collections;
 import java.util.List;
 
@@ -80,6 +91,8 @@ public class EssentializerCategory implements IRecipeCategory<EssentializerRecip
                     GuiEssentializer.MAGIC_ORBS[ord * 2] - 8,
                     GuiEssentializer.MAGIC_ORBS[ord * 2 + 1] - 16);
         }
+
+        recipeLayout.setRecipeTransferButton(background.getWidth() - 12, background.getHeight() - 12);
 
         List inputs = recipeWrapper.getInputs();
         essenceAmounts = recipeWrapper.getEssences();
@@ -151,5 +164,35 @@ public class EssentializerCategory implements IRecipeCategory<EssentializerRecip
         GlStateManager.popMatrix();
 
         GlStateManager.enableDepth();
+    }
+
+    public static class TransferInfo implements IRecipeTransferInfo
+    {
+        @Override
+        public Class<? extends Container> getContainerClass()
+        {
+            return ContainerEssentializer.class;
+        }
+
+        @Override
+        public String getRecipeCategoryUid()
+        {
+            return UID;
+        }
+
+        @Override
+        public List<Slot> getRecipeSlots(Container container)
+        {
+            return Collections.singletonList(container.getSlot(0));
+        }
+
+        @Override
+        public List<Slot> getInventorySlots(Container container)
+        {
+            List<Slot> l = Lists.newArrayList();
+            for(int i=3;i<(3+4*9);i++)
+                l.add(container.getSlot(i));
+            return l;
+        }
     }
 }

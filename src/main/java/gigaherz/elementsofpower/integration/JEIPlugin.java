@@ -10,10 +10,16 @@ import gigaherz.elementsofpower.integration.essentializer.EssentializerRecipeWra
 import mezz.jei.api.IJeiRuntime;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.IModRegistry;
+import mezz.jei.api.gui.IRecipeLayout;
+import mezz.jei.api.recipe.transfer.IRecipeTransferError;
+import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
 
 @mezz.jei.api.JEIPlugin
@@ -31,6 +37,8 @@ public class JEIPlugin implements IModPlugin
                 new GemstoneChangeRecipeHandler(),
                 new EssentializerRecipeHandler(),
                 new AnalyzerRecipeHandler());
+
+        registry.getRecipeTransferRegistry().addRecipeTransferHandler(new EssentializerCategory.TransferInfo());
 
         addContainerRecipes(registry);
 
