@@ -21,7 +21,7 @@ public class AnalyzerCategory implements IRecipeCategory<AnalyzerRecipeWrapper>
     static AnalyzerCategory INSTANCE;
 
     String[] qualityChances = {
-      "70%", "20%", "9%", "0.9%", "0.1%"
+            "70%", "20%", "9%", "0.9%", "0.1%"
     };
 
     @Nonnull
