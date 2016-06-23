@@ -22,12 +22,12 @@ repositories {
 apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'maven-publish'
 
-version = "0.7.8-alpha"
+version = "0.7.9-alpha"
 group = "gigaherz.elementsofpower" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "ElementsOfPower-1.10"
 
 minecraft {
-    version = "1.10-12.18.0.1981-1.10.0"
+    version = "1.10-12.18.0.1983-1.10.0"
     runDir = "run"
 
     mappings = "snapshot_20160623"

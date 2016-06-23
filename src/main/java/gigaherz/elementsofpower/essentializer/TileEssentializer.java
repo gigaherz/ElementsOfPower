@@ -120,18 +120,28 @@ public class TileEssentializer
     }
 
     @Override
+    public NBTTagCompound getUpdateTag()
+    {
+        return writeToNBT(new NBTTagCompound());
+    }
+
+    @Override
+    public void handleUpdateTag(NBTTagCompound tag)
+    {
+        readFromNBT(tag);
+    }
+
+    @Override
     public SPacketUpdateTileEntity getUpdatePacket()
     {
-        NBTTagCompound tag = new NBTTagCompound();
-        writeToNBT(tag);
-        return new SPacketUpdateTileEntity(pos, 0, tag);
+        return new SPacketUpdateTileEntity(this.pos, 0, getUpdateTag());
     }
 
     @Override
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet)
     {
         super.onDataPacket(net, packet);
-        readFromNBT(packet.getNbtCompound());
+        handleUpdateTag(packet.getNbtCompound());
 
         IBlockState state = worldObj.getBlockState(pos);
         worldObj.notifyBlockUpdate(pos, state, state, 3);
