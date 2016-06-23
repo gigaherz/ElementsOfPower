@@ -24,22 +24,18 @@ apply plugin: 'maven-publish'
 
 version = "0.7.8-alpha"
 group = "gigaherz.elementsofpower" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "ElementsOfPower-1.9.4"
+archivesBaseName = "ElementsOfPower-1.10"
 
 minecraft {
-    version = "1.9.4-12.17.0.1958"
+    version = "1.10-12.18.0.1981-1.10.0"
     runDir = "run"
 
-    mappings = "snapshot_20160612"
-
-    replace "@VERSION@", project.version
-    replaceIn "ElementsOfPower.java"
-
-    useDepAts = true
+    mappings = "snapshot_20160623"
 }
 
 dependencies {
-    deobfCompile "mezz.jei:jei_1.9.4:3.6.3.212"
+    deobfCompile "mezz.jei:jei_1.10:3.7.0.218:api"
+    runtime "mezz.jei:jei_1.10:3.7.0.218"
 }
 
 compileJava {
