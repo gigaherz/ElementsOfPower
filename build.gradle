@@ -31,6 +31,9 @@ minecraft {
     runDir = "run"
 
     mappings = "snapshot_20160623"
+
+    replace "@VERSION@", project.version
+    replaceIn "ElementsOfPower.java"
 }
 
 dependencies {
