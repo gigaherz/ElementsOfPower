@@ -27,10 +27,10 @@ group = "gigaherz.elementsofpower" // http://maven.apache.org/guides/mini/guide-
 archivesBaseName = "ElementsOfPower-1.9.4"
 
 minecraft {
-    version = "1.9.4-12.17.0.1958"
+    version = "1.9.4-12.17.0.1976"
     runDir = "run"
 
-    mappings = "snapshot_20160612"
+    mappings = "snapshot_20160623"
 
     replace "@VERSION@", project.version
     replaceIn "ElementsOfPower.java"
@@ -39,7 +39,7 @@ minecraft {
 }
 
 dependencies {
-    deobfCompile "mezz.jei:jei_1.9.4:3.6.3.212"
+    deobfCompile "mezz.jei:jei_1.9.4:3.6.7.216"
 }
 
 compileJava {
