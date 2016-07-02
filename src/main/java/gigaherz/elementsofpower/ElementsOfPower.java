@@ -476,6 +476,7 @@ public class ElementsOfPower
                 "G G",
                 " G ",
                 'G', Items.GOLD_INGOT);
+        GameRegistry.addShapelessRecipe(new ItemStack(guidebook), Items.BOOK, new ItemStack(magicOrb, 1, OreDictionary.WILDCARD_VALUE));
         GameRegistry.addRecipe(new GemstoneChangeRecipe());
         GameRegistry.addRecipe(new ContainerChargeRecipe());
 
