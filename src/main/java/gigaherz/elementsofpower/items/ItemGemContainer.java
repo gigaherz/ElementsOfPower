@@ -11,7 +11,6 @@ import gigaherz.elementsofpower.network.SpellSequenceUpdate;
 import gigaherz.elementsofpower.progression.DiscoveryHandler;
 import gigaherz.elementsofpower.spells.SpellManager;
 import gigaherz.elementsofpower.spells.Spellcast;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.EnumRarity;
@@ -234,12 +233,14 @@ public class ItemGemContainer extends ItemMagicContainer
     {
         Quality q = getQuality(stack);
 
-        String namePart = I18n.format(getUnlocalizedName(stack) + ".name");
+        @SuppressWarnings("deprecation")
+        String namePart = net.minecraft.util.text.translation.I18n.translateToLocal(getUnlocalizedName(stack) + ".name");
 
         if (q == null)
             return namePart;
 
-        String quality = I18n.format(ElementsOfPower.MODID + ".gemContainer.quality" + q.getUnlocalizedName());
+        @SuppressWarnings("deprecation")
+        String quality = net.minecraft.util.text.translation.I18n.translateToLocal(ElementsOfPower.MODID + ".gemContainer.quality" + q.getUnlocalizedName());
 
         return quality + " " + namePart;
     }

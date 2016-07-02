@@ -1,8 +1,8 @@
 package gigaherz.elementsofpower.network;
 
+import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.Used;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -12,7 +12,9 @@ import javax.annotation.Nullable;
 public class AddVelocityPlayer
         implements IMessage
 {
-    double vx, vy, vz;
+    public double vx;
+    public double vy;
+    public double vz;
 
     @Used
     public AddVelocityPlayer()
@@ -48,8 +50,7 @@ public class AddVelocityPlayer
         @Override
         public IMessage onMessage(AddVelocityPlayer message, MessageContext ctx)
         {
-            Minecraft.getMinecraft().addScheduledTask(() ->
-                    Minecraft.getMinecraft().thePlayer.addVelocity(message.vx, message.vy, message.vz));
+            ElementsOfPower.proxy.handleAddVelocity(message);
 
             return null; // no response in this case
         }

@@ -1,6 +1,7 @@
 package gigaherz.elementsofpower;
 
 import com.google.common.collect.ImmutableMap;
+import gigaherz.elementsofpower.network.AddVelocityPlayer;
 import gigaherz.elementsofpower.network.EssentializerAmountsUpdate;
 import gigaherz.elementsofpower.network.EssentializerTileUpdate;
 import gigaherz.elementsofpower.network.SpellcastSync;
@@ -21,6 +22,8 @@ public interface ISideProxy
     void handleRemainingAmountsUpdate(EssentializerAmountsUpdate message);
 
     void handleEssentializerTileUpdate(EssentializerTileUpdate message);
+
+    void handleAddVelocity(AddVelocityPlayer message);
 
     void displayBook();
 

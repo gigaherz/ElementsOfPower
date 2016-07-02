@@ -50,10 +50,10 @@ public class ItemGemstone extends ItemMagicContainer
         return "item." + ElementsOfPower.MODID + Gemstone.values[sub].getUnlocalizedName();
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public String getItemStackDisplayName(ItemStack stack)
     {
+        @SuppressWarnings("deprecation")
         String gemPart = net.minecraft.util.text.translation.I18n.translateToLocal(getUnlocalizedName(stack) + ".name");
 
         Quality q = getQuality(stack);
@@ -64,6 +64,7 @@ public class ItemGemstone extends ItemMagicContainer
 
         qName += q.getUnlocalizedName();
 
+        @SuppressWarnings("deprecation")
         String qualityPart = net.minecraft.util.text.translation.I18n.translateToLocal(qName);
 
         return (qualityPart + " " + gemPart).trim();

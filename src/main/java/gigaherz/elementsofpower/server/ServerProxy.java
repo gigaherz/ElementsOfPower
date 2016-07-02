@@ -2,6 +2,7 @@ package gigaherz.elementsofpower.server;
 
 import com.google.common.collect.ImmutableMap;
 import gigaherz.elementsofpower.ISideProxy;
+import gigaherz.elementsofpower.network.AddVelocityPlayer;
 import gigaherz.elementsofpower.network.EssentializerAmountsUpdate;
 import gigaherz.elementsofpower.network.EssentializerTileUpdate;
 import gigaherz.elementsofpower.network.SpellcastSync;
@@ -39,6 +40,12 @@ public class ServerProxy implements ISideProxy
     public void handleEssentializerTileUpdate(EssentializerTileUpdate message)
     {
         // Nothing here
+    }
+
+    @Override
+    public void handleAddVelocity(AddVelocityPlayer message)
+    {
+
     }
 
     @Override

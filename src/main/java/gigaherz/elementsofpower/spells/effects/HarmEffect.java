@@ -17,7 +17,7 @@ import net.minecraft.util.math.Vec3d;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class BreakingEffect extends SpellEffect
+public class HarmEffect extends SpellEffect
 {
     @Override
     public int getColor(Spellcast cast)
@@ -58,8 +58,7 @@ public class BreakingEffect extends SpellEffect
     {
         double lv = Math.max(0, cast.getDamageForce() - distance);
 
-        causePotionEffect(cast, e, MobEffects.INSTANT_DAMAGE, 0, lv * 0.5, 0.0);
-        causePotionEffect(cast, e, MobEffects.WITHER, 0, lv, 100.0);
+        causePotionEffect(cast, e, MobEffects.INSTANT_DAMAGE, 0, lv, 0.0);
     }
 
     @Override

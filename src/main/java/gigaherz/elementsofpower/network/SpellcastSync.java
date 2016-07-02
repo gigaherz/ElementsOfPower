@@ -5,7 +5,6 @@ import gigaherz.elementsofpower.Used;
 import gigaherz.elementsofpower.spells.SpellManager;
 import gigaherz.elementsofpower.spells.Spellcast;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -76,7 +75,7 @@ public class SpellcastSync
         @Override
         public IMessage onMessage(SpellcastSync message, MessageContext ctx)
         {
-            Minecraft.getMinecraft().addScheduledTask(() -> ElementsOfPower.proxy.handleSpellcastSync(message));
+            ElementsOfPower.proxy.handleSpellcastSync(message);
 
             return null; // no response in this case
         }
