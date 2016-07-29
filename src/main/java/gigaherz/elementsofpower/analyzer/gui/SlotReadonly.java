@@ -1,4 +1,4 @@
-package gigaherz.elementsofpower.slots;
+package gigaherz.elementsofpower.analyzer.gui;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;

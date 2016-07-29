@@ -2,7 +2,6 @@ package gigaherz.elementsofpower.spells;
 
 import com.google.common.base.Predicates;
 import gigaherz.elementsofpower.database.MagicAmounts;
-import gigaherz.elementsofpower.entitydata.SpellcastEntityData;
 import gigaherz.elementsofpower.spells.effects.SpellEffect;
 import gigaherz.elementsofpower.spells.shapes.SpellShape;
 import net.minecraft.entity.Entity;

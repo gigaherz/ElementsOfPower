@@ -1,4 +1,4 @@
-package gigaherz.elementsofpower.slots;
+package gigaherz.elementsofpower.essentializer.gui;
 
 import gigaherz.elementsofpower.database.ContainerInformation;
 import net.minecraft.inventory.IInventory;

@@ -1,6 +1,7 @@
 package gigaherz.elementsofpower.items;
 
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.common.ItemRegistered;
 import gigaherz.elementsofpower.gemstones.Element;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;

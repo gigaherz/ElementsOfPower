@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.guidebook;
 
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.items.ItemRegistered;
+import gigaherz.elementsofpower.common.ItemRegistered;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;

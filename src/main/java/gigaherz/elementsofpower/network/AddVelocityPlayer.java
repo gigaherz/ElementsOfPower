@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.network;
 
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.Used;
+import gigaherz.elementsofpower.common.Used;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;

@@ -1,4 +1,4 @@
-package gigaherz.elementsofpower;
+package gigaherz.elementsofpower.common;
 
 import com.google.common.collect.ImmutableMap;
 import gigaherz.elementsofpower.network.AddVelocityPlayer;

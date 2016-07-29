@@ -1,9 +1,10 @@
-package gigaherz.elementsofpower.essentializer;
+package gigaherz.elementsofpower.essentializer.gui;
 
 import com.google.common.collect.Lists;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.client.renderers.StackRenderingHelper;
 import gigaherz.elementsofpower.database.MagicAmounts;
+import gigaherz.elementsofpower.essentializer.TileEssentializer;
 import gigaherz.elementsofpower.gemstones.Element;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;

@@ -2,14 +2,14 @@ package gigaherz.elementsofpower.client;
 
 import com.google.common.collect.ImmutableMap;
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.ISideProxy;
-import gigaherz.elementsofpower.Used;
 import gigaherz.elementsofpower.client.renderers.*;
+import gigaherz.elementsofpower.common.ISideProxy;
+import gigaherz.elementsofpower.common.Used;
 import gigaherz.elementsofpower.entities.EntityBall;
 import gigaherz.elementsofpower.entities.EntityEssence;
-import gigaherz.elementsofpower.entitydata.SpellcastEntityData;
-import gigaherz.elementsofpower.essentializer.ContainerEssentializer;
+import gigaherz.elementsofpower.spells.SpellcastEntityData;
 import gigaherz.elementsofpower.essentializer.TileEssentializer;
+import gigaherz.elementsofpower.essentializer.gui.ContainerEssentializer;
 import gigaherz.elementsofpower.gemstones.Gemstone;
 import gigaherz.elementsofpower.gemstones.GemstoneBlockType;
 import gigaherz.elementsofpower.guidebook.GuiGuidebook;

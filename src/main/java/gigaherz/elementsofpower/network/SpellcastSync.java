@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.network;
 
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.Used;
+import gigaherz.elementsofpower.common.Used;
 import gigaherz.elementsofpower.spells.SpellManager;
 import gigaherz.elementsofpower.spells.Spellcast;
 import io.netty.buffer.ByteBuf;

@@ -1,6 +1,7 @@
 package gigaherz.elementsofpower.items;
 
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.common.ItemRegistered;
 import gigaherz.elementsofpower.database.ContainerInformation;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.gemstones.Element;

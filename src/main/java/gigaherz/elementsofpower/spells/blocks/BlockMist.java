@@ -1,11 +1,13 @@
-package gigaherz.elementsofpower.blocks;
+package gigaherz.elementsofpower.spells.blocks;
 
+import gigaherz.elementsofpower.common.BlockRegistered;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.util.BlockRenderLayer;
@@ -16,31 +18,33 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Random;
 
-public class BlockDust extends BlockRegistered
+public class BlockMist extends BlockRegistered
 {
     public static final PropertyInteger DENSITY = PropertyInteger.create("density", 1, 16);
-    private static final AxisAlignedBB DUMMY_AABB = new AxisAlignedBB(0, 0, 0, 0, 0, 0);
 
-    public BlockDust(String name)
+    public BlockMist(String name)
     {
-        this(name, Material.CLAY);
-    }
-
-    public BlockDust(String name, Material mat)
-    {
-        super(name, mat);
+        super(name, Material.AIR);
         setHardness(0.1F);
         setBlockUnbreakable();
         setSoundType(SoundType.CLOTH);
         setDefaultState(this.blockState.getBaseState()
                 .withProperty(DENSITY, 16));
+        setTickRandomly(true);
+        setLightOpacity(0);
     }
 
-    @Deprecated
     @Override
-    public boolean isFullCube(IBlockState state)
+    public boolean isVisuallyOpaque()
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isNormalCube(IBlockState state, IBlockAccess world, BlockPos pos)
     {
         return false;
     }
@@ -52,13 +56,23 @@ public class BlockDust extends BlockRegistered
         return false;
     }
 
+    @Override
+    protected BlockStateContainer createBlockState()
+    {
+        return new BlockStateContainer(this, DENSITY);
+    }
+
     @Deprecated
     @Override
-    public int getLightOpacity(IBlockState state)
+    public IBlockState getStateFromMeta(int meta)
     {
-        if (state.getBlock() != this)
-            return 16;
-        return state.getValue(DENSITY);
+        return this.getDefaultState().withProperty(DENSITY, 16 - meta);
+    }
+
+    @Override
+    public int getMetaFromState(IBlockState state)
+    {
+        return 16 - state.getValue(DENSITY);
     }
 
     @Override
@@ -77,24 +91,14 @@ public class BlockDust extends BlockRegistered
     @Override
     public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side)
     {
-        return true;
+        IBlockState current = blockAccess.getBlockState(pos);
+        IBlockState opposite = blockAccess.getBlockState(pos.offset(side.getOpposite()));
+
+        return opposite != current;
     }
 
     @Override
-    public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state)
-    {
-        super.onBlockAdded(worldIn, pos, state);
-
-        rescheduleUpdate(worldIn, pos, worldIn.rand);
-    }
-
-    private void rescheduleUpdate(World worldIn, BlockPos pos, Random rand)
-    {
-        worldIn.scheduleUpdate(pos, this, 4 + rand.nextInt(12));
-    }
-
-    @Override
-    public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
+    public void randomTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
     {
         int density = state.getValue(DENSITY) - 1;
         int maxGive = (int) Math.sqrt(density);
@@ -148,26 +152,14 @@ public class BlockDust extends BlockRegistered
             worldIn.setBlockState(pos, state.withProperty(DENSITY, density));
         }
 
-        rescheduleUpdate(worldIn, pos, rand);
+        worldIn.scheduleUpdate(pos, this, rand.nextInt(10));
     }
 
     @Deprecated
     @Override
-    public IBlockState getStateFromMeta(int meta)
+    public EnumPushReaction getMobilityFlag(IBlockState state)
     {
-        return this.getDefaultState().withProperty(DENSITY, 16 - meta);
-    }
-
-    @Override
-    public int getMetaFromState(IBlockState state)
-    {
-        return 16 - state.getValue(DENSITY);
-    }
-
-    @Override
-    protected BlockStateContainer createBlockState()
-    {
-        return new BlockStateContainer(this, DENSITY);
+        return EnumPushReaction.IGNORE;
     }
 
     @Override
@@ -184,34 +176,8 @@ public class BlockDust extends BlockRegistered
 
     @Deprecated
     @Override
-    public AxisAlignedBB getSelectedBoundingBox(IBlockState blockState, World worldIn, BlockPos pos)
+    public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB p_185477_4_, List<AxisAlignedBB> p_185477_5_, @Nullable Entity p_185477_6_)
     {
-        return DUMMY_AABB;
-    }
-
-    @Deprecated
-    @Nullable
-    @Override
-    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos)
-    {
-        return NULL_AABB;
-    }
-
-    @Override
-    public boolean isPassable(IBlockAccess worldIn, BlockPos pos)
-    {
-        return true;
-    }
-
-    @Deprecated
-    @Override
-    public EnumPushReaction getMobilityFlag(IBlockState state)
-    {
-        return EnumPushReaction.IGNORE;
-    }
-
-    @Override
-    public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
-    {
+        //super.addCollisionBoxToList(state, worldIn, pos, p_185477_4_, p_185477_5_, p_185477_6_);
     }
 }

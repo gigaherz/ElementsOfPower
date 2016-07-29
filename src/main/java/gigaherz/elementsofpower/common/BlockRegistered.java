@@ -1,4 +1,4 @@
-package gigaherz.elementsofpower.blocks;
+package gigaherz.elementsofpower.common;
 
 import gigaherz.elementsofpower.ElementsOfPower;
 import net.minecraft.block.Block;

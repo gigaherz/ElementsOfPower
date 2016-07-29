@@ -1,31 +1,35 @@
 package gigaherz.elementsofpower;
 
 import gigaherz.elementsofpower.analyzer.ItemAnalyzer;
-import gigaherz.elementsofpower.blocks.BlockCushion;
-import gigaherz.elementsofpower.blocks.BlockDust;
-import gigaherz.elementsofpower.blocks.BlockRegistered;
 import gigaherz.elementsofpower.capabilities.CapabilityMagicContainer;
 import gigaherz.elementsofpower.cocoons.BlockCocoon;
 import gigaherz.elementsofpower.cocoons.TileCocoon;
+import gigaherz.elementsofpower.common.BlockRegistered;
+import gigaherz.elementsofpower.common.GuiHandler;
+import gigaherz.elementsofpower.common.ISideProxy;
+import gigaherz.elementsofpower.common.MaterialCushion;
 import gigaherz.elementsofpower.database.EssenceConversions;
 import gigaherz.elementsofpower.database.EssenceOverrides;
 import gigaherz.elementsofpower.database.StockConversions;
 import gigaherz.elementsofpower.entities.EntityBall;
 import gigaherz.elementsofpower.entities.EntityEssence;
-import gigaherz.elementsofpower.entitydata.SpellcastEntityData;
+import gigaherz.elementsofpower.spells.SpellcastEntityData;
 import gigaherz.elementsofpower.essentializer.BlockEssentializer;
 import gigaherz.elementsofpower.essentializer.TileEssentializer;
 import gigaherz.elementsofpower.gemstones.*;
-import gigaherz.elementsofpower.gui.GuiHandler;
 import gigaherz.elementsofpower.guidebook.ItemGuidebook;
-import gigaherz.elementsofpower.items.*;
-import gigaherz.elementsofpower.materials.MaterialCushion;
+import gigaherz.elementsofpower.items.ItemMagicOrb;
+import gigaherz.elementsofpower.items.ItemRing;
+import gigaherz.elementsofpower.items.ItemStaff;
+import gigaherz.elementsofpower.items.ItemWand;
 import gigaherz.elementsofpower.network.*;
 import gigaherz.elementsofpower.progression.DiscoveryHandler;
 import gigaherz.elementsofpower.recipes.ContainerChargeRecipe;
 import gigaherz.elementsofpower.recipes.GemstoneChangeRecipe;
 import gigaherz.elementsofpower.spelldust.BlockSpelldust;
 import gigaherz.elementsofpower.spelldust.ItemSpelldust;
+import gigaherz.elementsofpower.spells.blocks.BlockCushion;
+import gigaherz.elementsofpower.spells.blocks.BlockDust;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
@@ -62,6 +66,7 @@ import java.text.Format;
 @Mod(modid = ElementsOfPower.MODID,
         name = ElementsOfPower.MODNAME, version = ElementsOfPower.VERSION,
         dependencies = "required-after:Forge@[12.16.0.1825,)",
+        acceptedMinecraftVersions = "[1.9.4,1.11.0)",
         updateJSON = "https://raw.githubusercontent.com/gigaherz/ElementsOfPower/master/update.json")
 public class ElementsOfPower
 {

@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.recipes;
 
+import gigaherz.elementsofpower.gemstones.ItemGemstone;
 import gigaherz.elementsofpower.items.ItemGemContainer;
-import gigaherz.elementsofpower.items.ItemGemstone;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

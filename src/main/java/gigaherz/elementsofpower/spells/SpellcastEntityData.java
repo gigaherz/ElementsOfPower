@@ -1,9 +1,7 @@
-package gigaherz.elementsofpower.entitydata;
+package gigaherz.elementsofpower.spells;
 
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.network.SpellcastSync;
-import gigaherz.elementsofpower.spells.SpellManager;
-import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;

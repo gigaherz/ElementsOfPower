@@ -5,7 +5,7 @@ import gigaherz.elementsofpower.client.renderers.spellrender.RenderBeam;
 import gigaherz.elementsofpower.client.renderers.spellrender.RenderCone;
 import gigaherz.elementsofpower.client.renderers.spellrender.RenderSpell;
 import gigaherz.elementsofpower.client.renderers.spellrender.RenderSphere;
-import gigaherz.elementsofpower.entitydata.SpellcastEntityData;
+import gigaherz.elementsofpower.spells.SpellcastEntityData;
 import gigaherz.elementsofpower.spells.SpellManager;
 import gigaherz.elementsofpower.spells.Spellcast;
 import gigaherz.elementsofpower.spells.shapes.SpellShape;

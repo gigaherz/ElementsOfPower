@@ -1,9 +1,7 @@
-package gigaherz.elementsofpower.analyzer;
+package gigaherz.elementsofpower.analyzer.gui;
 
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.ContainerInformation;
-import gigaherz.elementsofpower.slots.SlotAnalyzerIn;
-import gigaherz.elementsofpower.slots.SlotReadonly;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;

@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.server;
 
 import com.google.common.collect.ImmutableMap;
-import gigaherz.elementsofpower.ISideProxy;
+import gigaherz.elementsofpower.common.ISideProxy;
 import gigaherz.elementsofpower.network.AddVelocityPlayer;
 import gigaherz.elementsofpower.network.EssentializerAmountsUpdate;
 import gigaherz.elementsofpower.network.EssentializerTileUpdate;

@@ -1,6 +1,6 @@
 package gigaherz.elementsofpower.network;
 
-import gigaherz.elementsofpower.Used;
+import gigaherz.elementsofpower.common.Used;
 import gigaherz.elementsofpower.items.ItemWand;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;

@@ -1,4 +1,4 @@
-package gigaherz.elementsofpower.blocks;
+package gigaherz.elementsofpower.spells.blocks;
 
 import gigaherz.elementsofpower.ElementsOfPower;
 import net.minecraft.block.state.IBlockState;

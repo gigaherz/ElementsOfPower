@@ -1,8 +1,8 @@
 package gigaherz.elementsofpower.essentializer;
 
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.blocks.BlockRegistered;
-import gigaherz.elementsofpower.gui.GuiHandler;
+import gigaherz.elementsofpower.common.BlockRegistered;
+import gigaherz.elementsofpower.common.GuiHandler;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;

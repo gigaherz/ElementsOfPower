@@ -1,8 +1,8 @@
 package gigaherz.elementsofpower.analyzer;
 
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.gui.GuiHandler;
-import gigaherz.elementsofpower.items.ItemRegistered;
+import gigaherz.elementsofpower.common.GuiHandler;
+import gigaherz.elementsofpower.common.ItemRegistered;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;

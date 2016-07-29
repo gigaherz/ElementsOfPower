@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.integration.analyzer;
 
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.analyzer.GuiAnalyzer;
+import gigaherz.elementsofpower.analyzer.gui.GuiAnalyzer;
 import gigaherz.elementsofpower.gemstones.Quality;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;

@@ -1,10 +1,8 @@
-package gigaherz.elementsofpower.items;
+package gigaherz.elementsofpower.gemstones;
 
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.MagicAmounts;
-import gigaherz.elementsofpower.gemstones.Element;
-import gigaherz.elementsofpower.gemstones.Gemstone;
-import gigaherz.elementsofpower.gemstones.Quality;
+import gigaherz.elementsofpower.items.ItemMagicContainer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;

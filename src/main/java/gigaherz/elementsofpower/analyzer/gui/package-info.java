@@ -1,6 +1,6 @@
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-package gigaherz.elementsofpower.slots;
+package gigaherz.elementsofpower.analyzer.gui;
 
 import mcp.MethodsReturnNonnullByDefault;
 

@@ -1,13 +1,11 @@
-package gigaherz.elementsofpower.essentializer;
+package gigaherz.elementsofpower.essentializer.gui;
 
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.ContainerInformation;
 import gigaherz.elementsofpower.database.EssenceConversions;
 import gigaherz.elementsofpower.database.MagicAmounts;
+import gigaherz.elementsofpower.essentializer.TileEssentializer;
 import gigaherz.elementsofpower.network.EssentializerAmountsUpdate;
-import gigaherz.elementsofpower.slots.SlotContainerIn;
-import gigaherz.elementsofpower.slots.SlotContainerOut;
-import gigaherz.elementsofpower.slots.SlotSource;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;

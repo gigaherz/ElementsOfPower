@@ -1,10 +1,10 @@
-package gigaherz.elementsofpower.analyzer;
+package gigaherz.elementsofpower.analyzer.gui;
 
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.gemstones.Gemstone;
+import gigaherz.elementsofpower.gemstones.ItemGemstone;
 import gigaherz.elementsofpower.gemstones.Quality;
-import gigaherz.elementsofpower.items.ItemGemstone;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;

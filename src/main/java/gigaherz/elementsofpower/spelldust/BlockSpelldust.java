@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.spelldust;
 
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.blocks.BlockRegistered;
+import gigaherz.elementsofpower.common.BlockRegistered;
 import gigaherz.elementsofpower.gemstones.Gemstone;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;

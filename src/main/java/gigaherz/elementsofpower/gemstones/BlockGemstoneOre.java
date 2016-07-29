@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.gemstones;
 
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.blocks.BlockRegistered;
+import gigaherz.elementsofpower.common.BlockRegistered;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;

@@ -3,7 +3,7 @@ package gigaherz.elementsofpower.cocoons;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.blocks.BlockRegistered;
+import gigaherz.elementsofpower.common.BlockRegistered;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.entities.EntityEssence;
 import gigaherz.elementsofpower.gemstones.Element;

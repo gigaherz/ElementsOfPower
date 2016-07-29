@@ -1,8 +1,8 @@
 package gigaherz.elementsofpower.spelldust;
 
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.common.ItemRegistered;
 import gigaherz.elementsofpower.gemstones.Gemstone;
-import gigaherz.elementsofpower.items.ItemRegistered;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;

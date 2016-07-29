@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.network;
 
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.Used;
+import gigaherz.elementsofpower.common.Used;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.essentializer.TileEssentializer;
 import io.netty.buffer.ByteBuf;

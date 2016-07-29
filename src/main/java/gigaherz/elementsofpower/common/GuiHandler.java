@@ -1,11 +1,11 @@
-package gigaherz.elementsofpower.gui;
+package gigaherz.elementsofpower.common;
 
-import gigaherz.elementsofpower.analyzer.ContainerAnalyzer;
-import gigaherz.elementsofpower.analyzer.GuiAnalyzer;
 import gigaherz.elementsofpower.analyzer.ItemAnalyzer;
-import gigaherz.elementsofpower.essentializer.ContainerEssentializer;
-import gigaherz.elementsofpower.essentializer.GuiEssentializer;
+import gigaherz.elementsofpower.analyzer.gui.ContainerAnalyzer;
+import gigaherz.elementsofpower.analyzer.gui.GuiAnalyzer;
 import gigaherz.elementsofpower.essentializer.TileEssentializer;
+import gigaherz.elementsofpower.essentializer.gui.ContainerEssentializer;
+import gigaherz.elementsofpower.essentializer.gui.GuiEssentializer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
