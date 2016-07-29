@@ -72,7 +72,7 @@ public class ElementsOfPower
     public static final String CHANNEL = "ElementsOfPower";
 
     // The instance of your mod that Forge uses.
-    @Mod.Instance(value = ElementsOfPower.MODID)
+    @Mod.Instance(ElementsOfPower.MODID)
     public static ElementsOfPower instance;
 
     // Says where the client and server 'proxy' code is loaded.
@@ -172,8 +172,7 @@ public class ElementsOfPower
     {
         logger = event.getModLog();
 
-        config = new Configuration(event.getSuggestedConfigurationFile());
-        config.load();
+        ConfigManager.init(event.getSuggestedConfigurationFile());
 
         overrides = event.getModConfigurationDirectory() + File.separator + "elementsofpower_essences.json";
 
@@ -412,8 +411,10 @@ public class ElementsOfPower
     private void registerWorldGenerators()
     {
         // Worldgen
-        GameRegistry.registerWorldGenerator(new BlockGemstoneOre.Generator(), 1);
-        GameRegistry.registerWorldGenerator(new BlockCocoon.Generator(), 1);
+        if (ConfigManager.EnableGemstoneOregen)
+            GameRegistry.registerWorldGenerator(new BlockGemstoneOre.Generator(), 1);
+        if (ConfigManager.EnableCocoonGeneration)
+            GameRegistry.registerWorldGenerator(new BlockCocoon.Generator(), 1);
     }
 
     private void registerRecipes()
