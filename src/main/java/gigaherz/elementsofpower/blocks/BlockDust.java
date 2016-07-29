@@ -15,6 +15,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
 import java.util.Random;
 
 public class BlockDust extends BlockRegistered
@@ -35,6 +36,13 @@ public class BlockDust extends BlockRegistered
         setSoundType(SoundType.CLOTH);
         setDefaultState(this.blockState.getBaseState()
                 .withProperty(DENSITY, 16));
+    }
+
+    @Deprecated
+    @Override
+    public boolean isFullCube(IBlockState state)
+    {
+        return false;
     }
 
     @Deprecated
@@ -69,10 +77,20 @@ public class BlockDust extends BlockRegistered
     @Override
     public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side)
     {
-        IBlockState current = blockAccess.getBlockState(pos);
-        IBlockState opposite = blockAccess.getBlockState(pos.offset(side.getOpposite()));
+        return true;
+    }
 
-        return opposite != current;
+    @Override
+    public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state)
+    {
+        super.onBlockAdded(worldIn, pos, state);
+
+        rescheduleUpdate(worldIn, pos, worldIn.rand);
+    }
+
+    private void rescheduleUpdate(World worldIn, BlockPos pos, Random rand)
+    {
+        worldIn.scheduleUpdate(pos, this, 4 + rand.nextInt(12));
     }
 
     @Override
@@ -130,22 +148,7 @@ public class BlockDust extends BlockRegistered
             worldIn.setBlockState(pos, state.withProperty(DENSITY, density));
         }
 
-        worldIn.scheduleUpdate(pos, this, rand.nextInt(10));
-    }
-
-    @Deprecated
-    @Override
-    public EnumPushReaction getMobilityFlag(IBlockState state)
-    {
-        return EnumPushReaction.IGNORE;
-    }
-
-    @Override
-    public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state)
-    {
-        super.onBlockAdded(worldIn, pos, state);
-
-        worldIn.scheduleUpdate(pos, this, worldIn.rand.nextInt(10));
+        rescheduleUpdate(worldIn, pos, rand);
     }
 
     @Deprecated
@@ -184,6 +187,27 @@ public class BlockDust extends BlockRegistered
     public AxisAlignedBB getSelectedBoundingBox(IBlockState blockState, World worldIn, BlockPos pos)
     {
         return DUMMY_AABB;
+    }
+
+    @Deprecated
+    @Nullable
+    @Override
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos)
+    {
+        return NULL_AABB;
+    }
+
+    @Override
+    public boolean isPassable(IBlockAccess worldIn, BlockPos pos)
+    {
+        return true;
+    }
+
+    @Deprecated
+    @Override
+    public EnumPushReaction getMobilityFlag(IBlockState state)
+    {
+        return EnumPushReaction.IGNORE;
     }
 
     @Override

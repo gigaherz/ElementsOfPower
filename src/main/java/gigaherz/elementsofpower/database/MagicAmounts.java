@@ -4,7 +4,6 @@ import com.google.gson.*;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.gemstones.Element;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
@@ -27,9 +26,10 @@ public class MagicAmounts
             ElementsOfPower.MODID + ".element.death",
     };
 
+    @SuppressWarnings("deprecation")
     public static String getMagicName(int i)
     {
-        return I18n.format(magicNames[i]);
+        return net.minecraft.util.text.translation.I18n.translateToLocal(magicNames[i]);
     }
 
     public final float[] amounts = new float[ELEMENTS];

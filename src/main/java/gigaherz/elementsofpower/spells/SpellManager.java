@@ -34,7 +34,7 @@ public class SpellManager
     public static final SpellEffect light = new LightEffect();
     public static final SpellEffect mining = new MiningEffect();
     public static final SpellEffect healing = new HealthEffect();
-    public static final SpellEffect breaking = new BreakingEffect();
+    public static final SpellEffect breaking = new WitherEffect();
     public static final SpellEffect cushion = new CushionEffect();
     public static final SpellEffect lava = new LavaEffect(false);
     public static final SpellEffect resurrection = new ResurrectionEffect();

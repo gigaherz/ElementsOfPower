@@ -14,6 +14,7 @@ import gigaherz.elementsofpower.gemstones.Gemstone;
 import gigaherz.elementsofpower.gemstones.GemstoneBlockType;
 import gigaherz.elementsofpower.guidebook.GuiGuidebook;
 import gigaherz.elementsofpower.items.ItemGemContainer;
+import gigaherz.elementsofpower.network.AddVelocityPlayer;
 import gigaherz.elementsofpower.network.EssentializerAmountsUpdate;
 import gigaherz.elementsofpower.network.EssentializerTileUpdate;
 import gigaherz.elementsofpower.network.SpellcastSync;
@@ -117,16 +118,13 @@ public class ClientProxy implements ISideProxy
     @Override
     public void handleSpellcastSync(SpellcastSync message)
     {
-        Minecraft.getMinecraft().addScheduledTask(() -> handleSpellcastSync2(message));
-    }
+        Minecraft.getMinecraft().addScheduledTask(() -> {
+            World world = Minecraft.getMinecraft().theWorld;
+            EntityPlayer player = (EntityPlayer) world.getEntityByID(message.casterID);
+            SpellcastEntityData data = SpellcastEntityData.get(player);
 
-    public void handleSpellcastSync2(SpellcastSync message)
-    {
-        World world = Minecraft.getMinecraft().theWorld;
-        EntityPlayer player = (EntityPlayer) world.getEntityByID(message.casterID);
-        SpellcastEntityData data = SpellcastEntityData.get(player);
-
-        data.sync(message.changeMode, message.spellcast);
+            data.sync(message.changeMode, message.spellcast);
+        });
     }
 
     @Override
@@ -160,6 +158,13 @@ public class ClientProxy implements ISideProxy
                 essentializer.remainingToConvert = message.remaining;
             }
         });
+    }
+
+    @Override
+    public void handleAddVelocity(AddVelocityPlayer message)
+    {
+        Minecraft.getMinecraft().addScheduledTask(() ->
+                Minecraft.getMinecraft().thePlayer.addVelocity(message.vx, message.vy, message.vz));
     }
 
     @Override
