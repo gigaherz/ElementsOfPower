@@ -32,6 +32,9 @@ public class JEIPlugin implements IModPlugin
                 new EssentializerRecipeHandler(),
                 new AnalyzerRecipeHandler());
 
+        registry.addRecipeCategoryCraftingItem(new ItemStack(ElementsOfPower.essentializer), EssentializerCategory.UID);
+        registry.addRecipeCategoryCraftingItem(new ItemStack(ElementsOfPower.analyzer), AnalyzerCategory.UID);
+
         registry.getRecipeTransferRegistry().addRecipeTransferHandler(new EssentializerCategory.TransferInfo());
 
         addContainerRecipes(registry);

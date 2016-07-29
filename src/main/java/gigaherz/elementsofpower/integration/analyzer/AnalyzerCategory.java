@@ -16,9 +16,9 @@ import java.util.List;
 
 public class AnalyzerCategory implements IRecipeCategory<AnalyzerRecipeWrapper>
 {
-    static final String UID = ElementsOfPower.MODID + "_analyzer";
+    public static final String UID = ElementsOfPower.MODID + "_analyzer";
 
-    static AnalyzerCategory INSTANCE;
+    public static AnalyzerCategory INSTANCE;
 
     String[] qualityChances = {
             "70%", "20%", "9%", "0.9%", "0.1%"

@@ -27,9 +27,9 @@ import java.util.List;
 
 public class EssentializerCategory implements IRecipeCategory<EssentializerRecipeWrapper>
 {
-    static final String UID = ElementsOfPower.MODID + "_essentializer";
+    public static final String UID = ElementsOfPower.MODID + "_essentializer";
 
-    static EssentializerCategory INSTANCE;
+    public static EssentializerCategory INSTANCE;
 
     @Nonnull
     private final IDrawable background;
