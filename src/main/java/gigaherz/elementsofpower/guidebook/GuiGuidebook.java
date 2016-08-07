@@ -57,10 +57,10 @@ public class GuiGuidebook extends GuiScreen
         this.buttonList.add(this.buttonNextChapter = new SpriteButton(btnId++, right - 23, bottom - 13, 4));
         ElementsOfPower.logger.info("Showing gui with " + btnId + " buttons.");
 
-        updateButtonStates();
-
         book = new BookRenderer(BOOK_LOCATION, this).parseBook();
         background = new AnimatedBookBackground(this);
+
+        updateButtonStates();
     }
 
     protected void actionPerformed(GuiButton button) throws IOException
