@@ -1,27 +1,18 @@
 package gigaherz.elementsofpower.guidebook;
 
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.client.renderers.ModelHandle;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.*;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 public class GuiGuidebook extends GuiScreen
 {
@@ -35,20 +26,11 @@ public class GuiGuidebook extends GuiScreen
     private GuiButton buttonPreviousChapter;
     private GuiButton buttonBack;
 
-    private static float angleSpeed = (1 / 0.35f) / 20;
-    private float angleT = 1;
-
-    private boolean closing = false;
-
-    ModelHandle book00 = ModelHandle.of("elementsofpower:gui/book.obj").vertexFormat(DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
-    ModelHandle book30 = ModelHandle.of("elementsofpower:gui/book30.obj").vertexFormat(DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
-    ModelHandle book60 = ModelHandle.of("elementsofpower:gui/book60.obj").vertexFormat(DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
-    ModelHandle book90 = ModelHandle.of("elementsofpower:gui/book90.obj").vertexFormat(DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
-
     private ItemModelMesher mesher = Minecraft.getMinecraft().getRenderItem().getItemModelMesher();
     private TextureManager renderEngine = Minecraft.getMinecraft().renderEngine;
 
     private BookRenderer book;
+    private AnimatedBookBackground background;
 
     @Override
     public boolean doesGuiPauseGame()
@@ -78,6 +60,7 @@ public class GuiGuidebook extends GuiScreen
         updateButtonStates();
 
         book = new BookRenderer(BOOK_LOCATION, this).parseBook();
+        background = new AnimatedBookBackground(this);
     }
 
     protected void actionPerformed(GuiButton button) throws IOException
@@ -86,7 +69,7 @@ public class GuiGuidebook extends GuiScreen
         {
             if (button.id == buttonClose.id)
             {
-                closing = true;
+                background.startClosing();
             }
             else if (button.id == buttonBack.id)
             {
@@ -115,12 +98,12 @@ public class GuiGuidebook extends GuiScreen
 
     private void updateButtonStates()
     {
-        buttonClose.enabled = angleT == 0;
-        buttonBack.enabled = angleT == 0 && book.canGoBack();
-        buttonNextPage.enabled = angleT == 0 && book.canGoNextPage();
-        buttonPreviousPage.enabled = angleT == 0 && book.canGoPrevPage();
-        buttonNextChapter.enabled = angleT == 0 && book.canGoNextChapter();
-        buttonPreviousChapter.enabled = angleT == 0 && book.canGoPrevChapter();
+        buttonClose.enabled = background.isFullyOpen();
+        buttonBack.enabled = background.isFullyOpen() && book.canGoBack();
+        buttonNextPage.enabled = background.isFullyOpen() && book.canGoNextPage();
+        buttonPreviousPage.enabled = background.isFullyOpen() && book.canGoPrevPage();
+        buttonNextChapter.enabled = background.isFullyOpen() && book.canGoNextChapter();
+        buttonPreviousChapter.enabled = background.isFullyOpen() && book.canGoPrevChapter();
 
         buttonClose.visible = buttonClose.enabled;
         buttonBack.visible = buttonBack.enabled;
@@ -133,18 +116,8 @@ public class GuiGuidebook extends GuiScreen
     @Override
     public void updateScreen()
     {
-        if (closing)
-        {
-            angleT += angleSpeed;
-            if (angleT >= 1)
-            {
-                this.mc.displayGuiScreen(null);
-            }
-        }
-        else if (angleT > 0)
-        {
-            angleT = Math.max(0, angleT - angleSpeed);
-        }
+        if (background.update())
+            mc.displayGuiScreen(null);
 
         updateButtonStates();
     }
@@ -154,7 +127,7 @@ public class GuiGuidebook extends GuiScreen
     {
         if (keyCode == Keyboard.KEY_ESCAPE)
         {
-            closing = true;
+            background.startClosing();
             return;
         }
         else if (keyCode == Keyboard.KEY_BACK)
@@ -168,9 +141,9 @@ public class GuiGuidebook extends GuiScreen
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
-        drawBackgroundModel(partialTicks);
+        background.draw(partialTicks);
 
-        if (angleT <= 0)
+        if (background.isFullyOpen())
         {
             book.drawCurrentPages();
         }
@@ -185,140 +158,6 @@ public class GuiGuidebook extends GuiScreen
             return;
 
         super.mouseClicked(mouseX, mouseY, mouseButton);
-    }
-
-    private void drawBackgroundModel(float partialTicks)
-    {
-        IBakedModel modelBookA, modelBookB;
-
-        float angleX;
-
-        if (closing)
-            angleX = (angleT + partialTicks * angleSpeed) * 90;
-        else
-            angleX = (angleT - partialTicks * angleSpeed) * 90;
-
-        float blend;
-        if (angleX <= 0)
-        {
-            angleX = 0;
-            modelBookA = book00.get();
-            modelBookB = null;
-            blend = 0;
-        }
-        else if (angleX < 30)
-        {
-            modelBookA = book00.get();
-            modelBookB = book30.get();
-            blend = (angleX) / 30.0f;
-        }
-        else if (angleX < 60)
-        {
-            modelBookA = book30.get();
-            modelBookB = book60.get();
-            blend = (angleX - 30) / 30.0f;
-        }
-        else if (angleX < 90)
-        {
-            modelBookA = book60.get();
-            modelBookB = book90.get();
-            blend = (angleX - 60) / 30.0f;
-        }
-        else
-        {
-            angleX = 90;
-            modelBookA = book90.get();
-            modelBookB = null;
-            blend = 0;
-        }
-
-        GlStateManager.enableDepth();
-        GlStateManager.disableBlend();
-        GlStateManager.disableAlpha();
-        GlStateManager.disableCull();
-
-        GlStateManager.pushMatrix();
-
-        GlStateManager.translate(this.width * 0.5 * (1 + angleX / 130.0f), this.height * 0.5 * (1 + angleX / 110.0f) + BookRenderer.BOOK_HEIGHT / 2 - 4, 50);
-        GlStateManager.rotate(180, 0, 1, 0);
-        GlStateManager.rotate(-130, 1, 0, 0);
-        GlStateManager.scale(2.0f, 2.0f, 2.5f);
-        GlStateManager.scale(1.08f, 1.08f, 1.08f);
-
-        GlStateManager.rotate(angleX * 1.1f, 0, 0, 1);
-
-        GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
-
-        RenderHelper.enableStandardItemLighting();
-
-        mc.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-
-        if (modelBookB != null)
-        {
-            renderModelInterpolate(modelBookA, modelBookB, blend);
-        }
-        else
-        {
-            renderModel(modelBookA);
-        }
-
-        RenderHelper.disableStandardItemLighting();
-
-        GlStateManager.popMatrix();
-
-        GlStateManager.enableCull();
-        GlStateManager.enableAlpha();
-        GlStateManager.enableBlend();
-        GlStateManager.disableDepth();
-    }
-
-    public static void renderModel(IBakedModel model)
-    {
-        Tessellator tessellator = Tessellator.getInstance();
-        VertexBuffer worldrenderer = tessellator.getBuffer();
-        worldrenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
-        for (BakedQuad quad : model.getQuads(null, null, 0))
-        {
-            worldrenderer.addVertexData(quad.getVertexData());
-        }
-        tessellator.draw();
-    }
-
-    public static void renderModelInterpolate(IBakedModel modelA, IBakedModel modelB, float blend)
-    {
-        VertexFormat fmt = DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL;
-        Tessellator tessellator = Tessellator.getInstance();
-        VertexBuffer worldrenderer = tessellator.getBuffer();
-        worldrenderer.begin(GL11.GL_QUADS, fmt);
-        List<BakedQuad> generalQuadsA = modelA.getQuads(null, null, 0);
-        List<BakedQuad> generalQuadsB = modelB.getQuads(null, null, 0);
-
-        int length = fmt.getNextOffset();
-
-        for (int i = 0; i < generalQuadsA.size(); i++)
-        {
-            BakedQuad quadA = generalQuadsA.get(i);
-            BakedQuad quadB = generalQuadsB.get(i);
-
-            int[] dataA = quadA.getVertexData();
-            int[] dataB = quadB.getVertexData();
-
-            int[] blended = Arrays.copyOf(dataA, dataA.length);
-
-            for (int j = 0; j < 4; j++)
-            {
-                int o = (length / 4) * j;
-                for (int k = 0; k < 3; k++)
-                {
-                    float ax = Float.intBitsToFloat(dataA[o + k]);
-                    float bx = Float.intBitsToFloat(dataB[o + k]);
-                    blended[o + k] = Float.floatToRawIntBits(ax + blend * (bx - ax));
-                }
-            }
-
-            worldrenderer.addVertexData(blended);
-        }
-        tessellator.draw();
     }
 
     public FontRenderer getFontRenderer()

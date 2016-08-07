@@ -86,7 +86,7 @@ class BookRenderer
         return (currentChapter > 0);
     }
 
-    void navigateTo(final PageRef target)
+    public void navigateTo(final PageRef target)
     {
         pushHistory();
 
@@ -145,12 +145,7 @@ class BookRenderer
         }
     }
 
-    private void pushHistory()
-    {
-        history.push(new PageRef(currentChapter, currentPair * 2));
-    }
-
-    void navigateBack()
+    public void navigateBack()
     {
         if (history.size() > 0)
         {
@@ -166,7 +161,12 @@ class BookRenderer
         }
     }
 
-    protected boolean mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException
+    private void pushHistory()
+    {
+        history.push(new PageRef(currentChapter, currentPair * 2));
+    }
+
+    public boolean mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException
     {
         if (mouseButton == 0)
         {
@@ -210,7 +210,7 @@ class BookRenderer
         return false;
     }
 
-    BookRenderer parseBook()
+    public BookRenderer parseBook()
     {
         try
         {
