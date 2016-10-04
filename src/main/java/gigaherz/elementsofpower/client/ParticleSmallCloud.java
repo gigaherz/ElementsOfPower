@@ -1,22 +1,35 @@
 package gigaherz.elementsofpower.client;
 
-import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.particle.IParticleFactory;
-import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleCloud;
+import net.minecraft.crash.CrashReport;
+import net.minecraft.util.ReportedException;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
-import javax.annotation.ParametersAreNonnullByDefault;
+import java.lang.reflect.Field;
 
 public class ParticleSmallCloud extends ParticleCloud
 {
+    static Field internalParticleSizeField;
+
+    static {
+        internalParticleSizeField = ReflectionHelper.findField(ParticleCloud.class, "field_70569_a", "oSize");
+        internalParticleSizeField.setAccessible(true);
+    }
+
     public ParticleSmallCloud(World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn)
     {
         super(worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);
         particleScale *= 0.45f;
-        ReflectionHelper.setPrivateValue(ParticleCloud.class, this, particleScale, "field_70569_a", "oSize");
+        try
+        {
+            internalParticleSizeField.set(this, particleScale);
+        }
+        catch (IllegalAccessException e)
+        {
+            throw new ReportedException(new CrashReport("Error trying to construct particle", e));
+        }
     }
 
     @Override
