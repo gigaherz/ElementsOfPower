@@ -1,6 +1,7 @@
 package gigaherz.elementsofpower.client;
 
 import mcp.MethodsReturnNonnullByDefault;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.IParticleFactory;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleCloud;
@@ -11,7 +12,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 public class ParticleSmallCloud extends ParticleCloud
 {
-    protected ParticleSmallCloud(World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn)
+    public ParticleSmallCloud(World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn)
     {
         super(worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);
         particleScale *= 0.45f;
@@ -43,18 +44,8 @@ public class ParticleSmallCloud extends ParticleCloud
         }
     }
 
-    public static class Factory implements IParticleFactory
+    public static void spawn(World worldIn, double x, double y, double z, double vx, double vy, double vz)
     {
-        @Override
-        @MethodsReturnNonnullByDefault
-        @ParametersAreNonnullByDefault
-        public Particle getEntityFX(int particleID,
-                                    World worldIn,
-                                    double xCoordIn, double yCoordIn, double zCoordIn,
-                                    double xSpeedIn, double ySpeedIn, double zSpeedIn,
-                                    int... p_178902_15_)
-        {
-            return new ParticleSmallCloud(worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);
-        }
+        Minecraft.getMinecraft().effectRenderer.addEffect(new ParticleSmallCloud(worldIn, x, y, z, vx, vy, vz));
     }
 }

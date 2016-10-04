@@ -1,11 +1,13 @@
 package gigaherz.elementsofpower.essentializer;
 
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.client.ParticleSmallCloud;
 import gigaherz.elementsofpower.common.BlockRegistered;
 import gigaherz.elementsofpower.common.GuiHandler;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -13,6 +15,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import java.util.Random;
@@ -63,6 +67,7 @@ public class BlockEssentializer
         return new TileEssentializer();
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public void randomDisplayTick(IBlockState state, World worldIn, BlockPos pos, Random rand)
     {
@@ -81,16 +86,16 @@ public class BlockEssentializer
                 switch (rand.nextInt(4))
                 {
                     case 0:
-                        worldIn.spawnParticle(ElementsOfPower.SMALL_CLOUD_PARTICLE, x + rx + 0.4, y, z + rz, 0.0D, 0.05D, 0.0D);
+                        ParticleSmallCloud.spawn(worldIn, x + rx + 0.4, y, z + rz, 0.0D, 0.05D, 0.0D);
                         break;
                     case 1:
-                        worldIn.spawnParticle(ElementsOfPower.SMALL_CLOUD_PARTICLE, x + rx - 0.4, y, z + rz, 0.0D, 0.05D, 0.0D);
+                        ParticleSmallCloud.spawn(worldIn, x + rx - 0.4, y, z + rz, 0.0D, 0.05D, 0.0D);
                         break;
                     case 2:
-                        worldIn.spawnParticle(ElementsOfPower.SMALL_CLOUD_PARTICLE, x + rx, y, z + rz + 0.4, 0.0D, 0.05D, 0.0D);
+                        ParticleSmallCloud.spawn(worldIn, x + rx, y, z + rz + 0.4, 0.0D, 0.05D, 0.0D);
                         break;
                     case 3:
-                        worldIn.spawnParticle(ElementsOfPower.SMALL_CLOUD_PARTICLE, x + rx, y, z + rz - 0.4, 0.0D, 0.05D, 0.0D);
+                        ParticleSmallCloud.spawn(worldIn, x + rx, y, z + rz - 0.4, 0.0D, 0.05D, 0.0D);
                         break;
                 }
             }

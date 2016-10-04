@@ -67,36 +67,24 @@ public class ClientProxy implements ISideProxy
 
     public void init()
     {
-
-        registerParticle();
-
         Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(
-                new IBlockColor()
-                {
-                    public int colorMultiplier(@Nonnull IBlockState state, @Nullable IBlockAccess world, @Nullable BlockPos pos, int tintIndex)
-                    {
-                        Gemstone gem = state.getValue(BlockSpelldust.VARIANT);
-
-                        return gem.getTintColor();
-                    }
+                (state, world, pos, tintIndex) -> {
+                    Gemstone gem = state.getValue(BlockSpelldust.VARIANT);
+                    return gem.getTintColor();
                 }, ElementsOfPower.spell_wire);
+
         Minecraft.getMinecraft().getItemColors().registerItemColorHandler(
-                new IItemColor()
-                {
-                    @Override
-                    public int getColorFromItemstack(@Nonnull ItemStack stack, int tintIndex)
-                    {
-                        if (tintIndex != 0)
-                            return 0xFFFFFFFF;
+                (stack, tintIndex) -> {
+                    if (tintIndex != 0)
+                        return 0xFFFFFFFF;
 
-                        int index = stack.getItemDamage();
+                    int index = stack.getItemDamage();
 
-                        if (index >= Gemstone.values.length)
+                    if (index >= Gemstone.values.length)
 
-                            return 0xFFFFFFFF;
+                        return 0xFFFFFFFF;
 
-                        return Gemstone.values[index].getTintColor();
-                    }
+                    return Gemstone.values[index].getTintColor();
                 }, ElementsOfPower.spelldust);
     }
 
@@ -184,11 +172,6 @@ public class ClientProxy implements ISideProxy
     public IAnimationStateMachine load(ResourceLocation location, ImmutableMap<String, ITimeValue> parameters)
     {
         return ModelLoaderRegistry.loadASM(location, parameters);
-    }
-
-    public void registerParticle()
-    {
-        Minecraft.getMinecraft().effectRenderer.registerParticle(ElementsOfPower.SMALL_CLOUD_PARTICLE_ID, new ParticleSmallCloud.Factory());
     }
 
     // ----------------------------------------------------------- Item/Block Models

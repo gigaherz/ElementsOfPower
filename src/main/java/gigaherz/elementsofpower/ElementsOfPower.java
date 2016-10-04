@@ -169,9 +169,6 @@ public class ElementsOfPower
         }
     };
 
-    public static int SMALL_CLOUD_PARTICLE_ID;
-    public static EnumParticleTypes SMALL_CLOUD_PARTICLE;
-
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
@@ -182,8 +179,6 @@ public class ElementsOfPower
         overrides = event.getModConfigurationDirectory() + File.separator + "elementsofpower_essences.json";
 
         CapabilityMagicContainer.register();
-
-        registerParticle();
 
         registerItems();
 
@@ -229,20 +224,6 @@ public class ElementsOfPower
     public void postInit(FMLPostInitializationEvent event)
     {
         EssenceConversions.registerEssencesForRecipes();
-    }
-
-    private void registerParticle()
-    {
-        SMALL_CLOUD_PARTICLE_ID = -1;
-        for (EnumParticleTypes t : EnumParticleTypes.values())
-        {
-            SMALL_CLOUD_PARTICLE_ID = Math.max(SMALL_CLOUD_PARTICLE_ID, t.getParticleID() + 1);
-        }
-        SMALL_CLOUD_PARTICLE = EnumHelper.addEnum(EnumParticleTypes.class, "SMALL_CLOUD",
-                new Class<?>[]{String.class, int.class, boolean.class},
-                "small_cloud", SMALL_CLOUD_PARTICLE_ID, false);
-
-        // Client-side rendering registered in: proxy.registerParticle();
     }
 
     private void registerItems()
