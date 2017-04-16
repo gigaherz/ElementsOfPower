@@ -20,7 +20,7 @@ public class Utils
         return false;
     }
 
-    public static <OType> OType stackMapGet(Map<ItemStack, OType> map, ItemStack stack)
+    public static <OType> OType stackMapGet(Map<ItemStack, OType> map, ItemStack stack, OType defaultValue)
     {
         for (Map.Entry<ItemStack, OType> entry : map.entrySet())
         {
@@ -30,7 +30,7 @@ public class Utils
             }
         }
 
-        return null;
+        return defaultValue;
     }
 
     public static int gcd(int a, int b)

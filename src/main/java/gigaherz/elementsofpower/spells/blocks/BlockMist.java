@@ -1,6 +1,6 @@
 package gigaherz.elementsofpower.spells.blocks;
 
-import gigaherz.elementsofpower.common.BlockRegistered;
+import gigaherz.common.BlockRegistered;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.Material;
@@ -9,7 +9,7 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -18,6 +18,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -37,8 +38,9 @@ public class BlockMist extends BlockRegistered
         setLightOpacity(0);
     }
 
+    @Deprecated
     @Override
-    public boolean isVisuallyOpaque()
+    public boolean causesSuffocation(IBlockState p_176214_1_)
     {
         return false;
     }
@@ -169,15 +171,14 @@ public class BlockMist extends BlockRegistered
     }
 
     @Override
-    public Item getItemDropped(IBlockState state, Random rand, int fortune)
+    public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
     {
-        return null;
+        return Collections.emptyList();
     }
 
-    @Deprecated
     @Override
-    public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB p_185477_4_, List<AxisAlignedBB> p_185477_5_, @Nullable Entity p_185477_6_)
+    public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean p_185477_7_)
     {
-        //super.addCollisionBoxToList(state, worldIn, pos, p_185477_4_, p_185477_5_, p_185477_6_);
+        //super.addCollisionBoxToList(state, worldIn, pos, entityBox, collidingBoxes, entityIn, p_185477_7_);
     }
 }

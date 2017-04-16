@@ -17,9 +17,9 @@ import javax.annotation.Nullable;
 public class EssentializerTileUpdate
         implements IMessage
 {
-    public BlockPos pos;
-    public MagicAmounts remaining;
-    public ItemStack activeItem;
+    public BlockPos pos = new BlockPos(0, 0, 0);
+    public MagicAmounts remaining = MagicAmounts.EMPTY;
+    public ItemStack activeItem = ItemStack.EMPTY;
 
     @Used
     public EssentializerTileUpdate()
@@ -29,8 +29,8 @@ public class EssentializerTileUpdate
     public EssentializerTileUpdate(TileEssentializer essentializer)
     {
         this.pos = essentializer.getPos();
-        this.activeItem = essentializer.getStackInSlot(0);
-        this.remaining = MagicAmounts.copyOf(essentializer.remainingToConvert);
+        this.activeItem = essentializer.getInventory().getStackInSlot(0);
+        this.remaining = essentializer.remainingToConvert;
     }
 
     @Override
@@ -41,7 +41,7 @@ public class EssentializerTileUpdate
                 buf.readInt(),
                 buf.readInt());
         activeItem = ByteBufUtils.readItemStack(buf);
-        remaining = MagicAmounts.readAmounts(buf);
+        remaining = new MagicAmounts(buf);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class EssentializerTileUpdate
         buf.writeInt(pos.getY());
         buf.writeInt(pos.getZ());
         ByteBufUtils.writeItemStack(buf, activeItem);
-        MagicAmounts.writeAmounts(buf, remaining);
+        remaining.writeTo(buf);
     }
 
     public static class Handler implements IMessageHandler<EssentializerTileUpdate, IMessage>

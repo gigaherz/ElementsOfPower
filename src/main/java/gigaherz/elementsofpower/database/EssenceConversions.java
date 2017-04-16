@@ -21,46 +21,43 @@ public class EssenceConversions
             ItemStack output = it.getKey();
             List<ItemStack> inputs = it.getValue();
 
-            int stackSize = output.stackSize;
-            if (stackSize < 1)
+            int count = output.getCount();
+            if (count < 1)
             {
                 ElementsOfPower.logger.warn("StackSize is invalid! " + output.toString());
                 continue;
             }
 
-            if (output.stackSize > 1)
+            if (output.getCount() > 1)
             {
                 output = output.copy();
-                output.stackSize = 1;
+                output.setCount(1);
             }
 
             if (itemHasEssence(output))
                 continue;
 
             boolean allFound = true;
-            MagicAmounts am = new MagicAmounts();
+            MagicAmounts am = MagicAmounts.EMPTY;
             for (ItemStack b : inputs)
             {
                 MagicAmounts m = getEssences(b, true);
 
-                if (m == null || m.isEmpty())
+                if (m.isEmpty())
                 {
                     allFound = false;
                     break;
                 }
 
-                am.add(m);
+                am = am.add(m);
             }
 
             if (!allFound)
                 continue;
 
-            if (stackSize > 1)
+            if (count > 1)
             {
-                for (int i = 0; i < am.amounts.length; i++)
-                {
-                    am.amounts[i] /= stackSize;
-                }
+                am = am.multiply(1 / count);
             }
 
             addConversion(output, am);
@@ -69,35 +66,28 @@ public class EssenceConversions
 
     public static boolean itemHasEssence(ItemStack stack)
     {
-        if (stack.stackSize > 1)
+        if (stack.getCount() > 1)
         {
             stack = stack.copy();
-            stack.stackSize = 1;
+            stack.setCount(1);
         }
         return Utils.stackMapContainsKey(itemEssences, stack);
     }
 
     public static MagicAmounts getEssences(ItemStack stack, boolean wholeStack)
     {
-        int stackSize = stack.stackSize;
-        if (stackSize > 1)
+        int count = stack.getCount();
+        if (count > 1)
         {
             stack = stack.copy();
-            stack.stackSize = 1;
+            stack.setCount(1);
         }
 
-        MagicAmounts m = Utils.stackMapGet(itemEssences, stack);
-        if (m == null)
-            return null;
+        MagicAmounts m = Utils.stackMapGet(itemEssences, stack, MagicAmounts.EMPTY);
 
-        m = m.copy();
-
-        if (stackSize > 1 && wholeStack)
+        if (count > 1 && wholeStack)
         {
-            for (int i = 0; i < m.amounts.length; i++)
-            {
-                m.amounts[i] *= stackSize;
-            }
+            m = m.multiply(count);
         }
 
         return m;

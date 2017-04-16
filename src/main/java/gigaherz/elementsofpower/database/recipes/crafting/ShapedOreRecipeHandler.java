@@ -51,7 +51,7 @@ public class ShapedOreRecipeHandler implements IRecipeHandler
                 if (actualInput instanceof ItemStack)
                 {
                     ItemStack stack = ((ItemStack) actualInput).copy();
-                    stack.stackSize = 1;
+                    stack.setCount(1);
                     recipeItems.add(stack);
                 }
                 else

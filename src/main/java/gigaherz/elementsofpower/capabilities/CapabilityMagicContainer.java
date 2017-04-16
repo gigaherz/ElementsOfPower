@@ -33,7 +33,7 @@ public class CapabilityMagicContainer
 
             for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
             {
-                nbt.setFloat("" + i, amounts.amounts[i]);
+                nbt.setFloat("" + i, amounts.get(i));
             }
 
             return nbt;
@@ -44,7 +44,7 @@ public class CapabilityMagicContainer
         {
             NBTTagCompound tag = (NBTTagCompound) nbt;
 
-            MagicAmounts amounts = new MagicAmounts();
+            MagicAmounts amounts = MagicAmounts.EMPTY;
 
             for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
             {
@@ -52,7 +52,7 @@ public class CapabilityMagicContainer
                 {
                     float amount = tag.getFloat("" + i);
 
-                    amounts.amounts[i] = amount;
+                    amounts = amounts.with(i, amount);
                 }
                 catch (NumberFormatException ex)
                 {

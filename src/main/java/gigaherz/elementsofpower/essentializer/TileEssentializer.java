@@ -6,9 +6,6 @@ import gigaherz.elementsofpower.database.EssenceConversions;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.network.EssentializerTileUpdate;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -17,23 +14,96 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.items.wrapper.RangedWrapper;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class TileEssentializer
         extends TileEntity
-        implements ISidedInventory, ITickable
+        implements ITickable
 {
     public static final int MaxEssentializerMagic = 32768;
     public static final float MaxConvertPerTick = 5 / 20.0f;
+    public static final float MaxTransferPerTick = 50 / 20.0f;
 
-    public final InventoryBasic inventory = new InventoryBasic(ElementsOfPower.MODID + ".essentializer", false, 3);
+    public final IItemHandlerModifiable inventory = new ItemStackHandler(3)
+    {
 
-    public MagicAmounts containedMagic = new MagicAmounts();
+        @Override
+        protected void onContentsChanged(int slot)
+        {
+            super.onContentsChanged(slot);
+            markDirty();
+        }
+
+        public boolean isItemValidForSlot(int index, ItemStack stack)
+        {
+            switch (index)
+            {
+                case 0:
+                    return EssenceConversions.itemHasEssence(stack);
+                case 1:
+                    return ContainerInformation.itemContainsMagic(stack);
+                case 2:
+                    return ContainerInformation.canItemContainMagic(stack);
+            }
+            return false;
+        }
+
+        @Nonnull
+        @Override
+        public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)
+        {
+            if (!isItemValidForSlot(slot, stack))
+                return stack;
+            return super.insertItem(slot, stack, simulate);
+        }
+    };
+
+    public IItemHandler sides = new RangedWrapper(inventory, 0, 2);
+    public IItemHandler top = new RangedWrapper(inventory, 2, 3);
+
+    public MagicAmounts containedMagic = MagicAmounts.EMPTY;
     public MagicAmounts remainingToConvert;
+
+    @Override
+    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing)
+    {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+        {
+            return facing != EnumFacing.DOWN;
+        }
+        return super.hasCapability(capability, facing);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Nullable
+    @Override
+    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing)
+    {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+        {
+            if (facing == null) return (T) inventory;
+            switch (facing)
+            {
+                case UP:
+                    return (T) top;
+                case DOWN:
+                    return null;
+                default:
+                    return (T) sides;
+            }
+        }
+        return super.getCapability(capability, facing);
+    }
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound)
@@ -43,7 +113,7 @@ public class TileEssentializer
         containedMagic = readAmountsFromNBT(tagCompound, "Contained");
         remainingToConvert = readAmountsFromNBT(tagCompound, "Remaining");
         if (containedMagic == null)
-            containedMagic = new MagicAmounts();
+            containedMagic = MagicAmounts.EMPTY;
     }
 
     @Override
@@ -56,67 +126,56 @@ public class TileEssentializer
         return tagCompound;
     }
 
-    @Nullable
     private MagicAmounts readAmountsFromNBT(NBTTagCompound tagCompound, String key)
     {
-        MagicAmounts amounts = null;
+        MagicAmounts amounts = MagicAmounts.EMPTY;
         if (tagCompound.hasKey(key, Constants.NBT.TAG_COMPOUND))
         {
             NBTTagCompound tag = tagCompound.getCompoundTag(key);
 
-            amounts = new MagicAmounts();
-            amounts.readFromNBT(tag);
+            amounts = new MagicAmounts(tag);
         }
         return amounts;
     }
 
-    private void writeAmountsToNBT(NBTTagCompound tagCompound, String key, @Nullable MagicAmounts amounts)
+    private void writeAmountsToNBT(NBTTagCompound tagCompound, String key, MagicAmounts amounts)
     {
-        if (amounts != null)
-        {
-            NBTTagCompound tag = new NBTTagCompound();
+        NBTTagCompound tag = new NBTTagCompound();
 
-            amounts.writeToNBT(tag);
+        amounts.serialize(tag);
 
-            tagCompound.setTag(key, tag);
-        }
+        tagCompound.setTag(key, tag);
     }
 
     private void readInventoryFromNBT(NBTTagCompound tagCompound)
     {
-        NBTTagList tagList = tagCompound.getTagList("Inventory", Constants.NBT.TAG_COMPOUND);
-
-        inventory.clear();
-        for (int i = 0; i < tagList.tagCount(); i++)
+        if (tagCompound.getTagId("Inventory") == Constants.NBT.TAG_LIST)
         {
-            NBTTagCompound tag = (NBTTagCompound) tagList.get(i);
-            byte slot = tag.getByte("Slot");
+            NBTTagList tagList = tagCompound.getTagList("Inventory", Constants.NBT.TAG_COMPOUND);
 
-            if (slot < inventory.getSizeInventory())
+            for (int i = 0; i < inventory.getSlots(); i++)
+            { inventory.setStackInSlot(i, ItemStack.EMPTY); }
+
+            for (int i = 0; i < tagList.tagCount(); i++)
             {
-                inventory.setInventorySlotContents(slot, ItemStack.loadItemStackFromNBT(tag));
+                NBTTagCompound tag = (NBTTagCompound) tagList.get(i);
+                byte slot = tag.getByte("Slot");
+
+                if (slot < inventory.getSlots())
+                {
+                    inventory.setStackInSlot(slot, new ItemStack(tag));
+                }
             }
+
+            return;
         }
+
+        CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.readNBT(inventory, null, tagCompound.getTag("Slots"));
     }
 
     private void writeInventoryToNBT(NBTTagCompound tagCompound)
     {
-        NBTTagList itemList = new NBTTagList();
-
-        for (int i = 0; i < inventory.getSizeInventory(); i++)
-        {
-            ItemStack stack = inventory.getStackInSlot(i);
-
-            if (stack != null)
-            {
-                NBTTagCompound tag = new NBTTagCompound();
-                tag.setByte("Slot", (byte) i);
-                stack.writeToNBT(tag);
-                itemList.appendTag(tag);
-            }
-        }
-
-        tagCompound.setTag("Inventory", itemList);
+        tagCompound.setTag("Slots", CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.writeNBT(inventory, null));
     }
 
     @Override
@@ -143,14 +202,14 @@ public class TileEssentializer
         super.onDataPacket(net, packet);
         handleUpdateTag(packet.getNbtCompound());
 
-        IBlockState state = worldObj.getBlockState(pos);
-        worldObj.notifyBlockUpdate(pos, state, state, 3);
+        IBlockState state = world.getBlockState(pos);
+        world.notifyBlockUpdate(pos, state, state, 3);
     }
 
     @Override
     public void update()
     {
-        if (!worldObj.isRemote)
+        if (!world.isRemote)
         {
             boolean b0 = convertRemaining();
             boolean b1 = convertSource(inventory);
@@ -158,7 +217,7 @@ public class TileEssentializer
             boolean b3 = addMagicToOutput(inventory);
             if (b0 || b1 || b2 || b3)
             {
-                ElementsOfPower.channel.sendToAllAround(new EssentializerTileUpdate(this), new NetworkRegistry.TargetPoint(worldObj.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 50));
+                ElementsOfPower.channel.sendToAllAround(new EssentializerTileUpdate(this), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 50));
             }
             if (b1 || b2 || b3)
             {
@@ -169,44 +228,38 @@ public class TileEssentializer
 
     private boolean convertRemaining()
     {
-        if (remainingToConvert == null)
+        if (remainingToConvert.isEmpty())
             return false;
 
         float totalAdded = 0;
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            float maxTransfer = Math.min(MaxConvertPerTick, MaxEssentializerMagic - containedMagic.amounts[i]);
-            float transfer = Math.min(maxTransfer, remainingToConvert.amounts[i]);
+            float maxTransfer = Math.min(MaxConvertPerTick, MaxEssentializerMagic - containedMagic.get(i));
+            float transfer = Math.min(maxTransfer, remainingToConvert.get(i));
             if (transfer > 0)
             {
-                remainingToConvert.amounts[i] -= transfer;
-                containedMagic.amounts[i] += transfer;
+                remainingToConvert = remainingToConvert.add(i, -transfer);
+                containedMagic = containedMagic.add(i, +transfer);
                 totalAdded += transfer;
             }
         }
 
-        if (remainingToConvert.isEmpty())
-            remainingToConvert = null;
-
         return totalAdded > 0;
     }
 
-    private boolean convertSource(InventoryBasic inventory)
+    private boolean convertSource(IItemHandlerModifiable inventory)
     {
-        if (remainingToConvert != null)
+        if (!remainingToConvert.isEmpty())
             return false;
 
         ItemStack input = inventory.getStackInSlot(0);
 
-        if (input == null)
+        if (input.getCount() <= 0)
         {
             return false;
         }
 
         MagicAmounts contained = EssenceConversions.getEssences(input, false);
-
-        if (contained == null)
-            return false;
 
         if (contained.isEmpty())
             return false;
@@ -214,25 +267,20 @@ public class TileEssentializer
         if (!canAddAll(contained))
             return false;
 
-        remainingToConvert = contained.copy();
+        remainingToConvert = contained;
 
-        input.stackSize--;
+        input.shrink(1);
 
-        if (input.stackSize <= 0)
-            input = null;
+        if (input.getCount() <= 0)
+            input = ItemStack.EMPTY;
 
-        inventory.setInventorySlotContents(0, input);
+        inventory.setStackInSlot(0, input);
         return true;
     }
 
-    private boolean getMagicFromInput(InventoryBasic inventory)
+    private boolean getMagicFromInput(IItemHandlerModifiable inventory)
     {
         ItemStack input = inventory.getStackInSlot(1);
-
-        if (input == null)
-        {
-            return false;
-        }
 
         if (!ContainerInformation.itemContainsMagic(input))
             return false;
@@ -247,12 +295,12 @@ public class TileEssentializer
         float totalAdded = 0;
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            float maxTransfer = Math.min(MaxConvertPerTick, MaxEssentializerMagic - containedMagic.amounts[i]);
-            float transfer = isInfinite ? maxTransfer : Math.min(maxTransfer, contained.amounts[i]);
+            float maxTransfer = Math.min(MaxTransferPerTick, MaxEssentializerMagic - containedMagic.get(i));
+            float transfer = isInfinite ? maxTransfer : Math.min(maxTransfer, contained.get(i));
             if (transfer > 0)
             {
-                if (!isInfinite) contained.amounts[i] -= transfer;
-                containedMagic.amounts[i] += transfer;
+                if (!isInfinite) contained = contained.add(i, -transfer);
+                containedMagic = containedMagic.add(i, transfer);
                 totalAdded += transfer;
             }
         }
@@ -262,20 +310,15 @@ public class TileEssentializer
 
         input = ContainerInformation.setContainedMagic(input, contained);
 
-        inventory.setInventorySlotContents(1, input);
+        inventory.setStackInSlot(1, input);
         return true;
     }
 
-    private boolean addMagicToOutput(InventoryBasic inventory)
+    private boolean addMagicToOutput(IItemHandlerModifiable inventory)
     {
         ItemStack output = inventory.getStackInSlot(2);
 
-        if (output == null)
-        {
-            return false;
-        }
-
-        if (output.stackSize != 1)
+        if (output.getCount() != 1)
         {
             return false;
         }
@@ -292,12 +335,12 @@ public class TileEssentializer
         float totalAdded = 0;
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            float maxTransfer = Math.min(MaxConvertPerTick, limits.amounts[i] - contained.amounts[i]);
-            float transfer = Math.min(maxTransfer, containedMagic.amounts[i]);
+            float maxTransfer = Math.min(MaxTransferPerTick, limits.get(i) - contained.get(i));
+            float transfer = Math.min(maxTransfer, containedMagic.get(i));
             if (transfer > 0)
             {
-                contained.amounts[i] += transfer;
-                containedMagic.amounts[i] -= transfer;
+                contained = contained.add(i, transfer);
+                containedMagic = containedMagic.add(i, -transfer);
                 totalAdded += transfer;
             }
         }
@@ -305,7 +348,7 @@ public class TileEssentializer
         if (totalAdded <= 0)
             return false;
 
-        inventory.setInventorySlotContents(2, ContainerInformation.setContainedMagic(output, contained));
+        inventory.setStackInSlot(2, ContainerInformation.setContainedMagic(output, contained));
         return true;
     }
 
@@ -313,12 +356,12 @@ public class TileEssentializer
     {
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            float amount = magic.amounts[i];
+            float amount = magic.get(i);
 
             if (amount <= 0)
                 continue;
 
-            if (containedMagic.amounts[i] + amount > MaxEssentializerMagic)
+            if (containedMagic.get(i) + amount > MaxEssentializerMagic)
             {
                 return false;
             }
@@ -327,131 +370,8 @@ public class TileEssentializer
         return true;
     }
 
-    // IInventory forwarders
-    @Override
-    public String getName()
+    public IItemHandlerModifiable getInventory()
     {
-        return inventory.getName();
-    }
-
-    @Override
-    public boolean hasCustomName()
-    {
-        return inventory.hasCustomName();
-    }
-
-    @Override
-    public ITextComponent getDisplayName()
-    {
-        return inventory.getDisplayName();
-    }
-
-    @Override
-    public int getSizeInventory()
-    {
-        return inventory.getSizeInventory();
-    }
-
-    @Override
-    public ItemStack getStackInSlot(int slotIndex)
-    {
-        return inventory.getStackInSlot(slotIndex);
-    }
-
-    @Override
-    public void setInventorySlotContents(int slot, @Nullable ItemStack stack)
-    {
-        inventory.setInventorySlotContents(slot, stack);
-    }
-
-    @Override
-    public ItemStack decrStackSize(int slotIndex, int amount)
-    {
-        return inventory.decrStackSize(slotIndex, amount);
-    }
-
-    @Override
-    public ItemStack removeStackFromSlot(int slotIndex)
-    {
-        return inventory.removeStackFromSlot(slotIndex);
-    }
-
-    @Override
-    public int getInventoryStackLimit()
-    {
-        return inventory.getInventoryStackLimit();
-    }
-
-    @Override
-    public void clear()
-    {
-        inventory.clear();
-    }
-
-    // Can't forward this one because it returns true always
-    @Override
-    public boolean isUseableByPlayer(EntityPlayer player)
-    {
-        return (this.worldObj.getTileEntity(pos) == this)
-                && (player.getDistanceSq(
-                pos.getX() + 0.5,
-                pos.getY() + 0.5,
-                pos.getZ() + 0.5) < 64);
-    }
-
-    // Pointless inventory methods
-    @Override
-    public int getField(int id)
-    {
-        return 0;
-    }
-
-    @Override
-    public void setField(int id, int value)
-    {
-    }
-
-    @Override
-    public int getFieldCount()
-    {
-        return 0;
-    }
-
-    @Override
-    public void openInventory(EntityPlayer player)
-    {
-    }
-
-    @Override
-    public void closeInventory(EntityPlayer player)
-    {
-    }
-
-    // ISidedInventory
-    public int[] getSlotsForFace(EnumFacing side)
-    {
-        return new int[]{0, 1};
-    }
-
-    public boolean isItemValidForSlot(int index, ItemStack stack)
-    {
-        switch (index)
-        {
-            case 0:
-                return ContainerInformation.itemContainsMagic(stack) || EssenceConversions.itemHasEssence(stack);
-            case 1:
-                return ContainerInformation.canItemContainMagic(stack);
-        }
-        return false;
-    }
-
-    public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction)
-    {
-        return isItemValidForSlot(index, itemStackIn);
-    }
-
-    public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction)
-    {
-        return true;
+        return inventory;
     }
 }

@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.gemstones;
 
+import gigaherz.common.BlockRegistered;
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.common.BlockRegistered;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -12,8 +12,8 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkGenerator;
@@ -21,7 +21,6 @@ import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.feature.WorldGenMinable;
 import net.minecraftforge.fml.common.IWorldGenerator;
 
-import java.util.List;
 import java.util.Random;
 
 public class BlockGemstoneOre extends BlockRegistered
@@ -69,7 +68,7 @@ public class BlockGemstoneOre extends BlockRegistered
     }
 
     @Override
-    public void getSubBlocks(Item itemIn, CreativeTabs tab, List<ItemStack> list)
+    public void getSubBlocks(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> list)
     {
         for (GemstoneBlockType type : GemstoneBlockType.values)
         {
@@ -95,7 +94,7 @@ public class BlockGemstoneOre extends BlockRegistered
     public int getExpDrop(IBlockState state, IBlockAccess world, BlockPos pos, int fortune)
     {
         Random rand = world instanceof World ? ((World) world).rand : new Random();
-        return MathHelper.getRandomIntegerInRange(rand, 3, 7);
+        return rand.nextInt(4) + 3;
     }
 
     @Override

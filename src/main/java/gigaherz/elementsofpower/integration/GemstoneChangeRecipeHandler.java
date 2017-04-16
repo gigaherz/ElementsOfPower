@@ -17,16 +17,9 @@ public class GemstoneChangeRecipeHandler implements IRecipeHandler<GemstoneChang
 
     @Nonnull
     @Override
-    public String getRecipeCategoryUid()
-    {
-        return VanillaRecipeCategoryUid.CRAFTING;
-    }
-
-    @Nonnull
-    @Override
     public String getRecipeCategoryUid(@Nonnull GemstoneChangeRecipeWrapper recipe)
     {
-        return getRecipeCategoryUid();
+        return VanillaRecipeCategoryUid.CRAFTING;
     }
 
     @Nonnull

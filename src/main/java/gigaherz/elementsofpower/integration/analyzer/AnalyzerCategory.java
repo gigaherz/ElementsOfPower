@@ -7,11 +7,13 @@ import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.gui.IGuiItemStackGroup;
 import mezz.jei.api.gui.IRecipeLayout;
+import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeCategory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class AnalyzerCategory implements IRecipeCategory<AnalyzerRecipeWrapper>
@@ -24,7 +26,6 @@ public class AnalyzerCategory implements IRecipeCategory<AnalyzerRecipeWrapper>
             "70%", "20%", "9%", "0.9%", "0.1%"
     };
 
-    @Nonnull
     private final IDrawable background;
 
     public AnalyzerCategory(IGuiHelper guiHelper)
@@ -54,27 +55,29 @@ public class AnalyzerCategory implements IRecipeCategory<AnalyzerRecipeWrapper>
         return background;
     }
 
+    @Nullable
+    @Override
+    public IDrawable getIcon()
+    {
+        return null;
+    }
+
     @Override
     public void drawExtras(@Nonnull Minecraft mc)
     {
         for (int ord = 0; ord < Quality.values.length; ord++)
         {
-            mc.fontRendererObj.drawString(Quality.values[ord].name(),
+            mc.fontRenderer.drawString(Quality.values[ord].name(),
                     32 + 64 * (ord % 2) + 10,
                     17 + 21 * (ord / 2) - 14, 0xFFFFFFFF, false);
-            mc.fontRendererObj.drawString(qualityChances[ord],
+            mc.fontRenderer.drawString(qualityChances[ord],
                     32 + 64 * (ord % 2) + 10,
                     17 + 21 * (ord / 2) - 4, 0xFFFFFFFF, false);
         }
     }
 
     @Override
-    public void drawAnimations(@Nonnull Minecraft minecraft)
-    {
-    }
-
-    @Override
-    public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull AnalyzerRecipeWrapper recipeWrapper)
+    public void setRecipe(IRecipeLayout recipeLayout, AnalyzerRecipeWrapper recipeWrapper, IIngredients ingredients)
     {
         IGuiItemStackGroup itemStacks = recipeLayout.getItemStacks();
 
@@ -87,14 +90,26 @@ public class AnalyzerCategory implements IRecipeCategory<AnalyzerRecipeWrapper>
                     17 + 21 * (ord / 2) - 16);
         }
 
+        /*
         List inputs = recipeWrapper.getInputs();
         List outputs = recipeWrapper.getOutputs();
+        */
 
+        recipeWrapper.getIngredients(ingredients);
+
+        /*
         itemStacks.setFromRecipe(0, inputs.get(0));
         itemStacks.setFromRecipe(1, outputs.get(0));
         itemStacks.setFromRecipe(2, outputs.get(1));
         itemStacks.setFromRecipe(3, outputs.get(2));
         itemStacks.setFromRecipe(4, outputs.get(3));
         itemStacks.setFromRecipe(5, outputs.get(4));
+        */
+    }
+
+    @Override
+    public List<String> getTooltipStrings(int mouseX, int mouseY)
+    {
+        return null;
     }
 }

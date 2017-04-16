@@ -77,13 +77,14 @@ public class SpellSequenceUpdate
         public IMessage onMessage(SpellSequenceUpdate message, MessageContext ctx)
         {
             final SpellSequenceUpdate msg = message;
-            final EntityPlayer player = ctx.getServerHandler().playerEntity;
-            final WorldServer ws = (WorldServer) player.worldObj;
+            final EntityPlayer player = ctx.getServerHandler().player;
+            final WorldServer ws = (WorldServer) player.world;
 
-            ws.addScheduledTask(() -> {
-                ItemStack stack = player.inventory.mainInventory[msg.slotNumber];
+            ws.addScheduledTask(() ->
+            {
+                ItemStack stack = player.inventory.getStackInSlot(msg.slotNumber);
 
-                if (stack != null && stack.getItem() instanceof ItemWand)
+                if (stack.getItem() instanceof ItemWand)
                 {
                     ItemWand wand = (ItemWand) stack.getItem();
                     wand.processSequenceUpdate(msg, stack, player);

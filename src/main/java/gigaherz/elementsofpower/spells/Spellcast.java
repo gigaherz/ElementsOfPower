@@ -14,6 +14,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Random;
 
@@ -175,8 +176,9 @@ public class Spellcast
     }
 
     // Butchered from the player getMouseOver()
+    @Nullable
     public RayTraceResult getEntityIntercept(Vec3d start, Vec3d look, Vec3d end,
-                                             RayTraceResult mop)
+                                             @Nullable RayTraceResult mop)
     {
         double distance = end.distanceTo(start);
 
@@ -255,11 +257,13 @@ public class Spellcast
     }
 
     // Called by the client on render, and by the server as needed
+    @Nullable
     public RayTraceResult getHitPosition()
     {
         return getHitPosition(1);
     }
 
+    @Nullable
     public RayTraceResult getHitPosition(float partialTicks)
     {
         float maxDistance = 10;
@@ -279,7 +283,7 @@ public class Spellcast
         Vec3d look = player.getLook(partialTicks);
         end = start.addVector(look.xCoord * maxDistance, look.yCoord * maxDistance, look.zCoord * maxDistance);
 
-        RayTraceResult mop = player.worldObj.rayTraceBlocks(start, end, false, true, false);
+        RayTraceResult mop = player.world.rayTraceBlocks(start, end, false, true, false);
 
         mop = getEntityIntercept(start, look, end, mop);
 

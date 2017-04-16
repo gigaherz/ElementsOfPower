@@ -14,10 +14,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Optional;
 import org.apache.commons.lang3.tuple.Triple;
 
 import javax.annotation.Nullable;
 
+@Optional.Interface(modid = "baubles", iface = "baubles.api.IBauble")
 public class ItemRing extends ItemGemContainer implements IBauble
 {
     public static final float MAX_TRANSFER_TICK = 1 / 20.0f;
@@ -31,12 +33,12 @@ public class ItemRing extends ItemGemContainer implements IBauble
 
     protected MagicAmounts adjustInsertedMagic(MagicAmounts am)
     {
-        return am.copy().multiply(1.5f);
+        return am.multiply(1.5f);
     }
 
     protected MagicAmounts adjustRemovedMagic(MagicAmounts am)
     {
-        return am.copy().multiply(1 / 1.5f);
+        return am.multiply(1 / 1.5f);
     }
 
     @Override
@@ -48,7 +50,7 @@ public class ItemRing extends ItemGemContainer implements IBauble
     @Override
     public void onWornTick(ItemStack itemstack, EntityLivingBase player)
     {
-        if (player.worldObj.isRemote)
+        if (player.world.isRemote)
             return;
 
         if (player instanceof EntityPlayer)
@@ -156,15 +158,15 @@ public class ItemRing extends ItemGemContainer implements IBauble
             if (g == Gemstone.Diamond || g.ordinal() == i)
                 maxTransfer *= boost;
 
-            float transfer = Math.min(maxTransfer, limits.amounts[i] - amounts.amounts[i]);
+            float transfer = Math.min(maxTransfer, limits.get(i) - amounts.get(i));
             if (!isInfinite(stack))
-                transfer = Math.min(available.amounts[i], transfer);
+                transfer = Math.min(available.get(i), transfer);
             if (transfer > 0)
             {
                 totalTransfer += transfer;
-                amounts.amounts[i] += transfer;
+                amounts = amounts.add(i, transfer);
                 if (!isInfinite(stack))
-                    available.amounts[i] -= transfer;
+                    available = available.add(i, -transfer);
             }
         }
 
@@ -181,7 +183,7 @@ public class ItemRing extends ItemGemContainer implements IBauble
         for (int i = 0; i < b.getSizeInventory(); i++)
         {
             ItemStack s = b.getStackInSlot(i);
-            if (s == null || s == thisStack)
+            if (s == thisStack)
                 continue;
             if (ContainerInformation.canItemContainMagic(s))
             {

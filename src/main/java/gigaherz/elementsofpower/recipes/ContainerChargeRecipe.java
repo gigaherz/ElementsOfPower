@@ -7,6 +7,7 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -16,17 +17,17 @@ public class ContainerChargeRecipe implements IRecipe
     @Override
     public boolean matches(InventoryCrafting inv, World worldIn)
     {
-        ItemStack gemContainer = null;
-        ItemStack orb = null;
+        ItemStack gemContainer = ItemStack.EMPTY;
+        ItemStack orb = ItemStack.EMPTY;
         for (int i = 0; i < inv.getSizeInventory(); i++)
         {
             ItemStack current = inv.getStackInSlot(i);
-            if (current == null)
+            if (current.getCount() <= 0)
                 continue;
             Item item = current.getItem();
             if (item instanceof ItemMagicContainer)
             {
-                if (gemContainer != null)
+                if (gemContainer.getCount() > 0)
                     return false;
                 gemContainer = current;
             }
@@ -39,29 +40,26 @@ public class ContainerChargeRecipe implements IRecipe
                 return false;
             }
         }
-        return gemContainer != null && orb != null;
+        return gemContainer.getCount() > 0 && orb.getCount() > 0;
     }
 
     @Override
     public ItemStack getCraftingResult(InventoryCrafting inv)
     {
-        ItemMagicContainer gemContainerItem = null;
-
-        ItemStack gemContainer = null;
+        ItemStack gemContainer = ItemStack.EMPTY;
         List<ItemStack> orbs = Lists.newArrayList();
 
         for (int i = 0; i < inv.getSizeInventory(); i++)
         {
             ItemStack current = inv.getStackInSlot(i);
-            if (current == null)
+            if (current == ItemStack.EMPTY)
                 continue;
             Item item = current.getItem();
             if (item instanceof ItemMagicContainer)
             {
                 if (gemContainer != null)
-                    return null;
+                    return ItemStack.EMPTY;
                 gemContainer = current.copy();
-                gemContainerItem = (ItemMagicContainer) item;
             }
             else if (item instanceof ItemMagicOrb)
             {
@@ -69,19 +67,19 @@ public class ContainerChargeRecipe implements IRecipe
             }
             else
             {
-                return null;
+                return ItemStack.EMPTY;
             }
         }
 
-        if (gemContainer == null)
+        if (gemContainer.getCount() <= 0)
         {
-            return null;
+            return ItemStack.EMPTY;
         }
 
         for (ItemStack orb : orbs)
         {
-            gemContainer = gemContainerItem.addContainedMagic(gemContainer, orb);
-            if (gemContainer == null)
+            gemContainer = ((ItemMagicContainer) gemContainer.getItem()).addContainedMagic(gemContainer, orb);
+            if (gemContainer.getCount() <= 0)
                 break;
         }
 
@@ -97,12 +95,11 @@ public class ContainerChargeRecipe implements IRecipe
     @Override
     public ItemStack getRecipeOutput()
     {
-        return null;
+        return ItemStack.EMPTY;
     }
 
-    @Override
-    public ItemStack[] getRemainingItems(InventoryCrafting inv)
+    public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv)
     {
-        return new ItemStack[inv.getSizeInventory()];
+        return NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
     }
 }

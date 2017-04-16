@@ -1,9 +1,9 @@
 package gigaherz.elementsofpower.client.renderers;
 
+import gigaherz.common.client.ModelHandle;
 import gigaherz.elementsofpower.essentializer.TileEssentializer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
@@ -17,8 +17,6 @@ public class RenderEssentializer extends TileEntitySpecialRenderer<TileEssential
     @Override
     public void renderTileEntityAt(TileEssentializer te, double x, double y, double z, float partialTicks, int destroyStage)
     {
-        IBakedModel model = handle.get();
-
         bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
         GlStateManager.disableLighting();
@@ -47,14 +45,14 @@ public class RenderEssentializer extends TileEntitySpecialRenderer<TileEssential
 
             GlStateManager.rotate(angle1, 0, 1, 0);
 
-            ModelHandle.renderModel(model, 0xFFFFFFFF);
+            handle.render(0xFFFFFFFF);
 
             GlStateManager.popMatrix();
         }
         GlStateManager.popMatrix();
 
-        ItemStack stack = te.getStackInSlot(0);
-        if (stack != null)
+        ItemStack stack = te.getInventory().getStackInSlot(0);
+        if (stack.getCount() > 0)
         {
             float angle3 = time * 1.5f;
             float bob2 = (float) (1 + Math.sin(time * (Math.PI / 180) * 0.91)) * 0.03f;

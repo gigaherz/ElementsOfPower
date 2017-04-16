@@ -39,13 +39,7 @@ public class RecipeTools
         {
             ItemStack output = recipe.getRecipeOutput();
 
-            if (output.getItem() == null)
-            {
-                ElementsOfPower.logger.warn("A Recipe has non-null itemstack but the item is NULL! This recipe can NOT be processed!");
-                return;
-            }
-
-            if (output.stackSize == 0)
+            if (output.getCount() == 0)
             {
                 ElementsOfPower.logger.warn("Recipe with output '" + output + "' has stack size 0. This recipe will be ignored.");
                 return;
@@ -55,13 +49,7 @@ public class RecipeTools
             {
                 if (s != null)
                 {
-                    if (s.getItem() == null)
-                    {
-                        ElementsOfPower.logger.warn("Recipe with output '" + output + "' has invalid input stack. This recipe will be ignored.");
-                        return;
-                    }
-
-                    if (s.stackSize == 0)
+                    if (s.getCount() == 0)
                     {
                         ElementsOfPower.logger.warn("Recipe with output '" + output + "' has input stack of size 0. This recipe will be ignored.");
                         return;
@@ -89,7 +77,7 @@ public class RecipeTools
         {
             if (inputs.size() == 1)
             {
-                if (inputs.get(0).stackSize < output.stackSize)
+                if (inputs.get(0).getCount() < output.getCount())
                 {
                     return true;
                 }
@@ -116,16 +104,16 @@ public class RecipeTools
                     if (OreDictionary.itemMatches(s, output, false))
                     {
 
-                        int numNeeded = s.stackSize;
-                        int numProduced = output.stackSize;
+                        int numNeeded = s.getCount();
+                        int numProduced = output.getCount();
                         int num = Utils.lcm(numNeeded, numProduced);
 
                         int mult = num / numNeeded;
 
-                        result.stackSize *= mult;
+                        result.setCount(result.getCount() * mult);
                         for (ItemStack t : stacks)
                         {
-                            t.stackSize *= mult;
+                            t.setCount(t.getCount() * mult);
                         }
 
                         totalMult *= mult;
@@ -134,7 +122,7 @@ public class RecipeTools
                         for (ItemStack t : items)
                         {
                             ItemStack r = t.copy();
-                            r.stackSize *= mult2;
+                            r.setCount(r.getCount() * mult2);
                             stacks.add(r);
                         }
 
@@ -143,7 +131,7 @@ public class RecipeTools
                     else
                     {
                         ItemStack r = s.copy();
-                        r.stackSize *= totalMult;
+                        r.setCount(r.getCount() * totalMult);
                         stacks.add(r);
                     }
                 }
@@ -167,7 +155,7 @@ public class RecipeTools
         public ItemStack applyExistingRecipes(@Nonnull ItemStack output, @Nonnull List<ItemStack> items, @Nonnull List<ItemStack> applied)
         {
             ItemStack result = output.copy();
-            int numProduced = output.stackSize;
+            int numProduced = output.getCount();
             int totalMult = 1;
 
             for (ItemStack is : items)
@@ -182,7 +170,7 @@ public class RecipeTools
 
                         if (ss.size() == 1)
                         {
-                            if (ss.get(0).stackSize < entry.getKey().stackSize)
+                            if (ss.get(0).getCount() < entry.getKey().getCount())
                             {
                                 continue;
                             }
@@ -195,15 +183,15 @@ public class RecipeTools
 
                 if (found != null)
                 {
-                    int numNeeded = is.stackSize;
+                    int numNeeded = is.getCount();
                     int num = Utils.lcm(numNeeded, numProduced);
 
                     int mult = num / numNeeded;
 
-                    result.stackSize *= mult;
+                    result.setCount(result.getCount() * mult);
                     for (ItemStack t : applied)
                     {
-                        t.stackSize *= mult;
+                        t.setCount(t.getCount() * mult);
                     }
 
                     totalMult *= mult;
@@ -212,33 +200,33 @@ public class RecipeTools
                     for (ItemStack t : found.getValue())
                     {
                         ItemStack q = t.copy();
-                        q.stackSize *= mult2;
+                        q.setCount(q.getCount() * mult2);
                         addCompacting(applied, q);
                     }
                 }
                 else
                 {
                     ItemStack q = is.copy();
-                    q.stackSize *= totalMult;
+                    q.setCount(q.getCount() * totalMult);
                     addCompacting(applied, q);
                 }
             }
 
-            if (result.stackSize > 1)
+            if (result.getCount() > 1)
             {
-                int cd = result.stackSize;
+                int cd = result.getCount();
                 for (ItemStack is : applied)
                 {
-                    cd = Utils.gcd(cd, is.stackSize);
+                    cd = Utils.gcd(cd, is.getCount());
                 }
 
                 if (cd > 1)
                 {
                     for (ItemStack is : applied)
                     {
-                        is.stackSize /= cd;
+                        is.setCount(is.getCount() / cd);
                     }
-                    result.stackSize /= cd;
+                    result.setCount(result.getCount() / cd);
                 }
             }
 
@@ -271,7 +259,7 @@ public class RecipeTools
                 {
                     if (k != input)
                     {
-                        k.stackSize += input.stackSize;
+                        k.grow(input.getCount());
                     }
                     found = true;
                     break;

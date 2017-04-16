@@ -51,7 +51,7 @@ public class EntityBall extends EntityThrowable
     @Override
     protected void onImpact(RayTraceResult pos)
     {
-        if (!this.worldObj.isRemote)
+        if (!this.world.isRemote)
         {
             if (getSpellcast() != null)
                 spellcast.onImpact(pos, rand);
@@ -83,7 +83,7 @@ public class EntityBall extends EntityThrowable
             if (sequence.length() > 0)
             {
                 spellcast = SpellManager.makeSpell(sequence);
-                spellcast.init(worldObj, (EntityPlayer) getThrower());
+                spellcast.init(world, (EntityPlayer) getThrower());
             }
         }
         return spellcast;

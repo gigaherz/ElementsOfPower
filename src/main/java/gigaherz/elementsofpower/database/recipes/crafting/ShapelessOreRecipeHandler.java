@@ -6,6 +6,7 @@ import gigaherz.elementsofpower.database.recipes.IRecipeHandler;
 import gigaherz.elementsofpower.database.recipes.IRecipeInfoProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.util.NonNullList;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import javax.annotation.Nonnull;
@@ -35,7 +36,7 @@ public class ShapelessOreRecipeHandler implements IRecipeHandler
         {
             output = recipe.getRecipeOutput();
 
-            ArrayList<Object> inputs = recipe.getInput();
+            NonNullList<Object> inputs = recipe.getInput();
             for (Object input : inputs)
             {
                 Object actualInput = input;
@@ -51,7 +52,7 @@ public class ShapelessOreRecipeHandler implements IRecipeHandler
                 if (actualInput instanceof ItemStack)
                 {
                     ItemStack stack = ((ItemStack) actualInput).copy();
-                    stack.stackSize = 1;
+                    stack.setCount(1);
                     recipeItems.add(stack);
                 }
                 else

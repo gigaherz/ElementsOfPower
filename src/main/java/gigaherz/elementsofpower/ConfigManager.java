@@ -9,11 +9,9 @@ public class ConfigManager
     public static boolean EnableGemstoneOregen;
     public static boolean EnableCocoonGeneration;
 
-    private static Configuration config;
-
     public static void init(File configurationFile)
     {
-        config = new Configuration(configurationFile);
+        Configuration config = new Configuration(configurationFile);
         config.load();
 
         config.setCategoryComment("OreGen", "Settings related to Ore generation");

@@ -1,15 +1,13 @@
 package gigaherz.elementsofpower.essentializer;
 
+import gigaherz.common.BlockRegistered;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.client.ParticleSmallCloud;
-import gigaherz.elementsofpower.common.BlockRegistered;
 import gigaherz.elementsofpower.common.GuiHandler;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -18,7 +16,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nullable;
 import java.util.Random;
 
 public class BlockEssentializer
@@ -43,7 +40,7 @@ public class BlockEssentializer
     }
 
     @Override
-    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing heldItem, float side, float hitX, float hitY)
     {
         TileEntity tileEntity = worldIn.getTileEntity(pos);
 

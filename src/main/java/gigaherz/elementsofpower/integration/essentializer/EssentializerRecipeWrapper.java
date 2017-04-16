@@ -3,12 +3,12 @@ package gigaherz.elementsofpower.integration.essentializer;
 import com.google.common.collect.Lists;
 import gigaherz.elementsofpower.database.EssenceConversions;
 import gigaherz.elementsofpower.database.MagicAmounts;
+import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.BlankRecipeWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -31,21 +31,13 @@ public class EssentializerRecipeWrapper extends BlankRecipeWrapper
     private EssentializerRecipeWrapper(ItemStack input, MagicAmounts am)
     {
         inputs = Collections.singletonList(input);
-        outputs = am.copy();
+        outputs = am;
     }
 
-    @Nonnull
     @Override
-    public List getInputs()
+    public void getIngredients(IIngredients ingredients)
     {
-        return inputs;
-    }
-
-    @Nonnull
-    @Override
-    public List getOutputs()
-    {
-        return Collections.emptyList();
+        ingredients.setInputs(ItemStack.class, inputs);
     }
 
     @Nonnull
@@ -60,7 +52,6 @@ public class EssentializerRecipeWrapper extends BlankRecipeWrapper
         EssentializerCategory.INSTANCE.drawEssenceSlots(minecraft);
     }
 
-    @Nullable
     @Override
     public List<String> getTooltipStrings(int mouseX, int mouseY)
     {

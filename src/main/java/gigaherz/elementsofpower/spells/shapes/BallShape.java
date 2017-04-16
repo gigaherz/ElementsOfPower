@@ -8,6 +8,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 public class BallShape extends SpellShape
@@ -21,12 +22,12 @@ public class BallShape extends SpellShape
     @Override
     public Spellcast castSpell(ItemStack stack, EntityPlayer player, Spellcast cast)
     {
-        World world = player.worldObj;
+        World world = player.world;
         EntityBall entity = new EntityBall(world, cast, player);
 
         entity.setHeadingFromThrower(player, player.rotationPitch, player.rotationYaw, 0.0F, 2.5F, 1.0F);
 
-        if (world.spawnEntityInWorld(entity))
+        if (world.spawnEntity(entity))
             return cast;
 
         return null;
@@ -77,9 +78,17 @@ public class BallShape extends SpellShape
                         if (!in_sphere)
                             continue;
 
+                        BlockPos np = new BlockPos(x, y, z);
+
+                        RayTraceResult mop2 = cast.world.rayTraceBlocks(
+                                mop.hitVec.add(new Vec3d(mop.sideHit.getDirectionVec()).scale(0.5)),
+                                new Vec3d(px + 0.5, py + 0.5, pz + 0.5), false, true, false);
+                        if (mop2 != null && mop2.typeOfHit != RayTraceResult.Type.MISS)
+                            if (!mop2.getBlockPos().equals(np))
+                                continue;
+
                         float r = (float) Math.sqrt(r2);
 
-                        BlockPos np = new BlockPos(x, y, z);
 
                         IBlockState currentState = cast.world.getBlockState(np);
 

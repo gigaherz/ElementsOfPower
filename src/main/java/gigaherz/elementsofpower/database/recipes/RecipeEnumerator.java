@@ -41,10 +41,6 @@ public abstract class RecipeEnumerator
 
             for (IRecipe recipe : CraftingManager.getInstance().getRecipeList())
             {
-                ItemStack recipeOutput = recipe.getRecipeOutput();
-                if (recipeOutput == null || recipeOutput.getItem() == null)
-                    continue;
-
                 IRecipeInfoProvider provider = null;
 
                 for (IRecipeHandler h : craftingRecipeHandlers)
@@ -80,13 +76,7 @@ public abstract class RecipeEnumerator
             for (Map.Entry<ItemStack, ItemStack> entry : FurnaceRecipes.instance().getSmeltingList().entrySet())
             {
                 ItemStack output = entry.getValue();
-                if (output == null || output.getItem() == null)
-                    continue;
-
                 ItemStack input = entry.getKey();
-                if (input == null || input.getItem() == null)
-                    continue;
-
                 consumer.process(new FurnaceRecipeInfo(input, output));
             }
         }

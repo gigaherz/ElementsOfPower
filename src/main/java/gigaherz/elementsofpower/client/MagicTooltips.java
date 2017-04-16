@@ -28,7 +28,7 @@ public class MagicTooltips
         }
 
         MagicAmounts amounts = EssenceConversions.getEssences(event.getItemStack(), false);
-        if (amounts == null || amounts.isEmpty())
+        if (amounts.isEmpty())
             return;
 
         event.getToolTip().add(TextFormatting.YELLOW + "Converts to Essences:");
@@ -40,7 +40,7 @@ public class MagicTooltips
 
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            if (amounts.amounts[i] == 0)
+            if (amounts.get(i) == 0)
             {
                 continue;
             }
@@ -50,13 +50,13 @@ public class MagicTooltips
             String str;
             if (ContainerInformation.isInfiniteContainer(event.getItemStack()))
                 str = String.format("%s  %s x\u221E", TextFormatting.GRAY, magicName);
-            else if (event.getItemStack().stackSize > 1)
+            else if (event.getItemStack().getCount() > 1)
                 str = String.format("%s  %s x%s (stack %s)", TextFormatting.GRAY, magicName,
-                        ElementsOfPower.prettyNumberFormatter2.format(amounts.amounts[i]),
-                        ElementsOfPower.prettyNumberFormatter2.format(amounts.amounts[i] * event.getItemStack().stackSize));
+                        ElementsOfPower.prettyNumberFormatter2.format(amounts.get(i)),
+                        ElementsOfPower.prettyNumberFormatter2.format(amounts.get(i) * event.getItemStack().getCount()));
             else
                 str = String.format("%s  %s x%s", TextFormatting.GRAY, magicName,
-                        ElementsOfPower.prettyNumberFormatter2.format(amounts.amounts[i]));
+                        ElementsOfPower.prettyNumberFormatter2.format(amounts.get(i)));
             event.getToolTip().add(str);
         }
     }

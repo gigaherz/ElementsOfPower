@@ -16,10 +16,10 @@ import net.minecraft.util.ResourceLocation;
 
 public class GuiAnalyzer extends GuiContainer
 {
-    EntityPlayer player;
+    private EntityPlayer player;
 
     public static final ResourceLocation GUI_TEXTURE_LOCATION = ElementsOfPower.location("textures/gui/analyzer.png");
-    static final String guiTitle = "text." + ElementsOfPower.MODID + ".analyzer";
+    private static final String guiTitle = "text." + ElementsOfPower.MODID + ".analyzer";
 
     public GuiAnalyzer(EntityPlayer playerInventory)
     {
@@ -42,12 +42,12 @@ public class GuiAnalyzer extends GuiContainer
     protected void drawGuiContainerForegroundLayer(int x, int y)
     {
         String name = I18n.format(guiTitle);
-        mc.fontRendererObj.drawString(name, (xSize - mc.fontRendererObj.getStringWidth(name)) / 2, 6, 0x404040);
-        mc.fontRendererObj.drawString(I18n.format(this.player.inventory.getName()), 8, ySize - 96 + 3, 0x404040);
+        mc.fontRenderer.drawString(name, (xSize - mc.fontRenderer.getStringWidth(name)) / 2, 6, 0x404040);
+        mc.fontRenderer.drawString(I18n.format(this.player.inventory.getName()), 8, ySize - 96 + 3, 0x404040);
 
         Slot slotAnalyze = inventorySlots.inventorySlots.get(0);
         ItemStack stack = slotAnalyze.getStack();
-        if (stack != null)
+        if (stack.getCount() > 0)
         {
             Gemstone gem = null;
             Quality q = null;
@@ -56,7 +56,7 @@ public class GuiAnalyzer extends GuiContainer
             Item item = stack.getItem();
             if (item instanceof ItemGemstone)
             {
-                mc.fontRendererObj.drawString("Item: Gemstone", 32, 18, 0xffffff);
+                mc.fontRenderer.drawString("Item: Gemstone", 32, 18, 0xffffff);
 
                 ItemGemstone gemstone = (ItemGemstone) item;
                 gem = gemstone.getGemstone(stack);
@@ -66,19 +66,19 @@ public class GuiAnalyzer extends GuiContainer
 
             if (gem != null)
             {
-                mc.fontRendererObj.drawString("Gemstone type: " + gem.toString(), 32, 30, 0xffffff);
-                mc.fontRendererObj.drawString("Quality level: " + (q != null ? q.toString() : "Unknown"), 32, 40, 0xffffff);
-                if (am != null)
+                mc.fontRenderer.drawString("Gemstone type: " + gem.toString(), 32, 30, 0xffffff);
+                mc.fontRenderer.drawString("Quality level: " + (q != null ? q.toString() : "Unknown"), 32, 40, 0xffffff);
+                if (!am.isEmpty())
                 {
-                    mc.fontRendererObj.drawString("Effective Capacity:", 32, 50, 0xffffff);
-                    mc.fontRendererObj.drawString(am.toShortString(), 40, 60, 0xffffff);
+                    mc.fontRenderer.drawString("Effective Capacity:", 32, 50, 0xffffff);
+                    mc.fontRenderer.drawString(am.toShortString(), 40, 60, 0xffffff);
                 }
             }
             else
             {
-                mc.fontRendererObj.drawString("Item: " + stack.getDisplayName(), 32, 18, 0xffffff);
+                mc.fontRenderer.drawString("Item: " + stack.getDisplayName(), 32, 18, 0xffffff);
 
-                mc.fontRendererObj.drawSplitString("Does not look like a useful gemstone.", 32, 30, 166 - 32, 0xffffff);
+                mc.fontRenderer.drawSplitString("Does not look like a useful gemstone.", 32, 30, 166 - 32, 0xffffff);
             }
         }
     }

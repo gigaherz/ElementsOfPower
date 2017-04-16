@@ -1,8 +1,8 @@
 package gigaherz.elementsofpower.integration.essentializer;
 
 import com.google.common.collect.Lists;
+import gigaherz.common.client.StackRenderingHelper;
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.client.renderers.StackRenderingHelper;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.essentializer.gui.ContainerEssentializer;
 import gigaherz.elementsofpower.essentializer.gui.GuiEssentializer;
@@ -11,17 +11,18 @@ import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.gui.IGuiItemStackGroup;
 import mezz.jei.api.gui.IRecipeLayout;
+import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeCategory;
 import mezz.jei.api.recipe.transfer.IRecipeTransferInfo;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
@@ -31,10 +32,9 @@ public class EssentializerCategory implements IRecipeCategory<EssentializerRecip
 
     public static EssentializerCategory INSTANCE;
 
-    @Nonnull
     private final IDrawable background;
 
-    MagicAmounts essenceAmounts;
+    MagicAmounts essenceAmounts = MagicAmounts.EMPTY;
 
     public EssentializerCategory(IGuiHelper guiHelper)
     {
@@ -63,18 +63,20 @@ public class EssentializerCategory implements IRecipeCategory<EssentializerRecip
         return background;
     }
 
+    @Nullable
+    @Override
+    public IDrawable getIcon()
+    {
+        return null;
+    }
+
     @Override
     public void drawExtras(@Nonnull Minecraft minecraft)
     {
     }
 
     @Override
-    public void drawAnimations(@Nonnull Minecraft minecraft)
-    {
-    }
-
-    @Override
-    public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull EssentializerRecipeWrapper recipeWrapper)
+    public void setRecipe(IRecipeLayout recipeLayout, EssentializerRecipeWrapper recipeWrapper, IIngredients ingredients)
     {
         IGuiItemStackGroup itemStacks = recipeLayout.getItemStacks();
 
@@ -88,10 +90,11 @@ public class EssentializerCategory implements IRecipeCategory<EssentializerRecip
 
         recipeLayout.setRecipeTransferButton(background.getWidth() - 12, background.getHeight() - 12);
 
-        List inputs = recipeWrapper.getInputs();
+        //List inputs = recipeWrapper.getInputs();
         essenceAmounts = recipeWrapper.getEssences();
+        recipeWrapper.getIngredients(ingredients);
 
-        itemStacks.setFromRecipe(0, inputs.get(0));
+        //itemStacks.setFromRecipe(0, inputs.get(0));
     }
 
     public List<String> getTooltipStrings(int mouseX, int mouseY)
@@ -104,7 +107,7 @@ public class EssentializerCategory implements IRecipeCategory<EssentializerRecip
                     mouseY >= y && mouseY < (y + 16))
                 return Collections.singletonList(MagicAmounts.getMagicName(ord));
         }
-        return null;
+        return Collections.emptyList();
     }
 
     public void drawEssenceSlots(Minecraft mc)
@@ -118,7 +121,7 @@ public class EssentializerCategory implements IRecipeCategory<EssentializerRecip
 
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            float am = essenceAmounts.amounts[i];
+            float am = essenceAmounts.get(i);
 
             int alpha = am > 0 ? 0xFFFFFFFF : 0x3FFFFFFF;
 
@@ -135,7 +138,7 @@ public class EssentializerCategory implements IRecipeCategory<EssentializerRecip
         GlStateManager.translate(0, 0, 150);
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            float am = essenceAmounts.amounts[i];
+            float am = essenceAmounts.get(i);
 
             int x0 = GuiEssentializer.MAGIC_ORBS[i * 2] - 7;
             int y0 = GuiEssentializer.MAGIC_ORBS[i * 2 + 1] - 15;
@@ -150,20 +153,20 @@ public class EssentializerCategory implements IRecipeCategory<EssentializerRecip
 
             String formatted = ElementsOfPower.prettyNumberFormatter.format(count) + suffix;
 
-            float x1 = (x0 + 16) * 1.5f - mc.fontRendererObj.getStringWidth(formatted);
+            float x1 = (x0 + 16) * 1.5f - mc.fontRenderer.getStringWidth(formatted);
             float y1 = (y0 + 10.5f) * 1.5f;
 
-            mc.fontRendererObj.drawString(formatted, x1, y1, 0xFFFFFFFF, true);
+            mc.fontRenderer.drawString(formatted, x1, y1, 0xFFFFFFFF, true);
         }
         GlStateManager.popMatrix();
 
         GlStateManager.enableDepth();
     }
 
-    public static class TransferInfo implements IRecipeTransferInfo
+    public static class TransferInfo implements IRecipeTransferInfo<ContainerEssentializer>
     {
         @Override
-        public Class<? extends Container> getContainerClass()
+        public Class<ContainerEssentializer> getContainerClass()
         {
             return ContainerEssentializer.class;
         }
@@ -175,13 +178,19 @@ public class EssentializerCategory implements IRecipeCategory<EssentializerRecip
         }
 
         @Override
-        public List<Slot> getRecipeSlots(Container container)
+        public boolean canHandle(ContainerEssentializer container)
+        {
+            return true;
+        }
+
+        @Override
+        public List<Slot> getRecipeSlots(ContainerEssentializer container)
         {
             return Collections.singletonList(container.getSlot(0));
         }
 
         @Override
-        public List<Slot> getInventorySlots(Container container)
+        public List<Slot> getInventorySlots(ContainerEssentializer container)
         {
             List<Slot> l = Lists.newArrayList();
             for (int i = 3; i < (3 + 4 * 9); i++)

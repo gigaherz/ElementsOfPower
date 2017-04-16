@@ -1,8 +1,8 @@
 package gigaherz.elementsofpower.client.renderers;
 
+import gigaherz.common.client.ModelHandle;
 import gigaherz.elementsofpower.entities.EntityBall;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -20,8 +20,6 @@ public class RenderBall extends Render<EntityBall>
     @Override
     public void doRender(EntityBall entity, double x, double y, double z, float p_76986_8_, float partialTicks)
     {
-        IBakedModel model = handle.get();
-
         float scale = entity.getScale() * 0.25f;
 
         GlStateManager.disableLighting();
@@ -45,7 +43,7 @@ public class RenderBall extends Render<EntityBall>
             GlStateManager.pushMatrix();
             GlStateManager.scale(subScale, subScale, subScale);
 
-            ModelHandle.renderModel(model, color);
+            handle.render(color);
 
             GlStateManager.popMatrix();
         }

@@ -70,7 +70,7 @@ public class TickEventWandControl
         {
             if (handInUse != null)
             {
-                EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+                EntityPlayer player = Minecraft.getMinecraft().player;
                 if (!player.isHandActive()
                         || player.getItemInUseCount() > itemInUseCount)
                 {
@@ -85,10 +85,10 @@ public class TickEventWandControl
     {
         if (activeStack == null)
         {
-            EntityPlayer player = mc.thePlayer;
+            EntityPlayer player = mc.player;
             int slotNumber = player.inventory.currentItem;
             ItemStack itemUsing = player.inventory.getCurrentItem();
-            if (itemUsing == null || !(itemUsing.getItem() instanceof ItemWand))
+            if (!(itemUsing.getItem() instanceof ItemWand))
                 return;
 
             EnumHand hand = handInUse;
@@ -110,7 +110,7 @@ public class TickEventWandControl
         if (handInUse == null)
             return;
 
-        EntityPlayerSP player = mc.thePlayer;
+        EntityPlayerSP player = mc.player;
         if (player == null || player.inventory == null)
             return;
 
@@ -124,8 +124,7 @@ public class TickEventWandControl
             return;
         }
 
-        if (heldItem == null ||
-                heldItem.getItem().shouldCauseReequipAnimation(activeStack, heldItem, slotNumber != slotInUse))
+        if (heldItem.getItem().shouldCauseReequipAnimation(activeStack, heldItem, slotNumber != slotInUse))
         {
             endHoldingRightButton(true);
             return;
@@ -175,7 +174,7 @@ public class TickEventWandControl
         slotInUse = -1;
         sequence = null;
 
-        mc.thePlayer.resetActiveHand();
+        mc.player.resetActiveHand();
 
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {

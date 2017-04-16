@@ -10,6 +10,8 @@ import net.minecraft.world.World;
 
 public class ItemWand extends ItemGemContainer
 {
+    public static final String SPELL_SEQUENCE_TAG = "SpellSequence";
+
     public ItemWand(String name)
     {
         super(name);
@@ -18,8 +20,10 @@ public class ItemWand extends ItemGemContainer
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand)
+    public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand hand)
     {
+        ItemStack itemStackIn = playerIn.getHeldItem(hand);
+
         if (hand == EnumHand.MAIN_HAND)
         {
             ElementsOfPower.proxy.beginTracking(playerIn, hand);

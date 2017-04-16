@@ -9,7 +9,6 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
@@ -21,12 +20,13 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
+import javax.annotation.Nullable;
+
 public class SpellcastEntityData
 {
     public static final ResourceLocation PROP_KEY = ElementsOfPower.location("SpellcastData");
 
     EntityPlayer player;
-    World world;
     Spellcast currentCasting;
 
     public static SpellcastEntityData get(EntityPlayer p)
@@ -58,15 +58,17 @@ public class SpellcastEntityData
             String sequence = cast.getString("sequence");
 
             currentCasting = SpellManager.makeSpell(sequence);
-            currentCasting.init(world, player);
-            currentCasting.readFromNBT(cast);
+            if (currentCasting != null)
+            {
+                currentCasting.init(player.world, player);
+                currentCasting.readFromNBT(cast);
+            }
         }
     }
 
-    public void init(Entity entity, World world)
+    public void init(Entity entity)
     {
         this.player = (EntityPlayer) entity;
-        this.world = world;
     }
 
     public void begin(Spellcast spell)
@@ -75,9 +77,9 @@ public class SpellcastEntityData
         interrupt();
 
         currentCasting = spell;
-        currentCasting.init(world, player);
+        currentCasting.init(player.world, player);
 
-        if (!world.isRemote)
+        if (!player.world.isRemote)
             ElementsOfPower.channel.sendToAllAround(new SpellcastSync(SpellcastSync.ChangeMode.BEGIN, spell),
                     new NetworkRegistry.TargetPoint(player.dimension, player.posX, player.posY, player.posZ, 128));
     }
@@ -86,7 +88,7 @@ public class SpellcastEntityData
     {
         if (currentCasting != null)
         {
-            if (!world.isRemote)
+            if (!player.world.isRemote)
                 ElementsOfPower.channel.sendToAllAround(new SpellcastSync(SpellcastSync.ChangeMode.END, currentCasting),
                         new NetworkRegistry.TargetPoint(player.dimension, player.posX, player.posY, player.posZ, 128));
 
@@ -98,7 +100,7 @@ public class SpellcastEntityData
     {
         if (currentCasting != null)
         {
-            if (!world.isRemote)
+            if (!player.world.isRemote)
                 ElementsOfPower.channel.sendToAllAround(new SpellcastSync(SpellcastSync.ChangeMode.INTERRUPT, currentCasting),
                         new NetworkRegistry.TargetPoint(player.dimension, player.posX, player.posY, player.posZ, 128));
 
@@ -110,7 +112,7 @@ public class SpellcastEntityData
     {
         if (currentCasting != null)
         {
-            if (!world.isRemote)
+            if (!player.world.isRemote)
                 ElementsOfPower.channel.sendToAllAround(new SpellcastSync(SpellcastSync.ChangeMode.CANCEL, currentCasting),
                         new NetworkRegistry.TargetPoint(player.dimension, player.posX, player.posY, player.posZ, 128));
 
@@ -118,8 +120,9 @@ public class SpellcastEntityData
         }
     }
 
-    int currentSlot;
-    ItemStack currentItem;
+    private int currentSlot;
+
+    private ItemStack currentItem = ItemStack.EMPTY;
 
     public void updateSpell()
     {
@@ -133,7 +136,7 @@ public class SpellcastEntityData
         else
         {
             ItemStack newItem = player.inventory.getCurrentItem();
-            if (!ItemStack.areItemsEqual(currentItem, newItem) || currentItem == null)
+            if (!ItemStack.areItemsEqual(currentItem, newItem))
             {
                 shouldCancel = true;
             }
@@ -175,6 +178,7 @@ public class SpellcastEntityData
         }
     }
 
+    @Nullable
     public Spellcast getCurrentCasting()
     {
         return currentCasting;
@@ -190,13 +194,13 @@ public class SpellcastEntityData
             CapabilityManager.INSTANCE.register(SpellcastEntityData.class, new Capability.IStorage<SpellcastEntityData>()
             {
                 @Override
-                public NBTBase writeNBT(Capability<SpellcastEntityData> capability, SpellcastEntityData instance, EnumFacing side)
+                public NBTBase writeNBT(Capability<SpellcastEntityData> capability, SpellcastEntityData instance, @Nullable EnumFacing side)
                 {
                     return null;
                 }
 
                 @Override
-                public void readNBT(Capability<SpellcastEntityData> capability, SpellcastEntityData instance, EnumFacing side, NBTBase nbt)
+                public void readNBT(Capability<SpellcastEntityData> capability, SpellcastEntityData instance, @Nullable EnumFacing side, NBTBase nbt)
                 {
 
                 }
@@ -204,9 +208,9 @@ public class SpellcastEntityData
         }
 
         @SubscribeEvent
-        public void attachCapabilities(AttachCapabilitiesEvent.Entity e)
+        public void attachCapabilities(AttachCapabilitiesEvent<Entity> e)
         {
-            final Entity entity = e.getEntity();
+            final Entity entity = e.getObject();
 
             if (entity instanceof EntityPlayer)
             {
@@ -215,17 +219,17 @@ public class SpellcastEntityData
                     SpellcastEntityData cap = new SpellcastEntityData();
 
                     {
-                        cap.init(entity, entity.worldObj);
+                        cap.init(entity);
                     }
 
                     @Override
-                    public boolean hasCapability(Capability<?> capability, EnumFacing facing)
+                    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing)
                     {
                         return capability == SPELLCAST;
                     }
 
                     @Override
-                    public <T> T getCapability(Capability<T> capability, EnumFacing facing)
+                    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing)
                     {
                         if (capability == SPELLCAST)
                             return SPELLCAST.cast(cap);

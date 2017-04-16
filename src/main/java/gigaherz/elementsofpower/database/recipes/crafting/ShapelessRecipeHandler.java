@@ -41,7 +41,7 @@ public class ShapelessRecipeHandler implements IRecipeHandler
                     continue;
 
                 ItemStack stack = input.copy();
-                stack.stackSize = 1;
+                stack.setCount(1);
                 recipeItems.add(stack);
             }
         }

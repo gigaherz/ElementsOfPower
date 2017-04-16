@@ -1,8 +1,8 @@
 package gigaherz.elementsofpower.analyzer;
 
+import gigaherz.common.ItemRegistered;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.common.GuiHandler;
-import gigaherz.elementsofpower.common.ItemRegistered;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
@@ -22,7 +22,7 @@ public class ItemAnalyzer extends ItemRegistered
     }
 
     @Override
-    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
+    public EnumActionResult onItemUse(EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
     {
         pos = playerIn.getPosition();
         if (!worldIn.isRemote)
@@ -31,11 +31,11 @@ public class ItemAnalyzer extends ItemRegistered
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand)
+    public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand hand)
     {
         BlockPos pos = playerIn.getPosition();
         if (!worldIn.isRemote)
             playerIn.openGui(ElementsOfPower.instance, GuiHandler.GUI_ANALYZER, worldIn, pos.getX(), pos.getY(), pos.getZ());
-        return ActionResult.newResult(EnumActionResult.SUCCESS, itemStackIn);
+        return ActionResult.newResult(EnumActionResult.SUCCESS, playerIn.getHeldItem(hand));
     }
 }

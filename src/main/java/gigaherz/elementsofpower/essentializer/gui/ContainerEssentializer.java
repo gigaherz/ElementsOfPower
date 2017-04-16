@@ -13,21 +13,24 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.IItemHandler;
 
 public class ContainerEssentializer
         extends Container
 {
     protected TileEssentializer tile;
-    private MagicAmounts prevContained;
-    private MagicAmounts prevRemaining;
+    private MagicAmounts prevContained = MagicAmounts.EMPTY;
+    private MagicAmounts prevRemaining = MagicAmounts.EMPTY;
 
     public ContainerEssentializer(TileEssentializer tileEntity, InventoryPlayer playerInventory)
     {
         this.tile = tileEntity;
 
-        addSlotToContainer(new SlotSource(tileEntity, 0, 80, 44));
-        addSlotToContainer(new SlotContainerIn(tileEntity, 1, 8, 56));
-        addSlotToContainer(new SlotContainerOut(tileEntity, 2, 152, 56));
+        IItemHandler inv = tileEntity.getInventory();
+
+        addSlotToContainer(new SlotSource(inv, 0, 80, 44));
+        addSlotToContainer(new SlotContainerIn(inv, 1, 8, 56));
+        addSlotToContainer(new SlotContainerOut(inv, 2, 152, 56));
 
         bindPlayerInventory(playerInventory);
     }
@@ -53,7 +56,7 @@ public class ContainerEssentializer
     @Override
     public boolean canInteractWith(EntityPlayer player)
     {
-        return tile.isUseableByPlayer(player);
+        return true;
     }
 
     @Override
@@ -61,8 +64,8 @@ public class ContainerEssentializer
     {
         super.detectAndSendChanges();
 
-        if (!MagicAmounts.areAmountsEqual(prevContained, tile.containedMagic)
-                || !MagicAmounts.areAmountsEqual(prevRemaining, tile.remainingToConvert))
+        if (!prevContained.equals(tile.containedMagic)
+                || !prevRemaining.equals(tile.remainingToConvert))
         {
             for (IContainerListener watcher : this.listeners)
             {
@@ -72,8 +75,8 @@ public class ContainerEssentializer
                 }
             }
 
-            prevContained = MagicAmounts.copyOf(tile.containedMagic);
-            prevRemaining = MagicAmounts.copyOf(tile.remainingToConvert);
+            prevContained = tile.containedMagic;
+            prevRemaining = tile.remainingToConvert;
         }
     }
 
@@ -88,17 +91,17 @@ public class ContainerEssentializer
     {
         if (slotIndex < 8)
         {
-            return null;
+            return ItemStack.EMPTY;
         }
 
         Slot slot = this.inventorySlots.get(slotIndex);
         if (slot == null || !slot.getHasStack())
         {
-            return null;
+            return ItemStack.EMPTY;
         }
 
         ItemStack stack = slot.getStack();
-        assert stack != null;
+        assert stack.getCount() > 0;
         ItemStack stackCopy = stack.copy();
 
         int startIndex;
@@ -137,7 +140,7 @@ public class ContainerEssentializer
             }
             else
             {
-                return null;
+                return ItemStack.EMPTY;
             }
         }
         else
@@ -148,24 +151,24 @@ public class ContainerEssentializer
 
         if (!this.mergeItemStack(stack, startIndex, endIndex, false))
         {
-            return null;
+            return ItemStack.EMPTY;
         }
 
-        if (stack.stackSize == 0)
+        if (stack.getCount() == 0)
         {
-            slot.putStack(null);
+            slot.putStack(ItemStack.EMPTY);
         }
         else
         {
             slot.onSlotChanged();
         }
 
-        if (stack.stackSize == stackCopy.stackSize)
+        if (stack.getCount() == stackCopy.getCount())
         {
-            return null;
+            return ItemStack.EMPTY;
         }
 
-        slot.onPickupFromSlot(player, stack);
+        slot.onTake(player, stack);
         return stackCopy;
     }
 }

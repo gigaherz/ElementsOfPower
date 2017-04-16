@@ -35,7 +35,7 @@ public class EssenceOverrides
             {
             }.getType();
 
-            Map<String, MagicAmounts> ovr = SERIALIZER.<Map<String, MagicAmounts>>fromJson(r, type);
+            Map<String, MagicAmounts> ovr = SERIALIZER.fromJson(r, type);
             if (ovr != null)
             {
                 essenceOverrides.putAll(ovr);

@@ -75,7 +75,7 @@ public class ResurrectionEffect
 
             dragon.setLocationAndAngles(spawnAt.getX(), spawnAt.getY(), spawnAt.getZ(), world.rand.nextFloat() * 360.0F, 0.0F);
 
-            if (world.spawnEntityInWorld(dragon))
+            if (world.spawnEntity(dragon))
             {
                 world.setBlockToAir(blockPos);
             }

@@ -4,11 +4,11 @@ import com.google.common.collect.Lists;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.gemstones.Gemstone;
 import gigaherz.elementsofpower.gemstones.Quality;
+import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.BlankRecipeWrapper;
 import net.minecraft.item.ItemStack;
 import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
@@ -52,17 +52,9 @@ public class AnalyzerRecipeWrapper extends BlankRecipeWrapper
         }
     }
 
-    @Nonnull
     @Override
-    public List getInputs()
+    public void getIngredients(IIngredients ingredients)
     {
-        return inputs;
-    }
-
-    @Nonnull
-    @Override
-    public List getOutputs()
-    {
-        return outputs;
+        //ingredients.setInputs();
     }
 }

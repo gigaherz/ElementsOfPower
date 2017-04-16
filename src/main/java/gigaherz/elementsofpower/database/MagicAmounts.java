@@ -7,12 +7,15 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
+import javax.annotation.CheckReturnValue;
 import java.lang.reflect.Type;
 
+@NotNull
 public class MagicAmounts
 {
+    public static final MagicAmounts EMPTY = new MagicAmounts();
     public static final int ELEMENTS = 8;
 
     public final static String[] magicNames = {
@@ -32,20 +35,45 @@ public class MagicAmounts
         return net.minecraft.util.text.translation.I18n.translateToLocal(magicNames[i]);
     }
 
-    public final float[] amounts = new float[ELEMENTS];
+    private final float[] amounts = new float[ELEMENTS];
 
-    public static boolean areAmountsEqual(@Nullable MagicAmounts a1, @Nullable MagicAmounts a2)
-    {
-        return (a1 == null && a2 == null) || (a1 != null && a1.equals(a2));
-    }
-
-    public MagicAmounts()
+    private MagicAmounts()
     {
     }
 
-    public MagicAmounts(final MagicAmounts other)
+    private MagicAmounts(final MagicAmounts other)
     {
-        System.arraycopy(other.amounts, 0, amounts, 0, amounts.length);
+        System.arraycopy(other.amounts, 0, amounts, 0, ELEMENTS);
+    }
+
+    public MagicAmounts(NBTTagCompound tagCompound)
+    {
+        NBTTagList tagList = tagCompound.getTagList("Essences", Constants.NBT.TAG_COMPOUND);
+
+        for (int i = 0; i < tagList.tagCount(); i++)
+        {
+            NBTTagCompound tag = (NBTTagCompound) tagList.get(i);
+            byte slot = tag.getByte("Type");
+
+            if (slot >= 0 && slot < 8)
+            {
+                amounts[slot] = tag.getFloat("Count");
+            }
+        }
+    }
+
+    public MagicAmounts(ByteBuf buf)
+    {
+        int numElements = buf.readByte();
+        if (numElements > 0)
+        {
+            for (int i = 0; i < numElements; i++)
+            {
+                int which = buf.readByte();
+                float amount = buf.readFloat();
+                amounts[which] = amount;
+            }
+        }
     }
 
     @Override
@@ -139,134 +167,145 @@ public class MagicAmounts
         return true;
     }
 
-    public void subtract(MagicAmounts cost)
-    {
-        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-        {
-            amounts[i] -= cost.amounts[i];
-        }
-    }
-
+    @CheckReturnValue
     public MagicAmounts fire(float amount)
     {
-        amounts[0] += amount;
-        return this;
+        return add(0, amount);
     }
 
+    @CheckReturnValue
     public MagicAmounts water(float amount)
     {
-        amounts[1] += amount;
-        return this;
+        return add(1, amount);
     }
 
+    @CheckReturnValue
     public MagicAmounts air(float amount)
     {
-        amounts[2] += amount;
-        return this;
+        return add(2, amount);
     }
 
+    @CheckReturnValue
     public MagicAmounts earth(float amount)
     {
-        amounts[3] += amount;
-        return this;
+        return add(4, amount);
     }
 
+    @CheckReturnValue
     public MagicAmounts light(float amount)
     {
-        amounts[4] += amount;
-        return this;
+        return add(4, amount);
     }
 
+    @CheckReturnValue
     public MagicAmounts darkness(float amount)
     {
-        amounts[5] += amount;
-        return this;
+        return add(5, amount);
     }
 
+    @CheckReturnValue
     public MagicAmounts life(float amount)
     {
-        amounts[6] += amount;
-        return this;
+        return add(6, amount);
     }
 
+    @CheckReturnValue
     public MagicAmounts death(float amount)
     {
-        amounts[7] += amount;
-        return this;
+        return add(7, amount);
     }
 
+    @CheckReturnValue
+    public MagicAmounts add(Element element, float amount)
+    {
+        return add(element.ordinal(), amount);
+    }
+
+    @CheckReturnValue
+    public MagicAmounts add(int i, float amount)
+    {
+        if (Math.abs(amount) < 0.00001f)
+            return this;
+        return with(i, amounts[i] + amount);
+    }
+
+    @CheckReturnValue
+    public MagicAmounts with(int i, float amount)
+    {
+        if (Math.abs(amount - amounts[i]) < 0.00001f)
+            return this;
+        MagicAmounts n = copy();
+        n.amounts[i] = amount;
+        return n;
+    }
+
+    @CheckReturnValue
     public MagicAmounts all(float amount)
     {
+        MagicAmounts n = copy();
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            amounts[i] += amount;
+            n.amounts[i] += amount;
         }
-
-        return this;
+        return n;
     }
 
-    public MagicAmounts element(Element element, float amount)
+    @CheckReturnValue
+    public MagicAmounts add(MagicAmounts other)
     {
-        amounts[element.ordinal()] += amount;
-        return this;
-    }
-
-    public MagicAmounts add(@Nullable MagicAmounts other)
-    {
-        if (other == null)
-            return this;
+        MagicAmounts n = copy();
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            amounts[i] += other.amounts[i];
+            n.amounts[i] += other.amounts[i];
         }
-        return this;
+        return n;
     }
 
+    @CheckReturnValue
+    public MagicAmounts subtract(MagicAmounts cost)
+    {
+        MagicAmounts n = copy();
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+        {
+            n.amounts[i] -= cost.amounts[i];
+        }
+        return n;
+    }
+
+    @CheckReturnValue
     public MagicAmounts multiply(float scale)
     {
+        MagicAmounts n = copy();
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            amounts[i] *= scale;
+            n.amounts[i] *= scale;
         }
-        return this;
+        return n;
     }
 
+    @CheckReturnValue
     public MagicAmounts infinite()
     {
+        MagicAmounts n = new MagicAmounts();
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            amounts[i] = Integer.MAX_VALUE;
+            n.amounts[i] = Integer.MAX_VALUE;
         }
         return this;
     }
 
-    public float amount(Element element)
-    {
-        return amounts[element.ordinal()];
-    }
-
-    public MagicAmounts copy()
+    @CheckReturnValue
+    private MagicAmounts copy()
     {
         return new MagicAmounts(this);
     }
 
-    public void readFromNBT(NBTTagCompound tagCompound)
+    public float get(Element element)
     {
-        NBTTagList tagList = tagCompound.getTagList("Essences", Constants.NBT.TAG_COMPOUND);
-
-        for (int i = 0; i < tagList.tagCount(); i++)
-        {
-            NBTTagCompound tag = (NBTTagCompound) tagList.get(i);
-            byte slot = tag.getByte("Type");
-
-            if (slot >= 0 && slot < 8)
-            {
-                amounts[slot] = tag.getFloat("Count");
-            }
-        }
+        return amounts[element.ordinal()];
     }
 
-    public void writeToNBT(NBTTagCompound tagCompound)
+    public void serialize(NBTTagCompound tagCompound)
     {
         NBTTagList itemList = new NBTTagList();
 
@@ -279,12 +318,6 @@ public class MagicAmounts
         }
 
         tagCompound.setTag("Essences", itemList);
-    }
-
-    @Nullable
-    public static MagicAmounts copyOf(@Nullable MagicAmounts amounts)
-    {
-        return amounts == null ? null : amounts.copy();
     }
 
     public int getDominantElement()
@@ -304,54 +337,31 @@ public class MagicAmounts
         return dominant;
     }
 
-    @Nullable
-    public static MagicAmounts readAmounts(ByteBuf buf)
+    public void writeTo(ByteBuf buf)
     {
-        MagicAmounts amounts = null;
-        int numElements = buf.readByte();
-        if (numElements > 0)
+        int count = 0;
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            amounts = new MagicAmounts();
-            for (int i = 0; i < numElements; i++)
-            {
-                int which = buf.readByte();
-                float amount = buf.readFloat();
-                amounts.amounts[which] = amount;
-            }
+            if (amounts[i] > 0) count++;
         }
-        return amounts;
-    }
 
-    public static void writeAmounts(ByteBuf buf, @Nullable MagicAmounts amounts)
-    {
-        if (amounts != null)
+        buf.writeByte(count);
+
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            int count = 0;
-            for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+            if (amounts[i] > 0)
             {
-                if (amounts.amounts[i] > 0) count++;
+                buf.writeByte(i);
+                buf.writeFloat(amounts[i]);
             }
-
-            buf.writeByte(count);
-
-            for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-            {
-                if (amounts.amounts[i] > 0)
-                {
-                    buf.writeByte(i);
-                    buf.writeFloat(amounts.amounts[i]);
-                }
-            }
-        }
-        else
-        {
-            buf.writeByte(0);
         }
     }
 
-    public static MagicAmounts empty()
+    public float get(int i)
     {
-        return new MagicAmounts();
+        if (i < 0 || i >= ELEMENTS)
+            throw new IndexOutOfBoundsException();
+        return amounts[i];
     }
 
     public static class Serializer

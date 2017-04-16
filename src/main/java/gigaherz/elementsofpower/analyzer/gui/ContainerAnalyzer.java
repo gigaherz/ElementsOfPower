@@ -11,6 +11,8 @@ import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
+import java.util.List;
+
 public class ContainerAnalyzer extends Container
 {
     public InventoryInternal internalInventory;
@@ -68,11 +70,11 @@ public class ContainerAnalyzer extends Container
         Slot slot = this.inventorySlots.get(slotIndex);
         if (slot == null || !slot.getHasStack())
         {
-            return null;
+            return ItemStack.EMPTY;
         }
 
         ItemStack stack = slot.getStack();
-        assert stack != null;
+        assert stack.getCount() > 0;
         ItemStack stackCopy = stack.copy();
 
         int startIndex;
@@ -91,24 +93,24 @@ public class ContainerAnalyzer extends Container
 
         if (!this.mergeItemStack(stack, startIndex, endIndex, false))
         {
-            return null;
+            return ItemStack.EMPTY;
         }
 
-        if (stack.stackSize == 0)
+        if (stack.getCount() == 0)
         {
-            slot.putStack(null);
+            slot.putStack(ItemStack.EMPTY);
         }
         else
         {
             slot.onSlotChanged();
         }
 
-        if (stack.stackSize == stackCopy.stackSize)
+        if (stack.getCount() == stackCopy.getCount())
         {
-            return null;
+            return ItemStack.EMPTY;
         }
 
-        slot.onPickupFromSlot(player, stack);
+        slot.onTake(player, stack);
         return stackCopy;
     }
 
@@ -125,27 +127,27 @@ public class ContainerAnalyzer extends Container
 
         if (stack.isStackable())
         {
-            while (stack.stackSize > 0 && (!reverseDirection && i < endIndex || reverseDirection && i >= startIndex))
+            while (stack.getCount() > 0 && (!reverseDirection && i < endIndex || reverseDirection && i >= startIndex))
             {
                 Slot slot = this.inventorySlots.get(i);
                 ItemStack itemstack = slot.getStack();
                 int limit = Math.min(slot.getItemStackLimit(stack), stack.getMaxStackSize());
 
-                if (itemstack != null && itemstack.getItem() == stack.getItem() && (!stack.getHasSubtypes() || stack.getMetadata() == itemstack.getMetadata()) && ItemStack.areItemStackTagsEqual(stack, itemstack))
+                if (itemstack.getCount() > 0 && itemstack.getItem() == stack.getItem() && (!stack.getHasSubtypes() || stack.getMetadata() == itemstack.getMetadata()) && ItemStack.areItemStackTagsEqual(stack, itemstack))
                 {
-                    int j = itemstack.stackSize + stack.stackSize;
+                    int j = itemstack.getCount() + stack.getCount();
 
                     if (j <= limit)
                     {
-                        stack.stackSize = 0;
-                        itemstack.stackSize = j;
+                        stack.setCount(0);
+                        itemstack.setCount(j);
                         slot.onSlotChanged();
                         flag = true;
                     }
-                    else if (itemstack.stackSize < limit)
+                    else if (itemstack.getCount() < limit)
                     {
-                        stack.stackSize -= limit - itemstack.stackSize;
-                        itemstack.stackSize = limit;
+                        stack.shrink(limit - itemstack.getCount());
+                        itemstack.setCount(limit);
                         slot.onSlotChanged();
                         flag = true;
                     }
@@ -162,7 +164,7 @@ public class ContainerAnalyzer extends Container
             }
         }
 
-        if (stack.stackSize > 0)
+        if (stack.getCount() > 0)
         {
             if (reverseDirection)
             {
@@ -179,13 +181,13 @@ public class ContainerAnalyzer extends Container
                 ItemStack itemstack = slot.getStack();
                 int limit = Math.min(slot.getItemStackLimit(stack), stack.getMaxStackSize());
 
-                if (itemstack == null && slot.isItemValid(stack)) // Forge: Make sure to respect isItemValid in the slot.
+                if (itemstack.getCount() <= 0 && slot.isItemValid(stack)) // Forge: Make sure to respect isItemValid in the slot.
                 {
                     ItemStack put = stack.copy();
-                    put.stackSize = Math.min(put.stackSize, limit);
+                    put.setCount(Math.min(put.getCount(), limit));
                     slot.putStack(put);
                     slot.onSlotChanged();
-                    stack.stackSize -= put.stackSize;
+                    stack.shrink(put.getCount());
                     flag = true;
                     break;
                 }
@@ -209,7 +211,7 @@ public class ContainerAnalyzer extends Container
     {
         Slot s = inventorySlots.get(0);
         ItemStack stack = s.getStack();
-        if (stack != null && !player.worldObj.isRemote)
+        if (stack.getCount() > 0 && !player.world.isRemote)
         {
             ItemStack stack2 = ContainerInformation.identifyQuality(stack);
 
@@ -246,15 +248,16 @@ public class ContainerAnalyzer extends Container
     @Override
     public void putStackInSlot(int slotID, ItemStack stack)
     {
-        ElementsOfPower.logger.warn("putStackInSlot " + stack + " client=" + player.worldObj.isRemote);
+        ElementsOfPower.logger.warn("putStackInSlot " + stack + " client=" + player.world.isRemote);
         super.putStackInSlot(slotID, stack);
     }
 
+
     @Override
-    public void putStacksInSlots(ItemStack[] stacks)
+    public void setAll(List<ItemStack> stacks)
     {
-        ElementsOfPower.logger.warn("putStacksInSlots " + stacks[0] + " client=" + player.worldObj.isRemote);
-        super.putStacksInSlots(stacks);
+        ElementsOfPower.logger.warn("putStacksInSlots " + stacks.get(0) + " client=" + player.world.isRemote);
+        super.setAll(stacks);
     }
 
     @Override
@@ -262,10 +265,10 @@ public class ContainerAnalyzer extends Container
     {
         super.onContainerClosed(playerIn);
 
-        if (!player.worldObj.isRemote)
+        if (!player.world.isRemote)
         {
             ItemStack itemstack = internalInventory.removeStackFromSlot(0);
-            if (itemstack != null)
+            if (itemstack.getCount() > 0)
             {
                 playerIn.dropItem(itemstack, false);
             }

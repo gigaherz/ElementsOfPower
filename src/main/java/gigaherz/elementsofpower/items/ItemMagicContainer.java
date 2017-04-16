@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.items;
 
+import gigaherz.common.state.ItemStateful;
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.common.ItemRegistered;
 import gigaherz.elementsofpower.database.ContainerInformation;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.gemstones.Element;
@@ -11,10 +11,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.input.Keyboard;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
-public abstract class ItemMagicContainer extends ItemRegistered
+public abstract class ItemMagicContainer extends ItemStateful
 {
     public ItemMagicContainer(String name)
     {
@@ -38,7 +37,6 @@ public abstract class ItemMagicContainer extends ItemRegistered
         return new ItemStack(this, count, gemstone.ordinal());
     }
 
-    @Nullable
     public abstract MagicAmounts getCapacity(ItemStack stack);
 
     @Override
@@ -71,7 +69,7 @@ public abstract class ItemMagicContainer extends ItemRegistered
 
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            if (amounts.amounts[i] == 0)
+            if (amounts.get(i) == 0)
             {
                 continue;
             }
@@ -82,29 +80,28 @@ public abstract class ItemMagicContainer extends ItemRegistered
                 str = String.format("%s  %s x\u221E", TextFormatting.GRAY, magicName);
             else
                 str = String.format("%s  %s x%s", TextFormatting.GRAY, magicName,
-                        ElementsOfPower.prettyNumberFormatter2.format(amounts.amounts[i]));
+                        ElementsOfPower.prettyNumberFormatter2.format(amounts.get(i)));
             tooltipList.add(str);
         }
     }
 
-    @Nullable
-    public ItemStack addContainedMagic(@Nullable ItemStack stack, @Nullable ItemStack orb)
+    public ItemStack addContainedMagic(ItemStack stack, ItemStack orb)
     {
-        if (stack == null)
-            return null;
-        if (orb == null)
+        if (stack.getCount() <= 0)
+            return ItemStack.EMPTY;
+        if (orb.getCount() <= 0)
             return stack;
-        MagicAmounts am = new MagicAmounts();
-        am.add(ContainerInformation.getContainedMagic(stack));
-        am.element(Element.values[orb.getMetadata()], 8);
+        MagicAmounts am = MagicAmounts.EMPTY;
+        am = am.add(ContainerInformation.getContainedMagic(stack));
+        am = am.add(Element.values[orb.getMetadata()], 8);
 
         MagicAmounts lm = ContainerInformation.getMagicLimits(stack);
         if (!lm.isEmpty())
         {
             for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
             {
-                if (lm.amounts[i] < am.amounts[i])
-                    return null;
+                if (lm.get(i) < am.get(i))
+                    return ItemStack.EMPTY;
             }
         }
 

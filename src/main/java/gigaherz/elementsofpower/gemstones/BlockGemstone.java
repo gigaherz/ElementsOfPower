@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.gemstones;
 
+import gigaherz.common.BlockRegistered;
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.common.BlockRegistered;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.MapColor;
@@ -13,8 +13,9 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-
-import java.util.List;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 
 public class BlockGemstone extends BlockRegistered
 {
@@ -61,12 +62,18 @@ public class BlockGemstone extends BlockRegistered
     }
 
     @Override
-    public void getSubBlocks(Item itemIn, CreativeTabs tab, List<ItemStack> list)
+    public void getSubBlocks(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> list)
     {
         for (GemstoneBlockType type : GemstoneBlockType.values)
         {
             list.add(getStack(1, type));
         }
+    }
+
+    @Override
+    public boolean isBeaconBase(IBlockAccess worldObj, BlockPos pos, BlockPos beacon)
+    {
+        return true;
     }
 
     @Override

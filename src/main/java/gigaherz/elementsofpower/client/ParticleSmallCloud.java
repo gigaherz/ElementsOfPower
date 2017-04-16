@@ -11,12 +11,7 @@ import java.lang.reflect.Field;
 
 public class ParticleSmallCloud extends ParticleCloud
 {
-    static Field internalParticleSizeField;
-
-    static {
-        internalParticleSizeField = ReflectionHelper.findField(ParticleCloud.class, "field_70569_a", "oSize");
-        internalParticleSizeField.setAccessible(true);
-    }
+    private static final Field internalParticleSizeField = ReflectionHelper.findField(ParticleCloud.class, "field_70569_a", "oSize");
 
     public ParticleSmallCloud(World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn)
     {
@@ -45,12 +40,12 @@ public class ParticleSmallCloud extends ParticleCloud
         }
 
         this.setParticleTextureIndex(7 - this.particleAge * 8 / this.particleMaxAge);
-        this.moveEntity(this.motionX, this.motionY, this.motionZ);
+        this.move(this.motionX, this.motionY, this.motionZ);
         this.motionX *= 0.9599999785423279D;
         this.motionY *= 0.9599999785423279D;
         this.motionZ *= 0.9599999785423279D;
 
-        if (this.isCollided)
+        if (this.onGround)
         {
             this.motionY *= 0.699999988079071D;
             this.motionZ *= 0.699999988079071D;

@@ -1,6 +1,6 @@
 package gigaherz.elementsofpower.spells.blocks;
 
-import gigaherz.elementsofpower.common.BlockRegistered;
+import gigaherz.common.BlockRegistered;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.Material;
@@ -8,7 +8,7 @@ import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -17,6 +17,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 public class BlockDust extends BlockRegistered
@@ -91,7 +93,7 @@ public class BlockDust extends BlockRegistered
 
     private void rescheduleUpdate(World worldIn, BlockPos pos, Random rand)
     {
-        worldIn.scheduleUpdate(pos, this, 4 + rand.nextInt(12));
+        worldIn.scheduleUpdate(pos, this, 12 + rand.nextInt(12));
     }
 
     @Override
@@ -178,9 +180,9 @@ public class BlockDust extends BlockRegistered
     }
 
     @Override
-    public Item getItemDropped(IBlockState state, Random rand, int fortune)
+    public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
     {
-        return null;
+        return Collections.emptyList();
     }
 
     @Deprecated
@@ -193,7 +195,7 @@ public class BlockDust extends BlockRegistered
     @Deprecated
     @Nullable
     @Override
-    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos)
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos)
     {
         return NULL_AABB;
     }

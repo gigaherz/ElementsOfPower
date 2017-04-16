@@ -31,7 +31,7 @@ public class GuiHandler implements IGuiHandler
                 }
                 break;
             case GUI_ANALYZER:
-                if (player.inventory.getCurrentItem() != null && player.inventory.getCurrentItem().getItem() instanceof ItemAnalyzer)
+                if (player.inventory.getCurrentItem().getItem() instanceof ItemAnalyzer)
                     return new ContainerAnalyzer(player);
         }
 
@@ -52,7 +52,7 @@ public class GuiHandler implements IGuiHandler
                 }
                 break;
             case GUI_ANALYZER:
-                if (player.inventory.getCurrentItem() != null && player.inventory.getCurrentItem().getItem() instanceof ItemAnalyzer)
+                if (player.inventory.getCurrentItem().getItem() instanceof ItemAnalyzer)
                     return new GuiAnalyzer(player);
         }
 

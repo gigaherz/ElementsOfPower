@@ -1,13 +1,14 @@
 package gigaherz.elementsofpower.items;
 
+import gigaherz.common.ItemRegistered;
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.common.ItemRegistered;
 import gigaherz.elementsofpower.gemstones.Element;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.List;
@@ -45,7 +46,7 @@ public class ItemMagicOrb extends ItemRegistered
     }
 
     @Override
-    public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems)
+    public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems)
     {
         for (int meta = 0; meta < subNames.length; meta++)
         {

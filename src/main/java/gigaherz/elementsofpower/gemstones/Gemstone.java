@@ -24,7 +24,7 @@ public enum Gemstone implements IStringSerializable
     private final String unlocalizedName;
     private final int tintColor;
 
-    Gemstone(Element element, String name, int tintColor)
+    Gemstone(@Nullable Element element, String name, int tintColor)
     {
         this.element = element;
         this.name = name;

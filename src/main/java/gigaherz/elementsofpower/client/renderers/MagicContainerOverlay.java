@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower.client.renderers;
 
+import gigaherz.common.client.StackRenderingHelper;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.client.TickEventWandControl;
 import gigaherz.elementsofpower.database.ContainerInformation;
@@ -30,10 +31,10 @@ public class MagicContainerOverlay extends Gui
             return;
         }
 
-        EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
+        EntityPlayerSP player = Minecraft.getMinecraft().player;
         ItemStack heldItem = player.inventory.getCurrentItem();
 
-        if (heldItem == null)
+        if (heldItem.getCount() <= 0)
             return;
 
         // Contained essences
@@ -41,7 +42,7 @@ public class MagicContainerOverlay extends Gui
         if (amounts.isEmpty())
             return;
 
-        FontRenderer font = Minecraft.getMinecraft().fontRendererObj;
+        FontRenderer font = Minecraft.getMinecraft().fontRenderer;
 
         float rescale = 1;
         ScaledResolution res = event.getResolution();
@@ -61,13 +62,13 @@ public class MagicContainerOverlay extends Gui
         int yPos = 2;
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            int alpha = (amounts.amounts[i] < 0.001) ? 0x3FFFFFFF : 0xFFFFFFFF;
+            int alpha = (amounts.get(i) < 0.001) ? 0x3FFFFFFF : 0xFFFFFFFF;
 
-            ItemStack stack = ElementsOfPower.magicOrb.getStack((int) amounts.amounts[i], Element.values[i]);
+            ItemStack stack = ElementsOfPower.magicOrb.getStack((int) amounts.get(i), Element.values[i]);
 
             StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yPos, stack, alpha);
 
-            String formatted = ContainerInformation.isInfiniteContainer(heldItem) ? "\u221E" : ElementsOfPower.prettyNumberFormatter.format(amounts.amounts[i]);
+            String formatted = ContainerInformation.isInfiniteContainer(heldItem) ? "\u221E" : ElementsOfPower.prettyNumberFormatter.format(amounts.get(i));
             this.drawCenteredString(font, formatted, xPos + 8, yPos + 11, 0xFFC0C0C0);
             if (TickEventWandControl.instance.handInUse != null)
                 this.drawCenteredString(font, "K:" + (i + 1), xPos + 8, yPos + 24, 0xFFC0C0C0);

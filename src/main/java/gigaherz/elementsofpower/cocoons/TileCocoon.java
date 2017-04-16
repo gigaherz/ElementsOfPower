@@ -12,14 +12,14 @@ import net.minecraft.util.ITickable;
 
 public class TileCocoon extends TileEntity implements ITickable
 {
-    public final MagicAmounts essenceContained = new MagicAmounts();
+    public MagicAmounts essenceContained = MagicAmounts.EMPTY;
 
     @Override
     public void readFromNBT(NBTTagCompound compound)
     {
         super.readFromNBT(compound);
 
-        essenceContained.readFromNBT(compound);
+        essenceContained = new MagicAmounts(compound);
     }
 
     @Override
@@ -27,7 +27,7 @@ public class TileCocoon extends TileEntity implements ITickable
     {
         compound = super.writeToNBT(compound);
 
-        essenceContained.writeToNBT(compound);
+        essenceContained.serialize(compound);
 
         return compound;
     }
@@ -45,10 +45,10 @@ public class TileCocoon extends TileEntity implements ITickable
 
     public void addEssences(ItemStack stack)
     {
-        essenceContained.element(Element.values[stack.getMetadata()], 1);
+        essenceContained = essenceContained.add(Element.values[stack.getMetadata()], 1);
 
-        IBlockState state = worldObj.getBlockState(pos);
-        worldObj.notifyBlockUpdate(pos, state, state, 3);
+        IBlockState state = world.getBlockState(pos);
+        world.notifyBlockUpdate(pos, state, state, 3);
     }
 
     @Override

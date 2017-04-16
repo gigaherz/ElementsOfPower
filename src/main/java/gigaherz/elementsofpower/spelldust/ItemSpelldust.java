@@ -1,22 +1,23 @@
 package gigaherz.elementsofpower.spelldust;
 
+import gigaherz.common.state.IItemState;
+import gigaherz.common.state.IItemStateManager;
+import gigaherz.common.state.ItemStateful;
+import gigaherz.common.state.implementation.ItemStateManager;
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.common.ItemRegistered;
 import gigaherz.elementsofpower.gemstones.Gemstone;
+import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.util.NonNullList;
 
-import java.util.List;
+import java.util.Arrays;
 
-public class ItemSpelldust extends ItemRegistered
+public class ItemSpelldust extends ItemStateful
 {
+    public static final PropertyEnum<Gemstone> GEM = PropertyEnum.create("gem", Gemstone.class, Arrays.stream(Gemstone.values).filter(m -> m != Gemstone.Creativite).toArray(Gemstone[]::new));
+
     public ItemSpelldust(String name)
     {
         super(name);
@@ -25,12 +26,18 @@ public class ItemSpelldust extends ItemRegistered
     }
 
     @Override
-    public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems)
+    public IItemStateManager createStateManager()
     {
-        for (Gemstone g : Gemstone.values)
+        return new ItemStateManager(this, GEM);
+    }
+
+    @Override
+    public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems)
+    {
+        for (Gemstone type : GEM.getAllowedValues())
         {
-            if (g != Gemstone.Creativite)
-                subItems.add(new ItemStack(this, 1, g.ordinal()));
+            IItemState state = getDefaultState().withProperty(GEM, type);
+            subItems.add(state.getStack());
         }
     }
 
@@ -43,25 +50,5 @@ public class ItemSpelldust extends ItemRegistered
             return getUnlocalizedName();
 
         return getUnlocalizedName() + Gemstone.values[sub].getUnlocalizedName();
-    }
-
-    @Override
-    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
-    {
-        boolean flag = worldIn.getBlockState(pos).getBlock().isReplaceable(worldIn, pos);
-        BlockPos blockpos = flag ? pos : pos.offset(facing);
-
-        if (playerIn.canPlayerEdit(blockpos, facing, stack) &&
-                worldIn.canBlockBePlaced(worldIn.getBlockState(blockpos).getBlock(), blockpos, false, facing, null, stack) &&
-                ElementsOfPower.spell_wire.canPlaceBlockAt(worldIn, blockpos))
-        {
-            --stack.stackSize;
-            worldIn.setBlockState(blockpos, ElementsOfPower.spell_wire.onBlockPlaced(worldIn, blockpos, facing, hitX, hitY, hitZ, stack.getMetadata(), playerIn));
-            return EnumActionResult.SUCCESS;
-        }
-        else
-        {
-            return EnumActionResult.FAIL;
-        }
     }
 }

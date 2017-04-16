@@ -2,12 +2,12 @@ package gigaherz.elementsofpower.cocoons;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import gigaherz.common.BlockRegistered;
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.common.BlockRegistered;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.entities.EntityEssence;
-import gigaherz.elementsofpower.gemstones.Element;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockDirt;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.properties.PropertyInteger;
@@ -20,6 +20,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkGenerator;
@@ -113,10 +114,10 @@ public class BlockCocoon extends BlockRegistered
 
             if (!te.essenceContained.isEmpty())
             {
-                MagicAmounts am = te.essenceContained.copy();
+                MagicAmounts am = te.essenceContained;
                 for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
                 {
-                    am.amounts[i] = (float) Math.floor(am.amounts[i] * random.nextFloat());
+                    am = am.with(i, (float) Math.floor(am.get(i) * random.nextFloat()));
                 }
 
                 if (!am.isEmpty())
@@ -127,7 +128,7 @@ public class BlockCocoon extends BlockRegistered
 
                     e.setLocationAndAngles(p.getX(), p.getY(), p.getZ(), 0, 0);
 
-                    worldIn.spawnEntityInWorld(e);
+                    worldIn.spawnEntity(e);
                 }
             }
         }
@@ -136,23 +137,26 @@ public class BlockCocoon extends BlockRegistered
     }
 
     @Override
-    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
     {
-        if (heldItem != null && heldItem.getItem() == ElementsOfPower.magicOrb)
+        ItemStack heldItem = playerIn.getHeldItem(hand);
+
+        if (heldItem.getCount() > 0 && heldItem.getItem() == ElementsOfPower.magicOrb)
         {
             TileEntity te = worldIn.getTileEntity(pos);
 
-            assert te != null;
+            if (!(te instanceof TileCocoon))
+                return false;
 
             ((TileCocoon) te).addEssences(heldItem);
 
             if (!playerIn.capabilities.isCreativeMode)
-                heldItem.stackSize--;
+                heldItem.shrink(1);
 
             return true;
         }
 
-        return super.onBlockActivated(worldIn, pos, state, playerIn, hand, heldItem, side, hitX, hitY, hitZ);
+        return super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
     }
 
     @Override
@@ -176,7 +180,7 @@ public class BlockCocoon extends BlockRegistered
 
             for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
             {
-                float a = am.amounts[i];
+                float a = am.get(i);
                 int whole = (int) Math.floor(a);
                 if (rand.nextFloat() < (a - whole))
                     whole++;
@@ -197,7 +201,7 @@ public class BlockCocoon extends BlockRegistered
     }
 
     @Override
-    public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, @Nullable TileEntity te, @Nullable ItemStack stack)
+    public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, @Nullable TileEntity te, ItemStack stack)
     {
         super.harvestBlock(worldIn, player, pos, state, te, stack);
         worldIn.setBlockToAir(pos);
@@ -205,6 +209,8 @@ public class BlockCocoon extends BlockRegistered
 
     public static class Generator implements IWorldGenerator
     {
+        ThreadLocal<Set<BlockPos>> positionsTL = new ThreadLocal<>();
+
         @Override
         public void generate(Random rand, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider)
         {
@@ -212,133 +218,210 @@ public class BlockCocoon extends BlockRegistered
             if (num == 0)
                 return;
 
-            Set<BlockPos> positions = Sets.newHashSet();
+            DimensionType worldType = world.provider.getDimensionType();
+
+            Set<BlockPos> positions = positionsTL.get();
+
+            if (positions == null)
+                positionsTL.set(positions = Sets.newHashSet());
+
+            positions.clear();
             for (int i = 0; i < 250 && positions.size() < num; i++)
             {
                 int x = rand.nextInt(16);
                 int z = rand.nextInt(16);
                 int y = rand.nextInt(255);
-                BlockPos pos = new BlockPos(chunkX * 16 + x, y, chunkZ * 16 + z);
-                if (!positions.contains(pos))
+                BlockPos pos = new BlockPos(chunkX * 16 + 8 + x, y, chunkZ * 16 + 8 + z);
+                if (positions.contains(pos))
+                    continue;
+
+                if (!world.isAirBlock(pos))
+                    continue;
+
+                for (EnumFacing f : EnumFacing.VALUES)
                 {
-                    if (world.isAirBlock(pos))
+                    BlockPos pos1 = pos.offset(f);
+                    if (!world.isAirBlock(pos1))
                     {
-                        for (EnumFacing f : EnumFacing.VALUES)
+                        if (world.isSideSolid(pos1, f.getOpposite()))
                         {
-                            BlockPos pos1 = pos.offset(f);
-                            if (!world.isAirBlock(pos1))
-                            {
-                                //if(world.isSideSolid(pos1, f.getOpposite()))
-                                {
-                                    positions.add(pos);
-                                    generateOne(pos, rand, world);
-                                    break;
-                                }
-                            }
+                            positions.add(pos);
+                            generateOne(pos, f, rand, world, worldType);
+                            break;
                         }
                     }
                 }
             }
         }
 
-        private void generateOne(BlockPos pos, Random rand, World world)
+        private void generateOne(BlockPos pos, EnumFacing f, Random rand, World world, DimensionType worldType)
         {
-            for (EnumFacing f : EnumFacing.VALUES)
+            int size = 6 + rand.nextInt(10);
+
+            MagicAmounts am = MagicAmounts.EMPTY;
+
+            while (size-- > 0)
             {
-                BlockPos pos1 = pos.offset(f);
-                if (!world.isAirBlock(pos1))
+                int y = pos.getY() + rand.nextInt(11) - 5;
+                int x = pos.getX() + rand.nextInt(11) - 5;
+                int z = pos.getZ() + rand.nextInt(11) - 5;
+                if (y < 0)
                 {
-                    //if(world.isSideSolid(pos1, f.getOpposite()))
+                    am = am.darkness(1);
+                }
+                else if (y >= world.getHeight())
+                {
+                    if (worldType == DimensionType.OVERWORLD)
+                        am = am.light(1);
+                    else
+                        am = am.darkness(1);
+                }
+                else
+                {
+                    BlockPos pos1 = new BlockPos(x, y, z);
+                    IBlockState state = world.getBlockState(pos1);
+                    Block b = state.getBlock();
+
+                    if (worldType == DimensionType.OVERWORLD)
                     {
-                        int size = 6 + rand.nextInt(10);
+                        am = am.light(Math.max(0, 0.25f * Math.min(1, (y - 64) / 64.0f)));
+                        am = am.darkness(Math.max(0, 0.25f * (64 - y) / 64.0f));
+                    }
+                    else if (worldType == DimensionType.NETHER)
+                    {
+                        am = am.fire(0.5f);
+                    }
+                    else if (worldType == DimensionType.THE_END)
+                    {
+                        am = am.darkness(0.5f);
+                    }
 
-                        MagicAmounts am = new MagicAmounts();
-
-                        int x0 = pos.getX();
-                        int y0 = pos.getY();
-                        int z0 = pos.getZ();
-                        for (int y = Math.max(0, y0 - 2); y <= Math.min(255, y0 + 2); y++)
+                    Material mat = state.getMaterial();
+                    if (mat == Material.AIR)
+                    {
+                        am = am.air(0.25f);
+                    }
+                    else if (mat == Material.WATER)
+                    {
+                        am = am.water(1);
+                    }
+                    else if (mat == Material.LAVA)
+                    {
+                        am = am.fire(1);
+                        am = am.earth(0.5f);
+                    }
+                    else if (mat == Material.FIRE)
+                    {
+                        am = am.fire(1);
+                        am = am.air(0.5f);
+                    }
+                    else if (mat == Material.ROCK)
+                    {
+                        am = am.earth(1);
+                        if (b == Blocks.NETHERRACK)
                         {
-                            for (int z = z0 - 2; z < (z0 + 2); z++)
-                            {
-                                for (int x = x0 - 2; x < (x0 + 2); x++)
-                                {
-                                    BlockPos pos2 = new BlockPos(x, y, z);
-                                    Block b = world.getBlockState(pos2).getBlock();
-                                    am.light(Math.max(0, 0.25f * Math.min(1, (y - 64) / 64.0f)));
-                                    am.darkness(Math.max(0, 0.25f * (64 - y) / 64.0f));
-
-                                    if (b == Blocks.WATER || b == Blocks.FLOWING_WATER)
-                                    {
-                                        am.water(1.5f);
-                                    }
-                                    else if (b == Blocks.LAVA || b == Blocks.FLOWING_LAVA)
-                                    {
-                                        am.fire(1);
-                                    }
-                                    else if (b == Blocks.NETHERRACK)
-                                    {
-                                        am.fire(0.5f);
-                                        am.earth(1);
-                                    }
-                                    else if (b == Blocks.SOUL_SAND)
-                                    {
-                                        am.death(1);
-                                    }
-                                    else if (b == Blocks.LOG || b == Blocks.LOG2
-                                            || b == Blocks.LEAVES || b == Blocks.LEAVES2
-                                            || b == Blocks.RED_FLOWER || b == Blocks.YELLOW_FLOWER
-                                            || b == Blocks.GRASS || b == Blocks.TALLGRASS)
-                                    {
-                                        am.life(1);
-                                    }
-                                    else if (world.isAirBlock(pos2))
-                                    {
-                                        am.air(0.25f);
-                                    }
-                                    else
-                                    {
-                                        am.earth(1);
-                                    }
-                                }
-                            }
+                            am = am.fire(0.5f);
                         }
-
-                        Element e = Element.values[am.getDominantElement()];
-
-                        List<Element> elements = Lists.newArrayList(Element.values());
-
-                        elements.remove(e);
-
-                        MagicAmounts am2 = new MagicAmounts();
-                        am2.element(e, size);
-
-                        while (size > 0 && elements.size() > 0)
+                        else if (b == Blocks.END_STONE || b == Blocks.END_BRICKS)
                         {
-                            size = rand.nextInt(size);
-
-                            int i = rand.nextInt(elements.size());
-                            e = elements.get(i);
-                            elements.remove(i);
-
-                            am2.element(e, size);
+                            am = am.darkness(0.5f);
                         }
-
-                        if (!am2.isEmpty())
+                    }
+                    else if (mat == Material.SAND)
+                    {
+                        am = am.earth(0.5f);
+                        if (b == Blocks.SOUL_SAND)
                         {
-                            world.setBlockState(pos, ElementsOfPower.cocoon.getDefaultState().withProperty(FACING, f), 2);
-                            TileCocoon te = (TileCocoon) world.getTileEntity(pos);
-
-                            assert te != null;
-
-                            te.essenceContained.add(am2);
-
-                            ElementsOfPower.logger.warn("Generated at: " + pos + " near " + world.getBlockState(pos1).getBlock().getLocalizedName() + " with " + te.essenceContained);
+                            am = am.death(1);
                         }
-
-                        return;
+                        else
+                        {
+                            am = am.air(1);
+                        }
+                    }
+                    else if (mat == Material.WOOD)
+                    {
+                        am = am.life(1);
+                        am = am.earth(0.5f);
+                    }
+                    else if (mat == Material.LEAVES)
+                    {
+                        am = am.life(1);
+                    }
+                    else if (mat == Material.PLANTS)
+                    {
+                        am = am.life(1);
+                    }
+                    else if (mat == Material.CACTUS)
+                    {
+                        am = am.life(1);
+                        am = am.earth(0.5f);
+                    }
+                    else if (mat == Material.GRASS)
+                    {
+                        am = am.life(0.5f);
+                        am = am.earth(1);
+                    }
+                    else if (mat == Material.GROUND)
+                    {
+                        am = am.earth(1);
+                        if (b != Blocks.DIRT || state.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.PODZOL)
+                        {
+                            am = am.life(0.5f);
+                        }
+                    }
+                    else if (mat == Material.IRON)
+                    {
+                        am = am.earth(1);
+                    }
+                    else if (mat == Material.GLASS)
+                    {
+                        am = am.earth(0.5f);
+                        am = am.light(0.5f);
+                        am = am.air(0.5f);
+                    }
+                    else if (mat == Material.REDSTONE_LIGHT)
+                    {
+                        am = am.earth(0.5f);
+                        am = am.light(1);
+                    }
+                    else if (mat == Material.ICE || mat == Material.PACKED_ICE)
+                    {
+                        am = am.water(1);
+                        am = am.darkness(0.5f);
+                    }
+                    else if (mat == Material.SNOW || mat == Material.CRAFTED_SNOW)
+                    {
+                        am = am.water(0.5f);
+                        am = am.darkness(0.5f);
+                    }
+                    else if (mat == Material.CLAY)
+                    {
+                        am = am.earth(0.5f);
+                        am = am.water(1);
+                    }
+                    else if (mat == Material.GOURD)
+                    {
+                        am = am.earth(0.5f);
+                        am = am.life(0.25f);
+                    }
+                    else if (mat == Material.DRAGON_EGG)
+                    {
+                        am = am.darkness(1);
                     }
                 }
+            }
+
+            if (!am.isEmpty())
+            {
+                world.setBlockState(pos, ElementsOfPower.cocoon.getDefaultState().withProperty(FACING, f), 2);
+                TileCocoon te = (TileCocoon) world.getTileEntity(pos);
+
+                assert te != null;
+
+                te.essenceContained = te.essenceContained.add(am);
+
+                ElementsOfPower.logger.warn("Generated at: " + pos + " near " + world.getBlockState(pos).getBlock().getLocalizedName() + " with " + te.essenceContained);
             }
         }
     }

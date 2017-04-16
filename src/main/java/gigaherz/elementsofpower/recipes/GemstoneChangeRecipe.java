@@ -6,6 +6,7 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 
 public class GemstoneChangeRecipe implements IRecipe
@@ -13,23 +14,23 @@ public class GemstoneChangeRecipe implements IRecipe
     @Override
     public boolean matches(InventoryCrafting inv, World worldIn)
     {
-        ItemStack gemContainer = null;
-        ItemStack gem = null;
+        ItemStack gemContainer = ItemStack.EMPTY;
+        ItemStack gem = ItemStack.EMPTY;
         for (int i = 0; i < inv.getSizeInventory(); i++)
         {
             ItemStack current = inv.getStackInSlot(i);
-            if (current == null)
+            if (current.getCount() <= 0)
                 continue;
             Item item = current.getItem();
             if (item instanceof ItemGemContainer)
             {
-                if (gemContainer != null)
+                if (gemContainer.getCount() > 0)
                     return false;
                 gemContainer = current;
             }
             else if (item instanceof ItemGemstone)
             {
-                if (gem != null)
+                if (gem.getCount() > 0)
                     return false;
                 gem = current;
             }
@@ -38,48 +39,45 @@ public class GemstoneChangeRecipe implements IRecipe
                 return false;
             }
         }
-        return gemContainer != null;
+        return gemContainer.getCount() > 0;
     }
 
     @Override
     public ItemStack getCraftingResult(InventoryCrafting inv)
     {
-        ItemGemContainer gemContainerItem = null;
-
-        ItemStack gemContainer = null;
-        ItemStack gem = null;
+        ItemStack gemContainer = ItemStack.EMPTY;
+        ItemStack gem = ItemStack.EMPTY;
 
         for (int i = 0; i < inv.getSizeInventory(); i++)
         {
             ItemStack current = inv.getStackInSlot(i);
-            if (current == null)
+            if (current.getCount() <= 0)
                 continue;
             Item item = current.getItem();
             if (item instanceof ItemGemContainer)
             {
-                if (gemContainer != null)
-                    return null;
+                if (gemContainer.getCount() > 0)
+                    return ItemStack.EMPTY;
                 gemContainer = current;
-                gemContainerItem = (ItemGemContainer) item;
             }
             else if (item instanceof ItemGemstone)
             {
-                if (gem != null)
-                    return null;
+                if (gem.getCount() > 0)
+                    return ItemStack.EMPTY;
                 gem = current;
             }
             else
             {
-                return null;
+                return ItemStack.EMPTY;
             }
         }
 
-        if (gemContainer == null)
+        if (gemContainer.getCount() <= 0)
         {
-            return null;
+            return ItemStack.EMPTY;
         }
 
-        return gemContainerItem.setContainedGemstone(gemContainer.copy(), gem);
+        return ((ItemGemContainer) gemContainer.getItem()).setContainedGemstone(gemContainer.copy(), gem);
     }
 
     @Override
@@ -91,13 +89,13 @@ public class GemstoneChangeRecipe implements IRecipe
     @Override
     public ItemStack getRecipeOutput()
     {
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override
-    public ItemStack[] getRemainingItems(InventoryCrafting inv)
+    public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv)
     {
-        ItemStack[] arr = new ItemStack[inv.getSizeInventory()];
+        NonNullList<ItemStack> arr = NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
 
         ItemGemContainer gemContainerItem = null;
 
@@ -106,8 +104,6 @@ public class GemstoneChangeRecipe implements IRecipe
         for (int i = 0; i < inv.getSizeInventory(); i++)
         {
             ItemStack current = inv.getStackInSlot(i);
-            if (current == null)
-                continue;
             Item item = current.getItem();
             if (item instanceof ItemGemContainer)
             {
@@ -120,7 +116,7 @@ public class GemstoneChangeRecipe implements IRecipe
 
         if (gemContainer != null)
         {
-            arr[0] = gemContainerItem.getContainedGemstone(gemContainer);
+            arr.set(0, gemContainerItem.getContainedGemstone(gemContainer));
             return arr;
         }
 

@@ -1,9 +1,8 @@
 package gigaherz.elementsofpower.client.renderers.spellrender;
 
-import gigaherz.elementsofpower.client.renderers.ModelHandle;
+import gigaherz.common.client.ModelHandle;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,7 +17,7 @@ public class RenderSphere extends RenderSpell
     {
         float scale = cast.getScale();
 
-        IBakedModel modelSphere = getSphere(tex);
+        ModelHandle modelSphere = getSphere(tex);
 
         float time = ((cast.totalCastTime - cast.remainingCastTime) + partialTicks);
         float progress = (time / cast.totalCastTime);
@@ -49,9 +48,9 @@ public class RenderSphere extends RenderSpell
         GlStateManager.scale(scale, scale, scale);
 
         GlStateManager.cullFace(GlStateManager.CullFace.FRONT);
-        ModelHandle.renderModel(modelSphere, color);
+        modelSphere.render(color);
         GlStateManager.cullFace(GlStateManager.CullFace.BACK);
-        ModelHandle.renderModel(modelSphere, color);
+        modelSphere.render(color);
 
         GlStateManager.popMatrix();
 

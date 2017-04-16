@@ -1,6 +1,5 @@
 package gigaherz.elementsofpower.progression;
 
-import com.google.common.collect.Lists;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.essentializer.BlockEssentializer;
 import gigaherz.elementsofpower.items.ItemRing;
@@ -15,13 +14,12 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
+import net.minecraft.util.NonNullList;
 import net.minecraftforge.common.AchievementPage;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
-
-import java.util.List;
 
 public class DiscoveryHandler
 {
@@ -37,7 +35,7 @@ public class DiscoveryHandler
     static Achievement advancedSpell;
     static Achievement masterSpell;
 
-    final static List<ItemStack> gemTypes = Lists.newArrayList();
+    final static NonNullList<ItemStack> gemTypes = NonNullList.create();
 
     public static void init()
     {
@@ -104,7 +102,7 @@ public class DiscoveryHandler
     @SubscribeEvent
     public void onItemPickUp(EntityItemPickupEvent event)
     {
-        if (event.getEntityPlayer().worldObj.isRemote)
+        if (event.getEntityPlayer().world.isRemote)
             return;
 
         checkItem(event.getEntityPlayer(), event.getItem().getEntityItem());
@@ -113,7 +111,7 @@ public class DiscoveryHandler
     @SubscribeEvent
     public void onItemCrafted(PlayerEvent.ItemCraftedEvent event)
     {
-        if (event.player.worldObj.isRemote)
+        if (event.player.world.isRemote)
             return;
 
         checkItem(event.player, event.crafting);

@@ -1,8 +1,12 @@
 package gigaherz.elementsofpower.gemstones;
 
+import gigaherz.common.state.IItemState;
+import gigaherz.common.state.IItemStateManager;
+import gigaherz.common.state.implementation.ItemStateManager;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.items.ItemMagicContainer;
+import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -10,6 +14,7 @@ import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.util.Constants;
 
@@ -18,13 +23,15 @@ import java.util.List;
 
 public class ItemGemstone extends ItemMagicContainer
 {
+    public static final PropertyEnum<Gemstone> GEM = PropertyEnum.create("gem", Gemstone.class);
+
     public static final MagicAmounts[] capacities = {
-            new MagicAmounts().all(10),
-            new MagicAmounts().all(50),
-            new MagicAmounts().all(100),
-            new MagicAmounts().all(250),
-            new MagicAmounts().all(500),
-            new MagicAmounts().infinite(),
+            MagicAmounts.EMPTY.all(10),
+            MagicAmounts.EMPTY.all(50),
+            MagicAmounts.EMPTY.all(100),
+            MagicAmounts.EMPTY.all(250),
+            MagicAmounts.EMPTY.all(500),
+            MagicAmounts.EMPTY.infinite(),
     };
 
     public ItemGemstone(String name)
@@ -38,14 +45,35 @@ public class ItemGemstone extends ItemMagicContainer
     }
 
     @Override
+    public IItemStateManager createStateManager()
+    {
+        return new ItemStateManager(this, GEM);
+    }
+
+    @Override
+    public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems)
+    {
+        for (Gemstone type : GEM.getAllowedValues())
+        {
+            IItemState state = getDefaultState().withProperty(GEM, type);
+            for (Quality q : Quality.values)
+            {
+                subItems.add(setQuality(state.getStack(), q));
+            }
+        }
+    }
+
+    @Override
     public String getUnlocalizedName(ItemStack stack)
     {
-        int sub = stack.getItemDamage();
+        IItemState state = getStateManager().get(stack.getMetadata());
 
-        if (sub >= Gemstone.values.length)
+        if (state == null)
             return getUnlocalizedName();
 
-        return "item." + ElementsOfPower.MODID + Gemstone.values[sub].getUnlocalizedName();
+        String subName = state.getValue(GEM).getUnlocalizedName();
+
+        return "item." + ElementsOfPower.MODID + subName;
     }
 
     @Override
@@ -68,18 +96,6 @@ public class ItemGemstone extends ItemMagicContainer
         return (qualityPart + " " + gemPart).trim();
     }
 
-    @Override
-    public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems)
-    {
-        for (int meta = 0; meta < Gemstone.values.length; meta++)
-        {
-            for (Quality q : Quality.values)
-            {
-                subItems.add(setQuality(new ItemStack(itemIn, 1, meta), q));
-            }
-        }
-    }
-
     public void getUnexamined(List<ItemStack> subItems)
     {
         for (int meta = 0; meta < Gemstone.values.length; meta++)
@@ -88,25 +104,24 @@ public class ItemGemstone extends ItemMagicContainer
         }
     }
 
-    @Nullable
     @Override
     public MagicAmounts getCapacity(ItemStack stack)
     {
         Gemstone g = getGemstone(stack);
         if (g == null)
-            return null;
+            return MagicAmounts.EMPTY;
 
         Quality q = getQuality(stack);
         if (q == null)
-            return null;
+            return MagicAmounts.EMPTY;
 
-        MagicAmounts magic = capacities[q.ordinal()].copy();
+        MagicAmounts magic = capacities[q.ordinal()];
 
         Element e = g.getElement();
         if (e == null)
-            magic.all(magic.amounts[0] * 0.1f);
+            magic = magic.all(magic.get(0) * 0.1f);
         else
-            magic.element(g.getElement(), magic.amount(g.getElement()) * 0.25f);
+            magic = magic.add(g.getElement(), magic.get(g.getElement()) * 0.25f);
 
         return magic;
     }

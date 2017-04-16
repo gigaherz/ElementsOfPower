@@ -3,6 +3,7 @@ package gigaherz.elementsofpower.database;
 import com.google.common.collect.Lists;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.gemstones.Element;
+import gigaherz.elementsofpower.gemstones.Gemstone;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -103,15 +104,15 @@ public class StockConversions
         essences(Items.EMERALD).earth(100).life(50);
         essences(Items.QUARTZ).earth(100).light(50);
 
-        essences(ElementsOfPower.gemRuby).earth(100).fire(50);
-        essences(ElementsOfPower.gemSapphire).earth(100).water(50);
-        essences(ElementsOfPower.gemCitrine).earth(100).air(50);
-        essences(ElementsOfPower.gemAgate).earth(100).earth(50);
-        essences(ElementsOfPower.gemQuartz).earth(100).light(50);
-        essences(ElementsOfPower.gemSerendibite).earth(100).darkness(50);
-        essences(ElementsOfPower.gemEmerald).earth(100).life(50);
-        essences(ElementsOfPower.gemAmethyst).earth(100).death(50);
-        essences(ElementsOfPower.gemDiamond).earth(128);
+        essences(ElementsOfPower.gemstone.getStack(Gemstone.Ruby)).earth(100).fire(50);
+        essences(ElementsOfPower.gemstone.getStack(Gemstone.Sapphire)).earth(100).water(50);
+        essences(ElementsOfPower.gemstone.getStack(Gemstone.Citrine)).earth(100).air(50);
+        essences(ElementsOfPower.gemstone.getStack(Gemstone.Agate)).earth(100).earth(50);
+        essences(ElementsOfPower.gemstone.getStack(Gemstone.Quartz)).earth(100).light(50);
+        essences(ElementsOfPower.gemstone.getStack(Gemstone.Serendibite)).earth(100).darkness(50);
+        essences(ElementsOfPower.gemstone.getStack(Gemstone.Emerald)).earth(100).life(50);
+        essences(ElementsOfPower.gemstone.getStack(Gemstone.Amethyst)).earth(100).death(50);
+        essences(ElementsOfPower.gemstone.getStack(Gemstone.Diamond)).earth(128);
 
         essences(Items.CLAY_BALL).earth(8).water(2);
 
@@ -190,7 +191,7 @@ public class StockConversions
         ItemEssenceCollection collection = new ItemEssenceCollection();
         for (ItemStack is : subItems)
         {
-            ItemEssenceEntry ee = new ItemEssenceEntry(is, new MagicAmounts());
+            ItemEssenceEntry ee = new ItemEssenceEntry(is, MagicAmounts.EMPTY);
             collection.add(ee);
             stockEntries.add(ee);
         }
@@ -201,27 +202,26 @@ public class StockConversions
     private static ItemEssenceCollection essences(Block block, int... itemMetaValues)
     {
         Item item = Item.getItemFromBlock(block);
-        assert item != null;
         return essences(item, itemMetaValues);
     }
 
     private static ItemEssenceEntry essences(Item item, int meta)
     {
-        ItemEssenceEntry ee = new ItemEssenceEntry(new ItemStack(item, 1, meta), new MagicAmounts());
+        ItemEssenceEntry ee = new ItemEssenceEntry(new ItemStack(item, 1, meta), MagicAmounts.EMPTY);
         stockEntries.add(ee);
         return ee;
     }
 
     private static ItemEssenceEntry essences(Block block, int meta)
     {
-        ItemEssenceEntry ee = new ItemEssenceEntry(new ItemStack(block, 1, meta), new MagicAmounts());
+        ItemEssenceEntry ee = new ItemEssenceEntry(new ItemStack(block, 1, meta), MagicAmounts.EMPTY);
         stockEntries.add(ee);
         return ee;
     }
 
     private static ItemEssenceEntry essences(ItemStack stack)
     {
-        ItemEssenceEntry ee = new ItemEssenceEntry(stack, new MagicAmounts());
+        ItemEssenceEntry ee = new ItemEssenceEntry(stack, MagicAmounts.EMPTY);
         stockEntries.add(ee);
         return ee;
     }
@@ -271,70 +271,70 @@ public class StockConversions
         @Override
         public ItemEssenceEntry all(int amount)
         {
-            amounts.all(amount);
+            amounts = amounts.all(amount);
             return this;
         }
 
         @Override
         public ItemEssenceEntry fire(int amount)
         {
-            amounts.fire(amount);
+            amounts = amounts.fire(amount);
             return this;
         }
 
         @Override
         public ItemEssenceEntry water(int amount)
         {
-            amounts.water(amount);
+            amounts = amounts.water(amount);
             return this;
         }
 
         @Override
         public ItemEssenceEntry air(int amount)
         {
-            amounts.air(amount);
+            amounts = amounts.air(amount);
             return this;
         }
 
         @Override
         public ItemEssenceEntry earth(int amount)
         {
-            amounts.earth(amount);
+            amounts = amounts.earth(amount);
             return this;
         }
 
         @Override
         public ItemEssenceEntry light(int amount)
         {
-            amounts.light(amount);
+            amounts = amounts.light(amount);
             return this;
         }
 
         @Override
         public ItemEssenceEntry darkness(int amount)
         {
-            amounts.darkness(amount);
+            amounts = amounts.darkness(amount);
             return this;
         }
 
         @Override
         public ItemEssenceEntry life(int amount)
         {
-            amounts.life(amount);
+            amounts = amounts.life(amount);
             return this;
         }
 
         @Override
         public ItemEssenceEntry death(int amount)
         {
-            amounts.death(amount);
+            amounts = amounts.death(amount);
             return this;
         }
 
         @Override
         public ItemEssenceEntry element(Element l, int amount)
         {
-            amounts.element(l, amount);
+            amounts = amounts.add(l, amount);
             return this;
         }
     }

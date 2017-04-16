@@ -25,8 +25,8 @@ public class FurnaceRecipeInfo implements IRecipeInfoProvider
         recipeItems = inputs;
         recipeOutput = output.copy();
 
-        recipeInput.stackSize *= 8;
-        recipeOutput.stackSize *= 8;
+        recipeInput.setCount(recipeInput.getCount() * 8);
+        recipeOutput.setCount(recipeOutput.getCount() * 8);
     }
 
     @Nonnull

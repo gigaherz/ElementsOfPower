@@ -1,6 +1,6 @@
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-package gigaherz.elementsofpower.guidebook;
+package gigaherz.elementsofpower.integration.analyzer;
 
 import mcp.MethodsReturnNonnullByDefault;
 

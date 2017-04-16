@@ -3,6 +3,7 @@ package gigaherz.elementsofpower.database;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.gemstones.Gemstone;
 import gigaherz.elementsofpower.gemstones.ItemGemstone;
 import gigaherz.elementsofpower.gemstones.Quality;
 import gigaherz.elementsofpower.items.ItemMagicContainer;
@@ -14,7 +15,6 @@ import net.minecraft.util.ReportedException;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -23,11 +23,10 @@ public class ContainerInformation
 {
     static Random rand = new Random();
 
-    @Nullable
-    public static ItemStack identifyQuality(@Nullable ItemStack stack)
+    public static ItemStack identifyQuality(ItemStack stack)
     {
-        if (stack == null)
-            return null;
+        if (stack.getCount() <= 0)
+            return ItemStack.EMPTY;
 
         Item item = stack.getItem();
         if (item instanceof ItemGemstone)
@@ -38,15 +37,15 @@ public class ContainerInformation
 
         @SuppressWarnings("unchecked")
         List<Pair<ItemStack, String>> gems = Lists.newArrayList(
-                Pair.of(ElementsOfPower.gemRuby, "gemRuby"),
-                Pair.of(ElementsOfPower.gemSapphire, "gemSapphire"),
-                Pair.of(ElementsOfPower.gemCitrine, "gemCitrine"),
-                Pair.of(ElementsOfPower.gemAgate, "gemAgate"),
-                Pair.of(ElementsOfPower.gemQuartz, "gemQuartz"),
-                Pair.of(ElementsOfPower.gemSerendibite, "gemSerendibite"),
-                Pair.of(ElementsOfPower.gemEmerald, "gemEmerald"),
-                Pair.of(ElementsOfPower.gemAmethyst, "gemAmethyst"),
-                Pair.of(ElementsOfPower.gemDiamond, "gemDiamond")
+                Pair.of(ElementsOfPower.gemstone.getStack(Gemstone.Ruby), "gemRuby"),
+                Pair.of(ElementsOfPower.gemstone.getStack(Gemstone.Sapphire), "gemSapphire"),
+                Pair.of(ElementsOfPower.gemstone.getStack(Gemstone.Citrine), "gemCitrine"),
+                Pair.of(ElementsOfPower.gemstone.getStack(Gemstone.Agate), "gemAgate"),
+                Pair.of(ElementsOfPower.gemstone.getStack(Gemstone.Quartz), "gemQuartz"),
+                Pair.of(ElementsOfPower.gemstone.getStack(Gemstone.Serendibite), "gemSerendibite"),
+                Pair.of(ElementsOfPower.gemstone.getStack(Gemstone.Emerald), "gemEmerald"),
+                Pair.of(ElementsOfPower.gemstone.getStack(Gemstone.Amethyst), "gemAmethyst"),
+                Pair.of(ElementsOfPower.gemstone.getStack(Gemstone.Diamond), "gemDiamond")
         );
 
         int[] ids = OreDictionary.getOreIDs(stack);
@@ -82,10 +81,10 @@ public class ContainerInformation
 
     public static boolean canItemContainMagic(ItemStack stack)
     {
-        if (stack.stackSize != 1)
+        if (stack.getCount() != 1)
         {
             stack = stack.copy();
-            stack.stackSize = 1;
+            stack.setCount(1);
         }
         return !getMagicLimits(stack).isEmpty();
     }
@@ -102,46 +101,37 @@ public class ContainerInformation
 
     public static MagicAmounts getMagicLimits(ItemStack stack)
     {
-        if (stack.stackSize != 1)
-            return MagicAmounts.empty();
+        if (stack.getCount() != 1)
+            return MagicAmounts.EMPTY;
 
         Item item = stack.getItem();
         if (!(item instanceof ItemMagicContainer))
-            return MagicAmounts.empty();
+            return MagicAmounts.EMPTY;
 
-        MagicAmounts m = ((ItemMagicContainer) item).getCapacity(stack);
-        if (m == null)
-            return MagicAmounts.empty();
-
-        return m.copy();
+        return ((ItemMagicContainer) item).getCapacity(stack);
     }
 
-    public static MagicAmounts getContainedMagic(@Nullable ItemStack output)
+    public static MagicAmounts getContainedMagic(ItemStack output)
     {
-        if (output == null)
+        if (output.getCount() != 1)
         {
-            return MagicAmounts.empty();
-        }
-
-        if (output.stackSize != 1)
-        {
-            return MagicAmounts.empty();
+            return MagicAmounts.EMPTY;
         }
 
         if (isInfiniteContainer(output))
-            return new MagicAmounts().all(999);
+            return MagicAmounts.EMPTY.all(999);
 
         if (!(output.getItem() instanceof ItemMagicContainer))
-            return MagicAmounts.empty();
+            return MagicAmounts.EMPTY;
 
         NBTTagCompound nbt = output.getTagCompound();
 
         if (nbt == null)
         {
-            return MagicAmounts.empty();
+            return MagicAmounts.EMPTY;
         }
 
-        MagicAmounts amounts = new MagicAmounts();
+        MagicAmounts amounts = MagicAmounts.EMPTY;
         float max = 0;
 
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
@@ -155,7 +145,7 @@ public class ContainerInformation
                     max = amount;
                 }
 
-                amounts.amounts[i] = amount;
+                amounts = amounts.with(i, amount);
             }
             catch (NumberFormatException ex)
             {
@@ -168,20 +158,14 @@ public class ContainerInformation
             return amounts;
         }
 
-        return MagicAmounts.empty();
+        return MagicAmounts.EMPTY;
     }
 
-    @Nullable
-    public static ItemStack setContainedMagic(@Nullable ItemStack output, MagicAmounts amounts)
+    public static ItemStack setContainedMagic(ItemStack output, MagicAmounts amounts)
     {
-        if (output == null)
+        if (output.getCount() != 1)
         {
-            return null;
-        }
-
-        if (output.stackSize != 1)
-        {
-            return null;
+            return output;
         }
 
         if (isInfiniteContainer(output))
@@ -190,8 +174,8 @@ public class ContainerInformation
         if (!amounts.isEmpty())
         {
             output = identifyQuality(output);
-            if (output == null)
-                return null;
+            if (output.getCount() <= 0)
+                return ItemStack.EMPTY;
 
             NBTTagCompound nbt = output.getTagCompound();
             if (nbt == null)
@@ -202,7 +186,7 @@ public class ContainerInformation
 
             for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
             {
-                nbt.setFloat("" + i, amounts.amounts[i]);
+                nbt.setFloat("" + i, amounts.get(i));
             }
 
             return output;
@@ -230,7 +214,7 @@ public class ContainerInformation
 
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            if (amounts.amounts[i] < limits.amounts[i])
+            if (amounts.get(i) < limits.get(i))
                 return false;
         }
 
@@ -247,17 +231,15 @@ public class ContainerInformation
 
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            if (self.amounts[i] > 0 && amounts.amounts[i] < limits.amounts[i])
+            if (self.get(i) > 0 && amounts.get(i) < limits.get(i))
                 return true;
         }
 
         return false;
     }
 
-    public static boolean isInfiniteContainer(@Nullable ItemStack stack)
+    public static boolean isInfiniteContainer(ItemStack stack)
     {
-        if (stack == null)
-            return false;
         Item item = stack.getItem();
         return item instanceof ItemMagicContainer
                 && ((ItemMagicContainer) item).isInfinite(stack);

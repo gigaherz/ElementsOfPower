@@ -6,6 +6,7 @@ import gigaherz.elementsofpower.database.ContainerInformation;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.MoverType;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.passive.EntityAmbientCreature;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,7 +24,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 public class EntityEssence extends EntityAmbientCreature
@@ -81,8 +81,8 @@ public class EntityEssence extends EntityAmbientCreature
 
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            getDataManager().register(ELEMENTS[i], am.amounts[i]);
-            numEssences += am.amounts[i];
+            getDataManager().register(ELEMENTS[i], am.get(i));
+            numEssences += am.get(i);
         }
 
         scale = 0.025f * numEssences;
@@ -109,15 +109,15 @@ public class EntityEssence extends EntityAmbientCreature
     {
         int total = 0;
 
-        MagicAmounts amounts = new MagicAmounts();
+        MagicAmounts amounts = MagicAmounts.EMPTY;
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            amounts.amounts[i] = getDataManager().get(ELEMENTS[i]);
+            amounts = amounts.with(i, getDataManager().get(ELEMENTS[i]));
         }
 
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            total += Math.ceil(amounts.amounts[i]);
+            total += Math.ceil(amounts.get(i));
         }
 
         if (total == 0)
@@ -130,7 +130,7 @@ public class EntityEssence extends EntityAmbientCreature
 
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            float am = amounts.amounts[i];
+            float am = amounts.get(i);
             while (am > 0)
             {
                 seq.add(EssenceColors[i]);
@@ -194,16 +194,16 @@ public class EntityEssence extends EntityAmbientCreature
         }
         scale = 0.025f * numEssences;
 
-        if (worldObj.isRemote)
+        if (world.isRemote)
             return;
 
         entityAge2++;
         if (rand.nextDouble() < (entityAge2 * (1.0 / 2000) - 0.1))
         {
-            MagicAmounts amounts = new MagicAmounts();
+            MagicAmounts amounts = MagicAmounts.EMPTY;
             for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
             {
-                amounts.amounts[i] = getDataManager().get(ELEMENTS[i]);
+                amounts = amounts.with(i, getDataManager().get(ELEMENTS[i]));
             }
 
             if (amounts.getTotalMagic() > 0)
@@ -214,11 +214,11 @@ public class EntityEssence extends EntityAmbientCreature
                 while (j < rnd)
                 {
                     i = (i + 1) % 8;
-                    if (amounts.amounts[i] > 0)
+                    if (amounts.get(i) > 0)
                         j++;
                 }
-                amounts.amounts[i] = Math.max(0, amounts.amounts[i] - 1);
-                getDataManager().set(ELEMENTS[i], amounts.amounts[i]);
+                amounts = amounts.with(i, Math.max(0, amounts.get(i) - 1));
+                getDataManager().set(ELEMENTS[i], amounts.get(i));
             }
 
             if (amounts.getTotalMagic() <= 0)
@@ -236,14 +236,14 @@ public class EntityEssence extends EntityAmbientCreature
     {
         super.updateAITasks();
 
-        if (worldObj.isRemote)
+        if (world.isRemote)
             return;
 
         Vec3d followPos = new Vec3d(posX, posY, posZ);
 
         double dp = Double.POSITIVE_INFINITY;
 
-        Entity entity = worldObj.getClosestPlayerToEntity(this, 8.0D);
+        Entity entity = world.getClosestPlayerToEntity(this, 8.0D);
         if (entity != null)
         {
             dp = getDistanceSqToEntity(entity);
@@ -264,12 +264,12 @@ public class EntityEssence extends EntityAmbientCreature
                 do
                 {
                     blockPos = blockPos.down();
-                } while (blockPos.getY() > 0 && worldObj.isAirBlock(blockPos));
+                } while (blockPos.getY() > 0 && world.isAirBlock(blockPos));
 
                 spawnPosition = blockPos.up();
             }
             else if (spawnPosition.getY() < 1 ||
-                    !worldObj.isAirBlock(spawnPosition))
+                    !world.isAirBlock(spawnPosition))
             {
                 spawnPosition = spawnPosition.up();
             }
@@ -290,7 +290,7 @@ public class EntityEssence extends EntityAmbientCreature
         double currentDistance = home.lengthVector();
 
         double factor = Math.sqrt(currentDistance / wantedDistance);
-        double r = MathHelper.clamp_double(1 + rand.nextGaussian() - factor, 0, 2); // 0: point home. 1: stay forward. 2: move outward.
+        double r = MathHelper.clamp(1 + rand.nextGaussian() - factor, 0, 2); // 0: point home. 1: stay forward. 2: move outward.
 
         double speedMax = (entity != null ? 0.1f : 0.01) / scale;
 
@@ -309,9 +309,9 @@ public class EntityEssence extends EntityAmbientCreature
             accelY = lerp(accelY, lerp(forward.yCoord, random.yCoord, r), sa);
             accelZ = lerp(accelZ, lerp(forward.zCoord, random.zCoord, r), sa);
         }
-        motionX = MathHelper.clamp_double(motionX + lerp(0, accelX, sm), -speedMax, speedMax);
-        motionY = MathHelper.clamp_double(motionY + lerp(0, accelY, sm), -speedMax, speedMax);
-        motionZ = MathHelper.clamp_double(motionZ + lerp(0, accelZ, sm), -speedMax, speedMax);
+        motionX = MathHelper.clamp(motionX + lerp(0, accelX, sm), -speedMax, speedMax);
+        motionY = MathHelper.clamp(motionY + lerp(0, accelY, sm), -speedMax, speedMax);
+        motionZ = MathHelper.clamp(motionZ + lerp(0, accelZ, sm), -speedMax, speedMax);
 
         rotationYaw = (float) Math.atan2(motionZ, motionX);
         float xz = (float) Math.sqrt(motionX * motionX + motionZ * motionZ);
@@ -325,23 +325,21 @@ public class EntityEssence extends EntityAmbientCreature
         if (!(entity instanceof EntityPlayer))
             return;
 
-        MagicAmounts self = new MagicAmounts();
+        MagicAmounts self = MagicAmounts.EMPTY;
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            self.amounts[i] = getDataManager().get(ELEMENTS[i]);
+            self = self.with(i, getDataManager().get(ELEMENTS[i]));
         }
 
         EntityPlayer p = (EntityPlayer) entity;
         IInventory inv = null;
         int slot = 0;
-        ItemStack stack = null;
+        ItemStack stack = ItemStack.EMPTY;
 
         IInventory b = p.inventory;
         for (int i = 0; i < b.getSizeInventory(); i++)
         {
             ItemStack s = b.getStackInSlot(i);
-            if (s == null)
-                continue;
             if (ContainerInformation.canItemContainMagic(s))
             {
                 if (ContainerInformation.canTransferAnything(s, self))
@@ -354,7 +352,7 @@ public class EntityEssence extends EntityAmbientCreature
             }
         }
 
-        if (stack == null)
+        if (stack.getCount() <= 0)
         {
             b = BaublesApi.getBaubles(p);
             if (b != null)
@@ -362,8 +360,6 @@ public class EntityEssence extends EntityAmbientCreature
                 for (int i = 0; i < b.getSizeInventory(); i++)
                 {
                     ItemStack s = b.getStackInSlot(i);
-                    if (s == null)
-                        continue;
                     if (ContainerInformation.canItemContainMagic(s))
                     {
                         if (ContainerInformation.canTransferAnything(s, self))
@@ -378,7 +374,7 @@ public class EntityEssence extends EntityAmbientCreature
             }
         }
 
-        if (stack != null)
+        if (stack.getCount() > 0)
         {
             MagicAmounts limits = ContainerInformation.getMagicLimits(stack);
             MagicAmounts amounts = ContainerInformation.getContainedMagic(stack);
@@ -388,13 +384,13 @@ public class EntityEssence extends EntityAmbientCreature
                 float totalTransfer = 0;
                 for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
                 {
-                    float transfer = Math.min(self.amounts[i], limits.amounts[i] - amounts.amounts[i]);
+                    float transfer = Math.min(self.get(i), limits.get(i) - amounts.get(i));
                     if (transfer > 0)
                     {
                         totalTransfer += transfer;
-                        amounts.amounts[i] = Math.min(amounts.amounts[i] + transfer, limits.amounts[i]);
-                        self.amounts[i] -= transfer;
-                        getDataManager().set(ELEMENTS[i], self.amounts[i]);
+                        amounts = amounts.with(i, Math.min(amounts.get(i) + transfer, limits.get(i)));
+                        self = self.add(i, -transfer);
+                        getDataManager().set(ELEMENTS[i], self.get(i));
                     }
                 }
 
@@ -449,7 +445,7 @@ public class EntityEssence extends EntityAmbientCreature
             this.moveRelative(strafe, forward, this.onGround ? 0.1F * f1 : 0.02F);
             f = 0.91F;
 
-            this.moveEntity(this.motionX, this.motionY, this.motionZ);
+            this.move(MoverType.SELF, this.motionX, this.motionY, this.motionZ);
             this.motionX *= (double) f;
             this.motionY *= (double) f;
             this.motionZ *= (double) f;
@@ -458,7 +454,7 @@ public class EntityEssence extends EntityAmbientCreature
         this.prevLimbSwingAmount = this.limbSwingAmount;
         double d1 = this.posX - this.prevPosX;
         double d0 = this.posZ - this.prevPosZ;
-        float f2 = MathHelper.sqrt_double(d1 * d1 + d0 * d0) * 4.0F;
+        float f2 = MathHelper.sqrt(d1 * d1 + d0 * d0) * 4.0F;
 
         if (f2 > 1.0F)
         {
@@ -509,7 +505,7 @@ public class EntityEssence extends EntityAmbientCreature
     }
 
     @Override
-    protected boolean processInteract(EntityPlayer player, EnumHand p_184645_2_, @Nullable ItemStack stack)
+    protected boolean processInteract(EntityPlayer player, EnumHand p_184645_2_)
     {
         return false;
     }

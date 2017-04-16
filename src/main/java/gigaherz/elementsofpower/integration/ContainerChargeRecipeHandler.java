@@ -17,16 +17,9 @@ public class ContainerChargeRecipeHandler implements IRecipeHandler<ContainerCha
 
     @Nonnull
     @Override
-    public String getRecipeCategoryUid()
-    {
-        return VanillaRecipeCategoryUid.CRAFTING;
-    }
-
-    @Nonnull
-    @Override
     public String getRecipeCategoryUid(@Nonnull ContainerChargeRecipeWrapper recipe)
     {
-        return getRecipeCategoryUid();
+        return VanillaRecipeCategoryUid.CRAFTING;
     }
 
     @Nonnull

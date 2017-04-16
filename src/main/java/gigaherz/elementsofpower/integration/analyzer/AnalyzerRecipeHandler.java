@@ -16,16 +16,9 @@ public class AnalyzerRecipeHandler implements IRecipeHandler<AnalyzerRecipeWrapp
 
     @Nonnull
     @Override
-    public String getRecipeCategoryUid()
-    {
-        return AnalyzerCategory.UID;
-    }
-
-    @Nonnull
-    @Override
     public String getRecipeCategoryUid(@Nonnull AnalyzerRecipeWrapper recipe)
     {
-        return getRecipeCategoryUid();
+        return AnalyzerCategory.UID;
     }
 
     @Nonnull

@@ -5,9 +5,9 @@ import gigaherz.elementsofpower.client.renderers.spellrender.RenderBeam;
 import gigaherz.elementsofpower.client.renderers.spellrender.RenderCone;
 import gigaherz.elementsofpower.client.renderers.spellrender.RenderSpell;
 import gigaherz.elementsofpower.client.renderers.spellrender.RenderSphere;
-import gigaherz.elementsofpower.spells.SpellcastEntityData;
 import gigaherz.elementsofpower.spells.SpellManager;
 import gigaherz.elementsofpower.spells.Spellcast;
+import gigaherz.elementsofpower.spells.SpellcastEntityData;
 import gigaherz.elementsofpower.spells.shapes.SpellShape;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -33,7 +33,7 @@ public class SpellRenderOverlay
     @SubscribeEvent
     public void renderFirstPerson(RenderWorldLastEvent event)
     {
-        EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+        EntityPlayer player = Minecraft.getMinecraft().player;
         RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
 
         float partialTicks = event.getPartialTicks();
@@ -51,10 +51,10 @@ public class SpellRenderOverlay
     @SubscribeEvent
     public void playerRenderPost(RenderPlayerEvent.Post event)
     {
-        if (event.getEntityPlayer() == Minecraft.getMinecraft().thePlayer)
+        if (event.getEntityPlayer() == Minecraft.getMinecraft().player)
             return;
 
-        boolean isSelf = event.getEntityPlayer().getEntityId() == Minecraft.getMinecraft().thePlayer.getEntityId();
+        boolean isSelf = event.getEntityPlayer().getEntityId() == Minecraft.getMinecraft().player.getEntityId();
         EntityPlayer player = event.getEntityPlayer();
         RenderManager renderManager = event.getRenderer().getRenderManager();
 

@@ -16,16 +16,9 @@ public class EssentializerRecipeHandler implements IRecipeHandler<EssentializerR
 
     @Nonnull
     @Override
-    public String getRecipeCategoryUid()
-    {
-        return EssentializerCategory.UID;
-    }
-
-    @Nonnull
-    @Override
     public String getRecipeCategoryUid(@Nonnull EssentializerRecipeWrapper recipe)
     {
-        return getRecipeCategoryUid();
+        return EssentializerCategory.UID;
     }
 
     @Nonnull

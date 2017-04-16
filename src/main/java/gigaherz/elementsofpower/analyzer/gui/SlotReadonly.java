@@ -5,8 +5,6 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
-import javax.annotation.Nullable;
-
 public class SlotReadonly extends Slot
 {
     public SlotReadonly(IInventory par1iInventory, int par2, int par3, int par4)
@@ -15,7 +13,7 @@ public class SlotReadonly extends Slot
     }
 
     @Override
-    public boolean isItemValid(@Nullable ItemStack par1ItemStack)
+    public boolean isItemValid(ItemStack par1ItemStack)
     {
         return false;
     }

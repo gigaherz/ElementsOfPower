@@ -17,23 +17,20 @@ public class ItemStaff extends ItemWand
     public MagicAmounts getCapacity(ItemStack stack)
     {
         MagicAmounts magic = super.getCapacity(stack);
-        if (magic == null)
-            return null;
-
-        magic.add(magic.copy());
+        magic = magic.add(magic);
         return magic;
     }
 
     @Override
     protected MagicAmounts adjustInsertedMagic(MagicAmounts am)
     {
-        return am.copy().multiply(2.0f);
+        return am.multiply(2.0f);
     }
 
     @Override
     protected MagicAmounts adjustRemovedMagic(MagicAmounts am)
     {
-        return am.copy().multiply(0.5f);
+        return am.multiply(0.5f);
     }
 
     // TODO: Enable when the animatio nsystem supports rotating OBJ parts

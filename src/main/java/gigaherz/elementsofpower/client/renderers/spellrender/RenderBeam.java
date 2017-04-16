@@ -1,9 +1,8 @@
 package gigaherz.elementsofpower.client.renderers.spellrender;
 
-import gigaherz.elementsofpower.client.renderers.ModelHandle;
+import gigaherz.common.client.ModelHandle;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.EntityPlayer;
@@ -19,8 +18,8 @@ public class RenderBeam extends RenderSpell
     {
         float scale = 0.15f * cast.getScale();
 
-        IBakedModel modelSphere = getSphere(tex);
-        IBakedModel modelCyl = getCylinder(tex);
+        ModelHandle modelSphere = getSphere(tex);
+        ModelHandle modelCyl = getCylinder(tex);
 
         RayTraceResult mop = cast.getHitPosition(partialTicks);
 
@@ -76,7 +75,7 @@ public class RenderBeam extends RenderSpell
                 GlStateManager.rotate(angle, 0, 0, 1);
                 GlStateManager.scale(scale_start, scale_start, scale_start);
 
-                ModelHandle.renderModel(modelSphere, color);
+                modelSphere.render(color);
 
                 GlStateManager.popMatrix();
             }
@@ -92,7 +91,7 @@ public class RenderBeam extends RenderSpell
                 GlStateManager.rotate(angle, 0, 0, 1);
                 GlStateManager.scale(scale_beam, scale_beam, distance);
 
-                ModelHandle.renderModel(modelCyl, color);
+                modelCyl.render(color);
 
                 GlStateManager.popMatrix();
             }
@@ -109,7 +108,7 @@ public class RenderBeam extends RenderSpell
                 GlStateManager.rotate(angle, 0, 0, 1);
                 GlStateManager.scale(scale_end, scale_end, scale_end);
 
-                ModelHandle.renderModel(modelSphere, color);
+                modelSphere.render(color);
 
                 GlStateManager.popMatrix();
             }

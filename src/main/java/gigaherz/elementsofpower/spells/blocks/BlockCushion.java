@@ -13,8 +13,9 @@ public class BlockCushion extends BlockDust
         super(name, ElementsOfPower.materialCushion);
     }
 
+    @Deprecated
     @Override
-    public boolean isVisuallyOpaque()
+    public boolean causesSuffocation(IBlockState state)
     {
         return false;
     }

@@ -1,8 +1,8 @@
 package gigaherz.elementsofpower.essentializer.gui;
 
 import com.google.common.collect.Lists;
+import gigaherz.common.client.StackRenderingHelper;
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.client.renderers.StackRenderingHelper;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.essentializer.TileEssentializer;
 import gigaherz.elementsofpower.gemstones.Element;
@@ -78,8 +78,8 @@ public class GuiEssentializer extends GuiContainer
     @Override
     protected void drawGuiContainerForegroundLayer(int x, int y)
     {
-        mc.fontRendererObj.drawString(I18n.format(this.tile.getName()), 8, 6, 0x404040);
-        mc.fontRendererObj.drawString(I18n.format(this.player.getName()), 8, ySize - 96 + 3, 0x404040);
+        mc.fontRenderer.drawString(I18n.format("elementsofpower.essentializer"), 8, 6, 0x404040);
+        mc.fontRenderer.drawString(I18n.format(this.player.getName()), 8, ySize - 96 + 3, 0x404040);
 
         float opaqueLevel = TileEssentializer.MaxConvertPerTick * 20; // approx 3s fadeout
 
@@ -89,8 +89,8 @@ public class GuiEssentializer extends GuiContainer
             mc.renderEngine.bindTexture(GUI_TEXTURE_LOCATION);
             for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
             {
-                float alpha = (float) (0.9 + 0.1 * Math.sin(Math.PI * 8 * am.amounts[i] / opaqueLevel))
-                        * Math.min(1, am.amounts[i] / opaqueLevel);
+                float alpha = (float) (0.9 + 0.1 * Math.sin(Math.PI * 8 * am.get(i) / opaqueLevel))
+                        * Math.min(1, am.get(i) / opaqueLevel);
 
                 float r = COLORS[i * 3];
                 float g = COLORS[i * 3 + 1];
@@ -114,16 +114,16 @@ public class GuiEssentializer extends GuiContainer
 
         am = tile.containedMagic;
         if (am == null)
-            am = new MagicAmounts();
+            am = MagicAmounts.EMPTY;
 
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            int alpha = am.amounts[i] > 0 ? 0xFFFFFFFF : 0x3FFFFFFF;
+            int alpha = am.get(i) > 0 ? 0xFFFFFFFF : 0x3FFFFFFF;
 
             int x0 = MAGIC_ORBS[i * 2];
             int y0 = MAGIC_ORBS[i * 2 + 1];
 
-            ItemStack stack = ElementsOfPower.magicOrb.getStack((int) am.amounts[i], Element.values[i]);
+            ItemStack stack = ElementsOfPower.magicOrb.getStack((int) am.get(i), Element.values[i]);
 
             StackRenderingHelper.renderItemStack(mesher, mc.renderEngine, x0, y0, stack, alpha);
         }
@@ -135,7 +135,11 @@ public class GuiEssentializer extends GuiContainer
             int x0 = MAGIC_ORBS[i * 2];
             int y0 = MAGIC_ORBS[i * 2 + 1];
 
-            float count = (int) am.amounts[i];
+            float count = (int) am.get(i);
+
+            if (count <= 0)
+                continue;
+
             String suffix = "";
             if (count >= 900)
             {
@@ -145,10 +149,10 @@ public class GuiEssentializer extends GuiContainer
 
             String formatted = ElementsOfPower.prettyNumberFormatter.format(count) + suffix;
 
-            float x1 = (x0 + 16) * 1.5f - mc.fontRendererObj.getStringWidth(formatted);
+            float x1 = (x0 + 16) * 1.5f - mc.fontRenderer.getStringWidth(formatted);
             float y1 = (y0 + 10.5f) * 1.5f;
 
-            mc.fontRendererObj.drawString(formatted, x1, y1, 0xFFFFFFFF, true);
+            mc.fontRenderer.drawString(formatted, x1, y1, 0xFFFFFFFF, true);
         }
         GlStateManager.popMatrix();
 
@@ -164,7 +168,7 @@ public class GuiEssentializer extends GuiContainer
 
         MagicAmounts am = tile.containedMagic;
         if (am == null)
-            am = new MagicAmounts();
+            am = MagicAmounts.EMPTY;
 
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
@@ -178,7 +182,7 @@ public class GuiEssentializer extends GuiContainer
 
             List<String> tooltip = Lists.newArrayList();
             tooltip.add(MagicAmounts.getMagicName(i));
-            tooltip.add(TextFormatting.GRAY + ElementsOfPower.prettyNumberFormatter2.format(am.amounts[i]) + " / " + TileEssentializer.MaxEssentializerMagic);
+            tooltip.add(TextFormatting.GRAY + ElementsOfPower.prettyNumberFormatter2.format(am.get(i)) + " / " + TileEssentializer.MaxEssentializerMagic);
 
             drawHoveringText(tooltip, mx - x0, my - y0);
         }

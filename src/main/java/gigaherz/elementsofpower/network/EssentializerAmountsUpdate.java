@@ -26,24 +26,24 @@ public class EssentializerAmountsUpdate
     public EssentializerAmountsUpdate(int windowId, TileEssentializer essentializer)
     {
         this.windowId = windowId;
-        this.contained = MagicAmounts.copyOf(essentializer.containedMagic);
-        this.remaining = MagicAmounts.copyOf(essentializer.remainingToConvert);
+        this.contained = essentializer.containedMagic;
+        this.remaining = essentializer.remainingToConvert;
     }
 
     @Override
     public void fromBytes(ByteBuf buf)
     {
         windowId = buf.readInt();
-        contained = MagicAmounts.readAmounts(buf);
-        remaining = MagicAmounts.readAmounts(buf);
+        contained = new MagicAmounts(buf);
+        remaining = new MagicAmounts(buf);
     }
 
     @Override
     public void toBytes(ByteBuf buf)
     {
         buf.writeInt(windowId);
-        MagicAmounts.writeAmounts(buf, contained);
-        MagicAmounts.writeAmounts(buf, remaining);
+        contained.writeTo(buf);
+        remaining.writeTo(buf);
     }
 
     public static class Handler implements IMessageHandler<EssentializerAmountsUpdate, IMessage>

@@ -11,6 +11,7 @@ import gigaherz.elementsofpower.gemstones.Shape;
 import gigaherz.elementsofpower.spells.effects.*;
 import gigaherz.elementsofpower.spells.shapes.*;
 
+import javax.annotation.Nullable;
 import java.util.EnumMap;
 import java.util.List;
 
@@ -55,6 +56,7 @@ public class SpellManager
         }
     }
 
+    @Nullable
     public static Spellcast makeSpell(String sequence)
     {
         SpellBuilder b = SpellBuilder.begin();
@@ -144,6 +146,7 @@ public class SpellManager
             }
         }
 
+        @Nullable
         public Spellcast build(String sequence)
         {
             if (this.effect == null)
@@ -163,7 +166,7 @@ public class SpellManager
 
         private MagicAmounts computeCost()
         {
-            MagicAmounts amounts = new MagicAmounts();
+            MagicAmounts amounts = MagicAmounts.EMPTY;
 
             if (sequence.size() > 0)
             {
@@ -174,7 +177,7 @@ public class SpellManager
 
                 for (Multiset.Entry<Element> e : multiset.entrySet())
                 {
-                    amounts.amounts[e.getElement().ordinal()] += total * e.getCount() / sequence.size();
+                    amounts = amounts.add(e.getElement(), total * e.getCount() / sequence.size());
                 }
             }
 
