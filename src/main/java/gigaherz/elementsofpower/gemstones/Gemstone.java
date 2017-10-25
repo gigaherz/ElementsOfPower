@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower.gemstones;
 
+import com.google.common.collect.ImmutableList;
 import net.minecraft.util.IStringSerializable;
 
 import javax.annotation.Nullable;
@@ -54,6 +55,5 @@ public enum Gemstone implements IStringSerializable
         return tintColor;
     }
 
-    public static final Gemstone[] values = values();
-
+    public static final ImmutableList<Gemstone> values = ImmutableList.copyOf(values());
 }

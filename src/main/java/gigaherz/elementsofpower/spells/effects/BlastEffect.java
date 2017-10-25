@@ -41,7 +41,7 @@ public class BlastEffect extends SpellEffect
         if (!cast.world.isRemote)
         {
             boolean flag = cast.world.getGameRules().getBoolean("mobGriefing");
-            cast.world.newExplosion(null, hitVec.xCoord, hitVec.yCoord, hitVec.zCoord,
+            cast.world.newExplosion(null, hitVec.x, hitVec.y, hitVec.z,
                     cast.getDamageForce(), flag, flag);
         }
 

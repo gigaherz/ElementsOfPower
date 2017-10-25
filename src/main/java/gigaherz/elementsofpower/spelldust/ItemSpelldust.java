@@ -16,7 +16,7 @@ import java.util.Arrays;
 
 public class ItemSpelldust extends ItemStateful
 {
-    public static final PropertyEnum<Gemstone> GEM = PropertyEnum.create("gem", Gemstone.class, Arrays.stream(Gemstone.values).filter(m -> m != Gemstone.Creativite).toArray(Gemstone[]::new));
+    public static final PropertyEnum<Gemstone> GEM = PropertyEnum.create("gem", Gemstone.class, Gemstone.values.stream().filter(m -> m != Gemstone.Creativite).toArray(Gemstone[]::new));
 
     public ItemSpelldust(String name)
     {
@@ -32,7 +32,7 @@ public class ItemSpelldust extends ItemStateful
     }
 
     @Override
-    public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems)
+    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems)
     {
         for (Gemstone type : GEM.getAllowedValues())
         {
@@ -46,9 +46,9 @@ public class ItemSpelldust extends ItemStateful
     {
         int sub = stack.getItemDamage();
 
-        if (sub >= Gemstone.values.length)
+        if (sub >= Gemstone.values.size())
             return getUnlocalizedName();
 
-        return getUnlocalizedName() + Gemstone.values[sub].getUnlocalizedName();
+        return getUnlocalizedName() + Gemstone.values.get(sub).getUnlocalizedName();
     }
 }

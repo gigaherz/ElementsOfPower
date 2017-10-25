@@ -188,17 +188,17 @@ public class Spellcast
         }
 
         Vec3d direction = new Vec3d(
-                look.xCoord * distance,
-                look.yCoord * distance,
-                look.zCoord * distance);
+                look.x * distance,
+                look.y * distance,
+                look.z * distance);
 
         end = start.add(direction);
 
         Vec3d hitPosition = null;
         List<Entity> list = world.getEntitiesInAABBexcluding(player,
                 player.getEntityBoundingBox()
-                        .addCoord(direction.xCoord, direction.yCoord, direction.zCoord)
-                        .expand(1.0, 1.0, 1.0), Predicates.and(EntitySelectors.NOT_SPECTATING,
+                        .expand(direction.x, direction.y, direction.z)
+                        .grow(1.0, 1.0, 1.0), Predicates.and(EntitySelectors.NOT_SPECTATING,
                         Entity::canBeCollidedWith));
 
         double distanceToEntity = distance;
@@ -209,7 +209,7 @@ public class Spellcast
             AxisAlignedBB bounds = entity.getEntityBoundingBox().expand(border, border, border);
             RayTraceResult intercept = bounds.calculateIntercept(start, end);
 
-            if (bounds.isVecInside(start))
+            if (bounds.contains(start))
             {
                 if (distanceToEntity >= 0.0D)
                 {
@@ -281,7 +281,7 @@ public class Spellcast
         }
 
         Vec3d look = player.getLook(partialTicks);
-        end = start.addVector(look.xCoord * maxDistance, look.yCoord * maxDistance, look.zCoord * maxDistance);
+        end = start.addVector(look.x * maxDistance, look.y * maxDistance, look.z * maxDistance);
 
         RayTraceResult mop = player.world.rayTraceBlocks(start, end, false, true, false);
 

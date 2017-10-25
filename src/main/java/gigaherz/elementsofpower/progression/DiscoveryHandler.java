@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower.progression;
 
+/*
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.essentializer.BlockEssentializer;
 import gigaherz.elementsofpower.items.ItemRing;
@@ -51,25 +52,25 @@ public class DiscoveryHandler
         discoverGems = newAchievement(".discoverGems", -3, 0, Items.DIAMOND, null);
         discoverGems.initIndependentStat().registerStat();
 
-        acquireWand = newAchievement(".acquireWand", 0, 0, new ItemStack(ElementsOfPower.magicWand), discoverGems);
+        acquireWand = newAchievement(".acquireWand", 0, 0, new ItemStack(ElementsOfPower.wand), discoverGems);
         acquireWand.registerStat();
 
-        acquireRing = newAchievement(".acquireRing", 1, -2, new ItemStack(ElementsOfPower.magicRing), acquireWand);
+        acquireRing = newAchievement(".acquireRing", 1, -2, new ItemStack(ElementsOfPower.ring), acquireWand);
         acquireRing.registerStat();
 
-        acquireStaff = newAchievement(".acquireStaff", 2, 0, new ItemStack(ElementsOfPower.magicStaff), acquireWand);
+        acquireStaff = newAchievement(".acquireStaff", 2, 0, new ItemStack(ElementsOfPower.staff), acquireWand);
         acquireStaff.registerStat();
 
         essentializing = newAchievement(".essentializing", 4, 0, ElementsOfPower.essentializer, acquireStaff);
         essentializing.setSpecial().registerStat();
 
-        firstSpell = newAchievement(".firstSpell", 0, 2, new ItemStack(ElementsOfPower.magicOrb, 1, 2), acquireWand);
+        firstSpell = newAchievement(".firstSpell", 0, 2, new ItemStack(ElementsOfPower.orb, 1, 2), acquireWand);
         firstSpell.registerStat();
 
-        advancedSpell = newAchievement(".advancedSpell", 1, 3, new ItemStack(ElementsOfPower.magicOrb, 1, 1), firstSpell);
+        advancedSpell = newAchievement(".advancedSpell", 1, 3, new ItemStack(ElementsOfPower.orb, 1, 1), firstSpell);
         advancedSpell.registerStat();
 
-        masterSpell = newAchievement(".masterSpell", 3, 3, new ItemStack(ElementsOfPower.magicOrb, 1, 0), advancedSpell);
+        masterSpell = newAchievement(".masterSpell", 3, 3, new ItemStack(ElementsOfPower.orb, 1, 0), advancedSpell);
         masterSpell.setSpecial().registerStat();
 
         achievementPage = new AchievementPage("Elements of Power",
@@ -161,3 +162,4 @@ public class DiscoveryHandler
         }
     }
 }
+*/

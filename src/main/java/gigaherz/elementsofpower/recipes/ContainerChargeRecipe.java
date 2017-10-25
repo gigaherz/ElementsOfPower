@@ -9,10 +9,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import java.util.List;
 
-public class ContainerChargeRecipe implements IRecipe
+public class ContainerChargeRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
 {
     @Override
     public boolean matches(InventoryCrafting inv, World worldIn)
@@ -87,9 +88,9 @@ public class ContainerChargeRecipe implements IRecipe
     }
 
     @Override
-    public int getRecipeSize()
+    public boolean canFit(int width, int height)
     {
-        return 2;
+        return (width*height) >= 2;
     }
 
     @Override

@@ -3,15 +3,12 @@ package gigaherz.elementsofpower.database.recipes;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.database.recipes.crafting.ShapedOreRecipeHandler;
-import gigaherz.elementsofpower.database.recipes.crafting.ShapedRecipeHandler;
-import gigaherz.elementsofpower.database.recipes.crafting.ShapelessOreRecipeHandler;
-import gigaherz.elementsofpower.database.recipes.crafting.ShapelessRecipeHandler;
+import gigaherz.elementsofpower.database.recipes.crafting.GenericRecipeHandler;
 import gigaherz.elementsofpower.database.recipes.furnace.FurnaceRecipeInfo;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -24,10 +21,7 @@ public abstract class RecipeEnumerator
 
     static
     {
-        craftingRecipeHandlers.add(new ShapedRecipeHandler());
-        craftingRecipeHandlers.add(new ShapelessRecipeHandler());
-        craftingRecipeHandlers.add(new ShapedOreRecipeHandler());
-        craftingRecipeHandlers.add(new ShapelessOreRecipeHandler());
+        craftingRecipeHandlers.add(new GenericRecipeHandler());
     }
 
     abstract void enumerate(@Nonnull IRecipeInfoConsumer consumer);
@@ -39,7 +33,7 @@ public abstract class RecipeEnumerator
         {
             Set<Class<? extends IRecipe>> seenClasses = Sets.newHashSet();
 
-            for (IRecipe recipe : CraftingManager.getInstance().getRecipeList())
+            for (IRecipe recipe : ForgeRegistries.RECIPES)
             {
                 IRecipeInfoProvider provider = null;
 

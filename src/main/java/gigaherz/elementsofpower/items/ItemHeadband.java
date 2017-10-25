@@ -1,14 +1,13 @@
 package gigaherz.elementsofpower.items;
 
-//import baubles.api.BaubleType;
 import baubles.api.BaubleType;
 import gigaherz.elementsofpower.ElementsOfPower;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.Optional;
 
-public class ItemRing extends ItemBauble
+public class ItemHeadband extends ItemBauble
 {
-    public ItemRing(String name)
+    public ItemHeadband(String name)
     {
         super(name);
         setCreativeTab(ElementsOfPower.tabMagic);
@@ -18,8 +17,6 @@ public class ItemRing extends ItemBauble
     @Override
     public BaubleType getBaubleType(ItemStack itemstack)
     {
-        return BaubleType.RING;
+        return BaubleType.HEAD;
     }
 }
-
-

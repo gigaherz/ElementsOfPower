@@ -66,6 +66,14 @@ public class GuiEssentializer extends GuiContainer
     }
 
     @Override
+    public void drawScreen(int mouseX, int mouseY, float partialTicks)
+    {
+        this.drawDefaultBackground();
+        super.drawScreen(mouseX, mouseY, partialTicks);
+        this.renderHoveredToolTip(mouseX, mouseY);
+    }
+
+    @Override
     protected void drawGuiContainerBackgroundLayer(float f, int i, int j)
     {
         mc.renderEngine.bindTexture(GUI_TEXTURE_LOCATION);
@@ -123,7 +131,7 @@ public class GuiEssentializer extends GuiContainer
             int x0 = MAGIC_ORBS[i * 2];
             int y0 = MAGIC_ORBS[i * 2 + 1];
 
-            ItemStack stack = ElementsOfPower.magicOrb.getStack((int) am.get(i), Element.values[i]);
+            ItemStack stack = ElementsOfPower.orb.getStack((int) am.get(i), Element.values[i]);
 
             StackRenderingHelper.renderItemStack(mesher, mc.renderEngine, x0, y0, stack, alpha);
         }

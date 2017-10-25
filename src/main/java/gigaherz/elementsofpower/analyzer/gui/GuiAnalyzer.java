@@ -29,6 +29,14 @@ public class GuiAnalyzer extends GuiContainer
     }
 
     @Override
+    public void drawScreen(int mouseX, int mouseY, float partialTicks)
+    {
+        this.drawDefaultBackground();
+        super.drawScreen(mouseX, mouseY, partialTicks);
+        this.renderHoveredToolTip(mouseX, mouseY);
+    }
+
+    @Override
     protected void drawGuiContainerBackgroundLayer(float f, int i, int j)
     {
         mc.renderEngine.bindTexture(GUI_TEXTURE_LOCATION);

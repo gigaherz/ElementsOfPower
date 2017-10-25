@@ -9,7 +9,6 @@ public class ItemStaff extends ItemWand
     public ItemStaff(String name)
     {
         super(name);
-        setUnlocalizedName(ElementsOfPower.MODID + ".staff");
         setCreativeTab(ElementsOfPower.tabMagic);
     }
 

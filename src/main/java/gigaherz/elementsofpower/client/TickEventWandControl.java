@@ -61,6 +61,8 @@ public class TickEventWandControl
             s.keyBindsHotbar[i] = interceptKeys[i];
             s.keyBindings[indices[i]] = interceptKeys[i];
         }
+
+        //KeyBinding.resetKeyBindingArrayAndHash();
     }
 
     @SubscribeEvent

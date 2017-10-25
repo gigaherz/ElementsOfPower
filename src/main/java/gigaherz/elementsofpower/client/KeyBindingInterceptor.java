@@ -7,26 +7,29 @@ import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
 
 public class KeyBindingInterceptor extends KeyBinding
 {
     private static class FieldHelper<C, T>
     {
         Class<?> target;
-        String[] names;
+        String srgName;
+        String prettyName;
         Field field;
 
-        public FieldHelper(Class<? extends C> target, String... names)
+        public FieldHelper(Class<? extends C> target, String srgName, String prettyName)
         {
             this.target = target;
-            this.names = names;
+            this.srgName = srgName;
+            this.prettyName = prettyName;
         }
 
         private void ensureHaveField()
         {
             if (field == null)
             {
-                field = ReflectionHelper.findField(target, names);
+                field = ReflectionHelper.findField(target, srgName, prettyName);
             }
         }
 
@@ -44,8 +47,6 @@ public class KeyBindingInterceptor extends KeyBinding
         }
     }
 
-    static List<KeyBinding> keybindArray = null;
-
     protected KeyBinding interceptedKeyBinding;
     private boolean interceptionActive;
 
@@ -54,10 +55,6 @@ public class KeyBindingInterceptor extends KeyBinding
     static FieldHelper<KeyBinding, Boolean> fieldPressed = new FieldHelper<>(KeyBinding.class, "field_74513_e", "pressed");
     static FieldHelper<KeyBinding, Integer> fieldPressTime = new FieldHelper<>(KeyBinding.class, "field_151474_i", "pressTime");
 
-    private static void getKeybindArrayFromSuper()
-    {
-        keybindArray = ReflectionHelper.getPrivateValue(KeyBinding.class, null, "field_74516_a", "KEYBIND_ARRAY");
-    }
 
     /**
      * Create an Interceptor based on an existing binding.
@@ -69,13 +66,6 @@ public class KeyBindingInterceptor extends KeyBinding
     public KeyBindingInterceptor(KeyBinding existingKeyBinding)
     {
         super(existingKeyBinding.getKeyDescription(), existingKeyBinding.getKeyCode(), existingKeyBinding.getKeyCategory());
-
-        // the base constructor automatically adds the class to the keybindArray and hash, which we don't want, so undo it
-        if (keybindArray == null)
-        {
-            getKeybindArrayFromSuper();
-        }
-        keybindArray.remove(this);
 
         this.interceptionActive = false;
 

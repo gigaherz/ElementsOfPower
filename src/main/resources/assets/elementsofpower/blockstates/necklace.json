@@ -1,0 +1,45 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "elementsofpower:necklace.obj",
+    "transform": {
+      "thirdperson_righthand": {
+        "rotation": [{"y":-20},{"z":90}],
+        "translation": [0, 0.03, 0],
+        "scale": 0.2
+      },
+      "thirdperson_lefthand": {
+        "rotation": [{"y":-20}],
+        "translation": [0, 0.03, 0],
+        "scale": 0.2
+      },
+      "firstperson_righthand": {
+        "rotation": [{"y":200}],
+        "translation": [0, 0.1, 0],
+        "scale": 0.2
+      },
+      "firstperson_lefthand": {
+        "rotation": [{"y":20}],
+        "translation": [0, 0.1, 0],
+        "scale": 0.2
+      },
+      "gui": {
+      }
+    }
+  },
+  "variants": {
+    "gem": {
+      "unbound":  { },
+      "ruby":  { "textures": { "#Gem": "elementsofpower:blocks/block_ruby" } },
+      "sapphire":   { "textures": { "#Gem": "elementsofpower:blocks/block_sapphire" } },
+      "citrine": { "textures": { "#Gem": "elementsofpower:blocks/block_citrine" } },
+      "agate": { "textures": { "#Gem": "elementsofpower:blocks/block_agate" } },
+      "quartz": { "textures": { "#Gem": "minecraft:blocks/quartz_block_bottom" } },
+      "serendibite":  { "textures": { "#Gem": "elementsofpower:blocks/block_serendibite" } },
+      "emerald":  { "textures": { "#Gem": "minecraft:blocks/emerald_block" } },
+      "amethyst": { "textures": { "#Gem": "elementsofpower:blocks/block_amethyst" } },
+      "diamond": { "textures": { "#Gem": "minecraft:blocks/diamond_block" } },
+      "creative": { "textures": { "#Gem": "minecraft:blocks/bedrock" } }
+    }
+  }
+}

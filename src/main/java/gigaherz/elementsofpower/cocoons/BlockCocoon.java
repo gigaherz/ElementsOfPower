@@ -23,8 +23,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraftforge.fml.common.IWorldGenerator;
 
 import javax.annotation.Nullable;
@@ -141,7 +141,7 @@ public class BlockCocoon extends BlockRegistered
     {
         ItemStack heldItem = playerIn.getHeldItem(hand);
 
-        if (heldItem.getCount() > 0 && heldItem.getItem() == ElementsOfPower.magicOrb)
+        if (heldItem.getCount() > 0 && heldItem.getItem() == ElementsOfPower.orb)
         {
             TileEntity te = worldIn.getTileEntity(pos);
 
@@ -192,7 +192,7 @@ public class BlockCocoon extends BlockRegistered
                     else
                         whole = (int) (Math.pow(rand.nextFloat(), 3 - fortune) * whole);
 
-                    ret.add(new ItemStack(ElementsOfPower.magicOrb, whole, i));
+                    ret.add(new ItemStack(ElementsOfPower.orb, whole, i));
                 }
             }
         }

@@ -1,7 +1,6 @@
 package gigaherz.elementsofpower;
 
 import gigaherz.common.BlockRegistered;
-import gigaherz.common.RenamingHelper;
 import gigaherz.elementsofpower.analyzer.ItemAnalyzer;
 import gigaherz.elementsofpower.capabilities.CapabilityMagicContainer;
 import gigaherz.elementsofpower.cocoons.BlockCocoon;
@@ -17,12 +16,9 @@ import gigaherz.elementsofpower.entities.EntityEssence;
 import gigaherz.elementsofpower.essentializer.BlockEssentializer;
 import gigaherz.elementsofpower.essentializer.TileEssentializer;
 import gigaherz.elementsofpower.gemstones.*;
-import gigaherz.elementsofpower.items.ItemMagicOrb;
-import gigaherz.elementsofpower.items.ItemRing;
-import gigaherz.elementsofpower.items.ItemStaff;
-import gigaherz.elementsofpower.items.ItemWand;
+import gigaherz.elementsofpower.items.*;
 import gigaherz.elementsofpower.network.*;
-import gigaherz.elementsofpower.progression.DiscoveryHandler;
+//import gigaherz.elementsofpower.progression.DiscoveryHandler;
 import gigaherz.elementsofpower.recipes.ContainerChargeRecipe;
 import gigaherz.elementsofpower.recipes.GemstoneChangeRecipe;
 import gigaherz.elementsofpower.spelldust.ItemSpelldust;
@@ -38,6 +34,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.event.RegistryEvent;
@@ -45,17 +42,16 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.oredict.OreDictionary;
-import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 import org.apache.logging.log4j.Logger;
@@ -67,7 +63,7 @@ import java.text.Format;
 @Mod.EventBusSubscriber
 @Mod(modid = ElementsOfPower.MODID,
         name = ElementsOfPower.MODNAME, version = ElementsOfPower.VERSION,
-        acceptedMinecraftVersions = "[1.11.0,1.12.0)",
+        acceptedMinecraftVersions = "[1.12.0,1.13.0)",
         updateJSON = "https://raw.githubusercontent.com/gigaherz/ElementsOfPower/master/update.json")
 public class ElementsOfPower
 {
@@ -91,7 +87,6 @@ public class ElementsOfPower
     public static BlockRegistered mist;
     public static BlockRegistered cushion;
     public static BlockRegistered cocoon;
-
     public static BlockGemstoneOre gemstoneOre;
     public static BlockGemstone gemstoneBlock;
 
@@ -99,16 +94,14 @@ public class ElementsOfPower
     public static Material materialCushion = new MaterialCushion(MapColor.BLACK);
 
     // Item templates
-    public static ItemMagicOrb magicOrb;
-
-    public static ItemWand magicWand;
-    public static ItemWand magicStaff;
-    public static ItemRing magicRing;
-
+    public static ItemMagicOrb orb;
+    public static ItemWand wand;
+    public static ItemWand staff;
+    public static ItemBauble ring;
+    public static ItemBauble headband;
+    public static ItemBauble necklace;
     public static ItemGemstone gemstone;
-
     public static ItemAnalyzer analyzer;
-
     public static ItemSpelldust spelldust;
 
     @GameRegistry.ItemStackHolder(value = "gbook:guidebook", nbt = "{Book:\"" + MODID + ":xml/guidebook.xml\"}")
@@ -126,14 +119,12 @@ public class ElementsOfPower
     public final static Format prettyNumberFormatter = new DecimalFormat("#.#");
     public final static Format prettyNumberFormatter2 = new DecimalFormat("#0.0");
 
-    private static RenamingHelper helper = new RenamingHelper();
-
     public static CreativeTabs tabMagic = new CreativeTabs(MODID)
     {
         @Override
         public ItemStack getTabIconItem()
         {
-            return magicWand.getStack(Gemstone.Diamond, Quality.Common);
+            return wand.getStack(Gemstone.Diamond, Quality.Common);
         }
     };
 
@@ -149,6 +140,23 @@ public class ElementsOfPower
                 gemstoneBlock = new BlockGemstone("gemstone_block"),
                 gemstoneOre = new BlockGemstoneOre("gemstone_ore")
         );
+
+        GameRegistry.registerTileEntity(TileEssentializer.class, essentializer.getRegistryName().toString());
+        GameRegistry.registerTileEntity(TileCocoon.class, cocoon.getRegistryName().toString());
+
+        OreDictionary.registerOre("blockAgate", gemstoneBlock.getStack(GemstoneBlockType.Agate));
+        OreDictionary.registerOre("blockAmethyst", gemstoneBlock.getStack(GemstoneBlockType.Amethyst));
+        OreDictionary.registerOre("blockCitrine", gemstoneBlock.getStack(GemstoneBlockType.Citrine));
+        OreDictionary.registerOre("blockRuby", gemstoneBlock.getStack(GemstoneBlockType.Ruby));
+        OreDictionary.registerOre("blockSapphire", gemstoneBlock.getStack(GemstoneBlockType.Sapphire));
+        OreDictionary.registerOre("blockSerendibite", gemstoneBlock.getStack(GemstoneBlockType.Serendibite));
+
+        OreDictionary.registerOre("oreAgate", gemstoneOre.getStack(GemstoneBlockType.Agate));
+        OreDictionary.registerOre("oreAmethyst", gemstoneOre.getStack(GemstoneBlockType.Amethyst));
+        OreDictionary.registerOre("oreCitrine", gemstoneOre.getStack(GemstoneBlockType.Citrine));
+        OreDictionary.registerOre("oreRuby", gemstoneOre.getStack(GemstoneBlockType.Ruby));
+        OreDictionary.registerOre("oreSapphire", gemstoneOre.getStack(GemstoneBlockType.Sapphire));
+        OreDictionary.registerOre("oreSerendibite", gemstoneOre.getStack(GemstoneBlockType.Serendibite));
     }
 
     @SubscribeEvent
@@ -160,106 +168,16 @@ public class ElementsOfPower
                 gemstoneBlock.createItemBlock(),
                 gemstoneOre.createItemBlock(),
 
-                magicOrb = new ItemMagicOrb("magic_orb"),
-                magicWand = new ItemWand("magic_wand"),
-                magicStaff = new ItemStaff("magic_staff"),
-                magicRing = new ItemRing("magic_ring"),
+                orb = new ItemMagicOrb("orb"),
+                wand = new ItemWand("wand"),
+                staff = new ItemStaff("staff"),
+                ring = new ItemRing("ring"),
+                headband = new ItemHeadband("headband"),
+                necklace = new ItemNecklace("necklace"),
                 gemstone = new ItemGemstone("gemstone"),
                 analyzer = new ItemAnalyzer("analyzer"),
                 spelldust = new ItemSpelldust("spelldust")
         );
-    }
-
-    @Mod.EventHandler()
-    public void conflictResolver(FMLMissingMappingsEvent event)
-    {
-        helper.process(event);
-    }
-
-    private void registerTileEntities()
-    {
-        GameRegistry.registerTileEntityWithAlternatives(TileEssentializer.class, essentializer.getRegistryName().toString(), "essentializerTile");
-        GameRegistry.registerTileEntityWithAlternatives(TileCocoon.class, cocoon.getRegistryName().toString(), "cocoonTile");
-    }
-
-    @EventHandler
-    public void preInit(FMLPreInitializationEvent event)
-    {
-        logger = event.getModLog();
-
-        ConfigManager.init(event.getSuggestedConfigurationFile());
-
-        overrides = event.getModConfigurationDirectory() + File.separator + "elementsofpower_essences.json";
-
-        helper.addAlternativeName(gemstoneBlock, location("gemstoneBlock"));
-        helper.addAlternativeName(gemstoneOre, location("gemstoneOre"));
-        helper.addAlternativeName(magicOrb, location("magicOrb"));
-        helper.addAlternativeName(magicWand, location("magicWand"));
-        helper.addAlternativeName(magicStaff, location("magicStaff"));
-        helper.addAlternativeName(magicRing, location("magicRing"));
-
-        CapabilityMagicContainer.register();
-
-        registerTileEntities();
-
-        registerOreDictionaryNames();
-
-        registerNetwork();
-
-        logger.info("Registering extended entity properties...");
-
-        SpellcastEntityData.register();
-        DiscoveryHandler.init();
-
-        logger.info("Performing pre-initialization proxy tasks...");
-
-        proxy.preInit();
-    }
-
-    @EventHandler
-    public void init(FMLInitializationEvent event)
-    {
-        logger.info("Performing initialization proxy tasks...");
-
-        proxy.init();
-
-        registerEntities();
-
-        registerWorldGenerators();
-
-        registerRecipes();
-
-        // Gui
-        NetworkRegistry.INSTANCE.registerGuiHandler(this, guiHandler);
-
-        StockConversions.registerEssenceSources();
-        EssenceOverrides.loadOverrides();
-    }
-
-    @EventHandler
-    public void postInit(FMLPostInitializationEvent event)
-    {
-        EssenceConversions.registerEssencesForRecipes();
-    }
-
-    private void registerNetwork()
-    {
-        logger.info("Registering network channel...");
-
-        channel = NetworkRegistry.INSTANCE.newSimpleChannel(CHANNEL);
-
-        int messageNumber = 0;
-        channel.registerMessage(SpellSequenceUpdate.Handler.class, SpellSequenceUpdate.class, messageNumber++, Side.SERVER);
-        channel.registerMessage(SpellcastSync.Handler.class, SpellcastSync.class, messageNumber++, Side.CLIENT);
-        channel.registerMessage(EssentializerAmountsUpdate.Handler.class, EssentializerAmountsUpdate.class, messageNumber++, Side.CLIENT);
-        channel.registerMessage(EssentializerTileUpdate.Handler.class, EssentializerTileUpdate.class, messageNumber++, Side.CLIENT);
-        channel.registerMessage(AddVelocityPlayer.Handler.class, AddVelocityPlayer.class, messageNumber++, Side.CLIENT);
-        logger.debug("Final message number: " + messageNumber);
-    }
-
-    private void registerOreDictionaryNames()
-    {
-        logger.info("Registering ore dictionary names...");
 
         OreDictionary.registerOre("gemRuby", gemstone.getStack(Gemstone.Ruby));
         OreDictionary.registerOre("gemSapphire", gemstone.getStack(Gemstone.Sapphire));
@@ -280,61 +198,11 @@ public class ElementsOfPower
         OreDictionary.registerOre("magicGemstone", gemstone.getStack(Gemstone.Emerald));
         OreDictionary.registerOre("magicGemstone", gemstone.getStack(Gemstone.Amethyst));
         OreDictionary.registerOre("magicGemstone", gemstone.getStack(Gemstone.Diamond));
-
-        OreDictionary.registerOre("blockAgate", gemstoneBlock.getStack(GemstoneBlockType.Agate));
-        OreDictionary.registerOre("blockAmethyst", gemstoneBlock.getStack(GemstoneBlockType.Amethyst));
-        OreDictionary.registerOre("blockCitrine", gemstoneBlock.getStack(GemstoneBlockType.Citrine));
-        OreDictionary.registerOre("blockRuby", gemstoneBlock.getStack(GemstoneBlockType.Ruby));
-        OreDictionary.registerOre("blockSapphire", gemstoneBlock.getStack(GemstoneBlockType.Sapphire));
-        OreDictionary.registerOre("blockSerendibite", gemstoneBlock.getStack(GemstoneBlockType.Serendibite));
-
-        OreDictionary.registerOre("oreAgate", gemstoneOre.getStack(GemstoneBlockType.Agate));
-        OreDictionary.registerOre("oreAmethyst", gemstoneOre.getStack(GemstoneBlockType.Amethyst));
-        OreDictionary.registerOre("oreCitrine", gemstoneOre.getStack(GemstoneBlockType.Citrine));
-        OreDictionary.registerOre("oreRuby", gemstoneOre.getStack(GemstoneBlockType.Ruby));
-        OreDictionary.registerOre("oreSapphire", gemstoneOre.getStack(GemstoneBlockType.Sapphire));
-        OreDictionary.registerOre("oreSerendibite", gemstoneOre.getStack(GemstoneBlockType.Serendibite));
     }
 
-    private void registerEntities()
+    @SubscribeEvent
+    public static void registerRecipes(RegistryEvent.Register<IRecipe> event)
     {
-        // Entities
-        logger.info("Registering entities...");
-
-        int entityId = 1;
-        EntityRegistry.registerModEntity(location("spell_ball"), EntityBall.class, "SpellBall", entityId++, this, 80, 3, true);
-        EntityRegistry.registerModEntity(location("essence"), EntityEssence.class, "Essence", entityId++, this, 80, 3, true, 0x0000FF, 0xFFFF00);
-        logger.debug("Next entity id: " + entityId);
-    }
-
-    private void registerWorldGenerators()
-    {
-        // Worldgen
-        if (ConfigManager.EnableGemstoneOregen)
-            GameRegistry.registerWorldGenerator(new BlockGemstoneOre.Generator(), 1);
-        if (ConfigManager.EnableCocoonGeneration)
-            GameRegistry.registerWorldGenerator(new BlockCocoon.Generator(), 1);
-    }
-
-    private void registerRecipes()
-    {
-        // Recipes
-        logger.info("Registering recipes...");
-
-        GameRegistry.addRecipe(new ShapedOreRecipe(gemstoneBlock.getStack(GemstoneBlockType.Agate), "aaa", "aaa", "aaa", 'a', "gemAgate"));
-        GameRegistry.addRecipe(new ShapedOreRecipe(gemstoneBlock.getStack(GemstoneBlockType.Amethyst), "aaa", "aaa", "aaa", 'a', "gemAmethyst"));
-        GameRegistry.addRecipe(new ShapedOreRecipe(gemstoneBlock.getStack(GemstoneBlockType.Citrine), "aaa", "aaa", "aaa", 'a', "gemCitrine"));
-        GameRegistry.addRecipe(new ShapedOreRecipe(gemstoneBlock.getStack(GemstoneBlockType.Ruby), "aaa", "aaa", "aaa", 'a', "gemRuby"));
-        GameRegistry.addRecipe(new ShapedOreRecipe(gemstoneBlock.getStack(GemstoneBlockType.Sapphire), "aaa", "aaa", "aaa", 'a', "gemSapphire"));
-        GameRegistry.addRecipe(new ShapedOreRecipe(gemstoneBlock.getStack(GemstoneBlockType.Serendibite), "aaa", "aaa", "aaa", 'a', "gemSerendibite"));
-
-        GameRegistry.addRecipe(new ShapelessOreRecipe(copyStack(gemstone.getStack(Gemstone.Agate), 9), "blockAgate"));
-        GameRegistry.addRecipe(new ShapelessOreRecipe(copyStack(gemstone.getStack(Gemstone.Amethyst), 9), "blockAmethyst"));
-        GameRegistry.addRecipe(new ShapelessOreRecipe(copyStack(gemstone.getStack(Gemstone.Citrine), 9), "blockCitrine"));
-        GameRegistry.addRecipe(new ShapelessOreRecipe(copyStack(gemstone.getStack(Gemstone.Ruby), 9), "blockRuby"));
-        GameRegistry.addRecipe(new ShapelessOreRecipe(copyStack(gemstone.getStack(Gemstone.Sapphire), 9), "blockSapphire"));
-        GameRegistry.addRecipe(new ShapelessOreRecipe(copyStack(gemstone.getStack(Gemstone.Serendibite), 9), "blockSerendibite"));
-
         FurnaceRecipes.instance().addSmeltingRecipe(gemstoneOre.getStack(GemstoneBlockType.Agate), gemstone.getStack(Gemstone.Agate), 0);
         FurnaceRecipes.instance().addSmeltingRecipe(gemstoneOre.getStack(GemstoneBlockType.Amethyst), gemstone.getStack(Gemstone.Amethyst), 0);
         FurnaceRecipes.instance().addSmeltingRecipe(gemstoneOre.getStack(GemstoneBlockType.Citrine), gemstone.getStack(Gemstone.Citrine), 0);
@@ -342,52 +210,135 @@ public class ElementsOfPower
         FurnaceRecipes.instance().addSmeltingRecipe(gemstoneOre.getStack(GemstoneBlockType.Sapphire), gemstone.getStack(Gemstone.Sapphire), 0);
         FurnaceRecipes.instance().addSmeltingRecipe(gemstoneOre.getStack(GemstoneBlockType.Serendibite), gemstone.getStack(Gemstone.Serendibite), 0);
 
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(analyzer),
-                "glg",
-                "i  ",
-                "psp",
-                'g', "ingotGold",
-                'l', "paneGlass",
-                'i', "ingotIron",
-                's', "slabWood",
-                'p', "plankWood"));
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(essentializer, 1),
-                "IQI",
-                "ONO",
-                "IOI",
-                'I', Items.IRON_INGOT,
-                'O', Blocks.OBSIDIAN,
-                'Q', "magicGemstone",
-                'N', Items.NETHER_STAR));
-        GameRegistry.addShapedRecipe(new ItemStack(magicWand),
-                " G",
-                "S ",
-                'G', Items.GOLD_INGOT,
-                'S', Items.STICK);
-        GameRegistry.addRecipe(new ItemStack(magicStaff),
-                " GW",
-                " SG",
-                "S  ",
-                'W', new ItemStack(magicWand, 1, OreDictionary.WILDCARD_VALUE),
-                'G', Items.GOLD_INGOT,
-                'S', Items.STICK);
-        GameRegistry.addRecipe(new ItemStack(magicRing),
-                " GG",
-                "G G",
-                " G ",
-                'G', Items.GOLD_INGOT);
+        /*
+        event.getRegistry().registerAll(
 
-        if (guidebookStack != null)
-            GameRegistry.addShapelessRecipe(guidebookStack, Items.BOOK, new ItemStack(magicOrb, 1, OreDictionary.WILDCARD_VALUE));
+                new ShapedOreRecipe(null, gemstoneBlock.getStack(GemstoneBlockType.Agate), "aaa", "aaa", "aaa", 'a', "gemAgate"),
+                new ShapedOreRecipe(null, gemstoneBlock.getStack(GemstoneBlockType.Amethyst), "aaa", "aaa", "aaa", 'a', "gemAmethyst"),
+                new ShapedOreRecipe(null, gemstoneBlock.getStack(GemstoneBlockType.Citrine), "aaa", "aaa", "aaa", 'a', "gemCitrine"),
+                new ShapedOreRecipe(null, gemstoneBlock.getStack(GemstoneBlockType.Ruby), "aaa", "aaa", "aaa", 'a', "gemRuby"),
+                new ShapedOreRecipe(null, gemstoneBlock.getStack(GemstoneBlockType.Sapphire), "aaa", "aaa", "aaa", 'a', "gemSapphire"),
+                new ShapedOreRecipe(null, gemstoneBlock.getStack(GemstoneBlockType.Serendibite), "aaa", "aaa", "aaa", 'a', "gemSerendibite"),
+                new ShapelessOreRecipe(null, copyStack(gemstone.getStack(Gemstone.Agate), 9), "blockAgate"),
+                new ShapelessOreRecipe(null, copyStack(gemstone.getStack(Gemstone.Amethyst), 9), "blockAmethyst"),
+                new ShapelessOreRecipe(null, copyStack(gemstone.getStack(Gemstone.Citrine), 9), "blockCitrine"),
+                new ShapelessOreRecipe(null, copyStack(gemstone.getStack(Gemstone.Ruby), 9), "blockRuby"),
+                new ShapelessOreRecipe(null, copyStack(gemstone.getStack(Gemstone.Sapphire), 9), "blockSapphire"),
+                new ShapelessOreRecipe(null, copyStack(gemstone.getStack(Gemstone.Serendibite), 9), "blockSerendibite"),
 
-        GameRegistry.addRecipe(new GemstoneChangeRecipe());
-        GameRegistry.addRecipe(new ContainerChargeRecipe());
+                new ShapedOreRecipe(null, new ItemStack(analyzer),
+                        "glg",
+                        "i  ",
+                        "psp",
+                        'g', "ingotGold",
+                        'l', "paneGlass",
+                        'i', "ingotIron",
+                        's', "slabWood",
+                        'p', "plankWood"),
+                new ShapedOreRecipe(null, new ItemStack(essentializer, 1),
+                        "IQI",
+                        "ONO",
+                        "IOI",
+                        'I', Items.IRON_INGOT,
+                        'O', Blocks.OBSIDIAN,
+                        'Q', "magicGemstone",
+                        'N', Items.NETHER_STAR),
+                new ShapedOreRecipe(null, new ItemStack(wand),
+                        " G",
+                        "S ",
+                        'G', Items.GOLD_INGOT,
+                        'S', Items.STICK),
+                new ShapedOreRecipe(null, new ItemStack(staff),
+                        " GW",
+                        " SG",
+                        "S  ",
+                        'W', new ItemStack(wand, 1, OreDictionary.WILDCARD_VALUE),
+                        'G', Items.GOLD_INGOT,
+                        'S', Items.STICK),
+                new ShapedOreRecipe(null, new ItemStack(ring),
+                        " GG",
+                        "G G",
+                        " G ",
+                        'G', Items.GOLD_INGOT),
 
-        RecipeSorter.register("gemstoneChangeRecipe", GemstoneChangeRecipe.class, RecipeSorter.Category.SHAPELESS, "");
-        RecipeSorter.register("containerChargeRecipe", ContainerChargeRecipe.class, RecipeSorter.Category.SHAPELESS, "");
+                //if (guidebookStack != null)
+                //    GameRegistry.addShapelessRecipe(guidebookStack, Items.BOOK, new ItemStack(orb, 1, OreDictionary.WILDCARD_VALUE));
+
+                new GemstoneChangeRecipe(),
+                new ContainerChargeRecipe()
+        );
+        */
     }
 
-    private ItemStack copyStack(ItemStack original, int quantity)
+    @EventHandler
+    public void preInit(FMLPreInitializationEvent event)
+    {
+        logger = event.getModLog();
+
+        ConfigManager.init(event.getSuggestedConfigurationFile());
+
+        overrides = event.getModConfigurationDirectory() + File.separator + "elementsofpower_essences.json";
+
+        CapabilityMagicContainer.register();
+
+        registerNetwork();
+
+        SpellcastEntityData.register();
+        //DiscoveryHandler.init();
+
+        proxy.preInit();
+    }
+
+    @SubscribeEvent
+    public static void registerEntities(RegistryEvent.Register<EntityEntry> event)
+    {
+        int entityId = 1;
+        EntityRegistry.registerModEntity(location("spell_ball"), EntityBall.class, "SpellBall", entityId++, instance, 80, 3, true);
+        EntityRegistry.registerModEntity(location("essence"), EntityEssence.class, "Essence", entityId++, instance, 80, 3, true, 0x0000FF, 0xFFFF00);
+        logger.debug("Next entity id: " + entityId);
+    }
+
+    @EventHandler
+    public void init(FMLInitializationEvent event)
+    {
+        proxy.init();
+
+        registerWorldGenerators();
+
+        NetworkRegistry.INSTANCE.registerGuiHandler(this, guiHandler);
+
+        StockConversions.registerEssenceSources();
+        EssenceOverrides.loadOverrides();
+    }
+
+    @EventHandler
+    public void postInit(FMLPostInitializationEvent event)
+    {
+        EssenceConversions.registerEssencesForRecipes();
+    }
+
+    private void registerNetwork()
+    {
+        channel = NetworkRegistry.INSTANCE.newSimpleChannel(CHANNEL);
+
+        int messageNumber = 0;
+        channel.registerMessage(SpellSequenceUpdate.Handler.class, SpellSequenceUpdate.class, messageNumber++, Side.SERVER);
+        channel.registerMessage(SpellcastSync.Handler.class, SpellcastSync.class, messageNumber++, Side.CLIENT);
+        channel.registerMessage(EssentializerAmountsUpdate.Handler.class, EssentializerAmountsUpdate.class, messageNumber++, Side.CLIENT);
+        channel.registerMessage(EssentializerTileUpdate.Handler.class, EssentializerTileUpdate.class, messageNumber++, Side.CLIENT);
+        channel.registerMessage(AddVelocityPlayer.Handler.class, AddVelocityPlayer.class, messageNumber++, Side.CLIENT);
+        logger.debug("Final message number: " + messageNumber);
+    }
+
+    private void registerWorldGenerators()
+    {
+        if (ConfigManager.EnableGemstoneOregen)
+            GameRegistry.registerWorldGenerator(new BlockGemstoneOre.Generator(), 1);
+        if (ConfigManager.EnableCocoonGeneration)
+            GameRegistry.registerWorldGenerator(new BlockCocoon.Generator(), 1);
+    }
+
+    private static ItemStack copyStack(ItemStack original, int quantity)
     {
         ItemStack copy = original.copy();
         copy.setCount(quantity);
@@ -397,10 +348,5 @@ public class ElementsOfPower
     public static ResourceLocation location(String location)
     {
         return new ResourceLocation(MODID, location);
-    }
-
-    public void test()
-    {
-        ItemStack stack = null;
     }
 }

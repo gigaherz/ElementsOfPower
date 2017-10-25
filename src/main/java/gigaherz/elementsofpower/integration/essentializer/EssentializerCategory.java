@@ -56,6 +56,12 @@ public class EssentializerCategory implements IRecipeCategory<EssentializerRecip
         return I18n.format("text." + ElementsOfPower.MODID + ".jei.category.essentializer");
     }
 
+    @Override
+    public String getModName()
+    {
+        return "Elements of Power";
+    }
+
     @Nonnull
     @Override
     public IDrawable getBackground()
@@ -128,7 +134,7 @@ public class EssentializerCategory implements IRecipeCategory<EssentializerRecip
             int x0 = GuiEssentializer.MAGIC_ORBS[i * 2] - 7;
             int y0 = GuiEssentializer.MAGIC_ORBS[i * 2 + 1] - 15;
 
-            ItemStack stack = ElementsOfPower.magicOrb.getStack(1, Element.values[i]);
+            ItemStack stack = ElementsOfPower.orb.getStack(1, Element.values[i]);
 
             StackRenderingHelper.renderItemStack(mesher, mc.renderEngine, x0, y0, stack, alpha);
         }

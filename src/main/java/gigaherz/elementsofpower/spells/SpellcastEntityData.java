@@ -15,6 +15,7 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -22,12 +23,12 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import javax.annotation.Nullable;
 
-public class SpellcastEntityData
+public class SpellcastEntityData implements INBTSerializable<NBTTagCompound>
 {
-    public static final ResourceLocation PROP_KEY = ElementsOfPower.location("SpellcastData");
+    private static final ResourceLocation PROP_KEY = ElementsOfPower.location("SpellcastData");
 
-    EntityPlayer player;
-    Spellcast currentCasting;
+    private final EntityPlayer player;
+    private Spellcast currentCasting;
 
     public static SpellcastEntityData get(EntityPlayer p)
     {
@@ -39,8 +40,14 @@ public class SpellcastEntityData
         MinecraftForge.EVENT_BUS.register(new Handler());
     }
 
-    public void saveNBTData(NBTTagCompound compound)
+    public SpellcastEntityData(Entity entity)
     {
+        this.player = (EntityPlayer) entity;
+    }
+
+    public NBTTagCompound serializeNBT()
+    {
+        NBTTagCompound compound = new NBTTagCompound();
         if (currentCasting != null)
         {
             NBTTagCompound cast = new NBTTagCompound();
@@ -48,9 +55,10 @@ public class SpellcastEntityData
             cast.setString("sequence", currentCasting.getSequence());
             compound.setTag("currentSpell", cast);
         }
+        return compound;
     }
 
-    public void loadNBTData(NBTTagCompound compound)
+    public void deserializeNBT(NBTTagCompound compound)
     {
         if (compound.hasKey("currentSpell", Constants.NBT.TAG_COMPOUND))
         {
@@ -64,11 +72,6 @@ public class SpellcastEntityData
                 currentCasting.readFromNBT(cast);
             }
         }
-    }
-
-    public void init(Entity entity)
-    {
-        this.player = (EntityPlayer) entity;
     }
 
     public void begin(Spellcast spell)
@@ -216,11 +219,7 @@ public class SpellcastEntityData
             {
                 e.addCapability(PROP_KEY, new ICapabilitySerializable<NBTTagCompound>()
                 {
-                    SpellcastEntityData cap = new SpellcastEntityData();
-
-                    {
-                        cap.init(entity);
-                    }
+                    final SpellcastEntityData cap = new SpellcastEntityData(entity);
 
                     @Override
                     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing)
@@ -239,15 +238,13 @@ public class SpellcastEntityData
                     @Override
                     public NBTTagCompound serializeNBT()
                     {
-                        NBTTagCompound tag = new NBTTagCompound();
-                        cap.saveNBTData(tag);
-                        return tag;
+                        return cap.serializeNBT();
                     }
 
                     @Override
                     public void deserializeNBT(NBTTagCompound nbt)
                     {
-                        cap.loadNBTData(nbt);
+                        cap.deserializeNBT(nbt);
                     }
                 });
             }

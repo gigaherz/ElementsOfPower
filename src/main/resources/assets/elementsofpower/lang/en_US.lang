@@ -19,6 +19,30 @@ item.elementsofpower.ring.amethyst.name=Amethyst Ring
 item.elementsofpower.ring.diamond.name=Diamond Ring
 item.elementsofpower.ring.creative.name=Creative Ring
 
+item.elementsofpower.headband.name=Unbound Headband
+item.elementsofpower.headband.ruby.name=Ruby Headband
+item.elementsofpower.headband.sapphire.name=Sapphire Headband
+item.elementsofpower.headband.citrine.name=Citrine Headband
+item.elementsofpower.headband.agate.name=Agate Headband
+item.elementsofpower.headband.quartz.name=Quartz Headband
+item.elementsofpower.headband.serendibite.name=Serendibite Headband
+item.elementsofpower.headband.emerald.name=Emerald Headband
+item.elementsofpower.headband.amethyst.name=Amethyst Headband
+item.elementsofpower.headband.diamond.name=Diamond Headband
+item.elementsofpower.headband.creative.name=Creative Headband
+
+item.elementsofpower.necklace.name=Unbound Necklace
+item.elementsofpower.necklace.ruby.name=Ruby Necklace
+item.elementsofpower.necklace.sapphire.name=Sapphire Necklace
+item.elementsofpower.necklace.citrine.name=Citrine Necklace
+item.elementsofpower.necklace.agate.name=Agate Necklace
+item.elementsofpower.necklace.quartz.name=Quartz Necklace
+item.elementsofpower.necklace.serendibite.name=Serendibite Necklace
+item.elementsofpower.necklace.emerald.name=Emerald Necklace
+item.elementsofpower.necklace.amethyst.name=Amethyst Necklace
+item.elementsofpower.necklace.diamond.name=Diamond Necklace
+item.elementsofpower.necklace.creative.name=Creative Necklace
+
 item.elementsofpower.wand.name=Unbound Wand
 item.elementsofpower.wand.ruby.name=Ruby Wand
 item.elementsofpower.wand.sapphire.name=Sapphire Wand
@@ -105,20 +129,20 @@ elementsofpower.element.darkness=Darkness
 elementsofpower.element.life=Life
 elementsofpower.element.death=Death
 
-item.elementsofpower.magicOrb.fire.name=Fire Orb
-item.elementsofpower.magicOrb.water.name=Water Orb
-item.elementsofpower.magicOrb.air.name=Air Orb
-item.elementsofpower.magicOrb.earth.name=Earth Orb
-item.elementsofpower.magicOrb.light.name=Light Orb
-item.elementsofpower.magicOrb.darkness.name=Darkness Orb
-item.elementsofpower.magicOrb.life.name=Life Orb
-item.elementsofpower.magicOrb.death.name=Death Orb
+item.elementsofpower.orb.fire.name=Fire Orb
+item.elementsofpower.orb.water.name=Water Orb
+item.elementsofpower.orb.air.name=Air Orb
+item.elementsofpower.orb.earth.name=Earth Orb
+item.elementsofpower.orb.light.name=Light Orb
+item.elementsofpower.orb.darkness.name=Darkness Orb
+item.elementsofpower.orb.life.name=Life Orb
+item.elementsofpower.orb.death.name=Death Orb
 
 item.elementsofpower.analyzer.name=Gem Analyzer
 text.elementsofpower.analyzer=Gem Analyzer
 
-text.elementsofpower.magicOrb.use=Use to charge your magic items
-text.elementsofpower.magicOrb.cocoon=Right-click on a cocoon to add one essence
+text.elementsofpower.orb.use=Use to charge your magic items
+text.elementsofpower.orb.cocoon=Right-click on a cocoon to add one essence
 
 text.elementsofpower.gemstone.use=Use a Gem Analyzer to discover its quality
 text.elementsofpower.gemstone.combine=Combine with a magic item to set

@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower.gemstones;
 
+import com.google.common.collect.ImmutableList;
 import net.minecraft.util.IStringSerializable;
 
 public enum GemstoneBlockType implements IStringSerializable
@@ -37,6 +38,5 @@ public enum GemstoneBlockType implements IStringSerializable
         return name;
     }
 
-    public static GemstoneBlockType[] values = values();
-
+    public static final ImmutableList<GemstoneBlockType> values = ImmutableList.copyOf(values());
 }

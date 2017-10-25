@@ -16,8 +16,8 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.feature.WorldGenMinable;
 import net.minecraftforge.fml.common.IWorldGenerator;
 
@@ -52,9 +52,9 @@ public class BlockGemstoneOre extends BlockRegistered
     @Override
     public IBlockState getStateFromMeta(int meta)
     {
-        if (meta > GemstoneBlockType.values.length)
+        if (meta > GemstoneBlockType.values.size())
             return getDefaultState();
-        return getDefaultState().withProperty(TYPE, GemstoneBlockType.values[meta]);
+        return getDefaultState().withProperty(TYPE, GemstoneBlockType.values.get(meta));
     }
 
     public ItemStack getStack(GemstoneBlockType gemstoneBlockType)
@@ -68,7 +68,7 @@ public class BlockGemstoneOre extends BlockRegistered
     }
 
     @Override
-    public void getSubBlocks(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> list)
+    public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> list)
     {
         for (GemstoneBlockType type : GemstoneBlockType.values)
         {
@@ -133,9 +133,9 @@ public class BlockGemstoneOre extends BlockRegistered
         @Override
         public String getUnlocalizedName(ItemStack stack)
         {
-            if (stack.getMetadata() > GemstoneBlockType.values.length)
+            if (stack.getMetadata() > GemstoneBlockType.values.size())
                 return block.getUnlocalizedName();
-            return "tile." + ElementsOfPower.MODID + "." + GemstoneBlockType.values[stack.getMetadata()] + "Ore";
+            return "tile." + ElementsOfPower.MODID + "." + GemstoneBlockType.values.get(stack.getMetadata()) + "Ore";
         }
     }
 

@@ -61,14 +61,14 @@ public class ClientProxy implements IModProxy
 
         registerItemModel(ElementsOfPower.analyzer);
 
-        registerItemModel(ElementsOfPower.magicOrb.getStack(Element.Fire), "element=fire");
-        registerItemModel(ElementsOfPower.magicOrb.getStack(Element.Water), "element=water");
-        registerItemModel(ElementsOfPower.magicOrb.getStack(Element.Air), "element=air");
-        registerItemModel(ElementsOfPower.magicOrb.getStack(Element.Earth), "element=earth");
-        registerItemModel(ElementsOfPower.magicOrb.getStack(Element.Light), "element=light");
-        registerItemModel(ElementsOfPower.magicOrb.getStack(Element.Darkness), "element=dark");
-        registerItemModel(ElementsOfPower.magicOrb.getStack(Element.Life), "element=life");
-        registerItemModel(ElementsOfPower.magicOrb.getStack(Element.Death), "element=death");
+        registerItemModel(ElementsOfPower.orb.getStack(Element.Fire), "element=fire");
+        registerItemModel(ElementsOfPower.orb.getStack(Element.Water), "element=water");
+        registerItemModel(ElementsOfPower.orb.getStack(Element.Air), "element=air");
+        registerItemModel(ElementsOfPower.orb.getStack(Element.Earth), "element=earth");
+        registerItemModel(ElementsOfPower.orb.getStack(Element.Light), "element=light");
+        registerItemModel(ElementsOfPower.orb.getStack(Element.Darkness), "element=dark");
+        registerItemModel(ElementsOfPower.orb.getStack(Element.Life), "element=life");
+        registerItemModel(ElementsOfPower.orb.getStack(Element.Death), "element=death");
 
         new ItemStateMapper(ElementsOfPower.gemstone).registerAllModelsExplicitly();
         new ItemStateMapper(ElementsOfPower.spelldust).registerAllModelsExplicitly();
@@ -79,9 +79,11 @@ public class ClientProxy implements IModProxy
             registerBlockModelAsItem(ElementsOfPower.gemstoneOre, b.ordinal(), "type=" + b.getName());
         }
 
-        registerGemMeshDefinition(ElementsOfPower.magicRing, "magic_ring");
-        registerGemMeshDefinition(ElementsOfPower.magicWand, "magic_wand");
-        registerGemMeshDefinition(ElementsOfPower.magicStaff, "magic_staff");
+        registerGemMeshDefinition(ElementsOfPower.wand);
+        registerGemMeshDefinition(ElementsOfPower.staff);
+        registerGemMeshDefinition(ElementsOfPower.ring);
+        registerGemMeshDefinition(ElementsOfPower.headband);
+        registerGemMeshDefinition(ElementsOfPower.necklace);
     }
 
     @Optional.Method(modid = "gbook")
@@ -117,11 +119,11 @@ public class ClientProxy implements IModProxy
 
                     int index = stack.getItemDamage();
 
-                    if (index >= Gemstone.values.length)
+                    if (index >= Gemstone.values.size())
 
                         return 0xFFFFFFFF;
 
-                    return Gemstone.values[index].getTintColor();
+                    return Gemstone.values.get(index).getTintColor();
                 }, ElementsOfPower.spelldust);
     }
 
@@ -195,9 +197,9 @@ public class ClientProxy implements IModProxy
         playerIn.setActiveHand(hand);
     }
 
-    private static void registerGemMeshDefinition(Item item, String itemName)
+    private static void registerGemMeshDefinition(Item item)
     {
-        ModelLoader.setCustomMeshDefinition(item, new GemContainerMeshDefinition(item, itemName));
+        ModelLoader.setCustomMeshDefinition(item, new GemContainerMeshDefinition(item));
     }
 
     // ----------------------------------------------------------- Entity Renderers
@@ -211,19 +213,19 @@ public class ClientProxy implements IModProxy
 
     private static class GemContainerMeshDefinition implements ItemMeshDefinition
     {
-        final String itemName;
+        final Item item;
 
-        private GemContainerMeshDefinition(Item item, String itemName)
+        private GemContainerMeshDefinition(Item item)
         {
-            this.itemName = itemName;
+            this.item = item;
 
-            ResourceLocation[] resLocs = new ResourceLocation[Gemstone.values.length + 1];
-            for (int i = 0; i < Gemstone.values.length; i++)
+            ResourceLocation[] resLocs = new ResourceLocation[Gemstone.values.size() + 1];
+            for (int i = 0; i < Gemstone.values.size(); i++)
             {
-                Gemstone g = Gemstone.values[i];
+                Gemstone g = Gemstone.values.get(i);
                 resLocs[i] = getModelResourceLocation(g);
             }
-            resLocs[Gemstone.values.length] = getModelResourceLocation(null);
+            resLocs[Gemstone.values.size()] = getModelResourceLocation(null);
             ModelBakery.registerItemVariants(item, resLocs);
         }
 
@@ -245,7 +247,7 @@ public class ClientProxy implements IModProxy
         {
             String variantName = "gem=" + (g != null ? g.getName() : "unbound");
 
-            return new ModelResourceLocation(ElementsOfPower.MODID + ":" + itemName, variantName);
+            return new ModelResourceLocation(item.getRegistryName(), variantName);
         }
     }
 }

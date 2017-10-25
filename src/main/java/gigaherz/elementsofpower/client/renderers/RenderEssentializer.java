@@ -15,7 +15,7 @@ public class RenderEssentializer extends TileEntitySpecialRenderer<TileEssential
     ModelHandle handle = ModelHandle.of("elementsofpower:block/essentializer_2.obj");
 
     @Override
-    public void renderTileEntityAt(TileEssentializer te, double x, double y, double z, float partialTicks, int destroyStage)
+    public void render(TileEssentializer te, double x, double y, double z, float partialTicks, int destroyStage, float something)
     {
         bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 

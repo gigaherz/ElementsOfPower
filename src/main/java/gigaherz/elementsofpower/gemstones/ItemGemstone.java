@@ -8,6 +8,7 @@ import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.items.ItemMagicContainer;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumRarity;
@@ -16,6 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nullable;
@@ -51,7 +53,7 @@ public class ItemGemstone extends ItemMagicContainer
     }
 
     @Override
-    public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems)
+    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems)
     {
         for (Gemstone type : GEM.getAllowedValues())
         {
@@ -98,7 +100,7 @@ public class ItemGemstone extends ItemMagicContainer
 
     public void getUnexamined(List<ItemStack> subItems)
     {
-        for (int meta = 0; meta < Gemstone.values.length; meta++)
+        for (int meta = 0; meta < Gemstone.values.size(); meta++)
         {
             subItems.add(new ItemStack(this, 1, meta));
         }
@@ -140,10 +142,10 @@ public class ItemGemstone extends ItemMagicContainer
     {
         int meta = stack.getMetadata();
 
-        if (meta >= Gemstone.values.length)
+        if (meta >= Gemstone.values.size())
             return null;
 
-        return Gemstone.values[meta];
+        return Gemstone.values.get(meta);
     }
 
     @Nullable
@@ -178,12 +180,12 @@ public class ItemGemstone extends ItemMagicContainer
     }
 
     @Override
-    public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced)
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn)
     {
         if (getQuality(stack) == null)
             tooltip.add(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + I18n.format("text." + ElementsOfPower.MODID + ".gemstone.use"));
         else
             tooltip.add(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + I18n.format("text." + ElementsOfPower.MODID + ".gemstone.combine"));
-        super.addInformation(stack, playerIn, tooltip, advanced);
+        super.addInformation(stack, worldIn, tooltip, flagIn);
     }
 }

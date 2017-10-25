@@ -42,9 +42,9 @@ public class RenderSphere extends RenderSpell
         GlStateManager.pushMatrix();
 
         GlStateManager.translate(
-                (float) (x + offset.xCoord),
-                (float) (y + offset.yCoord - player.getEyeHeight() * 0.5f),
-                (float) (z + offset.zCoord));
+                (float) (x + offset.x),
+                (float) (y + offset.y - player.getEyeHeight() * 0.5f),
+                (float) (z + offset.z));
         GlStateManager.scale(scale, scale, scale);
 
         GlStateManager.cullFace(GlStateManager.CullFace.FRONT);

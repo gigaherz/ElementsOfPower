@@ -44,9 +44,9 @@ public class HealthEffect extends SpellEffect
             if (!e.isEntityAlive())
                 continue;
 
-            double dx = e.posX - hitVec.xCoord;
-            double dy = e.posY - hitVec.yCoord;
-            double dz = e.posZ - hitVec.zCoord;
+            double dx = e.posX - hitVec.x;
+            double dy = e.posY - hitVec.y;
+            double dz = e.posZ - hitVec.z;
 
             double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
@@ -84,12 +84,12 @@ public class HealthEffect extends SpellEffect
     public void processEntitiesAroundAfter(Spellcast cast, Vec3d hitVec)
     {
         AxisAlignedBB aabb = new AxisAlignedBB(
-                hitVec.xCoord - cast.getDamageForce(),
-                hitVec.yCoord - cast.getDamageForce(),
-                hitVec.zCoord - cast.getDamageForce(),
-                hitVec.xCoord + cast.getDamageForce(),
-                hitVec.yCoord + cast.getDamageForce(),
-                hitVec.zCoord + cast.getDamageForce());
+                hitVec.x - cast.getDamageForce(),
+                hitVec.y - cast.getDamageForce(),
+                hitVec.z - cast.getDamageForce(),
+                hitVec.x + cast.getDamageForce(),
+                hitVec.y + cast.getDamageForce(),
+                hitVec.z + cast.getDamageForce());
 
         List<EntityLivingBase> living = cast.world.getEntitiesWithinAABB(EntityLivingBase.class, aabb);
         healEntities(cast, hitVec, living);
@@ -99,7 +99,7 @@ public class HealthEffect extends SpellEffect
     public void spawnBallParticles(Spellcast cast, RayTraceResult mop)
     {
         cast.spawnRandomParticle(EnumParticleTypes.FLAME,
-                mop.hitVec.xCoord, mop.hitVec.yCoord, mop.hitVec.zCoord);
+                mop.hitVec.x, mop.hitVec.y, mop.hitVec.z);
     }
 
     @Override

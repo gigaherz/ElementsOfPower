@@ -6,11 +6,14 @@ import gigaherz.elementsofpower.database.ContainerInformation;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.gemstones.Element;
 import gigaherz.elementsofpower.gemstones.Gemstone;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 import org.lwjgl.input.Keyboard;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public abstract class ItemMagicContainer extends ItemStateful
@@ -51,7 +54,7 @@ public abstract class ItemMagicContainer extends ItemStateful
     }
 
     @Override
-    public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltipList, boolean showAdvancedInfo)
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn)
     {
         MagicAmounts amounts = ContainerInformation.getContainedMagic(stack);
 
@@ -60,10 +63,10 @@ public abstract class ItemMagicContainer extends ItemStateful
             return;
         }
 
-        tooltipList.add(TextFormatting.YELLOW + "Contains magic:");
+        tooltip.add(TextFormatting.YELLOW + "Contains magic:");
         if (!Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) && !Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
         {
-            tooltipList.add(TextFormatting.GRAY + "  (Hold SHIFT)");
+            tooltip.add(TextFormatting.GRAY + "  (Hold SHIFT)");
             return;
         }
 
@@ -81,7 +84,7 @@ public abstract class ItemMagicContainer extends ItemStateful
             else
                 str = String.format("%s  %s x%s", TextFormatting.GRAY, magicName,
                         ElementsOfPower.prettyNumberFormatter2.format(amounts.get(i)));
-            tooltipList.add(str);
+            tooltip.add(str);
         }
     }
 

@@ -29,9 +29,9 @@ public class RenderCone extends RenderSpell
         Vec3d beam = end.subtract(start);
         Vec3d dir = beam.normalize();
 
-        double beamPlane = Math.sqrt(dir.xCoord * dir.xCoord + dir.zCoord * dir.zCoord);
-        double beamYaw = Math.atan2(dir.zCoord, dir.xCoord);
-        double beamPitch = Math.atan2(dir.yCoord, beamPlane);
+        double beamPlane = Math.sqrt(dir.x * dir.x + dir.z * dir.z);
+        double beamYaw = Math.atan2(dir.z, dir.x);
+        double beamPitch = Math.atan2(dir.y, beamPlane);
 
         GlStateManager.disableLighting();
         GlStateManager.enableRescaleNormal();
@@ -59,9 +59,9 @@ public class RenderCone extends RenderSpell
 
             GlStateManager.pushMatrix();
             GlStateManager.translate(
-                    (float) (x + offset.xCoord),
-                    (float) (y + offset.yCoord),
-                    (float) (z + offset.zCoord));
+                    (float) (x + offset.x),
+                    (float) (y + offset.y),
+                    (float) (z + offset.z));
             GlStateManager.rotate(-(float) Math.toDegrees(beamYaw) + 90, 0, 1, 0);
             GlStateManager.rotate(-(float) Math.toDegrees(beamPitch), 1, 0, 0);
             GlStateManager.translate(0, -0.15f, offset_z);

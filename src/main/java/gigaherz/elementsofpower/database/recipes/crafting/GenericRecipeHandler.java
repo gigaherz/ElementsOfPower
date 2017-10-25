@@ -5,24 +5,26 @@ import gigaherz.elementsofpower.database.recipes.IRecipeHandler;
 import gigaherz.elementsofpower.database.recipes.IRecipeInfoProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.ShapelessRecipes;
+import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.util.NonNullList;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShapelessRecipeHandler implements IRecipeHandler
+public class GenericRecipeHandler implements IRecipeHandler
 {
     @Override
     public boolean accepts(@Nonnull IRecipe recipe)
     {
-        return recipe instanceof ShapelessRecipes;
+        return recipe instanceof ShapelessOreRecipe;
     }
 
     @Override
     public IRecipeInfoProvider handle(@Nonnull IRecipe recipe)
     {
-        return new RecipeInfo((ShapelessRecipes) recipe);
+        return new RecipeInfo((ShapelessOreRecipe) recipe);
     }
 
     private static class RecipeInfo implements IRecipeInfoProvider
@@ -30,17 +32,17 @@ public class ShapelessRecipeHandler implements IRecipeHandler
         ArrayList<ItemStack> recipeItems = Lists.newArrayList();
         ItemStack output;
 
-        public RecipeInfo(ShapelessRecipes recipe)
+        public RecipeInfo(ShapelessOreRecipe recipe)
         {
             output = recipe.getRecipeOutput();
 
-            List<ItemStack> inputs = recipe.recipeItems;
-            for (ItemStack input : inputs)
+            NonNullList<Ingredient> inputs = recipe.getIngredients();
+            for (Ingredient input : inputs)
             {
-                if (input == null)
-                    continue;
 
-                ItemStack stack = input.copy();
+                ItemStack actualInput = input.getMatchingStacks()[0];
+
+                ItemStack stack = (actualInput).copy();
                 stack.setCount(1);
                 recipeItems.add(stack);
             }

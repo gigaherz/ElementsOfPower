@@ -58,13 +58,13 @@ public class TeleportEffect extends SpellEffect
                         playerMP.dismountRidingEntity();
                     }
 
-                    playerMP.setPositionAndUpdate(hitVec.xCoord, hitVec.yCoord, hitVec.zCoord);
+                    playerMP.setPositionAndUpdate(hitVec.x, hitVec.y, hitVec.z);
                     playerMP.fallDistance = 0.0F;
                 }
             }
             else if (cast.player != null)
             {
-                cast.player.setPositionAndUpdate(hitVec.xCoord, hitVec.yCoord, hitVec.zCoord);
+                cast.player.setPositionAndUpdate(hitVec.x, hitVec.y, hitVec.z);
                 cast.player.fallDistance = 0.0F;
             }
         }
@@ -85,7 +85,7 @@ public class TeleportEffect extends SpellEffect
         for (int i = 0; i < 32; ++i)
         {
             cast.spawnRandomParticle(EnumParticleTypes.PORTAL,
-                    mop.hitVec.xCoord, mop.hitVec.yCoord, mop.hitVec.zCoord);
+                    mop.hitVec.x, mop.hitVec.y, mop.hitVec.z);
         }
     }
 

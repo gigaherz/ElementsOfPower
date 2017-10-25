@@ -48,6 +48,12 @@ public class AnalyzerCategory implements IRecipeCategory<AnalyzerRecipeWrapper>
         return I18n.format("text." + ElementsOfPower.MODID + ".jei.category.analyzer");
     }
 
+    @Override
+    public String getModName()
+    {
+        return "Elements of Power";
+    }
+
     @Nonnull
     @Override
     public IDrawable getBackground()

@@ -59,12 +59,12 @@ public class JEIPlugin implements IModPlugin
 
     private void addContainerRecipes(@Nonnull IModRegistry registry)
     {
-        ItemStack orb = new ItemStack(ElementsOfPower.magicOrb, 1, OreDictionary.WILDCARD_VALUE);
+        ItemStack orb = new ItemStack(ElementsOfPower.orb, 1, OreDictionary.WILDCARD_VALUE);
         ItemStack gemstone = new ItemStack(ElementsOfPower.gemstone, 1, OreDictionary.WILDCARD_VALUE);
         for (ItemStack stack : Arrays.asList(
-                new ItemStack(ElementsOfPower.magicWand),
-                new ItemStack(ElementsOfPower.magicStaff),
-                new ItemStack(ElementsOfPower.magicRing)
+                new ItemStack(ElementsOfPower.wand),
+                new ItemStack(ElementsOfPower.staff),
+                new ItemStack(ElementsOfPower.ring)
         ))
         {
             registry.addRecipes(

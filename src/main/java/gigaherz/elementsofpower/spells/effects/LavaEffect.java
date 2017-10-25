@@ -70,7 +70,7 @@ public class LavaEffect extends SpellEffect
         for (int i = 0; i < 8; ++i)
         {
             cast.spawnRandomParticle(EnumParticleTypes.LAVA,
-                    mop.hitVec.xCoord, mop.hitVec.yCoord, mop.hitVec.zCoord);
+                    mop.hitVec.x, mop.hitVec.y, mop.hitVec.z);
         }
     }
 

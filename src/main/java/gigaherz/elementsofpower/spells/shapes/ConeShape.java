@@ -55,12 +55,12 @@ public class ConeShape extends SpellShape
         Vec3d q2 = p0.add(v2);
         Vec3d q3 = p0.add(v3);
 
-        float mx = (float) max5(p0.xCoord, q0.xCoord, q1.xCoord, q2.xCoord, q3.xCoord);
-        float nx = (float) min5(p0.xCoord, q0.xCoord, q1.xCoord, q2.xCoord, q3.xCoord);
-        float my = (float) max5(p0.yCoord, q0.yCoord, q1.yCoord, q2.yCoord, q3.yCoord);
-        float ny = (float) min5(p0.yCoord, q0.yCoord, q1.yCoord, q2.yCoord, q3.yCoord);
-        float mz = (float) max5(p0.zCoord, q0.zCoord, q1.zCoord, q2.zCoord, q3.zCoord);
-        float nz = (float) min5(p0.zCoord, q0.zCoord, q1.zCoord, q2.zCoord, q3.zCoord);
+        float mx = (float) max5(p0.x, q0.x, q1.x, q2.x, q3.x);
+        float nx = (float) min5(p0.x, q0.x, q1.x, q2.x, q3.x);
+        float my = (float) max5(p0.y, q0.y, q1.y, q2.y, q3.y);
+        float ny = (float) min5(p0.y, q0.y, q1.y, q2.y, q3.y);
+        float mz = (float) max5(p0.z, q0.z, q1.z, q2.z, q3.z);
+        float nz = (float) min5(p0.z, q0.z, q1.z, q2.z, q3.z);
 
         return new AxisAlignedBB(mx, my, mz, nx, ny, nz);
     }

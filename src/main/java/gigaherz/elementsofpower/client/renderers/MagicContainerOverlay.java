@@ -64,7 +64,7 @@ public class MagicContainerOverlay extends Gui
         {
             int alpha = (amounts.get(i) < 0.001) ? 0x3FFFFFFF : 0xFFFFFFFF;
 
-            ItemStack stack = ElementsOfPower.magicOrb.getStack((int) amounts.get(i), Element.values[i]);
+            ItemStack stack = ElementsOfPower.orb.getStack((int) amounts.get(i), Element.values[i]);
 
             StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yPos, stack, alpha);
 
@@ -90,7 +90,7 @@ public class MagicContainerOverlay extends Gui
                 {
                     int i = SpellManager.elementIndices[c - 'A'];
 
-                    ItemStack stack = ElementsOfPower.magicOrb.getStack(1, Element.values[i]);
+                    ItemStack stack = ElementsOfPower.orb.getStack(1, Element.values[i]);
 
                     StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yPos, stack, 0xFFFFFFFF);
 
@@ -108,7 +108,7 @@ public class MagicContainerOverlay extends Gui
             {
                 int i = SpellManager.elementIndices[c - 'A'];
 
-                ItemStack stack = ElementsOfPower.magicOrb.getStack(1, Element.values[i]);
+                ItemStack stack = ElementsOfPower.orb.getStack(1, Element.values[i]);
 
                 StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yPos, stack, 0xFFFFFFFF);
 

@@ -72,7 +72,7 @@ public class TileEssentializer
     public IItemHandler top = new RangedWrapper(inventory, 2, 3);
 
     public MagicAmounts containedMagic = MagicAmounts.EMPTY;
-    public MagicAmounts remainingToConvert;
+    public MagicAmounts remainingToConvert = MagicAmounts.EMPTY;
 
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing)

@@ -4,13 +4,16 @@ import gigaherz.common.ItemRegistered;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.gemstones.Element;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class ItemMagicOrb extends ItemRegistered
@@ -46,19 +49,19 @@ public class ItemMagicOrb extends ItemRegistered
     }
 
     @Override
-    public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems)
+    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems)
     {
         for (int meta = 0; meta < subNames.length; meta++)
         {
-            subItems.add(new ItemStack(itemIn, 1, meta));
+            subItems.add(new ItemStack(this, 1, meta));
         }
     }
 
     @Override
-    public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced)
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn)
     {
-        tooltip.add(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + I18n.format("text." + ElementsOfPower.MODID + ".magicOrb.use"));
-        tooltip.add(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + I18n.format("text." + ElementsOfPower.MODID + ".magicOrb.cocoon"));
+        tooltip.add(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + I18n.format("text." + ElementsOfPower.MODID + ".orb.use"));
+        tooltip.add(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + I18n.format("text." + ElementsOfPower.MODID + ".orb.cocoon"));
     }
 
     public ItemStack getStack(Element element)

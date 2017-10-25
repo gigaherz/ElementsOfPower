@@ -1,6 +1,5 @@
 package gigaherz.elementsofpower.entities;
 
-import baubles.api.BaublesApi;
 import com.google.common.collect.Lists;
 import gigaherz.elementsofpower.database.ContainerInformation;
 import gigaherz.elementsofpower.database.MagicAmounts;
@@ -278,9 +277,9 @@ public class EntityEssence extends EntityAmbientCreature
                 new Vec3d(spawnPosition.getX(), spawnPosition.getY() + 1, spawnPosition.getZ());
         }
 
-        double dx = followPos.xCoord - posX;
-        double dy = followPos.yCoord - posY;
-        double dz = followPos.zCoord - posZ;
+        double dx = followPos.x - posX;
+        double dy = followPos.y - posY;
+        double dz = followPos.z - posZ;
 
         Vec3d home = new Vec3d(dx, dy, dz);
         Vec3d forward = getLookVec();
@@ -299,15 +298,15 @@ public class EntityEssence extends EntityAmbientCreature
 
         if (r <= 1)
         {
-            accelX = lerp(accelX, lerp(home.xCoord, forward.xCoord, r), sa);
-            accelY = lerp(accelY, lerp(home.yCoord, forward.yCoord, r), sa);
-            accelZ = lerp(accelZ, lerp(home.zCoord, forward.zCoord, r), sa);
+            accelX = lerp(accelX, lerp(home.x, forward.x, r), sa);
+            accelY = lerp(accelY, lerp(home.y, forward.y, r), sa);
+            accelZ = lerp(accelZ, lerp(home.z, forward.z, r), sa);
         }
         else
         {
-            accelX = lerp(accelX, lerp(forward.xCoord, random.xCoord, r), sa);
-            accelY = lerp(accelY, lerp(forward.yCoord, random.yCoord, r), sa);
-            accelZ = lerp(accelZ, lerp(forward.zCoord, random.zCoord, r), sa);
+            accelX = lerp(accelX, lerp(forward.x, random.x, r), sa);
+            accelY = lerp(accelY, lerp(forward.y, random.y, r), sa);
+            accelZ = lerp(accelZ, lerp(forward.z, random.z, r), sa);
         }
         motionX = MathHelper.clamp(motionX + lerp(0, accelX, sm), -speedMax, speedMax);
         motionY = MathHelper.clamp(motionY + lerp(0, accelY, sm), -speedMax, speedMax);
@@ -352,7 +351,7 @@ public class EntityEssence extends EntityAmbientCreature
             }
         }
 
-        if (stack.getCount() <= 0)
+        /*if (stack.getCount() <= 0)
         {
             b = BaublesApi.getBaubles(p);
             if (b != null)
@@ -372,7 +371,7 @@ public class EntityEssence extends EntityAmbientCreature
                     }
                 }
             }
-        }
+        }*/
 
         if (stack.getCount() > 0)
         {
@@ -435,14 +434,15 @@ public class EntityEssence extends EntityAmbientCreature
         tag.setDouble("accelZ", accelZ);
     }
 
+
     @Override
-    public void moveEntityWithHeading(float strafe, float forward)
+    public void travel(float strafe, float up, float forward)
     {
         {
             float f = 0.91F;
 
             float f1 = 0.16277136F / (f * f * f);
-            this.moveRelative(strafe, forward, this.onGround ? 0.1F * f1 : 0.02F);
+            this.moveRelative(strafe, up, forward, this.onGround ? 0.1F * f1 : 0.02F);
             f = 0.91F;
 
             this.move(MoverType.SELF, this.motionX, this.motionY, this.motionZ);

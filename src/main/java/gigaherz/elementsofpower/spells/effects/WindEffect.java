@@ -58,12 +58,12 @@ public class WindEffect extends SpellEffect
         int force = cast.getDamageForce();
 
         AxisAlignedBB aabb = new AxisAlignedBB(
-                hitVec.xCoord - force,
-                hitVec.yCoord - force,
-                hitVec.zCoord - force,
-                hitVec.xCoord + force,
-                hitVec.yCoord + force,
-                hitVec.zCoord + force);
+                hitVec.x - force,
+                hitVec.y - force,
+                hitVec.z - force,
+                hitVec.x + force,
+                hitVec.y + force,
+                hitVec.z + force);
 
         List<EntityLivingBase> living = cast.world.getEntitiesWithinAABB(EntityLivingBase.class, aabb);
         pushEntities(cast, force, hitVec, living);
@@ -98,15 +98,15 @@ public class WindEffect extends SpellEffect
         {
             Vec3d look = e.getLookVec();
 
-            vx += force * look.xCoord;
-            vy += force * look.yCoord;
-            vz += force * look.zCoord;
+            vx += force * look.x;
+            vy += force * look.y;
+            vz += force * look.z;
         }
         else
         {
-            double dx = e.posX - hitVec.xCoord;
-            double dy = e.posY - hitVec.yCoord;
-            double dz = e.posZ - hitVec.zCoord;
+            double dx = e.posX - hitVec.x;
+            double dy = e.posY - hitVec.y;
+            double dz = e.posZ - hitVec.z;
 
             double ll = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
@@ -133,17 +133,17 @@ public class WindEffect extends SpellEffect
         if (cast.getDamageForce() >= 5)
         {
             cast.spawnRandomParticle(EnumParticleTypes.EXPLOSION_HUGE,
-                    mop.hitVec.xCoord, mop.hitVec.yCoord, mop.hitVec.zCoord);
+                    mop.hitVec.x, mop.hitVec.y, mop.hitVec.z);
         }
         else if (cast.getDamageForce() >= 2)
         {
             cast.spawnRandomParticle(EnumParticleTypes.EXPLOSION_LARGE,
-                    mop.hitVec.xCoord, mop.hitVec.yCoord, mop.hitVec.zCoord);
+                    mop.hitVec.x, mop.hitVec.y, mop.hitVec.z);
         }
         else
         {
             cast.spawnRandomParticle(EnumParticleTypes.EXPLOSION_NORMAL,
-                    mop.hitVec.xCoord, mop.hitVec.yCoord, mop.hitVec.zCoord);
+                    mop.hitVec.x, mop.hitVec.y, mop.hitVec.z);
         }
     }
 

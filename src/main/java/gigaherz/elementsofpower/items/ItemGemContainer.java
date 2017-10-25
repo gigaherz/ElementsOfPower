@@ -10,7 +10,7 @@ import gigaherz.elementsofpower.gemstones.Gemstone;
 import gigaherz.elementsofpower.gemstones.ItemGemstone;
 import gigaherz.elementsofpower.gemstones.Quality;
 import gigaherz.elementsofpower.network.SpellSequenceUpdate;
-import gigaherz.elementsofpower.progression.DiscoveryHandler;
+//import gigaherz.elementsofpower.progression.DiscoveryHandler;
 import gigaherz.elementsofpower.spells.SpellManager;
 import gigaherz.elementsofpower.spells.Spellcast;
 import gigaherz.elementsofpower.spells.SpellcastEntityData;
@@ -97,10 +97,10 @@ public abstract class ItemGemContainer extends ItemMagicContainer
             return null;
 
         int g = tag.getInteger("gemstone");
-        if (g < 0 || g > Gemstone.values.length)
+        if (g < 0 || g > Gemstone.values.size())
             return null;
 
-        return Gemstone.values[g];
+        return Gemstone.values.get(g);
     }
 
     public ItemStack setGemstone(ItemStack stack, @Nullable Gemstone gemstone)
@@ -331,7 +331,7 @@ public abstract class ItemGemContainer extends ItemMagicContainer
 
         ContainerInformation.setContainedMagic(stack, amounts);
 
-        DiscoveryHandler.instance.onSpellcast(player, cast);
+        //DiscoveryHandler.instance.onSpellcast(player, cast);
         return updateSequenceOnWand;
     }
 
