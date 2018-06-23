@@ -3,7 +3,6 @@ package gigaherz.elementsofpower.items;
 import baubles.api.BaubleType;
 import gigaherz.elementsofpower.ElementsOfPower;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.Optional;
 
 public class ItemNecklace extends ItemBauble
 {
@@ -13,10 +12,16 @@ public class ItemNecklace extends ItemBauble
         setCreativeTab(ElementsOfPower.tabMagic);
     }
 
-    @Optional.Method(modid = "baubles")
     @Override
-    public BaubleType getBaubleType(ItemStack itemstack)
+    protected Object getBaubleInstance()
     {
-        return BaubleType.AMULET;
+        return new BaubleData()
+        {
+            @Override
+            public BaubleType getBaubleType(ItemStack itemstack)
+            {
+                return BaubleType.AMULET;
+            }
+        };
     }
 }

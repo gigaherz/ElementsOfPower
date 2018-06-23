@@ -19,6 +19,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.IBlockAccess;
@@ -167,10 +168,8 @@ public class BlockCocoon extends BlockRegistered
     }
 
     @Override
-    public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
+    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
     {
-        ArrayList<ItemStack> ret = Lists.newArrayList();
-
         TileEntity te = world.getTileEntity(pos);
 
         if (te instanceof TileCocoon)
@@ -192,12 +191,10 @@ public class BlockCocoon extends BlockRegistered
                     else
                         whole = (int) (Math.pow(rand.nextFloat(), 3 - fortune) * whole);
 
-                    ret.add(new ItemStack(ElementsOfPower.orb, whole, i));
+                    drops.add(new ItemStack(ElementsOfPower.orb, whole, i));
                 }
             }
         }
-
-        return ret;
     }
 
     @Override

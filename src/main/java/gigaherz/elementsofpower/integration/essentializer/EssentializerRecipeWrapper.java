@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import gigaherz.elementsofpower.database.EssenceConversions;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import mezz.jei.api.ingredients.IIngredients;
-import mezz.jei.api.recipe.BlankRecipeWrapper;
+import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 
@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class EssentializerRecipeWrapper extends BlankRecipeWrapper
+public class EssentializerRecipeWrapper implements IRecipeWrapper
 {
     public static List<EssentializerRecipeWrapper> getRecipes()
     {

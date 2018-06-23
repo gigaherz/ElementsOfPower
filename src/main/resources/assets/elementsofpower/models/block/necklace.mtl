@@ -1,0 +1,6 @@
+# Rhino
+newmtl Gem
+map_Kd minecraft:blocks/diamond_block
+
+newmtl Ring
+map_Kd minecraft:blocks/gold_block

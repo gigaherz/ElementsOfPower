@@ -24,7 +24,10 @@ public class Either<TLeft, TRight>
         return new Either(false, value);
     }
 
-    public boolean isLeft() { return isLeft; }
+    public boolean isLeft()
+    {
+        return isLeft;
+    }
 
     public TLeft getLeft()
     {

@@ -2,16 +2,16 @@ package gigaherz.elementsofpower.integration;
 
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.integration.analyzer.AnalyzerCategory;
-import gigaherz.elementsofpower.integration.analyzer.AnalyzerRecipeHandler;
 import gigaherz.elementsofpower.integration.analyzer.AnalyzerRecipeWrapper;
 import gigaherz.elementsofpower.integration.essentializer.EssentializerCategory;
-import gigaherz.elementsofpower.integration.essentializer.EssentializerRecipeHandler;
 import gigaherz.elementsofpower.integration.essentializer.EssentializerRecipeWrapper;
 import mezz.jei.api.IJeiRuntime;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.IModRegistry;
 import mezz.jei.api.ISubtypeRegistry;
 import mezz.jei.api.ingredients.IModIngredientRegistration;
+import mezz.jei.api.recipe.IRecipeCategoryRegistration;
+import mezz.jei.api.recipe.VanillaRecipeCategoryUid;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -34,27 +34,30 @@ public class JEIPlugin implements IModPlugin
     }
 
     @Override
-    public void register(@Nonnull IModRegistry registry)
+    public void registerCategories(IRecipeCategoryRegistration registry)
     {
         registry.addRecipeCategories(
                 new EssentializerCategory(registry.getJeiHelpers().getGuiHelper()),
                 new AnalyzerCategory(registry.getJeiHelpers().getGuiHelper()));
+    }
 
-        registry.addRecipeHandlers(
-                new ContainerChargeRecipeHandler(),
-                new GemstoneChangeRecipeHandler(),
-                new EssentializerRecipeHandler(),
-                new AnalyzerRecipeHandler());
+    @Override
+    public void register(@Nonnull IModRegistry registry)
+    {
+        registry.handleRecipes(ContainerChargeRecipeWrapper.class, (w) -> w, VanillaRecipeCategoryUid.CRAFTING);
+        registry.handleRecipes(GemstoneChangeRecipeWrapper.class, (w) -> w, VanillaRecipeCategoryUid.CRAFTING);
+        registry.handleRecipes(EssentializerRecipeWrapper.class, (w) -> w, VanillaRecipeCategoryUid.CRAFTING);
+        registry.handleRecipes(AnalyzerRecipeWrapper.class, (w) -> w, VanillaRecipeCategoryUid.CRAFTING);
 
-        registry.addRecipeCategoryCraftingItem(new ItemStack(ElementsOfPower.essentializer), EssentializerCategory.UID);
-        registry.addRecipeCategoryCraftingItem(new ItemStack(ElementsOfPower.analyzer), AnalyzerCategory.UID);
+        registry.addRecipeCatalyst(new ItemStack(ElementsOfPower.essentializer), EssentializerCategory.UID);
+        registry.addRecipeCatalyst(new ItemStack(ElementsOfPower.analyzer), AnalyzerCategory.UID);
 
         registry.getRecipeTransferRegistry().addRecipeTransferHandler(new EssentializerCategory.TransferInfo());
 
-        addContainerRecipes(registry);
+        registry.addRecipes(EssentializerRecipeWrapper.getRecipes(), EssentializerCategory.UID);
+        registry.addRecipes(AnalyzerRecipeWrapper.getRecipes(), AnalyzerCategory.UID);
 
-        registry.addRecipes(EssentializerRecipeWrapper.getRecipes());
-        registry.addRecipes(AnalyzerRecipeWrapper.getRecipes());
+        addContainerRecipes(registry);
     }
 
     private void addContainerRecipes(@Nonnull IModRegistry registry)
@@ -67,18 +70,17 @@ public class JEIPlugin implements IModPlugin
                 new ItemStack(ElementsOfPower.ring)
         ))
         {
-            registry.addRecipes(
-                    Arrays.asList(
-                            new GemstoneChangeRecipeWrapper(stack, stack, gemstone),
-                            new ContainerChargeRecipeWrapper(stack, stack, orb),
-                            new ContainerChargeRecipeWrapper(stack, stack, orb, orb),
-                            new ContainerChargeRecipeWrapper(stack, stack, orb, orb, orb),
-                            new ContainerChargeRecipeWrapper(stack, stack, orb, orb, orb, orb),
-                            new ContainerChargeRecipeWrapper(stack, stack, orb, orb, orb, orb, orb),
-                            new ContainerChargeRecipeWrapper(stack, stack, orb, orb, orb, orb, orb, orb),
-                            new ContainerChargeRecipeWrapper(stack, stack, orb, orb, orb, orb, orb, orb, orb),
-                            new ContainerChargeRecipeWrapper(stack, stack, orb, orb, orb, orb, orb, orb, orb, orb)
-                    ));
+            registry.addRecipes(Arrays.asList(
+                    new GemstoneChangeRecipeWrapper(stack, stack, gemstone),
+                    new ContainerChargeRecipeWrapper(stack, stack, orb),
+                    new ContainerChargeRecipeWrapper(stack, stack, orb, orb),
+                    new ContainerChargeRecipeWrapper(stack, stack, orb, orb, orb),
+                    new ContainerChargeRecipeWrapper(stack, stack, orb, orb, orb, orb),
+                    new ContainerChargeRecipeWrapper(stack, stack, orb, orb, orb, orb, orb),
+                    new ContainerChargeRecipeWrapper(stack, stack, orb, orb, orb, orb, orb, orb),
+                    new ContainerChargeRecipeWrapper(stack, stack, orb, orb, orb, orb, orb, orb, orb),
+                    new ContainerChargeRecipeWrapper(stack, stack, orb, orb, orb, orb, orb, orb, orb, orb)
+            ), VanillaRecipeCategoryUid.CRAFTING);
         }
     }
 

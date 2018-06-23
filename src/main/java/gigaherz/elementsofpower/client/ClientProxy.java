@@ -3,7 +3,10 @@ package gigaherz.elementsofpower.client;
 import gigaherz.common.client.ModelHandle;
 import gigaherz.common.state.client.ItemStateMapper;
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.client.renderers.*;
+import gigaherz.elementsofpower.client.renderers.MagicContainerOverlay;
+import gigaherz.elementsofpower.client.renderers.RenderBall;
+import gigaherz.elementsofpower.client.renderers.RenderEssence;
+import gigaherz.elementsofpower.client.renderers.RenderEssentializer;
 import gigaherz.elementsofpower.common.IModProxy;
 import gigaherz.elementsofpower.common.Used;
 import gigaherz.elementsofpower.entities.EntityBall;
@@ -31,6 +34,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoader;
@@ -56,6 +60,10 @@ public class ClientProxy implements IModProxy
     @SubscribeEvent
     public static void registerModels(ModelRegistryEvent event)
     {
+        OBJLoader.INSTANCE.addDomain(ElementsOfPower.MODID);
+
+        ModelHandle.init();
+
         registerBlockModelAsItem(ElementsOfPower.essentializer);
         registerBlockModelAsItem(ElementsOfPower.cocoon, 0, "color=8,facing=north");
 
@@ -84,6 +92,11 @@ public class ClientProxy implements IModProxy
         registerGemMeshDefinition(ElementsOfPower.ring);
         registerGemMeshDefinition(ElementsOfPower.headband);
         registerGemMeshDefinition(ElementsOfPower.necklace);
+
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEssentializer.class, new RenderEssentializer());
+
+        RenderingRegistry.registerEntityRenderingHandler(EntityBall.class, RenderBall::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityEssence.class, RenderEssence::new);
     }
 
     @Optional.Method(modid = "gbook")
@@ -99,19 +112,10 @@ public class ClientProxy implements IModProxy
         event.getMap().registerSprite(ElementsOfPower.location("blocks/cone"));
     }
 
-    public void preInit()
+    @SubscribeEvent
+    public static void colorHandlers(ColorHandlerEvent.Item event)
     {
-        OBJLoader.INSTANCE.addDomain(ElementsOfPower.MODID);
-
-        ModelHandle.init();
-
-        registerClientEvents();
-        registerEntityRenderers();
-    }
-
-    public void init()
-    {
-        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(
+        event.getItemColors().registerItemColorHandler(
                 (stack, tintIndex) ->
                 {
                     if (tintIndex != 0)
@@ -127,12 +131,15 @@ public class ClientProxy implements IModProxy
                 }, ElementsOfPower.spelldust);
     }
 
+    public ClientProxy()
+    {
+        registerClientEvents();
+    }
+
     private void registerClientEvents()
     {
-        MinecraftForge.EVENT_BUS.register(new MagicContainerOverlay());
-        MinecraftForge.EVENT_BUS.register(new MagicTooltips());
-        MinecraftForge.EVENT_BUS.register(new SpellRenderOverlay());
         MinecraftForge.EVENT_BUS.register(new TickEventWandControl());
+        MinecraftForge.EVENT_BUS.register(new MagicContainerOverlay());
     }
 
     @Override
@@ -200,15 +207,6 @@ public class ClientProxy implements IModProxy
     private static void registerGemMeshDefinition(Item item)
     {
         ModelLoader.setCustomMeshDefinition(item, new GemContainerMeshDefinition(item));
-    }
-
-    // ----------------------------------------------------------- Entity Renderers
-    public void registerEntityRenderers()
-    {
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEssentializer.class, new RenderEssentializer());
-
-        RenderingRegistry.registerEntityRenderingHandler(EntityBall.class, RenderBall::new);
-        RenderingRegistry.registerEntityRenderingHandler(EntityEssence.class, RenderEssence::new);
     }
 
     private static class GemContainerMeshDefinition implements ItemMeshDefinition

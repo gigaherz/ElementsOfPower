@@ -1,0 +1,6 @@
+{
+  "recipes": {
+    "container_charge": "gigaherz.elementsofpower.recipes.ContainerChargeRecipeFactory",
+    "gemstone_change": "gigaherz.elementsofpower.recipes.GemstoneChangeRecipeFactory"
+  }
+}

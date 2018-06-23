@@ -9,10 +9,6 @@ import net.minecraft.util.EnumHand;
 
 public interface IModProxy
 {
-    void preInit();
-
-    void init();
-
     void handleSpellcastSync(SpellcastSync message);
 
     void handleRemainingAmountsUpdate(EssentializerAmountsUpdate message);

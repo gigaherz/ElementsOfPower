@@ -8,11 +8,8 @@ import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.gemstones.Gemstone;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
-
-import java.util.Arrays;
 
 public class ItemSpelldust extends ItemStateful
 {

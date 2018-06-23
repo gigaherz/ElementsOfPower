@@ -18,13 +18,13 @@ public class GenericRecipeHandler implements IRecipeHandler
     @Override
     public boolean accepts(@Nonnull IRecipe recipe)
     {
-        return recipe instanceof ShapelessOreRecipe;
+        return !recipe.isDynamic();
     }
 
     @Override
     public IRecipeInfoProvider handle(@Nonnull IRecipe recipe)
     {
-        return new RecipeInfo((ShapelessOreRecipe) recipe);
+        return new RecipeInfo(recipe);
     }
 
     private static class RecipeInfo implements IRecipeInfoProvider
@@ -32,14 +32,13 @@ public class GenericRecipeHandler implements IRecipeHandler
         ArrayList<ItemStack> recipeItems = Lists.newArrayList();
         ItemStack output;
 
-        public RecipeInfo(ShapelessOreRecipe recipe)
+        public RecipeInfo(IRecipe recipe)
         {
             output = recipe.getRecipeOutput();
 
             NonNullList<Ingredient> inputs = recipe.getIngredients();
             for (Ingredient input : inputs)
             {
-
                 ItemStack actualInput = input.getMatchingStacks()[0];
 
                 ItemStack stack = (actualInput).copy();

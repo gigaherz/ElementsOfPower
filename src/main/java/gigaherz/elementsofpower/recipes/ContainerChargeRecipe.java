@@ -90,7 +90,7 @@ public class ContainerChargeRecipe extends IForgeRegistryEntry.Impl<IRecipe> imp
     @Override
     public boolean canFit(int width, int height)
     {
-        return (width*height) >= 2;
+        return (width * height) >= 2;
     }
 
     @Override
@@ -102,5 +102,11 @@ public class ContainerChargeRecipe extends IForgeRegistryEntry.Impl<IRecipe> imp
     public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv)
     {
         return NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
+    }
+
+    @Override
+    public boolean isDynamic()
+    {
+        return true;
     }
 }

@@ -18,9 +18,6 @@ import gigaherz.elementsofpower.essentializer.TileEssentializer;
 import gigaherz.elementsofpower.gemstones.*;
 import gigaherz.elementsofpower.items.*;
 import gigaherz.elementsofpower.network.*;
-//import gigaherz.elementsofpower.progression.DiscoveryHandler;
-import gigaherz.elementsofpower.recipes.ContainerChargeRecipe;
-import gigaherz.elementsofpower.recipes.GemstoneChangeRecipe;
 import gigaherz.elementsofpower.spelldust.ItemSpelldust;
 import gigaherz.elementsofpower.spells.SpellcastEntityData;
 import gigaherz.elementsofpower.spells.blocks.BlockCushion;
@@ -29,8 +26,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
@@ -48,17 +43,17 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.EntityEntry;
-import net.minecraftforge.fml.common.registry.EntityRegistry;
+import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.oredict.OreDictionary;
-import net.minecraftforge.oredict.ShapedOreRecipe;
-import net.minecraftforge.oredict.ShapelessOreRecipe;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.Format;
+
+//import gigaherz.elementsofpower.progression.DiscoveryHandler;
 
 @Mod.EventBusSubscriber
 @Mod(modid = ElementsOfPower.MODID,
@@ -141,8 +136,8 @@ public class ElementsOfPower
                 gemstoneOre = new BlockGemstoneOre("gemstone_ore")
         );
 
-        GameRegistry.registerTileEntity(TileEssentializer.class, essentializer.getRegistryName().toString());
-        GameRegistry.registerTileEntity(TileCocoon.class, cocoon.getRegistryName().toString());
+        GameRegistry.registerTileEntity(TileEssentializer.class, essentializer.getRegistryName());
+        GameRegistry.registerTileEntity(TileCocoon.class, cocoon.getRegistryName());
 
         OreDictionary.registerOre("blockAgate", gemstoneBlock.getStack(GemstoneBlockType.Agate));
         OreDictionary.registerOre("blockAmethyst", gemstoneBlock.getStack(GemstoneBlockType.Amethyst));
@@ -285,24 +280,31 @@ public class ElementsOfPower
 
         SpellcastEntityData.register();
         //DiscoveryHandler.init();
-
-        proxy.preInit();
     }
 
     @SubscribeEvent
     public static void registerEntities(RegistryEvent.Register<EntityEntry> event)
     {
+
         int entityId = 1;
-        EntityRegistry.registerModEntity(location("spell_ball"), EntityBall.class, "SpellBall", entityId++, instance, 80, 3, true);
-        EntityRegistry.registerModEntity(location("essence"), EntityEssence.class, "Essence", entityId++, instance, 80, 3, true, 0x0000FF, 0xFFFF00);
+        event.getRegistry().registerAll(
+                EntityEntryBuilder.create().name("SpellBall")
+                        .id(location("spell_ball"), entityId++)
+                        .entity(EntityBall.class).factory(EntityBall::new)
+                        .tracker(80, 3, true).build(),
+
+                EntityEntryBuilder.create().name("Essence")
+                        .id(location("essence"), entityId++)
+                        .entity(EntityEssence.class).factory(EntityEssence::new)
+                        .tracker(80, 3, true)
+                        .egg(0x0000FF, 0xFFFF00).build()
+        );
         logger.debug("Next entity id: " + entityId);
     }
 
     @EventHandler
     public void init(FMLInitializationEvent event)
     {
-        proxy.init();
-
         registerWorldGenerators();
 
         NetworkRegistry.INSTANCE.registerGuiHandler(this, guiHandler);

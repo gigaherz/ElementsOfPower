@@ -12,14 +12,20 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.common.Optional;
-import org.apache.commons.lang3.tuple.Triple;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @Optional.Interface(modid = "baubles", iface = "baubles.api.IBauble")
-public abstract class ItemBauble extends ItemGemContainer implements IBauble
+public abstract class ItemBauble extends ItemGemContainer
 {
     private static final float MAX_TRANSFER_TICK = 1 / 20.0f;
 
@@ -28,9 +34,16 @@ public abstract class ItemBauble extends ItemGemContainer implements IBauble
         super(name);
     }
 
+    interface ItemSlotReference
+    {
+        ItemStack get();
+
+        void set(ItemStack stack);
+    }
+
     @Nullable
-    private static Triple<ItemStack, IInventory, Integer>
-    findInInventory(ItemStack thisStack, @Nullable IInventory b, MagicAmounts available)
+    private static ItemSlotReference
+    findInInventory(ItemStack thisStack, @Nullable final IInventory b, MagicAmounts available)
     {
         if (b == null)
             return null;
@@ -44,7 +57,59 @@ public abstract class ItemBauble extends ItemGemContainer implements IBauble
             {
                 if (ContainerInformation.canTransferAnything(s, available))
                 {
-                    return Triple.of(s, b, i);
+                    final int slot = i;
+                    return new ItemSlotReference()
+                    {
+                        @Override
+                        public ItemStack get()
+                        {
+                            return b.getStackInSlot(slot);
+                        }
+
+                        @Override
+                        public void set(ItemStack stack)
+                        {
+                            b.setInventorySlotContents(slot, stack);
+                        }
+                    };
+                }
+            }
+        }
+
+        return null;
+    }
+
+    @Nullable
+    private static ItemSlotReference
+    findInInventory(ItemStack thisStack, @Nullable IItemHandlerModifiable b, MagicAmounts available)
+    {
+        if (b == null)
+            return null;
+
+        for (int i = 0; i < b.getSlots(); i++)
+        {
+            ItemStack s = b.getStackInSlot(i);
+            if (s == thisStack)
+                continue;
+            if (ContainerInformation.canItemContainMagic(s))
+            {
+                if (ContainerInformation.canTransferAnything(s, available))
+                {
+                    final int slot = i;
+                    return new ItemSlotReference()
+                    {
+                        @Override
+                        public ItemStack get()
+                        {
+                            return b.getStackInSlot(slot);
+                        }
+
+                        @Override
+                        public void set(ItemStack stack)
+                        {
+                            b.setStackInSlot(slot, stack);
+                        }
+                    };
                 }
             }
         }
@@ -60,49 +125,6 @@ public abstract class ItemBauble extends ItemGemContainer implements IBauble
     protected MagicAmounts adjustRemovedMagic(MagicAmounts am)
     {
         return am.multiply(1 / 1.5f);
-    }
-
-    @Optional.Method(modid = "baubles")
-    @Override
-    public abstract BaubleType getBaubleType(ItemStack itemstack);
-
-    @Override
-    public boolean willAutoSync(ItemStack itemstack, EntityLivingBase player) {
-        return true;
-    }
-
-    @Override
-    public void onWornTick(ItemStack itemstack, EntityLivingBase player)
-    {
-        if (player.world.isRemote)
-            return;
-
-        if (player instanceof EntityPlayer)
-            tryTransferToWands(itemstack, (EntityPlayer) player);
-    }
-
-    @Override
-    public void onEquipped(ItemStack itemstack, EntityLivingBase player)
-    {
-
-    }
-
-    @Override
-    public void onUnequipped(ItemStack itemstack, EntityLivingBase player)
-    {
-
-    }
-
-    @Override
-    public boolean canEquip(ItemStack itemstack, EntityLivingBase player)
-    {
-        return true;
-    }
-
-    @Override
-    public boolean canUnequip(ItemStack itemstack, EntityLivingBase player)
-    {
-        return true;
     }
 
     @Override
@@ -124,25 +146,23 @@ public abstract class ItemBauble extends ItemGemContainer implements IBauble
         if (available.isEmpty())
             return;
 
-        Triple<ItemStack, IInventory, Integer> triple;
+        ItemSlotReference slotReference = findInInventory(thisStack, p.inventory, available);
 
-        triple = findInInventory(thisStack, p.inventory, available);
-
-        if (triple == null)
+        if (slotReference == null)
         {
-            triple = findInInventory(thisStack, BaublesApi.getBaubles(p), available);
+            slotReference = findInInventory(thisStack, BaublesApi.getBaublesHandler(p), available);
         }
 
-        if (triple == null)
+        if (slotReference == null)
             return;
 
-        doTransfer(thisStack, available, triple);
+        doTransfer(thisStack, available, slotReference);
     }
 
     private void doTransfer(ItemStack thisStack, MagicAmounts available,
-                            Triple<ItemStack, IInventory, Integer> triple)
+                            ItemSlotReference slotReference)
     {
-        ItemStack stack = triple.getLeft();
+        ItemStack stack = slotReference.get();
         MagicAmounts limits = ContainerInformation.getMagicLimits(stack);
         MagicAmounts amounts = ContainerInformation.getContainedMagic(stack);
 
@@ -155,7 +175,7 @@ public abstract class ItemBauble extends ItemGemContainer implements IBauble
         {
             ItemStack stack2 = ContainerInformation.setContainedMagic(stack, amounts);
             if (stack2 != stack)
-                triple.getMiddle().setInventorySlotContents(triple.getRight(), stack2);
+                slotReference.set(stack2);
 
             if (!isInfinite(thisStack))
                 ContainerInformation.setContainedMagic(thisStack, available);
@@ -195,5 +215,88 @@ public abstract class ItemBauble extends ItemGemContainer implements IBauble
         }
 
         return totalTransfer;
+    }
+
+    private static Capability<IBauble> BAUBLE_ITEM_CAP = null;
+
+    @CapabilityInject(IBauble.class)
+    public static void injectBaubleCap(Capability<IBauble> cap)
+    {
+        BAUBLE_ITEM_CAP = cap;
+    }
+
+    @Nullable
+    @Override
+    public ICapabilityProvider initCapabilities(ItemStack _stack, @Nullable NBTTagCompound nbt)
+    {
+        return BAUBLE_ITEM_CAP == null ? null : new ICapabilityProvider()
+        {
+            ItemStack stack = _stack;
+
+            @Override
+            public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing)
+            {
+                return capability == BAUBLE_ITEM_CAP;
+            }
+
+            @SuppressWarnings("unchecked")
+            @Nullable
+            @Override
+            public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
+            {
+                if (capability == BAUBLE_ITEM_CAP)
+                    return (T) getBaubleInstance();
+                return null;
+            }
+        };
+    }
+
+    protected abstract Object getBaubleInstance();
+
+    protected abstract class BaubleData implements IBauble
+    {
+        @Optional.Method(modid = "baubles")
+        @Override
+        public abstract BaubleType getBaubleType(ItemStack itemstack);
+
+        @Override
+        public boolean willAutoSync(ItemStack itemstack, EntityLivingBase player)
+        {
+            return true;
+        }
+
+        @Override
+        public void onWornTick(ItemStack itemstack, EntityLivingBase player)
+        {
+            if (player.world.isRemote)
+                return;
+
+            if (player instanceof EntityPlayer)
+                tryTransferToWands(itemstack, (EntityPlayer) player);
+        }
+
+        @Override
+        public void onEquipped(ItemStack itemstack, EntityLivingBase player)
+        {
+
+        }
+
+        @Override
+        public void onUnequipped(ItemStack itemstack, EntityLivingBase player)
+        {
+
+        }
+
+        @Override
+        public boolean canEquip(ItemStack itemstack, EntityLivingBase player)
+        {
+            return true;
+        }
+
+        @Override
+        public boolean canUnequip(ItemStack itemstack, EntityLivingBase player)
+        {
+            return true;
+        }
     }
 }

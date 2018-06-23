@@ -62,7 +62,7 @@ public class TickEventWandControl
             s.keyBindings[indices[i]] = interceptKeys[i];
         }
 
-        //KeyBinding.resetKeyBindingArrayAndHash();
+        KeyBinding.resetKeyBindingArrayAndHash();
     }
 
     @SubscribeEvent
@@ -136,7 +136,7 @@ public class TickEventWandControl
 
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            if (interceptKeys[i].retrieveClick())
+            if (interceptKeys[i].isPressedIntercept())
             {
                 sequence += SpellManager.elementChars[i];
             }

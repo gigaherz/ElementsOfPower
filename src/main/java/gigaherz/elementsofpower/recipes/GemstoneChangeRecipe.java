@@ -7,11 +7,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.IForgeRegistryEntry;
-
-import javax.annotation.Nullable;
 
 public class GemstoneChangeRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
 {
@@ -125,5 +122,11 @@ public class GemstoneChangeRecipe extends IForgeRegistryEntry.Impl<IRecipe> impl
         }
 
         return arr;
+    }
+
+    @Override
+    public boolean isDynamic()
+    {
+        return true;
     }
 }

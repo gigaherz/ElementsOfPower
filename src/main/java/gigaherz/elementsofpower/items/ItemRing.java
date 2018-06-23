@@ -1,10 +1,10 @@
 package gigaherz.elementsofpower.items;
 
 //import baubles.api.BaubleType;
+
 import baubles.api.BaubleType;
 import gigaherz.elementsofpower.ElementsOfPower;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.Optional;
 
 public class ItemRing extends ItemBauble
 {
@@ -14,11 +14,17 @@ public class ItemRing extends ItemBauble
         setCreativeTab(ElementsOfPower.tabMagic);
     }
 
-    @Optional.Method(modid = "baubles")
     @Override
-    public BaubleType getBaubleType(ItemStack itemstack)
+    protected Object getBaubleInstance()
     {
-        return BaubleType.RING;
+        return new BaubleData()
+        {
+            @Override
+            public BaubleType getBaubleType(ItemStack itemstack)
+            {
+                return BaubleType.RING;
+            }
+        };
     }
 }
 

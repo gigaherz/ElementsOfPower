@@ -10,7 +10,6 @@ import gigaherz.elementsofpower.gemstones.Gemstone;
 import gigaherz.elementsofpower.gemstones.ItemGemstone;
 import gigaherz.elementsofpower.gemstones.Quality;
 import gigaherz.elementsofpower.network.SpellSequenceUpdate;
-//import gigaherz.elementsofpower.progression.DiscoveryHandler;
 import gigaherz.elementsofpower.spells.SpellManager;
 import gigaherz.elementsofpower.spells.Spellcast;
 import gigaherz.elementsofpower.spells.SpellcastEntityData;
@@ -27,6 +26,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nullable;
+
+//import gigaherz.elementsofpower.progression.DiscoveryHandler;
 
 public abstract class ItemGemContainer extends ItemMagicContainer
 {

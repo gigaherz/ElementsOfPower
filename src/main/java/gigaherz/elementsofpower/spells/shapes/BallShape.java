@@ -25,7 +25,7 @@ public class BallShape extends SpellShape
         World world = player.world;
         EntityBall entity = new EntityBall(world, cast, player);
 
-        entity.setHeadingFromThrower(player, player.rotationPitch, player.rotationYaw, 0.0F, 2.5F, 1.0F);
+        entity.shoot(player, player.rotationPitch, player.rotationYaw, 0.0F, 2.5F, 1.0F);
 
         if (world.spawnEntity(entity))
             return cast;

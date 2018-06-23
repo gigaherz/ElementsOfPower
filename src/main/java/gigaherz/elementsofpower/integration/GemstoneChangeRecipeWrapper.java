@@ -1,14 +1,13 @@
 package gigaherz.elementsofpower.integration;
 
 import mezz.jei.api.ingredients.IIngredients;
-import mezz.jei.api.recipe.BlankRecipeWrapper;
-import mezz.jei.api.recipe.wrapper.ICraftingRecipeWrapper;
+import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.item.ItemStack;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class GemstoneChangeRecipeWrapper extends BlankRecipeWrapper implements ICraftingRecipeWrapper
+public class GemstoneChangeRecipeWrapper implements IRecipeWrapper
 {
 
     private final List<ItemStack> inputs;

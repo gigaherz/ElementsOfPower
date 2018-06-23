@@ -245,7 +245,7 @@ public class EntityEssence extends EntityAmbientCreature
         Entity entity = world.getClosestPlayerToEntity(this, 8.0D);
         if (entity != null)
         {
-            dp = getDistanceSqToEntity(entity);
+            dp = getDistanceSq(entity);
             if (dp < 2.0 && entityAge2 > 100)
             {
                 tryAbosrbInto(entity);

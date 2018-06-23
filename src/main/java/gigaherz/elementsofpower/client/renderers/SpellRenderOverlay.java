@@ -1,6 +1,7 @@
 package gigaherz.elementsofpower.client.renderers;
 
 import com.google.common.collect.Maps;
+import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.client.renderers.spellrender.RenderBeam;
 import gigaherz.elementsofpower.client.renderers.spellrender.RenderCone;
 import gigaherz.elementsofpower.client.renderers.spellrender.RenderSpell;
@@ -15,10 +16,13 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
 
 import java.util.Map;
 
+@Mod.EventBusSubscriber(value = Side.CLIENT, modid = ElementsOfPower.MODID)
 public class SpellRenderOverlay
 {
     public static final Map<SpellShape, RenderSpell> rendererRegistry = Maps.newHashMap();
@@ -31,7 +35,7 @@ public class SpellRenderOverlay
     }
 
     @SubscribeEvent
-    public void renderFirstPerson(RenderWorldLastEvent event)
+    public static void renderFirstPerson(RenderWorldLastEvent event)
     {
         EntityPlayer player = Minecraft.getMinecraft().player;
         RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
@@ -49,7 +53,7 @@ public class SpellRenderOverlay
     }
 
     @SubscribeEvent
-    public void playerRenderPost(RenderPlayerEvent.Post event)
+    public static void playerRenderPost(RenderPlayerEvent.Post event)
     {
         if (event.getEntityPlayer() == Minecraft.getMinecraft().player)
             return;
@@ -82,7 +86,7 @@ public class SpellRenderOverlay
     }
 
     @SuppressWarnings("unchecked")
-    public void drawSpellsOnPlayer(EntityPlayer player, RenderManager renderManager, double x, double y, double z, float partialTicks, Vec3d offset)
+    public static void drawSpellsOnPlayer(EntityPlayer player, RenderManager renderManager, double x, double y, double z, float partialTicks, Vec3d offset)
     {
         SpellcastEntityData data = SpellcastEntityData.get(player);
 

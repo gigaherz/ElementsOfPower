@@ -9,13 +9,16 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
 import org.lwjgl.input.Keyboard;
 
+@Mod.EventBusSubscriber(value = Side.CLIENT, modid = ElementsOfPower.MODID)
 public class MagicTooltips
 {
     @SubscribeEvent
-    public void onTooltip(ItemTooltipEvent event)
+    public static void onTooltip(ItemTooltipEvent event)
     {
         if (ContainerInformation.itemContainsMagic(event.getItemStack()))
             return;
