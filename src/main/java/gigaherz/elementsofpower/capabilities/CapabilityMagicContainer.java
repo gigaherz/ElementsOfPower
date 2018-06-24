@@ -19,7 +19,7 @@ public class CapabilityMagicContainer
 
     public static void register()
     {
-        CapabilityManager.INSTANCE.register(IMagicContainer.class, new Storage(), new Factory());
+        CapabilityManager.INSTANCE.register(IMagicContainer.class, new Storage(), MagicContainer::new);
     }
 
     private static class Storage implements Capability.IStorage<IMagicContainer>
@@ -61,15 +61,6 @@ public class CapabilityMagicContainer
             }
 
             instance.setContainedMagic(amounts);
-        }
-    }
-
-    private static class Factory implements Callable<IMagicContainer>
-    {
-        @Override
-        public IMagicContainer call() throws Exception
-        {
-            throw new UnsupportedOperationException("Default implementation is not available for IMagicContainer. Please create your own instances of MagicContainer.");
         }
     }
 }

@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.analyzer.gui;
 
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.database.ContainerInformation;
+import gigaherz.elementsofpower.database.GemstoneInformation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -213,7 +213,7 @@ public class ContainerAnalyzer extends Container
         ItemStack stack = s.getStack();
         if (stack.getCount() > 0 && !player.world.isRemote)
         {
-            ItemStack stack2 = ContainerInformation.identifyQuality(stack);
+            ItemStack stack2 = GemstoneInformation.identifyQuality(stack);
 
             if (!ItemStack.areItemStacksEqual(stack, stack2))
             {

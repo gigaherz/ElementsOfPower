@@ -18,7 +18,7 @@ public class GenericRecipeHandler implements IRecipeHandler
     @Override
     public boolean accepts(@Nonnull IRecipe recipe)
     {
-        return !recipe.isDynamic();
+        return !recipe.isDynamic() && recipe.getIngredients().stream().allMatch(i -> i.getMatchingStacks().length > 0);
     }
 
     @Override
@@ -39,7 +39,11 @@ public class GenericRecipeHandler implements IRecipeHandler
             NonNullList<Ingredient> inputs = recipe.getIngredients();
             for (Ingredient input : inputs)
             {
-                ItemStack actualInput = input.getMatchingStacks()[0];
+                ItemStack[] stacks = input.getMatchingStacks();
+                if (stacks.length == 0)
+                    continue;
+
+                ItemStack actualInput = stacks[0];
 
                 ItemStack stack = (actualInput).copy();
                 stack.setCount(1);

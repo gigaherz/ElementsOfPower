@@ -49,9 +49,12 @@ public class ItemMagicOrb extends ItemRegistered
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems)
     {
-        for (int meta = 0; meta < subNames.length; meta++)
+        if (this.isInCreativeTab(tab))
         {
-            subItems.add(new ItemStack(this, 1, meta));
+            for (int meta = 0; meta < subNames.length; meta++)
+            {
+                subItems.add(new ItemStack(this, 1, meta));
+            }
         }
     }
 

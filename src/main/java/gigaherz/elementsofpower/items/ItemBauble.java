@@ -3,6 +3,7 @@ package gigaherz.elementsofpower.items;
 import baubles.api.BaubleType;
 import baubles.api.BaublesApi;
 import baubles.api.IBauble;
+import gigaherz.elementsofpower.capabilities.IMagicContainer;
 import gigaherz.elementsofpower.database.ContainerInformation;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.gemstones.Gemstone;
@@ -51,28 +52,23 @@ public abstract class ItemBauble extends ItemGemContainer
         for (int i = 0; i < b.getSizeInventory(); i++)
         {
             ItemStack s = b.getStackInSlot(i);
-            if (s == thisStack)
-                continue;
-            if (ContainerInformation.canItemContainMagic(s))
+            if (canReceiveMagic(thisStack, s, available))
             {
-                if (ContainerInformation.canTransferAnything(s, available))
+                final int slot = i;
+                return new ItemSlotReference()
                 {
-                    final int slot = i;
-                    return new ItemSlotReference()
+                    @Override
+                    public ItemStack get()
                     {
-                        @Override
-                        public ItemStack get()
-                        {
-                            return b.getStackInSlot(slot);
-                        }
+                        return b.getStackInSlot(slot);
+                    }
 
-                        @Override
-                        public void set(ItemStack stack)
-                        {
-                            b.setInventorySlotContents(slot, stack);
-                        }
-                    };
-                }
+                    @Override
+                    public void set(ItemStack stack)
+                    {
+                        b.setInventorySlotContents(slot, stack);
+                    }
+                };
             }
         }
 
@@ -89,33 +85,35 @@ public abstract class ItemBauble extends ItemGemContainer
         for (int i = 0; i < b.getSlots(); i++)
         {
             ItemStack s = b.getStackInSlot(i);
-            if (s == thisStack)
-                continue;
-            if (ContainerInformation.canItemContainMagic(s))
+            if (canReceiveMagic(thisStack, s, available))
             {
-                if (ContainerInformation.canTransferAnything(s, available))
+                final int slot = i;
+                return new ItemSlotReference()
                 {
-                    final int slot = i;
-                    return new ItemSlotReference()
+                    @Override
+                    public ItemStack get()
                     {
-                        @Override
-                        public ItemStack get()
-                        {
-                            return b.getStackInSlot(slot);
-                        }
+                        return b.getStackInSlot(slot);
+                    }
 
-                        @Override
-                        public void set(ItemStack stack)
-                        {
-                            b.setStackInSlot(slot, stack);
-                        }
-                    };
-                }
+                    @Override
+                    public void set(ItemStack stack)
+                    {
+                        b.setStackInSlot(slot, stack);
+                    }
+                };
             }
         }
 
         return null;
     }
+    private static boolean canReceiveMagic(ItemStack thisStack, ItemStack s, MagicAmounts available)
+    {
+        return s != thisStack
+                && ContainerInformation.canItemContainMagic(s)
+                && ContainerInformation.canTransferAnything(s, available);
+    }
+
 
     protected MagicAmounts adjustInsertedMagic(MagicAmounts am)
     {
@@ -141,7 +139,11 @@ public abstract class ItemBauble extends ItemGemContainer
 
     protected void tryTransferToWands(ItemStack thisStack, EntityPlayer p)
     {
-        MagicAmounts available = ContainerInformation.getContainedMagic(thisStack);
+        IMagicContainer magic = ContainerInformation.getMagic(thisStack);
+        if (magic == null)
+            return;
+
+        MagicAmounts available = magic.getContainedMagic();
 
         if (available.isEmpty())
             return;
@@ -156,33 +158,36 @@ public abstract class ItemBauble extends ItemGemContainer
         if (slotReference == null)
             return;
 
-        doTransfer(thisStack, available, slotReference);
+        doTransfer(thisStack, magic, available, slotReference);
     }
 
-    private void doTransfer(ItemStack thisStack, MagicAmounts available,
+    private void doTransfer(ItemStack thisStack, IMagicContainer thisMagic,
+                            MagicAmounts available,
                             ItemSlotReference slotReference)
     {
         ItemStack stack = slotReference.get();
-        MagicAmounts limits = ContainerInformation.getMagicLimits(stack);
-        MagicAmounts amounts = ContainerInformation.getContainedMagic(stack);
+        IMagicContainer magic = ContainerInformation.getMagic(stack);
+        if (magic == null)
+            return;
+
+        MagicAmounts limits = magic.getCapacity();
+        MagicAmounts amounts = magic.getContainedMagic();
 
         if (limits.isEmpty())
             return;
 
-        float totalTransfer = getTotalTransfer(thisStack, available, stack, limits, amounts);
+        float totalTransfer = getTotalTransfer(thisStack, thisMagic, available, stack, limits, amounts);
 
         if (totalTransfer > 0)
         {
-            ItemStack stack2 = ContainerInformation.setContainedMagic(stack, amounts);
-            if (stack2 != stack)
-                slotReference.set(stack2);
+            magic.setContainedMagic(amounts);
 
-            if (!isInfinite(thisStack))
-                ContainerInformation.setContainedMagic(thisStack, available);
+            if (!thisMagic.isInfinite())
+                thisMagic.setContainedMagic(available);
         }
     }
 
-    private float getTotalTransfer(ItemStack thisStack,
+    private float getTotalTransfer(ItemStack thisStack, IMagicContainer thisMagic,
                                    MagicAmounts available, ItemStack stack,
                                    MagicAmounts limits, MagicAmounts amounts)
     {
@@ -203,13 +208,13 @@ public abstract class ItemBauble extends ItemGemContainer
                 maxTransfer *= boost;
 
             float transfer = Math.min(maxTransfer, limits.get(i) - amounts.get(i));
-            if (!isInfinite(stack))
+            if (!thisMagic.isInfinite())
                 transfer = Math.min(available.get(i), transfer);
             if (transfer > 0)
             {
                 totalTransfer += transfer;
                 amounts = amounts.add(i, transfer);
-                if (!isInfinite(stack))
+                if (!thisMagic.isInfinite())
                     available = available.add(i, -transfer);
             }
         }

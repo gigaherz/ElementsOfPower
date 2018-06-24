@@ -1,6 +1,7 @@
 package gigaherz.elementsofpower.entities;
 
 import com.google.common.collect.Lists;
+import gigaherz.elementsofpower.capabilities.IMagicContainer;
 import gigaherz.elementsofpower.database.ContainerInformation;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import net.minecraft.block.state.IBlockState;
@@ -351,32 +352,14 @@ public class EntityEssence extends EntityAmbientCreature
             }
         }
 
-        /*if (stack.getCount() <= 0)
-        {
-            b = BaublesApi.getBaubles(p);
-            if (b != null)
-            {
-                for (int i = 0; i < b.getSizeInventory(); i++)
-                {
-                    ItemStack s = b.getStackInSlot(i);
-                    if (ContainerInformation.canItemContainMagic(s))
-                    {
-                        if (ContainerInformation.canTransferAnything(s, self))
-                        {
-                            stack = s;
-                            inv = b;
-                            slot = i;
-                            break;
-                        }
-                    }
-                }
-            }
-        }*/
-
         if (stack.getCount() > 0)
         {
-            MagicAmounts limits = ContainerInformation.getMagicLimits(stack);
-            MagicAmounts amounts = ContainerInformation.getContainedMagic(stack);
+            IMagicContainer magic = ContainerInformation.getMagic(stack);
+            if (magic == null)
+                return;
+
+            MagicAmounts limits = magic.getCapacity();
+            MagicAmounts amounts = magic.getContainedMagic();
 
             if (!limits.isEmpty())
             {
@@ -395,8 +378,7 @@ public class EntityEssence extends EntityAmbientCreature
 
                 if (totalTransfer > 0)
                 {
-                    stack = ContainerInformation.setContainedMagic(stack, amounts);
-                    inv.setInventorySlotContents(slot, stack);
+                    magic.setContainedMagic(amounts);
                 }
             }
 

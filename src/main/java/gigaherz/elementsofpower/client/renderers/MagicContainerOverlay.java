@@ -2,6 +2,7 @@ package gigaherz.elementsofpower.client.renderers;
 
 import gigaherz.common.client.StackRenderingHelper;
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.capabilities.IMagicContainer;
 import gigaherz.elementsofpower.client.TickEventWandControl;
 import gigaherz.elementsofpower.database.ContainerInformation;
 import gigaherz.elementsofpower.database.MagicAmounts;
@@ -37,9 +38,13 @@ public class MagicContainerOverlay extends Gui
         if (heldItem.getCount() <= 0)
             return;
 
+        IMagicContainer magic = ContainerInformation.getMagic(heldItem);
+        if (magic == null)
+            return;
+
         // Contained essences
-        MagicAmounts amounts = ContainerInformation.getContainedMagic(heldItem);
-        if (amounts.isEmpty())
+        MagicAmounts amounts = magic.getContainedMagic();
+        if (!magic.isInfinite() && amounts.isEmpty())
             return;
 
         FontRenderer font = Minecraft.getMinecraft().fontRenderer;
@@ -68,7 +73,7 @@ public class MagicContainerOverlay extends Gui
 
             StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yPos, stack, alpha);
 
-            String formatted = ContainerInformation.isInfiniteContainer(heldItem) ? "\u221E" : ElementsOfPower.prettyNumberFormatter.format(amounts.get(i));
+            String formatted = magic.isInfinite() ? "\u221E" : ElementsOfPower.prettyNumberFormatter.format(amounts.get(i));
             this.drawCenteredString(font, formatted, xPos + 8, yPos + 11, 0xFFC0C0C0);
             if (TickEventWandControl.instance.handInUse != null)
                 this.drawCenteredString(font, "K:" + (i + 1), xPos + 8, yPos + 24, 0xFFC0C0C0);

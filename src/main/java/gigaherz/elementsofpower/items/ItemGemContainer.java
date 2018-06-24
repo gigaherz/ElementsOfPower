@@ -3,6 +3,9 @@ package gigaherz.elementsofpower.items;
 import gigaherz.common.state.IItemStateManager;
 import gigaherz.common.state.implementation.ItemStateManager;
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.capabilities.AbstractMagicContainer;
+import gigaherz.elementsofpower.capabilities.CapabilityMagicContainer;
+import gigaherz.elementsofpower.capabilities.IMagicContainer;
 import gigaherz.elementsofpower.database.ContainerInformation;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.gemstones.Element;
@@ -21,10 +24,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.Constants;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 //import gigaherz.elementsofpower.progression.DiscoveryHandler;
@@ -33,27 +41,16 @@ public abstract class ItemGemContainer extends ItemMagicContainer
 {
     public static final PropertyInteger NORMAL = PropertyInteger.create("meta", 0, 1);
 
-
     @Override
-    public IItemStateManager createStateManager()
+    public boolean canContainMagic(ItemStack stack)
     {
-        return new ItemStateManager(this, NORMAL);
-    }
-
-    public ItemGemContainer(String name)
-    {
-        super(name);
+        return getGemstone(stack) != null;
     }
 
     @Override
     public boolean isInfinite(ItemStack stack)
     {
         return getGemstone(stack) == Gemstone.Creativite;
-    }
-
-    public ItemStack getStack(Gemstone gemstone, Quality quality)
-    {
-        return setQuality(getStack(1, gemstone), quality);
     }
 
     @Override
@@ -76,6 +73,22 @@ public abstract class ItemGemContainer extends ItemMagicContainer
             magic = magic.add(g.getElement(), magic.get(g.getElement()) * 0.25f);
 
         return magic;
+    }
+
+    @Override
+    public IItemStateManager createStateManager()
+    {
+        return new ItemStateManager(this, NORMAL);
+    }
+
+    public ItemGemContainer(String name)
+    {
+        super(name);
+    }
+
+    public ItemStack getStack(Gemstone gemstone, Quality quality)
+    {
+        return setQuality(getStack(1, gemstone), quality);
     }
 
     @Override
@@ -183,13 +196,20 @@ public abstract class ItemGemContainer extends ItemMagicContainer
             t = ElementsOfPower.gemstone.setQuality(t, q);
         }
 
-        MagicAmounts am = ContainerInformation.getContainedMagic(stack);
+        IMagicContainer magic = ContainerInformation.getMagic(stack);
+        if (magic == null)
+            return ItemStack.EMPTY;
+
+        MagicAmounts am = magic.getContainedMagic();
 
         if (!am.isEmpty())
         {
             am = adjustRemovedMagic(am);
 
-            t = ContainerInformation.setContainedMagic(t, am);
+            IMagicContainer magic2 = ContainerInformation.getMagic(t);
+            if (magic2 == null)
+                return ItemStack.EMPTY;
+            magic2.setContainedMagic(am);
         }
 
         return t;
@@ -197,23 +217,34 @@ public abstract class ItemGemContainer extends ItemMagicContainer
 
     public ItemStack setContainedGemstone(ItemStack stack, ItemStack gemstone)
     {
-        if (gemstone.getCount() <= 0)
-        {
-            return ContainerInformation.setContainedMagic(setQuality(setGemstone(stack, null), null), MagicAmounts.EMPTY);
-        }
+        ItemStack result;
+        MagicAmounts am = MagicAmounts.EMPTY;
 
         if (!(gemstone.getItem() instanceof ItemGemstone))
             return ItemStack.EMPTY;
 
-        ItemGemstone g = ((ItemGemstone) gemstone.getItem());
-        Gemstone gem = g.getGemstone(gemstone);
-        Quality q = g.getQuality(gemstone);
+        if (gemstone.getCount() <= 0)
+        {
+            result = setQuality(setGemstone(stack, null), null);
+        }
+        else
+        {
+            ItemGemstone g = ((ItemGemstone) gemstone.getItem());
+            Gemstone gem = g.getGemstone(gemstone);
+            Quality q = g.getQuality(gemstone);
+            result = setQuality(setGemstone(stack, gem), q);
 
-        MagicAmounts am = ContainerInformation.getContainedMagic(gemstone);
+            IMagicContainer magic3 = ContainerInformation.getMagic(gemstone);
 
-        am = adjustInsertedMagic(am);
+            am = (magic3 == null) ? MagicAmounts.EMPTY : magic3.getContainedMagic();
+            am = adjustInsertedMagic(am);
+        }
 
-        return ContainerInformation.setContainedMagic(setQuality(setGemstone(stack, gem), q), am);
+        IMagicContainer magic4 = ContainerInformation.getMagic(result);
+        if (magic4 != null)
+            magic4.setContainedMagic(am);
+
+        return result;
     }
 
     protected MagicAmounts adjustInsertedMagic(MagicAmounts am)
@@ -314,10 +345,14 @@ public abstract class ItemGemContainer extends ItemMagicContainer
         if (cast == null)
             return false;
 
-        MagicAmounts amounts = ContainerInformation.getContainedMagic(stack);
+        IMagicContainer magic = ContainerInformation.getMagic(stack);
+        if (magic == null)
+            return false;
+
+        MagicAmounts amounts = magic.getContainedMagic();
         MagicAmounts cost = cast.getSpellCost();
 
-        if (!ContainerInformation.isInfiniteContainer(stack) && !amounts.hasEnough(cost))
+        if (!magic.isInfinite() && !amounts.hasEnough(cost))
             return false;
 
         cast = cast.getShape().castSpell(stack, player, cast);
@@ -327,10 +362,10 @@ public abstract class ItemGemContainer extends ItemMagicContainer
             data.begin(cast);
         }
 
-        if (!ContainerInformation.isInfiniteContainer(stack))
+        if (!magic.isInfinite())
             amounts = amounts.subtract(cost);
 
-        ContainerInformation.setContainedMagic(stack, amounts);
+        magic.setContainedMagic(amounts);
 
         //DiscoveryHandler.instance.onSpellcast(player, cast);
         return updateSequenceOnWand;
@@ -343,7 +378,11 @@ public abstract class ItemGemContainer extends ItemMagicContainer
             NBTTagCompound nbt = stack.getTagCompound();
             if (nbt == null)
             {
-                if (!ContainerInformation.isInfiniteContainer(stack))
+                IMagicContainer magic = ContainerInformation.getMagic(stack);
+                if (magic == null)
+                    return;
+
+                if (!magic.isInfinite())
                     return;
 
                 nbt = new NBTTagCompound();

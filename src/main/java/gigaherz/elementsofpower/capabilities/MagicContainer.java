@@ -4,18 +4,21 @@ import gigaherz.elementsofpower.database.MagicAmounts;
 
 public class MagicContainer implements IMagicContainer
 {
-    final MagicAmounts capacity;
+    private MagicAmounts capacity;
     private MagicAmounts containedMagic;
 
-    public MagicContainer(MagicAmounts capacity)
-    {
-        this.capacity = capacity;
-    }
+    public MagicContainer() {}
 
     @Override
     public MagicAmounts getCapacity()
     {
         return capacity;
+    }
+
+    @Override
+    public void setCapacity(MagicAmounts capacity)
+    {
+        this.capacity = capacity;
     }
 
     @Override

@@ -4,6 +4,10 @@ import gigaherz.common.state.IItemState;
 import gigaherz.common.state.IItemStateManager;
 import gigaherz.common.state.implementation.ItemStateManager;
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.capabilities.AbstractMagicContainer;
+import gigaherz.elementsofpower.capabilities.CapabilityMagicContainer;
+import gigaherz.elementsofpower.capabilities.IMagicContainer;
+import gigaherz.elementsofpower.capabilities.MagicContainer;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.items.ItemMagicContainer;
 import net.minecraft.block.properties.PropertyEnum;
@@ -13,11 +17,16 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.Constants;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -45,6 +54,40 @@ public class ItemGemstone extends ItemMagicContainer
     }
 
     @Override
+    public boolean canContainMagic(ItemStack stack)
+    {
+        return getGemstone(stack) != null;
+    }
+
+    @Override
+    public boolean isInfinite(ItemStack stack)
+    {
+        return getGemstone(stack) == Gemstone.Creativite;
+    }
+
+    @Override
+    public MagicAmounts getCapacity(ItemStack stack)
+    {
+        Gemstone g = getGemstone(stack);
+        if (g == null)
+            return MagicAmounts.EMPTY;
+
+        Quality q = getQuality(stack);
+        if (q == null)
+            return MagicAmounts.EMPTY;
+
+        MagicAmounts magic = capacities[q.ordinal()];
+
+        Element e = g.getElement();
+        if (e == null)
+            magic = magic.all(magic.get(0) * 0.1f);
+        else
+            magic = magic.add(g.getElement(), magic.get(g.getElement()) * 0.25f);
+
+        return magic;
+    }
+
+    @Override
     public IItemStateManager createStateManager()
     {
         return new ItemStateManager(this, GEM);
@@ -53,12 +96,15 @@ public class ItemGemstone extends ItemMagicContainer
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems)
     {
-        for (Gemstone type : GEM.getAllowedValues())
+        if (this.isInCreativeTab(tab))
         {
-            IItemState state = getDefaultState().withProperty(GEM, type);
-            for (Quality q : Quality.values)
+            for (Gemstone type : GEM.getAllowedValues())
             {
-                subItems.add(setQuality(state.getStack(), q));
+                IItemState state = getDefaultState().withProperty(GEM, type);
+                for (Quality q : Quality.values)
+                {
+                    subItems.add(setQuality(state.getStack(), q));
+                }
             }
         }
     }
@@ -102,28 +148,6 @@ public class ItemGemstone extends ItemMagicContainer
         {
             subItems.add(new ItemStack(this, 1, meta));
         }
-    }
-
-    @Override
-    public MagicAmounts getCapacity(ItemStack stack)
-    {
-        Gemstone g = getGemstone(stack);
-        if (g == null)
-            return MagicAmounts.EMPTY;
-
-        Quality q = getQuality(stack);
-        if (q == null)
-            return MagicAmounts.EMPTY;
-
-        MagicAmounts magic = capacities[q.ordinal()];
-
-        Element e = g.getElement();
-        if (e == null)
-            magic = magic.all(magic.get(0) * 0.1f);
-        else
-            magic = magic.add(g.getElement(), magic.get(g.getElement()) * 0.25f);
-
-        return magic;
     }
 
     @Override

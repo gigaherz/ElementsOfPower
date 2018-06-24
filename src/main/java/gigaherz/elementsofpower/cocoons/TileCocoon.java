@@ -19,7 +19,7 @@ public class TileCocoon extends TileEntity implements ITickable
     {
         super.readFromNBT(compound);
 
-        essenceContained = new MagicAmounts(compound);
+        essenceContained = new MagicAmounts(compound.getCompoundTag("Magic"));
     }
 
     @Override
@@ -27,7 +27,7 @@ public class TileCocoon extends TileEntity implements ITickable
     {
         compound = super.writeToNBT(compound);
 
-        essenceContained.serialize(compound);
+        compound.setTag("Magic", essenceContained.serializeNBT());
 
         return compound;
     }

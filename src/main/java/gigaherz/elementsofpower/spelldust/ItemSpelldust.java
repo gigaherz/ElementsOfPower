@@ -31,10 +31,13 @@ public class ItemSpelldust extends ItemStateful
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems)
     {
-        for (Gemstone type : GEM.getAllowedValues())
+        if (this.isInCreativeTab(tab))
         {
-            IItemState state = getDefaultState().withProperty(GEM, type);
-            subItems.add(state.getStack());
+            for (Gemstone type : GEM.getAllowedValues())
+            {
+                IItemState state = getDefaultState().withProperty(GEM, type);
+                subItems.add(state.getStack());
+            }
         }
     }
 

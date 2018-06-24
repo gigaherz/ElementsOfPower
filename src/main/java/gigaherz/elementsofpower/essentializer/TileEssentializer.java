@@ -1,6 +1,7 @@
 package gigaherz.elementsofpower.essentializer;
 
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.capabilities.IMagicContainer;
 import gigaherz.elementsofpower.database.ContainerInformation;
 import gigaherz.elementsofpower.database.EssenceConversions;
 import gigaherz.elementsofpower.database.MagicAmounts;
@@ -140,11 +141,7 @@ public class TileEssentializer
 
     private void writeAmountsToNBT(NBTTagCompound tagCompound, String key, MagicAmounts amounts)
     {
-        NBTTagCompound tag = new NBTTagCompound();
-
-        amounts.serialize(tag);
-
-        tagCompound.setTag(key, tag);
+        tagCompound.setTag(key, amounts.serializeNBT());
     }
 
     private void readInventoryFromNBT(NBTTagCompound tagCompound)
@@ -282,13 +279,13 @@ public class TileEssentializer
     {
         ItemStack input = inventory.getStackInSlot(1);
 
-        if (!ContainerInformation.itemContainsMagic(input))
+        IMagicContainer magic = ContainerInformation.getMagic(input);
+        if (magic == null)
             return false;
 
-        boolean isInfinite = ContainerInformation.isInfiniteContainer(input);
+        boolean isInfinite = magic.isInfinite();
 
-        MagicAmounts contained = ContainerInformation.getContainedMagic(input);
-
+        MagicAmounts contained = magic.getContainedMagic();
         if (contained.isEmpty())
             return false;
 
@@ -308,7 +305,7 @@ public class TileEssentializer
         if (totalAdded <= 0)
             return false;
 
-        input = ContainerInformation.setContainedMagic(input, contained);
+        magic.setContainedMagic(contained);
 
         inventory.setStackInSlot(1, input);
         return true;
@@ -323,11 +320,15 @@ public class TileEssentializer
             return false;
         }
 
-        if (ContainerInformation.isInfiniteContainer(output))
+        IMagicContainer magic = ContainerInformation.getMagic(output);
+        if (magic == null)
             return false;
 
-        MagicAmounts limits = ContainerInformation.getMagicLimits(output);
-        MagicAmounts contained = ContainerInformation.getContainedMagic(output);
+        if (magic.isInfinite())
+            return false;
+
+        MagicAmounts limits = magic.getCapacity();
+        MagicAmounts contained = magic.getContainedMagic();
 
         if (limits.isEmpty())
             return false;
@@ -348,7 +349,7 @@ public class TileEssentializer
         if (totalAdded <= 0)
             return false;
 
-        inventory.setStackInSlot(2, ContainerInformation.setContainedMagic(output, contained));
+        magic.setContainedMagic(contained);
         return true;
     }
 

@@ -1,6 +1,8 @@
 package gigaherz.elementsofpower.analyzer.gui;
 
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.capabilities.IMagicContainer;
+import gigaherz.elementsofpower.database.ContainerInformation;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.gemstones.Gemstone;
 import gigaherz.elementsofpower.gemstones.ItemGemstone;
@@ -69,7 +71,9 @@ public class GuiAnalyzer extends GuiContainer
                 ItemGemstone gemstone = (ItemGemstone) item;
                 gem = gemstone.getGemstone(stack);
                 q = gemstone.getQuality(stack);
-                am = gemstone.getCapacity(stack);
+
+                IMagicContainer magic = ContainerInformation.getMagic(stack);
+                am = magic != null ? magic.getCapacity() : MagicAmounts.EMPTY;
             }
 
             if (gem != null)

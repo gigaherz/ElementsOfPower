@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower.database;
 
+import com.google.common.base.Objects;
 import com.google.gson.*;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.gemstones.Element;
@@ -7,13 +8,15 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.CheckReturnValue;
 import java.lang.reflect.Type;
+import java.util.Arrays;
 
 @NotNull
-public class MagicAmounts
+public class MagicAmounts implements INBTSerializable<NBTTagCompound>
 {
     public static final MagicAmounts EMPTY = new MagicAmounts();
     public static final int ELEMENTS = 8;
@@ -48,18 +51,7 @@ public class MagicAmounts
 
     public MagicAmounts(NBTTagCompound tagCompound)
     {
-        NBTTagList tagList = tagCompound.getTagList("Essences", Constants.NBT.TAG_COMPOUND);
-
-        for (int i = 0; i < tagList.tagCount(); i++)
-        {
-            NBTTagCompound tag = (NBTTagCompound) tagList.get(i);
-            byte slot = tag.getByte("Type");
-
-            if (slot >= 0 && slot < 8)
-            {
-                amounts[slot] = tag.getFloat("Count");
-            }
-        }
+        deserializeNBT(tagCompound);
     }
 
     public MagicAmounts(ByteBuf buf)
@@ -74,6 +66,11 @@ public class MagicAmounts
                 amounts[which] = amount;
             }
         }
+    }
+
+    public static MagicAmounts ofElement(Element value, float count)
+    {
+        return EMPTY.add(value, count);
     }
 
     @Override
@@ -294,6 +291,16 @@ public class MagicAmounts
         return this;
     }
 
+    public static MagicAmounts min(MagicAmounts a, MagicAmounts b)
+    {
+        MagicAmounts n = new MagicAmounts();
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+        {
+            n.amounts[i] = Math.min(a.amounts[i], b.amounts[i]);
+        }
+        return n;
+    }
+
     @CheckReturnValue
     private MagicAmounts copy()
     {
@@ -305,8 +312,11 @@ public class MagicAmounts
         return amounts[element.ordinal()];
     }
 
-    public void serialize(NBTTagCompound tagCompound)
+
+    @Override
+    public NBTTagCompound serializeNBT()
     {
+        NBTTagCompound nbt = new NBTTagCompound();
         NBTTagList itemList = new NBTTagList();
 
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
@@ -317,7 +327,25 @@ public class MagicAmounts
             itemList.appendTag(tag);
         }
 
-        tagCompound.setTag("Essences", itemList);
+        nbt.setTag("Essences", itemList);
+        return nbt;
+    }
+
+    @Override
+    public void deserializeNBT(NBTTagCompound nbt)
+    {
+        NBTTagList tagList = nbt.getTagList("Essences", Constants.NBT.TAG_COMPOUND);
+
+        for (int i = 0; i < tagList.tagCount(); i++)
+        {
+            NBTTagCompound tag = (NBTTagCompound) tagList.get(i);
+            byte slot = tag.getByte("Type");
+
+            if (slot >= 0 && slot < 8)
+            {
+                amounts[slot] = tag.getFloat("Count");
+            }
+        }
     }
 
     public int getDominantElement()
@@ -362,6 +390,51 @@ public class MagicAmounts
         if (i < 0 || i >= ELEMENTS)
             throw new IndexOutOfBoundsException();
         return amounts[i];
+    }
+
+    public boolean lessEqual(MagicAmounts other)
+    {
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+        {
+            if (amounts[i] > other.amounts[i])
+                return false;
+        }
+
+        return true;
+    }
+
+    public boolean lessThan(MagicAmounts other)
+    {
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+        {
+            if (amounts[i] >= other.amounts[i])
+                return false;
+        }
+
+        return true;
+    }
+
+    public boolean equals(MagicAmounts other)
+    {
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+        {
+            if (amounts[i] != other.amounts[i])
+                return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        return obj instanceof MagicAmounts && equals((MagicAmounts)obj);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Arrays.hashCode(amounts);
     }
 
     public static class Serializer
