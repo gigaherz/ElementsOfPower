@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.essentializer.gui;
 
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.database.ContainerInformation;
+import gigaherz.elementsofpower.capabilities.CapabilityMagicContainer;
 import gigaherz.elementsofpower.database.EssenceConversions;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.essentializer.TileEssentializer;
@@ -89,11 +89,6 @@ public class ContainerEssentializer
     @Override
     public ItemStack transferStackInSlot(EntityPlayer player, int slotIndex)
     {
-        if (slotIndex < 8)
-        {
-            return ItemStack.EMPTY;
-        }
-
         Slot slot = this.inventorySlots.get(slotIndex);
         if (slot == null || !slot.getHasStack())
         {
@@ -109,19 +104,13 @@ public class ContainerEssentializer
 
         if (slotIndex >= 3)
         {
-            boolean itemIsContainer = ContainerInformation.canItemContainMagic(stack);
-            boolean itemContainsMagic = itemIsContainer && ContainerInformation.itemContainsMagic(stack);
+            boolean itemIsContainer = CapabilityMagicContainer.hasContainer(stack);
             boolean itemHasEssence = EssenceConversions.itemHasEssence(stack);
 
-            if (itemContainsMagic)
+            if (itemIsContainer)
             {
                 startIndex = 1;
-                endIndex = startIndex + 1;
-            }
-            else if (itemIsContainer)
-            {
-                startIndex = 2;
-                endIndex = startIndex + 1;
+                endIndex = startIndex + 2;
             }
             else if (itemHasEssence)
             {

@@ -1,8 +1,8 @@
 package gigaherz.elementsofpower.entities;
 
 import com.google.common.collect.Lists;
+import gigaherz.elementsofpower.capabilities.CapabilityMagicContainer;
 import gigaherz.elementsofpower.capabilities.IMagicContainer;
-import gigaherz.elementsofpower.database.ContainerInformation;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -332,57 +332,41 @@ public class EntityEssence extends EntityAmbientCreature
         }
 
         EntityPlayer p = (EntityPlayer) entity;
-        IInventory inv = null;
-        int slot = 0;
-        ItemStack stack = ItemStack.EMPTY;
-
         IInventory b = p.inventory;
         for (int i = 0; i < b.getSizeInventory(); i++)
         {
             ItemStack s = b.getStackInSlot(i);
-            if (ContainerInformation.canItemContainMagic(s))
+            if (s.getCount() <= 0)
+                continue;
+
+            IMagicContainer magic = CapabilityMagicContainer.getContainer(s);
+            if (magic != null && !magic.isFull())
             {
-                if (ContainerInformation.canTransferAnything(s, self))
+                MagicAmounts limits = magic.getCapacity();
+                MagicAmounts amounts = magic.getContainedMagic();
+
+                if (!limits.isEmpty())
                 {
-                    stack = s;
-                    inv = b;
-                    slot = i;
-                    break;
-                }
-            }
-        }
-
-        if (stack.getCount() > 0)
-        {
-            IMagicContainer magic = ContainerInformation.getMagic(stack);
-            if (magic == null)
-                return;
-
-            MagicAmounts limits = magic.getCapacity();
-            MagicAmounts amounts = magic.getContainedMagic();
-
-            if (!limits.isEmpty())
-            {
-                float totalTransfer = 0;
-                for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-                {
-                    float transfer = Math.min(self.get(i), limits.get(i) - amounts.get(i));
-                    if (transfer > 0)
+                    MagicAmounts transfer = MagicAmounts.min(self, limits.subtract(amounts));
+                    amounts = amounts.add(MagicAmounts.min(amounts.add(transfer), limits));
+                    self = self.subtract(transfer);
+                    for (int e = 0; e < MagicAmounts.ELEMENTS; e++)
                     {
-                        totalTransfer += transfer;
-                        amounts = amounts.with(i, Math.min(amounts.get(i) + transfer, limits.get(i)));
-                        self = self.add(i, -transfer);
-                        getDataManager().set(ELEMENTS[i], self.get(i));
+                        if (transfer.get(e) != 0)
+                        {
+                            getDataManager().set(ELEMENTS[e], self.get(e));
+                        }
+                    }
+
+                    if (!transfer.isEmpty())
+                    {
+                        magic.setContainedMagic(amounts);
                     }
                 }
 
-                if (totalTransfer > 0)
-                {
-                    magic.setContainedMagic(amounts);
-                }
+                sequence = null;
+                break;
             }
-
-            sequence = null;
         }
 
         setDead();

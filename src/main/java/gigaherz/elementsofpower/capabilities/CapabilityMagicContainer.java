@@ -2,6 +2,7 @@ package gigaherz.elementsofpower.capabilities;
 
 import gigaherz.elementsofpower.database.MagicAmounts;
 import net.minecraft.crash.CrashReport;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -10,6 +11,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 
+import javax.annotation.Nullable;
 import java.util.concurrent.Callable;
 
 public class CapabilityMagicContainer
@@ -20,6 +22,29 @@ public class CapabilityMagicContainer
     public static void register()
     {
         CapabilityManager.INSTANCE.register(IMagicContainer.class, new Storage(), MagicContainer::new);
+    }
+
+    @Nullable
+    public static IMagicContainer getContainer(ItemStack stack)
+    {
+        return stack.getCapability(INSTANCE, null);
+    }
+
+    public static boolean hasContainer(ItemStack stack)
+    {
+        return stack.hasCapability(INSTANCE, null);
+    }
+
+    public static boolean containsMagic(ItemStack stack)
+    {
+        IMagicContainer cap = stack.getCapability(INSTANCE, null);
+        return cap != null && (cap.isInfinite() || !cap.getContainedMagic().isEmpty());
+    }
+
+    public static boolean isNotFull(ItemStack stack, MagicAmounts self)
+    {
+        IMagicContainer cap = stack.getCapability(INSTANCE, null);
+        return cap != null && !cap.isInfinite() && !cap.isFull() && !cap.getCapacity().isEmpty();
     }
 
     private static class Storage implements Capability.IStorage<IMagicContainer>
@@ -33,7 +58,7 @@ public class CapabilityMagicContainer
 
             for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
             {
-                nbt.setFloat("" + i, amounts.get(i));
+                nbt.setFloat(Integer.toString(i), amounts.get(i));
             }
 
             return nbt;
@@ -50,7 +75,7 @@ public class CapabilityMagicContainer
             {
                 try
                 {
-                    float amount = tag.getFloat("" + i);
+                    float amount = tag.getFloat(Integer.toString(i));
 
                     amounts = amounts.with(i, amount);
                 }

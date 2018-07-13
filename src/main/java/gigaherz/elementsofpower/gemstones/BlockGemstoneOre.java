@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower.gemstones;
 
+import com.google.common.collect.Lists;
 import gigaherz.common.BlockRegistered;
 import gigaherz.elementsofpower.ElementsOfPower;
 import net.minecraft.block.Block;
@@ -21,6 +22,7 @@ import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.feature.WorldGenMinable;
 import net.minecraftforge.fml.common.IWorldGenerator;
 
+import java.util.List;
 import java.util.Random;
 
 public class BlockGemstoneOre extends BlockRegistered
@@ -141,6 +143,15 @@ public class BlockGemstoneOre extends BlockRegistered
 
     public static class Generator implements IWorldGenerator
     {
+        List<WorldGenMinable> minables = Lists.newArrayList();
+
+        {
+            for (GemstoneBlockType g : GemstoneBlockType.values)
+            {
+                minables.add(new WorldGenMinable(ElementsOfPower.gemstoneOre.getDefaultState().withProperty(TYPE, g), 5));
+            }
+        }
+
         @Override
         public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider)
         {
@@ -158,7 +169,7 @@ public class BlockGemstoneOre extends BlockRegistered
 
         private void generateSurface(World world, Random rand, int chunkX, int chunkZ)
         {
-            for (GemstoneBlockType g : GemstoneBlockType.values)
+            for (WorldGenMinable minable : minables)
             {
                 for (int k = 0; k < 2; k++)
                 {
@@ -166,7 +177,7 @@ public class BlockGemstoneOre extends BlockRegistered
                     int firstBlockYCoord = rand.nextInt(18);
                     int firstBlockZCoord = chunkZ + rand.nextInt(16);
 
-                    (new WorldGenMinable(ElementsOfPower.gemstoneOre.getDefaultState().withProperty(TYPE, g), 5)).generate(world, rand, new BlockPos(firstBlockXCoord, firstBlockYCoord, firstBlockZCoord));
+                    minable.generate(world, rand, new BlockPos(firstBlockXCoord, firstBlockYCoord, firstBlockZCoord));
                 }
             }
         }

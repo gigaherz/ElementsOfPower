@@ -3,8 +3,8 @@ package gigaherz.elementsofpower.items;
 import baubles.api.BaubleType;
 import baubles.api.BaublesApi;
 import baubles.api.IBauble;
+import gigaherz.elementsofpower.capabilities.CapabilityMagicContainer;
 import gigaherz.elementsofpower.capabilities.IMagicContainer;
-import gigaherz.elementsofpower.database.ContainerInformation;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.gemstones.Gemstone;
 import gigaherz.elementsofpower.gemstones.Quality;
@@ -107,11 +107,11 @@ public abstract class ItemBauble extends ItemGemContainer
 
         return null;
     }
+
     private static boolean canReceiveMagic(ItemStack thisStack, ItemStack s, MagicAmounts available)
     {
         return s != thisStack
-                && ContainerInformation.canItemContainMagic(s)
-                && ContainerInformation.canTransferAnything(s, available);
+                && CapabilityMagicContainer.isNotFull(s, available);
     }
 
 
@@ -139,7 +139,7 @@ public abstract class ItemBauble extends ItemGemContainer
 
     protected void tryTransferToWands(ItemStack thisStack, EntityPlayer p)
     {
-        IMagicContainer magic = ContainerInformation.getMagic(thisStack);
+        IMagicContainer magic = CapabilityMagicContainer.getContainer(thisStack);
         if (magic == null)
             return;
 
@@ -166,7 +166,7 @@ public abstract class ItemBauble extends ItemGemContainer
                             ItemSlotReference slotReference)
     {
         ItemStack stack = slotReference.get();
-        IMagicContainer magic = ContainerInformation.getMagic(stack);
+        IMagicContainer magic = CapabilityMagicContainer.getContainer(stack);
         if (magic == null)
             return;
 

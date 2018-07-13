@@ -1,8 +1,8 @@
 package gigaherz.elementsofpower.essentializer;
 
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.capabilities.CapabilityMagicContainer;
 import gigaherz.elementsofpower.capabilities.IMagicContainer;
-import gigaherz.elementsofpower.database.ContainerInformation;
 import gigaherz.elementsofpower.database.EssenceConversions;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.network.EssentializerTileUpdate;
@@ -52,9 +52,9 @@ public class TileEssentializer
                 case 0:
                     return EssenceConversions.itemHasEssence(stack);
                 case 1:
-                    return ContainerInformation.itemContainsMagic(stack);
+                    return CapabilityMagicContainer.hasContainer(stack);
                 case 2:
-                    return ContainerInformation.canItemContainMagic(stack);
+                    return CapabilityMagicContainer.hasContainer(stack);
             }
             return false;
         }
@@ -279,7 +279,7 @@ public class TileEssentializer
     {
         ItemStack input = inventory.getStackInSlot(1);
 
-        IMagicContainer magic = ContainerInformation.getMagic(input);
+        IMagicContainer magic = CapabilityMagicContainer.getContainer(input);
         if (magic == null)
             return false;
 
@@ -320,7 +320,7 @@ public class TileEssentializer
             return false;
         }
 
-        IMagicContainer magic = ContainerInformation.getMagic(output);
+        IMagicContainer magic = CapabilityMagicContainer.getContainer(output);
         if (magic == null)
             return false;
 

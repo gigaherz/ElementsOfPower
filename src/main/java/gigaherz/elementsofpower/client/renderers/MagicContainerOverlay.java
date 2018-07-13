@@ -2,9 +2,9 @@ package gigaherz.elementsofpower.client.renderers;
 
 import gigaherz.common.client.StackRenderingHelper;
 import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.capabilities.CapabilityMagicContainer;
 import gigaherz.elementsofpower.capabilities.IMagicContainer;
 import gigaherz.elementsofpower.client.TickEventWandControl;
-import gigaherz.elementsofpower.database.ContainerInformation;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.gemstones.Element;
 import gigaherz.elementsofpower.items.ItemWand;
@@ -38,7 +38,7 @@ public class MagicContainerOverlay extends Gui
         if (heldItem.getCount() <= 0)
             return;
 
-        IMagicContainer magic = ContainerInformation.getMagic(heldItem);
+        IMagicContainer magic = CapabilityMagicContainer.getContainer(heldItem);
         if (magic == null)
             return;
 

@@ -1,6 +1,6 @@
 package gigaherz.elementsofpower.essentializer.gui;
 
-import gigaherz.elementsofpower.database.ContainerInformation;
+import gigaherz.elementsofpower.capabilities.CapabilityMagicContainer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
@@ -15,7 +15,7 @@ public class SlotContainerOut extends SlotItemHandler
     @Override
     public boolean isItemValid(ItemStack stack)
     {
-        return stack.getCount() <= 0 || ContainerInformation.canItemContainMagic(stack);
+        return stack.getCount() <= 0 || CapabilityMagicContainer.hasContainer(stack);
     }
 
     @Override

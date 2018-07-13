@@ -3,10 +3,8 @@ package gigaherz.elementsofpower.items;
 import gigaherz.common.state.IItemStateManager;
 import gigaherz.common.state.implementation.ItemStateManager;
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.capabilities.AbstractMagicContainer;
 import gigaherz.elementsofpower.capabilities.CapabilityMagicContainer;
 import gigaherz.elementsofpower.capabilities.IMagicContainer;
-import gigaherz.elementsofpower.database.ContainerInformation;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.gemstones.Element;
 import gigaherz.elementsofpower.gemstones.Gemstone;
@@ -24,15 +22,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.Constants;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 //import gigaherz.elementsofpower.progression.DiscoveryHandler;
@@ -196,7 +189,7 @@ public abstract class ItemGemContainer extends ItemMagicContainer
             t = ElementsOfPower.gemstone.setQuality(t, q);
         }
 
-        IMagicContainer magic = ContainerInformation.getMagic(stack);
+        IMagicContainer magic = CapabilityMagicContainer.getContainer(stack);
         if (magic == null)
             return ItemStack.EMPTY;
 
@@ -206,7 +199,7 @@ public abstract class ItemGemContainer extends ItemMagicContainer
         {
             am = adjustRemovedMagic(am);
 
-            IMagicContainer magic2 = ContainerInformation.getMagic(t);
+            IMagicContainer magic2 = CapabilityMagicContainer.getContainer(t);
             if (magic2 == null)
                 return ItemStack.EMPTY;
             magic2.setContainedMagic(am);
@@ -220,10 +213,7 @@ public abstract class ItemGemContainer extends ItemMagicContainer
         ItemStack result;
         MagicAmounts am = MagicAmounts.EMPTY;
 
-        if (!(gemstone.getItem() instanceof ItemGemstone))
-            return ItemStack.EMPTY;
-
-        if (gemstone.getCount() <= 0)
+        if (gemstone.getCount() <= 0 || !(gemstone.getItem() instanceof ItemGemstone))
         {
             result = setQuality(setGemstone(stack, null), null);
         }
@@ -234,13 +224,13 @@ public abstract class ItemGemContainer extends ItemMagicContainer
             Quality q = g.getQuality(gemstone);
             result = setQuality(setGemstone(stack, gem), q);
 
-            IMagicContainer magic3 = ContainerInformation.getMagic(gemstone);
+            IMagicContainer magic3 = CapabilityMagicContainer.getContainer(gemstone);
 
             am = (magic3 == null) ? MagicAmounts.EMPTY : magic3.getContainedMagic();
             am = adjustInsertedMagic(am);
         }
 
-        IMagicContainer magic4 = ContainerInformation.getMagic(result);
+        IMagicContainer magic4 = CapabilityMagicContainer.getContainer(result);
         if (magic4 != null)
             magic4.setContainedMagic(am);
 
@@ -345,7 +335,7 @@ public abstract class ItemGemContainer extends ItemMagicContainer
         if (cast == null)
             return false;
 
-        IMagicContainer magic = ContainerInformation.getMagic(stack);
+        IMagicContainer magic = CapabilityMagicContainer.getContainer(stack);
         if (magic == null)
             return false;
 
@@ -378,7 +368,7 @@ public abstract class ItemGemContainer extends ItemMagicContainer
             NBTTagCompound nbt = stack.getTagCompound();
             if (nbt == null)
             {
-                IMagicContainer magic = ContainerInformation.getMagic(stack);
+                IMagicContainer magic = CapabilityMagicContainer.getContainer(stack);
                 if (magic == null)
                     return;
 
