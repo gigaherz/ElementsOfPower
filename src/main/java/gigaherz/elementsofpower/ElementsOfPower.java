@@ -25,12 +25,17 @@ import gigaherz.elementsofpower.spells.blocks.BlockDust;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -49,9 +54,17 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.logging.log4j.Logger;
 
+import javax.vecmath.Matrix3d;
+import javax.vecmath.Vector3d;
 import java.io.File;
+import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
 import java.text.Format;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
+
+import static org.lwjgl.opengl.GL11.GL_QUADS;
 
 //import gigaherz.elementsofpower.progression.DiscoveryHandler;
 
@@ -77,26 +90,43 @@ public class ElementsOfPower
     public static IModProxy proxy;
 
     // Block templates
+
+    @GameRegistry.ObjectHolder(MODID + ":essentializer")
     public static BlockRegistered essentializer;
+    @GameRegistry.ObjectHolder(MODID + ":dust")
     public static BlockRegistered dust;
+    @GameRegistry.ObjectHolder(MODID + ":mist")
     public static BlockRegistered mist;
+    @GameRegistry.ObjectHolder(MODID + ":cushion")
     public static BlockRegistered cushion;
+    @GameRegistry.ObjectHolder(MODID + ":cocoon")
     public static BlockRegistered cocoon;
+    @GameRegistry.ObjectHolder(MODID + ":gemstone_ore")
     public static BlockGemstoneOre gemstoneOre;
+    @GameRegistry.ObjectHolder(MODID + ":gemstone_block")
     public static BlockGemstone gemstoneBlock;
 
     // Block Materials
     public static Material materialCushion = new MaterialCushion(MapColor.BLACK);
 
     // Item templates
+    @GameRegistry.ObjectHolder(MODID + ":orb")
     public static ItemMagicOrb orb;
+    @GameRegistry.ObjectHolder(MODID + ":wand")
     public static ItemWand wand;
+    @GameRegistry.ObjectHolder(MODID + ":staff")
     public static ItemWand staff;
+    @GameRegistry.ObjectHolder(MODID + ":ring")
     public static ItemBauble ring;
+    @GameRegistry.ObjectHolder(MODID + ":headband")
     public static ItemBauble headband;
+    @GameRegistry.ObjectHolder(MODID + ":necklace")
     public static ItemBauble necklace;
+    @GameRegistry.ObjectHolder(MODID + ":gemstone")
     public static ItemGemstone gemstone;
+    @GameRegistry.ObjectHolder(MODID + ":analyzer")
     public static ItemAnalyzer analyzer;
+    @GameRegistry.ObjectHolder(MODID + ":spelldust")
     public static ItemSpelldust spelldust;
 
     @GameRegistry.ItemStackHolder(value = "gbook:guidebook", nbt = "{Book:\"" + MODID + ":xml/guidebook.xml\"}")
@@ -127,31 +157,14 @@ public class ElementsOfPower
     public static void registerBlocks(RegistryEvent.Register<Block> event)
     {
         event.getRegistry().registerAll(
-                essentializer = new BlockEssentializer("essentializer"),
-                dust = new BlockDust("dust"),
-                mist = new BlockDust("mist"),
-                cushion = new BlockCushion("cushion"),
-                cocoon = new BlockCocoon("cocoon"),
-                gemstoneBlock = new BlockGemstone("gemstone_block"),
-                gemstoneOre = new BlockGemstoneOre("gemstone_ore")
+                new BlockEssentializer("essentializer"),
+                new BlockDust("dust"),
+                new BlockDust("mist"),
+                new BlockCushion("cushion"),
+                new BlockCocoon("cocoon"),
+                new BlockGemstone("gemstone_block"),
+                new BlockGemstoneOre("gemstone_ore")
         );
-
-        GameRegistry.registerTileEntity(TileEssentializer.class, essentializer.getRegistryName());
-        GameRegistry.registerTileEntity(TileCocoon.class, cocoon.getRegistryName());
-
-        OreDictionary.registerOre("blockAgate", gemstoneBlock.getStack(GemstoneBlockType.Agate));
-        OreDictionary.registerOre("blockAmethyst", gemstoneBlock.getStack(GemstoneBlockType.Amethyst));
-        OreDictionary.registerOre("blockCitrine", gemstoneBlock.getStack(GemstoneBlockType.Citrine));
-        OreDictionary.registerOre("blockRuby", gemstoneBlock.getStack(GemstoneBlockType.Ruby));
-        OreDictionary.registerOre("blockSapphire", gemstoneBlock.getStack(GemstoneBlockType.Sapphire));
-        OreDictionary.registerOre("blockSerendibite", gemstoneBlock.getStack(GemstoneBlockType.Serendibite));
-
-        OreDictionary.registerOre("oreAgate", gemstoneOre.getStack(GemstoneBlockType.Agate));
-        OreDictionary.registerOre("oreAmethyst", gemstoneOre.getStack(GemstoneBlockType.Amethyst));
-        OreDictionary.registerOre("oreCitrine", gemstoneOre.getStack(GemstoneBlockType.Citrine));
-        OreDictionary.registerOre("oreRuby", gemstoneOre.getStack(GemstoneBlockType.Ruby));
-        OreDictionary.registerOre("oreSapphire", gemstoneOre.getStack(GemstoneBlockType.Sapphire));
-        OreDictionary.registerOre("oreSerendibite", gemstoneOre.getStack(GemstoneBlockType.Serendibite));
     }
 
     @SubscribeEvent
@@ -163,36 +176,16 @@ public class ElementsOfPower
                 gemstoneBlock.createItemBlock(),
                 gemstoneOre.createItemBlock(),
 
-                orb = new ItemMagicOrb("orb"),
-                wand = new ItemWand("wand"),
-                staff = new ItemStaff("staff"),
-                ring = new ItemRing("ring"),
-                headband = new ItemHeadband("headband"),
-                necklace = new ItemNecklace("necklace"),
-                gemstone = new ItemGemstone("gemstone"),
-                analyzer = new ItemAnalyzer("analyzer"),
-                spelldust = new ItemSpelldust("spelldust")
+                new ItemMagicOrb("orb"),
+                new ItemWand("wand"),
+                new ItemStaff("staff"),
+                new ItemRing("ring"),
+                new ItemHeadband("headband"),
+                new ItemNecklace("necklace"),
+                new ItemGemstone("gemstone"),
+                new ItemAnalyzer("analyzer"),
+                new ItemSpelldust("spelldust")
         );
-
-        OreDictionary.registerOre("gemRuby", gemstone.getStack(Gemstone.Ruby));
-        OreDictionary.registerOre("gemSapphire", gemstone.getStack(Gemstone.Sapphire));
-        OreDictionary.registerOre("gemCitrine", gemstone.getStack(Gemstone.Citrine));
-        OreDictionary.registerOre("gemAgate", gemstone.getStack(Gemstone.Agate));
-        OreDictionary.registerOre("gemQuartz", gemstone.getStack(Gemstone.Quartz));
-        OreDictionary.registerOre("gemSerendibite", gemstone.getStack(Gemstone.Serendibite));
-        OreDictionary.registerOre("gemEmerald", gemstone.getStack(Gemstone.Emerald));
-        OreDictionary.registerOre("gemAmethyst", gemstone.getStack(Gemstone.Amethyst));
-        OreDictionary.registerOre("gemDiamond", gemstone.getStack(Gemstone.Diamond));
-
-        OreDictionary.registerOre("magicGemstone", gemstone.getStack(Gemstone.Ruby));
-        OreDictionary.registerOre("magicGemstone", gemstone.getStack(Gemstone.Sapphire));
-        OreDictionary.registerOre("magicGemstone", gemstone.getStack(Gemstone.Citrine));
-        OreDictionary.registerOre("magicGemstone", gemstone.getStack(Gemstone.Agate));
-        OreDictionary.registerOre("magicGemstone", gemstone.getStack(Gemstone.Quartz));
-        OreDictionary.registerOre("magicGemstone", gemstone.getStack(Gemstone.Serendibite));
-        OreDictionary.registerOre("magicGemstone", gemstone.getStack(Gemstone.Emerald));
-        OreDictionary.registerOre("magicGemstone", gemstone.getStack(Gemstone.Amethyst));
-        OreDictionary.registerOre("magicGemstone", gemstone.getStack(Gemstone.Diamond));
     }
 
     @SubscribeEvent
@@ -305,6 +298,43 @@ public class ElementsOfPower
     @EventHandler
     public void init(FMLInitializationEvent event)
     {
+        GameRegistry.registerTileEntity(TileEssentializer.class, essentializer.getRegistryName());
+        GameRegistry.registerTileEntity(TileCocoon.class, cocoon.getRegistryName());
+
+        OreDictionary.registerOre("blockAgate", gemstoneBlock.getStack(GemstoneBlockType.Agate));
+        OreDictionary.registerOre("blockAmethyst", gemstoneBlock.getStack(GemstoneBlockType.Amethyst));
+        OreDictionary.registerOre("blockCitrine", gemstoneBlock.getStack(GemstoneBlockType.Citrine));
+        OreDictionary.registerOre("blockRuby", gemstoneBlock.getStack(GemstoneBlockType.Ruby));
+        OreDictionary.registerOre("blockSapphire", gemstoneBlock.getStack(GemstoneBlockType.Sapphire));
+        OreDictionary.registerOre("blockSerendibite", gemstoneBlock.getStack(GemstoneBlockType.Serendibite));
+
+        OreDictionary.registerOre("oreAgate", gemstoneOre.getStack(GemstoneBlockType.Agate));
+        OreDictionary.registerOre("oreAmethyst", gemstoneOre.getStack(GemstoneBlockType.Amethyst));
+        OreDictionary.registerOre("oreCitrine", gemstoneOre.getStack(GemstoneBlockType.Citrine));
+        OreDictionary.registerOre("oreRuby", gemstoneOre.getStack(GemstoneBlockType.Ruby));
+        OreDictionary.registerOre("oreSapphire", gemstoneOre.getStack(GemstoneBlockType.Sapphire));
+        OreDictionary.registerOre("oreSerendibite", gemstoneOre.getStack(GemstoneBlockType.Serendibite));
+
+        OreDictionary.registerOre("gemRuby", gemstone.getStack(Gemstone.Ruby));
+        OreDictionary.registerOre("gemSapphire", gemstone.getStack(Gemstone.Sapphire));
+        OreDictionary.registerOre("gemCitrine", gemstone.getStack(Gemstone.Citrine));
+        OreDictionary.registerOre("gemAgate", gemstone.getStack(Gemstone.Agate));
+        OreDictionary.registerOre("gemQuartz", gemstone.getStack(Gemstone.Quartz));
+        OreDictionary.registerOre("gemSerendibite", gemstone.getStack(Gemstone.Serendibite));
+        OreDictionary.registerOre("gemEmerald", gemstone.getStack(Gemstone.Emerald));
+        OreDictionary.registerOre("gemAmethyst", gemstone.getStack(Gemstone.Amethyst));
+        OreDictionary.registerOre("gemDiamond", gemstone.getStack(Gemstone.Diamond));
+
+        OreDictionary.registerOre("magicGemstone", gemstone.getStack(Gemstone.Ruby));
+        OreDictionary.registerOre("magicGemstone", gemstone.getStack(Gemstone.Sapphire));
+        OreDictionary.registerOre("magicGemstone", gemstone.getStack(Gemstone.Citrine));
+        OreDictionary.registerOre("magicGemstone", gemstone.getStack(Gemstone.Agate));
+        OreDictionary.registerOre("magicGemstone", gemstone.getStack(Gemstone.Quartz));
+        OreDictionary.registerOre("magicGemstone", gemstone.getStack(Gemstone.Serendibite));
+        OreDictionary.registerOre("magicGemstone", gemstone.getStack(Gemstone.Emerald));
+        OreDictionary.registerOre("magicGemstone", gemstone.getStack(Gemstone.Amethyst));
+        OreDictionary.registerOre("magicGemstone", gemstone.getStack(Gemstone.Diamond));
+
         registerWorldGenerators();
 
         NetworkRegistry.INSTANCE.registerGuiHandler(this, guiHandler);
@@ -350,5 +380,144 @@ public class ElementsOfPower
     public static ResourceLocation location(String location)
     {
         return new ResourceLocation(MODID, location);
+    }
+
+
+    @Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
+    public static class Test
+    {
+        public static final Test INSTANCE = new Test();
+
+        @SubscribeEvent
+        public static void worldLast(RenderWorldLastEvent event)
+        {
+            INSTANCE.render(event.getPartialTicks());
+        }
+
+
+        private static Star[] stars = new Star[4096];
+        static
+        {
+            generateStars();
+        }
+
+        private static void generateStars()
+        {
+            final Random random = new Random(0);
+            final int radius = 100;
+            final double threshold = 0.15;
+
+            for (int i = 0; i < stars.length; i++)
+            {
+                Star star = new Star();
+                double u = 2 * Math.PI * random.nextFloat();
+                double v = Math.acos(1 - 2 * random.nextFloat()) - Math.PI*0.5;
+                double size = (1 + 2 * random.nextFloat()) * .05f;
+
+                // prevents aliasing artifacts, making small stars fainter but not smaller
+                star.alpha = Math.min(size * (1/threshold), 1);
+                if (size < threshold)
+                    size = threshold;
+
+                star.points = new Vector3d[]{
+                        new Vector3d(-size*0.5,-size*0.5,radius),
+                        new Vector3d(-size * 2,0,radius),
+                        new Vector3d(-size*0.5,size*0.5,radius),
+                        new Vector3d(0,0,radius),
+
+                        new Vector3d(-size*0.5,size*0.5,radius),
+                        new Vector3d(0,size*2,radius),
+                        new Vector3d(size*0.5,size*0.5,radius),
+                        new Vector3d(0,0,radius),
+
+                        new Vector3d(size*0.5,size*0.5,radius),
+                        new Vector3d(size*2,0,radius),
+                        new Vector3d(size*0.5,-size*0.5,radius),
+                        new Vector3d(0,0,radius),
+
+                        new Vector3d(size*0.5,-size*0.5,radius),
+                        new Vector3d(0,-size*2,radius),
+                        new Vector3d(-size*0.5,-size*0.5,radius),
+                        new Vector3d(0,0,radius),
+                };
+
+                Matrix3d matrix1 = new Matrix3d();
+                matrix1.rotY(u);
+                Matrix3d matrix2 = new Matrix3d();
+                matrix2.rotX(v);
+                matrix1.mul(matrix2);
+
+                Arrays.stream(star.points).forEach(matrix1::transform);
+
+                stars[i] = star;
+            }
+        }
+
+        private BufferBuilder bufferbuilder;
+        public void render(float partialTicks)
+        {
+            GlStateManager.disableFog();
+            GlStateManager.disableAlpha();
+            GlStateManager.enableBlend();
+            GlStateManager.disableTexture2D();
+            GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+            RenderHelper.disableStandardItemLighting();
+            GlStateManager.depthMask(false);
+            if (bufferbuilder == null)
+            {
+                bufferbuilder = new BufferBuilder(stars.length * 8);
+                bufferbuilder.begin(GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+                for (Star star : stars)
+                {
+                    for (Vector3d point : star.points)
+                    {
+                        bufferbuilder.pos(point.x, point.y, point.z).color(255, 255, 255, (int) (255 * star.alpha)).endVertex();
+                    }
+                }
+                bufferbuilder.finishDrawing();
+            }
+            draw(bufferbuilder);
+
+            GlStateManager.depthMask(true);
+            GlStateManager.enableTexture2D();
+            GlStateManager.enableAlpha();
+        }
+
+        public void draw(BufferBuilder bufferBuilderIn)
+        {
+            if (bufferBuilderIn.getVertexCount() > 0)
+            {
+                VertexFormat vertexformat = bufferBuilderIn.getVertexFormat();
+                int i = vertexformat.getSize();
+                ByteBuffer bytebuffer = bufferBuilderIn.getByteBuffer();
+                List<VertexFormatElement> list = vertexformat.getElements();
+
+                for (int j = 0; j < list.size(); ++j)
+                {
+                    VertexFormatElement vertexformatelement = list.get(j);
+                    bytebuffer.position(vertexformat.getOffset(j));
+
+                    // moved to VertexFormatElement.preDraw
+                    vertexformatelement.getUsage().preDraw(vertexformat, j, i, bytebuffer);
+                }
+
+                GlStateManager.glDrawArrays(bufferBuilderIn.getDrawMode(), 0, bufferBuilderIn.getVertexCount());
+                int i1 = 0;
+
+                for (int j1 = list.size(); i1 < j1; ++i1)
+                {
+                    VertexFormatElement vertexformatelement1 = list.get(i1);
+
+                    // moved to VertexFormatElement.postDraw
+                    vertexformatelement1.getUsage().postDraw(vertexformat, i1, i, bytebuffer);
+                }
+            }
+        }
+
+        private static class Star
+        {
+            public Vector3d[] points;
+            public double alpha;
+        }
     }
 }
