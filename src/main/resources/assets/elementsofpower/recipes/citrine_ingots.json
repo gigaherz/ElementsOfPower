@@ -1,0 +1,11 @@
+{
+  "type":"minecraft:crafting_shapeless",
+  "ingredients": [
+    { "type": "forge:ore_dict", "ore":"blockCitrine" }
+  ],
+  "result": {
+    "item": "elementsofpower:gemstone",
+    "data": 2,
+    "count": 9
+  }
+}

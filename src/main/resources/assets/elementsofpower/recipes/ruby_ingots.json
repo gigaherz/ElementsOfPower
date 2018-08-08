@@ -1,0 +1,11 @@
+{
+  "type":"minecraft:crafting_shapeless",
+  "ingredients": [
+    { "type": "forge:ore_dict", "ore":"blockRuby" }
+  ],
+  "result": {
+    "item": "elementsofpower:gemstone",
+    "data": 0,
+    "count": 9
+  }
+}

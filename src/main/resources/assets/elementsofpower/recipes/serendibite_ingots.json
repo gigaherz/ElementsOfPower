@@ -1,0 +1,11 @@
+{
+  "type":"minecraft:crafting_shapeless",
+  "ingredients": [
+    { "type": "forge:ore_dict", "ore":"blockSerendibite" }
+  ],
+  "result": {
+    "item": "elementsofpower:gemstone",
+    "data": 5,
+    "count": 9
+  }
+}

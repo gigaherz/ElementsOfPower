@@ -1,0 +1,17 @@
+{
+  "type":"minecraft:crafting_shapeless",
+  "conditions": [
+    { "type":"forge:mod_loaded", "modid": "gbook"}
+  ],
+  "ingredients": [
+    { "item": "minecraft:book" },
+    { "item": "elementsofpower:orb", "data":32767 }
+  ],
+  "result": {
+    "item": "gbook:guidebook",
+    "data": 0,
+    "nbt": {
+      "book": "elementsofpower:xml/guidebook.xml"
+    }
+  }
+}

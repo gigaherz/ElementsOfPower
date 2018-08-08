@@ -1,8 +1,8 @@
 newmtl caps
-map_Kd minecraft:blocks/iron_block
+map_Kd minecraft:blocks/gold_block
 
 newmtl gem
-map_Kd minecraft:blocks/bedrock
+map_Kd elementsofpower:transparent
 
 newmtl orbs
 map_Kd minecraft:blocks/quartz_block_chiseled

@@ -67,7 +67,9 @@ public class JEIPlugin implements IModPlugin
         for (ItemStack stack : Arrays.asList(
                 new ItemStack(ElementsOfPower.wand),
                 new ItemStack(ElementsOfPower.staff),
-                new ItemStack(ElementsOfPower.ring)
+                new ItemStack(ElementsOfPower.ring),
+                new ItemStack(ElementsOfPower.headband),
+                new ItemStack(ElementsOfPower.necklace)
         ))
         {
             registry.addRecipes(Arrays.asList(

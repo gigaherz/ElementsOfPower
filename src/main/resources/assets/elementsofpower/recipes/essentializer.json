@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "IQI",
+    "ONO",
+    "IOI"
+  ],
+  "key": {
+    "I": { "type": "forge:ore_dict", "ore": "ingotIron" },
+    "O": { "item": "minecraft:obsidian" },
+    "Q": { "type": "forge:ore_dict", "ore": "magicGemstone" },
+    "N": { "item": "minecraft:nether_star" }
+  },
+  "result": {
+    "item": "elementsofpower:essentializer"
+  }
+}

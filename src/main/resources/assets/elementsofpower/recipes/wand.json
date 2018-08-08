@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " G",
+    "S "
+  ],
+  "key": {
+    "G": { "type": "forge:ore_dict", "ore": "ingotGold" },
+    "S": { "item": "minecraft:stick" }
+  },
+  "result": {
+    "item": "elementsofpower:wand",
+    "data":0
+  }
+}

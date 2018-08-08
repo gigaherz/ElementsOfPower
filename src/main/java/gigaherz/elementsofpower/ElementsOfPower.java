@@ -178,71 +178,12 @@ public class ElementsOfPower
     @SubscribeEvent
     public static void registerRecipes(RegistryEvent.Register<IRecipe> event)
     {
-        FurnaceRecipes.instance().addSmeltingRecipe(gemstoneOre.getStack(GemstoneBlockType.Agate), gemstone.getStack(Gemstone.Agate), 0);
-        FurnaceRecipes.instance().addSmeltingRecipe(gemstoneOre.getStack(GemstoneBlockType.Amethyst), gemstone.getStack(Gemstone.Amethyst), 0);
-        FurnaceRecipes.instance().addSmeltingRecipe(gemstoneOre.getStack(GemstoneBlockType.Citrine), gemstone.getStack(Gemstone.Citrine), 0);
-        FurnaceRecipes.instance().addSmeltingRecipe(gemstoneOre.getStack(GemstoneBlockType.Ruby), gemstone.getStack(Gemstone.Ruby), 0);
-        FurnaceRecipes.instance().addSmeltingRecipe(gemstoneOre.getStack(GemstoneBlockType.Sapphire), gemstone.getStack(Gemstone.Sapphire), 0);
-        FurnaceRecipes.instance().addSmeltingRecipe(gemstoneOre.getStack(GemstoneBlockType.Serendibite), gemstone.getStack(Gemstone.Serendibite), 0);
-
-        /*
-        event.getRegistry().registerAll(
-
-                new ShapedOreRecipe(null, gemstoneBlock.getStack(GemstoneBlockType.Agate), "aaa", "aaa", "aaa", 'a', "gemAgate"),
-                new ShapedOreRecipe(null, gemstoneBlock.getStack(GemstoneBlockType.Amethyst), "aaa", "aaa", "aaa", 'a', "gemAmethyst"),
-                new ShapedOreRecipe(null, gemstoneBlock.getStack(GemstoneBlockType.Citrine), "aaa", "aaa", "aaa", 'a', "gemCitrine"),
-                new ShapedOreRecipe(null, gemstoneBlock.getStack(GemstoneBlockType.Ruby), "aaa", "aaa", "aaa", 'a', "gemRuby"),
-                new ShapedOreRecipe(null, gemstoneBlock.getStack(GemstoneBlockType.Sapphire), "aaa", "aaa", "aaa", 'a', "gemSapphire"),
-                new ShapedOreRecipe(null, gemstoneBlock.getStack(GemstoneBlockType.Serendibite), "aaa", "aaa", "aaa", 'a', "gemSerendibite"),
-                new ShapelessOreRecipe(null, copyStack(gemstone.getStack(Gemstone.Agate), 9), "blockAgate"),
-                new ShapelessOreRecipe(null, copyStack(gemstone.getStack(Gemstone.Amethyst), 9), "blockAmethyst"),
-                new ShapelessOreRecipe(null, copyStack(gemstone.getStack(Gemstone.Citrine), 9), "blockCitrine"),
-                new ShapelessOreRecipe(null, copyStack(gemstone.getStack(Gemstone.Ruby), 9), "blockRuby"),
-                new ShapelessOreRecipe(null, copyStack(gemstone.getStack(Gemstone.Sapphire), 9), "blockSapphire"),
-                new ShapelessOreRecipe(null, copyStack(gemstone.getStack(Gemstone.Serendibite), 9), "blockSerendibite"),
-
-                new ShapedOreRecipe(null, new ItemStack(analyzer),
-                        "glg",
-                        "i  ",
-                        "psp",
-                        'g', "ingotGold",
-                        'l', "paneGlass",
-                        'i', "ingotIron",
-                        's', "slabWood",
-                        'p', "plankWood"),
-                new ShapedOreRecipe(null, new ItemStack(essentializer, 1),
-                        "IQI",
-                        "ONO",
-                        "IOI",
-                        'I', Items.IRON_INGOT,
-                        'O', Blocks.OBSIDIAN,
-                        'Q', "magicGemstone",
-                        'N', Items.NETHER_STAR),
-                new ShapedOreRecipe(null, new ItemStack(wand),
-                        " G",
-                        "S ",
-                        'G', Items.GOLD_INGOT,
-                        'S', Items.STICK),
-                new ShapedOreRecipe(null, new ItemStack(staff),
-                        " GW",
-                        " SG",
-                        "S  ",
-                        'W', new ItemStack(wand, 1, OreDictionary.WILDCARD_VALUE),
-                        'G', Items.GOLD_INGOT,
-                        'S', Items.STICK),
-                new ShapedOreRecipe(null, new ItemStack(ring),
-                        " GG",
-                        "G G",
-                        " G ",
-                        'G', Items.GOLD_INGOT),
-
-                //if (guidebookStack != null)
-                //    GameRegistry.addShapelessRecipe(guidebookStack, Items.BOOK, new ItemStack(orb, 1, OreDictionary.WILDCARD_VALUE));
-
-                new GemstoneChangeRecipe(),
-                new ContainerChargeRecipe()
-        );
-        */
+        FurnaceRecipes.instance().addSmeltingRecipe(gemstoneOre.getStack(GemstoneBlockType.Agate), gemstone.getStack(Gemstone.Agate), 1.0F);
+        FurnaceRecipes.instance().addSmeltingRecipe(gemstoneOre.getStack(GemstoneBlockType.Amethyst), gemstone.getStack(Gemstone.Amethyst), 1.0F);
+        FurnaceRecipes.instance().addSmeltingRecipe(gemstoneOre.getStack(GemstoneBlockType.Citrine), gemstone.getStack(Gemstone.Citrine), 1.0F);
+        FurnaceRecipes.instance().addSmeltingRecipe(gemstoneOre.getStack(GemstoneBlockType.Ruby), gemstone.getStack(Gemstone.Ruby), 1.0F);
+        FurnaceRecipes.instance().addSmeltingRecipe(gemstoneOre.getStack(GemstoneBlockType.Sapphire), gemstone.getStack(Gemstone.Sapphire), 1.0F);
+        FurnaceRecipes.instance().addSmeltingRecipe(gemstoneOre.getStack(GemstoneBlockType.Serendibite), gemstone.getStack(Gemstone.Serendibite), 1.0F);
     }
 
     @EventHandler
