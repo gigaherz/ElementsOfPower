@@ -1,4 +1,4 @@
-package gigaherz.elementsofpower.gemstones;
+package gigaherz.elementsofpower.spells;
 
 public enum Effect
 {

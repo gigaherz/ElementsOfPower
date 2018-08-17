@@ -6,7 +6,7 @@ import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.essentializer.gui.ContainerEssentializer;
 import gigaherz.elementsofpower.essentializer.gui.GuiEssentializer;
-import gigaherz.elementsofpower.gemstones.Element;
+import gigaherz.elementsofpower.spells.Element;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.gui.IGuiItemStackGroup;

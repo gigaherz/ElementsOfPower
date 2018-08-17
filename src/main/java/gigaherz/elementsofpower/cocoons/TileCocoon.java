@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.cocoons;
 
 import gigaherz.elementsofpower.database.MagicAmounts;
-import gigaherz.elementsofpower.gemstones.Element;
+import gigaherz.elementsofpower.spells.Element;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;

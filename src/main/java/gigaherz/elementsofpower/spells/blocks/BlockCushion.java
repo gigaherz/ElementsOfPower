@@ -28,7 +28,7 @@ public class BlockCushion extends BlockDust
     }
 
     @Override
-    public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn)
+    public void onEntityCollision(World worldIn, BlockPos pos, IBlockState state, Entity entityIn)
     {
         double maxV = 0.1;
         double maxVSq = maxV * maxV;

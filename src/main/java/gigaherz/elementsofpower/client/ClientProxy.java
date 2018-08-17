@@ -31,8 +31,14 @@ public class ClientProxy implements IModProxy
 
     private void registerClientEvents()
     {
-        MinecraftForge.EVENT_BUS.register(new TickEventWandControl());
+        MinecraftForge.EVENT_BUS.register(new WandUseManager());
         MinecraftForge.EVENT_BUS.register(new MagicContainerOverlay());
+    }
+
+    @Override
+    public void init()
+    {
+        WandUseManager.instance.initialize();
     }
 
     @Override
@@ -93,7 +99,7 @@ public class ClientProxy implements IModProxy
     @Override
     public void beginTracking(EntityPlayer playerIn, EnumHand hand)
     {
-        TickEventWandControl.instance.handInUse = hand;
+        WandUseManager.instance.handInUse = hand;
         playerIn.setActiveHand(hand);
     }
 }

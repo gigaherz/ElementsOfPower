@@ -2,6 +2,7 @@ package gigaherz.elementsofpower.client;
 
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.MagicAmounts;
+import gigaherz.elementsofpower.spells.Element;
 import gigaherz.elementsofpower.items.ItemWand;
 import gigaherz.elementsofpower.network.SpellSequenceUpdate;
 import gigaherz.elementsofpower.spells.SpellManager;
@@ -12,13 +13,24 @@ import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
+import net.minecraftforge.client.settings.IKeyConflictContext;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import org.lwjgl.input.Keyboard;
 
-public class TickEventWandControl
+import javax.annotation.Nullable;
+
+public class WandUseManager
 {
-    public static TickEventWandControl instance;
+    private final static int[] defaultKeys = {
+            Keyboard.KEY_1,Keyboard.KEY_2,Keyboard.KEY_3,Keyboard.KEY_4,
+            Keyboard.KEY_5,Keyboard.KEY_6,Keyboard.KEY_7,Keyboard.KEY_8
+    };
+
+    public static WandUseManager instance;
 
     public String sequence;
     public EnumHand handInUse = null;
@@ -28,12 +40,53 @@ public class TickEventWandControl
 
     private Minecraft mc;
 
-    final KeyBindingInterceptor[] interceptKeys = new KeyBindingInterceptor[8];
+    final KeyBinding[] spellKeys = new KeyBinding[8];
 
-    public TickEventWandControl()
+    class OnUseContext implements IKeyConflictContext
+    {
+        @Override
+        public boolean isActive()
+        {
+            return handInUse != null;
+        }
+
+        @Override
+        public boolean conflicts(IKeyConflictContext other)
+        {
+            return other != null && !(other instanceof VanillaHotbarResolverContext);
+        }
+    }
+
+    class VanillaHotbarResolverContext implements IKeyConflictContext
+    {
+        public final IKeyConflictContext context;
+
+        VanillaHotbarResolverContext(@Nullable IKeyConflictContext context)
+        {
+            this.context = context;
+        }
+
+        @Override
+        public boolean isActive()
+        {
+            return handInUse == null && (context == null || context.isActive());
+        }
+
+        @Override
+        public boolean conflicts(IKeyConflictContext other)
+        {
+            return other != null && !(other instanceof OnUseContext)
+                    && (context == null || context.conflicts(other));
+        }
+    }
+
+    public WandUseManager()
     {
         instance = this;
+    }
 
+    public void initialize()
+    {
         mc = Minecraft.getMinecraft();
 
         GameSettings s = mc.gameSettings;
@@ -54,15 +107,14 @@ public class TickEventWandControl
                 }
             }
         }
-
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            interceptKeys[i] = new KeyBindingInterceptor(s.keyBindsHotbar[i]);
-            s.keyBindsHotbar[i] = interceptKeys[i];
-            s.keyBindings[indices[i]] = interceptKeys[i];
-        }
+            ClientRegistry.registerKeyBinding(spellKeys[i] =
+                    new KeyBinding("key.elementsofpower.spellkey."+ Element.values[i].translationName(),
+                            new OnUseContext(), defaultKeys[i], "key.elementsofpower.category"));
 
-        KeyBinding.resetKeyBindingArrayAndHash();
+            s.keyBindsHotbar[i].setKeyConflictContext(new VanillaHotbarResolverContext(s.keyBindsHotbar[i].getKeyConflictContext()));
+        }
     }
 
     @SubscribeEvent
@@ -133,10 +185,14 @@ public class TickEventWandControl
         }
 
         itemInUseCount--;
+    }
 
+    @SubscribeEvent
+    public void onKeyPress(InputEvent.KeyInputEvent event)
+    {
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            if (interceptKeys[i].isPressedIntercept())
+            while (spellKeys[i].isPressed())
             {
                 sequence += SpellManager.elementChars[i];
             }
@@ -152,11 +208,6 @@ public class TickEventWandControl
         sequence = "";
 
         ElementsOfPower.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.BEGIN, slotInUse, null));
-
-        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-        {
-            interceptKeys[i].setInterceptionActive(true);
-        }
     }
 
     private void endHoldingRightButton(boolean cancelMagicSetting)
@@ -177,10 +228,5 @@ public class TickEventWandControl
         sequence = null;
 
         mc.player.resetActiveHand();
-
-        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-        {
-            interceptKeys[i].setInterceptionActive(false);
-        }
     }
 }

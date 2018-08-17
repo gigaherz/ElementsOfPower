@@ -33,7 +33,7 @@ public class RenderBeam extends RenderSpell
         Vec3d beam = end.subtract(start);
         Vec3d dir = beam.normalize();
 
-        double distance = beam.lengthVector();
+        double distance = beam.length();
 
         double beamPlane = Math.sqrt(dir.x * dir.x + dir.z * dir.z);
         double beamYaw = Math.atan2(dir.z, dir.x);

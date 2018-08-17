@@ -95,7 +95,7 @@ public class MiningEffect extends SpellEffect
 
                         if (flag)
                         {
-                            block.onBlockDestroyedByPlayer(world, blockPos, currentState);
+                            block.onPlayerDestroy(world, blockPos, currentState);
                             block.harvestBlock(world, player, blockPos, currentState, tileentity, cast.getCastingPlayer().getHeldItem(EnumHand.MAIN_HAND)); // FIXME
                         }
 

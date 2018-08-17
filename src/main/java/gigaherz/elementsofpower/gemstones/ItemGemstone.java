@@ -4,12 +4,9 @@ import gigaherz.common.state.IItemState;
 import gigaherz.common.state.IItemStateManager;
 import gigaherz.common.state.implementation.ItemStateManager;
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.capabilities.AbstractMagicContainer;
-import gigaherz.elementsofpower.capabilities.CapabilityMagicContainer;
-import gigaherz.elementsofpower.capabilities.IMagicContainer;
-import gigaherz.elementsofpower.capabilities.MagicContainer;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.items.ItemMagicContainer;
+import gigaherz.elementsofpower.spells.Element;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
@@ -17,16 +14,11 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.Constants;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -110,12 +102,12 @@ public class ItemGemstone extends ItemMagicContainer
     }
 
     @Override
-    public String getUnlocalizedName(ItemStack stack)
+    public String getTranslationKey(ItemStack stack)
     {
         IItemState state = getStateManager().get(stack.getMetadata());
 
         if (state == null)
-            return getUnlocalizedName();
+            return getTranslationKey();
 
         String subName = state.getValue(GEM).getUnlocalizedName();
 
@@ -126,7 +118,7 @@ public class ItemGemstone extends ItemMagicContainer
     public String getItemStackDisplayName(ItemStack stack)
     {
         @SuppressWarnings("deprecation")
-        String gemPart = net.minecraft.util.text.translation.I18n.translateToLocal(getUnlocalizedName(stack) + ".name");
+        String gemPart = net.minecraft.util.text.translation.I18n.translateToLocal(getTranslationKey(stack) + ".name");
 
         Quality q = getQuality(stack);
 

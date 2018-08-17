@@ -287,7 +287,7 @@ public class EntityEssence extends EntityAmbientCreature
         Vec3d random = new Vec3d(rand.nextGaussian(), rand.nextGaussian(), rand.nextGaussian());
 
         double wantedDistance = Math.min(dp * 0.5f, 2.0f * scale);
-        double currentDistance = home.lengthVector();
+        double currentDistance = home.length();
 
         double factor = Math.sqrt(currentDistance / wantedDistance);
         double r = MathHelper.clamp(1 + rand.nextGaussian() - factor, 0, 2); // 0: point home. 1: stay forward. 2: move outward.

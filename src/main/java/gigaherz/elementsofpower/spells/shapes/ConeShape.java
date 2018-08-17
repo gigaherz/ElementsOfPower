@@ -119,7 +119,7 @@ public class ConeShape extends SpellShape
         double dot1 = ap.dotProduct(ab);
         double dot2 = ab.dotProduct(ab);
 
-        double pd = (dot1 / dot2) * ab.lengthVector();
+        double pd = (dot1 / dot2) * ab.length();
 
         if (pd > length)
             return false;

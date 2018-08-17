@@ -166,3 +166,13 @@ achievement.elementsofpower.masterSpell.desc=... or breaking it, I'm not quite s
 
 text.elementsofpower.jei.category.essentializer=Essentializer Breakdown
 text.elementsofpower.jei.category.analyzer=Gemstone Analyzer
+
+key.elementsofpower.category=Elements of Power
+key.elementsofpower.spellkey.fire=Add Fire to Spell
+key.elementsofpower.spellkey.water=Add Water to Spell
+key.elementsofpower.spellkey.air=Add Air to Spell
+key.elementsofpower.spellkey.earth=Add Earth to Spell
+key.elementsofpower.spellkey.light=Add Light to Spell
+key.elementsofpower.spellkey.darkness=Add Darkness to Spell
+key.elementsofpower.spellkey.life=Add Life to Spell
+key.elementsofpower.spellkey.death=Add Death to Spell

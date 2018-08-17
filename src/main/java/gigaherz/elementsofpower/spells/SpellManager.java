@@ -5,9 +5,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multiset;
 import gigaherz.elementsofpower.database.MagicAmounts;
-import gigaherz.elementsofpower.gemstones.Effect;
-import gigaherz.elementsofpower.gemstones.Element;
-import gigaherz.elementsofpower.gemstones.Shape;
 import gigaherz.elementsofpower.spells.effects.*;
 import gigaherz.elementsofpower.spells.shapes.*;
 

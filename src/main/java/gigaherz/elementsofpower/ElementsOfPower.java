@@ -134,7 +134,7 @@ public class ElementsOfPower
     public static CreativeTabs tabMagic = new CreativeTabs(MODID)
     {
         @Override
-        public ItemStack getTabIconItem()
+        public ItemStack createIcon()
         {
             return wand.getStack(Gemstone.Diamond, Quality.Common);
         }
@@ -269,6 +269,8 @@ public class ElementsOfPower
 
         StockConversions.registerEssenceSources();
         EssenceOverrides.loadOverrides();
+
+        proxy.init();
     }
 
     @EventHandler

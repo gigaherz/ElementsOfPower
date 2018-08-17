@@ -2,7 +2,7 @@ package gigaherz.elementsofpower.items;
 
 import gigaherz.common.ItemRegistered;
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.gemstones.Element;
+import gigaherz.elementsofpower.spells.Element;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -34,7 +34,7 @@ public class ItemMagicOrb extends ItemRegistered
     }
 
     @Override
-    public String getUnlocalizedName(ItemStack stack)
+    public String getTranslationKey(ItemStack stack)
     {
         int sub = stack.getItemDamage();
 
@@ -43,7 +43,7 @@ public class ItemMagicOrb extends ItemRegistered
             sub = 0;
         }
 
-        return getUnlocalizedName() + "." + subNames[sub];
+        return getTranslationKey() + "." + subNames[sub];
     }
 
     @Override

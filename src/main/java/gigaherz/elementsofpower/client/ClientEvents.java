@@ -9,7 +9,7 @@ import gigaherz.elementsofpower.client.renderers.RenderEssentializer;
 import gigaherz.elementsofpower.entities.EntityBall;
 import gigaherz.elementsofpower.entities.EntityEssence;
 import gigaherz.elementsofpower.essentializer.TileEssentializer;
-import gigaherz.elementsofpower.gemstones.Element;
+import gigaherz.elementsofpower.spells.Element;
 import gigaherz.elementsofpower.gemstones.Gemstone;
 import gigaherz.elementsofpower.gemstones.GemstoneBlockType;
 import gigaherz.elementsofpower.items.ItemGemContainer;

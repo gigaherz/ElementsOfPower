@@ -1,9 +1,8 @@
 package gigaherz.elementsofpower.database;
 
-import com.google.common.base.Objects;
 import com.google.gson.*;
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.gemstones.Element;
+import gigaherz.elementsofpower.spells.Element;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;

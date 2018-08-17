@@ -72,7 +72,7 @@ public class BlockDust extends BlockRegistered
     }
 
     @Override
-    public BlockRenderLayer getBlockLayer()
+    public BlockRenderLayer getRenderLayer()
     {
         return BlockRenderLayer.TRANSLUCENT;
     }
@@ -208,7 +208,7 @@ public class BlockDust extends BlockRegistered
 
     @Deprecated
     @Override
-    public EnumPushReaction getMobilityFlag(IBlockState state)
+    public EnumPushReaction getPushReaction(IBlockState state)
     {
         return EnumPushReaction.IGNORE;
     }

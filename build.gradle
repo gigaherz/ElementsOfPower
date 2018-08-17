@@ -11,10 +11,6 @@ buildscript {
     }
 }
 
-plugins {
-    id 'com.github.johnrengelman.shadow' version '1.2.3'
-}
-
 repositories {
     maven {
         url "http://dvs1.progwml6.com/files/maven"
@@ -25,66 +21,66 @@ repositories {
     maven {
         url 'http://dogforce-games.com/maven'
     }
+    maven {
+        name = "thiakil"
+        url = "http://maven.thiakil.com/"
+    }
 }
 
 apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'maven-publish'
 
-version = "0.7.12-alpha"
+version = "0.7.13-alpha"
 group = "gigaherz.elementsofpower" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "ElementsOfPower-1.12"
 
 minecraft {
-    version = "1.12.2-14.23.4.2729"
+    version = "1.12.2-14.23.4.2756"
     runDir = "run"
 
-    mappings = "snapshot_20180701"
+    mappings = "stable_39"
 
     replace "@VERSION@", project.version
     replaceIn "ElementsOfPower.java"
 }
 
-jar {
-    classifier = 'slim'
+configurations {
+    // configuration that holds jars to embed inside the jar
+    embed
+    embed.transitive = false
 }
 
-shadowJar {
-    classifier = ''
-    dependencies {
-        include(dependency(':Commons-1.12.0:'))
-        exclude '*CraftTweaker*'
-        exclude '*Baubles*'
-    }
-    relocate 'gigaherz.common', "${project.group}.shadow.common"
-}
-
-reobf {
-    shadowJar { mappingType = 'SEARGE' }
-}
-
-tasks.build.dependsOn reobfShadowJar
-
-artifacts {
-    archives shadowJar
-    archives sourceJar
-}
 
 dependencies {
     compile "org.jetbrains:annotations:15.0"
 
     deobfCompile "gigaherz.commons:gigaherz.commons-1.12.1:0.6.4"
-    //embed "gigaherz.commons:gigaherz.commons-1.12.1:0.6.4"
+    embed "gigaherz.commons:gigaherz.commons-1.12.1:0.6.4"
 
     deobfCompile "gigaherz.guidebook:Guidebook-1.12.2:2.5.0"
 
     deobfCompile "mezz.jei:jei_1.12.2:4.10.0.199:api"
     runtime "mezz.jei:jei_1.12.2:4.10.0.199"
 
+    deobfCompile "com.azanor.baubles:Baubles:1.12-1.5.2"
+
     compile fileTree(dir: 'libs', include: '*.jar')
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+jar {
+    into('/META-INF/libraries') {
+        from configurations.embed
+    }
+
+    manifest {
+        attributes([
+                "ContainedDeps": configurations.embed.collect { it.getName() }.join(' '),
+                "Maven-Artifact":"${project.group}:${project.archivesBaseName}:${project.version}",
+                'Timestamp': System.currentTimeMillis()
+        ])
+    }
+}
+
 compileJava {
     sourceCompatibility = 1.8
     targetCompatibility = 1.8

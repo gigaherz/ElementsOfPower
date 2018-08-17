@@ -4,9 +4,9 @@ import gigaherz.common.client.StackRenderingHelper;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.capabilities.CapabilityMagicContainer;
 import gigaherz.elementsofpower.capabilities.IMagicContainer;
-import gigaherz.elementsofpower.client.TickEventWandControl;
+import gigaherz.elementsofpower.client.WandUseManager;
 import gigaherz.elementsofpower.database.MagicAmounts;
-import gigaherz.elementsofpower.gemstones.Element;
+import gigaherz.elementsofpower.spells.Element;
 import gigaherz.elementsofpower.items.ItemWand;
 import gigaherz.elementsofpower.spells.SpellManager;
 import net.minecraft.client.Minecraft;
@@ -75,7 +75,7 @@ public class MagicContainerOverlay extends Gui
 
             String formatted = magic.isInfinite() ? "\u221E" : ElementsOfPower.prettyNumberFormatter.format(amounts.get(i));
             this.drawCenteredString(font, formatted, xPos + 8, yPos + 11, 0xFFC0C0C0);
-            if (TickEventWandControl.instance.handInUse != null)
+            if (WandUseManager.instance.handInUse != null)
                 this.drawCenteredString(font, "K:" + (i + 1), xPos + 8, yPos + 24, 0xFFC0C0C0);
 
             xPos += 28;
@@ -104,12 +104,12 @@ public class MagicContainerOverlay extends Gui
             }
         }
 
-        if (TickEventWandControl.instance.sequence != null)
+        if (WandUseManager.instance.sequence != null)
         {
             // New spell sequence
-            xPos = (rescaledWidth - 6 * (TickEventWandControl.instance.sequence.length() - 1) - 14) / 2;
+            xPos = (rescaledWidth - 6 * (WandUseManager.instance.sequence.length() - 1) - 14) / 2;
             yPos = rescaledHeight / 2 + 16;
-            for (char c : TickEventWandControl.instance.sequence.toCharArray())
+            for (char c : WandUseManager.instance.sequence.toCharArray())
             {
                 int i = SpellManager.elementIndices[c - 'A'];
 

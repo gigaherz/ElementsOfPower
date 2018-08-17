@@ -1,6 +1,7 @@
 package gigaherz.elementsofpower.gemstones;
 
 import com.google.common.collect.ImmutableList;
+import gigaherz.elementsofpower.spells.Element;
 import net.minecraft.util.IStringSerializable;
 
 import javax.annotation.Nullable;

@@ -133,10 +133,10 @@ public class BlockGemstoneOre extends BlockRegistered
         }
 
         @Override
-        public String getUnlocalizedName(ItemStack stack)
+        public String getTranslationKey(ItemStack stack)
         {
             if (stack.getMetadata() > GemstoneBlockType.values.size())
-                return block.getUnlocalizedName();
+                return block.getTranslationKey();
             return "tile." + ElementsOfPower.MODID + "." + GemstoneBlockType.values.get(stack.getMetadata()) + "Ore";
         }
     }

@@ -281,7 +281,7 @@ public class Spellcast
         }
 
         Vec3d look = player.getLook(partialTicks);
-        end = start.addVector(look.x * maxDistance, look.y * maxDistance, look.z * maxDistance);
+        end = start.add(look.x * maxDistance, look.y * maxDistance, look.z * maxDistance);
 
         RayTraceResult mop = player.world.rayTraceBlocks(start, end, false, true, false);
 

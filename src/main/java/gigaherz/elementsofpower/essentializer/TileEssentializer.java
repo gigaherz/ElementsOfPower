@@ -43,6 +43,8 @@ public class TileEssentializer
         {
             super.onContentsChanged(slot);
             markDirty();
+            IBlockState state = world.getBlockState(pos);
+            world.notifyBlockUpdate(pos, state, state, 3);
         }
 
         public boolean isItemValidForSlot(int index, ItemStack stack)

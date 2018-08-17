@@ -42,13 +42,13 @@ public class ItemSpelldust extends ItemStateful
     }
 
     @Override
-    public String getUnlocalizedName(ItemStack stack)
+    public String getTranslationKey(ItemStack stack)
     {
         int sub = stack.getItemDamage();
 
         if (sub >= Gemstone.values.size())
-            return getUnlocalizedName();
+            return getTranslationKey();
 
-        return getUnlocalizedName() + Gemstone.values.get(sub).getUnlocalizedName();
+        return getTranslationKey() + Gemstone.values.get(sub).getUnlocalizedName();
     }
 }

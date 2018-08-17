@@ -2,7 +2,7 @@ package gigaherz.elementsofpower.database;
 
 import com.google.common.collect.Lists;
 import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.gemstones.Element;
+import gigaherz.elementsofpower.spells.Element;
 import gigaherz.elementsofpower.gemstones.Gemstone;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;

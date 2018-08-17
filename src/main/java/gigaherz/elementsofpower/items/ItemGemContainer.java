@@ -6,7 +6,7 @@ import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.capabilities.CapabilityMagicContainer;
 import gigaherz.elementsofpower.capabilities.IMagicContainer;
 import gigaherz.elementsofpower.database.MagicAmounts;
-import gigaherz.elementsofpower.gemstones.Element;
+import gigaherz.elementsofpower.spells.Element;
 import gigaherz.elementsofpower.gemstones.Gemstone;
 import gigaherz.elementsofpower.gemstones.ItemGemstone;
 import gigaherz.elementsofpower.gemstones.Quality;
@@ -254,14 +254,14 @@ public abstract class ItemGemContainer extends ItemMagicContainer
     }
 
     @Override
-    public String getUnlocalizedName(ItemStack stack)
+    public String getTranslationKey(ItemStack stack)
     {
         Gemstone g = getGemstone(stack);
 
         if (g == null)
-            return getUnlocalizedName();
+            return getTranslationKey();
 
-        return getUnlocalizedName() + g.getUnlocalizedName();
+        return getTranslationKey() + g.getUnlocalizedName();
     }
 
     @Override
@@ -270,7 +270,7 @@ public abstract class ItemGemContainer extends ItemMagicContainer
         Quality q = getQuality(stack);
 
         @SuppressWarnings("deprecation")
-        String namePart = net.minecraft.util.text.translation.I18n.translateToLocal(getUnlocalizedName(stack) + ".name");
+        String namePart = net.minecraft.util.text.translation.I18n.translateToLocal(getTranslationKey(stack) + ".name");
 
         if (q == null)
             return namePart;
