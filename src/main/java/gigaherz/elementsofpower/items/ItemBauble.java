@@ -13,12 +13,14 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
@@ -234,6 +236,7 @@ public abstract class ItemBauble extends ItemGemContainer
     @Override
     public ICapabilityProvider initCapabilities(ItemStack _stack, @Nullable NBTTagCompound nbt)
     {
+        final ICapabilityProvider superProvider = super.initCapabilities(_stack, nbt);
         return BAUBLE_ITEM_CAP == null ? null : new ICapabilityProvider()
         {
             ItemStack stack = _stack;
@@ -241,7 +244,7 @@ public abstract class ItemBauble extends ItemGemContainer
             @Override
             public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing)
             {
-                return capability == BAUBLE_ITEM_CAP;
+                return capability == BAUBLE_ITEM_CAP || superProvider.hasCapability(capability, facing);
             }
 
             @SuppressWarnings("unchecked")
@@ -251,7 +254,7 @@ public abstract class ItemBauble extends ItemGemContainer
             {
                 if (capability == BAUBLE_ITEM_CAP)
                     return (T) getBaubleInstance();
-                return null;
+                return superProvider.getCapability(capability, facing);
             }
         };
     }

@@ -14,6 +14,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 
 public abstract class ItemMagicContainer extends ItemStateful
 {
@@ -116,22 +117,34 @@ public abstract class ItemMagicContainer extends ItemStateful
         return !magic.getContainedMagic().isEmpty();
     }
 
-    public ItemStack addContainedMagic(ItemStack stack, ItemStack orb)
+    public ItemStack addContainedMagic(ItemStack stack, List<ItemStack> orbs)
     {
         if (stack.getCount() <= 0)
             return ItemStack.EMPTY;
-        if (orb.getCount() <= 0)
-            return stack;
+        if (orbs.size() == 0)
+            return ItemStack.EMPTY;
 
         IMagicContainer magic = CapabilityMagicContainer.getContainer(stack);
         if (magic == null)
-            return stack;
+            return ItemStack.EMPTY;
 
         if (magic.isFull() || magic.isInfinite())
-            return stack;
+            return ItemStack.EMPTY;
 
-        magic.insertMagic(MagicAmounts.ofElement(Element.values[orb.getMetadata()], 8), false);
+        MagicAmounts totalMagic = MagicAmounts.EMPTY;
 
+        for(ItemStack orb : orbs)
+        {
+            if (orb.getCount() <= 0)
+                continue;
+
+            totalMagic = totalMagic.add(Element.values[orb.getMetadata()], 8);
+        }
+
+        if (!magic.insertMagic(totalMagic, true).isEmpty())
+            return ItemStack.EMPTY;
+
+        magic.insertMagic(totalMagic, false);
         return stack;
     }
 }

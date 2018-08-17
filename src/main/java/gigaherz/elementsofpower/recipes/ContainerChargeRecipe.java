@@ -58,7 +58,7 @@ public class ContainerChargeRecipe extends IForgeRegistryEntry.Impl<IRecipe> imp
             Item item = current.getItem();
             if (item instanceof ItemMagicContainer)
             {
-                if (gemContainer != null)
+                if (gemContainer.getCount() > 0)
                     return ItemStack.EMPTY;
                 gemContainer = current.copy();
             }
@@ -77,13 +77,7 @@ public class ContainerChargeRecipe extends IForgeRegistryEntry.Impl<IRecipe> imp
             return ItemStack.EMPTY;
         }
 
-        for (ItemStack orb : orbs)
-        {
-            gemContainer = ((ItemMagicContainer) gemContainer.getItem()).addContainedMagic(gemContainer, orb);
-            if (gemContainer.getCount() <= 0)
-                break;
-        }
-
+        gemContainer = ((ItemMagicContainer) gemContainer.getItem()).addContainedMagic(gemContainer, orbs);
         return gemContainer;
     }
 

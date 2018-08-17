@@ -10,19 +10,10 @@ import javax.annotation.Nullable;
 
 public class ItemHeadband extends ItemBauble
 {
-    ICapabilityProvider provider;
-
     public ItemHeadband(String name)
     {
         super(name);
         setCreativeTab(ElementsOfPower.tabMagic);
-    }
-
-    @Nullable
-    @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt)
-    {
-        return super.initCapabilities(stack, nbt);
     }
 
     @Override

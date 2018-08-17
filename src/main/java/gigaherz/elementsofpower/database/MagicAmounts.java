@@ -406,11 +406,11 @@ public class MagicAmounts implements INBTSerializable<NBTTagCompound>
     {
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            if (amounts[i] >= other.amounts[i])
-                return false;
+            if (amounts[i] < other.amounts[i])
+                return true;
         }
 
-        return true;
+        return false;
     }
 
     public boolean equals(MagicAmounts other)
