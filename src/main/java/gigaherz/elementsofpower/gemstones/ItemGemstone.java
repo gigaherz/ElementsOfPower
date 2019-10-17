@@ -15,9 +15,13 @@ import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -193,13 +197,14 @@ public class ItemGemstone extends ItemMagicContainer
         return stack;
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn)
     {
         if (getQuality(stack) == null)
-            tooltip.add(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + I18n.format("text." + ElementsOfPower.MODID + ".gemstone.use"));
+            tooltip.add(new TextComponentTranslation("text.elementsofpower.gemstone.use").setStyle(new Style().setColor(TextFormatting.DARK_GRAY).setItalic(true)).getFormattedText());
         else
-            tooltip.add(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + I18n.format("text." + ElementsOfPower.MODID + ".gemstone.combine"));
+            tooltip.add(new TextComponentTranslation("text.elementsofpower.gemstone.combine").setStyle(new Style().setColor(TextFormatting.DARK_GRAY).setItalic(true)).getFormattedText());
         super.addInformation(stack, worldIn, tooltip, flagIn);
     }
 }

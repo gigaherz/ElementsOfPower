@@ -15,6 +15,9 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 
+import java.util.Arrays;
+import java.util.regex.Pattern;
+
 public class ContainerEssentializer
         extends Container
 {
@@ -84,6 +87,9 @@ public class ContainerEssentializer
     {
         tile.containedMagic = contained;
         tile.remainingToConvert = remaining;
+
+        Pattern p = Pattern.compile("");
+        p.matcher("");
     }
 
     @Override

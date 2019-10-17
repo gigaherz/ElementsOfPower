@@ -22,15 +22,20 @@ import gigaherz.elementsofpower.spelldust.ItemSpelldust;
 import gigaherz.elementsofpower.spells.SpellcastEntityData;
 import gigaherz.elementsofpower.spells.blocks.BlockCushion;
 import gigaherz.elementsofpower.spells.blocks.BlockDust;
+import gigaherz.elementsofpower.spells.blocks.BlockLight;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -52,6 +57,8 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.Format;
+import java.util.Arrays;
+import java.util.List;
 
 //import gigaherz.elementsofpower.progression.DiscoveryHandler;
 
@@ -84,6 +91,8 @@ public class ElementsOfPower
     public static BlockRegistered dust;
     @GameRegistry.ObjectHolder(MODID + ":mist")
     public static BlockRegistered mist;
+    @GameRegistry.ObjectHolder(MODID + ":light")
+    public static BlockRegistered light;
     @GameRegistry.ObjectHolder(MODID + ":cushion")
     public static BlockRegistered cushion;
     @GameRegistry.ObjectHolder(MODID + ":cocoon")
@@ -147,6 +156,7 @@ public class ElementsOfPower
                 new BlockEssentializer("essentializer"),
                 new BlockDust("dust"),
                 new BlockDust("mist"),
+                new BlockLight("light"),
                 new BlockCushion("cushion"),
                 new BlockCocoon("cocoon"),
                 new BlockGemstone("gemstone_block"),

@@ -21,7 +21,9 @@ public class StockConversions
     public static void registerEssenceSources()
     {
         for (Element e : Element.values())
-        { essences(ElementsOfPower.orb, e.ordinal()).element(e, 8); }
+        {
+            essences(ElementsOfPower.orb, e.ordinal()).element(e, 8);
+        }
 
         essences(Blocks.CACTUS).life(3);
         essences(Blocks.CHEST).earth(2).light(1);

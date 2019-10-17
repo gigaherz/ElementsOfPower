@@ -3,12 +3,14 @@ package gigaherz.elementsofpower.spells.effects;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.spells.Spellcast;
 import gigaherz.elementsofpower.spells.blocks.BlockDust;
+import gigaherz.elementsofpower.spells.blocks.BlockLight;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 
@@ -19,7 +21,7 @@ public class LightEffect extends SpellEffect
     @Override
     public int getColor(Spellcast cast)
     {
-        return 0x000000;
+        return 0xFFFFFF;
     }
 
     @Override
@@ -31,7 +33,7 @@ public class LightEffect extends SpellEffect
     @Override
     public int getInterval(Spellcast cast)
     {
-        return 10;
+        return 5;
     }
 
     @Override
@@ -57,7 +59,7 @@ public class LightEffect extends SpellEffect
     {
         for (int i = 0; i < 8; ++i)
         {
-            cast.spawnRandomParticle(EnumParticleTypes.WATER_SPLASH,
+            cast.spawnRandomParticle(EnumParticleTypes.CRIT_MAGIC,
                     mop.hitVec.x, mop.hitVec.y, mop.hitVec.z);
         }
     }
@@ -71,11 +73,17 @@ public class LightEffect extends SpellEffect
             currentState = cast.world.getBlockState(blockPos);
         }
 
+        int density = MathHelper.clamp((int)(16-16*r),1,16);
+
         Block block = currentState.getBlock();
 
         if (block == Blocks.AIR)
         {
-            cast.world.setBlockState(blockPos, ElementsOfPower.dust.getDefaultState().withProperty(BlockDust.DENSITY, 16));
+            cast.world.setBlockState(blockPos, ElementsOfPower.light.getDefaultState().withProperty(BlockLight.DENSITY, density));
+        }
+        else if (block == ElementsOfPower.light)
+        {
+            ((BlockLight)block).resetCooldown(cast.world, blockPos, currentState, density);
         }
     }
 }

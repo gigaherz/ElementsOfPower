@@ -31,6 +31,17 @@ import javax.annotation.Nullable;
 public abstract class ItemBauble extends ItemGemContainer
 {
     private static final float MAX_TRANSFER_TICK = 1 / 20.0f;
+    private static final float[] TRANSFER_RATES = {
+            MAX_TRANSFER_TICK,
+            MAX_TRANSFER_TICK * 2,
+            MAX_TRANSFER_TICK * 5,
+            MAX_TRANSFER_TICK * 10,
+            MAX_TRANSFER_TICK * 25
+    };
+
+    static {
+        assert TRANSFER_RATES.length == Quality.values().length;
+    }
 
     protected ItemBauble(String name)
     {
@@ -178,50 +189,41 @@ public abstract class ItemBauble extends ItemGemContainer
         if (limits.isEmpty())
             return;
 
-        float totalTransfer = getTotalTransfer(thisStack, thisMagic, available, stack, limits, amounts);
+        MagicAmounts remaining = available;
 
-        if (totalTransfer > 0)
+        Gemstone g = getGemstone(thisStack);
+        Quality q = getQuality(thisStack);
+        if (g != null && q != null)
+        {
+            float maxTransferFrom = TRANSFER_RATES[q.ordinal()];
+            float boost = q.getTransferSpeed();
+
+            for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+            {
+                float maxTransfer = maxTransferFrom;
+
+                if (g == Gemstone.Diamond || g.ordinal() == i)
+                    maxTransfer *= boost;
+
+                float transfer = Math.min(maxTransfer, limits.get(i) - amounts.get(i));
+                if (!thisMagic.isInfinite())
+                    transfer = Math.min(remaining.get(i), transfer);
+                if (transfer > 0)
+                {
+                    amounts = amounts.add(i, transfer);
+                    if (!thisMagic.isInfinite())
+                        remaining = remaining.add(i, -transfer);
+                }
+            }
+        }
+
+        if (remaining.lessThan(available))
         {
             magic.setContainedMagic(amounts);
 
             if (!thisMagic.isInfinite())
-                thisMagic.setContainedMagic(available);
+                thisMagic.setContainedMagic(remaining);
         }
-    }
-
-    private float getTotalTransfer(ItemStack thisStack, IMagicContainer thisMagic,
-                                   MagicAmounts available, ItemStack stack,
-                                   MagicAmounts limits, MagicAmounts amounts)
-    {
-        Gemstone g = getGemstone(thisStack);
-        Quality q = getQuality(thisStack);
-
-        if (g == null || q == null)
-            return 0;
-
-        float boost = q.getTransferSpeed();
-
-        float totalTransfer = 0;
-        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-        {
-            float maxTransfer = ItemBauble.MAX_TRANSFER_TICK;
-
-            if (g == Gemstone.Diamond || g.ordinal() == i)
-                maxTransfer *= boost;
-
-            float transfer = Math.min(maxTransfer, limits.get(i) - amounts.get(i));
-            if (!thisMagic.isInfinite())
-                transfer = Math.min(available.get(i), transfer);
-            if (transfer > 0)
-            {
-                totalTransfer += transfer;
-                amounts = amounts.add(i, transfer);
-                if (!thisMagic.isInfinite())
-                    available = available.add(i, -transfer);
-            }
-        }
-
-        return totalTransfer;
     }
 
     private static Capability<IBauble> BAUBLE_ITEM_CAP = null;

@@ -80,21 +80,15 @@ public class BlockEssentializer
                 double rx = rand.nextDouble() * 0.2D - 0.1D;
                 double rz = rand.nextDouble() * 0.2D - 0.1D;
 
-                switch (rand.nextInt(4))
-                {
-                    case 0:
-                        ParticleSmallCloud.spawn(worldIn, x + rx + 0.4, y, z + rz, 0.0D, 0.05D, 0.0D);
-                        break;
-                    case 1:
-                        ParticleSmallCloud.spawn(worldIn, x + rx - 0.4, y, z + rz, 0.0D, 0.05D, 0.0D);
-                        break;
-                    case 2:
-                        ParticleSmallCloud.spawn(worldIn, x + rx, y, z + rz + 0.4, 0.0D, 0.05D, 0.0D);
-                        break;
-                    case 3:
-                        ParticleSmallCloud.spawn(worldIn, x + rx, y, z + rz - 0.4, 0.0D, 0.05D, 0.0D);
-                        break;
-                }
+                int sides = rand.nextInt(16);
+                if ((sides & 1) != 0)
+                    ParticleSmallCloud.spawn(worldIn, x + rx + 0.4, y, z + rz, 0.0D, 0.05D, 0.0D);
+                if ((sides & 2) != 0)
+                    ParticleSmallCloud.spawn(worldIn, x + rx - 0.4, y, z + rz, 0.0D, 0.05D, 0.0D);
+                if ((sides & 4) != 0)
+                    ParticleSmallCloud.spawn(worldIn, x + rx, y, z + rz + 0.4, 0.0D, 0.05D, 0.0D);
+                if ((sides & 8) != 0)
+                    ParticleSmallCloud.spawn(worldIn, x + rx, y, z + rz - 0.4, 0.0D, 0.05D, 0.0D);
             }
         }
     }

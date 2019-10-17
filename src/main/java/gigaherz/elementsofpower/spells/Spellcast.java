@@ -41,6 +41,7 @@ public class Spellcast
 
     public Random rand;
     private int empowering;
+    private int radiating;
     private MagicAmounts spellCost;
 
     public Spellcast(SpellShape shape, SpellEffect effect, int power, String sequence)
@@ -268,17 +269,7 @@ public class Spellcast
     {
         float maxDistance = 10;
 
-        if (partialTicks < 1)
-        {
-            double sx = player.prevPosX + (player.posX - player.prevPosX) * partialTicks;
-            double sy = player.prevPosY + (player.posY - player.prevPosY) * partialTicks + player.getEyeHeight();
-            double sz = player.prevPosZ + (player.posZ - player.prevPosZ) * partialTicks;
-            start = new Vec3d(sx, sy, sz);
-        }
-        else
-        {
-            start = new Vec3d(player.posX, player.posY + player.getEyeHeight(), player.posZ);
-        }
+        calculateStartPosition(partialTicks);
 
         Vec3d look = player.getLook(partialTicks);
         end = start.add(look.x * maxDistance, look.y * maxDistance, look.z * maxDistance);
@@ -295,6 +286,22 @@ public class Spellcast
         return mop;
     }
 
+    public Vec3d calculateStartPosition(float partialTicks)
+    {
+        if (partialTicks < 1)
+        {
+            double sx = player.prevPosX + (player.posX - player.prevPosX) * partialTicks;
+            double sy = player.prevPosY + (player.posY - player.prevPosY) * partialTicks + player.getEyeHeight();
+            double sz = player.prevPosZ + (player.posZ - player.prevPosZ) * partialTicks;
+            start = new Vec3d(sx, sy, sz);
+        }
+        else
+        {
+            start = new Vec3d(player.posX, player.posY + player.getEyeHeight(), player.posZ);
+        }
+        return start;
+    }
+
     public void setEmpowering(int empowering)
     {
         this.empowering = empowering;
@@ -303,6 +310,16 @@ public class Spellcast
     public int getEmpowering()
     {
         return empowering;
+    }
+
+    public void setRadiating(int radiating)
+    {
+        this.radiating = radiating;
+    }
+
+    public int getRadiating()
+    {
+        return radiating;
     }
 
     public MagicAmounts getSpellCost()

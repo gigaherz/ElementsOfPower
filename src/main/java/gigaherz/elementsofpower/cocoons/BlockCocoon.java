@@ -417,8 +417,6 @@ public class BlockCocoon extends BlockRegistered
                 assert te != null;
 
                 te.essenceContained = te.essenceContained.add(am);
-
-                ElementsOfPower.logger.warn("Generated at: " + pos + " near " + world.getBlockState(pos).getBlock().getLocalizedName() + " with " + te.essenceContained);
             }
         }
     }

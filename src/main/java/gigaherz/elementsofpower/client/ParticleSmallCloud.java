@@ -5,13 +5,14 @@ import net.minecraft.client.particle.ParticleCloud;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.util.ReportedException;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import java.lang.reflect.Field;
 
 public class ParticleSmallCloud extends ParticleCloud
 {
-    private static final Field internalParticleSizeField = ReflectionHelper.findField(ParticleCloud.class, "field_70569_a", "oSize");
+    private static final Field internalParticleSizeField = ObfuscationReflectionHelper.findField(ParticleCloud.class, "field_70569_a");
 
     public ParticleSmallCloud(World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn)
     {

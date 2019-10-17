@@ -184,7 +184,7 @@ public class MagicAmounts implements INBTSerializable<NBTTagCompound>
     @CheckReturnValue
     public MagicAmounts earth(float amount)
     {
-        return add(4, amount);
+        return add(3, amount);
     }
 
     @CheckReturnValue

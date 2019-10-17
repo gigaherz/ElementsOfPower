@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower.spells;
 
+import com.google.common.collect.Lists;
 import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.network.SpellcastSync;
 import net.minecraft.entity.Entity;

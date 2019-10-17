@@ -19,7 +19,7 @@ public class SpellManager
 
     public static final SpellShape sphere = new SphereShape();
     public static final SpellShape ball = new BallShape();
-    public static final SpellShape beam = new BeamShape();
+    public static final SpellShape beam = new LaserShape(); // FIXME: new BeamShape();
     public static final SpellShape cone = new ConeShape();
     public static final SpellShape self = new SelfShape();
     public static final SpellShape single = new SingleShape();
@@ -241,7 +241,7 @@ public class SpellManager
 
         private void addModifier(Element e)
         {
-            if (sequence.get(sequence.size() - 1) == e.getOpposite())
+            if (sequence.size() > 0 && sequence.get(sequence.size() - 1) == e.getOpposite())
             {
                 sequence.remove(sequence.size() - 1);
                 if (sequence.size() == 0)

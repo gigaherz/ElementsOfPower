@@ -248,7 +248,6 @@ public class ContainerAnalyzer extends Container
     @Override
     public void putStackInSlot(int slotID, ItemStack stack)
     {
-        ElementsOfPower.logger.warn("putStackInSlot " + stack + " client=" + player.world.isRemote);
         super.putStackInSlot(slotID, stack);
     }
 
@@ -256,7 +255,6 @@ public class ContainerAnalyzer extends Container
     @Override
     public void setAll(List<ItemStack> stacks)
     {
-        ElementsOfPower.logger.warn("putStacksInSlots " + stacks.get(0) + " client=" + player.world.isRemote);
         super.setAll(stacks);
     }
 

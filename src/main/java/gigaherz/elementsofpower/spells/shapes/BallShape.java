@@ -6,6 +6,7 @@ import gigaherz.elementsofpower.spells.effects.SpellEffect;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -52,13 +53,19 @@ public class BallShape extends SpellShape
         {
             BlockPos bp = mop.getBlockPos();
 
+            Vec3d vec;
+            Vec3d dir;
             if (mop.typeOfHit == RayTraceResult.Type.BLOCK)
             {
                 bp = bp.offset(mop.sideHit);
+                vec = new Vec3d(bp);
+                dir = new Vec3d(mop.sideHit.getDirectionVec());
             }
             else
             {
                 bp = new BlockPos(mop.hitVec);
+                vec = mop.hitVec;
+                dir = new Vec3d(0,0,0);
             }
 
             int px = bp.getX();
@@ -81,7 +88,7 @@ public class BallShape extends SpellShape
                         BlockPos np = new BlockPos(x, y, z);
 
                         RayTraceResult mop2 = cast.world.rayTraceBlocks(
-                                mop.hitVec.add(new Vec3d(mop.sideHit.getDirectionVec()).scale(0.5)),
+                                vec.add(dir.scale(0.5)),
                                 new Vec3d(px + 0.5, py + 0.5, pz + 0.5), false, true, false);
                         if (mop2 != null && mop2.typeOfHit != RayTraceResult.Type.MISS)
                             if (!mop2.getBlockPos().equals(np))
