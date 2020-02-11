@@ -1,50 +1,94 @@
 package gigaherz.elementsofpower.essentializer.gui;
 
-import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.capabilities.CapabilityMagicContainer;
 import gigaherz.elementsofpower.database.EssenceConversions;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.essentializer.TileEssentializer;
 import gigaherz.elementsofpower.network.EssentializerAmountsUpdate;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.IContainerListener;
-import net.minecraft.inventory.Slot;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.inventory.container.IContainerListener;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.registries.ObjectHolder;
 
-import java.util.Arrays;
 import java.util.regex.Pattern;
 
 public class ContainerEssentializer
         extends Container
 {
-    protected TileEssentializer tile;
+    @ObjectHolder("elementsofpower:essentializer")
+    public static ContainerType<ContainerEssentializer> TYPE;
+
+    protected IMagicAmountHolder magicHolder;
     private MagicAmounts prevContained = MagicAmounts.EMPTY;
     private MagicAmounts prevRemaining = MagicAmounts.EMPTY;
 
-    public ContainerEssentializer(TileEssentializer tileEntity, InventoryPlayer playerInventory)
+    public ContainerEssentializer(int id, PlayerInventory playerInventory)
     {
-        this.tile = tileEntity;
+        this(id, playerInventory, new ItemStackHandler(3), new IMagicAmountHolder()
+        {
+            private MagicAmounts remaining = MagicAmounts.EMPTY;
+            private MagicAmounts contained = MagicAmounts.EMPTY;
 
-        IItemHandler inv = tileEntity.getInventory();
+            @Override
+            public MagicAmounts getContainedMagic()
+            {
+                return this.contained;
+            }
 
-        addSlotToContainer(new SlotSource(inv, 0, 80, 44));
-        addSlotToContainer(new SlotContainerIn(inv, 1, 8, 56));
-        addSlotToContainer(new SlotContainerOut(inv, 2, 152, 56));
+            @Override
+            public MagicAmounts getRemainingToConvert()
+            {
+                return this.remaining;
+            }
+
+            @Override
+            public void setContainedMagic(MagicAmounts contained)
+            {
+                this.contained = contained;
+            }
+
+            @Override
+            public void setRemainingToConvert(MagicAmounts remaining)
+            {
+                this.remaining = remaining;
+            }
+        });
+    }
+
+    public ContainerEssentializer(int id, TileEssentializer tileEntity, PlayerInventory playerInventory)
+    {
+        this(id, playerInventory, tileEntity.getInventory(), tileEntity);
+    }
+
+    private ContainerEssentializer(int id, PlayerInventory playerInventory, IItemHandler inv, IMagicAmountHolder magicHolder)
+    {
+        super(TYPE, id);
+
+        this.magicHolder = magicHolder;
+
+        addSlot(new SlotSource(inv, 0, 80, 44));
+        addSlot(new SlotContainerIn(inv, 1, 8, 56));
+        addSlot(new SlotContainerOut(inv, 2, 152, 56));
 
         bindPlayerInventory(playerInventory);
     }
 
-    protected void bindPlayerInventory(InventoryPlayer playerInventory)
+    protected void bindPlayerInventory(PlayerInventory playerInventory)
     {
         for (int i = 0; i < 3; i++)
         {
             for (int j = 0; j < 9; j++)
             {
-                addSlotToContainer(new Slot(playerInventory,
+                addSlot(new Slot(playerInventory,
                         j + i * 9 + 9,
                         8 + j * 18, 94 + i * 18));
             }
@@ -52,12 +96,17 @@ public class ContainerEssentializer
 
         for (int i = 0; i < 9; i++)
         {
-            addSlotToContainer(new Slot(playerInventory, i, 8 + i * 18, 152));
+            addSlot(new Slot(playerInventory, i, 8 + i * 18, 152));
         }
     }
 
+    public IMagicAmountHolder getMagicHolder()
+    {
+        return magicHolder;
+    }
+
     @Override
-    public boolean canInteractWith(EntityPlayer player)
+    public boolean canInteractWith(PlayerEntity player)
     {
         return true;
     }
@@ -67,33 +116,35 @@ public class ContainerEssentializer
     {
         super.detectAndSendChanges();
 
-        if (!prevContained.equals(tile.containedMagic)
-                || !prevRemaining.equals(tile.remainingToConvert))
+        if (!prevContained.equals(magicHolder.getContainedMagic())
+                || !prevRemaining.equals(magicHolder.getRemainingToConvert()))
         {
             for (IContainerListener watcher : this.listeners)
             {
-                if (watcher instanceof EntityPlayerMP)
+                if (watcher instanceof ServerPlayerEntity)
                 {
-                    ElementsOfPower.channel.sendTo(new EssentializerAmountsUpdate(windowId, tile), (EntityPlayerMP) watcher);
+                    ElementsOfPowerMod.channel.send(
+                            PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)watcher),
+                            new EssentializerAmountsUpdate(windowId, magicHolder));
                 }
             }
 
-            prevContained = tile.containedMagic;
-            prevRemaining = tile.remainingToConvert;
+            prevContained = magicHolder.getContainedMagic();
+            prevRemaining = magicHolder.getRemainingToConvert();
         }
     }
 
     public void updateAmounts(MagicAmounts contained, MagicAmounts remaining)
     {
-        tile.containedMagic = contained;
-        tile.remainingToConvert = remaining;
+        magicHolder.setContainedMagic(contained);
+        magicHolder.setRemainingToConvert(remaining);
 
         Pattern p = Pattern.compile("");
         p.matcher("");
     }
 
     @Override
-    public ItemStack transferStackInSlot(EntityPlayer player, int slotIndex)
+    public ItemStack transferStackInSlot(PlayerEntity player, int slotIndex)
     {
         Slot slot = this.inventorySlots.get(slotIndex);
         if (slot == null || !slot.getHasStack())
@@ -111,7 +162,7 @@ public class ContainerEssentializer
         if (slotIndex >= 3)
         {
             boolean itemIsContainer = CapabilityMagicContainer.hasContainer(stack);
-            boolean itemHasEssence = EssenceConversions.itemHasEssence(stack);
+            boolean itemHasEssence = EssenceConversions.itemHasEssence(stack.getItem());
 
             if (itemIsContainer)
             {

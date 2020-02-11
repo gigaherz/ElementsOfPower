@@ -1,20 +1,15 @@
 package gigaherz.elementsofpower.network;
 
-import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.common.Used;
+import gigaherz.elementsofpower.client.ClientPacketHandlers;
 import gigaherz.elementsofpower.spells.SpellManager;
 import gigaherz.elementsofpower.spells.Spellcast;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraftforge.fml.network.NetworkEvent;
 
-import javax.annotation.Nullable;
+import java.util.function.Supplier;
 
 public class SpellcastSync
-        implements IMessage
 {
     public enum ChangeMode
     {
@@ -29,11 +24,6 @@ public class SpellcastSync
     public ChangeMode changeMode;
     public Spellcast spellcast;
 
-    @Used
-    public SpellcastSync()
-    {
-    }
-
     public SpellcastSync(ChangeMode mode, Spellcast cast)
     {
         changeMode = mode;
@@ -41,13 +31,12 @@ public class SpellcastSync
         casterID = cast.getCastingPlayer().getEntityId();
     }
 
-    @Override
-    public void fromBytes(ByteBuf buf)
+    public SpellcastSync(PacketBuffer buf)
     {
         changeMode = ChangeMode.values[buf.readInt()];
         casterID = buf.readInt();
 
-        NBTTagCompound tagData = ByteBufUtils.readTag(buf);
+        CompoundNBT tagData = buf.readCompoundTag();
         String sequence = tagData.getString("sequence");
 
         spellcast = SpellManager.makeSpell(sequence);
@@ -55,29 +44,21 @@ public class SpellcastSync
             spellcast.readFromNBT(tagData);
     }
 
-    @Override
-    public void toBytes(ByteBuf buf)
+    public void encode(PacketBuffer buf)
     {
         buf.writeInt(changeMode.ordinal());
         buf.writeInt(casterID);
 
-        NBTTagCompound tagData = new NBTTagCompound();
+        CompoundNBT tagData = new CompoundNBT();
         spellcast.writeToNBT(tagData);
 
-        tagData.setString("sequence", spellcast.getSequence());
+        tagData.putString("sequence", spellcast.getSequence());
 
-        ByteBufUtils.writeTag(buf, tagData);
+        buf.writeCompoundTag(tagData);
     }
 
-    public static class Handler implements IMessageHandler<SpellcastSync, IMessage>
+    public boolean handle(Supplier<NetworkEvent.Context> context)
     {
-        @Nullable
-        @Override
-        public IMessage onMessage(SpellcastSync message, MessageContext ctx)
-        {
-            ElementsOfPower.proxy.handleSpellcastSync(message);
-
-            return null; // no response in this case
-        }
+        return ClientPacketHandlers.handleSpellcastSync(this);
     }
 }

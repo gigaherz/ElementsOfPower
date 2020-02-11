@@ -1,12 +1,14 @@
 package gigaherz.elementsofpower.client;
 
-import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.capabilities.CapabilityMagicContainer;
 import gigaherz.elementsofpower.capabilities.IMagicContainer;
 import gigaherz.elementsofpower.database.EssenceConversions;
 import gigaherz.elementsofpower.database.MagicAmounts;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.init.Items;
+import net.minecraft.client.util.InputMappings;
+import net.minecraft.item.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
@@ -14,11 +16,12 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-@Mod.EventBusSubscriber(value = Side.CLIENT, modid = ElementsOfPower.MODID)
+@Mod.EventBusSubscriber(value = Side.CLIENT, modid = ElementsOfPowerMod.MODID)
 public class MagicTooltips
 {
     @SubscribeEvent
@@ -37,15 +40,17 @@ public class MagicTooltips
 
         if (item == Items.DIAMOND || item == Items.EMERALD || item == Items.QUARTZ)
         {
-            toolTip.add(1, TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + I18n.format("text." + ElementsOfPower.MODID + ".gemstone.use"));
+            toolTip.add(1, TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + I18n.format("text." + ElementsOfPowerMod.MODID + ".gemstone.use"));
         }
 
         MagicAmounts amounts = EssenceConversions.getEssences(stack, false);
         if (amounts.isEmpty())
             return;
 
+        Minecraft mc = Minecraft.getInstance();
+
         toolTip.add(TextFormatting.YELLOW + "Converts to Essences:");
-        if (!Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) && !Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
+        if (!InputMappings.isKeyDown(mc.getMainWindow().getHandle(), GLFW.GLFW_KEY_LEFT_SHIFT) && !InputMappings.isKeyDown(mc.getMainWindow().getHandle(), GLFW.GLFW_KEY_RIGHT_SHIFT))
         {
             toolTip.add(TextFormatting.GRAY + "  (Hold SHIFT)");
             return;
@@ -65,11 +70,11 @@ public class MagicTooltips
                 str = String.format("%s  %s x\u221E", TextFormatting.GRAY, magicName);
             else */if (stack.getCount() > 1)
                 str = String.format("%s  %s x%s (stack %s)", TextFormatting.GRAY, magicName,
-                        ElementsOfPower.prettyNumberFormatter2.format(amounts.get(i)),
-                        ElementsOfPower.prettyNumberFormatter2.format(amounts.get(i) * stack.getCount()));
+                        ElementsOfPowerMod.prettyNumberFormatter2.format(amounts.get(i)),
+                        ElementsOfPowerMod.prettyNumberFormatter2.format(amounts.get(i) * stack.getCount()));
             else
                 str = String.format("%s  %s x%s", TextFormatting.GRAY, magicName,
-                        ElementsOfPower.prettyNumberFormatter2.format(amounts.get(i)));
+                        ElementsOfPowerMod.prettyNumberFormatter2.format(amounts.get(i)));
             toolTip.add(str);
         }
     }
@@ -113,7 +118,7 @@ public class MagicTooltips
 
                 String magicName = MagicAmounts.getMagicName(i);
                 String str = String.format("%s  %s x%s", TextFormatting.GRAY, magicName,
-                            ElementsOfPower.prettyNumberFormatter2.format(amounts.get(i)));
+                            ElementsOfPowerMod.prettyNumberFormatter2.format(amounts.get(i)));
                 toolTip.add(str);
             }
         }

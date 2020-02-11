@@ -2,15 +2,15 @@ package gigaherz.elementsofpower.spells.shapes;
 
 import gigaherz.elementsofpower.spells.Spellcast;
 import gigaherz.elementsofpower.spells.effects.SpellEffect;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 
 public class SphereShape extends SpellShape
 {
     @Override
-    public Spellcast castSpell(ItemStack stack, EntityPlayer player, Spellcast cast)
+    public Spellcast castSpell(ItemStack stack, PlayerEntity player, Spellcast cast)
     {
         return cast;
     }
@@ -32,7 +32,7 @@ public class SphereShape extends SpellShape
     {
         SpellEffect effect = cast.getEffect();
 
-        EntityPlayer player = cast.player;
+        PlayerEntity player = cast.player;
 
         if (!effect.processEntitiesAroundBefore(cast, player.getPositionVector()))
             return;
@@ -63,7 +63,7 @@ public class SphereShape extends SpellShape
 
                         BlockPos np = new BlockPos(x, y, z);
 
-                        IBlockState currentState = cast.world.getBlockState(np);
+                        BlockState currentState = cast.world.getBlockState(np);
 
                         effect.processBlockWithinRadius(cast, np, currentState, r, null);
                     }

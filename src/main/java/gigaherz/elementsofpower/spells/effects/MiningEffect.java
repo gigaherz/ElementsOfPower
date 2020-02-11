@@ -2,13 +2,14 @@ package gigaherz.elementsofpower.spells.effects;
 
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.management.PlayerInteractionManager;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -61,20 +62,20 @@ public class MiningEffect extends SpellEffect
     }
 
     @Override
-    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, float r, @Nullable RayTraceResult mop)
+    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, BlockState currentState, float r, @Nullable RayTraceResult mop)
     {
-        EntityPlayer player = cast.player;
+        PlayerEntity player = cast.player;
         World world = cast.world;
         Block block = currentState.getBlock();
-        IBlockState state = world.getBlockState(blockPos);
+        BlockState state = world.getBlockState(blockPos);
 
         float hardness = state.getBlockHardness(world, blockPos);
 
         if (!block.isAir(state, world, blockPos) && hardness >= 0 && hardness <= (cast.getDamageForce() / 3.0f))
         {
-            if (player instanceof EntityPlayerMP)
+            if (player instanceof ServerPlayerEntity)
             {
-                EntityPlayerMP playermp = (EntityPlayerMP) player;
+                ServerPlayerEntity playermp = (ServerPlayerEntity) player;
                 PlayerInteractionManager mgr = playermp.interactionManager;
 
                 int exp = net.minecraftforge.common.ForgeHooks.onBlockBreakEvent(world, mgr.getGameType(), playermp, blockPos);
@@ -86,17 +87,17 @@ public class MiningEffect extends SpellEffect
 
                     if (mgr.isCreative())
                     {
-                        world.setBlockToAir(blockPos);
+                        world.setBlockState(blockPos, Blocks.AIR.getDefaultState());
                     }
                     else
                     {
                         block.onBlockHarvested(world, blockPos, currentState, player);
-                        boolean flag = block.removedByPlayer(state, world, blockPos, player, true);
+                        boolean flag = block.removedByPlayer(state, world, blockPos, player, true, world.getFluidState(blockPos));
 
                         if (flag)
                         {
                             block.onPlayerDestroy(world, blockPos, currentState);
-                            block.harvestBlock(world, player, blockPos, currentState, tileentity, cast.getCastingPlayer().getHeldItem(EnumHand.MAIN_HAND)); // FIXME
+                            block.harvestBlock(world, player, blockPos, currentState, tileentity, cast.getCastingPlayer().getHeldItem(Hand.MAIN_HAND)); // FIXME
                         }
 
                         // Drop experiance

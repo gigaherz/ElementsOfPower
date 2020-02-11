@@ -1,13 +1,12 @@
 package gigaherz.elementsofpower.spells.effects;
 
-import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.spells.Spellcast;
-import gigaherz.elementsofpower.spells.blocks.BlockDust;
 import gigaherz.elementsofpower.spells.blocks.BlockLight;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -60,12 +59,12 @@ public class LightEffect extends SpellEffect
         for (int i = 0; i < 8; ++i)
         {
             cast.spawnRandomParticle(EnumParticleTypes.CRIT_MAGIC,
-                    mop.hitVec.x, mop.hitVec.y, mop.hitVec.z);
+                    mop.getHitVec().x, mop.getHitVec().y, mop.getHitVec().z);
         }
     }
 
     @Override
-    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, float r, @Nullable RayTraceResult mop)
+    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, BlockState currentState, float r, @Nullable RayTraceResult mop)
     {
         if (mop != null)
         {
@@ -79,9 +78,9 @@ public class LightEffect extends SpellEffect
 
         if (block == Blocks.AIR)
         {
-            cast.world.setBlockState(blockPos, ElementsOfPower.light.getDefaultState().withProperty(BlockLight.DENSITY, density));
+            cast.world.setBlockState(blockPos, ElementsOfPowerMod.light.getDefaultState().withProperty(BlockLight.DENSITY, density));
         }
-        else if (block == ElementsOfPower.light)
+        else if (block == ElementsOfPowerMod.light)
         {
             ((BlockLight)block).resetCooldown(cast.world, blockPos, currentState, density);
         }

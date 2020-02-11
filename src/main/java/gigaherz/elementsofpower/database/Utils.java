@@ -1,38 +1,7 @@
 package gigaherz.elementsofpower.database;
 
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.oredict.OreDictionary;
-
-import java.util.Map;
-
 public class Utils
 {
-    public static <OType> boolean stackMapContainsKey(Map<ItemStack, OType> map, ItemStack stack)
-    {
-        for (ItemStack k : map.keySet())
-        {
-            if (OreDictionary.itemMatches(stack, k, false))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public static <OType> OType stackMapGet(Map<ItemStack, OType> map, ItemStack stack, OType defaultValue)
-    {
-        for (Map.Entry<ItemStack, OType> entry : map.entrySet())
-        {
-            if (OreDictionary.itemMatches(stack, entry.getKey(), false))
-            {
-                return entry.getValue();
-            }
-        }
-
-        return defaultValue;
-    }
-
     public static int gcd(int a, int b)
     {
         for (; ; )

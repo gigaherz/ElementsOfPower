@@ -2,17 +2,17 @@ package gigaherz.elementsofpower.capabilities;
 
 import gigaherz.elementsofpower.database.MagicAmounts;
 import net.minecraft.crash.CrashReport;
+import net.minecraft.crash.ReportedException;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ReportedException;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nullable;
-import java.util.concurrent.Callable;
 
 public class CapabilityMagicContainer
 {
@@ -24,50 +24,47 @@ public class CapabilityMagicContainer
         CapabilityManager.INSTANCE.register(IMagicContainer.class, new Storage(), MagicContainer::new);
     }
 
-    @Nullable
-    public static IMagicContainer getContainer(ItemStack stack)
+    public static LazyOptional<IMagicContainer> getContainer(ItemStack stack)
     {
-        return stack.getCapability(INSTANCE, null);
+        return stack.getCapability(INSTANCE);
     }
 
     public static boolean hasContainer(ItemStack stack)
     {
-        return stack.hasCapability(INSTANCE, null);
+        return stack.getCapability(INSTANCE).isPresent();
     }
 
     public static boolean containsMagic(ItemStack stack)
     {
-        IMagicContainer cap = stack.getCapability(INSTANCE, null);
-        return cap != null && (cap.isInfinite() || !cap.getContainedMagic().isEmpty());
+        return stack.getCapability(INSTANCE).map(cap -> (cap.isInfinite() || !cap.getContainedMagic().isEmpty())).orElse(false);
     }
 
     public static boolean isNotFull(ItemStack stack, MagicAmounts self)
     {
-        IMagicContainer cap = stack.getCapability(INSTANCE, null);
-        return cap != null && !cap.isInfinite() && !cap.isFull() && !cap.getCapacity().isEmpty();
+        return stack.getCapability(INSTANCE).map(cap -> cap != null && !cap.isInfinite() && !cap.isFull() && !cap.getCapacity().isEmpty()).orElse(true);
     }
 
     private static class Storage implements Capability.IStorage<IMagicContainer>
     {
         @Override
-        public NBTBase writeNBT(Capability<IMagicContainer> capability, IMagicContainer instance, EnumFacing side)
+        public INBT writeNBT(Capability<IMagicContainer> capability, IMagicContainer instance, Direction side)
         {
-            NBTTagCompound nbt = new NBTTagCompound();
+            CompoundNBT nbt = new CompoundNBT();
 
             MagicAmounts amounts = instance.getContainedMagic();
 
             for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
             {
-                nbt.setFloat(Integer.toString(i), amounts.get(i));
+                nbt.putFloat(Integer.toString(i), amounts.get(i));
             }
 
             return nbt;
         }
 
         @Override
-        public void readNBT(Capability<IMagicContainer> capability, IMagicContainer instance, EnumFacing side, NBTBase nbt)
+        public void readNBT(Capability<IMagicContainer> capability, IMagicContainer instance, Direction side, INBT nbt)
         {
-            NBTTagCompound tag = (NBTTagCompound) nbt;
+            CompoundNBT tag = (CompoundNBT) nbt;
 
             MagicAmounts amounts = MagicAmounts.EMPTY;
 

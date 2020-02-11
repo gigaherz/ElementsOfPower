@@ -1,40 +1,38 @@
 package gigaherz.elementsofpower.database;
 
 import com.google.gson.*;
-import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.spells.Element;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.CheckReturnValue;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 
-@NotNull
-public class MagicAmounts implements INBTSerializable<NBTTagCompound>
+public class MagicAmounts implements INBTSerializable<CompoundNBT>
 {
     public static final MagicAmounts EMPTY = new MagicAmounts();
     public static final int ELEMENTS = 8;
 
     public final static String[] magicNames = {
-            ElementsOfPower.MODID + ".element.fire",
-            ElementsOfPower.MODID + ".element.water",
-            ElementsOfPower.MODID + ".element.air",
-            ElementsOfPower.MODID + ".element.earth",
-            ElementsOfPower.MODID + ".element.light",
-            ElementsOfPower.MODID + ".element.darkness",
-            ElementsOfPower.MODID + ".element.life",
-            ElementsOfPower.MODID + ".element.death",
+            ElementsOfPowerMod.MODID + ".element.fire",
+            ElementsOfPowerMod.MODID + ".element.water",
+            ElementsOfPowerMod.MODID + ".element.air",
+            ElementsOfPowerMod.MODID + ".element.earth",
+            ElementsOfPowerMod.MODID + ".element.light",
+            ElementsOfPowerMod.MODID + ".element.darkness",
+            ElementsOfPowerMod.MODID + ".element.life",
+            ElementsOfPowerMod.MODID + ".element.death",
     };
 
-    @SuppressWarnings("deprecation")
     public static String getMagicName(int i)
     {
-        return net.minecraft.util.text.translation.I18n.translateToLocal(magicNames[i]);
+        return new TranslationTextComponent(magicNames[i]).getFormattedText();
     }
 
     private final float[] amounts = new float[ELEMENTS];
@@ -48,12 +46,12 @@ public class MagicAmounts implements INBTSerializable<NBTTagCompound>
         System.arraycopy(other.amounts, 0, amounts, 0, ELEMENTS);
     }
 
-    public MagicAmounts(NBTTagCompound tagCompound)
+    public MagicAmounts(CompoundNBT tagCompound)
     {
         deserializeNBT(tagCompound);
     }
 
-    public MagicAmounts(ByteBuf buf)
+    public MagicAmounts(PacketBuffer buf)
     {
         int numElements = buf.readByte();
         if (numElements > 0)
@@ -118,7 +116,7 @@ public class MagicAmounts implements INBTSerializable<NBTTagCompound>
             else
                 b.append(",");
 
-            String str = ElementsOfPower.prettyNumberFormatter.format(amounts[i]);
+            String str = ElementsOfPowerMod.prettyNumberFormatter.format(amounts[i]);
             b.append(str);
 
             first = false;
@@ -313,31 +311,31 @@ public class MagicAmounts implements INBTSerializable<NBTTagCompound>
 
 
     @Override
-    public NBTTagCompound serializeNBT()
+    public CompoundNBT serializeNBT()
     {
-        NBTTagCompound nbt = new NBTTagCompound();
-        NBTTagList itemList = new NBTTagList();
+        CompoundNBT nbt = new CompoundNBT();
+        ListNBT itemList = new ListNBT();
 
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            NBTTagCompound tag = new NBTTagCompound();
-            tag.setByte("Type", (byte) i);
-            tag.setFloat("Count", amounts[i]);
-            itemList.appendTag(tag);
+            CompoundNBT tag = new CompoundNBT();
+            tag.putByte("Type", (byte) i);
+            tag.putFloat("Count", amounts[i]);
+            itemList.add(tag);
         }
 
-        nbt.setTag("Essences", itemList);
+        nbt.put("Essences", itemList);
         return nbt;
     }
 
     @Override
-    public void deserializeNBT(NBTTagCompound nbt)
+    public void deserializeNBT(CompoundNBT nbt)
     {
-        NBTTagList tagList = nbt.getTagList("Essences", Constants.NBT.TAG_COMPOUND);
+        ListNBT tagList = nbt.getList("Essences", Constants.NBT.TAG_COMPOUND);
 
-        for (int i = 0; i < tagList.tagCount(); i++)
+        for (int i = 0; i < tagList.size(); i++)
         {
-            NBTTagCompound tag = (NBTTagCompound) tagList.get(i);
+            CompoundNBT tag = (CompoundNBT) tagList.get(i);
             byte slot = tag.getByte("Type");
 
             if (slot >= 0 && slot < 8)
@@ -364,7 +362,7 @@ public class MagicAmounts implements INBTSerializable<NBTTagCompound>
         return dominant;
     }
 
-    public void writeTo(ByteBuf buf)
+    public void writeTo(PacketBuffer buf)
     {
         int count = 0;
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)

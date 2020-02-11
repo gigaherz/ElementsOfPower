@@ -1,36 +1,44 @@
 package gigaherz.elementsofpower.essentializer;
 
-import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.capabilities.CapabilityMagicContainer;
 import gigaherz.elementsofpower.capabilities.IMagicContainer;
 import gigaherz.elementsofpower.database.EssenceConversions;
 import gigaherz.elementsofpower.database.MagicAmounts;
+import gigaherz.elementsofpower.essentializer.gui.IMagicAmountHolder;
 import gigaherz.elementsofpower.network.EssentializerTileUpdate;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ITickable;
+import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.Direction;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.RangedWrapper;
+import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class TileEssentializer
         extends TileEntity
-        implements ITickable
+        implements ITickableTileEntity, IMagicAmountHolder
 {
+    @ObjectHolder("elementsofpower:essentializer")
+    public static TileEntityType<TileEssentializer> TYPE;
+
     public static final int MaxEssentializerMagic = 32768;
     public static final float MaxConvertPerTick = 5 / 20.0f;
     public static final float MaxTransferPerTick = 50 / 20.0f;
@@ -43,7 +51,7 @@ public class TileEssentializer
         {
             super.onContentsChanged(slot);
             markDirty();
-            IBlockState state = world.getBlockState(pos);
+            BlockState state = world.getBlockState(pos);
             world.notifyBlockUpdate(pos, state, state, 3);
         }
 
@@ -52,7 +60,7 @@ public class TileEssentializer
             switch (index)
             {
                 case 0:
-                    return EssenceConversions.itemHasEssence(stack);
+                    return EssenceConversions.itemHasEssence(stack.getItem());
                 case 1:
                     return CapabilityMagicContainer.hasContainer(stack);
                 case 2:
@@ -77,41 +85,43 @@ public class TileEssentializer
     public MagicAmounts containedMagic = MagicAmounts.EMPTY;
     public MagicAmounts remainingToConvert = MagicAmounts.EMPTY;
 
-    @Override
-    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing)
+    private final LazyOptional<IItemHandler> inventoryGetter = LazyOptional.of(() -> inventory);
+    private final LazyOptional<IItemHandler> topGetter = LazyOptional.of(() -> top);
+    private final LazyOptional<IItemHandler> sideGetter = LazyOptional.of(() -> sides);
+
+    public TileEssentializer(TileEntityType<?> type)
     {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
-        {
-            return facing != EnumFacing.DOWN;
-        }
-        return super.hasCapability(capability, facing);
+        super(type);
     }
 
-    @SuppressWarnings("unchecked")
-    @Nullable
+    public TileEssentializer()
+    {
+        super(TYPE);
+    }
+
     @Override
-    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing)
+    public <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction facing)
     {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
         {
-            if (facing == null) return (T) inventory;
+            if (facing == null) return inventoryGetter.cast();
             switch (facing)
             {
                 case UP:
-                    return (T) top;
+                    return topGetter.cast();
                 case DOWN:
-                    return null;
+                    return LazyOptional.empty();
                 default:
-                    return (T) sides;
+                    return sideGetter.cast();
             }
         }
         return super.getCapability(capability, facing);
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound)
+    public void read(CompoundNBT tagCompound)
     {
-        super.readFromNBT(tagCompound);
+        super.read(tagCompound);
         readInventoryFromNBT(tagCompound);
         containedMagic = readAmountsFromNBT(tagCompound, "Contained");
         remainingToConvert = readAmountsFromNBT(tagCompound, "Remaining");
@@ -120,93 +130,72 @@ public class TileEssentializer
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound)
+    public CompoundNBT write(CompoundNBT tagCompound)
     {
-        tagCompound = super.writeToNBT(tagCompound);
+        tagCompound = super.write(tagCompound);
         writeInventoryToNBT(tagCompound);
         writeAmountsToNBT(tagCompound, "Contained", containedMagic);
         writeAmountsToNBT(tagCompound, "Remaining", remainingToConvert);
         return tagCompound;
     }
 
-    private MagicAmounts readAmountsFromNBT(NBTTagCompound tagCompound, String key)
+    private MagicAmounts readAmountsFromNBT(CompoundNBT tagCompound, String key)
     {
         MagicAmounts amounts = MagicAmounts.EMPTY;
-        if (tagCompound.hasKey(key, Constants.NBT.TAG_COMPOUND))
+        if (tagCompound.contains(key, Constants.NBT.TAG_COMPOUND))
         {
-            NBTTagCompound tag = tagCompound.getCompoundTag(key);
+            CompoundNBT tag = tagCompound.getCompound(key);
 
             amounts = new MagicAmounts(tag);
         }
         return amounts;
     }
 
-    private void writeAmountsToNBT(NBTTagCompound tagCompound, String key, MagicAmounts amounts)
+    private void writeAmountsToNBT(CompoundNBT tagCompound, String key, MagicAmounts amounts)
     {
-        tagCompound.setTag(key, amounts.serializeNBT());
+        tagCompound.put(key, amounts.serializeNBT());
     }
 
-    private void readInventoryFromNBT(NBTTagCompound tagCompound)
+    private void readInventoryFromNBT(CompoundNBT tagCompound)
     {
-        if (tagCompound.getTagId("Inventory") == Constants.NBT.TAG_LIST)
-        {
-            NBTTagList tagList = tagCompound.getTagList("Inventory", Constants.NBT.TAG_COMPOUND);
-
-            for (int i = 0; i < inventory.getSlots(); i++)
-            { inventory.setStackInSlot(i, ItemStack.EMPTY); }
-
-            for (int i = 0; i < tagList.tagCount(); i++)
-            {
-                NBTTagCompound tag = (NBTTagCompound) tagList.get(i);
-                byte slot = tag.getByte("Slot");
-
-                if (slot < inventory.getSlots())
-                {
-                    inventory.setStackInSlot(slot, new ItemStack(tag));
-                }
-            }
-
-            return;
-        }
-
-        CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.readNBT(inventory, null, tagCompound.getTag("Slots"));
+        CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.readNBT(inventory, null, tagCompound.getCompound("Slots"));
     }
 
-    private void writeInventoryToNBT(NBTTagCompound tagCompound)
+    private void writeInventoryToNBT(CompoundNBT tagCompound)
     {
-        tagCompound.setTag("Slots", CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.writeNBT(inventory, null));
+        tagCompound.put("Slots", CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.writeNBT(inventory, null));
     }
 
     @Override
-    public NBTTagCompound getUpdateTag()
+    public CompoundNBT getUpdateTag()
     {
-        return writeToNBT(new NBTTagCompound());
+        return write(new CompoundNBT());
     }
 
     @Override
-    public void handleUpdateTag(NBTTagCompound tag)
+    public void handleUpdateTag(CompoundNBT tag)
     {
-        readFromNBT(tag);
+        read(tag);
     }
 
     @Override
-    public SPacketUpdateTileEntity getUpdatePacket()
+    public SUpdateTileEntityPacket getUpdatePacket()
     {
-        return new SPacketUpdateTileEntity(this.pos, 0, getUpdateTag());
+        return new SUpdateTileEntityPacket(this.pos, 0, getUpdateTag());
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet)
+    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket packet)
     {
         super.onDataPacket(net, packet);
         handleUpdateTag(packet.getNbtCompound());
 
-        IBlockState state = world.getBlockState(pos);
+        BlockState state = world.getBlockState(pos);
         world.notifyBlockUpdate(pos, state, state, 3);
     }
 
     @Override
-    public void update()
+    public void tick()
     {
         if (!world.isRemote)
         {
@@ -216,7 +205,9 @@ public class TileEssentializer
             boolean b3 = addMagicToOutput(inventory);
             if (b0 || b1 || b2 || b3)
             {
-                ElementsOfPower.channel.sendToAllAround(new EssentializerTileUpdate(this), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 50));
+                ElementsOfPowerMod.channel.send(
+                        PacketDistributor.TRACKING_CHUNK.with(() -> (Chunk)world.getChunk(pos)),
+                        new EssentializerTileUpdate(this));
             }
             if (b1 || b2 || b3)
             {
@@ -281,36 +272,35 @@ public class TileEssentializer
     {
         ItemStack input = inventory.getStackInSlot(1);
 
-        IMagicContainer magic = CapabilityMagicContainer.getContainer(input);
-        if (magic == null)
-            return false;
+        return CapabilityMagicContainer.getContainer(input).map(magic -> {
 
-        boolean isInfinite = magic.isInfinite();
+            boolean isInfinite = magic.isInfinite();
 
-        MagicAmounts contained = magic.getContainedMagic();
-        if (contained.isEmpty())
-            return false;
+            MagicAmounts contained = magic.getContainedMagic();
+            if (contained.isEmpty())
+                return false;
 
-        float totalAdded = 0;
-        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-        {
-            float maxTransfer = Math.min(MaxTransferPerTick, MaxEssentializerMagic - containedMagic.get(i));
-            float transfer = isInfinite ? maxTransfer : Math.min(maxTransfer, contained.get(i));
-            if (transfer > 0)
+            float totalAdded = 0;
+            for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
             {
-                if (!isInfinite) contained = contained.add(i, -transfer);
-                containedMagic = containedMagic.add(i, transfer);
-                totalAdded += transfer;
+                float maxTransfer = Math.min(MaxTransferPerTick, MaxEssentializerMagic - containedMagic.get(i));
+                float transfer = isInfinite ? maxTransfer : Math.min(maxTransfer, contained.get(i));
+                if (transfer > 0)
+                {
+                    if (!isInfinite) contained = contained.add(i, -transfer);
+                    containedMagic = containedMagic.add(i, transfer);
+                    totalAdded += transfer;
+                }
             }
-        }
 
-        if (totalAdded <= 0)
-            return false;
+            if (totalAdded <= 0)
+                return false;
 
-        magic.setContainedMagic(contained);
+            magic.setContainedMagic(contained);
 
-        inventory.setStackInSlot(1, input);
-        return true;
+            inventory.setStackInSlot(1, input);
+            return true;
+        }).orElse(false);
     }
 
     private boolean addMagicToOutput(IItemHandlerModifiable inventory)
@@ -322,37 +312,35 @@ public class TileEssentializer
             return false;
         }
 
-        IMagicContainer magic = CapabilityMagicContainer.getContainer(output);
-        if (magic == null)
-            return false;
+        return CapabilityMagicContainer.getContainer(output).map(magic -> {
+            if (magic.isInfinite())
+                return false;
 
-        if (magic.isInfinite())
-            return false;
+            MagicAmounts limits = magic.getCapacity();
+            MagicAmounts contained = magic.getContainedMagic();
 
-        MagicAmounts limits = magic.getCapacity();
-        MagicAmounts contained = magic.getContainedMagic();
+            if (limits.isEmpty())
+                return false;
 
-        if (limits.isEmpty())
-            return false;
-
-        float totalAdded = 0;
-        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-        {
-            float maxTransfer = Math.min(MaxTransferPerTick, limits.get(i) - contained.get(i));
-            float transfer = Math.min(maxTransfer, containedMagic.get(i));
-            if (transfer > 0)
+            float totalAdded = 0;
+            for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
             {
-                contained = contained.add(i, transfer);
-                containedMagic = containedMagic.add(i, -transfer);
-                totalAdded += transfer;
+                float maxTransfer = Math.min(MaxTransferPerTick, limits.get(i) - contained.get(i));
+                float transfer = Math.min(maxTransfer, containedMagic.get(i));
+                if (transfer > 0)
+                {
+                    contained = contained.add(i, transfer);
+                    containedMagic = containedMagic.add(i, -transfer);
+                    totalAdded += transfer;
+                }
             }
-        }
 
-        if (totalAdded <= 0)
-            return false;
+            if (totalAdded <= 0)
+                return false;
 
-        magic.setContainedMagic(contained);
-        return true;
+            magic.setContainedMagic(contained);
+            return true;
+        }).orElse(false);
     }
 
     private boolean canAddAll(MagicAmounts magic)

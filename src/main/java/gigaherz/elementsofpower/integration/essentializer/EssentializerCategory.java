@@ -2,7 +2,7 @@ package gigaherz.elementsofpower.integration.essentializer;
 
 import com.google.common.collect.Lists;
 import gigaherz.common.client.StackRenderingHelper;
-import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.essentializer.gui.ContainerEssentializer;
 import gigaherz.elementsofpower.essentializer.gui.GuiEssentializer;
@@ -18,7 +18,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.inventory.Slot;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
@@ -28,7 +28,7 @@ import java.util.List;
 
 public class EssentializerCategory implements IRecipeCategory<EssentializerRecipeWrapper>
 {
-    public static final String UID = ElementsOfPower.MODID + "_essentializer";
+    public static final String UID = ElementsOfPowerMod.MODID + "_essentializer";
 
     public static EssentializerCategory INSTANCE;
 
@@ -53,7 +53,7 @@ public class EssentializerCategory implements IRecipeCategory<EssentializerRecip
     @Override
     public String getTitle()
     {
-        return I18n.format("text." + ElementsOfPower.MODID + ".jei.category.essentializer");
+        return I18n.format("text." + ElementsOfPowerMod.MODID + ".jei.category.essentializer");
     }
 
     @Override
@@ -134,7 +134,7 @@ public class EssentializerCategory implements IRecipeCategory<EssentializerRecip
             int x0 = GuiEssentializer.MAGIC_ORBS[i * 2] - 7;
             int y0 = GuiEssentializer.MAGIC_ORBS[i * 2 + 1] - 15;
 
-            ItemStack stack = ElementsOfPower.orb.getStack(1, Element.values[i]);
+            ItemStack stack = ElementsOfPowerMod.orb.getStack(1, Element.values[i]);
 
             StackRenderingHelper.renderItemStack(mesher, mc.renderEngine, x0, y0, stack, alpha);
         }
@@ -157,7 +157,7 @@ public class EssentializerCategory implements IRecipeCategory<EssentializerRecip
                 count /= 1000;
             }
 
-            String formatted = ElementsOfPower.prettyNumberFormatter.format(count) + suffix;
+            String formatted = ElementsOfPowerMod.prettyNumberFormatter.format(count) + suffix;
 
             float x1 = (x0 + 16) * 1.5f - mc.fontRenderer.getStringWidth(formatted);
             float y1 = (y0 + 10.5f) * 1.5f;

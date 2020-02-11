@@ -1,16 +1,18 @@
 package gigaherz.elementsofpower.spells.shapes;
 
 import gigaherz.elementsofpower.spells.Spellcast;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 
 public class SingleShape extends SpellShape
 {
     @Override
-    public Spellcast castSpell(ItemStack stack, EntityPlayer player, Spellcast cast)
+    public Spellcast castSpell(ItemStack stack, PlayerEntity player, Spellcast cast)
     {
         return cast;
     }
@@ -28,14 +30,14 @@ public class SingleShape extends SpellShape
 
         if (mop != null)
         {
-            if (mop.typeOfHit == RayTraceResult.Type.ENTITY)
+            if (mop.getType() == RayTraceResult.Type.ENTITY)
             {
-                cast.getEffect().processDirectHit(cast, mop.entityHit, mop.hitVec);
+                cast.getEffect().processDirectHit(cast, ((EntityRayTraceResult)mop).getEntity(), mop.getHitVec());
             }
-            else if (mop.typeOfHit == RayTraceResult.Type.BLOCK)
+            else if (mop.getType() == RayTraceResult.Type.BLOCK)
             {
-                BlockPos pos = mop.getBlockPos();
-                IBlockState state = cast.world.getBlockState(pos);
+                BlockPos pos = ((BlockRayTraceResult)mop).getPos();
+                BlockState state = cast.world.getBlockState(pos);
                 cast.getEffect().processBlockWithinRadius(cast, pos, state, 0, mop);
             }
         }

@@ -2,14 +2,14 @@ package gigaherz.elementsofpower.spells.effects;
 
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.monster.EntityBlaze;
-import net.minecraft.entity.projectile.EntityFireball;
-import net.minecraft.entity.projectile.EntitySmallFireball;
-import net.minecraft.init.Blocks;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.monster.BlazeEntity;
+import net.minecraft.entity.projectile.DamagingProjectileEntity;
+import net.minecraft.entity.projectile.SmallFireballEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -43,7 +43,7 @@ public class FlameEffect extends SpellEffect
     @Override
     public void processDirectHit(Spellcast cast, Entity entity, Vec3d hitVec)
     {
-        float damage = (entity instanceof EntityBlaze) ? 3 + cast.getDamageForce() : cast.getDamageForce();
+        float damage = (entity instanceof BlazeEntity) ? 3 + cast.getDamageForce() : cast.getDamageForce();
 
         entity.attackEntityFrom(DamageSource.causeThrownDamage(cast.projectile, cast.player), damage);
         entity.setFire(cast.getDamageForce());
@@ -59,29 +59,29 @@ public class FlameEffect extends SpellEffect
     public void processEntitiesAroundAfter(Spellcast cast, Vec3d hitVec)
     {
         AxisAlignedBB aabb = new AxisAlignedBB(
-                hitVec.x - cast.getDamageForce(),
-                hitVec.y - cast.getDamageForce(),
-                hitVec.z - cast.getDamageForce(),
-                hitVec.x + cast.getDamageForce(),
-                hitVec.y + cast.getDamageForce(),
-                hitVec.z + cast.getDamageForce());
+                getHitVec().x - cast.getDamageForce(),
+                getHitVec().y - cast.getDamageForce(),
+                getHitVec().z - cast.getDamageForce(),
+                getHitVec().x + cast.getDamageForce(),
+                getHitVec().y + cast.getDamageForce(),
+                getHitVec().z + cast.getDamageForce());
 
-        burnEntities(cast, hitVec, cast.world.getEntitiesWithinAABB(EntityLivingBase.class, aabb));
-        burnEntities(cast, hitVec, cast.world.getEntitiesWithinAABB(EntityItem.class, aabb));
+        burnEntities(cast, getHitVec(), cast.world.getEntitiesWithinAABB(LivingEntity.class, aabb));
+        burnEntities(cast, getHitVec(), cast.world.getEntitiesWithinAABB(ItemEntity.class, aabb));
     }
 
     private void burnEntities(Spellcast cast, Vec3d hitVec, List<? extends Entity> living)
     {
-        EntityFireball ef = new EntitySmallFireball(cast.world);
+        DamagingProjectileEntity ef = new SmallFireballEntity(cast.world);
 
         for (Entity e : living)
         {
             if (!e.isEntityAlive())
                 continue;
 
-            double dx = e.posX - hitVec.x;
-            double dy = e.posY - hitVec.y;
-            double dz = e.posZ - hitVec.z;
+            double dx = e.posX - getHitVec().x;
+            double dy = e.posY - getHitVec().y;
+            double dz = e.posZ - getHitVec().z;
 
             double ll = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
@@ -100,7 +100,7 @@ public class FlameEffect extends SpellEffect
     }
 
     @Override
-    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, float r, @Nullable RayTraceResult mop)
+    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, BlockState currentState, float r, @Nullable RayTraceResult mop)
     {
         if (mop != null)
         {
@@ -120,6 +120,6 @@ public class FlameEffect extends SpellEffect
     public void spawnBallParticles(Spellcast cast, RayTraceResult mop)
     {
         cast.spawnRandomParticle(EnumParticleTypes.FLAME,
-                mop.hitVec.x, mop.hitVec.y, mop.hitVec.z);
+                mop.getHitVec().x, mop.getHitVec().y, mop.getHitVec().z);
     }
 }

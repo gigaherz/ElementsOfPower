@@ -2,13 +2,10 @@ package gigaherz.elementsofpower.spells.shapes;
 
 import com.google.common.collect.Lists;
 import gigaherz.elementsofpower.spells.Spellcast;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 
 import java.util.List;
 
@@ -21,7 +18,7 @@ public class LaserShape extends SpellShape
     }
 
     @Override
-    public Spellcast castSpell(ItemStack stack, EntityPlayer player, Spellcast cast)
+    public Spellcast castSpell(ItemStack stack, PlayerEntity player, Spellcast cast)
     {
         return cast;
     }
@@ -39,18 +36,18 @@ public class LaserShape extends SpellShape
 
         if (mop != null)
         {
-            Vec3d diff = mop.hitVec.subtract(cast.start);
+            Vec3d diff = mop.getHitVec().subtract(cast.start);
 
             List<BlockPos> intersections = getAllBlocksInRay(cast.start, diff.normalize(), diff.length());
 
-            if (mop.typeOfHit == RayTraceResult.Type.ENTITY)
+            if (mop.getType() == RayTraceResult.Type.ENTITY)
             {
-                cast.getEffect().processDirectHit(cast, mop.entityHit, mop.hitVec);
+                cast.getEffect().processDirectHit(cast, ((EntityRayTraceResult)mop).getEntity(), mop.getHitVec());
             }
-            else if (mop.typeOfHit == RayTraceResult.Type.BLOCK)
+            else if (mop.getType() == RayTraceResult.Type.BLOCK)
             {
-                BlockPos pos = mop.getBlockPos();
-                IBlockState state = cast.world.getBlockState(pos);
+                BlockPos pos = ((BlockRayTraceResult)mop).getPos();
+                BlockState state = cast.world.getBlockState(pos);
                 cast.getEffect().processBlockWithinRadius(cast, pos, state, 0, mop);
             }
 

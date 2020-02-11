@@ -1,18 +1,18 @@
 package gigaherz.elementsofpower.client;
 
-import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.spells.Element;
 import gigaherz.elementsofpower.items.ItemWand;
 import gigaherz.elementsofpower.network.SpellSequenceUpdate;
 import gigaherz.elementsofpower.spells.SpellManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraftforge.client.settings.IKeyConflictContext;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -33,7 +33,7 @@ public class WandUseManager
     public static WandUseManager instance;
 
     public String sequence;
-    public EnumHand handInUse = null;
+    public Hand handInUse = null;
     public ItemStack activeStack = null;
     public int slotInUse;
     public int itemInUseCount;
@@ -87,7 +87,7 @@ public class WandUseManager
 
     public void initialize()
     {
-        mc = Minecraft.getMinecraft();
+        mc = Minecraft.getInstance();
 
         GameSettings s = mc.gameSettings;
 
@@ -110,7 +110,7 @@ public class WandUseManager
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
             ClientRegistry.registerKeyBinding(spellKeys[i] =
-                    new KeyBinding("key.elementsofpower.spellkey."+ Element.values[i].translationName(),
+                    new KeyBinding("key.elementsofpower.spellkey."+ Element.values[i].getName(),
                             new OnUseContext(), defaultKeys[i], "key.elementsofpower.category"));
 
             s.keyBindsHotbar[i].setKeyConflictContext(new VanillaHotbarResolverContext(s.keyBindsHotbar[i].getKeyConflictContext()));
@@ -124,7 +124,7 @@ public class WandUseManager
         {
             if (handInUse != null)
             {
-                EntityPlayer player = Minecraft.getMinecraft().player;
+                PlayerEntity player = Minecraft.getInstance().player;
                 if (!player.isHandActive()
                         || player.getItemInUseCount() > itemInUseCount)
                 {
@@ -139,13 +139,13 @@ public class WandUseManager
     {
         if (activeStack == null)
         {
-            EntityPlayer player = mc.player;
+            PlayerEntity player = mc.player;
             int slotNumber = player.inventory.currentItem;
             ItemStack itemUsing = player.inventory.getCurrentItem();
             if (!(itemUsing.getItem() instanceof ItemWand))
                 return;
 
-            EnumHand hand = handInUse;
+            Hand hand = handInUse;
 
             beginHoldingRightButton(slotNumber, hand, itemUsing);
         }
@@ -164,7 +164,7 @@ public class WandUseManager
         if (handInUse == null)
             return;
 
-        EntityPlayerSP player = mc.player;
+        ClientPlayerEntity player = mc.player;
         if (player == null || player.inventory == null)
             return;
 
@@ -199,7 +199,7 @@ public class WandUseManager
         }
     }
 
-    private void beginHoldingRightButton(int slotNumber, EnumHand hand, ItemStack itemUsing)
+    private void beginHoldingRightButton(int slotNumber, Hand hand, ItemStack itemUsing)
     {
         activeStack = itemUsing;
         handInUse = hand;
@@ -207,18 +207,18 @@ public class WandUseManager
         slotInUse = slotNumber;
         sequence = "";
 
-        ElementsOfPower.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.BEGIN, slotInUse, null));
+        ElementsOfPowerMod.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.BEGIN, slotInUse, null));
     }
 
     private void endHoldingRightButton(boolean cancelMagicSetting)
     {
         if (cancelMagicSetting)
         {
-            ElementsOfPower.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.CANCEL, slotInUse, null));
+            ElementsOfPowerMod.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.CANCEL, slotInUse, null));
         }
         else
         {
-            ElementsOfPower.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.COMMIT, slotInUse, sequence));
+            ElementsOfPowerMod.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.COMMIT, slotInUse, sequence));
         }
 
         handInUse = null;

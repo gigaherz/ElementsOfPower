@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.items;
 
 import baubles.api.BaubleType;
-import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.ElementsOfPowerMod;
 import net.minecraft.item.ItemStack;
 
 public class ItemNecklace extends ItemBauble
@@ -9,7 +9,7 @@ public class ItemNecklace extends ItemBauble
     public ItemNecklace(String name)
     {
         super(name);
-        setCreativeTab(ElementsOfPower.tabMagic);
+        setCreativeTab(ElementsOfPowerMod.tabMagic);
     }
 
     @Override

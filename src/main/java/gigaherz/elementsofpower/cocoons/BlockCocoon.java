@@ -1,111 +1,66 @@
 package gigaherz.elementsofpower.cocoons;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import gigaherz.common.BlockRegistered;
-import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.entities.EntityEssence;
+import gigaherz.elementsofpower.spells.Element;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockDirt;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.properties.PropertyInteger;
-import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.state.DirectionProperty;
+import net.minecraft.state.IntegerProperty;
+import net.minecraft.state.StateContainer;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.DimensionType;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraft.world.gen.IChunkGenerator;
-import net.minecraftforge.fml.common.IWorldGenerator;
+import net.minecraft.world.server.ServerWorld;
 
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
-public class BlockCocoon extends BlockRegistered
+public class BlockCocoon extends Block
 {
-    public static final PropertyEnum<EnumFacing> FACING = PropertyEnum.create("facing", EnumFacing.class);
-    public static final PropertyInteger COLOR = PropertyInteger.create("color", 0, MagicAmounts.ELEMENTS);
+    public static final DirectionProperty FACING = BlockStateProperties.FACING;
+    public static final IntegerProperty COLOR = IntegerProperty.create("color", 0, MagicAmounts.ELEMENTS);
 
-    public BlockCocoon(String name)
+    private final Element type;
+
+    public BlockCocoon(Element type, Properties properties)
     {
-        super(name, Material.CACTUS);
-        setTickRandomly(true);
-        setCreativeTab(ElementsOfPower.tabMagic);
-        setLightOpacity(0);
-        setLightLevel(5);
-        setHardness(1);
+        super(properties);
+        this.type = type;
     }
 
-    @Deprecated
-    @Override
-    public boolean isOpaqueCube(IBlockState state)
+    public Element getType()
     {
-        return false;
+        return type;
     }
 
     @Override
-    public boolean hasTileEntity(IBlockState state)
+    public boolean hasTileEntity(BlockState state)
     {
         return true;
     }
 
     @Override
-    public TileEntity createTileEntity(World world, IBlockState state)
+    public TileEntity createTileEntity(BlockState state, IBlockReader world)
     {
         return new TileCocoon();
     }
 
     @Override
-    protected BlockStateContainer createBlockState()
+    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder)
     {
-        return new BlockStateContainer(this, FACING, COLOR);
+        builder.add(FACING, COLOR);
     }
 
     @Override
-    public int getMetaFromState(IBlockState state)
-    {
-        return state.getValue(FACING).ordinal();
-    }
-
-    @Deprecated
-    @Override
-    public IBlockState getStateFromMeta(int meta)
-    {
-        if (meta > EnumFacing.VALUES.length)
-            return getDefaultState();
-        return getDefaultState().withProperty(FACING, EnumFacing.VALUES[meta]);
-    }
-
-    @Deprecated
-    @Override
-    public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos)
-    {
-        TileEntity te = worldIn.getTileEntity(pos);
-
-        if (state.getBlock() != this)
-            return state;
-
-        if (!(te instanceof TileCocoon))
-            return state;
-
-        return state.withProperty(COLOR, ((TileCocoon) te).getDominantElement());
-    }
-
-    @Override
-    public void randomTick(World worldIn, BlockPos pos, IBlockState state, Random random)
+    public void randomTick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random)
     {
         if (!worldIn.isRemote)
         {
@@ -125,91 +80,47 @@ public class BlockCocoon extends BlockRegistered
                 {
                     EntityEssence e = new EntityEssence(worldIn, am);
 
-                    BlockPos p = pos.offset(worldIn.getBlockState(pos).getValue(FACING).getOpposite());
+                    BlockPos p = pos.offset(worldIn.getBlockState(pos).get(FACING).getOpposite());
 
                     e.setLocationAndAngles(p.getX(), p.getY(), p.getZ(), 0, 0);
 
-                    worldIn.spawnEntity(e);
+                    worldIn.addEntity(e);
                 }
             }
         }
 
-        super.randomTick(worldIn, pos, state, random);
+        super.randomTick(state, worldIn, pos, random);
     }
 
     @Override
-    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
+    public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult rayTraceResult)
     {
-        ItemStack heldItem = playerIn.getHeldItem(hand);
+        ItemStack heldItem = player.getHeldItem(hand);
 
-        if (heldItem.getCount() > 0 && heldItem.getItem() == ElementsOfPower.orb)
+        if (heldItem.getCount() > 0 && heldItem.getItem() == ElementsOfPowerMod.orb)
         {
             TileEntity te = worldIn.getTileEntity(pos);
 
             if (!(te instanceof TileCocoon))
-                return false;
+                return ActionResultType.FAIL;
 
             ((TileCocoon) te).addEssences(heldItem);
 
-            if (!playerIn.capabilities.isCreativeMode)
+            if (!player.abilities.isCreativeMode)
                 heldItem.shrink(1);
 
-            return true;
+            return ActionResultType.SUCCESS;
         }
 
-        return super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
+        return super.onBlockActivated(state, worldIn, pos, player, hand, rayTraceResult);
     }
 
-    @Override
-    public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest)
-    {
-        //If it will harvest, delay deletion of the block until after getDrops
-        return willHarvest || super.removedByPlayer(state, world, pos, player, false);
-    }
-
-    @Override
-    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
-    {
-        TileEntity te = world.getTileEntity(pos);
-
-        if (te instanceof TileCocoon)
-        {
-            Random rand = world instanceof World ? ((World) world).rand : new Random();
-            MagicAmounts am = ((TileCocoon) te).essenceContained;
-
-            for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-            {
-                float a = am.get(i);
-                int whole = (int) Math.floor(a);
-                if (rand.nextFloat() < (a - whole))
-                    whole++;
-
-                if (whole > 0)
-                {
-                    if (fortune >= 1)
-                        whole = (int) (Math.pow(rand.nextFloat(), 1 / (fortune - 1)) * whole);
-                    else
-                        whole = (int) (Math.pow(rand.nextFloat(), 3 - fortune) * whole);
-
-                    drops.add(new ItemStack(ElementsOfPower.orb, whole, i));
-                }
-            }
-        }
-    }
-
-    @Override
-    public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, @Nullable TileEntity te, ItemStack stack)
-    {
-        super.harvestBlock(worldIn, player, pos, state, te, stack);
-        worldIn.setBlockToAir(pos);
-    }
-
-    public static class Generator implements IWorldGenerator
+    /*public static class Generator implements IWorldGenerator
     {
         ThreadLocal<Set<BlockPos>> positionsTL = new ThreadLocal<>();
 
         @Override
-        public void generate(Random rand, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider)
+        public void generate(Random rand, int chunkX, int chunkZ, World world, ChunkGenerator chunkGenerator, AbstractChunkProvider chunkProvider)
         {
             int num = Math.max(0, rand.nextInt(7) - 5);
             if (num == 0)
@@ -235,7 +146,7 @@ public class BlockCocoon extends BlockRegistered
                 if (!world.isAirBlock(pos))
                     continue;
 
-                for (EnumFacing f : EnumFacing.VALUES)
+                for (Direction f : Direction.VALUES)
                 {
                     BlockPos pos1 = pos.offset(f);
                     if (!world.isAirBlock(pos1))
@@ -251,7 +162,7 @@ public class BlockCocoon extends BlockRegistered
             }
         }
 
-        private void generateOne(BlockPos pos, EnumFacing f, Random rand, World world, DimensionType worldType)
+        private void generateOne(BlockPos pos, Direction f, Random rand, World world, DimensionType worldType)
         {
             int size = 6 + rand.nextInt(10);
 
@@ -276,7 +187,7 @@ public class BlockCocoon extends BlockRegistered
                 else
                 {
                     BlockPos pos1 = new BlockPos(x, y, z);
-                    IBlockState state = world.getBlockState(pos1);
+                    BlockState state = world.getBlockState(pos1);
                     Block b = state.getBlock();
 
                     if (worldType == DimensionType.OVERWORLD)
@@ -419,5 +330,5 @@ public class BlockCocoon extends BlockRegistered
                 te.essenceContained = te.essenceContained.add(am);
             }
         }
-    }
+    }*/
 }

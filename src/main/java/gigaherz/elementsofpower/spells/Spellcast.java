@@ -5,17 +5,18 @@ import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.spells.effects.SpellEffect;
 import gigaherz.elementsofpower.spells.shapes.SpellShape;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EntitySelectors;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.particles.IParticleData;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.Direction;
+import net.minecraft.util.EntityPredicates;
+import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 public class Spellcast
@@ -33,7 +34,7 @@ public class Spellcast
     protected SpellEffect effect;
 
     public World world;
-    public EntityPlayer player;
+    public PlayerEntity player;
 
     public Entity projectile;
 
@@ -73,7 +74,7 @@ public class Spellcast
         projectile = entity;
     }
 
-    public void init(World world, EntityPlayer player)
+    public void init(World world, PlayerEntity player)
     {
         this.world = world;
         this.player = player;
@@ -132,26 +133,25 @@ public class Spellcast
 
         if (remainingCastTime <= 0)
         {
-            SpellcastEntityData data = SpellcastEntityData.get(player);
-            data.end();
+            SpellcastEntityData.get(player).ifPresent(SpellcastEntityData::end);
         }
     }
 
-    public void readFromNBT(NBTTagCompound tagData)
+    public void readFromNBT(CompoundNBT tagData)
     {
-        remainingCastTime = tagData.getInteger("remainingCastTime");
-        remainingInterval = tagData.getInteger("remainingInterval");
-        totalCastTime = tagData.getInteger("totalCastTime");
+        remainingCastTime = tagData.getInt("remainingCastTime");
+        remainingInterval = tagData.getInt("remainingInterval");
+        totalCastTime = tagData.getInt("totalCastTime");
     }
 
-    public void writeToNBT(NBTTagCompound tagData)
+    public void writeToNBT(CompoundNBT tagData)
     {
-        tagData.setInteger("remainingCastTime", remainingCastTime);
-        tagData.setInteger("remainingInterval", remainingInterval);
-        tagData.setInteger("totalCastTime", totalCastTime);
+        tagData.putInt("remainingCastTime", remainingCastTime);
+        tagData.putInt("remainingInterval", remainingInterval);
+        tagData.putInt("totalCastTime", totalCastTime);
     }
 
-    public EntityPlayer getCastingPlayer()
+    public PlayerEntity getCastingPlayer()
     {
         return player;
     }
@@ -171,9 +171,9 @@ public class Spellcast
         return (rand.nextFloat() - 0.5f) * power / 8.0f;
     }
 
-    public void spawnRandomParticle(EnumParticleTypes type, double x, double y, double z)
+    public void spawnRandomParticle(IParticleData type, double x, double y, double z)
     {
-        world.spawnParticle(type, x, y, z, getRandomForParticle(), getRandomForParticle(), getRandomForParticle());
+        world.addParticle(type, x, y, z, getRandomForParticle(), getRandomForParticle(), getRandomForParticle());
     }
 
     // Butchered from the player getMouseOver()
@@ -185,7 +185,7 @@ public class Spellcast
 
         if (mop != null)
         {
-            distance = mop.hitVec.distanceTo(start);
+            distance = mop.getHitVec().distanceTo(start);
         }
 
         Vec3d direction = new Vec3d(
@@ -197,31 +197,31 @@ public class Spellcast
 
         Vec3d hitPosition = null;
         List<Entity> list = world.getEntitiesInAABBexcluding(player,
-                player.getEntityBoundingBox()
+                player.getBoundingBox()
                         .expand(direction.x, direction.y, direction.z)
-                        .grow(1.0, 1.0, 1.0), Predicates.and(EntitySelectors.NOT_SPECTATING,
-                        Entity::canBeCollidedWith));
+                        .grow(1.0, 1.0, 1.0),
+                            entity -> EntityPredicates.NOT_SPECTATING.test(entity) && entity.canBeCollidedWith());
 
         double distanceToEntity = distance;
         Entity pointedEntity = null;
         for (Entity entity : list)
         {
             double border = entity.getCollisionBorderSize();
-            AxisAlignedBB bounds = entity.getEntityBoundingBox().expand(border, border, border);
-            RayTraceResult intercept = bounds.calculateIntercept(start, end);
+            AxisAlignedBB bounds = entity.getBoundingBox().expand(border, border, border);
+            Optional<Vec3d> intercept = bounds.rayTrace(start, end);
 
             if (bounds.contains(start))
             {
                 if (distanceToEntity >= 0.0D)
                 {
                     pointedEntity = entity;
-                    hitPosition = intercept == null ? start : intercept.hitVec;
+                    hitPosition = intercept.orElse(start);
                     distanceToEntity = 0.0D;
                 }
             }
-            else if (intercept != null)
+            else if (intercept.isPresent())
             {
-                double interceptDistance = start.distanceTo(intercept.hitVec);
+                double interceptDistance = start.distanceTo(intercept.get());
 
                 if (interceptDistance < distanceToEntity || distanceToEntity == 0.0D)
                 {
@@ -230,13 +230,13 @@ public class Spellcast
                         if (distanceToEntity == 0.0D)
                         {
                             pointedEntity = entity;
-                            hitPosition = intercept.hitVec;
+                            hitPosition = intercept.get();
                         }
                     }
                     else
                     {
                         pointedEntity = entity;
-                        hitPosition = intercept.hitVec;
+                        hitPosition = intercept.get();
                         distanceToEntity = interceptDistance;
                     }
                 }
@@ -249,7 +249,7 @@ public class Spellcast
             {
                 if (start.distanceTo(hitPosition) < distance)
                 {
-                    return new RayTraceResult(pointedEntity, hitPosition);
+                    return new EntityRayTraceResult(pointedEntity, hitPosition);
                 }
             }
         }
@@ -274,30 +274,31 @@ public class Spellcast
         Vec3d look = player.getLook(partialTicks);
         end = start.add(look.x * maxDistance, look.y * maxDistance, look.z * maxDistance);
 
-        RayTraceResult mop = player.world.rayTraceBlocks(start, end, false, true, false);
+        // FIXME
+        BlockRayTraceResult blockTrace = world.rayTraceBlocks(new RayTraceContext(start, end, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, player));
 
-        mop = getEntityIntercept(start, look, end, mop);
+        RayTraceResult trace = getEntityIntercept(start, look, end, blockTrace);
 
-        if (mop != null && mop.hitVec != null)
+        if (trace != null && trace.getType() != RayTraceResult.Type.MISS)
         {
-            end = mop.hitVec;
+            end = trace.getHitVec();
         }
 
-        return mop;
+        return trace;
     }
 
     public Vec3d calculateStartPosition(float partialTicks)
     {
         if (partialTicks < 1)
         {
-            double sx = player.prevPosX + (player.posX - player.prevPosX) * partialTicks;
-            double sy = player.prevPosY + (player.posY - player.prevPosY) * partialTicks + player.getEyeHeight();
-            double sz = player.prevPosZ + (player.posZ - player.prevPosZ) * partialTicks;
+            double sx = player.prevPosX + (player.getPosX() - player.prevPosX) * partialTicks;
+            double sy = player.prevPosY + (player.getPosY() - player.prevPosY) * partialTicks + player.getEyeHeight();
+            double sz = player.prevPosZ + (player.getPosZ() - player.prevPosZ) * partialTicks;
             start = new Vec3d(sx, sy, sz);
         }
         else
         {
-            start = new Vec3d(player.posX, player.posY + player.getEyeHeight(), player.posZ);
+            start = player.getEyePosition(1.0f);
         }
         return start;
     }

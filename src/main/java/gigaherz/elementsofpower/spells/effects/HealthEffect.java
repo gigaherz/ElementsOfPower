@@ -3,11 +3,11 @@ package gigaherz.elementsofpower.spells.effects;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDirt;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.MobEffects;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.potion.Effects;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -37,16 +37,16 @@ public class HealthEffect extends SpellEffect
         return 8;
     }
 
-    private void healEntities(Spellcast cast, Vec3d hitVec, List<? extends EntityLivingBase> living)
+    private void healEntities(Spellcast cast, Vec3d hitVec, List<? extends LivingEntity> living)
     {
-        for (EntityLivingBase e : living)
+        for (LivingEntity e : living)
         {
             if (!e.isEntityAlive())
                 continue;
 
-            double dx = e.posX - hitVec.x;
-            double dy = e.posY - hitVec.y;
-            double dz = e.posZ - hitVec.z;
+            double dx = e.posX - getHitVec().x;
+            double dy = e.posY - getHitVec().y;
+            double dz = e.posZ - getHitVec().z;
 
             double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
@@ -54,24 +54,24 @@ public class HealthEffect extends SpellEffect
         }
     }
 
-    private void applyEffectsToEntity(Spellcast cast, double distance, EntityLivingBase e)
+    private void applyEffectsToEntity(Spellcast cast, double distance, LivingEntity e)
     {
         double lv = Math.max(0, cast.getDamageForce() - distance);
 
         int emp = cast.getEmpowering();
 
         if (-emp < lv)
-            causePotionEffect(cast, e, MobEffects.INSTANT_HEALTH, 0, (lv + emp) * 0.5, 0.0);
+            causePotionEffect(cast, e, Effects.INSTANT_HEALTH, 0, (lv + emp) * 0.5, 0.0);
 
         if (emp < lv)
-            causePotionEffect(cast, e, MobEffects.REGENERATION, 0, (lv - emp), 100.0);
+            causePotionEffect(cast, e, Effects.REGENERATION, 0, (lv - emp), 100.0);
     }
 
     @Override
     public void processDirectHit(Spellcast cast, Entity entity, Vec3d hitVec)
     {
-        if (entity instanceof EntityLivingBase)
-            applyEffectsToEntity(cast, 0, (EntityLivingBase) entity);
+        if (entity instanceof LivingEntity)
+            applyEffectsToEntity(cast, 0, (LivingEntity) entity);
     }
 
     @Override
@@ -84,26 +84,26 @@ public class HealthEffect extends SpellEffect
     public void processEntitiesAroundAfter(Spellcast cast, Vec3d hitVec)
     {
         AxisAlignedBB aabb = new AxisAlignedBB(
-                hitVec.x - cast.getDamageForce(),
-                hitVec.y - cast.getDamageForce(),
-                hitVec.z - cast.getDamageForce(),
-                hitVec.x + cast.getDamageForce(),
-                hitVec.y + cast.getDamageForce(),
-                hitVec.z + cast.getDamageForce());
+                getHitVec().x - cast.getDamageForce(),
+                getHitVec().y - cast.getDamageForce(),
+                getHitVec().z - cast.getDamageForce(),
+                getHitVec().x + cast.getDamageForce(),
+                getHitVec().y + cast.getDamageForce(),
+                getHitVec().z + cast.getDamageForce());
 
-        List<EntityLivingBase> living = cast.world.getEntitiesWithinAABB(EntityLivingBase.class, aabb);
-        healEntities(cast, hitVec, living);
+        List<LivingEntity> living = cast.world.getEntitiesWithinAABB(LivingEntity.class, aabb);
+        healEntities(cast, getHitVec(), living);
     }
 
     @Override
     public void spawnBallParticles(Spellcast cast, RayTraceResult mop)
     {
         cast.spawnRandomParticle(EnumParticleTypes.FLAME,
-                mop.hitVec.x, mop.hitVec.y, mop.hitVec.z);
+                mop.getHitVec().x, mop.getHitVec().y, mop.getHitVec().z);
     }
 
     @Override
-    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, float r, @Nullable RayTraceResult mop)
+    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, BlockState currentState, float r, @Nullable RayTraceResult mop)
     {
         Block block = currentState.getBlock();
 

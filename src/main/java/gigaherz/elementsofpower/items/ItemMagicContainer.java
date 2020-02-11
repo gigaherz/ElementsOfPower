@@ -1,43 +1,32 @@
 package gigaherz.elementsofpower.items;
 
-import gigaherz.common.state.ItemStateful;
 import gigaherz.elementsofpower.capabilities.CapabilityMagicContainer;
 import gigaherz.elementsofpower.capabilities.IMagicContainer;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.spells.Element;
 import gigaherz.elementsofpower.gemstones.Gemstone;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public abstract class ItemMagicContainer extends ItemStateful
+public abstract class ItemMagicContainer extends Item
 {
-    public ItemMagicContainer(String name)
+    public ItemMagicContainer(Properties properties)
     {
-        super(name);
-        setMaxStackSize(1);
-        setHasSubtypes(true);
-    }
-
-    public ItemStack getStack(Gemstone gemstone)
-    {
-        return getStack(1, gemstone);
-    }
-
-    public ItemStack getStack(int count, Gemstone gemstone)
-    {
-        return new ItemStack(this, count, gemstone.ordinal());
+        super(properties);
     }
 
     @Nullable
     @Override
-    public ICapabilityProvider initCapabilities(ItemStack _stack, @Nullable NBTTagCompound nbt)
+    public ICapabilityProvider initCapabilities(ItemStack _stack, @Nullable CompoundNBT nbt)
     {
         return new ICapabilityProvider() {
             final ItemStack stack = _stack;
@@ -64,38 +53,27 @@ public abstract class ItemMagicContainer extends ItemStateful
                 @Override
                 public MagicAmounts getContainedMagic()
                 {
-                    NBTTagCompound compound = stack.getTagCompound();
-                    if (compound == null || !compound.hasKey("ContainedMagic"))
+                    CompoundNBT compound = stack.getTag();
+                    if (compound == null || !compound.contains("ContainedMagic"))
                         return MagicAmounts.EMPTY;
-                    return new MagicAmounts(compound.getCompoundTag("ContainedMagic"));
+                    return new MagicAmounts(compound.getCompound("ContainedMagic"));
                 }
 
                 @Override
                 public void setContainedMagic(MagicAmounts containedMagic)
                 {
-                    NBTTagCompound compound = stack.getTagCompound();
-                    if (compound == null)
-                        stack.setTagCompound(compound = new NBTTagCompound());
-                    compound.setTag("ContainedMagic", containedMagic.serializeNBT());
+                    CompoundNBT compound = stack.getOrCreateTag();
+                    compound.put("ContainedMagic", containedMagic.serializeNBT());
                 }
             };
+            final LazyOptional<IMagicContainer> containerGetter = LazyOptional.of(() -> container);
 
             @Override
-            public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing)
+            public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing)
             {
                 if (capability == CapabilityMagicContainer.INSTANCE && canContainMagic(stack))
-                    return true;
-                return false;
-            }
-
-            @SuppressWarnings("unchecked")
-            @Nullable
-            @Override
-            public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
-            {
-                if (capability == CapabilityMagicContainer.INSTANCE && canContainMagic(stack))
-                    return (T)container;
-                return null;
+                    return containerGetter.cast();
+                return LazyOptional.empty();
             }
         };
     }
@@ -107,14 +85,12 @@ public abstract class ItemMagicContainer extends ItemStateful
     @Override
     public boolean hasEffect(ItemStack stack)
     {
-        IMagicContainer magic = CapabilityMagicContainer.getContainer(stack);
-        if (magic == null)
-            return false;
+        return CapabilityMagicContainer.getContainer(stack).map(magic -> {
+            if (magic.isInfinite())
+                return true;
 
-        if (magic.isInfinite())
-            return true;
-
-        return !magic.getContainedMagic().isEmpty();
+            return !magic.getContainedMagic().isEmpty();
+        }).orElse(false);
     }
 
     public ItemStack addContainedMagic(ItemStack stack, List<ItemStack> orbs)
@@ -124,27 +100,25 @@ public abstract class ItemMagicContainer extends ItemStateful
         if (orbs.size() == 0)
             return ItemStack.EMPTY;
 
-        IMagicContainer magic = CapabilityMagicContainer.getContainer(stack);
-        if (magic == null)
-            return ItemStack.EMPTY;
+        return CapabilityMagicContainer.getContainer(stack).map(magic -> {
+            if (magic.isFull() || magic.isInfinite())
+                return ItemStack.EMPTY;
 
-        if (magic.isFull() || magic.isInfinite())
-            return ItemStack.EMPTY;
+            MagicAmounts totalMagic = MagicAmounts.EMPTY;
 
-        MagicAmounts totalMagic = MagicAmounts.EMPTY;
+            for(ItemStack orb : orbs)
+            {
+                if (orb.getCount() <= 0)
+                    continue;
 
-        for(ItemStack orb : orbs)
-        {
-            if (orb.getCount() <= 0)
-                continue;
+                totalMagic = totalMagic.add(((ItemMagicOrb)orb.getItem()).getElement(), 8);
+            }
 
-            totalMagic = totalMagic.add(Element.values[orb.getMetadata()], 8);
-        }
+            if (!magic.insertMagic(totalMagic, true).isEmpty())
+                return ItemStack.EMPTY;
 
-        if (!magic.insertMagic(totalMagic, true).isEmpty())
-            return ItemStack.EMPTY;
-
-        magic.insertMagic(totalMagic, false);
-        return stack;
+            magic.insertMagic(totalMagic, false);
+            return stack;
+        }).orElse(ItemStack.EMPTY);
     }
 }

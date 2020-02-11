@@ -1,16 +1,16 @@
 package gigaherz.elementsofpower.spells.effects;
 
-import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.network.AddVelocityPlayer;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDynamicLiquid;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Blocks;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -45,11 +45,11 @@ public class WindEffect extends SpellEffect
     {
         int force = cast.getDamageForce();
 
-        if ((!(entity instanceof EntityLivingBase) && !(entity instanceof EntityItem))
+        if ((!(entity instanceof LivingEntity) && !(entity instanceof ItemEntity))
                 || !entity.isEntityAlive())
             return;
 
-        applyVelocity(cast, force, hitVec, entity, false);
+        applyVelocity(cast, force, getHitVec(), entity, false);
     }
 
     @Override
@@ -58,18 +58,18 @@ public class WindEffect extends SpellEffect
         int force = cast.getDamageForce();
 
         AxisAlignedBB aabb = new AxisAlignedBB(
-                hitVec.x - force,
-                hitVec.y - force,
-                hitVec.z - force,
-                hitVec.x + force,
-                hitVec.y + force,
-                hitVec.z + force);
+                getHitVec().x - force,
+                getHitVec().y - force,
+                getHitVec().z - force,
+                getHitVec().x + force,
+                getHitVec().y + force,
+                getHitVec().z + force);
 
-        List<EntityLivingBase> living = cast.world.getEntitiesWithinAABB(EntityLivingBase.class, aabb);
-        pushEntities(cast, force, hitVec, living);
+        List<LivingEntity> living = cast.world.getEntitiesWithinAABB(LivingEntity.class, aabb);
+        pushEntities(cast, force, getHitVec(), living);
 
-        List<EntityItem> items = cast.world.getEntitiesWithinAABB(EntityItem.class, aabb);
-        pushEntities(cast, force, hitVec, items);
+        List<ItemEntity> items = cast.world.getEntitiesWithinAABB(ItemEntity.class, aabb);
+        pushEntities(cast, force, getHitVec(), items);
 
         return true;
     }
@@ -86,7 +86,7 @@ public class WindEffect extends SpellEffect
             if (!e.isEntityAlive())
                 continue;
 
-            applyVelocity(cast, force, hitVec, e, true);
+            applyVelocity(cast, force, getHitVec(), e, true);
         }
     }
 
@@ -104,9 +104,9 @@ public class WindEffect extends SpellEffect
         }
         else
         {
-            double dx = e.posX - hitVec.x;
-            double dy = e.posY - hitVec.y;
-            double dz = e.posZ - hitVec.z;
+            double dx = e.posX - getHitVec().x;
+            double dy = e.posY - getHitVec().y;
+            double dz = e.posZ - getHitVec().z;
 
             double ll = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
@@ -121,9 +121,9 @@ public class WindEffect extends SpellEffect
         }
 
         e.addVelocity(vx, vy, vz);
-        if (e instanceof EntityPlayerMP)
+        if (e instanceof ServerPlayerEntity)
         {
-            ElementsOfPower.channel.sendTo(new AddVelocityPlayer(vx, vy, vz), (EntityPlayerMP) e);
+            ElementsOfPowerMod.channel.sendTo(new AddVelocityPlayer(vx, vy, vz), (ServerPlayerEntity) e);
         }
     }
 
@@ -133,22 +133,22 @@ public class WindEffect extends SpellEffect
         if (cast.getDamageForce() >= 5)
         {
             cast.spawnRandomParticle(EnumParticleTypes.EXPLOSION_HUGE,
-                    mop.hitVec.x, mop.hitVec.y, mop.hitVec.z);
+                    mop.getHitVec().x, mop.getHitVec().y, mop.getHitVec().z);
         }
         else if (cast.getDamageForce() >= 2)
         {
             cast.spawnRandomParticle(EnumParticleTypes.EXPLOSION_LARGE,
-                    mop.hitVec.x, mop.hitVec.y, mop.hitVec.z);
+                    mop.getHitVec().x, mop.getHitVec().y, mop.getHitVec().z);
         }
         else
         {
             cast.spawnRandomParticle(EnumParticleTypes.EXPLOSION_NORMAL,
-                    mop.hitVec.x, mop.hitVec.y, mop.hitVec.z);
+                    mop.getHitVec().x, mop.getHitVec().y, mop.getHitVec().z);
         }
     }
 
     @Override
-    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, float r, @Nullable RayTraceResult mop)
+    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, BlockState currentState, float r, @Nullable RayTraceResult mop)
     {
         if (mop != null)
         {

@@ -1,11 +1,11 @@
 package gigaherz.elementsofpower.spells.effects;
 
 import gigaherz.elementsofpower.spells.Spellcast;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionEffect;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.potion.Effect;
+import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -33,14 +33,14 @@ public abstract class SpellEffect
 
     public abstract void spawnBallParticles(Spellcast cast, RayTraceResult mop);
 
-    public void processBlockAtBeamEnd(Spellcast cast, BlockPos blockPos, IBlockState currentState, @Nullable RayTraceResult mop)
+    public void processBlockAtBeamEnd(Spellcast cast, BlockPos blockPos, BlockState currentState, @Nullable RayTraceResult mop)
     {
         processBlockWithinRadius(cast, blockPos, currentState, 0, mop);
     }
 
-    public abstract void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, float distance, @Nullable RayTraceResult mop);
+    public abstract void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, BlockState currentState, float distance, @Nullable RayTraceResult mop);
 
-    protected static void causePotionEffect(Spellcast cast, EntityLivingBase e, Potion potion, int amplifier, double distance, double durationBase)
+    protected static void causePotionEffect(Spellcast cast, LivingEntity e, Effect potion, int amplifier, double distance, double durationBase)
     {
         if (potion.isInstant())
         {
@@ -52,7 +52,7 @@ public abstract class SpellEffect
 
             if (j > 20)
             {
-                e.addPotionEffect(new PotionEffect(potion, j, amplifier));
+                e.addPotionEffect(new EffectInstance(potion, j, amplifier));
             }
         }
     }

@@ -1,11 +1,13 @@
 package gigaherz.elementsofpower.spells.effects;
 
 import gigaherz.elementsofpower.spells.Spellcast;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.Explosion;
+import net.minecraft.world.GameRules;
 
 import javax.annotation.Nullable;
 
@@ -40,9 +42,9 @@ public class BlastEffect extends SpellEffect
     {
         if (!cast.world.isRemote)
         {
-            boolean flag = cast.world.getGameRules().getBoolean("mobGriefing");
-            cast.world.newExplosion(null, hitVec.x, hitVec.y, hitVec.z,
-                    cast.getDamageForce(), flag, flag);
+            boolean doGriefing = cast.world.getGameRules().getBoolean(GameRules.MOB_GRIEFING);
+            cast.world.createExplosion(null, hitVec.x, hitVec.y, hitVec.z,
+                    cast.getDamageForce(), doGriefing, doGriefing ? Explosion.Mode.BREAK : Explosion.Mode.NONE);
         }
 
         return false;
@@ -61,7 +63,7 @@ public class BlastEffect extends SpellEffect
     }
 
     @Override
-    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, float r, @Nullable RayTraceResult mop)
+    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, BlockState currentState, float r, @Nullable RayTraceResult mop)
     {
 
     }

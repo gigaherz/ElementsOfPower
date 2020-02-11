@@ -6,7 +6,7 @@ import gigaherz.elementsofpower.analyzer.gui.GuiAnalyzer;
 import gigaherz.elementsofpower.essentializer.TileEssentializer;
 import gigaherz.elementsofpower.essentializer.gui.ContainerEssentializer;
 import gigaherz.elementsofpower.essentializer.gui.GuiEssentializer;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -18,7 +18,7 @@ public class GuiHandler implements IGuiHandler
     public static final int GUI_ANALYZER = 1;
 
     @Override
-    public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z)
+    public Object getServerGuiElement(int id, PlayerEntity player, World world, int x, int y, int z)
     {
         switch (id)
         {
@@ -39,7 +39,7 @@ public class GuiHandler implements IGuiHandler
     }
 
     @Override
-    public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z)
+    public Object getClientGuiElement(int id, PlayerEntity player, World world, int x, int y, int z)
     {
         switch (id)
         {

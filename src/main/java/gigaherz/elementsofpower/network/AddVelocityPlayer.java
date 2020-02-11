@@ -1,28 +1,17 @@
 package gigaherz.elementsofpower.network;
 
-import gigaherz.elementsofpower.common.Used;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import gigaherz.elementsofpower.client.ClientPacketHandlers;
+import gigaherz.elementsofpower.client.ClientProxy;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.network.NetworkEvent;
 
-import javax.annotation.Nullable;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class AddVelocityPlayer
-        implements IMessage
 {
     public double vx;
     public double vy;
     public double vz;
-
-    @Used
-    public AddVelocityPlayer()
-    {
-    }
 
     public AddVelocityPlayer(double vx, double vy, double vz)
     {
@@ -31,41 +20,22 @@ public class AddVelocityPlayer
         this.vz = vz;
     }
 
-    @Override
-    public void fromBytes(ByteBuf buf)
+    public AddVelocityPlayer(PacketBuffer buf)
     {
         vx = buf.readDouble();
         vy = buf.readDouble();
         vz = buf.readDouble();
     }
 
-    @Override
-    public void toBytes(ByteBuf buf)
+    public void encode(PacketBuffer buf)
     {
         buf.writeDouble(vx);
         buf.writeDouble(vy);
         buf.writeDouble(vz);
     }
 
-    public static class Handler implements IMessageHandler<AddVelocityPlayer, IMessage>
+    public boolean handle(Supplier<NetworkEvent.Context> context)
     {
-        @Nullable
-        @Override
-        public IMessage onMessage(AddVelocityPlayer message, MessageContext ctx)
-        {
-            return ActualHandler.SUPPLIER.get().apply(message);
-        }
-    }
-
-    private static class ActualHandler
-    {
-        public static final Supplier<Function<AddVelocityPlayer, IMessage>> SUPPLIER = () -> ActualHandler::handle;
-
-        public static IMessage handle(AddVelocityPlayer message)
-        {
-            Minecraft.getMinecraft().addScheduledTask(() ->
-                    Minecraft.getMinecraft().player.addVelocity(message.vx, message.vy, message.vz));
-            return null;
-        }
+        return ClientPacketHandlers.handleAddVelocityPlayer(this);
     }
 }

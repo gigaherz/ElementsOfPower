@@ -2,11 +2,11 @@ package gigaherz.elementsofpower.cocoons;
 
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.spells.Element;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 
@@ -15,7 +15,7 @@ public class TileCocoon extends TileEntity implements ITickable
     public MagicAmounts essenceContained = MagicAmounts.EMPTY;
 
     @Override
-    public void readFromNBT(NBTTagCompound compound)
+    public void readFromNBT(CompoundNBT compound)
     {
         super.readFromNBT(compound);
 
@@ -23,7 +23,7 @@ public class TileCocoon extends TileEntity implements ITickable
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound compound)
+    public CompoundNBT writeToNBT(CompoundNBT compound)
     {
         compound = super.writeToNBT(compound);
 
@@ -47,30 +47,30 @@ public class TileCocoon extends TileEntity implements ITickable
     {
         essenceContained = essenceContained.add(Element.values[stack.getMetadata()], 1);
 
-        IBlockState state = world.getBlockState(pos);
+        BlockState state = world.getBlockState(pos);
         world.notifyBlockUpdate(pos, state, state, 3);
     }
 
     @Override
-    public NBTTagCompound getUpdateTag()
+    public CompoundNBT getUpdateTag()
     {
-        return writeToNBT(new NBTTagCompound());
+        return writeToNBT(new CompoundNBT());
     }
 
     @Override
-    public void handleUpdateTag(NBTTagCompound tag)
+    public void handleUpdateTag(CompoundNBT tag)
     {
         readFromNBT(tag);
     }
 
     @Override
-    public SPacketUpdateTileEntity getUpdatePacket()
+    public SUpdateTileEntityPacket getUpdatePacket()
     {
-        return new SPacketUpdateTileEntity(this.pos, 0, getUpdateTag());
+        return new SUpdateTileEntityPacket(this.pos, 0, getUpdateTag());
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet)
+    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket packet)
     {
         super.onDataPacket(net, packet);
         handleUpdateTag(packet.getNbtCompound());

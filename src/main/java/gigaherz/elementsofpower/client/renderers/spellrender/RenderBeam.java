@@ -3,9 +3,9 @@ package gigaherz.elementsofpower.client.renderers.spellrender;
 import gigaherz.common.client.ModelHandle;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.client.renderer.texture.AtlasTexture;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.opengl.GL11;
@@ -13,7 +13,7 @@ import org.lwjgl.opengl.GL11;
 public class RenderBeam extends RenderSpell
 {
     @Override
-    public void doRender(Spellcast cast, EntityPlayer player, RenderManager renderManager,
+    public void doRender(Spellcast cast, PlayerEntity player, EntityRendererManager renderManager,
                          double x, double y, double z, float partialTicks, Vec3d offset, String tex, int beam_color)
     {
         float scale = 0.15f * cast.getScale();
@@ -45,7 +45,7 @@ public class RenderBeam extends RenderSpell
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.depthMask(false);
 
-        renderManager.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        renderManager.renderEngine.bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
 
         GlStateManager.pushMatrix();
 
@@ -96,7 +96,7 @@ public class RenderBeam extends RenderSpell
                 GlStateManager.popMatrix();
             }
 
-            if (mop != null && mop.hitVec != null)
+            if (mop != null && mop.getHitVec() != null)
             {
                 GlStateManager.pushMatrix();
                 GlStateManager.translate(

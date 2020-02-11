@@ -2,7 +2,7 @@ package gigaherz.elementsofpower.database.recipes;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.database.recipes.crafting.GenericRecipeHandler;
 import gigaherz.elementsofpower.database.recipes.furnace.FurnaceRecipeInfo;
 import net.minecraft.item.ItemStack;
@@ -52,7 +52,7 @@ public abstract class RecipeEnumerator
                     if (!seenClasses.contains(c))
                     {
                         seenClasses.add(c);
-                        ElementsOfPower.logger.warn("Ignoring unhandled recipe class: " + c.getName());
+                        ElementsOfPowerMod.logger.warn("Ignoring unhandled recipe class: " + c.getName());
                     }
                     continue;
                 }

@@ -1,41 +1,52 @@
 package gigaherz.elementsofpower.analyzer;
 
-import gigaherz.common.ItemRegistered;
-import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.common.GuiHandler;
-import net.minecraft.entity.player.EntityPlayer;
+import gigaherz.elementsofpower.analyzer.gui.ContainerAnalyzer;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.SimpleNamedContainerProvider;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.network.NetworkHooks;
 
-public class ItemAnalyzer extends ItemRegistered
+public class ItemAnalyzer extends Item
 {
-    public ItemAnalyzer(String name)
+    public ItemAnalyzer(Properties properties)
     {
-        super(name);
-        setMaxStackSize(1);
-        setCreativeTab(ElementsOfPower.tabMagic);
+        super(properties);
+    }
+
+    private void openGui(ServerPlayerEntity playerIn, ItemStack heldItem)
+    {
+        int slot = playerIn.inventory.getSlotFor(heldItem);
+        NetworkHooks.openGui(playerIn, new SimpleNamedContainerProvider((id, playerInventory, player) -> new ContainerAnalyzer(id, playerInventory, slot),
+                        new TranslationTextComponent("container.elementsofpower.analyzer")),
+                (packetBuffer) -> packetBuffer.writeInt(slot));
     }
 
     @Override
-    public EnumActionResult onItemUse(EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
+    public ActionResultType onItemUse(ItemUseContext context)
     {
-        pos = playerIn.getPosition();
-        if (!worldIn.isRemote)
-            playerIn.openGui(ElementsOfPower.instance, GuiHandler.GUI_ANALYZER, worldIn, pos.getX(), pos.getY(), pos.getZ());
-        return EnumActionResult.SUCCESS;
+        if (context.getPlayer() == null)
+            return ActionResultType.PASS;
+
+        if (!context.getWorld().isRemote)
+            openGui((ServerPlayerEntity)context.getPlayer(), context.getItem());
+
+        return ActionResultType.SUCCESS;
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand hand)
+    public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand hand)
     {
-        BlockPos pos = playerIn.getPosition();
         if (!worldIn.isRemote)
-            playerIn.openGui(ElementsOfPower.instance, GuiHandler.GUI_ANALYZER, worldIn, pos.getX(), pos.getY(), pos.getZ());
-        return ActionResult.newResult(EnumActionResult.SUCCESS, playerIn.getHeldItem(hand));
+            openGui((ServerPlayerEntity)playerIn, playerIn.getHeldItem(hand));
+
+        return ActionResult.func_226248_a_(playerIn.getHeldItem(hand));
     }
 }

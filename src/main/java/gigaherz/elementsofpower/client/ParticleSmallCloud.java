@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.client;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.particle.ParticleCloud;
+import net.minecraft.client.particle.CloudParticle;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.util.ReportedException;
 import net.minecraft.world.World;
@@ -10,9 +10,9 @@ import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import java.lang.reflect.Field;
 
-public class ParticleSmallCloud extends ParticleCloud
+public class ParticleSmallCloud extends CloudParticle
 {
-    private static final Field internalParticleSizeField = ObfuscationReflectionHelper.findField(ParticleCloud.class, "field_70569_a");
+    private static final Field internalParticleSizeField = ObfuscationReflectionHelper.findField(CloudParticle.class, "field_70569_a");
 
     public ParticleSmallCloud(World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn)
     {
@@ -55,6 +55,6 @@ public class ParticleSmallCloud extends ParticleCloud
 
     public static void spawn(World worldIn, double x, double y, double z, double vx, double vy, double vz)
     {
-        Minecraft.getMinecraft().effectRenderer.addEffect(new ParticleSmallCloud(worldIn, x, y, z, vx, vy, vz));
+        Minecraft.getInstance().effectRenderer.addEffect(new ParticleSmallCloud(worldIn, x, y, z, vx, vy, vz));
     }
 }

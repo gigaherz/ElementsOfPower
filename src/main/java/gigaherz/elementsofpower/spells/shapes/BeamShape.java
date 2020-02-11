@@ -2,12 +2,11 @@ package gigaherz.elementsofpower.spells.shapes;
 
 import gigaherz.elementsofpower.spells.Spellcast;
 import gigaherz.elementsofpower.spells.effects.SpellEffect;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.Direction;
+import net.minecraft.util.math.*;
 
 public class BeamShape extends SpellShape
 {
@@ -18,7 +17,7 @@ public class BeamShape extends SpellShape
     }
 
     @Override
-    public Spellcast castSpell(ItemStack stack, EntityPlayer player, Spellcast cast)
+    public Spellcast castSpell(ItemStack stack, PlayerEntity player, Spellcast cast)
     {
         return cast;
     }
@@ -36,14 +35,14 @@ public class BeamShape extends SpellShape
 
         if (mop != null)
         {
-            if (mop.typeOfHit == RayTraceResult.Type.ENTITY)
+            if (mop.getType() == RayTraceResult.Type.ENTITY)
             {
-                cast.getEffect().processDirectHit(cast, mop.entityHit, mop.hitVec);
+                cast.getEffect().processDirectHit(cast, ((EntityRayTraceResult)mop).getEntity(), mop.getHitVec());
             }
-            else if (mop.typeOfHit == RayTraceResult.Type.BLOCK)
+            else if (mop.getType() == RayTraceResult.Type.BLOCK)
             {
-                BlockPos pos = mop.getBlockPos();
-                IBlockState state = cast.world.getBlockState(pos);
+                BlockPos pos = ((BlockRayTraceResult)mop).getPos();
+                BlockState state = cast.world.getBlockState(pos);
                 if (cast.getRadiating() > 0)
                 {
                     radiate(cast, mop, cast.getRadiating());
@@ -57,31 +56,33 @@ public class BeamShape extends SpellShape
     }
 
 
-    public void radiate(Spellcast cast, RayTraceResult mop, int radius)
+    public void radiate(Spellcast cast, RayTraceResult trace1, int radius)
     {
         SpellEffect effect = cast.getEffect();
 
-        if (mop.entityHit != null)
+        if (trace1.getType() == RayTraceResult.Type.ENTITY)
         {
-            effect.processDirectHit(cast, mop.entityHit, mop.hitVec);
+            effect.processDirectHit(cast, ((EntityRayTraceResult)trace1).getEntity(), trace1.getHitVec());
         }
 
-        effect.spawnBallParticles(cast, mop);
+        effect.spawnBallParticles(cast, trace1);
 
-        if (!effect.processEntitiesAroundBefore(cast, mop.hitVec))
+        if (!effect.processEntitiesAroundBefore(cast, trace1.getHitVec()))
             return;
 
-        if (radius > 0)
+        if (radius > 0 && trace1.getType() == RayTraceResult.Type.BLOCK)
         {
-            BlockPos bp = mop.getBlockPos();
-
-            if (mop.typeOfHit == RayTraceResult.Type.BLOCK)
+            BlockPos bp;
+            Direction facing = Direction.NORTH;
+            if (trace1.getType() == RayTraceResult.Type.BLOCK)
             {
-                bp = bp.offset(mop.sideHit);
+                BlockRayTraceResult brt = (BlockRayTraceResult) trace1;
+                bp = brt.getPos().offset(brt.getFace());
+                facing = brt.getFace();
             }
             else
             {
-                bp = new BlockPos(mop.hitVec);
+                bp = new BlockPos(trace1.getHitVec());
             }
 
             int px = bp.getX();
@@ -103,17 +104,17 @@ public class BeamShape extends SpellShape
 
                         BlockPos np = new BlockPos(x, y, z);
 
-                        RayTraceResult mop2 = cast.world.rayTraceBlocks(
-                                mop.hitVec.add(new Vec3d(mop.sideHit.getDirectionVec()).scale(0.5)),
-                                new Vec3d(px + 0.5, py + 0.5, pz + 0.5), false, true, false);
-                        if (mop2 != null && mop2.typeOfHit != RayTraceResult.Type.MISS)
-                            if (!mop2.getBlockPos().equals(np))
+                        Vec3d start = trace1.getHitVec().add(new Vec3d(facing.getDirectionVec()).scale(0.5));
+                        Vec3d end = new Vec3d(px + 0.5, py + 0.5, pz + 0.5);
+                        BlockRayTraceResult trace2 = cast.world.rayTraceBlocks(new RayTraceContext(start, end, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, cast.player));
+                        if (trace2.getType() != RayTraceResult.Type.MISS)
+                            if (!trace2.getPos().equals(np))
                                 continue;
 
                         float r = (float) Math.sqrt(r2);
 
 
-                        IBlockState currentState = cast.world.getBlockState(np);
+                        BlockState currentState = cast.world.getBlockState(np);
 
                         effect.processBlockWithinRadius(cast, np, currentState, r, null);
                     }
@@ -121,6 +122,6 @@ public class BeamShape extends SpellShape
             }
         }
 
-        effect.processEntitiesAroundAfter(cast, mop.hitVec);
+        effect.processEntitiesAroundAfter(cast, trace1.getHitVec());
     }
 }

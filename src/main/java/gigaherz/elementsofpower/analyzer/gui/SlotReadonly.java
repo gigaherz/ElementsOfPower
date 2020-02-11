@@ -1,8 +1,8 @@
 package gigaherz.elementsofpower.analyzer.gui;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Slot;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 
 public class SlotReadonly extends Slot
@@ -19,7 +19,7 @@ public class SlotReadonly extends Slot
     }
 
     @Override
-    public boolean canTakeStack(EntityPlayer playerIn)
+    public boolean canTakeStack(PlayerEntity playerIn)
     {
         return false;
     }

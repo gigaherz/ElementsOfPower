@@ -1,13 +1,12 @@
 package gigaherz.elementsofpower.spells.shapes;
 
 import gigaherz.elementsofpower.spells.Spellcast;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.*;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -20,7 +19,7 @@ public class ConeShape extends SpellShape
     }
 
     @Override
-    public Spellcast castSpell(ItemStack stack, EntityPlayer player, Spellcast cast)
+    public Spellcast castSpell(ItemStack stack, PlayerEntity player, Spellcast cast)
     {
         return cast;
     }
@@ -33,13 +32,13 @@ public class ConeShape extends SpellShape
 
     private AxisAlignedBB getConeBounds(Spellcast cast)
     {
-        EntityPlayer player = cast.player;
+        PlayerEntity player = cast.player;
 
         float length = 4 + cast.getDamageForce() * 0.5f; // cone length
         float radius = 2;
         float hyp = (float) Math.sqrt(radius * radius + length * length);
 
-        Vec3d p0 = new Vec3d(player.posX, player.posY + (double) player.getEyeHeight(), player.posZ);
+        Vec3d p0 = player.getEyePosition(1.0f);
 
         float y = player.rotationYawHead;
         float p = player.rotationPitch;
@@ -65,7 +64,6 @@ public class ConeShape extends SpellShape
         return new AxisAlignedBB(mx, my, mz, nx, ny, nz);
     }
 
-    @NotNull
     private Vec3d getVectorFromRPY(double length, double y, double p, double r)
     {
         y = Math.toRadians(y + 90);
@@ -102,7 +100,7 @@ public class ConeShape extends SpellShape
 
     private boolean isPointInCone(Spellcast cast, Vec3d point)
     {
-        EntityPlayer player = cast.player;
+        PlayerEntity player = cast.player;
 
         double length = 4 + cast.getDamageForce() * 0.5f; // cone length
         double radius = 2;
@@ -112,7 +110,7 @@ public class ConeShape extends SpellShape
         double p = player.rotationPitch;
         double f = Math.abs(Math.atan(tang));
 
-        Vec3d p0 = new Vec3d(player.posX, player.posY + (double) player.getEyeHeight(), player.posZ);
+        Vec3d p0 = player.getEyePosition(1.0f);
         Vec3d ab = getVectorFromRPY(length, y, p, 0);
         Vec3d ap = point.subtract(p0);
 
@@ -132,10 +130,7 @@ public class ConeShape extends SpellShape
     @Override
     public void spellTick(Spellcast cast)
     {
-        Vec3d playerPos = new Vec3d(
-                cast.player.posX,
-                cast.player.posY + (double) cast.player.getEyeHeight(),
-                cast.player.posZ);
+        Vec3d playerPos = cast.player.getEyePosition(1.0f);
 
         final AxisAlignedBB aabb = getConeBounds(cast);
 
@@ -143,7 +138,7 @@ public class ConeShape extends SpellShape
         {
             if (e == null)
                 return false;
-            AxisAlignedBB aabb_ = e.getEntityBoundingBox();
+            AxisAlignedBB aabb_ = e.getBoundingBox();
             for (int i = 0; i <= 2; i++)
             {
                 double x = MathHelper.clampedLerp(aabb_.minX, aabb_.maxX, i / 2.0);
@@ -184,19 +179,18 @@ public class ConeShape extends SpellShape
                     Vec3d pt = new Vec3d(x + 0.5, y + 0.5, z + 0.5);
                     if (isPointInCone(cast, pt))
                     {
-                        RayTraceResult mop = cast.world.rayTraceBlocks(playerPos, pt, false, true, false);
-
-                        if (mop != null && mop.typeOfHit != RayTraceResult.Type.MISS)
+                        BlockRayTraceResult mop = cast.world.rayTraceBlocks(new RayTraceContext(playerPos, pt, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, cast.player));
+                        if (mop.getType() != RayTraceResult.Type.MISS)
                         {
-                            BlockPos pos = mop.getBlockPos();
-                            IBlockState state = cast.world.getBlockState(pos);
+                            BlockPos pos = mop.getPos();
+                            BlockState state = cast.world.getBlockState(pos);
 
                             cast.getEffect().processBlockWithinRadius(cast, pos, state, (float) pt.distanceTo(playerPos), mop);
                         }
                         else
                         {
                             BlockPos pos = new BlockPos(x, y, z);
-                            IBlockState state = cast.world.getBlockState(pos);
+                            BlockState state = cast.world.getBlockState(pos);
                             cast.getEffect().processBlockWithinRadius(cast, pos, state, (float) pt.distanceTo(playerPos), null);
                         }
                     }
@@ -207,9 +201,9 @@ public class ConeShape extends SpellShape
 
     private static class FacePos extends BlockPos
     {
-        public final EnumFacing direction;
+        public final Direction direction;
 
-        public FacePos(Vec3d vec, EnumFacing face)
+        public FacePos(Vec3d vec, Direction face)
         {
             super(vec);
             direction = face;

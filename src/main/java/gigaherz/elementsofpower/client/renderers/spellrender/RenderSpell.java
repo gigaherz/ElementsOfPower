@@ -6,8 +6,8 @@ import gigaherz.elementsofpower.spells.Spellcast;
 import gigaherz.elementsofpower.spells.effects.FlameEffect;
 import gigaherz.elementsofpower.spells.effects.WaterEffect;
 import gigaherz.elementsofpower.spells.effects.WindEffect;
-import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.Map;
@@ -34,9 +34,9 @@ public abstract class RenderSpell
         return cylinders.computeIfAbsent(tex, k -> ModelHandle.of("elementsofpower:entity/cylinder.obj").replace("#Default", tex));
     }
 
-    public abstract void doRender(Spellcast spellcast, EntityPlayer player, RenderManager renderManager, double x, double y, double z, float partialTicks, Vec3d offset, String tex, int color);
+    public abstract void doRender(Spellcast spellcast, PlayerEntity player, EntityRendererManager renderManager, double x, double y, double z, float partialTicks, Vec3d offset, String tex, int color);
 
-    public void doRender(Spellcast spellcast, EntityPlayer player, RenderManager renderManager, double x, double y, double z, float partialTicks, Vec3d offset)
+    public void doRender(Spellcast spellcast, PlayerEntity player, EntityRendererManager renderManager, double x, double y, double z, float partialTicks, Vec3d offset)
     {
         int color = spellcast.getColor();
 

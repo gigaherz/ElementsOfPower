@@ -1,34 +1,20 @@
 package gigaherz.elementsofpower.items;
 
-import baubles.api.BaubleType;
-import baubles.api.BaublesApi;
-import baubles.api.IBauble;
 import gigaherz.elementsofpower.capabilities.CapabilityMagicContainer;
 import gigaherz.elementsofpower.capabilities.IMagicContainer;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.gemstones.Gemstone;
 import gigaherz.elementsofpower.gemstones.Quality;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.capabilities.ICapabilitySerializable;
-import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-@Optional.Interface(modid = "baubles", iface = "baubles.api.IBauble")
-public abstract class ItemBauble extends ItemGemContainer
+public class ItemBauble extends ItemGemContainer
 {
     private static final float MAX_TRANSFER_TICK = 1 / 20.0f;
     private static final float[] TRANSFER_RATES = {
@@ -43,9 +29,9 @@ public abstract class ItemBauble extends ItemGemContainer
         assert TRANSFER_RATES.length == Quality.values().length;
     }
 
-    protected ItemBauble(String name)
+    public ItemBauble(Properties properties)
     {
-        super(name);
+        super(properties);
     }
 
     interface ItemSlotReference
@@ -139,18 +125,18 @@ public abstract class ItemBauble extends ItemGemContainer
     }
 
     @Override
-    public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected)
+    public void inventoryTick(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected)
     {
-        super.onUpdate(stack, worldIn, entityIn, itemSlot, isSelected);
+        super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
 
         if (worldIn.isRemote)
             return;
 
-        if (entityIn instanceof EntityPlayer)
-            tryTransferToWands(stack, (EntityPlayer) entityIn);
+        if (entityIn instanceof PlayerEntity)
+            tryTransferToWands(stack, (PlayerEntity) entityIn);
     }
 
-    protected void tryTransferToWands(ItemStack thisStack, EntityPlayer p)
+    protected void tryTransferToWands(ItemStack thisStack, PlayerEntity p)
     {
         IMagicContainer magic = CapabilityMagicContainer.getContainer(thisStack);
         if (magic == null)
@@ -163,10 +149,10 @@ public abstract class ItemBauble extends ItemGemContainer
 
         ItemSlotReference slotReference = findInInventory(thisStack, p.inventory, available);
 
-        if (slotReference == null)
+        /*if (slotReference == null)
         {
             slotReference = findInInventory(thisStack, BaublesApi.getBaublesHandler(p), available);
-        }
+        }*/
 
         if (slotReference == null)
             return;
@@ -223,90 +209,6 @@ public abstract class ItemBauble extends ItemGemContainer
 
             if (!thisMagic.isInfinite())
                 thisMagic.setContainedMagic(remaining);
-        }
-    }
-
-    private static Capability<IBauble> BAUBLE_ITEM_CAP = null;
-
-    @CapabilityInject(IBauble.class)
-    public static void injectBaubleCap(Capability<IBauble> cap)
-    {
-        BAUBLE_ITEM_CAP = cap;
-    }
-
-    @Nullable
-    @Override
-    public ICapabilityProvider initCapabilities(ItemStack _stack, @Nullable NBTTagCompound nbt)
-    {
-        final ICapabilityProvider superProvider = super.initCapabilities(_stack, nbt);
-        return BAUBLE_ITEM_CAP == null ? null : new ICapabilityProvider()
-        {
-            ItemStack stack = _stack;
-
-            @Override
-            public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing)
-            {
-                return capability == BAUBLE_ITEM_CAP || superProvider.hasCapability(capability, facing);
-            }
-
-            @SuppressWarnings("unchecked")
-            @Nullable
-            @Override
-            public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
-            {
-                if (capability == BAUBLE_ITEM_CAP)
-                    return (T) getBaubleInstance();
-                return superProvider.getCapability(capability, facing);
-            }
-        };
-    }
-
-    protected abstract Object getBaubleInstance();
-
-    protected abstract class BaubleData implements IBauble
-    {
-        @Optional.Method(modid = "baubles")
-        @Override
-        public abstract BaubleType getBaubleType(ItemStack itemstack);
-
-        @Override
-        public boolean willAutoSync(ItemStack itemstack, EntityLivingBase player)
-        {
-            return true;
-        }
-
-        @Override
-        public void onWornTick(ItemStack itemstack, EntityLivingBase player)
-        {
-            if (player.world.isRemote)
-                return;
-
-            if (player instanceof EntityPlayer)
-                tryTransferToWands(itemstack, (EntityPlayer) player);
-        }
-
-        @Override
-        public void onEquipped(ItemStack itemstack, EntityLivingBase player)
-        {
-
-        }
-
-        @Override
-        public void onUnequipped(ItemStack itemstack, EntityLivingBase player)
-        {
-
-        }
-
-        @Override
-        public boolean canEquip(ItemStack itemstack, EntityLivingBase player)
-        {
-            return true;
-        }
-
-        @Override
-        public boolean canUnequip(ItemStack itemstack, EntityLivingBase player)
-        {
-            return true;
         }
     }
 }

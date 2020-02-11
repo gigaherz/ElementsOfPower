@@ -3,15 +3,15 @@ package gigaherz.elementsofpower.client.renderers;
 import gigaherz.common.client.ModelHandle;
 import gigaherz.elementsofpower.entities.EntityEssence;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
-public class RenderEssence extends Render<EntityEssence>
+public class RenderEssence extends EntityRenderer<EntityEssence>
 {
-    public RenderEssence(RenderManager renderManager)
+    public RenderEssence(EntityRendererManager renderManager)
     {
         super(renderManager);
     }
@@ -31,7 +31,7 @@ public class RenderEssence extends Render<EntityEssence>
         GlStateManager.translate((float) x, (float) y, (float) z);
         GlStateManager.scale(scale, scale, scale);
 
-        bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
 
         float cycle = (entity.ticksExisted % 10 + partialTicks) / 11.0f;
 
@@ -66,6 +66,6 @@ public class RenderEssence extends Render<EntityEssence>
     @Override
     protected ResourceLocation getEntityTexture(EntityEssence entity)
     {
-        return TextureMap.LOCATION_BLOCKS_TEXTURE;
+        return AtlasTexture.LOCATION_BLOCKS_TEXTURE;
     }
 }

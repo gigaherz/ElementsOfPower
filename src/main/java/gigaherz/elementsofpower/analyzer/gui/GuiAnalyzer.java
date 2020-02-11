@@ -1,61 +1,61 @@
 package gigaherz.elementsofpower.analyzer.gui;
 
-import gigaherz.elementsofpower.ElementsOfPower;
+import com.mojang.blaze3d.systems.RenderSystem;
+import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.capabilities.CapabilityMagicContainer;
 import gigaherz.elementsofpower.capabilities.IMagicContainer;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.gemstones.Gemstone;
 import gigaherz.elementsofpower.gemstones.ItemGemstone;
 import gigaherz.elementsofpower.gemstones.Quality;
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Slot;
+import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
 
-public class GuiAnalyzer extends GuiContainer
+public class GuiAnalyzer extends ContainerScreen<ContainerAnalyzer>
 {
-    private EntityPlayer player;
+    private PlayerEntity player;
 
-    public static final ResourceLocation GUI_TEXTURE_LOCATION = ElementsOfPower.location("textures/gui/analyzer.png");
-    private static final String guiTitle = "text." + ElementsOfPower.MODID + ".analyzer";
+    public static final ResourceLocation GUI_TEXTURE_LOCATION = ElementsOfPowerMod.location("textures/gui/analyzer.png");
 
-    public GuiAnalyzer(EntityPlayer playerInventory)
+    public GuiAnalyzer(ContainerAnalyzer container, PlayerInventory playerInventory, ITextComponent title)
     {
-        super(new ContainerAnalyzer(playerInventory));
-        this.player = playerInventory;
+        super(container, playerInventory, title);
+        this.player = playerInventory.player;
         ySize = 176;
     }
 
     @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks)
+    public void render(int mouseX, int mouseY, float partialTicks)
     {
-        this.drawDefaultBackground();
-        super.drawScreen(mouseX, mouseY, partialTicks);
+        this.renderBackground();
+        super.render(mouseX, mouseY, partialTicks);
         this.renderHoveredToolTip(mouseX, mouseY);
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float f, int i, int j)
     {
-        mc.renderEngine.bindTexture(GUI_TEXTURE_LOCATION);
-        GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
+        minecraft.textureManager.bindTexture(GUI_TEXTURE_LOCATION);
+        RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1.0f);
         int x = (width - xSize) / 2;
         int y = (height - ySize) / 2;
-        this.drawTexturedModalRect(x, y, 0, 0, xSize, ySize);
+        this.blit(x, y, 0, 0, xSize, ySize);
     }
 
     @Override
     protected void drawGuiContainerForegroundLayer(int x, int y)
     {
-        String name = I18n.format(guiTitle);
-        mc.fontRenderer.drawString(name, (xSize - mc.fontRenderer.getStringWidth(name)) / 2, 6, 0x404040);
-        mc.fontRenderer.drawString(I18n.format(this.player.inventory.getName()), 8, ySize - 96 + 3, 0x404040);
+        String name = title.getFormattedText();
+        font.drawString(name, (xSize - font.getStringWidth(name)) / 2, 6, 0x404040);
+        font.drawString(this.player.inventory.getName().getFormattedText(), 8, ySize - 96 + 3, 0x404040);
 
-        Slot slotAnalyze = inventorySlots.inventorySlots.get(0);
+        Slot slotAnalyze = container.inventorySlots.get(0);
         ItemStack stack = slotAnalyze.getStack();
         if (stack.getCount() > 0)
         {
@@ -66,31 +66,30 @@ public class GuiAnalyzer extends GuiContainer
             Item item = stack.getItem();
             if (item instanceof ItemGemstone)
             {
-                mc.fontRenderer.drawString("Item: Gemstone", 32, 18, 0xffffff);
+                font.drawString("Item: Gemstone", 32, 18, 0xffffff);
 
                 ItemGemstone gemstone = (ItemGemstone) item;
-                gem = gemstone.getGemstone(stack);
+                gem = gemstone.getGemstone();
                 q = gemstone.getQuality(stack);
 
-                IMagicContainer magic = CapabilityMagicContainer.getContainer(stack);
-                am = magic != null ? magic.getCapacity() : MagicAmounts.EMPTY;
+                am = CapabilityMagicContainer.getContainer(stack).map(IMagicContainer::getCapacity).orElse(MagicAmounts.EMPTY);
             }
 
             if (gem != null)
             {
-                mc.fontRenderer.drawString("Gemstone type: " + gem.toString(), 32, 30, 0xffffff);
-                mc.fontRenderer.drawString("Quality level: " + (q != null ? q.toString() : "Unknown"), 32, 40, 0xffffff);
+                font.drawString("Gemstone type: " + gem.toString(), 32, 30, 0xffffff);
+                font.drawString("Quality level: " + (q != null ? q.toString() : "Unknown"), 32, 40, 0xffffff);
                 if (!am.isEmpty())
                 {
-                    mc.fontRenderer.drawString("Effective Capacity:", 32, 50, 0xffffff);
-                    mc.fontRenderer.drawString(am.toShortString(), 40, 60, 0xffffff);
+                    font.drawString("Effective Capacity:", 32, 50, 0xffffff);
+                    font.drawString(am.toShortString(), 40, 60, 0xffffff);
                 }
             }
             else
             {
-                mc.fontRenderer.drawString("Item: " + stack.getDisplayName(), 32, 18, 0xffffff);
+                font.drawString("Item: " + stack.getDisplayName(), 32, 18, 0xffffff);
 
-                mc.fontRenderer.drawSplitString("Does not look like a useful gemstone.", 32, 30, 166 - 32, 0xffffff);
+                font.drawSplitString("Does not look like a useful gemstone.", 32, 30, 166 - 32, 0xffffff);
             }
         }
     }

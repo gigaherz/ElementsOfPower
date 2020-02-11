@@ -3,7 +3,7 @@ package gigaherz.elementsofpower.recipes;
 import com.google.common.collect.Lists;
 import gigaherz.elementsofpower.items.ItemMagicContainer;
 import gigaherz.elementsofpower.items.ItemMagicOrb;
-import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -16,7 +16,7 @@ import java.util.List;
 public class ContainerChargeRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
 {
     @Override
-    public boolean matches(InventoryCrafting inv, World worldIn)
+    public boolean matches(CraftingInventory inv, World worldIn)
     {
         ItemStack gemContainer = ItemStack.EMPTY;
         ItemStack orb = ItemStack.EMPTY;
@@ -45,7 +45,7 @@ public class ContainerChargeRecipe extends IForgeRegistryEntry.Impl<IRecipe> imp
     }
 
     @Override
-    public ItemStack getCraftingResult(InventoryCrafting inv)
+    public ItemStack getCraftingResult(CraftingInventory inv)
     {
         ItemStack gemContainer = ItemStack.EMPTY;
         List<ItemStack> orbs = Lists.newArrayList();
@@ -93,7 +93,7 @@ public class ContainerChargeRecipe extends IForgeRegistryEntry.Impl<IRecipe> imp
         return ItemStack.EMPTY;
     }
 
-    public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv)
+    public NonNullList<ItemStack> getRemainingItems(CraftingInventory inv)
     {
         return NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
     }

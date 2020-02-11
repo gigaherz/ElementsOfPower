@@ -1,15 +1,20 @@
 buildscript {
     repositories {
+        maven { url = 'https://files.minecraftforge.net/maven' }
         jcenter()
+        mavenCentral()
         maven {
-            name = "forge"
-            url = "http://files.minecraftforge.net/maven"
+            url 'http://dogforce-games.com/maven'
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.0.165-run-configs-rework', changing: true
     }
 }
+apply plugin: 'net.minecraftforge.gradle'
+// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
+apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
 
 repositories {
     maven {
@@ -24,75 +29,76 @@ repositories {
     }
 }
 
-apply plugin: 'net.minecraftforge.gradle.forge'
-apply plugin: 'maven-publish'
-
 version = "0.7.14-alpha"
 group = "gigaherz.elementsofpower" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "ElementsOfPower-1.12"
+archivesBaseName = "ElementsOfPower-1.15.2"
+
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
 minecraft {
-    version = "1.12.2-14.23.5.2838"
-    runDir = "run"
-    mappings = "stable_39"
+    mappings channel: 'snapshot', version: '20200131-1.15.1'
 
-    replace "@VERSION@", project.version
-    replaceIn "ElementsOfPower.java"
-}
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
-configurations {
-    // configuration that holds jars to embed inside the jar
-    embed
-    embed.transitive = false
+    runs {
+        client {
+            workingDirectory project.file('run')
+
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                examplemod {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        server {
+            workingDirectory project.file('run')
+
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                examplemod {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        data {
+            workingDirectory project.file('run')
+
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.console.level', 'debug'
+
+            args '--mod', 'examplemod', '--all', '--output', file('src/generated/resources/')
+
+            mods {
+                examplemod {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
 }
 
 dependencies {
-    compile "org.jetbrains:annotations:15.0"
+    minecraft 'net.minecraftforge:forge:1.15.2-31.1.1'
 
-    deobfCompile "gigaherz.commons:gigaherz.commons-1.12.1:0.6.4"
-    embed "gigaherz.commons:gigaherz.commons-1.12.1:0.6.4"
-
-    deobfCompile "gigaherz.guidebook:Guidebook-1.12.2:2.5.0"
-
-    deobfCompile "mezz.jei:jei_1.12.2:4.10.0.199:api"
-    runtime "mezz.jei:jei_1.12.2:4.10.0.199"
-
-    deobfCompile "com.azanor.baubles:Baubles:1.12-1.5.2:api"
-    runtime "com.azanor.baubles:Baubles:1.12-1.5.2"
-
-    compile fileTree(dir: 'libs', include: '*.jar')
 }
 
 jar {
-    into('/META-INF/libraries') {
-        from configurations.embed
-    }
-
     manifest {
         attributes([
-                "ContainedDeps": configurations.embed.collect { it.getName() }.join(' '),
-                "Maven-Artifact":"${project.group}:${project.archivesBaseName}:${project.version}",
-                'Timestamp': System.currentTimeMillis()
+            "Specification-Title": "elementsofpower",
+            "Specification-Vendor": "gigaherz",
+            "Specification-Version": "1", // We are version 1 of ourselves
+            "Implementation-Title": project.name,
+            "Implementation-Version": "${version}",
+            "Implementation-Vendor" :"gigaherz",
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
-    }
-}
-
-compileJava {
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
-    options.encoding = 'UTF-8'
-}
-
-processResources {
-    inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
-
-    from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
-        expand 'version':project.version, 'mcversion':project.minecraft.version
-    }
-
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
     }
 }

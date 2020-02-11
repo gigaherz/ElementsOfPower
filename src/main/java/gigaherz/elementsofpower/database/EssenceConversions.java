@@ -1,8 +1,9 @@
 package gigaherz.elementsofpower.database;
 
 import com.google.common.collect.Maps;
-import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.database.recipes.RecipeTools;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.Map;
 
 public class EssenceConversions
 {
-    public static Map<ItemStack, MagicAmounts> itemEssences = Maps.newHashMap();
+    public static Map<Item, MagicAmounts> itemEssences = Maps.newHashMap();
 
     public static void registerEssencesForRecipes()
     {
@@ -24,7 +25,7 @@ public class EssenceConversions
             int count = output.getCount();
             if (count < 1)
             {
-                ElementsOfPower.logger.warn("StackSize is invalid! " + output.toString());
+                ElementsOfPowerMod.logger.warn("StackSize is invalid! " + output.toString());
                 continue;
             }
 
@@ -34,7 +35,7 @@ public class EssenceConversions
                 output.setCount(1);
             }
 
-            if (itemHasEssence(output))
+            if (itemHasEssence(output.getItem()))
                 continue;
 
             boolean allFound = true;
@@ -57,21 +58,16 @@ public class EssenceConversions
 
             if (count > 1)
             {
-                am = am.multiply(1 / count);
+                am = am.multiply(1.0f / count);
             }
 
-            addConversion(output, am);
+            addConversion(output.getItem(), am);
         }
     }
 
-    public static boolean itemHasEssence(ItemStack stack)
+    public static boolean itemHasEssence(Item item)
     {
-        if (stack.getCount() > 1)
-        {
-            stack = stack.copy();
-            stack.setCount(1);
-        }
-        return Utils.stackMapContainsKey(itemEssences, stack);
+        return itemEssences.containsKey(item);
     }
 
     public static MagicAmounts getEssences(ItemStack stack, boolean wholeStack)
@@ -83,7 +79,7 @@ public class EssenceConversions
             stack.setCount(1);
         }
 
-        MagicAmounts m = Utils.stackMapGet(itemEssences, stack, MagicAmounts.EMPTY);
+        MagicAmounts m = getEssences(stack.getItem());
 
         if (count > 1 && wholeStack)
         {
@@ -93,11 +89,16 @@ public class EssenceConversions
         return m;
     }
 
-    public static void addConversion(ItemStack item, MagicAmounts amounts)
+    public static MagicAmounts getEssences(Item stack)
     {
-        if (Utils.stackMapContainsKey(itemEssences, item))
+        return itemEssences.getOrDefault(stack, MagicAmounts.EMPTY);
+    }
+
+    public static void addConversion(Item item, MagicAmounts amounts)
+    {
+        if (itemEssences.containsKey(item))
         {
-            ElementsOfPower.logger.error("Stack already inserted! " + item.toString());
+            ElementsOfPowerMod.logger.error("Stack already inserted! " + item.toString());
             return;
         }
 

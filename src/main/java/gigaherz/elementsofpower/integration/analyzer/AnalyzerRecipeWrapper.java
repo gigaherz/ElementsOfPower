@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.integration.analyzer;
 
 import com.google.common.collect.Lists;
-import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.gemstones.Gemstone;
 import gigaherz.elementsofpower.gemstones.Quality;
 import mezz.jei.api.ingredients.IIngredients;
@@ -48,7 +48,7 @@ public class AnalyzerRecipeWrapper implements IRecipeWrapper
         outputs = Lists.newArrayList();
         for (Quality q : Quality.values)
         {
-            outputs.add(ElementsOfPower.gemstone.setQuality(ElementsOfPower.gemstone.getStack(gem), q));
+            outputs.add(ElementsOfPowerMod.gemstone.setQuality(ElementsOfPowerMod.gemstone.getStack(gem), q));
         }
     }
 

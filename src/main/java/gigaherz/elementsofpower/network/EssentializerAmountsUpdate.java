@@ -1,60 +1,44 @@
 package gigaherz.elementsofpower.network;
 
-import gigaherz.elementsofpower.ElementsOfPower;
-import gigaherz.elementsofpower.common.Used;
+import gigaherz.elementsofpower.client.ClientPacketHandlers;
+import gigaherz.elementsofpower.client.ClientProxy;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.essentializer.TileEssentializer;
-import io.netty.buffer.ByteBuf;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import gigaherz.elementsofpower.essentializer.gui.IMagicAmountHolder;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.network.NetworkEvent;
 
-import javax.annotation.Nullable;
+import java.util.function.Supplier;
 
 public class EssentializerAmountsUpdate
-        implements IMessage
 {
     public int windowId;
     public MagicAmounts contained;
     public MagicAmounts remaining;
 
-    @Used
-    public EssentializerAmountsUpdate()
-    {
-    }
-
-    public EssentializerAmountsUpdate(int windowId, TileEssentializer essentializer)
+    public EssentializerAmountsUpdate(int windowId, IMagicAmountHolder essentializer)
     {
         this.windowId = windowId;
-        this.contained = essentializer.containedMagic;
-        this.remaining = essentializer.remainingToConvert;
+        this.contained = essentializer.getContainedMagic();
+        this.remaining = essentializer.getRemainingToConvert();
     }
 
-    @Override
-    public void fromBytes(ByteBuf buf)
+    public EssentializerAmountsUpdate(PacketBuffer buf)
     {
         windowId = buf.readInt();
         contained = new MagicAmounts(buf);
         remaining = new MagicAmounts(buf);
     }
 
-    @Override
-    public void toBytes(ByteBuf buf)
+    public void encode(PacketBuffer buf)
     {
         buf.writeInt(windowId);
         contained.writeTo(buf);
         remaining.writeTo(buf);
     }
 
-    public static class Handler implements IMessageHandler<EssentializerAmountsUpdate, IMessage>
+    public boolean handle(Supplier<NetworkEvent.Context> context)
     {
-        @Nullable
-        @Override
-        public IMessage onMessage(EssentializerAmountsUpdate message, MessageContext ctx)
-        {
-            ElementsOfPower.proxy.handleRemainingAmountsUpdate(message);
-
-            return null; // no response in this case
-        }
+        return ClientPacketHandlers.handleRemainingAmountsUpdate(this);
     }
 }

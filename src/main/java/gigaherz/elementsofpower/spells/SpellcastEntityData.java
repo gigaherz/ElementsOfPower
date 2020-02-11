@@ -1,14 +1,13 @@
 package gigaherz.elementsofpower.spells;
 
-import com.google.common.collect.Lists;
-import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.network.SpellcastSync;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
@@ -17,23 +16,24 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 
-public class SpellcastEntityData implements INBTSerializable<NBTTagCompound>
+public class SpellcastEntityData implements INBTSerializable<CompoundNBT>
 {
-    private static final ResourceLocation PROP_KEY = ElementsOfPower.location("SpellcastData");
+    private static final ResourceLocation PROP_KEY = ElementsOfPowerMod.location("SpellcastData");
 
-    private final EntityPlayer player;
+    private final PlayerEntity player;
     private Spellcast currentCasting;
 
-    public static SpellcastEntityData get(EntityPlayer p)
+    public static LazyOptional<SpellcastEntityData> get(PlayerEntity p)
     {
-        return p.getCapability(Handler.SPELLCAST, EnumFacing.UP);
+        return p.getCapability(Handler.SPELLCAST, Direction.UP);
     }
 
     public static void register()
@@ -43,27 +43,27 @@ public class SpellcastEntityData implements INBTSerializable<NBTTagCompound>
 
     public SpellcastEntityData(Entity entity)
     {
-        this.player = (EntityPlayer) entity;
+        this.player = (PlayerEntity) entity;
     }
 
-    public NBTTagCompound serializeNBT()
+    public CompoundNBT serializeNBT()
     {
-        NBTTagCompound compound = new NBTTagCompound();
+        CompoundNBT compound = new CompoundNBT();
         if (currentCasting != null)
         {
-            NBTTagCompound cast = new NBTTagCompound();
+            CompoundNBT cast = new CompoundNBT();
             currentCasting.writeToNBT(cast);
-            cast.setString("sequence", currentCasting.getSequence());
-            compound.setTag("currentSpell", cast);
+            cast.putString("sequence", currentCasting.getSequence());
+            compound.put("currentSpell", cast);
         }
         return compound;
     }
 
-    public void deserializeNBT(NBTTagCompound compound)
+    public void deserializeNBT(CompoundNBT compound)
     {
-        if (compound.hasKey("currentSpell", Constants.NBT.TAG_COMPOUND))
+        if (compound.contains("currentSpell", Constants.NBT.TAG_COMPOUND))
         {
-            NBTTagCompound cast = (NBTTagCompound) compound.getTag("currentSpell");
+            CompoundNBT cast = compound.getCompound("currentSpell");
             String sequence = cast.getString("sequence");
 
             currentCasting = SpellManager.makeSpell(sequence);
@@ -84,8 +84,10 @@ public class SpellcastEntityData implements INBTSerializable<NBTTagCompound>
         currentCasting.init(player.world, player);
 
         if (!player.world.isRemote)
-            ElementsOfPower.channel.sendToAllAround(new SpellcastSync(SpellcastSync.ChangeMode.BEGIN, spell),
-                    new NetworkRegistry.TargetPoint(player.dimension, player.posX, player.posY, player.posZ, 128));
+        {
+            ElementsOfPowerMod.channel.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player),
+                    new SpellcastSync(SpellcastSync.ChangeMode.BEGIN, spell));
+        }
     }
 
     public void end()
@@ -93,8 +95,10 @@ public class SpellcastEntityData implements INBTSerializable<NBTTagCompound>
         if (currentCasting != null)
         {
             if (!player.world.isRemote)
-                ElementsOfPower.channel.sendToAllAround(new SpellcastSync(SpellcastSync.ChangeMode.END, currentCasting),
-                        new NetworkRegistry.TargetPoint(player.dimension, player.posX, player.posY, player.posZ, 128));
+            {
+                ElementsOfPowerMod.channel.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player),
+                        new SpellcastSync(SpellcastSync.ChangeMode.END, currentCasting));
+            }
 
             currentCasting = null;
         }
@@ -105,8 +109,10 @@ public class SpellcastEntityData implements INBTSerializable<NBTTagCompound>
         if (currentCasting != null)
         {
             if (!player.world.isRemote)
-                ElementsOfPower.channel.sendToAllAround(new SpellcastSync(SpellcastSync.ChangeMode.INTERRUPT, currentCasting),
-                        new NetworkRegistry.TargetPoint(player.dimension, player.posX, player.posY, player.posZ, 128));
+            {
+                ElementsOfPowerMod.channel.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player),
+                        new SpellcastSync(SpellcastSync.ChangeMode.INTERRUPT, currentCasting));
+            }
 
             currentCasting = null;
         }
@@ -117,8 +123,10 @@ public class SpellcastEntityData implements INBTSerializable<NBTTagCompound>
         if (currentCasting != null)
         {
             if (!player.world.isRemote)
-                ElementsOfPower.channel.sendToAllAround(new SpellcastSync(SpellcastSync.ChangeMode.CANCEL, currentCasting),
-                        new NetworkRegistry.TargetPoint(player.dimension, player.posX, player.posY, player.posZ, 128));
+            {
+                ElementsOfPowerMod.channel.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player),
+                        new SpellcastSync(SpellcastSync.ChangeMode.CANCEL, currentCasting));
+            }
 
             currentCasting = null;
         }
@@ -198,15 +206,16 @@ public class SpellcastEntityData implements INBTSerializable<NBTTagCompound>
             CapabilityManager.INSTANCE.register(SpellcastEntityData.class, new Capability.IStorage<SpellcastEntityData>()
             {
                 @Override
-                public NBTBase writeNBT(Capability<SpellcastEntityData> capability, SpellcastEntityData instance, @Nullable EnumFacing side)
+                public INBT writeNBT(Capability<SpellcastEntityData> capability, SpellcastEntityData instance, @Nullable Direction side)
                 {
-                    return null;
+                    return instance.serializeNBT();
                 }
 
                 @Override
-                public void readNBT(Capability<SpellcastEntityData> capability, SpellcastEntityData instance, @Nullable EnumFacing side, NBTBase nbt)
+                public void readNBT(Capability<SpellcastEntityData> capability, SpellcastEntityData instance, @Nullable Direction side, INBT nbt)
                 {
-
+                    if (nbt instanceof CompoundNBT)
+                        instance.deserializeNBT((CompoundNBT) nbt);
                 }
             }, () -> null);
         }
@@ -216,34 +225,29 @@ public class SpellcastEntityData implements INBTSerializable<NBTTagCompound>
         {
             final Entity entity = e.getObject();
 
-            if (entity instanceof EntityPlayer)
+            if (entity instanceof PlayerEntity)
             {
-                e.addCapability(PROP_KEY, new ICapabilitySerializable<NBTTagCompound>()
+                e.addCapability(PROP_KEY, new ICapabilitySerializable<CompoundNBT>()
                 {
                     final SpellcastEntityData cap = new SpellcastEntityData(entity);
+                    final LazyOptional<SpellcastEntityData> capGetter = LazyOptional.of(() -> cap);
 
                     @Override
-                    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing)
-                    {
-                        return capability == SPELLCAST;
-                    }
-
-                    @Override
-                    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing)
+                    public <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction facing)
                     {
                         if (capability == SPELLCAST)
-                            return SPELLCAST.cast(cap);
-                        return null;
+                            return capGetter.cast();
+                        return LazyOptional.empty();
                     }
 
                     @Override
-                    public NBTTagCompound serializeNBT()
+                    public CompoundNBT serializeNBT()
                     {
                         return cap.serializeNBT();
                     }
 
                     @Override
-                    public void deserializeNBT(NBTTagCompound nbt)
+                    public void deserializeNBT(CompoundNBT nbt)
                     {
                         cap.deserializeNBT(nbt);
                     }
@@ -256,8 +260,7 @@ public class SpellcastEntityData implements INBTSerializable<NBTTagCompound>
         {
             if (e.phase == TickEvent.Phase.END)
             {
-                SpellcastEntityData data = SpellcastEntityData.get(e.player);
-                data.updateSpell();
+                SpellcastEntityData.get(e.player).ifPresent(SpellcastEntityData::updateSpell);
             }
         }
     }

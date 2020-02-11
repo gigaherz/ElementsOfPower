@@ -1,9 +1,9 @@
 package gigaherz.elementsofpower.spells.effects;
 
 import gigaherz.elementsofpower.spells.Spellcast;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
@@ -45,9 +45,9 @@ public class TeleportEffect extends SpellEffect
     {
         if (!cast.world.isRemote)
         {
-            if (cast.player instanceof EntityPlayerMP)
+            if (cast.player instanceof ServerPlayerEntity)
             {
-                EntityPlayerMP playerMP = (EntityPlayerMP) cast.player;
+                ServerPlayerEntity playerMP = (ServerPlayerEntity) cast.player;
 
                 if (playerMP.connection.getNetworkManager().isChannelOpen()
                         && playerMP.world == cast.world
@@ -58,13 +58,13 @@ public class TeleportEffect extends SpellEffect
                         playerMP.dismountRidingEntity();
                     }
 
-                    playerMP.setPositionAndUpdate(hitVec.x, hitVec.y, hitVec.z);
+                    playerMP.setPositionAndUpdate(getHitVec().x, getHitVec().y, getHitVec().z);
                     playerMP.fallDistance = 0.0F;
                 }
             }
             else if (cast.player != null)
             {
-                cast.player.setPositionAndUpdate(hitVec.x, hitVec.y, hitVec.z);
+                cast.player.setPositionAndUpdate(getHitVec().x, getHitVec().y, getHitVec().z);
                 cast.player.fallDistance = 0.0F;
             }
         }
@@ -85,12 +85,12 @@ public class TeleportEffect extends SpellEffect
         for (int i = 0; i < 32; ++i)
         {
             cast.spawnRandomParticle(EnumParticleTypes.PORTAL,
-                    mop.hitVec.x, mop.hitVec.y, mop.hitVec.z);
+                    mop.getHitVec().x, mop.getHitVec().y, mop.getHitVec().z);
         }
     }
 
     @Override
-    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, float r, @Nullable RayTraceResult mop)
+    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, BlockState currentState, float r, @Nullable RayTraceResult mop)
     {
 
     }

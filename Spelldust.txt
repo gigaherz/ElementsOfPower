@@ -1,0 +1,38 @@
+
+Spelldust
+-----------
+
+Spelldust travels horizontally, never up or down
+
+Dust lines activate other dust lines or blocks of gemstones, that they are pointing at.
+
+
+
+
+Riby (Fire):
+Detects energy, activating spontaneously when
+    * A projectile enters the block space,
+    * An explosion happens nearby (?),
+    * A redstone signal reaches the dust,
+    * ...
+When activated by
+    * Water
+    * ...
+
+
+
+Quartz (Light):
+In the presence of light, activates spontaneously.
+When activated by
+    * Fire
+    * Water
+    * ...
+    * Light: Produces light (temporary light block above itself)
+
+Serendibite (Darkness):
+In the absence of light, activates spontaneously.
+When activated by
+    * Fire
+    * Water
+    * ...
+

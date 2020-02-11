@@ -1,77 +1,39 @@
 package gigaherz.elementsofpower.items;
 
-import gigaherz.common.ItemRegistered;
-import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.spells.Element;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ItemMagicOrb extends ItemRegistered
+public class ItemMagicOrb extends Item
 {
-    private final static String[] subNames =
-            {"fire", "water", "air", "earth", "light", "darkness", "life", "death"};
+    private final Element element;
 
-    public ItemMagicOrb(String name)
+    public ItemMagicOrb(Element element, Properties properties)
     {
-        super(name);
-        setMaxStackSize(64);
-        setHasSubtypes(true);
-        setCreativeTab(ElementsOfPower.tabMagic);
+        super(properties);
+        this.element = element;
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Override
-    public int getMetadata(int damageValue)
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn)
     {
-        return damageValue;
+        tooltip.add(new TranslationTextComponent("text.elementsofpower.orb.use").applyTextStyles(TextFormatting.DARK_GRAY, TextFormatting.ITALIC));
+        tooltip.add(new TranslationTextComponent("text.elementsofpower.orb.cocoon").applyTextStyles(TextFormatting.DARK_GRAY, TextFormatting.ITALIC));
     }
 
-    @Override
-    public String getTranslationKey(ItemStack stack)
+    public Element getElement()
     {
-        int sub = stack.getItemDamage();
-
-        if (sub >= subNames.length)
-        {
-            sub = 0;
-        }
-
-        return getTranslationKey() + "." + subNames[sub];
-    }
-
-    @Override
-    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems)
-    {
-        if (this.isInCreativeTab(tab))
-        {
-            for (int meta = 0; meta < subNames.length; meta++)
-            {
-                subItems.add(new ItemStack(this, 1, meta));
-            }
-        }
-    }
-
-    @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn)
-    {
-        tooltip.add(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + I18n.format("text." + ElementsOfPower.MODID + ".orb.use"));
-        tooltip.add(TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + I18n.format("text." + ElementsOfPower.MODID + ".orb.cocoon"));
-    }
-
-    public ItemStack getStack(Element element)
-    {
-        return getStack(1, element);
-    }
-
-    public ItemStack getStack(int count, Element element)
-    {
-        return new ItemStack(this, count, element.ordinal());
+        return element;
     }
 }

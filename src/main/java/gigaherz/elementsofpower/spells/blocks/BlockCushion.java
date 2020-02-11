@@ -1,50 +1,43 @@
 package gigaherz.elementsofpower.spells.blocks;
 
-import gigaherz.elementsofpower.ElementsOfPower;
-import net.minecraft.block.state.IBlockState;
+import gigaherz.elementsofpower.ElementsOfPowerMod;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class BlockCushion extends BlockDust
 {
-    public BlockCushion(String name)
+    public BlockCushion(Properties properties)
     {
-        super(name, ElementsOfPower.materialCushion);
+        super(properties);
     }
 
     @Deprecated
-    @Override
-    public boolean causesSuffocation(IBlockState state)
+    //@Override
+    public boolean causesSuffocation(BlockState state)
     {
         return false;
     }
 
-    @Deprecated
     @Override
-    public int getLightOpacity(IBlockState state)
-    {
-        return 0;
-    }
-
-    @Override
-    public void onEntityCollision(World worldIn, BlockPos pos, IBlockState state, Entity entityIn)
+    public void onEntityCollision(BlockState state, World worldIn, BlockPos pos, Entity entityIn)
     {
         double maxV = 0.1;
         double maxVSq = maxV * maxV;
         double factor = 0.2;
 
-        double velocitySq = entityIn.motionX * entityIn.motionX + entityIn.motionY * entityIn.motionY + entityIn.motionZ * entityIn.motionZ;
+        double velocitySq = entityIn.getMotion().lengthSquared();
         if (velocitySq > maxVSq)
         {
             double velocity = Math.sqrt(velocitySq);
             double newVel = velocity + factor * (maxV - velocity);
 
-            entityIn.motionX = entityIn.motionX * newVel / velocity;
-            entityIn.motionY = entityIn.motionY * newVel / velocity;
-            entityIn.motionZ = entityIn.motionZ * newVel / velocity;
+            double ratio = newVel / velocity;
 
-            entityIn.fallDistance = (float) (entityIn.fallDistance * newVel / velocity);
+            entityIn.setMotion(entityIn.getMotion().scale(ratio));
+
+            entityIn.fallDistance = (float) (entityIn.fallDistance * ratio);
         }
     }
 }

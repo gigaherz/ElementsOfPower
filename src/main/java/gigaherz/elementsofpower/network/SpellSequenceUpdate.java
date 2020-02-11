@@ -2,19 +2,18 @@ package gigaherz.elementsofpower.network;
 
 import gigaherz.elementsofpower.common.Used;
 import gigaherz.elementsofpower.items.ItemWand;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.WorldServer;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.network.NetworkEvent;
 
 import javax.annotation.Nullable;
+import java.util.function.Supplier;
 
 public class SpellSequenceUpdate
-        implements IMessage
 {
     public enum ChangeMode
     {
@@ -30,11 +29,6 @@ public class SpellSequenceUpdate
     public ChangeMode changeMode;
     public String sequence;
 
-    @Used
-    public SpellSequenceUpdate()
-    {
-    }
-
     public SpellSequenceUpdate(ChangeMode mode, int slotNumber, @Nullable String sequence)
     {
         changeMode = mode;
@@ -42,56 +36,46 @@ public class SpellSequenceUpdate
         this.slotNumber = slotNumber;
     }
 
-    @Override
-    public void fromBytes(ByteBuf buf)
+    public SpellSequenceUpdate(PacketBuffer buf)
     {
         int r = buf.readInt();
         changeMode = ChangeMode.values[r];
         slotNumber = buf.readByte();
-        sequence = ByteBufUtils.readUTF8String(buf);
+        sequence = buf.readString();
         if (sequence.length() == 0)
         {
             sequence = null;
         }
     }
 
-    @Override
-    public void toBytes(ByteBuf buf)
+    public void encode(PacketBuffer buf)
     {
         buf.writeInt(changeMode.ordinal());
         buf.writeByte(slotNumber);
         if (sequence != null)
         {
-            ByteBufUtils.writeUTF8String(buf, sequence);
+            buf.writeString(sequence);
         }
         else
         {
-            ByteBufUtils.writeUTF8String(buf, "");
+            buf.writeString("");
         }
     }
 
-    public static class Handler implements IMessageHandler<SpellSequenceUpdate, IMessage>
+    public boolean handle(Supplier<NetworkEvent.Context> context)
     {
-        @Nullable
-        @Override
-        public IMessage onMessage(SpellSequenceUpdate message, MessageContext ctx)
+        context.get().enqueueWork(() ->
         {
-            final SpellSequenceUpdate msg = message;
-            final EntityPlayer player = ctx.getServerHandler().player;
-            final WorldServer ws = (WorldServer) player.world;
+            ServerPlayerEntity player = context.get().getSender();
+            ItemStack stack = player.inventory.getStackInSlot(slotNumber);
 
-            ws.addScheduledTask(() ->
+            if (stack.getItem() instanceof ItemWand)
             {
-                ItemStack stack = player.inventory.getStackInSlot(msg.slotNumber);
+                ItemWand wand = (ItemWand) stack.getItem();
+                wand.processSequenceUpdate(this, stack, player);
+            }
+        });
 
-                if (stack.getItem() instanceof ItemWand)
-                {
-                    ItemWand wand = (ItemWand) stack.getItem();
-                    wand.processSequenceUpdate(msg, stack, player);
-                }
-            });
-
-            return null; // no response in this case
-        }
+        return true;
     }
 }

@@ -4,7 +4,7 @@ import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.ElementsOfPowerMod;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -30,7 +30,7 @@ public class EssenceOverrides
     {
         try
         {
-            Reader r = new FileReader(ElementsOfPower.overrides);
+            Reader r = new FileReader(ElementsOfPowerMod.overrides);
             Type type = new TypeToken<Map<String, MagicAmounts>>()
             {
             }.getType();
@@ -51,7 +51,7 @@ public class EssenceOverrides
     {
         try
         {
-            Writer w = new FileWriter(ElementsOfPower.overrides);
+            Writer w = new FileWriter(ElementsOfPowerMod.overrides);
             w.write(SERIALIZER.toJson(essenceOverrides));
             w.flush();
             w.close();

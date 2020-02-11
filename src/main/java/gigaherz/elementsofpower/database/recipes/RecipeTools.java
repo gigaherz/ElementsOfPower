@@ -2,7 +2,7 @@ package gigaherz.elementsofpower.database.recipes;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.database.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
@@ -41,7 +41,7 @@ public class RecipeTools
 
             if (output.getCount() == 0)
             {
-                ElementsOfPower.logger.warn("Recipe with output '" + output + "' has stack size 0. This recipe will be ignored.");
+                ElementsOfPowerMod.logger.warn("Recipe with output '" + output + "' has stack size 0. This recipe will be ignored.");
                 return;
             }
 
@@ -51,7 +51,7 @@ public class RecipeTools
                 {
                     if (s.getCount() == 0)
                     {
-                        ElementsOfPower.logger.warn("Recipe with output '" + output + "' has input stack of size 0. This recipe will be ignored.");
+                        ElementsOfPowerMod.logger.warn("Recipe with output '" + output + "' has input stack of size 0. This recipe will be ignored.");
                         return;
                     }
                 }

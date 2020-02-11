@@ -1,19 +1,26 @@
-/.gradle
-/.idea
-/eclipse
-/build
-/classes
+# eclipse
+bin
+*.launch
+.settings
+.metadata
+.classpath
+.project
 
-/*-fml.txt
-/MinecraftForge-*.txt
-/README.txt
-/forge-*-changelog.txt
-/gradle
-/gradlew
-/gradlew.bat
-/Paulscode * License.txt
-/*.iml
+# idea
+out
+*.ipr
+*.iws
+*.iml
+.idea
 
-*.bak
-*.rhl
-/run
+# gradle
+build
+.gradle
+
+# other
+eclipse
+run
+
+# Files from Forge MDK
+forge*changelog.txt
+/videos

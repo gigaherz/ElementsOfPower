@@ -1,22 +1,22 @@
 package gigaherz.elementsofpower.gemstones;
 
-import net.minecraft.item.EnumRarity;
+import net.minecraft.item.Rarity;
 
 public enum Quality
 {
-    Rough(".rough", EnumRarity.COMMON, 0.9f),
-    Common(".common", EnumRarity.COMMON, 1.0f),
-    Smooth(".smooth", EnumRarity.UNCOMMON, 1.25f),
-    Flawless(".flawless", EnumRarity.RARE, 1.5f),
-    Pure(".pure", EnumRarity.EPIC, 2.0f);
+    Rough(".rough", Rarity.COMMON, 0.9f),
+    Common(".common", Rarity.COMMON, 1.0f),
+    Smooth(".smooth", Rarity.UNCOMMON, 1.25f),
+    Flawless(".flawless", Rarity.RARE, 1.5f),
+    Pure(".pure", Rarity.EPIC, 2.0f);
 
     public static final Quality[] values = values();
 
     private final String unlocalizedName;
-    private final EnumRarity rarity;
+    private final Rarity rarity;
     private final float transferSpeed;
 
-    Quality(String unlocalizedName, EnumRarity rarity, float transferSpeed)
+    Quality(String unlocalizedName, Rarity rarity, float transferSpeed)
     {
         this.unlocalizedName = unlocalizedName;
         this.rarity = rarity;
@@ -28,7 +28,7 @@ public enum Quality
         return unlocalizedName;
     }
 
-    public EnumRarity getRarity()
+    public Rarity getRarity()
     {
         return rarity;
     }

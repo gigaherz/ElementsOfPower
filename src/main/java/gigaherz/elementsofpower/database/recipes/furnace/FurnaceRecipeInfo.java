@@ -2,7 +2,7 @@ package gigaherz.elementsofpower.database.recipes.furnace;
 
 import com.google.common.collect.Lists;
 import gigaherz.elementsofpower.database.recipes.IRecipeInfoProvider;
-import net.minecraft.init.Items;
+import net.minecraft.item.Items;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;

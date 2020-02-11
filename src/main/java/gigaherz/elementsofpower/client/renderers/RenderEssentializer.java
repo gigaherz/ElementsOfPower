@@ -5,7 +5,7 @@ import gigaherz.elementsofpower.essentializer.TileEssentializer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
-import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
@@ -17,7 +17,7 @@ public class RenderEssentializer extends TileEntitySpecialRenderer<TileEssential
     @Override
     public void render(TileEssentializer te, double x, double y, double z, float partialTicks, int destroyStage, float something)
     {
-        bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
 
         GlStateManager.disableLighting();
 
@@ -67,8 +67,8 @@ public class RenderEssentializer extends TileEntitySpecialRenderer<TileEssential
             GlStateManager.color(1f, 1f, 1f, 1f);
             GlStateManager.scale(0.35, 0.35, 0.35);
 
-            Minecraft mc = Minecraft.getMinecraft();
-            mc.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+            Minecraft mc = Minecraft.getInstance();
+            mc.renderEngine.bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
             mc.getRenderItem().renderItem(stack, TransformType.GROUND);
 
             GlStateManager.popMatrix();

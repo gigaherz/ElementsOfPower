@@ -4,30 +4,34 @@ import com.google.common.collect.Lists;
 import gigaherz.elementsofpower.capabilities.CapabilityMagicContainer;
 import gigaherz.elementsofpower.capabilities.IMagicContainer;
 import gigaherz.elementsofpower.database.MagicAmounts;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.MoverType;
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.passive.EntityAmbientCreature;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.*;
+import net.minecraft.entity.passive.AmbientEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
+import net.minecraftforge.registries.ObjectHolder;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
-public class EntityEssence extends EntityAmbientCreature
+public class EntityEssence extends AmbientEntity
 {
+    @ObjectHolder("elementsofpower:ball")
+    public static EntityType<EntityEssence> TYPE;
+
     public static final float[][] EssenceColors = {
             {1.0f, 0.0f, 0.0f},
             {0.0f, 0.0f, 1.0f},
@@ -61,21 +65,19 @@ public class EntityEssence extends EntityAmbientCreature
 
     int entityAge2;
 
-    public EntityEssence(World worldIn)
+    public EntityEssence(EntityType<EntityEssence> type, World world)
     {
-        super(worldIn);
-
-        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-        {
-            getDataManager().register(ELEMENTS[i], 0.0f);
-        }
-
-        setEntityBoundingBox(new AxisAlignedBB(0, 0, 0, 0, 0, 0));
+        this(type, world, MagicAmounts.EMPTY);
     }
 
     public EntityEssence(World worldIn, MagicAmounts am)
     {
-        super(worldIn);
+        this(TYPE, worldIn, am);
+    }
+
+    protected EntityEssence(EntityType<EntityEssence> type, World world, MagicAmounts am)
+    {
+        super(type, world);
 
         int numEssences = 0;
 
@@ -87,7 +89,7 @@ public class EntityEssence extends EntityAmbientCreature
 
         scale = 0.025f * numEssences;
 
-        setEntityBoundingBox(new AxisAlignedBB(0, 0, 0, 0, 0, 0));
+        //setEntityBoundingBox(new AxisAlignedBB(0, 0, 0, 0, 0, 0));
     }
 
     public float getScale()
@@ -176,16 +178,15 @@ public class EntityEssence extends EntityAmbientCreature
     }
 
     @Override
-    protected void applyEntityAttributes()
-    {
-        super.applyEntityAttributes();
-        getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(2.0D);
+    protected void registerAttributes() {
+        super.registerAttributes();
+        this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(2.0D);
     }
 
     @Override
-    public void onUpdate()
+    public void tick()
     {
-        super.onUpdate();
+        super.tick();
 
         int numEssences = 0;
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
@@ -222,7 +223,7 @@ public class EntityEssence extends EntityAmbientCreature
             }
 
             if (amounts.getTotalMagic() <= 0)
-                setDead();
+                remove();
             else
             {
                 sequence = null;
@@ -239,20 +240,20 @@ public class EntityEssence extends EntityAmbientCreature
         if (world.isRemote)
             return;
 
-        Vec3d followPos = new Vec3d(posX, posY, posZ);
+        Vec3d followPos = getPositionVec();
 
         double dp = Double.POSITIVE_INFINITY;
 
-        Entity entity = world.getClosestPlayerToEntity(this, 8.0D);
+        Entity entity = world.getClosestPlayer(this, 8.0D);
         if (entity != null)
         {
             dp = getDistanceSq(entity);
             if (dp < 2.0 && entityAge2 > 100)
             {
                 tryAbosrbInto(entity);
-                if (isDead) return;
+                if (!isAlive()) return;
             }
-            followPos = new Vec3d(entity.posX, entity.posY + entity.getEyeHeight(), entity.posZ);
+            followPos = getEyePosition(1.0f);
             spawnPosition = null;
         }
         else
@@ -278,11 +279,7 @@ public class EntityEssence extends EntityAmbientCreature
                 new Vec3d(spawnPosition.getX(), spawnPosition.getY() + 1, spawnPosition.getZ());
         }
 
-        double dx = followPos.x - posX;
-        double dy = followPos.y - posY;
-        double dz = followPos.z - posZ;
-
-        Vec3d home = new Vec3d(dx, dy, dz);
+        Vec3d home = followPos.subtract(getPositionVec());
         Vec3d forward = getLookVec();
         Vec3d random = new Vec3d(rand.nextGaussian(), rand.nextGaussian(), rand.nextGaussian());
 
@@ -309,20 +306,24 @@ public class EntityEssence extends EntityAmbientCreature
             accelY = lerp(accelY, lerp(forward.y, random.y, r), sa);
             accelZ = lerp(accelZ, lerp(forward.z, random.z, r), sa);
         }
-        motionX = MathHelper.clamp(motionX + lerp(0, accelX, sm), -speedMax, speedMax);
-        motionY = MathHelper.clamp(motionY + lerp(0, accelY, sm), -speedMax, speedMax);
-        motionZ = MathHelper.clamp(motionZ + lerp(0, accelZ, sm), -speedMax, speedMax);
+        Vec3d motion = getMotion();
+        motion = new Vec3d(
+                MathHelper.clamp(motion.x + lerp(0, accelX, sm), -speedMax, speedMax),
+                MathHelper.clamp(motion.y + lerp(0, accelY, sm), -speedMax, speedMax),
+                MathHelper.clamp(motion.z + lerp(0, accelZ, sm), -speedMax, speedMax)
+        );
+        setMotion(motion);
 
-        rotationYaw = (float) Math.atan2(motionZ, motionX);
-        float xz = (float) Math.sqrt(motionX * motionX + motionZ * motionZ);
-        rotationPitch = (float) Math.atan2(motionY, xz);
+        rotationYaw = (float) Math.atan2(motion.z, motion.x);
+        float xz = (float) Math.sqrt(motion.x * motion.x + motion.z * motion.z);
+        rotationPitch = (float) Math.atan2(motion.y, xz);
 
         moveForward = 0.5f;
     }
 
     private void tryAbosrbInto(Entity entity)
     {
-        if (!(entity instanceof EntityPlayer))
+        if (!(entity instanceof PlayerEntity))
             return;
 
         MagicAmounts self = MagicAmounts.EMPTY;
@@ -331,7 +332,7 @@ public class EntityEssence extends EntityAmbientCreature
             self = self.with(i, getDataManager().get(ELEMENTS[i]));
         }
 
-        EntityPlayer p = (EntityPlayer) entity;
+        PlayerEntity p = (PlayerEntity) entity;
         IInventory b = p.inventory;
         for (int i = 0; i < b.getSizeInventory(); i++)
         {
@@ -339,87 +340,91 @@ public class EntityEssence extends EntityAmbientCreature
             if (s.getCount() <= 0)
                 continue;
 
-            IMagicContainer magic = CapabilityMagicContainer.getContainer(s);
-            if (magic != null && !magic.isFull())
-            {
-                MagicAmounts limits = magic.getCapacity();
-                MagicAmounts amounts = magic.getContainedMagic();
-
-                if (!limits.isEmpty())
+            MagicAmounts[] _self = { self };
+            if (CapabilityMagicContainer.getContainer(s).filter(magic -> !magic.isFull()).map(magic -> {
+                MagicAmounts am = _self[0];
+                if (!magic.isFull())
                 {
-                    MagicAmounts transfer = MagicAmounts.min(self, limits.subtract(amounts));
-                    amounts = amounts.add(MagicAmounts.min(amounts.add(transfer), limits));
-                    self = self.subtract(transfer);
-                    for (int e = 0; e < MagicAmounts.ELEMENTS; e++)
+                    MagicAmounts limits = magic.getCapacity();
+                    MagicAmounts amounts = magic.getContainedMagic();
+
+                    if (!limits.isEmpty())
                     {
-                        if (transfer.get(e) != 0)
+                        MagicAmounts transfer = MagicAmounts.min(am, limits.subtract(amounts));
+                        amounts = amounts.add(MagicAmounts.min(amounts.add(transfer), limits));
+                        _self[0] = am = am.subtract(transfer);
+                        for (int e = 0; e < MagicAmounts.ELEMENTS; e++)
                         {
-                            getDataManager().set(ELEMENTS[e], self.get(e));
+                            if (transfer.get(e) != 0)
+                            {
+                                getDataManager().set(ELEMENTS[e], am.get(e));
+                            }
+                        }
+
+                        if (!transfer.isEmpty())
+                        {
+                            magic.setContainedMagic(amounts);
                         }
                     }
 
-                    if (!transfer.isEmpty())
-                    {
-                        magic.setContainedMagic(amounts);
-                    }
+                    sequence = null;
+                    return true;
                 }
-
-                sequence = null;
+                return false;
+            }).orElse(false))
+            {
                 break;
             }
+            self = _self[0];
         }
 
-        setDead();
+        remove();
     }
 
     @Override
-    public void readEntityFromNBT(NBTTagCompound tag)
+    public void readAdditional(CompoundNBT tag)
     {
-        super.readEntityFromNBT(tag);
+        super.readAdditional(tag);
+
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
             getDataManager().set(ELEMENTS[i], tag.getFloat("Essence" + i));
         }
-        entityAge2 = tag.getInteger("Age2");
+        entityAge2 = tag.getInt("Age2");
         accelX = tag.getDouble("accelX");
         accelY = tag.getDouble("accelY");
         accelZ = tag.getDouble("accelZ");
     }
 
     @Override
-    public void writeEntityToNBT(NBTTagCompound tag)
+    public void writeAdditional(CompoundNBT tag)
     {
-        super.writeEntityToNBT(tag);
+        super.writeAdditional(tag);
+
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            tag.setFloat("Essence" + i, getDataManager().get(ELEMENTS[i]));
+            tag.putFloat("Essence" + i, getDataManager().get(ELEMENTS[i]));
         }
-        tag.setInteger("Age2", entityAge2);
-        tag.setDouble("accelX", accelX);
-        tag.setDouble("accelY", accelY);
-        tag.setDouble("accelZ", accelZ);
+        tag.putInt("Age2", entityAge2);
+        tag.putDouble("accelX", accelX);
+        tag.putDouble("accelY", accelY);
+        tag.putDouble("accelZ", accelZ);
     }
 
-
     @Override
-    public void travel(float strafe, float up, float forward)
+    public void travel(Vec3d direction)
     {
         {
-            float f = 0.91F;
+            this.moveRelative(1.0f, direction);
 
-            float f1 = 0.16277136F / (f * f * f);
-            this.moveRelative(strafe, up, forward, this.onGround ? 0.1F * f1 : 0.02F);
-            f = 0.91F;
+            this.move(MoverType.SELF, getMotion());
 
-            this.move(MoverType.SELF, this.motionX, this.motionY, this.motionZ);
-            this.motionX *= (double) f;
-            this.motionY *= (double) f;
-            this.motionZ *= (double) f;
+            setMotion(getMotion().scale(0.91f));
         }
 
         this.prevLimbSwingAmount = this.limbSwingAmount;
-        double d1 = this.posX - this.prevPosX;
-        double d0 = this.posZ - this.prevPosZ;
+        double d1 = this.getPosX() - this.prevPosX;
+        double d0 = this.getPosZ() - this.prevPosZ;
         float f2 = MathHelper.sqrt(d1 * d1 + d0 * d0) * 4.0F;
 
         if (f2 > 1.0F)
@@ -459,19 +464,19 @@ public class EntityEssence extends EntityAmbientCreature
     }
 
     @Override
-    public boolean isNotColliding()
+    public boolean isNotColliding(IWorldReader p_205019_1_)
     {
         return true;
     }
 
     @Override
-    public boolean canBeLeashedTo(EntityPlayer player)
+    public boolean canBeLeashedTo(PlayerEntity player)
     {
         return false;
     }
 
     @Override
-    protected boolean processInteract(EntityPlayer player, EnumHand p_184645_2_)
+    protected boolean processInteract(PlayerEntity player, Hand p_184645_2_)
     {
         return false;
     }
@@ -504,14 +509,14 @@ public class EntityEssence extends EntityAmbientCreature
         return false;
     }
 
-
     @Override
-    public void fall(float distance, float damageMultiplier)
+    public boolean onLivingFall(float p_225503_1_, float p_225503_2_)
     {
+        return false;
     }
 
     @Override
-    protected void updateFallState(double y, boolean onGroundIn, IBlockState state, BlockPos pos)
+    protected void updateFallState(double y, boolean onGroundIn, BlockState state, BlockPos pos)
     {
     }
 
@@ -528,7 +533,7 @@ public class EntityEssence extends EntityAmbientCreature
     }
 
     @Override
-    public float getEyeHeight()
+    public float getEyeHeight(Pose pose)
     {
         return 0;
     }

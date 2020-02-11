@@ -1,38 +1,50 @@
 package gigaherz.elementsofpower.analyzer.gui;
 
-import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.GemstoneInformation;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.IContainerListener;
-import net.minecraft.inventory.InventoryBasic;
-import net.minecraft.inventory.Slot;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.inventory.container.IContainerListener;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.registries.ObjectHolder;
 
 import java.util.List;
 
 public class ContainerAnalyzer extends Container
 {
+    @ObjectHolder("elementsofpower:analyzer")
+    public static ContainerType<ContainerAnalyzer> TYPE;
+
     public InventoryInternal internalInventory;
-    public EntityPlayer player;
-    public InventoryPlayer playerInventory;
+    public PlayerEntity player;
+    public PlayerInventory playerInventory;
     public int slotNumber;
 
-    public ContainerAnalyzer(EntityPlayer player)
+    public ContainerAnalyzer(int id, PlayerInventory playerInventory, PacketBuffer extraData)
     {
-        this.internalInventory = new InventoryInternal();
-        this.player = player;
-        this.playerInventory = player.inventory;
-        this.slotNumber = playerInventory.currentItem;
+        this(id, playerInventory, extraData.readInt());
+    }
 
-        addSlotToContainer(new SlotAnalyzerIn(internalInventory, 0, 8, 16));
+    public ContainerAnalyzer(int id, PlayerInventory playerInventory, int slotNumber)
+    {
+        super(TYPE, id);
+        this.internalInventory = new InventoryInternal();
+        this.playerInventory = playerInventory;
+        this.player = playerInventory.player;
+        this.slotNumber = slotNumber;
+
+        addSlot(new SlotAnalyzerIn(internalInventory, 0, 8, 16));
 
         bindPlayerInventory(playerInventory);
     }
 
-    protected void bindPlayerInventory(InventoryPlayer playerInventory)
+
+    protected void bindPlayerInventory(PlayerInventory playerInventory)
     {
         for (int i = 0; i < 3; i++)
         {
@@ -42,9 +54,9 @@ public class ContainerAnalyzer extends Container
                 int x = 8 + j * 18;
                 int y = 94 + i * 18;
                 if (slot == slotNumber)
-                    addSlotToContainer(new SlotReadonly(playerInventory, slot, x, y));
+                    addSlot(new SlotReadonly(playerInventory, slot, x, y));
                 else
-                    addSlotToContainer(new Slot(playerInventory, slot, x, y));
+                    addSlot(new Slot(playerInventory, slot, x, y));
             }
         }
 
@@ -52,20 +64,20 @@ public class ContainerAnalyzer extends Container
         {
             int x = 8 + i * 18;
             if (i == slotNumber)
-                addSlotToContainer(new SlotReadonly(playerInventory, i, x, 152));
+                addSlot(new SlotReadonly(playerInventory, i, x, 152));
             else
-                addSlotToContainer(new Slot(playerInventory, i, x, 152));
+                addSlot(new Slot(playerInventory, i, x, 152));
         }
     }
 
     @Override
-    public boolean canInteractWith(EntityPlayer playerIn)
+    public boolean canInteractWith(PlayerEntity playerIn)
     {
         return true;
     }
 
     @Override
-    public ItemStack transferStackInSlot(EntityPlayer player, int slotIndex)
+    public ItemStack transferStackInSlot(PlayerEntity player, int slotIndex)
     {
         Slot slot = this.inventorySlots.get(slotIndex);
         if (slot == null || !slot.getHasStack())
@@ -133,7 +145,7 @@ public class ContainerAnalyzer extends Container
                 ItemStack itemstack = slot.getStack();
                 int limit = Math.min(slot.getItemStackLimit(stack), stack.getMaxStackSize());
 
-                if (itemstack.getCount() > 0 && itemstack.getItem() == stack.getItem() && (!stack.getHasSubtypes() || stack.getMetadata() == itemstack.getMetadata()) && ItemStack.areItemStackTagsEqual(stack, itemstack))
+                if (itemstack.getCount() > 0 && itemstack.getItem() == stack.getItem() && ItemStack.areItemStackTagsEqual(stack, itemstack))
                 {
                     int j = itemstack.getCount() + stack.getCount();
 
@@ -223,10 +235,10 @@ public class ContainerAnalyzer extends Container
                 for (IContainerListener listener : this.listeners)
                 {
                     boolean prev = false;
-                    EntityPlayerMP p = null;
-                    if (listener instanceof EntityPlayerMP)
+                    ServerPlayerEntity p = null;
+                    if (listener instanceof ServerPlayerEntity)
                     {
-                        p = (EntityPlayerMP) listener;
+                        p = (ServerPlayerEntity) listener;
                         prev = p.isChangingQuantityOnly;
                         p.isChangingQuantityOnly = false;
                     }
@@ -259,7 +271,7 @@ public class ContainerAnalyzer extends Container
     }
 
     @Override
-    public void onContainerClosed(EntityPlayer playerIn)
+    public void onContainerClosed(PlayerEntity playerIn)
     {
         super.onContainerClosed(playerIn);
 
@@ -273,11 +285,11 @@ public class ContainerAnalyzer extends Container
         }
     }
 
-    class InventoryInternal extends InventoryBasic
+    class InventoryInternal extends Inventory
     {
         public InventoryInternal()
         {
-            super("analyzer", false, 1);
+            super(1);
         }
 
         @Override

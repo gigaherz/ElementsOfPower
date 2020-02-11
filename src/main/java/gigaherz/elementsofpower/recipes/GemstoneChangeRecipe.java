@@ -2,7 +2,7 @@ package gigaherz.elementsofpower.recipes;
 
 import gigaherz.elementsofpower.gemstones.ItemGemstone;
 import gigaherz.elementsofpower.items.ItemGemContainer;
-import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -13,7 +13,7 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 public class GemstoneChangeRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
 {
     @Override
-    public boolean matches(InventoryCrafting inv, World worldIn)
+    public boolean matches(CraftingInventory inv, World worldIn)
     {
         ItemStack gemContainer = ItemStack.EMPTY;
         ItemStack gem = ItemStack.EMPTY;
@@ -44,7 +44,7 @@ public class GemstoneChangeRecipe extends IForgeRegistryEntry.Impl<IRecipe> impl
     }
 
     @Override
-    public ItemStack getCraftingResult(InventoryCrafting inv)
+    public ItemStack getCraftingResult(CraftingInventory inv)
     {
         ItemStack gemContainer = ItemStack.EMPTY;
         ItemStack gem = ItemStack.EMPTY;
@@ -94,7 +94,7 @@ public class GemstoneChangeRecipe extends IForgeRegistryEntry.Impl<IRecipe> impl
     }
 
     @Override
-    public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv)
+    public NonNullList<ItemStack> getRemainingItems(CraftingInventory inv)
     {
         NonNullList<ItemStack> arr = NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
 

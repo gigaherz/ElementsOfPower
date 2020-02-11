@@ -3,14 +3,14 @@ package gigaherz.elementsofpower.client.renderers;
 import gigaherz.common.client.ModelHandle;
 import gigaherz.elementsofpower.entities.EntityBall;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.util.ResourceLocation;
 
-public class RenderBall extends Render<EntityBall>
+public class RenderBall extends EntityRenderer<EntityBall>
 {
-    public RenderBall(RenderManager renderManager)
+    public RenderBall(EntityRendererManager renderManager)
     {
         super(renderManager);
     }
@@ -29,7 +29,7 @@ public class RenderBall extends Render<EntityBall>
         GlStateManager.enableRescaleNormal();
         GlStateManager.scale(scale, scale, scale);
 
-        bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
 
         int ball_color = entity.getColor();
         for (int i = 0; i <= 4; i++)
@@ -59,6 +59,6 @@ public class RenderBall extends Render<EntityBall>
     @Override
     protected ResourceLocation getEntityTexture(EntityBall entity)
     {
-        return TextureMap.LOCATION_BLOCKS_TEXTURE;
+        return AtlasTexture.LOCATION_BLOCKS_TEXTURE;
     }
 }

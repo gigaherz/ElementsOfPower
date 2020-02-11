@@ -2,7 +2,7 @@ package gigaherz.elementsofpower.database;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.gemstones.Gemstone;
 import gigaherz.elementsofpower.gemstones.ItemGemstone;
 import gigaherz.elementsofpower.gemstones.Quality;
@@ -19,15 +19,15 @@ public class GemstoneInformation
 {
     @SuppressWarnings("unchecked")
     static final List<Pair<ItemStack, String>> GEMS = Lists.newArrayList(
-            Pair.of(ElementsOfPower.gemstone.getStack(Gemstone.Ruby), "gemRuby"),
-            Pair.of(ElementsOfPower.gemstone.getStack(Gemstone.Sapphire), "gemSapphire"),
-            Pair.of(ElementsOfPower.gemstone.getStack(Gemstone.Citrine), "gemCitrine"),
-            Pair.of(ElementsOfPower.gemstone.getStack(Gemstone.Agate), "gemAgate"),
-            Pair.of(ElementsOfPower.gemstone.getStack(Gemstone.Quartz), "gemQuartz"),
-            Pair.of(ElementsOfPower.gemstone.getStack(Gemstone.Serendibite), "gemSerendibite"),
-            Pair.of(ElementsOfPower.gemstone.getStack(Gemstone.Emerald), "gemEmerald"),
-            Pair.of(ElementsOfPower.gemstone.getStack(Gemstone.Amethyst), "gemAmethyst"),
-            Pair.of(ElementsOfPower.gemstone.getStack(Gemstone.Diamond), "gemDiamond")
+            Pair.of(ElementsOfPowerMod.gemstone.getStack(Gemstone.Ruby), "gemRuby"),
+            Pair.of(ElementsOfPowerMod.gemstone.getStack(Gemstone.Sapphire), "gemSapphire"),
+            Pair.of(ElementsOfPowerMod.gemstone.getStack(Gemstone.Citrine), "gemCitrine"),
+            Pair.of(ElementsOfPowerMod.gemstone.getStack(Gemstone.Agate), "gemAgate"),
+            Pair.of(ElementsOfPowerMod.gemstone.getStack(Gemstone.Quartz), "gemQuartz"),
+            Pair.of(ElementsOfPowerMod.gemstone.getStack(Gemstone.Serendibite), "gemSerendibite"),
+            Pair.of(ElementsOfPowerMod.gemstone.getStack(Gemstone.Emerald), "gemEmerald"),
+            Pair.of(ElementsOfPowerMod.gemstone.getStack(Gemstone.Amethyst), "gemAmethyst"),
+            Pair.of(ElementsOfPowerMod.gemstone.getStack(Gemstone.Diamond), "gemDiamond")
     );
 
     static Random rand = new Random();
@@ -64,14 +64,14 @@ public class GemstoneInformation
     {
         float rnd = rand.nextFloat();
         if (rnd > 0.3f)
-            return ElementsOfPower.gemstone.setQuality(target, Quality.Rough);
+            return ElementsOfPowerMod.gemstone.setQuality(target, Quality.Rough);
         if (rnd > 0.1f)
-            return ElementsOfPower.gemstone.setQuality(target, Quality.Common);
+            return ElementsOfPowerMod.gemstone.setQuality(target, Quality.Common);
         if (rnd > 0.01f)
-            return ElementsOfPower.gemstone.setQuality(target, Quality.Smooth);
+            return ElementsOfPowerMod.gemstone.setQuality(target, Quality.Smooth);
         if (rnd > 0.001f)
-            return ElementsOfPower.gemstone.setQuality(target, Quality.Flawless);
+            return ElementsOfPowerMod.gemstone.setQuality(target, Quality.Flawless);
 
-        return ElementsOfPower.gemstone.setQuality(target, Quality.Pure);
+        return ElementsOfPowerMod.gemstone.setQuality(target, Quality.Pure);
     }
 }

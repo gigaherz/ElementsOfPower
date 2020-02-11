@@ -1,6 +1,6 @@
 package gigaherz.elementsofpower.integration.analyzer;
 
-import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.analyzer.gui.GuiAnalyzer;
 import gigaherz.elementsofpower.gemstones.Quality;
 import mezz.jei.api.IGuiHelper;
@@ -18,7 +18,7 @@ import java.util.List;
 
 public class AnalyzerCategory implements IRecipeCategory<AnalyzerRecipeWrapper>
 {
-    public static final String UID = ElementsOfPower.MODID + "_analyzer";
+    public static final String UID = ElementsOfPowerMod.MODID + "_analyzer";
 
     public static AnalyzerCategory INSTANCE;
 
@@ -45,7 +45,7 @@ public class AnalyzerCategory implements IRecipeCategory<AnalyzerRecipeWrapper>
     @Override
     public String getTitle()
     {
-        return I18n.format("text." + ElementsOfPower.MODID + ".jei.category.analyzer");
+        return I18n.format("text." + ElementsOfPowerMod.MODID + ".jei.category.analyzer");
     }
 
     @Override

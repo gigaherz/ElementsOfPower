@@ -1,6 +1,6 @@
 package gigaherz.elementsofpower.integration;
 
-import gigaherz.elementsofpower.ElementsOfPower;
+import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.integration.analyzer.AnalyzerCategory;
 import gigaherz.elementsofpower.integration.analyzer.AnalyzerRecipeWrapper;
 import gigaherz.elementsofpower.integration.essentializer.EssentializerCategory;
@@ -49,8 +49,8 @@ public class JEIPlugin implements IModPlugin
         registry.handleRecipes(EssentializerRecipeWrapper.class, (w) -> w, VanillaRecipeCategoryUid.CRAFTING);
         registry.handleRecipes(AnalyzerRecipeWrapper.class, (w) -> w, VanillaRecipeCategoryUid.CRAFTING);
 
-        registry.addRecipeCatalyst(new ItemStack(ElementsOfPower.essentializer), EssentializerCategory.UID);
-        registry.addRecipeCatalyst(new ItemStack(ElementsOfPower.analyzer), AnalyzerCategory.UID);
+        registry.addRecipeCatalyst(new ItemStack(ElementsOfPowerMod.essentializer), EssentializerCategory.UID);
+        registry.addRecipeCatalyst(new ItemStack(ElementsOfPowerMod.analyzer), AnalyzerCategory.UID);
 
         registry.getRecipeTransferRegistry().addRecipeTransferHandler(new EssentializerCategory.TransferInfo());
 
@@ -62,14 +62,14 @@ public class JEIPlugin implements IModPlugin
 
     private void addContainerRecipes(@Nonnull IModRegistry registry)
     {
-        ItemStack orb = new ItemStack(ElementsOfPower.orb, 1, OreDictionary.WILDCARD_VALUE);
-        ItemStack gemstone = new ItemStack(ElementsOfPower.gemstone, 1, OreDictionary.WILDCARD_VALUE);
+        ItemStack orb = new ItemStack(ElementsOfPowerMod.orb, 1, OreDictionary.WILDCARD_VALUE);
+        ItemStack gemstone = new ItemStack(ElementsOfPowerMod.gemstone, 1, OreDictionary.WILDCARD_VALUE);
         for (ItemStack stack : Arrays.asList(
-                new ItemStack(ElementsOfPower.wand),
-                new ItemStack(ElementsOfPower.staff),
-                new ItemStack(ElementsOfPower.ring),
-                new ItemStack(ElementsOfPower.headband),
-                new ItemStack(ElementsOfPower.necklace)
+                new ItemStack(ElementsOfPowerMod.wand),
+                new ItemStack(ElementsOfPowerMod.staff),
+                new ItemStack(ElementsOfPowerMod.ring),
+                new ItemStack(ElementsOfPowerMod.headband),
+                new ItemStack(ElementsOfPowerMod.necklace)
         ))
         {
             registry.addRecipes(Arrays.asList(

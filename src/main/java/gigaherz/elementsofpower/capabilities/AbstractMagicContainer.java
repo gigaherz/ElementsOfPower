@@ -1,11 +1,10 @@
 package gigaherz.elementsofpower.capabilities;
 
 import gigaherz.elementsofpower.database.MagicAmounts;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.util.INBTSerializable;
 
-public abstract class AbstractMagicContainer implements IMagicContainer, INBTSerializable<NBTTagCompound>
+public abstract class AbstractMagicContainer implements IMagicContainer, INBTSerializable<CompoundNBT>
 {
     private MagicAmounts containedMagic = MagicAmounts.EMPTY;
 
@@ -22,16 +21,16 @@ public abstract class AbstractMagicContainer implements IMagicContainer, INBTSer
     }
 
     @Override
-    public NBTTagCompound serializeNBT()
+    public CompoundNBT serializeNBT()
     {
-        NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setTag("Magic", containedMagic.serializeNBT());
+        CompoundNBT nbt = new CompoundNBT();
+        nbt.put("Magic", containedMagic.serializeNBT());
         return nbt;
     }
 
     @Override
-    public void deserializeNBT(NBTTagCompound nbt)
+    public void deserializeNBT(CompoundNBT nbt)
     {
-        containedMagic = new MagicAmounts(nbt.getCompoundTag("Magic"));
+        containedMagic = new MagicAmounts(nbt.getCompound("Magic"));
     }
 }

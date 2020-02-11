@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.client.renderers;
 
-import gigaherz.common.client.StackRenderingHelper;
-import gigaherz.elementsofpower.ElementsOfPower;
+import com.mojang.blaze3d.systems.RenderSystem;
+import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.capabilities.CapabilityMagicContainer;
 import gigaherz.elementsofpower.capabilities.IMagicContainer;
 import gigaherz.elementsofpower.client.WandUseManager;
@@ -10,19 +10,17 @@ import gigaherz.elementsofpower.spells.Element;
 import gigaherz.elementsofpower.items.ItemWand;
 import gigaherz.elementsofpower.spells.SpellManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-public class MagicContainerOverlay extends Gui
+public class MagicContainerOverlay extends AbstractGui
 {
     @SubscribeEvent
     public void onRenderGameOverlay(RenderGameOverlayEvent.Post event)
@@ -32,7 +30,7 @@ public class MagicContainerOverlay extends Gui
             return;
         }
 
-        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        ClientPlayerEntity player = Minecraft.getInstance().player;
         ItemStack heldItem = player.inventory.getCurrentItem();
 
         if (heldItem.getCount() <= 0)
@@ -47,21 +45,19 @@ public class MagicContainerOverlay extends Gui
         if (!magic.isInfinite() && amounts.isEmpty())
             return;
 
-        FontRenderer font = Minecraft.getMinecraft().fontRenderer;
+        FontRenderer font = Minecraft.getInstance().fontRenderer;
 
         float rescale = 1;
-        ScaledResolution res = event.getResolution();
         int rescaledWidth = (int) (res.getScaledWidth() / rescale);
         int rescaledHeight = (int) (res.getScaledHeight() / rescale);
 
-        GlStateManager.pushAttrib();
-        GlStateManager.pushMatrix();
-        GlStateManager.depthMask(false);
+        RenderSystem.pushMatrix();
+        RenderSystem.depthMask(false);
 
-        GlStateManager.scale(rescale, rescale, 1);
+        RenderSystem.scalef(rescale, rescale, 1);
 
-        ItemModelMesher mesher = Minecraft.getMinecraft().getRenderItem().getItemModelMesher();
-        TextureManager renderEngine = Minecraft.getMinecraft().renderEngine;
+        ItemModelMesher mesher = Minecraft.getInstance().getItemRenderer().getItemModelMesher();
+        TextureManager renderEngine = Minecraft.getInstance().textureManager;
 
         int xPos = (rescaledWidth - 7 * 28 - 16) / 2;
         int yPos = 2;
@@ -69,11 +65,11 @@ public class MagicContainerOverlay extends Gui
         {
             int alpha = (amounts.get(i) < 0.001) ? 0x3FFFFFFF : 0xFFFFFFFF;
 
-            ItemStack stack = ElementsOfPower.orb.getStack((int) amounts.get(i), Element.values[i]);
+            ItemStack stack = ElementsOfPowerMod.orb.getStack((int) amounts.get(i), Element.values[i]);
 
             StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yPos, stack, alpha);
 
-            String formatted = magic.isInfinite() ? "\u221E" : ElementsOfPower.prettyNumberFormatter.format(amounts.get(i));
+            String formatted = magic.isInfinite() ? "\u221E" : ElementsOfPowerMod.prettyNumberFormatter.format(amounts.get(i));
             this.drawCenteredString(font, formatted, xPos + 8, yPos + 11, 0xFFC0C0C0);
             if (WandUseManager.instance.handInUse != null)
                 this.drawCenteredString(font, "K:" + (i + 1), xPos + 8, yPos + 24, 0xFFC0C0C0);
@@ -81,7 +77,7 @@ public class MagicContainerOverlay extends Gui
             xPos += 28;
         }
 
-        NBTTagCompound nbt = heldItem.getTagCompound();
+        CompoundNBT nbt = heldItem.getTag();
         if (nbt != null)
         {
             String savedSequence = nbt.getString(ItemWand.SPELL_SEQUENCE_TAG);
@@ -95,7 +91,7 @@ public class MagicContainerOverlay extends Gui
                 {
                     int i = SpellManager.elementIndices[c - 'A'];
 
-                    ItemStack stack = ElementsOfPower.orb.getStack(1, Element.values[i]);
+                    ItemStack stack = ElementsOfPowerMod.orb.getStack(1, Element.values[i]);
 
                     StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yPos, stack, 0xFFFFFFFF);
 
@@ -113,7 +109,7 @@ public class MagicContainerOverlay extends Gui
             {
                 int i = SpellManager.elementIndices[c - 'A'];
 
-                ItemStack stack = ElementsOfPower.orb.getStack(1, Element.values[i]);
+                ItemStack stack = ElementsOfPowerMod.orb.getStack(1, Element.values[i]);
 
                 StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yPos, stack, 0xFFFFFFFF);
 
@@ -121,12 +117,11 @@ public class MagicContainerOverlay extends Gui
             }
         }
 
-        GlStateManager.depthMask(true);
+        RenderSystem.depthMask(true);
 
-        GlStateManager.popMatrix();
-        GlStateManager.popAttrib();
+        RenderSystem.popMatrix();
 
-        GlStateManager.disableAlpha();
-        GlStateManager.disableBlend();
+        RenderSystem.disableAlphaTest();
+        RenderSystem.disableBlend();
     }
 }

@@ -1,72 +1,67 @@
 package gigaherz.elementsofpower.essentializer;
 
-import gigaherz.common.BlockRegistered;
-import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.client.ParticleSmallCloud;
-import gigaherz.elementsofpower.common.GuiHandler;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import gigaherz.elementsofpower.essentializer.gui.ContainerEssentializer;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.SimpleNamedContainerProvider;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.network.NetworkHooks;
 
+import javax.annotation.Nullable;
 import java.util.Random;
 
-public class BlockEssentializer
-        extends BlockRegistered
+public class BlockEssentializer extends Block
 {
 
-    public BlockEssentializer(String name)
+    public BlockEssentializer(Properties properties)
     {
-        super(name, Material.IRON);
-        setCreativeTab(ElementsOfPower.tabMagic);
-        setHardness(15.0F);
-        setSoundType(SoundType.METAL);
-        setLightLevel(1);
-        setLightOpacity(0);
-    }
-
-    @Deprecated
-    @Override
-    public boolean isOpaqueCube(IBlockState state)
-    {
-        return false;
+        super(properties);
     }
 
     @Override
-    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing heldItem, float side, float hitX, float hitY)
+    public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult p_225533_6_)
     {
         TileEntity tileEntity = worldIn.getTileEntity(pos);
 
-        if (tileEntity == null || playerIn.isSneaking())
-            return false;
+        if (tileEntity == null)
+            return ActionResultType.FAIL;
 
-        playerIn.openGui(ElementsOfPower.instance, GuiHandler.GUI_ESSENTIALIZER, worldIn, pos.getX(), pos.getY(), pos.getZ());
+        if (player.isShiftKeyDown())
+            return ActionResultType.PASS;
 
-        return true;
+        if (worldIn.isRemote)
+            return ActionResultType.SUCCESS;
+
+        NetworkHooks.openGui((ServerPlayerEntity)player, new SimpleNamedContainerProvider(ContainerEssentializer::new, new TranslationTextComponent("container.elementsofpower.essentializer.title")), pos);
+
+        return ActionResultType.SUCCESS;
     }
 
     @Override
-    public boolean hasTileEntity(IBlockState state)
+    public boolean hasTileEntity(BlockState state)
     {
         return true;
     }
 
+    @Nullable
     @Override
-    public TileEntity createTileEntity(World world, IBlockState state)
+    public TileEntity createTileEntity(BlockState state, IBlockReader world)
     {
         return new TileEssentializer();
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
-    public void randomDisplayTick(IBlockState state, World worldIn, BlockPos pos, Random rand)
+    public void animateTick(BlockState stateIn, World worldIn, BlockPos pos, Random rand)
     {
         TileEntity te = worldIn.getTileEntity(pos);
         if (te instanceof TileEssentializer)

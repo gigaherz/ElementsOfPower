@@ -1,15 +1,13 @@
 package gigaherz.elementsofpower.items;
 
-import gigaherz.elementsofpower.ElementsOfPower;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import net.minecraft.item.ItemStack;
 
 public class ItemStaff extends ItemWand
 {
-    public ItemStaff(String name)
+    public ItemStaff(Properties properties)
     {
-        super(name);
-        setCreativeTab(ElementsOfPower.tabMagic);
+        super(properties);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.spells.shapes;
 
 import gigaherz.elementsofpower.spells.Spellcast;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.RayTraceResult;
 
@@ -14,7 +14,7 @@ public abstract class SpellShape
     }
 
     @Nullable
-    public abstract Spellcast castSpell(ItemStack stack, EntityPlayer player, Spellcast cast);
+    public abstract Spellcast castSpell(ItemStack stack, PlayerEntity player, Spellcast cast);
 
     public void onImpact(Spellcast spellcast, RayTraceResult mop)
     {

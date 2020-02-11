@@ -1,112 +1,66 @@
 package gigaherz.elementsofpower.spells.blocks;
 
-import gigaherz.common.BlockRegistered;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.material.EnumPushReaction;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyInteger;
-import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.material.PushReaction;
+import net.minecraft.state.IntegerProperty;
+import net.minecraft.state.StateContainer;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 
-import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.List;
 import java.util.Random;
 
-public class BlockDust extends BlockRegistered
+public class BlockDust extends Block
 {
-    public static final PropertyInteger DENSITY = PropertyInteger.create("density", 1, 16);
-    private static final AxisAlignedBB DUMMY_AABB = new AxisAlignedBB(0, 0, 0, 0, 0, 0);
+    public static final IntegerProperty DENSITY = IntegerProperty.create("density", 1, 16);
 
-    public BlockDust(String name)
+    public BlockDust(Properties properties)
     {
-        this(name, Material.CLAY);
+        super(properties);
+        setDefaultState(this.getStateContainer().getBaseState().with(DENSITY, 16));
     }
 
-    public BlockDust(String name, Material mat)
-    {
-        super(name, mat);
-        setHardness(0.1F);
-        setBlockUnbreakable();
-        setSoundType(SoundType.CLOTH);
-        setDefaultState(this.blockState.getBaseState()
-                .withProperty(DENSITY, 16));
-    }
-
-    @Deprecated
     @Override
-    public boolean isFullCube(IBlockState state)
-    {
-        return false;
-    }
-
-    @Deprecated
-    @Override
-    public boolean isOpaqueCube(IBlockState state)
-    {
-        return false;
-    }
-
-    @Deprecated
-    @Override
-    public int getLightOpacity(IBlockState state)
+    public int getOpacity(BlockState state, IBlockReader worldIn, BlockPos pos)
     {
         if (state.getBlock() != this)
             return 16;
-        return state.getValue(DENSITY);
+        return state.get(DENSITY);
     }
 
     @Override
-    public int quantityDropped(Random random)
+    public void onBlockAdded(BlockState state, World worldIn, BlockPos pos, BlockState oldState, boolean isMoving)
     {
-        return 0;
-    }
-
-    @Override
-    public BlockRenderLayer getRenderLayer()
-    {
-        return BlockRenderLayer.TRANSLUCENT;
-    }
-
-    @Deprecated
-    @Override
-    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side)
-    {
-        return true;
-    }
-
-    @Override
-    public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state)
-    {
-        super.onBlockAdded(worldIn, pos, state);
+        super.onBlockAdded(state, worldIn, pos, oldState, isMoving);
 
         rescheduleUpdate(worldIn, pos, worldIn.rand);
     }
 
     private void rescheduleUpdate(World worldIn, BlockPos pos, Random rand)
     {
-        worldIn.scheduleUpdate(pos, this, 12 + rand.nextInt(12));
+        worldIn.getPendingBlockTicks().scheduleTick(pos, this, 12 + rand.nextInt(12));
     }
 
     @Override
-    public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
+    public void randomTick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random)
     {
-        int density = state.getValue(DENSITY) - 1;
+        // explicitly don't call super
+    }
+
+    @Override
+    public void tick(BlockState state, ServerWorld worldIn, BlockPos pos, Random rand)
+    {
+        int density = state.get(DENSITY) - 1;
         int maxGive = (int) Math.sqrt(density);
 
-        for (EnumFacing f : EnumFacing.VALUES)
+        for (Direction f : Direction.values())
         {
             BlockPos bp = pos.offset(f);
-            IBlockState neighbour = worldIn.getBlockState(bp);
+            BlockState neighbour = worldIn.getBlockState(bp);
             if (neighbour.getBlock().isAir(neighbour, worldIn, bp)
                     || neighbour.getBlock() == Blocks.FIRE)
             {
@@ -116,26 +70,26 @@ public class BlockDust extends BlockRegistered
                     int d = rand.nextInt(maxGive);
                     if (d > 0)
                     {
-                        worldIn.setBlockState(bp, getDefaultState().withProperty(DENSITY, d));
+                        worldIn.setBlockState(bp, getDefaultState().with(DENSITY, d));
                         density -= d;
                         given = true;
                     }
                 }
 
                 if (!given)
-                    worldIn.setBlockToAir(bp);
+                    worldIn.setBlockState(bp, Blocks.AIR.getDefaultState());
             }
             else if (neighbour.getBlock() == this)
             {
                 if (density > maxGive)
                 {
-                    int od = neighbour.getValue(DENSITY);
+                    int od = neighbour.get(DENSITY);
                     if (od < 16)
                     {
                         int d = rand.nextInt(Math.min(16 - od, maxGive));
                         if (d > 0)
                         {
-                            worldIn.setBlockState(bp, getDefaultState().withProperty(DENSITY, od + d));
+                            worldIn.setBlockState(bp, getDefaultState().with(DENSITY, od + d));
                             density -= d;
                         }
                     }
@@ -145,76 +99,26 @@ public class BlockDust extends BlockRegistered
 
         if (density <= 0)
         {
-            worldIn.setBlockToAir(pos);
+            worldIn.setBlockState(pos, Blocks.AIR.getDefaultState());
         }
         else
         {
-            worldIn.setBlockState(pos, state.withProperty(DENSITY, density));
+            worldIn.setBlockState(pos, state.with(DENSITY, density));
         }
 
         rescheduleUpdate(worldIn, pos, rand);
     }
 
-    @Deprecated
     @Override
-    public IBlockState getStateFromMeta(int meta)
+    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder)
     {
-        return this.getDefaultState().withProperty(DENSITY, 16 - meta);
-    }
-
-    @Override
-    public int getMetaFromState(IBlockState state)
-    {
-        return 16 - state.getValue(DENSITY);
-    }
-
-    @Override
-    protected BlockStateContainer createBlockState()
-    {
-        return new BlockStateContainer(this, DENSITY);
-    }
-
-    @Override
-    public boolean isReplaceable(IBlockAccess worldIn, BlockPos pos)
-    {
-        return true;
-    }
-
-    @Override
-    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
-    {
+        builder.add(DENSITY);
     }
 
     @Deprecated
     @Override
-    public AxisAlignedBB getSelectedBoundingBox(IBlockState blockState, World worldIn, BlockPos pos)
+    public PushReaction getPushReaction(BlockState state)
     {
-        return DUMMY_AABB;
-    }
-
-    @Deprecated
-    @Nullable
-    @Override
-    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos)
-    {
-        return NULL_AABB;
-    }
-
-    @Override
-    public boolean isPassable(IBlockAccess worldIn, BlockPos pos)
-    {
-        return true;
-    }
-
-    @Deprecated
-    @Override
-    public EnumPushReaction getPushReaction(IBlockState state)
-    {
-        return EnumPushReaction.IGNORE;
-    }
-
-    @Override
-    public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
-    {
+        return PushReaction.IGNORE;
     }
 }

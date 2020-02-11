@@ -1,10 +1,10 @@
 package gigaherz.elementsofpower.spells.effects;
 
 import gigaherz.elementsofpower.spells.Spellcast;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.boss.EntityDragon;
-import net.minecraft.init.Blocks;
+import net.minecraft.entity.boss.dragon.EnderDragonEntity;
+import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -58,18 +58,18 @@ public class ResurrectionEffect
     }
 
     @Override
-    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, float distance, @Nullable RayTraceResult mop)
+    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, BlockState currentState, float distance, @Nullable RayTraceResult mop)
     {
         // Resurrecting players could be done by
         // sending dimension packet or maybe respawn keeping items
 
         World world = cast.world;
 
-        IBlockState state = world.getBlockState(blockPos);
+        BlockState state = world.getBlockState(blockPos);
 
         if (state.getBlock() == Blocks.DRAGON_EGG)
         {
-            EntityDragon dragon = new EntityDragon(world);
+            EnderDragonEntity dragon = new EnderDragonEntity(world);
 
             BlockPos spawnAt = world.getTopSolidOrLiquidBlock(blockPos).up(5);
 

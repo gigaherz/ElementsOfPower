@@ -2,13 +2,12 @@ package gigaherz.elementsofpower.spells.effects;
 
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockDirt;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.MobEffects;
-import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.potion.Effects;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -37,16 +36,16 @@ public class WitherEffect extends SpellEffect
         return 8;
     }
 
-    private void witherEntities(Spellcast cast, Vec3d hitVec, List<? extends EntityLivingBase> living)
+    private void witherEntities(Spellcast cast, Vec3d hitVec, List<? extends LivingEntity> living)
     {
-        for (EntityLivingBase e : living)
+        for (LivingEntity e : living)
         {
-            if (!e.isEntityAlive())
+            if (!e.isAlive())
                 continue;
 
-            double dx = e.posX - hitVec.x;
-            double dy = e.posY - hitVec.y;
-            double dz = e.posZ - hitVec.z;
+            double dx = e.getPosX() - hitVec.x;
+            double dy = e.getPosY() - hitVec.y;
+            double dz = e.getPosZ() - hitVec.z;
 
             double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
@@ -54,18 +53,18 @@ public class WitherEffect extends SpellEffect
         }
     }
 
-    private void applyEffectsToEntity(Spellcast cast, double distance, EntityLivingBase e)
+    private void applyEffectsToEntity(Spellcast cast, double distance, LivingEntity e)
     {
         double lv = Math.max(0, cast.getDamageForce() - distance);
 
-        causePotionEffect(cast, e, MobEffects.WITHER, 0, lv, 100.0);
+        causePotionEffect(cast, e, Effects.WITHER, 0, lv, 100.0);
     }
 
     @Override
     public void processDirectHit(Spellcast cast, Entity entity, Vec3d hitVec)
     {
-        if (entity instanceof EntityLivingBase)
-            applyEffectsToEntity(cast, 0, (EntityLivingBase) entity);
+        if (entity instanceof LivingEntity)
+            applyEffectsToEntity(cast, 0, (LivingEntity) entity);
     }
 
     @Override
@@ -85,19 +84,19 @@ public class WitherEffect extends SpellEffect
                 hitVec.y + cast.getDamageForce(),
                 hitVec.z + cast.getDamageForce());
 
-        List<EntityLivingBase> living = cast.world.getEntitiesWithinAABB(EntityLivingBase.class, aabb);
+        List<LivingEntity> living = cast.world.getEntitiesWithinAABB(LivingEntity.class, aabb);
         witherEntities(cast, hitVec, living);
     }
 
     @Override
     public void spawnBallParticles(Spellcast cast, RayTraceResult mop)
     {
-        cast.spawnRandomParticle(EnumParticleTypes.FLAME,
-                mop.hitVec.x, mop.hitVec.y, mop.hitVec.z);
+        cast.spawnRandomParticle(ParticleTypes.FLAME,
+                mop.getHitVec().x, mop.getHitVec().y, mop.getHitVec().z);
     }
 
     @Override
-    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, float r, @Nullable RayTraceResult mop)
+    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, BlockState currentState, float r, @Nullable RayTraceResult mop)
     {
         Block block = currentState.getBlock();
 
@@ -107,12 +106,7 @@ public class WitherEffect extends SpellEffect
         }
         else if (block == Blocks.DIRT)
         {
-            switch (currentState.getValue(BlockDirt.VARIANT))
-            {
-                case DIRT:
-                    cast.world.setBlockState(blockPos, Blocks.DIRT.getDefaultState().withProperty(BlockDirt.VARIANT, BlockDirt.DirtType.COARSE_DIRT));
-                    break;
-            }
+            cast.world.setBlockState(blockPos, Blocks.COARSE_DIRT.getDefaultState());
         }
     }
 }

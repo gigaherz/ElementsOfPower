@@ -4,10 +4,10 @@ import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDynamicLiquid;
 import net.minecraft.block.BlockSnow;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -60,12 +60,12 @@ public class FrostEffect extends SpellEffect
         for (int i = 0; i < 8; ++i)
         {
             cast.spawnRandomParticle(EnumParticleTypes.SNOWBALL,
-                    mop.hitVec.x, mop.hitVec.y, mop.hitVec.z);
+                    mop.getHitVec().x, mop.getHitVec().y, mop.getHitVec().z);
         }
     }
 
     @Override
-    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, IBlockState currentState, float r, @Nullable RayTraceResult mop)
+    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, BlockState currentState, float r, @Nullable RayTraceResult mop)
     {
         if (mop != null)
         {
@@ -108,12 +108,12 @@ public class FrostEffect extends SpellEffect
                 }
                 return;
             }
-            else if (!Blocks.SNOW_LAYER.canPlaceBlockOnSide(world, blockPos, EnumFacing.UP))
+            else if (!Blocks.SNOW_LAYER.canPlaceBlockOnSide(world, blockPos, Direction.UP))
             {
                 return;
             }
 
-            IBlockState below = world.getBlockState(blockPos.down());
+            BlockState below = world.getBlockState(blockPos.down());
             if (below.getBlock() == Blocks.SNOW_LAYER)
             {
                 if (below.getValue(BlockSnow.LAYERS) < 8)
