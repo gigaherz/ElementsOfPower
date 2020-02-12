@@ -1,5 +1,5 @@
 package gigaherz.elementsofpower.client;
-
+/*
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.CloudParticle;
 import net.minecraft.crash.CrashReport;
@@ -56,4 +56,4 @@ public class ParticleSmallCloud extends CloudParticle
     {
         Minecraft.getInstance().particles.addEffect(new ParticleSmallCloud(worldIn, x, y, z, vx, vy, vz));
     }
-}
+}*/

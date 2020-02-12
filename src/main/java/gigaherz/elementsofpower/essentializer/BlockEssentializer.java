@@ -1,12 +1,15 @@
 package gigaherz.elementsofpower.essentializer;
 
-import gigaherz.elementsofpower.client.ParticleSmallCloud;
 import gigaherz.elementsofpower.essentializer.gui.ContainerEssentializer;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.particle.ParticleManager;
+import net.minecraft.client.particle.SmokeParticle;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.SimpleNamedContainerProvider;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
@@ -77,15 +80,18 @@ public class BlockEssentializer extends Block
                 double rx = rand.nextDouble() * 0.2D - 0.1D;
                 double rz = rand.nextDouble() * 0.2D - 0.1D;
 
+                //FIXME: reimplement particle
+                //ParticleSmallCloud.spawn
+
                 int sides = rand.nextInt(16);
                 if ((sides & 1) != 0)
-                    ParticleSmallCloud.spawn(worldIn, x + rx + 0.4, y, z + rz, 0.0D, 0.05D, 0.0D);
+                    Minecraft.getInstance().particles.addParticle(ParticleTypes.SMOKE, x + rx + 0.4, y, z + rz, 0.0D, 0.05D, 0.0D);
                 if ((sides & 2) != 0)
-                    ParticleSmallCloud.spawn(worldIn, x + rx - 0.4, y, z + rz, 0.0D, 0.05D, 0.0D);
+                    Minecraft.getInstance().particles.addParticle(ParticleTypes.SMOKE, x + rx - 0.4, y, z + rz, 0.0D, 0.05D, 0.0D);
                 if ((sides & 4) != 0)
-                    ParticleSmallCloud.spawn(worldIn, x + rx, y, z + rz + 0.4, 0.0D, 0.05D, 0.0D);
+                    Minecraft.getInstance().particles.addParticle(ParticleTypes.SMOKE, x + rx, y, z + rz + 0.4, 0.0D, 0.05D, 0.0D);
                 if ((sides & 8) != 0)
-                    ParticleSmallCloud.spawn(worldIn, x + rx, y, z + rz - 0.4, 0.0D, 0.05D, 0.0D);
+                    Minecraft.getInstance().particles.addParticle(ParticleTypes.SMOKE, x + rx, y, z + rz - 0.4, 0.0D, 0.05D, 0.0D);
             }
         }
     }

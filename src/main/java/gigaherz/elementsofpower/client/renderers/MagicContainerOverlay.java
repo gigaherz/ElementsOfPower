@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.capabilities.CapabilityMagicContainer;
 import gigaherz.elementsofpower.capabilities.IMagicContainer;
+import gigaherz.elementsofpower.client.StackRenderingHelper;
 import gigaherz.elementsofpower.client.WandUseManager;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.spells.Element;
