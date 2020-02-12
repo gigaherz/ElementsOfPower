@@ -26,7 +26,6 @@ import java.util.Random;
 public class BlockCocoon extends Block
 {
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
-    public static final IntegerProperty COLOR = IntegerProperty.create("color", 0, MagicAmounts.ELEMENTS);
 
     private final Element type;
 
@@ -56,7 +55,7 @@ public class BlockCocoon extends Block
     @Override
     protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder)
     {
-        builder.add(FACING, COLOR);
+        builder.add(FACING);
     }
 
     @Override

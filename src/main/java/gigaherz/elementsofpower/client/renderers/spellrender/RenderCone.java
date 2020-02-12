@@ -65,7 +65,7 @@ public class RenderCone extends RenderSpell
             matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(angle));
             matrixStackIn.scale(scale_xy, scale_xy, scale_z);
 
-            modelCone.render(bufferIn, rt, matrixStackIn, 0x00F000F0, color);
+            modelCone.get().render(bufferIn, rt, matrixStackIn, 0x00F000F0, color);
 
             matrixStackIn.pop();
         }

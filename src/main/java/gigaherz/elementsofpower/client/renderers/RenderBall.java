@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.util.Lazy;
 
 public class RenderBall extends EntityRenderer<EntityBall>
 {
@@ -16,7 +17,7 @@ public class RenderBall extends EntityRenderer<EntityBall>
         super(renderManager);
     }
 
-    ModelHandle handle = ModelHandle.of("elementsofpower:entity/sphere.obj");
+    Lazy<ModelHandle> handle = RenderSpell.modelSphere;
 
     @Override
     public void render(EntityBall entity, float entityYaw, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn)
@@ -38,7 +39,7 @@ public class RenderBall extends EntityRenderer<EntityBall>
             matrixStackIn.push();
             matrixStackIn.scale(subScale, subScale, subScale);
 
-            handle.render(bufferIn, RenderType.entityTranslucent(getEntityTexture(entity)), matrixStackIn, 0x00F000F0, color);
+            handle.get().render(bufferIn, RenderType.entityTranslucent(getEntityTexture(entity)), matrixStackIn, 0x00F000F0, color);
 
             matrixStackIn.pop();
         }

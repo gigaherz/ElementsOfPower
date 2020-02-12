@@ -47,6 +47,7 @@ import net.minecraft.item.*;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.common.util.Lazy;
@@ -220,23 +221,23 @@ public class ElementsOfPowerMod
     @ObjectHolder("elementsofpower:death_cocoon")
     public static Item deathCocoonItem;
     @ObjectHolder("elementsofpower:ruby_spelldust")
-    public static ItemGemstone ruby_spelldust;
+    public static ItemSpelldust ruby_spelldust;
     @ObjectHolder("elementsofpower:sapphire_spelldust")
-    public static ItemGemstone sapphire_spelldust;
+    public static ItemSpelldust sapphire_spelldust;
     @ObjectHolder("elementsofpower:citrine_spelldust")
-    public static ItemGemstone citrine_spelldust;
+    public static ItemSpelldust citrine_spelldust;
     @ObjectHolder("elementsofpower:agate_spelldust")
-    public static ItemGemstone agate_spelldust;
+    public static ItemSpelldust agate_spelldust;
     @ObjectHolder("elementsofpower:quartz_spelldust")
-    public static ItemGemstone quartz_spelldust;
+    public static ItemSpelldust quartz_spelldust;
     @ObjectHolder("elementsofpower:serendibite_spelldust")
-    public static ItemGemstone serendibite_spelldust;
+    public static ItemSpelldust serendibite_spelldust;
     @ObjectHolder("elementsofpower:emerald_spelldust")
-    public static ItemGemstone emerald_spelldust;
+    public static ItemSpelldust emerald_spelldust;
     @ObjectHolder("elementsofpower:amethyst_spelldust")
-    public static ItemGemstone amethyst_spelldust;
+    public static ItemSpelldust amethyst_spelldust;
     @ObjectHolder("elementsofpower:diamond_spelldust")
-    public static ItemGemstone diamond_spelldust;
+    public static ItemSpelldust diamond_spelldust;
 
     //@ItemStackHolder(value = "gbook:guidebook", nbt = "{Book:\"" + "elementsofpowerxml/guidebook.xml\"}")
     public ItemStack guidebookStack;
@@ -261,7 +262,7 @@ public class ElementsOfPowerMod
     public final static Format prettyNumberFormatter = new DecimalFormat("#.#");
     public final static Format prettyNumberFormatter2 = new DecimalFormat("#0.0");
 
-    public static ItemGroup tabMagic = new ItemGroup(MODID)
+    public static ItemGroup tabMagic = new ItemGroup("elementsofpower.magic")
     {
         @Override
         public ItemStack createIcon()
@@ -270,7 +271,7 @@ public class ElementsOfPowerMod
         }
     };
 
-    public static ItemGroup tabGemstones = new ItemGroup(MODID)
+    public static ItemGroup tabGemstones = new ItemGroup("elementsofpower.gemstones")
     {
         @Override
         public ItemStack createIcon()
@@ -286,6 +287,9 @@ public class ElementsOfPowerMod
 
         modEventBus.addGenericListener(Block.class, this::registerBlocks);
         modEventBus.addGenericListener(Item.class, this::registerItems);
+        modEventBus.addGenericListener(EntityType.class, this::registerEntities);
+        modEventBus.addGenericListener(TileEntityType.class, this::registerTileEntities);
+        modEventBus.addGenericListener(ContainerType.class, this::registerContainerTypes);
 
         modEventBus.addListener(this::clientSetup);
 
@@ -353,7 +357,8 @@ public class ElementsOfPowerMod
     public void registerEntities(RegistryEvent.Register<EntityType<?>> event)
     {
         event.getRegistry().registerAll(
-            spellBallInit.get(), essenceInit.get()
+            spellBallInit.get().setRegistryName("ball"),
+            essenceInit.get().setRegistryName("essence")
         );
     }
 
@@ -375,12 +380,7 @@ public class ElementsOfPowerMod
         );
     }
 
-    public static void commonSetup(FMLCommonSetupEvent event)
-    {
-
-    }
-
-    public void clientSetup(FMLClientSetupEvent event)
+    public void clientSetup(ModelRegistryEvent event)
     {
         RenderingRegistry.registerEntityRenderingHandler(EntityEssence.TYPE, RenderEssence::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityBall.TYPE, RenderBall::new);
@@ -468,8 +468,9 @@ public class ElementsOfPowerMod
 
         registerWorldGenerators();
 
-        StockConversions.registerEssenceSources();
-        EssenceOverrides.loadOverrides();
+        // TODO: Calculate on server resource reloading (needs recipes)
+        //StockConversions.registerEssenceSources();
+        //EssenceOverrides.loadOverrides();
     }
 
     public void postInit(FMLLoadCompleteEvent event)

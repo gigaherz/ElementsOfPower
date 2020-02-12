@@ -40,8 +40,8 @@ public class RenderSphere extends RenderSpell
         matrixStackIn.translate( (float) (offset.x), (float) (offset.y - player.getEyeHeight() * 0.5f), (float) (offset.z));
         matrixStackIn.scale(scale, scale, scale);
 
-        modelSphere.render(bufferIn, getRenderType(cast, true), matrixStackIn, 0x00F000F0, color);
-        modelSphere.render(bufferIn, getRenderType(cast, false), matrixStackIn, 0x00F000F0, color);
+        modelSphere.get().render(bufferIn, getRenderType(cast, true), matrixStackIn, 0x00F000F0, color);
+        modelSphere.get().render(bufferIn, getRenderType(cast, false), matrixStackIn, 0x00F000F0, color);
 
         matrixStackIn.pop();
     }

@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
 
 public class SpellcastEntityData implements INBTSerializable<CompoundNBT>
 {
-    private static final ResourceLocation PROP_KEY = ElementsOfPowerMod.location("SpellcastData");
+    private static final ResourceLocation PROP_KEY = ElementsOfPowerMod.location("spellcast_data");
 
     private final PlayerEntity player;
     private Spellcast currentCasting;

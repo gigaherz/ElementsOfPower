@@ -11,10 +11,11 @@ import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.common.util.Lazy;
 
 public class RenderEssentializer extends TileEntityRenderer<TileEssentializer>
 {
-    ModelHandle handle = ModelHandle.of("elementsofpower:block/essentializer_2.obj");
+    Lazy<ModelHandle> handle = Lazy.of(() -> ModelHandle.of("elementsofpower:block/essentializer_2.obj") );
 
     public RenderEssentializer(TileEntityRendererDispatcher rendererDispatcherIn)
     {
@@ -50,7 +51,7 @@ public class RenderEssentializer extends TileEntityRenderer<TileEssentializer>
 
             matrixStack.rotate(Vector3f.YP.rotationDegrees(angle1));
 
-            handle.render(bufferIn, RenderType.translucent(), matrixStack, combinedLightIn, 0xFFFFFFFF);
+            handle.get().render(bufferIn, RenderType.translucent(), matrixStack, combinedLightIn, 0xFFFFFFFF);
 
             matrixStack.pop();
         }

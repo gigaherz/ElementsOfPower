@@ -72,7 +72,7 @@ public class RenderBeam extends RenderSpell
                 matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(angle));
                 matrixStackIn.scale(scale_start, scale_start, scale_start);
 
-                modelSphere.render(bufferIn, rt, matrixStackIn, 0x00F000F0, color);
+                modelSphere.get().render(bufferIn, rt, matrixStackIn, 0x00F000F0, color);
 
                 matrixStackIn.pop();
             }
@@ -85,7 +85,7 @@ public class RenderBeam extends RenderSpell
                 matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(angle));
                 matrixStackIn.scale(scale_beam, scale_beam, (float) distance);
 
-                modelCyl.render(bufferIn, rt, matrixStackIn, 0x00F000F0, color);
+                modelCyl.get().render(bufferIn, rt, matrixStackIn, 0x00F000F0, color);
 
                 matrixStackIn.pop();
             }
@@ -99,7 +99,7 @@ public class RenderBeam extends RenderSpell
                 matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(angle));
                 matrixStackIn.scale(scale_end, scale_end, scale_end);
 
-                modelSphere.render(bufferIn, rt, matrixStackIn, 0x00F000F0, color);
+                modelSphere.get().render(bufferIn, rt, matrixStackIn, 0x00F000F0, color);
 
                 matrixStackIn.pop();
             }

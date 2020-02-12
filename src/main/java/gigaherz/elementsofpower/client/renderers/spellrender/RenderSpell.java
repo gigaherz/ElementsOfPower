@@ -1,6 +1,5 @@
 package gigaherz.elementsofpower.client.renderers.spellrender;
 
-import com.google.common.collect.Maps;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import gigaherz.elementsofpower.client.renderers.ModelHandle;
 import gigaherz.elementsofpower.spells.Spellcast;
@@ -13,31 +12,16 @@ import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.common.util.Lazy;
 
 import javax.annotation.Nullable;
-import java.util.Map;
 
 
 public abstract class RenderSpell
 {
-    final ModelHandle modelCone = getCone();
-    final ModelHandle modelSphere = getSphere();
-    final ModelHandle modelCyl = getCylinder();
-
-    protected ModelHandle getCone()
-    {
-        return ModelHandle.of("elementsofpower:entity/cone.obj");
-    }
-
-    protected ModelHandle getSphere()
-    {
-        return ModelHandle.of("elementsofpower:entity/sphere.obj");
-    }
-
-    protected ModelHandle getCylinder()
-    {
-        return ModelHandle.of("elementsofpower:entity/cylinder.obj");
-    }
+    public static final Lazy<ModelHandle> modelCone = Lazy.of(() -> ModelHandle.of("elementsofpower:entity/cone.obj"));
+    public static final Lazy<ModelHandle> modelSphere = Lazy.of(() -> ModelHandle.of("elementsofpower:entity/sphere.obj"));
+    public static final Lazy<ModelHandle> modelCyl = Lazy.of(() -> ModelHandle.of("elementsofpower:entity/cylinder.obj"));
 
     public static int getColor(Spellcast spellcast)
     {
