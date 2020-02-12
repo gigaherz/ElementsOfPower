@@ -4,14 +4,13 @@ import gigaherz.elementsofpower.analyzer.ItemAnalyzer;
 import gigaherz.elementsofpower.analyzer.gui.ContainerAnalyzer;
 import gigaherz.elementsofpower.analyzer.gui.GuiAnalyzer;
 import gigaherz.elementsofpower.capabilities.CapabilityMagicContainer;
-import gigaherz.elementsofpower.client.ClientProxy;
 import gigaherz.elementsofpower.client.WandUseManager;
 import gigaherz.elementsofpower.client.renderers.MagicContainerOverlay;
 import gigaherz.elementsofpower.client.renderers.RenderBall;
 import gigaherz.elementsofpower.client.renderers.RenderEssence;
+import gigaherz.elementsofpower.client.renderers.RenderEssentializer;
 import gigaherz.elementsofpower.cocoons.BlockCocoon;
 import gigaherz.elementsofpower.cocoons.TileCocoon;
-import gigaherz.elementsofpower.common.IModProxy;
 import gigaherz.elementsofpower.database.EssenceConversions;
 import gigaherz.elementsofpower.database.EssenceOverrides;
 import gigaherz.elementsofpower.database.StockConversions;
@@ -56,6 +55,7 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.*;
@@ -85,8 +85,6 @@ public class ElementsOfPowerMod
 
     public static ElementsOfPowerMod instance;
 
-    public static IModProxy proxy = DistExecutor.runForDist(() -> () -> new ClientProxy(), () -> () -> new IModProxy(){});
-
     // Block templates
     @ObjectHolder("elementsofpower:essentializer")
     public static Block essentializer;
@@ -95,7 +93,7 @@ public class ElementsOfPowerMod
     @ObjectHolder("elementsofpower:mist")
     public static Block mist;
     @ObjectHolder("elementsofpower:light")
-    public static Block light;
+    public static BlockLight light;
     @ObjectHolder("elementsofpower:cushion")
     public static Block cushion;
     @ObjectHolder("elementsofpower:fire_cocoon")
@@ -143,8 +141,22 @@ public class ElementsOfPowerMod
     public static Material materialCushion = (new Material.Builder(MaterialColor.BLACK)).doesNotBlockMovement().notOpaque().notSolid().replaceable().pushDestroys().build();
 
     // Item templates
-    @ObjectHolder("elementsofpower:orb")
-    public static ItemMagicOrb orb;
+    @ObjectHolder("elementsofpower:fire_orb")
+    public static ItemMagicOrb fire_orb;
+    @ObjectHolder("elementsofpower:water_orb")
+    public static ItemMagicOrb water_orb;
+    @ObjectHolder("elementsofpower:air_orb")
+    public static ItemMagicOrb air_orb;
+    @ObjectHolder("elementsofpower:earth_orb")
+    public static ItemMagicOrb earth_orb;
+    @ObjectHolder("elementsofpower:light_orb")
+    public static ItemMagicOrb light_orb;
+    @ObjectHolder("elementsofpower:darkness_orb")
+    public static ItemMagicOrb darkness_orb;
+    @ObjectHolder("elementsofpower:life_orb")
+    public static ItemMagicOrb life_orb;
+    @ObjectHolder("elementsofpower:death_orb")
+    public static ItemMagicOrb death_orb;
     @ObjectHolder("elementsofpower:wand")
     public static ItemWand wand;
     @ObjectHolder("elementsofpower:staff")
@@ -157,8 +169,6 @@ public class ElementsOfPowerMod
     public static ItemBauble necklace;
     @ObjectHolder("elementsofpower:analyzer")
     public static ItemAnalyzer analyzer;
-    @ObjectHolder("elementsofpower:spelldust")
-    public static ItemSpelldust spelldust;
     @ObjectHolder("elementsofpower:ruby")
     public static ItemGemstone ruby;
     @ObjectHolder("elementsofpower:sapphire")
@@ -209,6 +219,24 @@ public class ElementsOfPowerMod
     public static Item lifeCocoonItem;
     @ObjectHolder("elementsofpower:death_cocoon")
     public static Item deathCocoonItem;
+    @ObjectHolder("elementsofpower:ruby_spelldust")
+    public static ItemGemstone ruby_spelldust;
+    @ObjectHolder("elementsofpower:sapphire_spelldust")
+    public static ItemGemstone sapphire_spelldust;
+    @ObjectHolder("elementsofpower:citrine_spelldust")
+    public static ItemGemstone citrine_spelldust;
+    @ObjectHolder("elementsofpower:agate_spelldust")
+    public static ItemGemstone agate_spelldust;
+    @ObjectHolder("elementsofpower:quartz_spelldust")
+    public static ItemGemstone quartz_spelldust;
+    @ObjectHolder("elementsofpower:serendibite_spelldust")
+    public static ItemGemstone serendibite_spelldust;
+    @ObjectHolder("elementsofpower:emerald_spelldust")
+    public static ItemGemstone emerald_spelldust;
+    @ObjectHolder("elementsofpower:amethyst_spelldust")
+    public static ItemGemstone amethyst_spelldust;
+    @ObjectHolder("elementsofpower:diamond_spelldust")
+    public static ItemGemstone diamond_spelldust;
 
     //@ItemStackHolder(value = "gbook:guidebook", nbt = "{Book:\"" + "elementsofpowerxml/guidebook.xml\"}")
     public ItemStack guidebookStack;
@@ -232,7 +260,6 @@ public class ElementsOfPowerMod
 
     public final static Format prettyNumberFormatter = new DecimalFormat("#.#");
     public final static Format prettyNumberFormatter2 = new DecimalFormat("#0.0");
-    private String overrides;
 
     public static ItemGroup tabMagic = new ItemGroup(MODID)
     {
@@ -299,7 +326,6 @@ public class ElementsOfPowerMod
                 new ItemBauble(new Item.Properties().group(tabMagic).maxStackSize(1)).setRegistryName("headband"),
                 new ItemBauble(new Item.Properties().group(tabMagic).maxStackSize(1)).setRegistryName("necklace"),
                 new ItemAnalyzer(new Item.Properties().group(tabMagic).maxStackSize(1)).setRegistryName("analyzer"),
-                new ItemSpelldust(new Item.Properties().group(tabMagic)).setRegistryName("spelldust"),
 
                 new SpawnEggItem(essenceInit.get(), 0x0000FF, 0xFFFF00, new Item.Properties().group(tabMagic)).setRegistryName("essence")
         );
@@ -312,6 +338,8 @@ public class ElementsOfPowerMod
                 event.getRegistry().register(new BlockItem(type.getBlock(), new Item.Properties().group(tabMagic)).setRegistryName(type.getName() + "_block"));
             if (type.generateCustomOre())
                 event.getRegistry().register(new BlockItem(type.getOre(), new Item.Properties().group(tabMagic)).setRegistryName(type.getName() + "_ore"));
+            if (type.generateSpelldust())
+                event.getRegistry().register(new ItemSpelldust(type, new Item.Properties().group(tabMagic)).setRegistryName(type.getName() + "_spelldust"));
         }
         for(Element type : Element.values())
         {
@@ -357,6 +385,8 @@ public class ElementsOfPowerMod
         RenderingRegistry.registerEntityRenderingHandler(EntityEssence.TYPE, RenderEssence::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityBall.TYPE, RenderBall::new);
 
+        ClientRegistry.bindTileEntityRenderer(TileEssentializer.TYPE, RenderEssentializer::new);
+
         ScreenManager.registerFactory(ContainerAnalyzer.TYPE, GuiAnalyzer::new);
         ScreenManager.registerFactory(ContainerEssentializer.TYPE, GuiEssentializer::new);
 
@@ -391,8 +421,6 @@ public class ElementsOfPowerMod
     public void preInit(FMLCommonSetupEvent event)
     {
         //ConfigManager.init(event.getSuggestedConfigurationFile());
-
-        overrides = FMLPaths.CONFIGDIR + File.separator + "elementsofpower_essences.json";
 
         CapabilityMagicContainer.register();
 
@@ -442,8 +470,6 @@ public class ElementsOfPowerMod
 
         StockConversions.registerEssenceSources();
         EssenceOverrides.loadOverrides();
-
-        proxy.init();
     }
 
     public void postInit(FMLLoadCompleteEvent event)

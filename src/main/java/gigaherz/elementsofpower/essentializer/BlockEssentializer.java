@@ -33,7 +33,7 @@ public class BlockEssentializer extends Block
     {
         TileEntity tileEntity = worldIn.getTileEntity(pos);
 
-        if (tileEntity == null)
+        if (!(tileEntity instanceof TileEssentializer))
             return ActionResultType.FAIL;
 
         if (player.isShiftKeyDown())
@@ -42,7 +42,9 @@ public class BlockEssentializer extends Block
         if (worldIn.isRemote)
             return ActionResultType.SUCCESS;
 
-        NetworkHooks.openGui((ServerPlayerEntity)player, new SimpleNamedContainerProvider(ContainerEssentializer::new, new TranslationTextComponent("container.elementsofpower.essentializer.title")), pos);
+        NetworkHooks.openGui((ServerPlayerEntity)player, new SimpleNamedContainerProvider((id,playerInventory,playerEntity) ->
+                new ContainerEssentializer(id,(TileEssentializer) tileEntity,playerInventory),
+                new TranslationTextComponent("container.elementsofpower.essentializer.title")), pos);
 
         return ActionResultType.SUCCESS;
     }

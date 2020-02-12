@@ -1,8 +1,8 @@
 package gigaherz.elementsofpower.cocoons;
 
-import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.entities.EntityEssence;
+import gigaherz.elementsofpower.items.ItemMagicOrb;
 import gigaherz.elementsofpower.spells.Element;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -97,7 +97,7 @@ public class BlockCocoon extends Block
     {
         ItemStack heldItem = player.getHeldItem(hand);
 
-        if (heldItem.getCount() > 0 && heldItem.getItem() == ElementsOfPowerMod.orb)
+        if (heldItem.getCount() > 0 && heldItem.getItem() instanceof ItemMagicOrb)
         {
             TileEntity te = worldIn.getTileEntity(pos);
 

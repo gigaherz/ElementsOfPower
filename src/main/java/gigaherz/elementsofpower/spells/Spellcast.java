@@ -183,7 +183,7 @@ public class Spellcast
     {
         double distance = end.distanceTo(start);
 
-        if (mop != null)
+        if (mop != null && mop.getType() != RayTraceResult.Type.MISS)
         {
             distance = mop.getHitVec().distanceTo(start);
         }

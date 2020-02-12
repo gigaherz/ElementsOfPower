@@ -1,25 +1,23 @@
 package gigaherz.elementsofpower.client.renderers.spellrender;
 
-import gigaherz.common.client.ModelHandle;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import gigaherz.elementsofpower.client.renderers.ModelHandle;
 import gigaherz.elementsofpower.spells.Spellcast;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
-import org.lwjgl.opengl.GL11;
 
 public class RenderBeam extends RenderSpell
 {
     @Override
-    public void doRender(Spellcast cast, PlayerEntity player, EntityRendererManager renderManager,
-                         double x, double y, double z, float partialTicks, Vec3d offset, String tex, int beam_color)
+    public void render(Spellcast cast, PlayerEntity player, EntityRendererManager renderManager, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, Vec3d offset)
     {
         float scale = 0.15f * cast.getScale();
 
-        ModelHandle modelSphere = getSphere(tex);
-        ModelHandle modelCyl = getCylinder(tex);
 
         RayTraceResult mop = cast.getHitPosition(partialTicks);
 
@@ -39,18 +37,20 @@ public class RenderBeam extends RenderSpell
         double beamYaw = Math.atan2(dir.z, dir.x);
         double beamPitch = Math.atan2(dir.y, beamPlane);
 
-        GlStateManager.disableLighting();
-        GlStateManager.enableRescaleNormal();
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GlStateManager.depthMask(false);
+        /*
+        RenderSystem.disableLighting();
+        RenderSystem.enableRescaleNormal();
+        RenderSystem.enableBlend();
+        RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        RenderSystem.depthMask(false);
+         */
 
-        renderManager.renderEngine.bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
-
-        GlStateManager.pushMatrix();
+        matrixStackIn.push();
 
         float time = (player.ticksExisted + partialTicks);
 
+        int beam_color = getColor(cast);
+        RenderType rt = getRenderType(cast);
         for (int i = 0; i <= 4; i++)
         {
             //float tt = (i + (player.ticksExisted % 10 + partialTicks) / 11.0f) / 5.0f;
@@ -65,60 +65,46 @@ public class RenderBeam extends RenderSpell
             float angle = time * (6 + 3 * (4 + i)) * ((i & 1) == 0 ? 1 : -1) * 0.1f;
 
             {
-                GlStateManager.pushMatrix();
-                GlStateManager.translate(
-                        (float) (x + offset.x),
-                        (float) (y + offset.y),
-                        (float) (z + offset.z));
-                GlStateManager.rotate(-(float) Math.toDegrees(beamYaw) + 90, 0, 1, 0);
-                GlStateManager.rotate(-(float) Math.toDegrees(beamPitch), 1, 0, 0);
-                GlStateManager.rotate(angle, 0, 0, 1);
-                GlStateManager.scale(scale_start, scale_start, scale_start);
+                matrixStackIn.push();
+                matrixStackIn.translate( (float) (offset.x), (float) (offset.y), (float) (offset.z));
+                matrixStackIn.rotate(Vector3f.YP.rotation((float) (Math.PI*0.5-beamYaw)));
+                matrixStackIn.rotate(Vector3f.YP.rotation((float) -beamPitch));
+                matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(angle));
+                matrixStackIn.scale(scale_start, scale_start, scale_start);
 
-                modelSphere.render(color);
+                modelSphere.render(bufferIn, rt, matrixStackIn, 0x00F000F0, color);
 
-                GlStateManager.popMatrix();
+                matrixStackIn.pop();
             }
 
             {
-                GlStateManager.pushMatrix();
-                GlStateManager.translate(
-                        (float) (x + offset.x),
-                        (float) (y + offset.y),
-                        (float) (z + offset.z));
-                GlStateManager.rotate(-(float) Math.toDegrees(beamYaw) + 90, 0, 1, 0);
-                GlStateManager.rotate(-(float) Math.toDegrees(beamPitch), 1, 0, 0);
-                GlStateManager.rotate(angle, 0, 0, 1);
-                GlStateManager.scale(scale_beam, scale_beam, distance);
+                matrixStackIn.push();
+                matrixStackIn.translate( (float) (offset.x), (float) (offset.y), (float) (offset.z));
+                matrixStackIn.rotate(Vector3f.YP.rotation((float) (Math.PI*0.5-beamYaw)));
+                matrixStackIn.rotate(Vector3f.YP.rotation((float) -beamPitch));
+                matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(angle));
+                matrixStackIn.scale(scale_beam, scale_beam, (float) distance);
 
-                modelCyl.render(color);
+                modelCyl.render(bufferIn, rt, matrixStackIn, 0x00F000F0, color);
 
-                GlStateManager.popMatrix();
+                matrixStackIn.pop();
             }
 
-            if (mop != null && mop.getHitVec() != null)
+            if (mop != null && mop.getType() != RayTraceResult.Type.MISS)
             {
-                GlStateManager.pushMatrix();
-                GlStateManager.translate(
-                        (float) (x + beam0.x),
-                        (float) (y + beam0.y),
-                        (float) (z + beam0.z));
-                GlStateManager.rotate(-(float) Math.toDegrees(beamYaw) + 90, 0, 1, 0);
-                GlStateManager.rotate(-(float) Math.toDegrees(beamPitch), 1, 0, 0);
-                GlStateManager.rotate(angle, 0, 0, 1);
-                GlStateManager.scale(scale_end, scale_end, scale_end);
+                matrixStackIn.push();
+                matrixStackIn.translate( (float) (offset.x), (float) (offset.y), (float) (offset.z));
+                matrixStackIn.rotate(Vector3f.YP.rotation((float) (Math.PI*0.5-beamYaw)));
+                matrixStackIn.rotate(Vector3f.YP.rotation((float) -beamPitch));
+                matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(angle));
+                matrixStackIn.scale(scale_end, scale_end, scale_end);
 
-                modelSphere.render(color);
+                modelSphere.render(bufferIn, rt, matrixStackIn, 0x00F000F0, color);
 
-                GlStateManager.popMatrix();
+                matrixStackIn.pop();
             }
         }
 
-        GlStateManager.popMatrix();
-
-        GlStateManager.depthMask(true);
-        GlStateManager.disableBlend();
-        GlStateManager.disableRescaleNormal();
-        GlStateManager.enableLighting();
+        matrixStackIn.pop();
     }
 }

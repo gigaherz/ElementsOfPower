@@ -127,7 +127,7 @@ public class GuiEssentializer extends ContainerScreen<ContainerEssentializer>
             int x0 = MAGIC_ORBS[i * 2];
             int y0 = MAGIC_ORBS[i * 2 + 1];
 
-            ItemStack stack = ElementsOfPowerMod.orb.getStack((int) am.get(i), Element.values[i]);
+            ItemStack stack = new ItemStack(Element.values[i].getOrb());
 
             RenderSystem.color4f(1,1,1,alpha/255.0f);
             minecraft.getItemRenderer().renderItemAndEffectIntoGUI(stack, x0, y0);

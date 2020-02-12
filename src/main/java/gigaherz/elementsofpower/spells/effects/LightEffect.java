@@ -7,11 +7,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.math.*;
 
 import javax.annotation.Nullable;
 
@@ -58,17 +55,17 @@ public class LightEffect extends SpellEffect
     {
         for (int i = 0; i < 8; ++i)
         {
-            cast.spawnRandomParticle(EnumParticleTypes.CRIT_MAGIC,
-                    mop.getHitVec().x, mop.getHitVec().y, mop.getHitVec().z);
+            Vec3d hitVec = mop.getHitVec();
+            cast.spawnRandomParticle(ParticleTypes.CRIT, hitVec.x, hitVec.y, hitVec.z);
         }
     }
 
     @Override
     public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, BlockState currentState, float r, @Nullable RayTraceResult mop)
     {
-        if (mop != null)
+        if (mop != null && mop.getType() == RayTraceResult.Type.BLOCK)
         {
-            blockPos = blockPos.offset(mop.sideHit);
+            blockPos = blockPos.offset(((BlockRayTraceResult)mop).getFace());
             currentState = cast.world.getBlockState(blockPos);
         }
 
@@ -78,11 +75,11 @@ public class LightEffect extends SpellEffect
 
         if (block == Blocks.AIR)
         {
-            cast.world.setBlockState(blockPos, ElementsOfPowerMod.light.getDefaultState().withProperty(BlockLight.DENSITY, density));
+            cast.world.setBlockState(blockPos, ElementsOfPowerMod.light.getDefaultState().with(BlockLight.DENSITY, density));
         }
         else if (block == ElementsOfPowerMod.light)
         {
-            ((BlockLight)block).resetCooldown(cast.world, blockPos, currentState, density);
+            ElementsOfPowerMod.light.resetCooldown(cast.world, blockPos, currentState, density);
         }
     }
 }

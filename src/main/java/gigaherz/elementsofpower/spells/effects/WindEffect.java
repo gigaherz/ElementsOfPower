@@ -4,18 +4,17 @@ import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.network.AddVelocityPlayer;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockDynamicLiquid;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.*;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -46,10 +45,10 @@ public class WindEffect extends SpellEffect
         int force = cast.getDamageForce();
 
         if ((!(entity instanceof LivingEntity) && !(entity instanceof ItemEntity))
-                || !entity.isEntityAlive())
+                || !entity.isAlive())
             return;
 
-        applyVelocity(cast, force, getHitVec(), entity, false);
+        applyVelocity(cast, force, hitVec, entity, false);
     }
 
     @Override
@@ -58,18 +57,18 @@ public class WindEffect extends SpellEffect
         int force = cast.getDamageForce();
 
         AxisAlignedBB aabb = new AxisAlignedBB(
-                getHitVec().x - force,
-                getHitVec().y - force,
-                getHitVec().z - force,
-                getHitVec().x + force,
-                getHitVec().y + force,
-                getHitVec().z + force);
+                hitVec.x - force,
+                hitVec.y - force,
+                hitVec.z - force,
+                hitVec.x + force,
+                hitVec.y + force,
+                hitVec.z + force);
 
         List<LivingEntity> living = cast.world.getEntitiesWithinAABB(LivingEntity.class, aabb);
-        pushEntities(cast, force, getHitVec(), living);
+        pushEntities(cast, force, hitVec, living);
 
         List<ItemEntity> items = cast.world.getEntitiesWithinAABB(ItemEntity.class, aabb);
-        pushEntities(cast, force, getHitVec(), items);
+        pushEntities(cast, force, hitVec, items);
 
         return true;
     }
@@ -83,10 +82,10 @@ public class WindEffect extends SpellEffect
     {
         for (Entity e : entities)
         {
-            if (!e.isEntityAlive())
+            if (!e.isAlive())
                 continue;
 
-            applyVelocity(cast, force, getHitVec(), e, true);
+            applyVelocity(cast, force, hitVec, e, true);
         }
     }
 
@@ -104,9 +103,9 @@ public class WindEffect extends SpellEffect
         }
         else
         {
-            double dx = e.posX - getHitVec().x;
-            double dy = e.posY - getHitVec().y;
-            double dz = e.posZ - getHitVec().z;
+            double dx = e.getPosX() - hitVec.x;
+            double dy = e.getPosY() - hitVec.y;
+            double dz = e.getPosZ() - hitVec.z;
 
             double ll = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
@@ -123,36 +122,37 @@ public class WindEffect extends SpellEffect
         e.addVelocity(vx, vy, vz);
         if (e instanceof ServerPlayerEntity)
         {
-            ElementsOfPowerMod.channel.sendTo(new AddVelocityPlayer(vx, vy, vz), (ServerPlayerEntity) e);
+            ElementsOfPowerMod.channel.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) e), new AddVelocityPlayer(vx, vy, vz));
         }
     }
 
     @Override
     public void spawnBallParticles(Spellcast cast, RayTraceResult mop)
     {
+        Vec3d hitVec = mop.getHitVec();
         if (cast.getDamageForce() >= 5)
         {
-            cast.spawnRandomParticle(EnumParticleTypes.EXPLOSION_HUGE,
-                    mop.getHitVec().x, mop.getHitVec().y, mop.getHitVec().z);
+            // FIXME: huge
+            cast.spawnRandomParticle(ParticleTypes.EXPLOSION, hitVec.x, hitVec.y, hitVec.z);
         }
         else if (cast.getDamageForce() >= 2)
         {
-            cast.spawnRandomParticle(EnumParticleTypes.EXPLOSION_LARGE,
-                    mop.getHitVec().x, mop.getHitVec().y, mop.getHitVec().z);
+            // FIXME: large
+            cast.spawnRandomParticle(ParticleTypes.EXPLOSION, hitVec.x, hitVec.y, hitVec.z);
         }
         else
         {
-            cast.spawnRandomParticle(EnumParticleTypes.EXPLOSION_NORMAL,
-                    mop.getHitVec().x, mop.getHitVec().y, mop.getHitVec().z);
+            // FIXME: normal
+            cast.spawnRandomParticle(ParticleTypes.EXPLOSION, hitVec.x, hitVec.y, hitVec.z);
         }
     }
 
     @Override
     public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, BlockState currentState, float r, @Nullable RayTraceResult mop)
     {
-        if (mop != null)
+        if (mop != null && mop.getType() == RayTraceResult.Type.BLOCK)
         {
-            blockPos = blockPos.offset(mop.sideHit);
+            blockPos = blockPos.offset(((BlockRayTraceResult)mop).getFace());
             currentState = cast.world.getBlockState(blockPos);
         }
 
@@ -160,19 +160,26 @@ public class WindEffect extends SpellEffect
 
         if (block == Blocks.FIRE)
         {
-            cast.world.setBlockToAir(blockPos);
+            cast.world.setBlockState(blockPos, Blocks.AIR.getDefaultState());
         }
-        else if (block == Blocks.FLOWING_WATER || block == Blocks.WATER)
+        else if (block == Blocks.WATER)
         {
-            if (currentState.getValue(BlockDynamicLiquid.LEVEL) > 0)
+            if (!currentState.getFluidState().isSource())
             {
-                cast.world.setBlockToAir(blockPos);
+                cast.world.setBlockState(blockPos, Blocks.AIR.getDefaultState());
             }
         }
         else if (!currentState.getMaterial().blocksMovement() && !currentState.getMaterial().isLiquid())
         {
-            block.dropBlockAsItem(cast.world, blockPos, currentState, 0);
-            cast.world.setBlockToAir(blockPos);
+            dropBlockAsItem(cast.world, blockPos, currentState);
+            cast.world.setBlockState(blockPos, Blocks.AIR.getDefaultState());
         }
+    }
+
+    private void dropBlockAsItem(World world, BlockPos pos, BlockState state)
+    {
+        TileEntity tileentity = state.hasTileEntity() ? world.getTileEntity(pos) : null;
+        Block.spawnDrops(state, world, pos, tileentity);
+        world.setBlockState(pos, Blocks.AIR.getDefaultState());
     }
 }

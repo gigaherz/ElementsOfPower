@@ -2,13 +2,12 @@ package gigaherz.elementsofpower.spells.effects;
 
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockDirt;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.potion.Effects;
-import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -41,12 +40,12 @@ public class HealthEffect extends SpellEffect
     {
         for (LivingEntity e : living)
         {
-            if (!e.isEntityAlive())
+            if (!e.isAlive())
                 continue;
 
-            double dx = e.posX - getHitVec().x;
-            double dy = e.posY - getHitVec().y;
-            double dz = e.posZ - getHitVec().z;
+            double dx = e.getPosX() - hitVec.x;
+            double dy = e.getPosY() - hitVec.y;
+            double dz = e.getPosZ() - hitVec.z;
 
             double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
@@ -84,22 +83,22 @@ public class HealthEffect extends SpellEffect
     public void processEntitiesAroundAfter(Spellcast cast, Vec3d hitVec)
     {
         AxisAlignedBB aabb = new AxisAlignedBB(
-                getHitVec().x - cast.getDamageForce(),
-                getHitVec().y - cast.getDamageForce(),
-                getHitVec().z - cast.getDamageForce(),
-                getHitVec().x + cast.getDamageForce(),
-                getHitVec().y + cast.getDamageForce(),
-                getHitVec().z + cast.getDamageForce());
+                hitVec.x - cast.getDamageForce(),
+                hitVec.y - cast.getDamageForce(),
+                hitVec.z - cast.getDamageForce(),
+                hitVec.x + cast.getDamageForce(),
+                hitVec.y + cast.getDamageForce(),
+                hitVec.z + cast.getDamageForce());
 
         List<LivingEntity> living = cast.world.getEntitiesWithinAABB(LivingEntity.class, aabb);
-        healEntities(cast, getHitVec(), living);
+        healEntities(cast, hitVec, living);
     }
 
     @Override
     public void spawnBallParticles(Spellcast cast, RayTraceResult mop)
     {
-        cast.spawnRandomParticle(EnumParticleTypes.FLAME,
-                mop.getHitVec().x, mop.getHitVec().y, mop.getHitVec().z);
+        Vec3d hitVec = mop.getHitVec();
+        cast.spawnRandomParticle(ParticleTypes.FLAME, hitVec.x, hitVec.y, hitVec.z);
     }
 
     @Override
@@ -107,17 +106,13 @@ public class HealthEffect extends SpellEffect
     {
         Block block = currentState.getBlock();
 
-        if (block == Blocks.DIRT)
+        if (block == Blocks.COARSE_DIRT)
         {
-            switch (currentState.getValue(BlockDirt.VARIANT))
-            {
-                case COARSE_DIRT:
-                    cast.world.setBlockState(blockPos, Blocks.DIRT.getDefaultState());
-                    break;
-                case DIRT:
-                    cast.world.setBlockState(blockPos, Blocks.GRASS.getDefaultState());
-                    break;
-            }
+            cast.world.setBlockState(blockPos, Blocks.DIRT.getDefaultState());
+        }
+        else if (block == Blocks.DIRT)
+        {
+            cast.world.setBlockState(blockPos, Blocks.GRASS.getDefaultState());
         }
     }
 }

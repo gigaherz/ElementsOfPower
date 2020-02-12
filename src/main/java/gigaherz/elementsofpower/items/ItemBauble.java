@@ -138,26 +138,25 @@ public class ItemBauble extends ItemGemContainer
 
     protected void tryTransferToWands(ItemStack thisStack, PlayerEntity p)
     {
-        IMagicContainer magic = CapabilityMagicContainer.getContainer(thisStack);
-        if (magic == null)
-            return;
+        CapabilityMagicContainer.getContainer(thisStack).ifPresent(magic -> {
+            MagicAmounts available = magic.getContainedMagic();
 
-        MagicAmounts available = magic.getContainedMagic();
+            if (available.isEmpty())
+                return;
 
-        if (available.isEmpty())
-            return;
-
-        ItemSlotReference slotReference = findInInventory(thisStack, p.inventory, available);
+            ItemSlotReference slotReference = findInInventory(thisStack, p.inventory, available);
 
         /*if (slotReference == null)
         {
             slotReference = findInInventory(thisStack, BaublesApi.getBaublesHandler(p), available);
         }*/
 
-        if (slotReference == null)
-            return;
+            if (slotReference == null)
+                return;
 
-        doTransfer(thisStack, magic, available, slotReference);
+            doTransfer(thisStack, magic, available, slotReference);
+        });
+
     }
 
     private void doTransfer(ItemStack thisStack, IMagicContainer thisMagic,
@@ -165,50 +164,49 @@ public class ItemBauble extends ItemGemContainer
                             ItemSlotReference slotReference)
     {
         ItemStack stack = slotReference.get();
-        IMagicContainer magic = CapabilityMagicContainer.getContainer(stack);
-        if (magic == null)
-            return;
+        CapabilityMagicContainer.getContainer(stack).ifPresent(magic -> {
 
-        MagicAmounts limits = magic.getCapacity();
-        MagicAmounts amounts = magic.getContainedMagic();
+            MagicAmounts limits = magic.getCapacity();
+            MagicAmounts amounts = magic.getContainedMagic();
 
-        if (limits.isEmpty())
-            return;
+            if (limits.isEmpty())
+                return;
 
-        MagicAmounts remaining = available;
+            MagicAmounts remaining = available;
 
-        Gemstone g = getGemstone(thisStack);
-        Quality q = getQuality(thisStack);
-        if (g != null && q != null)
-        {
-            float maxTransferFrom = TRANSFER_RATES[q.ordinal()];
-            float boost = q.getTransferSpeed();
-
-            for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+            Gemstone g = getGemstone(thisStack);
+            Quality q = getQuality(thisStack);
+            if (g != null && q != null)
             {
-                float maxTransfer = maxTransferFrom;
+                float maxTransferFrom = TRANSFER_RATES[q.ordinal()];
+                float boost = q.getTransferSpeed();
 
-                if (g == Gemstone.Diamond || g.ordinal() == i)
-                    maxTransfer *= boost;
-
-                float transfer = Math.min(maxTransfer, limits.get(i) - amounts.get(i));
-                if (!thisMagic.isInfinite())
-                    transfer = Math.min(remaining.get(i), transfer);
-                if (transfer > 0)
+                for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
                 {
-                    amounts = amounts.add(i, transfer);
+                    float maxTransfer = maxTransferFrom;
+
+                    if (g == Gemstone.Diamond || g.ordinal() == i)
+                        maxTransfer *= boost;
+
+                    float transfer = Math.min(maxTransfer, limits.get(i) - amounts.get(i));
                     if (!thisMagic.isInfinite())
-                        remaining = remaining.add(i, -transfer);
+                        transfer = Math.min(remaining.get(i), transfer);
+                    if (transfer > 0)
+                    {
+                        amounts = amounts.add(i, transfer);
+                        if (!thisMagic.isInfinite())
+                            remaining = remaining.add(i, -transfer);
+                    }
                 }
             }
-        }
 
-        if (remaining.lessThan(available))
-        {
-            magic.setContainedMagic(amounts);
+            if (remaining.lessThan(available))
+            {
+                magic.setContainedMagic(amounts);
 
-            if (!thisMagic.isInfinite())
-                thisMagic.setContainedMagic(remaining);
-        }
+                if (!thisMagic.isInfinite())
+                    thisMagic.setContainedMagic(remaining);
+            }
+        });
     }
 }

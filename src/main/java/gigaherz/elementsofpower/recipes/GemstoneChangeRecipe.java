@@ -5,13 +5,21 @@ import gigaherz.elementsofpower.items.ItemGemContainer;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.ICraftingRecipe;
+import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 
-public class GemstoneChangeRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
+public class GemstoneChangeRecipe implements ICraftingRecipe
 {
+    private final ResourceLocation id;
+
+    public GemstoneChangeRecipe(ResourceLocation id)
+    {
+        this.id = id;
+    }
+
     @Override
     public boolean matches(CraftingInventory inv, World worldIn)
     {
@@ -128,5 +136,17 @@ public class GemstoneChangeRecipe extends IForgeRegistryEntry.Impl<IRecipe> impl
     public boolean isDynamic()
     {
         return true;
+    }
+
+    @Override
+    public ResourceLocation getId()
+    {
+        return id;
+    }
+
+    @Override
+    public IRecipeSerializer<?> getSerializer()
+    {
+        return GemstoneChangeRecipeFactory.INSTANCE;
     }
 }

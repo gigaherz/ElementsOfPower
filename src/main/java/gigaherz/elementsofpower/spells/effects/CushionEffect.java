@@ -7,8 +7,9 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.block.Blocks;
-import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 
@@ -55,9 +56,9 @@ public class CushionEffect extends SpellEffect
     @Override
     public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, BlockState currentState, float r, @Nullable RayTraceResult mop)
     {
-        if (mop != null)
+        if (mop != null && mop.getType() == RayTraceResult.Type.BLOCK)
         {
-            blockPos = blockPos.offset(mop.sideHit);
+            blockPos = blockPos.offset(((BlockRayTraceResult)mop).getFace());
             currentState = cast.world.getBlockState(blockPos);
         }
 
@@ -65,17 +66,17 @@ public class CushionEffect extends SpellEffect
 
         if (block == Blocks.AIR)
         {
-            cast.world.setBlockState(blockPos, ElementsOfPowerMod.cushion.getDefaultState().withProperty(BlockCushion.DENSITY, 16));
+            cast.world.setBlockState(blockPos, ElementsOfPowerMod.cushion.getDefaultState().with(BlockCushion.DENSITY, 16));
         }
     }
 
     @Override
     public void spawnBallParticles(Spellcast cast, RayTraceResult mop)
     {
+        Vec3d hitVec = mop.getHitVec();
         for (int i = 0; i < 8; ++i)
         {
-            cast.spawnRandomParticle(EnumParticleTypes.WATER_SPLASH,
-                    mop.getHitVec().x, mop.getHitVec().y, mop.getHitVec().z);
+            cast.spawnRandomParticle(ParticleTypes.SPLASH, hitVec.x, hitVec.y, hitVec.z);
         }
     }
 }

@@ -1,6 +1,8 @@
 package gigaherz.elementsofpower.items;
 
 import gigaherz.elementsofpower.ElementsOfPowerMod;
+import gigaherz.elementsofpower.client.ClientProxy;
+import gigaherz.elementsofpower.client.WandUseManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
@@ -23,10 +25,20 @@ public class ItemWand extends ItemGemContainer
 
         if (hand == Hand.MAIN_HAND)
         {
-            ElementsOfPowerMod.proxy.beginTracking(playerIn, hand);
+            if (worldIn.isRemote)
+            {
+                beginTracking(playerIn, hand);
+            }
+
+            playerIn.setActiveHand(hand);
             return ActionResult.func_226248_a_(itemStackIn);
         }
 
         return ActionResult.func_226251_d_(itemStackIn);
+    }
+
+    public static void beginTracking(PlayerEntity playerIn, Hand hand)
+    {
+        WandUseManager.instance.handInUse = hand;
     }
 }

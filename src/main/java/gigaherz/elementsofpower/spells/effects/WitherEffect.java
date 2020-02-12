@@ -91,8 +91,8 @@ public class WitherEffect extends SpellEffect
     @Override
     public void spawnBallParticles(Spellcast cast, RayTraceResult mop)
     {
-        cast.spawnRandomParticle(ParticleTypes.FLAME,
-                mop.getHitVec().x, mop.getHitVec().y, mop.getHitVec().z);
+        Vec3d hitVec = mop.getHitVec();
+        cast.spawnRandomParticle(ParticleTypes.FLAME, hitVec.x, hitVec.y, hitVec.z);
     }
 
     @Override

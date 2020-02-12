@@ -169,4 +169,9 @@ public class ItemGemstone extends ItemMagicContainer
         else
             tooltip.add(new TranslationTextComponent("text.elementsofpower.gemstone.combine").applyTextStyles(TextFormatting.DARK_GRAY, TextFormatting.ITALIC));
     }
+
+    public ItemStack getStack(Quality quality)
+    {
+        return setQuality(new ItemStack(this), quality);
+    }
 }

@@ -6,8 +6,8 @@ import javax.annotation.Nonnull;
 
 public interface IRecipeHandler
 {
-    boolean accepts(@Nonnull IRecipe recipe);
+    boolean accepts(@Nonnull IRecipe<?> recipe);
 
     @Nonnull
-    IRecipeInfoProvider handle(@Nonnull IRecipe recipe);
+    IRecipeInfoProvider handle(@Nonnull IRecipe<?> recipe);
 }

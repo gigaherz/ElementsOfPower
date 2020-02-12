@@ -1,6 +1,7 @@
 package gigaherz.elementsofpower.client.renderers;
 
 import com.google.common.collect.Maps;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.client.renderers.spellrender.RenderBeam;
 import gigaherz.elementsofpower.client.renderers.spellrender.RenderCone;
@@ -11,18 +12,20 @@ import gigaherz.elementsofpower.spells.Spellcast;
 import gigaherz.elementsofpower.spells.SpellcastEntityData;
 import gigaherz.elementsofpower.spells.shapes.SpellShape;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
 
 import java.util.Map;
 
-@Mod.EventBusSubscriber(value = Side.CLIENT, modid = ElementsOfPowerMod.MODID)
+@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = ElementsOfPowerMod.MODID)
 public class SpellRenderOverlay
 {
     public static final Map<SpellShape, RenderSpell> rendererRegistry = Maps.newHashMap();
@@ -49,17 +52,22 @@ public class SpellRenderOverlay
         off = off.rotatePitch(-(float) Math.toRadians(ppitch));
         off = off.rotateYaw(-(float) Math.toRadians(pyaw));
 
-        drawSpellsOnPlayer(player, renderManager, 0, player.getEyeHeight(), 0, partialTicks, off);
+        IRenderTypeBuffer buffers = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
+        MatrixStack stack = event.getMatrixStack();
+        stack.push();
+        stack.translate(0,player.getEyeHeight(),0);
+        drawSpellsOnPlayer(player, renderManager, partialTicks, stack, buffers, 0x00F000F0, off);
+        stack.pop();
     }
 
     @SubscribeEvent
     public static void playerRenderPost(RenderPlayerEvent.Post event)
     {
-        if (event.getEntityPlayer() == Minecraft.getInstance().player)
+        PlayerEntity player = event.getPlayer();
+        if (player == Minecraft.getInstance().player)
             return;
 
-        boolean isSelf = event.getEntityPlayer().getEntityId() == Minecraft.getInstance().player.getEntityId();
-        PlayerEntity player = event.getEntityPlayer();
+        boolean isSelf = player.getEntityId() == Minecraft.getInstance().player.getEntityId();
         EntityRendererManager renderManager = event.getRenderer().getRenderManager();
 
         float partialTicks = event.getPartialRenderTick();
@@ -82,23 +90,28 @@ public class SpellRenderOverlay
             off = off.add(new Vec3d(0, -0.25, 0));
         }
 
-        drawSpellsOnPlayer(player, renderManager, event.getX(), event.getY() + player.getEyeHeight(), event.getZ(), partialTicks, off);
+        MatrixStack stack = event.getMatrixStack();
+        stack.push();
+        stack.translate(0,player.getEyeHeight(),0);
+        drawSpellsOnPlayer(player, renderManager, partialTicks, stack, event.getBuffers(), event.getLight(), off);
+        stack.pop();
     }
 
     @SuppressWarnings("unchecked")
-    public static void drawSpellsOnPlayer(PlayerEntity player, EntityRendererManager renderManager, double x, double y, double z, float partialTicks, Vec3d offset)
+    public static void drawSpellsOnPlayer(PlayerEntity player, EntityRendererManager renderManager, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, Vec3d offset)
     {
-        SpellcastEntityData data = SpellcastEntityData.get(player);
+        SpellcastEntityData.get(player).ifPresent(data -> {
 
-        Spellcast cast = data.getCurrentCasting();
+            Spellcast cast = data.getCurrentCasting();
 
-        if (cast == null)
-            return;
+            if (cast == null)
+                return;
 
-        RenderSpell renderer = rendererRegistry.get(cast.getShape());
-        if (renderer != null)
-        {
-            renderer.doRender(cast, player, renderManager, x, y, z, partialTicks, offset);
-        }
+            RenderSpell renderer = rendererRegistry.get(cast.getShape());
+            if (renderer != null)
+            {
+                renderer.render(cast, player, renderManager, partialTicks, matrixStackIn, bufferIn, packedLightIn, offset);
+            }
+        });
     }
 }

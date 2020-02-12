@@ -2,12 +2,14 @@ package gigaherz.elementsofpower.spells.effects;
 
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockDynamicLiquid;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.block.Blocks;
-import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.fluid.Fluids;
+import net.minecraft.fluid.LavaFluid;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 
@@ -43,7 +45,7 @@ public class LavaEffect extends SpellEffect
     @Override
     public int getForceModifier(Spellcast cast)
     {
-        return cast.world.provider.doesWaterVaporize() ? +1 : 0;
+        return cast.world.dimension.doesWaterVaporize() ? +1 : 0;
     }
 
     @Override
@@ -69,17 +71,17 @@ public class LavaEffect extends SpellEffect
     {
         for (int i = 0; i < 8; ++i)
         {
-            cast.spawnRandomParticle(EnumParticleTypes.LAVA,
-                    mop.getHitVec().x, mop.getHitVec().y, mop.getHitVec().z);
+            Vec3d hitVec = mop.getHitVec();
+            cast.spawnRandomParticle(ParticleTypes.LAVA, hitVec.x, hitVec.y, hitVec.z);
         }
     }
 
     @Override
     public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, BlockState currentState, float r, @Nullable RayTraceResult mop)
     {
-        if (mop != null)
+        if (mop != null && mop.getType() == RayTraceResult.Type.BLOCK)
         {
-            blockPos = blockPos.offset(mop.sideHit);
+            blockPos = blockPos.offset(((BlockRayTraceResult)mop).getFace());
             currentState = cast.world.getBlockState(blockPos);
         }
 
@@ -89,11 +91,11 @@ public class LavaEffect extends SpellEffect
         {
             if (spawnSourceBlocks)
             {
-                cast.world.setBlockState(blockPos, Blocks.FLOWING_LAVA.getDefaultState().withProperty(BlockDynamicLiquid.LEVEL, 0));
+                cast.world.setBlockState(blockPos, Fluids.LAVA.getDefaultState().getBlockState());
             }
             else
             {
-                cast.world.setBlockState(blockPos, Blocks.FLOWING_LAVA.getDefaultState().withProperty(BlockDynamicLiquid.LEVEL, 15));
+                cast.world.setBlockState(blockPos, Fluids.FLOWING_LAVA.getDefaultState().with(LavaFluid.LEVEL_1_8, 8).getBlockState());
             }
         }
     }

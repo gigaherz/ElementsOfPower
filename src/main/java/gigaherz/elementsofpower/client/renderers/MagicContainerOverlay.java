@@ -30,98 +30,98 @@ public class MagicContainerOverlay extends AbstractGui
             return;
         }
 
-        ClientPlayerEntity player = Minecraft.getInstance().player;
+        Minecraft mc = Minecraft.getInstance();
+        ClientPlayerEntity player = mc.player;
         ItemStack heldItem = player.inventory.getCurrentItem();
 
         if (heldItem.getCount() <= 0)
             return;
 
-        IMagicContainer magic = CapabilityMagicContainer.getContainer(heldItem);
-        if (magic == null)
-            return;
+        CapabilityMagicContainer.getContainer(heldItem).ifPresent(magic -> {
 
-        // Contained essences
-        MagicAmounts amounts = magic.getContainedMagic();
-        if (!magic.isInfinite() && amounts.isEmpty())
-            return;
+            // Contained essences
+            MagicAmounts amounts = magic.getContainedMagic();
+            if (!magic.isInfinite() && amounts.isEmpty())
+                return;
 
-        FontRenderer font = Minecraft.getInstance().fontRenderer;
+            FontRenderer font = mc.fontRenderer;
 
-        float rescale = 1;
-        int rescaledWidth = (int) (res.getScaledWidth() / rescale);
-        int rescaledHeight = (int) (res.getScaledHeight() / rescale);
+            float rescale = 1;
+            int rescaledWidth = (int) (mc.getMainWindow().getScaledWidth() / rescale);
+            int rescaledHeight = (int) (mc.getMainWindow().getScaledHeight() / rescale);
 
-        RenderSystem.pushMatrix();
-        RenderSystem.depthMask(false);
+            RenderSystem.pushMatrix();
+            RenderSystem.depthMask(false);
 
-        RenderSystem.scalef(rescale, rescale, 1);
+            RenderSystem.scalef(rescale, rescale, 1);
 
-        ItemModelMesher mesher = Minecraft.getInstance().getItemRenderer().getItemModelMesher();
-        TextureManager renderEngine = Minecraft.getInstance().textureManager;
+            ItemModelMesher mesher = mc.getItemRenderer().getItemModelMesher();
+            TextureManager renderEngine = mc.textureManager;
 
-        int xPos = (rescaledWidth - 7 * 28 - 16) / 2;
-        int yPos = 2;
-        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-        {
-            int alpha = (amounts.get(i) < 0.001) ? 0x3FFFFFFF : 0xFFFFFFFF;
-
-            ItemStack stack = ElementsOfPowerMod.orb.getStack((int) amounts.get(i), Element.values[i]);
-
-            StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yPos, stack, alpha);
-
-            String formatted = magic.isInfinite() ? "\u221E" : ElementsOfPowerMod.prettyNumberFormatter.format(amounts.get(i));
-            this.drawCenteredString(font, formatted, xPos + 8, yPos + 11, 0xFFC0C0C0);
-            if (WandUseManager.instance.handInUse != null)
-                this.drawCenteredString(font, "K:" + (i + 1), xPos + 8, yPos + 24, 0xFFC0C0C0);
-
-            xPos += 28;
-        }
-
-        CompoundNBT nbt = heldItem.getTag();
-        if (nbt != null)
-        {
-            String savedSequence = nbt.getString(ItemWand.SPELL_SEQUENCE_TAG);
-
-            if (savedSequence.length() > 0)
+            int xPos = (rescaledWidth - 7 * 28 - 16) / 2;
+            int yPos = 2;
+            for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
             {
-                // Saved spell sequence
-                xPos = (rescaledWidth - 6 * (savedSequence.length() - 1) - 14) / 2;
-                yPos = rescaledHeight / 2 - 16 - 16;
-                for (char c : savedSequence.toCharArray())
+                int alpha = (amounts.get(i) < 0.001) ? 0x3FFFFFFF : 0xFFFFFFFF;
+
+                ItemStack stack = new ItemStack(Element.values[i].getOrb(), (int) amounts.get(i));
+
+                StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yPos, stack, alpha);
+
+                String formatted = magic.isInfinite() ? "\u221E" : ElementsOfPowerMod.prettyNumberFormatter.format(amounts.get(i));
+                this.drawCenteredString(font, formatted, xPos + 8, yPos + 11, 0xFFC0C0C0);
+                if (WandUseManager.instance.handInUse != null)
+                    this.drawCenteredString(font, "K:" + (i + 1), xPos + 8, yPos + 24, 0xFFC0C0C0);
+
+                xPos += 28;
+            }
+
+            CompoundNBT nbt = heldItem.getTag();
+            if (nbt != null)
+            {
+                String savedSequence = nbt.getString(ItemWand.SPELL_SEQUENCE_TAG);
+
+                if (savedSequence.length() > 0)
+                {
+                    // Saved spell sequence
+                    xPos = (rescaledWidth - 6 * (savedSequence.length() - 1) - 14) / 2;
+                    yPos = rescaledHeight / 2 - 16 - 16;
+                    for (char c : savedSequence.toCharArray())
+                    {
+                        int i = SpellManager.elementIndices[c - 'A'];
+
+                        ItemStack stack = new ItemStack(Element.values[i].getOrb());
+
+                        StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yPos, stack, 0xFFFFFFFF);
+
+                        xPos += 6;
+                    }
+                }
+            }
+
+            if (WandUseManager.instance.sequence != null)
+            {
+                // New spell sequence
+                xPos = (rescaledWidth - 6 * (WandUseManager.instance.sequence.length() - 1) - 14) / 2;
+                yPos = rescaledHeight / 2 + 16;
+                for (char c : WandUseManager.instance.sequence.toCharArray())
                 {
                     int i = SpellManager.elementIndices[c - 'A'];
 
-                    ItemStack stack = ElementsOfPowerMod.orb.getStack(1, Element.values[i]);
+                    ItemStack stack = new ItemStack(Element.values[i].getOrb());
 
                     StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yPos, stack, 0xFFFFFFFF);
 
                     xPos += 6;
                 }
             }
-        }
 
-        if (WandUseManager.instance.sequence != null)
-        {
-            // New spell sequence
-            xPos = (rescaledWidth - 6 * (WandUseManager.instance.sequence.length() - 1) - 14) / 2;
-            yPos = rescaledHeight / 2 + 16;
-            for (char c : WandUseManager.instance.sequence.toCharArray())
-            {
-                int i = SpellManager.elementIndices[c - 'A'];
+            RenderSystem.depthMask(true);
 
-                ItemStack stack = ElementsOfPowerMod.orb.getStack(1, Element.values[i]);
+            RenderSystem.popMatrix();
 
-                StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yPos, stack, 0xFFFFFFFF);
-
-                xPos += 6;
-            }
-        }
-
-        RenderSystem.depthMask(true);
-
-        RenderSystem.popMatrix();
-
-        RenderSystem.disableAlphaTest();
-        RenderSystem.disableBlend();
+            RenderSystem.disableAlphaTest();
+            RenderSystem.disableBlend();
+        });
     }
 }

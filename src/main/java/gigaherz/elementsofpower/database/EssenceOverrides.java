@@ -8,13 +8,19 @@ import gigaherz.elementsofpower.ElementsOfPowerMod;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.io.*;
 import java.lang.reflect.Type;
+import java.nio.file.Path;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public class EssenceOverrides
 {
+    public static final Supplier<Path> OVERRIDES = () -> FMLPaths.CONFIGDIR.get().resolve("elementsofpower_essences.json");
+
     private static final Gson SERIALIZER = new GsonBuilder()
             .registerTypeAdapter(MagicAmounts.class, new MagicAmounts.Serializer()).create();
 
@@ -30,7 +36,7 @@ public class EssenceOverrides
     {
         try
         {
-            Reader r = new FileReader(ElementsOfPowerMod.overrides);
+            Reader r = new FileReader(OVERRIDES.get().toFile());
             Type type = new TypeToken<Map<String, MagicAmounts>>()
             {
             }.getType();
@@ -51,7 +57,7 @@ public class EssenceOverrides
     {
         try
         {
-            Writer w = new FileWriter(ElementsOfPowerMod.overrides);
+            Writer w = new FileWriter(OVERRIDES.get().toFile());
             w.write(SERIALIZER.toJson(essenceOverrides));
             w.flush();
             w.close();
@@ -66,12 +72,11 @@ public class EssenceOverrides
     {
         loadConfigOverrides();
 
-        ResourceLocation resloc = Item.REGISTRY.getNameForObject(stack.getItem());
+        ResourceLocation resloc = stack.getItem().getRegistryName();
         assert resloc != null;
         String itemName = resloc.toString();
-        String entryName = String.format("%s@%d", itemName, stack.getMetadata());
 
-        essenceOverrides.put(entryName, amounts);
+        essenceOverrides.put(itemName, amounts);
 
         saveConfigOverrides();
     }
@@ -80,28 +85,15 @@ public class EssenceOverrides
     {
         for (Map.Entry<String, MagicAmounts> e : essenceOverrides.entrySet())
         {
-            String itemName;
-            String entryName = e.getKey();
-            int meta;
-            int pos = entryName.lastIndexOf('@');
-            if (pos <= 0)
-            {
-                itemName = entryName;
-                meta = 0;
-            }
-            else
-            {
-                itemName = entryName.substring(0, pos);
-                meta = Integer.parseInt(entryName.substring(pos + 1));
-            }
+            String itemName = e.getKey();
 
-            Item item = Item.REGISTRY.getObject(new ResourceLocation(itemName));
+            Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemName));
             if (item != null)
             {
-                ItemStack stack = new ItemStack(item, 1, meta);
+                ItemStack stack = new ItemStack(item, 1);
                 MagicAmounts m = e.getValue();
 
-                EssenceConversions.addConversion(stack, m);
+                EssenceConversions.addConversion(stack.getItem(), m);
             }
         }
     }

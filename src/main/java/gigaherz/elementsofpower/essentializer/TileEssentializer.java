@@ -365,4 +365,28 @@ public class TileEssentializer
     {
         return inventory;
     }
+
+    @Override
+    public MagicAmounts getContainedMagic()
+    {
+        return containedMagic;
+    }
+
+    @Override
+    public MagicAmounts getRemainingToConvert()
+    {
+        return remainingToConvert;
+    }
+
+    @Override
+    public void setContainedMagic(MagicAmounts contained)
+    {
+        containedMagic = contained;
+    }
+
+    @Override
+    public void setRemainingToConvert(MagicAmounts remaining)
+    {
+        remainingToConvert = remaining;
+    }
 }

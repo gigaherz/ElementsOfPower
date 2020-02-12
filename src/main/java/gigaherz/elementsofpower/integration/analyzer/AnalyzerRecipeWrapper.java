@@ -1,5 +1,5 @@
 package gigaherz.elementsofpower.integration.analyzer;
-
+/*
 import com.google.common.collect.Lists;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.gemstones.Gemstone;
@@ -58,3 +58,4 @@ public class AnalyzerRecipeWrapper implements IRecipeWrapper
         //ingredients.setInputs();
     }
 }
+*/

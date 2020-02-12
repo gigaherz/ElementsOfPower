@@ -1,16 +1,33 @@
 package gigaherz.elementsofpower.recipes;
 
-import com.google.gson.JsonObject;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraftforge.common.crafting.IRecipeFactory;
-import net.minecraftforge.common.crafting.JsonContext;
+import com.google.gson.JsonObject;;
+import net.minecraft.item.crafting.IRecipeSerializer;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.registries.ForgeRegistryEntry;
 
-public class ContainerChargeRecipeFactory implements IRecipeFactory
+import javax.annotation.Nullable;
+
+public class ContainerChargeRecipeFactory extends ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<ContainerChargeRecipe>
 {
+    public static final ContainerChargeRecipeFactory INSTANCE = new ContainerChargeRecipeFactory();
+
     @Override
-    public IRecipe parse(JsonContext context, JsonObject json)
+    public ContainerChargeRecipe read(ResourceLocation recipeId, JsonObject json)
     {
-        return new ContainerChargeRecipe();
+        return new ContainerChargeRecipe(recipeId);
+    }
+
+    @Nullable
+    @Override
+    public ContainerChargeRecipe read(ResourceLocation recipeId, PacketBuffer buffer)
+    {
+        return new ContainerChargeRecipe(recipeId);
+    }
+
+    @Override
+    public void write(PacketBuffer buffer, ContainerChargeRecipe recipe)
+    {
     }
 }
 

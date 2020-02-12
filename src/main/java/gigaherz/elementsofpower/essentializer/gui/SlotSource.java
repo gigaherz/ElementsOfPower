@@ -15,7 +15,7 @@ public class SlotSource extends SlotItemHandler
     @Override
     public boolean isItemValid(ItemStack stack)
     {
-        return stack == null || EssenceConversions.itemHasEssence(stack);
+        return stack == null || EssenceConversions.itemHasEssence(stack.getItem());
     }
 
     @Override

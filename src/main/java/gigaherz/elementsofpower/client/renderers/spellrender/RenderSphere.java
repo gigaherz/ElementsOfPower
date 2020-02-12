@@ -1,23 +1,19 @@
 package gigaherz.elementsofpower.client.renderers.spellrender;
 
-import gigaherz.common.client.ModelHandle;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import gigaherz.elementsofpower.spells.Spellcast;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Vec3d;
-import org.lwjgl.opengl.GL11;
 
 public class RenderSphere extends RenderSpell
 {
     @Override
-    public void doRender(Spellcast cast, PlayerEntity player, EntityRendererManager renderManager,
-                         double x, double y, double z, float partialTicks, Vec3d offset, String tex, int color)
+    public void render(Spellcast cast, PlayerEntity player, EntityRendererManager renderManager, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, Vec3d offset)
     {
         float scale = cast.getScale();
-
-        ModelHandle modelSphere = getSphere(tex);
 
         float time = ((cast.totalCastTime - cast.remainingCastTime) + partialTicks);
         float progress = (time / cast.totalCastTime);
@@ -28,36 +24,30 @@ public class RenderSphere extends RenderSpell
             return;
 
         int alpha = (int) (255 * (1 - progress));
-        color = (alpha << 24) | color;
+        int color = (alpha << 24) | getColor(cast);
 
+        /*
         GlStateManager.disableLighting();
         GlStateManager.enableRescaleNormal();
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.depthMask(false);
+         */
 
-        renderManager.renderEngine.bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
+        matrixStackIn.push();
 
-        GlStateManager.pushMatrix();
+        matrixStackIn.translate( (float) (offset.x), (float) (offset.y - player.getEyeHeight() * 0.5f), (float) (offset.z));
+        matrixStackIn.scale(scale, scale, scale);
 
-        GlStateManager.translate(
-                (float) (x + offset.x),
-                (float) (y + offset.y - player.getEyeHeight() * 0.5f),
-                (float) (z + offset.z));
-        GlStateManager.scale(scale, scale, scale);
+        modelSphere.render(bufferIn, getRenderType(cast, true), matrixStackIn, 0x00F000F0, color);
+        modelSphere.render(bufferIn, getRenderType(cast, false), matrixStackIn, 0x00F000F0, color);
 
-        GlStateManager.cullFace(GlStateManager.CullFace.FRONT);
-        modelSphere.render(color);
-        GlStateManager.cullFace(GlStateManager.CullFace.BACK);
-        modelSphere.render(color);
+        matrixStackIn.pop();
+    }
 
-        GlStateManager.popMatrix();
-
-        GlStateManager.depthMask(true);
-        GlStateManager.disableBlend();
-        GlStateManager.disableRescaleNormal();
-        GlStateManager.enableLighting();
-        GlStateManager.enableAlpha();
+    private RenderType getRenderType(Spellcast cast, boolean cullFront)
+    {
+        return null;
     }
 }

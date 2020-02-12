@@ -5,17 +5,15 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.monster.BlazeEntity;
 import net.minecraft.entity.projectile.DamagingProjectileEntity;
 import net.minecraft.entity.projectile.SmallFireballEntity;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.math.*;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -59,29 +57,29 @@ public class FlameEffect extends SpellEffect
     public void processEntitiesAroundAfter(Spellcast cast, Vec3d hitVec)
     {
         AxisAlignedBB aabb = new AxisAlignedBB(
-                getHitVec().x - cast.getDamageForce(),
-                getHitVec().y - cast.getDamageForce(),
-                getHitVec().z - cast.getDamageForce(),
-                getHitVec().x + cast.getDamageForce(),
-                getHitVec().y + cast.getDamageForce(),
-                getHitVec().z + cast.getDamageForce());
+                hitVec.x - cast.getDamageForce(),
+                hitVec.y - cast.getDamageForce(),
+                hitVec.z - cast.getDamageForce(),
+                hitVec.x + cast.getDamageForce(),
+                hitVec.y + cast.getDamageForce(),
+                hitVec.z + cast.getDamageForce());
 
-        burnEntities(cast, getHitVec(), cast.world.getEntitiesWithinAABB(LivingEntity.class, aabb));
-        burnEntities(cast, getHitVec(), cast.world.getEntitiesWithinAABB(ItemEntity.class, aabb));
+        burnEntities(cast, hitVec, cast.world.getEntitiesWithinAABB(LivingEntity.class, aabb));
+        burnEntities(cast, hitVec, cast.world.getEntitiesWithinAABB(ItemEntity.class, aabb));
     }
 
     private void burnEntities(Spellcast cast, Vec3d hitVec, List<? extends Entity> living)
     {
-        DamagingProjectileEntity ef = new SmallFireballEntity(cast.world);
+        DamagingProjectileEntity ef = EntityType.SMALL_FIREBALL.create(cast.world);
 
         for (Entity e : living)
         {
-            if (!e.isEntityAlive())
+            if (!e.isAlive())
                 continue;
 
-            double dx = e.posX - getHitVec().x;
-            double dy = e.posY - getHitVec().y;
-            double dz = e.posZ - getHitVec().z;
+            double dx = e.getPosX() - hitVec.x;
+            double dy = e.getPosY() - hitVec.y;
+            double dz = e.getPosZ() - hitVec.z;
 
             double ll = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
@@ -102,9 +100,9 @@ public class FlameEffect extends SpellEffect
     @Override
     public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, BlockState currentState, float r, @Nullable RayTraceResult mop)
     {
-        if (mop != null)
+        if (mop != null && mop.getType() == RayTraceResult.Type.BLOCK)
         {
-            blockPos = blockPos.offset(mop.sideHit);
+            blockPos = blockPos.offset(((BlockRayTraceResult)mop).getFace());
             currentState = cast.world.getBlockState(blockPos);
         }
 
@@ -119,7 +117,7 @@ public class FlameEffect extends SpellEffect
     @Override
     public void spawnBallParticles(Spellcast cast, RayTraceResult mop)
     {
-        cast.spawnRandomParticle(EnumParticleTypes.FLAME,
-                mop.getHitVec().x, mop.getHitVec().y, mop.getHitVec().z);
+        Vec3d hitVec = mop.getHitVec();
+        cast.spawnRandomParticle(ParticleTypes.FLAME, hitVec.x, hitVec.y, hitVec.z);
     }
 }

@@ -1,15 +1,11 @@
 package gigaherz.elementsofpower.spells.effects;
 
 import gigaherz.elementsofpower.spells.Spellcast;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockDynamicLiquid;
-import net.minecraft.block.BlockSnow;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
+import net.minecraft.block.*;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -59,17 +55,17 @@ public class FrostEffect extends SpellEffect
     {
         for (int i = 0; i < 8; ++i)
         {
-            cast.spawnRandomParticle(EnumParticleTypes.SNOWBALL,
-                    mop.getHitVec().x, mop.getHitVec().y, mop.getHitVec().z);
+            Vec3d hitVec = mop.getHitVec();
+            cast.spawnRandomParticle(ParticleTypes.ITEM_SNOWBALL, hitVec.x, hitVec.y, hitVec.z);
         }
     }
 
     @Override
     public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, BlockState currentState, float r, @Nullable RayTraceResult mop)
     {
-        if (mop != null)
+        if (mop != null && mop.getType() == RayTraceResult.Type.BLOCK)
         {
-            blockPos = blockPos.offset(mop.sideHit);
+            blockPos = blockPos.offset(((BlockRayTraceResult)mop).getFace());
             currentState = cast.world.getBlockState(blockPos);
         }
 
@@ -80,13 +76,13 @@ public class FrostEffect extends SpellEffect
 
         if (block == Blocks.FIRE)
         {
-            world.setBlockToAir(blockPos);
+            world.setBlockState(blockPos, Blocks.AIR.getDefaultState());
         }
         else if (layers > 0)
         {
-            if (block == Blocks.LAVA || block == Blocks.FLOWING_LAVA)
+            if (block == Blocks.LAVA)
             {
-                if (currentState.getValue(BlockDynamicLiquid.LEVEL) > 0)
+                if (currentState.get(FlowingFluidBlock.LEVEL) > 0)
                 {
                     world.setBlockState(blockPos, Blocks.COBBLESTONE.getDefaultState());
                 }
@@ -96,9 +92,9 @@ public class FrostEffect extends SpellEffect
                 }
                 return;
             }
-            else if (block == Blocks.WATER || block == Blocks.FLOWING_WATER)
+            else if (block == Blocks.WATER)
             {
-                if (currentState.getValue(BlockDynamicLiquid.LEVEL) > 0)
+                if (currentState.get(FlowingFluidBlock.LEVEL) > 0)
                 {
                     world.setBlockState(blockPos, Blocks.ICE.getDefaultState());
                 }
@@ -108,15 +104,15 @@ public class FrostEffect extends SpellEffect
                 }
                 return;
             }
-            else if (!Blocks.SNOW_LAYER.canPlaceBlockOnSide(world, blockPos, Direction.UP))
+            /*else if (!Blocks.SNOW.canPlaceBlockOnSide(world, blockPos, Direction.UP))
             {
                 return;
-            }
+            }*/
 
             BlockState below = world.getBlockState(blockPos.down());
-            if (below.getBlock() == Blocks.SNOW_LAYER)
+            if (below.getBlock() == Blocks.SNOW)
             {
-                if (below.getValue(BlockSnow.LAYERS) < 8)
+                if (below.get(SnowBlock.LAYERS) < 8)
                 {
                     blockPos = blockPos.down();
                 }
@@ -127,20 +123,20 @@ public class FrostEffect extends SpellEffect
                 currentState = world.getBlockState(blockPos);
                 block = currentState.getBlock();
 
-                if (block == Blocks.SNOW_LAYER)
+                if (block == Blocks.SNOW)
                 {
-                    int l = currentState.getValue(BlockSnow.LAYERS);
+                    int l = currentState.get(SnowBlock.LAYERS);
                     if (l == 8)
                         break;
                     int add = Math.min(8 - l, layers);
                     l += add;
-                    world.setBlockState(blockPos, currentState.withProperty(BlockSnow.LAYERS, l));
+                    world.setBlockState(blockPos, currentState.with(SnowBlock.LAYERS, l));
                     layers -= add;
                 }
                 else if (block == Blocks.AIR)
                 {
                     int add = Math.min(8, layers);
-                    world.setBlockState(blockPos, Blocks.SNOW_LAYER.getDefaultState().withProperty(BlockSnow.LAYERS, add));
+                    world.setBlockState(blockPos, Blocks.SNOW.getDefaultState().with(SnowBlock.LAYERS, add));
                     layers -= add;
                 }
                 else

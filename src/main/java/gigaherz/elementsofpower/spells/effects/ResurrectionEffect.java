@@ -3,6 +3,7 @@ package gigaherz.elementsofpower.spells.effects;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
@@ -69,15 +70,17 @@ public class ResurrectionEffect
 
         if (state.getBlock() == Blocks.DRAGON_EGG)
         {
-            EnderDragonEntity dragon = new EnderDragonEntity(world);
+            EnderDragonEntity dragon = EntityType.ENDER_DRAGON.create(world);
 
-            BlockPos spawnAt = world.getTopSolidOrLiquidBlock(blockPos).up(5);
+            // FIXME: figure out
+            //BlockPos spawnAt = world.getTopSolidOrLiquidBlock(blockPos).up(5);
+            BlockPos spawnAt = (blockPos).up(5);
 
             dragon.setLocationAndAngles(spawnAt.getX(), spawnAt.getY(), spawnAt.getZ(), world.rand.nextFloat() * 360.0F, 0.0F);
 
-            if (world.spawnEntity(dragon))
+            if (world.addEntity(dragon))
             {
-                world.setBlockToAir(blockPos);
+                world.setBlockState(blockPos, Blocks.AIR.getDefaultState());
             }
         }
     }

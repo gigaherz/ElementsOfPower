@@ -1,5 +1,5 @@
 package gigaherz.elementsofpower.integration;
-
+/*
 import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.integration.analyzer.AnalyzerCategory;
 import gigaherz.elementsofpower.integration.analyzer.AnalyzerRecipeWrapper;
@@ -91,3 +91,4 @@ public class JEIPlugin implements IModPlugin
     {
     }
 }
+*/

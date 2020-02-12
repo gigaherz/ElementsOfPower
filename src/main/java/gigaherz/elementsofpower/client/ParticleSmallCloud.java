@@ -3,10 +3,9 @@ package gigaherz.elementsofpower.client;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.CloudParticle;
 import net.minecraft.crash.CrashReport;
-import net.minecraft.util.ReportedException;
+import net.minecraft.crash.ReportedException;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import java.lang.reflect.Field;
 
@@ -14,7 +13,7 @@ public class ParticleSmallCloud extends CloudParticle
 {
     private static final Field internalParticleSizeField = ObfuscationReflectionHelper.findField(CloudParticle.class, "field_70569_a");
 
-    public ParticleSmallCloud(World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn)
+    private ParticleSmallCloud(World worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn)
     {
         super(worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);
         particleScale *= 0.45f;
@@ -29,18 +28,18 @@ public class ParticleSmallCloud extends CloudParticle
     }
 
     @Override
-    public void onUpdate()
+    public void tick()
     {
         this.prevPosX = this.posX;
         this.prevPosY = this.posY;
         this.prevPosZ = this.posZ;
 
-        if (this.particleAge++ >= this.particleMaxAge)
+        if (this.age++ >= this.maxAge)
         {
             this.setExpired();
         }
 
-        this.setParticleTextureIndex(7 - this.particleAge * 8 / this.particleMaxAge);
+        this.setParticleTextureIndex(7 - this.age * 8 / this.maxAge);
         this.move(this.motionX, this.motionY, this.motionZ);
         this.motionX *= 0.9599999785423279D;
         this.motionY *= 0.9599999785423279D;
@@ -55,6 +54,6 @@ public class ParticleSmallCloud extends CloudParticle
 
     public static void spawn(World worldIn, double x, double y, double z, double vx, double vy, double vz)
     {
-        Minecraft.getInstance().effectRenderer.addEffect(new ParticleSmallCloud(worldIn, x, y, z, vx, vy, vz));
+        Minecraft.getInstance().particles.addEffect(new ParticleSmallCloud(worldIn, x, y, z, vx, vy, vz));
     }
 }

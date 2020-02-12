@@ -1,55 +1,60 @@
 package gigaherz.elementsofpower.client.renderers;
 
-import gigaherz.common.client.ModelHandle;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import gigaherz.elementsofpower.essentializer.TileEssentializer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
-import net.minecraft.client.renderer.texture.AtlasTexture;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.Vector3f;
+import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
 
-public class RenderEssentializer extends TileEntitySpecialRenderer<TileEssentializer>
+public class RenderEssentializer extends TileEntityRenderer<TileEssentializer>
 {
     ModelHandle handle = ModelHandle.of("elementsofpower:block/essentializer_2.obj");
 
-    @Override
-    public void render(TileEssentializer te, double x, double y, double z, float partialTicks, int destroyStage, float something)
+    public RenderEssentializer(TileEntityRendererDispatcher rendererDispatcherIn)
     {
-        bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
+        super(rendererDispatcherIn);
+    }
 
-        GlStateManager.disableLighting();
+    @Override
+    public void render(TileEssentializer te, float partialTicks, MatrixStack matrixStack, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn)
+    {
+        //GlStateManager.disableLighting();
 
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(x + 0.5, y + 1, z + 0.5);
+        matrixStack.push();
+        matrixStack.translate(0.5, 1, 0.5);
 
         float timeRandom = MathHelper.getPositionRandom(te.getPos()) % 360;
 
-        float time = (getWorld().getTotalWorldTime() + timeRandom + partialTicks) * 1.5f;
+        float time = (te.getWorld().getGameTime() + timeRandom + partialTicks) * 1.5f;
 
         float angle1 = time * 2.5f + 120 * (1 + (float) Math.sin(time * 0.05f));
         float angle2 = time * 0.9f;
         float bob = (float) Math.sin(time * (Math.PI / 180) * 2.91) * 0.06f;
 
-        GlStateManager.translate(0, bob, 0);
+        matrixStack.translate(0, bob, 0);
 
         for (int i = 0; i < 4; i++)
         {
-            GlStateManager.pushMatrix();
+            matrixStack.push();
 
             float angle3 = angle2 + 90 * i;
-            GlStateManager.rotate(angle3, 0, 1, 0);
-            GlStateManager.translate(0.6, 0, 0);
-            GlStateManager.rotate(-45, 0, 0, 1);
+            matrixStack.rotate(Vector3f.YP.rotationDegrees(angle3));
+            matrixStack.translate(0.6, 0, 0);
+            matrixStack.rotate(Vector3f.ZP.rotationDegrees(-45));
 
-            GlStateManager.rotate(angle1, 0, 1, 0);
+            matrixStack.rotate(Vector3f.YP.rotationDegrees(angle1));
 
-            handle.render(0xFFFFFFFF);
+            handle.render(bufferIn, RenderType.translucent(), matrixStack, combinedLightIn, 0xFFFFFFFF);
 
-            GlStateManager.popMatrix();
+            matrixStack.pop();
         }
-        GlStateManager.popMatrix();
+        matrixStack.pop();
 
         ItemStack stack = te.getInventory().getStackInSlot(0);
         if (stack.getCount() > 0)
@@ -57,23 +62,20 @@ public class RenderEssentializer extends TileEntitySpecialRenderer<TileEssential
             float angle3 = time * 1.5f;
             float bob2 = (float) (1 + Math.sin(time * (Math.PI / 180) * 0.91)) * 0.03f;
 
-            GlStateManager.pushMatrix();
+            matrixStack.push();
 
-            GlStateManager.translate(x + 0.5, y + 0.55 + bob2, z + 0.5);
+            matrixStack.translate(0.5, 0.55 + bob2, 0.5);
 
-            GlStateManager.rotate(angle3, 0, 1, 0);
-            GlStateManager.rotate(90, 1, 0, 0);
+            matrixStack.rotate(Vector3f.YP.rotationDegrees(angle3));
+            matrixStack.rotate(Vector3f.XP.rotationDegrees(90));
 
-            GlStateManager.color(1f, 1f, 1f, 1f);
-            GlStateManager.scale(0.35, 0.35, 0.35);
+            //matrixStack.color(1f, 1f, 1f, 1f);
+            matrixStack.scale(0.35f, 0.35f, 0.35f);
 
             Minecraft mc = Minecraft.getInstance();
-            mc.renderEngine.bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
-            mc.getRenderItem().renderItem(stack, TransformType.GROUND);
+            mc.getItemRenderer().renderItem(stack, ItemCameraTransforms.TransformType.GROUND, combinedLightIn, combinedOverlayIn, matrixStack, bufferIn);
 
-            GlStateManager.popMatrix();
+            matrixStack.pop();
         }
-
-        GlStateManager.enableLighting();
     }
 }

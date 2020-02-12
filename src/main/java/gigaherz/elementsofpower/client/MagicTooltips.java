@@ -2,45 +2,45 @@ package gigaherz.elementsofpower.client;
 
 import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.capabilities.CapabilityMagicContainer;
-import gigaherz.elementsofpower.capabilities.IMagicContainer;
 import gigaherz.elementsofpower.database.EssenceConversions;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.InputMappings;
 import net.minecraft.item.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-@Mod.EventBusSubscriber(value = Side.CLIENT, modid = ElementsOfPowerMod.MODID)
+@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = ElementsOfPowerMod.MODID)
 public class MagicTooltips
 {
     @SubscribeEvent
     public static void onTooltip(ItemTooltipEvent event)
     {
         ItemStack stack = event.getItemStack();
-        List<String> toolTip = event.getToolTip();
+        List<ITextComponent> toolTip = event.getToolTip();
 
         addConversionTooltip(toolTip, stack);
         addContainedTooltip(toolTip, stack);
     }
 
-    private static void addConversionTooltip(List<String> toolTip, ItemStack stack)
+    private static void addConversionTooltip(List<ITextComponent> toolTip, ItemStack stack)
     {
         Item item = stack.getItem();
 
         if (item == Items.DIAMOND || item == Items.EMERALD || item == Items.QUARTZ)
         {
-            toolTip.add(1, TextFormatting.DARK_GRAY + "" + TextFormatting.ITALIC + I18n.format("text." + ElementsOfPowerMod.MODID + ".gemstone.use"));
+            toolTip.add(1, new TranslationTextComponent("text.elementsofpower.gemstone.use").applyTextStyles(TextFormatting.DARK_GRAY, TextFormatting.ITALIC));
         }
 
         MagicAmounts amounts = EssenceConversions.getEssences(stack, false);
@@ -49,10 +49,10 @@ public class MagicTooltips
 
         Minecraft mc = Minecraft.getInstance();
 
-        toolTip.add(TextFormatting.YELLOW + "Converts to Essences:");
+        toolTip.add(new StringTextComponent("Converts to Essences:").applyTextStyle(TextFormatting.YELLOW));
         if (!InputMappings.isKeyDown(mc.getMainWindow().getHandle(), GLFW.GLFW_KEY_LEFT_SHIFT) && !InputMappings.isKeyDown(mc.getMainWindow().getHandle(), GLFW.GLFW_KEY_RIGHT_SHIFT))
         {
-            toolTip.add(TextFormatting.GRAY + "  (Hold SHIFT)");
+            toolTip.add(new StringTextComponent("  (Hold SHIFT)").applyTextStyle(TextFormatting.GRAY));
             return;
         }
 
@@ -69,59 +69,58 @@ public class MagicTooltips
             /*if (magic.isInfinite())
                 str = String.format("%s  %s x\u221E", TextFormatting.GRAY, magicName);
             else */if (stack.getCount() > 1)
-                str = String.format("%s  %s x%s (stack %s)", TextFormatting.GRAY, magicName,
+                str = String.format("  %s x%s (stack %s)", magicName,
                         ElementsOfPowerMod.prettyNumberFormatter2.format(amounts.get(i)),
                         ElementsOfPowerMod.prettyNumberFormatter2.format(amounts.get(i) * stack.getCount()));
             else
-                str = String.format("%s  %s x%s", TextFormatting.GRAY, magicName,
+                str = String.format(" %s x%s", magicName,
                         ElementsOfPowerMod.prettyNumberFormatter2.format(amounts.get(i)));
-            toolTip.add(str);
+            toolTip.add(new StringTextComponent(str).applyTextStyle(TextFormatting.GRAY));
         }
     }
 
-    public static void addContainedTooltip(List<String> toolTip, ItemStack stack)
+    public static void addContainedTooltip(List<ITextComponent> toolTip, ItemStack stack)
     {
-        IMagicContainer magic = CapabilityMagicContainer.getContainer(stack);
-        if (magic == null)
-            return;
+        CapabilityMagicContainer.getContainer(stack).ifPresent(magic -> {
 
-        MagicAmounts amounts = magic.getContainedMagic();
-        if (amounts.isEmpty() && !magic.isInfinite())
-        {
-            return;
-        }
-
-        toolTip.add(TextFormatting.YELLOW + "Contains magic:");
-        if (!Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) && !Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
-        {
-            toolTip.add(TextFormatting.GRAY + "  (Hold SHIFT)");
-            return;
-        }
-
-        if(magic.isInfinite())
-        {
-            for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+            MagicAmounts amounts = magic.getContainedMagic();
+            if (amounts.isEmpty() && !magic.isInfinite())
             {
-                String magicName = MagicAmounts.getMagicName(i);
-                String str = String.format("%s  %s x\u221E", TextFormatting.GRAY, magicName);
-                toolTip.add(str);
+                return;
             }
-        }
-        else
-        {
-            for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+
+            Minecraft mc = Minecraft.getInstance();
+
+            toolTip.add(new StringTextComponent("Contains magic:").applyTextStyle(TextFormatting.YELLOW));
+            if (!InputMappings.isKeyDown(mc.getMainWindow().getHandle(), GLFW.GLFW_KEY_LEFT_SHIFT) &&
+                    !InputMappings.isKeyDown(mc.getMainWindow().getHandle(), GLFW.GLFW_KEY_RIGHT_SHIFT))
             {
-                if (amounts.get(i) == 0)
+                toolTip.add(new StringTextComponent("  (Hold SHIFT)").applyTextStyle(TextFormatting.GRAY));
+                return;
+            }
+
+            if(magic.isInfinite())
+            {
+                for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
                 {
-                    continue;
+                    String magicName = MagicAmounts.getMagicName(i);
+                    toolTip.add(new StringTextComponent(magicName).applyTextStyle(TextFormatting.GRAY));
                 }
-
-                String magicName = MagicAmounts.getMagicName(i);
-                String str = String.format("%s  %s x%s", TextFormatting.GRAY, magicName,
-                            ElementsOfPowerMod.prettyNumberFormatter2.format(amounts.get(i)));
-                toolTip.add(str);
             }
-        }
-    }
+            else
+            {
+                for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+                {
+                    if (amounts.get(i) == 0)
+                    {
+                        continue;
+                    }
 
+                    String magicName = MagicAmounts.getMagicName(i);
+                    String str = String.format("  %s x%s", magicName, ElementsOfPowerMod.prettyNumberFormatter2.format(amounts.get(i)));
+                    toolTip.add(new StringTextComponent(str).applyTextStyle(TextFormatting.GRAY));
+                }
+            }
+        });
+    }
 }

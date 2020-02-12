@@ -1,13 +1,12 @@
 package gigaherz.elementsofpower.client.renderers;
 
-import gigaherz.common.client.ModelHandle;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import gigaherz.elementsofpower.entities.EntityEssence;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.opengl.GL11;
 
 public class RenderEssence extends EntityRenderer<EntityEssence>
 {
@@ -19,19 +18,19 @@ public class RenderEssence extends EntityRenderer<EntityEssence>
     ModelHandle handle = ModelHandle.of("elementsofpower:entity/sphere.obj");
 
     @Override
-    public void doRender(EntityEssence entity, double x, double y, double z, float p_76986_8_, float partialTicks)
+    public void render(EntityEssence entity, float entityYaw, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn)
     {
         float scale = entity.getScale();
 
+        /*
         GlStateManager.disableLighting();
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.enableRescaleNormal();
-        GlStateManager.pushMatrix();
-        GlStateManager.translate((float) x, (float) y, (float) z);
-        GlStateManager.scale(scale, scale, scale);
+        */
 
-        bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
+        matrixStackIn.push();
+        matrixStackIn.scale(scale, scale, scale);
 
         float cycle = (entity.ticksExisted % 10 + partialTicks) / 11.0f;
 
@@ -47,25 +46,22 @@ public class RenderEssence extends EntityRenderer<EntityEssence>
             alpha /= 2;
             int color = (alpha << 24) | ball_color;
 
-            GlStateManager.pushMatrix();
-            GlStateManager.scale(subScale, subScale, subScale);
+            matrixStackIn.push();
+            matrixStackIn.scale(subScale, subScale, subScale);
 
-            handle.render(color);
+            handle.render(bufferIn, RenderType.entityTranslucent(getEntityTexture(entity)), matrixStackIn, 0x00F000F0, color);
 
-            GlStateManager.popMatrix();
+            matrixStackIn.pop();
         }
 
-        GlStateManager.popMatrix();
+        matrixStackIn.pop();
 
-        GlStateManager.disableRescaleNormal();
-        GlStateManager.enableLighting();
-
-        super.doRender(entity, x, y, z, p_76986_8_, partialTicks);
+        super.render(entity, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
     }
 
     @Override
-    protected ResourceLocation getEntityTexture(EntityEssence entity)
+    public ResourceLocation getEntityTexture(EntityEssence entity)
     {
-        return AtlasTexture.LOCATION_BLOCKS_TEXTURE;
+        return new ResourceLocation("forge:white");
     }
 }

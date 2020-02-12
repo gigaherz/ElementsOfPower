@@ -1,5 +1,5 @@
 package gigaherz.elementsofpower.integration;
-
+/*
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.item.ItemStack;
@@ -26,3 +26,4 @@ public class GemstoneChangeRecipeWrapper implements IRecipeWrapper
         ingredients.setOutput(ItemStack.class, output);
     }
 }
+*/

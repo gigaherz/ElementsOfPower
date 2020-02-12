@@ -1,5 +1,5 @@
 package gigaherz.elementsofpower.integration.essentializer;
-
+/*
 import com.google.common.collect.Lists;
 import gigaherz.elementsofpower.database.EssenceConversions;
 import gigaherz.elementsofpower.database.MagicAmounts;
@@ -58,3 +58,4 @@ public class EssentializerRecipeWrapper implements IRecipeWrapper
         return EssentializerCategory.INSTANCE.getTooltipStrings(mouseX, mouseY);
     }
 }
+*/

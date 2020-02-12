@@ -1,5 +1,5 @@
 package gigaherz.elementsofpower.integration.analyzer;
-
+/*
 import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.analyzer.gui.GuiAnalyzer;
 import gigaherz.elementsofpower.gemstones.Quality;
@@ -96,21 +96,21 @@ public class AnalyzerCategory implements IRecipeCategory<AnalyzerRecipeWrapper>
                     17 + 21 * (ord / 2) - 16);
         }
 
-        /*
+        /-*
         List inputs = recipeWrapper.getInputs();
         List outputs = recipeWrapper.getOutputs();
-        */
+        *-/
 
         recipeWrapper.getIngredients(ingredients);
 
-        /*
+        /-*
         itemStacks.setFromRecipe(0, inputs.get(0));
         itemStacks.setFromRecipe(1, outputs.get(0));
         itemStacks.setFromRecipe(2, outputs.get(1));
         itemStacks.setFromRecipe(3, outputs.get(2));
         itemStacks.setFromRecipe(4, outputs.get(3));
-        itemStacks.setFromRecipe(5, outputs.get(4));
-        */
+        i-temStacks.setFromRecipe(5, outputs.get(4));
+        *-/
     }
 
     @Override
@@ -119,3 +119,4 @@ public class AnalyzerCategory implements IRecipeCategory<AnalyzerRecipeWrapper>
         return null;
     }
 }
+*/

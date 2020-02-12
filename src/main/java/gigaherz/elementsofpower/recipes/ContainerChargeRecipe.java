@@ -6,15 +6,23 @@ import gigaherz.elementsofpower.items.ItemMagicOrb;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.ICraftingRecipe;
+import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import java.util.List;
 
-public class ContainerChargeRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
+public class ContainerChargeRecipe implements ICraftingRecipe
 {
+    private final ResourceLocation id;
+
+    public ContainerChargeRecipe(ResourceLocation id)
+    {
+        this.id = id;
+    }
+
     @Override
     public boolean matches(CraftingInventory inv, World worldIn)
     {
@@ -102,5 +110,17 @@ public class ContainerChargeRecipe extends IForgeRegistryEntry.Impl<IRecipe> imp
     public boolean isDynamic()
     {
         return true;
+    }
+
+    @Override
+    public ResourceLocation getId()
+    {
+        return id;
+    }
+
+    @Override
+    public IRecipeSerializer<?> getSerializer()
+    {
+        return ContainerChargeRecipeFactory.INSTANCE;
     }
 }

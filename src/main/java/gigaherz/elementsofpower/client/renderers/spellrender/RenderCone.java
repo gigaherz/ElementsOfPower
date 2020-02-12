@@ -1,23 +1,22 @@
 package gigaherz.elementsofpower.client.renderers.spellrender;
 
-import gigaherz.common.client.ModelHandle;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import gigaherz.elementsofpower.client.renderers.ModelHandle;
 import gigaherz.elementsofpower.spells.Spellcast;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Vec3d;
-import org.lwjgl.opengl.GL11;
 
 public class RenderCone extends RenderSpell
 {
     @Override
-    public void doRender(Spellcast cast, PlayerEntity player, EntityRendererManager renderManager,
-                         double x, double y, double z, float partialTicks, Vec3d offset, String tex, int color)
+    public void render(Spellcast cast, PlayerEntity player, EntityRendererManager renderManager, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, Vec3d offset)
     {
         float scale = 2 * cast.getScale();
 
-        ModelHandle modelCone = getCone(tex);
 
         cast.getHitPosition(partialTicks);
 
@@ -33,22 +32,23 @@ public class RenderCone extends RenderSpell
         double beamYaw = Math.atan2(dir.z, dir.x);
         double beamPitch = Math.atan2(dir.y, beamPlane);
 
+        /*
         GlStateManager.disableLighting();
         GlStateManager.enableRescaleNormal();
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.depthMask(false);
+         */
 
-        renderManager.renderEngine.bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
-
-        GlStateManager.pushMatrix();
+        matrixStackIn.push();
 
         int alpha = 80; // 64;
-        color = (alpha << 24) | color;
+        int color = (alpha << 24) | getColor(cast);
 
         float time = (player.ticksExisted + partialTicks);
 
+        RenderType rt = getRenderType(cast);
         for (int i = 0; i <= 4; i++)
         {
             float scale_xy = scale * (float) Math.pow(0.8, i);
@@ -57,28 +57,19 @@ public class RenderCone extends RenderSpell
 
             float angle = time * (6 + 3 * (4 - i)) * ((i & 1) == 0 ? 1 : -1);
 
-            GlStateManager.pushMatrix();
-            GlStateManager.translate(
-                    (float) (x + offset.x),
-                    (float) (y + offset.y),
-                    (float) (z + offset.z));
-            GlStateManager.rotate(-(float) Math.toDegrees(beamYaw) + 90, 0, 1, 0);
-            GlStateManager.rotate(-(float) Math.toDegrees(beamPitch), 1, 0, 0);
-            GlStateManager.translate(0, -0.15f, offset_z);
-            GlStateManager.rotate(angle, 0, 0, 1);
-            GlStateManager.scale(scale_xy, scale_xy, scale_z);
+            matrixStackIn.push();
+            matrixStackIn.translate( (float) (offset.x), (float) (offset.y), (float) (offset.z));
+            matrixStackIn.rotate(Vector3f.YP.rotation((float) (Math.PI*0.5-beamYaw)));
+            matrixStackIn.rotate(Vector3f.YP.rotation((float) -beamPitch));
+            matrixStackIn.translate(0, -0.15f, offset_z);
+            matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(angle));
+            matrixStackIn.scale(scale_xy, scale_xy, scale_z);
 
-            modelCone.render(color);
+            modelCone.render(bufferIn, rt, matrixStackIn, 0x00F000F0, color);
 
-            GlStateManager.popMatrix();
+            matrixStackIn.pop();
         }
 
-        GlStateManager.popMatrix();
-
-        GlStateManager.depthMask(true);
-        GlStateManager.disableBlend();
-        GlStateManager.disableRescaleNormal();
-        GlStateManager.enableLighting();
-        GlStateManager.enableAlpha();
+        matrixStackIn.pop();
     }
 }

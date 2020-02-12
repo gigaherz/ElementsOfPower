@@ -1,5 +1,5 @@
 package gigaherz.elementsofpower.integration.essentializer;
-
+/*
 import com.google.common.collect.Lists;
 import gigaherz.common.client.StackRenderingHelper;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
@@ -205,3 +205,4 @@ public class EssentializerCategory implements IRecipeCategory<EssentializerRecip
         }
     }
 }
+*/

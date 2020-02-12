@@ -1,39 +1,54 @@
 package gigaherz.elementsofpower.cocoons;
 
 import gigaherz.elementsofpower.database.MagicAmounts;
-import gigaherz.elementsofpower.spells.Element;
+import gigaherz.elementsofpower.items.ItemMagicOrb;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ITickable;
+import net.minecraft.tileentity.TileEntityType;
+import net.minecraftforge.registries.ObjectHolder;
 
-public class TileCocoon extends TileEntity implements ITickable
+public class TileCocoon extends TileEntity implements ITickableTileEntity
 {
+    @ObjectHolder("elementsofpower:cocoon")
+    public static TileEntityType<TileCocoon> TYPE;
+
     public MagicAmounts essenceContained = MagicAmounts.EMPTY;
 
-    @Override
-    public void readFromNBT(CompoundNBT compound)
+    public TileCocoon(TileEntityType<?> type)
     {
-        super.readFromNBT(compound);
+        super(type);
+    }
 
-        essenceContained = new MagicAmounts(compound.getCompoundTag("Magic"));
+    public TileCocoon()
+    {
+        super(TYPE);
     }
 
     @Override
-    public CompoundNBT writeToNBT(CompoundNBT compound)
+    public void read(CompoundNBT compound)
     {
-        compound = super.writeToNBT(compound);
+        super.read(compound);
 
-        compound.setTag("Magic", essenceContained.serializeNBT());
+        essenceContained = new MagicAmounts(compound.getCompound("Magic"));
+    }
+
+    @Override
+    public CompoundNBT write(CompoundNBT compound)
+    {
+        compound = super.write(compound);
+
+        compound.put("Magic", essenceContained.serializeNBT());
 
         return compound;
     }
 
     @Override
-    public void update()
+    public void tick()
     {
 
     }
@@ -45,7 +60,7 @@ public class TileCocoon extends TileEntity implements ITickable
 
     public void addEssences(ItemStack stack)
     {
-        essenceContained = essenceContained.add(Element.values[stack.getMetadata()], 1);
+        essenceContained = essenceContained.add(((ItemMagicOrb)stack.getItem()).getElement(), 1);
 
         BlockState state = world.getBlockState(pos);
         world.notifyBlockUpdate(pos, state, state, 3);
@@ -54,13 +69,13 @@ public class TileCocoon extends TileEntity implements ITickable
     @Override
     public CompoundNBT getUpdateTag()
     {
-        return writeToNBT(new CompoundNBT());
+        return write(new CompoundNBT());
     }
 
     @Override
     public void handleUpdateTag(CompoundNBT tag)
     {
-        readFromNBT(tag);
+        read(tag);
     }
 
     @Override

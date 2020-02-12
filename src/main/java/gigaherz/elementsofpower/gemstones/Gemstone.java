@@ -17,36 +17,36 @@ public enum Gemstone implements IStringSerializable, IItemProvider
 {
     Ruby(Element.Fire, "ruby", 0xFFFF0000,
             () -> ElementsOfPowerMod.ruby, false, () -> ElementsOfPowerMod.rubyBlock, () -> ElementsOfPowerMod.rubyOre,
-            () -> ElementsOfPowerMod.unknown_ruby), // red
+            () -> ElementsOfPowerMod.unknown_ruby, true, () -> ElementsOfPowerMod.ruby_spelldust), // red
     Sapphire(Element.Water, "sapphire", 0xFF0000FF,
             () -> ElementsOfPowerMod.sapphire, false, () -> ElementsOfPowerMod.sapphireBlock, () -> ElementsOfPowerMod.sapphireOre,
-            () -> ElementsOfPowerMod.unknown_sapphire), // blue
+            () -> ElementsOfPowerMod.unknown_sapphire, true, () -> ElementsOfPowerMod.sapphire_spelldust), // blue
     Citrine(Element.Air, "citrine", 0xFFFFFF00,
             () -> ElementsOfPowerMod.citrine, false, () -> ElementsOfPowerMod.citrineBlock, () -> ElementsOfPowerMod.citrineOre,
-            () -> ElementsOfPowerMod.unknown_citrine), // yellow
+            () -> ElementsOfPowerMod.unknown_citrine, true, () -> ElementsOfPowerMod.citrine_spelldust), // yellow
     Agate(Element.Earth, "agate", 0xFF7F3F00,
             () -> ElementsOfPowerMod.agate, false, () -> ElementsOfPowerMod.agateBlock, () -> ElementsOfPowerMod.agateOre,
-            () -> ElementsOfPowerMod.unknown_agate), // brown
+            () -> ElementsOfPowerMod.unknown_agate, true, () -> ElementsOfPowerMod.agate_spelldust), // brown
     Quartz(Element.Light, "quartz", 0xFFFFFFFF,
             () -> ElementsOfPowerMod.quartz, true, () -> Blocks.QUARTZ_BLOCK, () -> Blocks.NETHER_QUARTZ_ORE,
-            () -> Items.QUARTZ), // white
+            () -> Items.QUARTZ, true, () -> ElementsOfPowerMod.quartz_spelldust), // white
     Serendibite(Element.Darkness, "serendibite", 0xFF0F0F0F,
             () -> ElementsOfPowerMod.serendibite, false, () -> ElementsOfPowerMod.serendibiteBlock, () -> ElementsOfPowerMod.serendibiteOre,
-            () -> ElementsOfPowerMod.unknown_serendibite), // black
+            () -> ElementsOfPowerMod.unknown_serendibite, true, () -> ElementsOfPowerMod.serendibite_spelldust), // black
     Emerald(Element.Life, "emerald", 0xFF00FF00,
             () -> ElementsOfPowerMod.emerald, true, ()->Blocks.EMERALD_BLOCK, ()->Blocks.EMERALD_ORE,
-            () -> Items.EMERALD), // green
+            () -> Items.EMERALD, true, () -> ElementsOfPowerMod.emerald_spelldust), // green
     Amethyst(Element.Death, "amethyst", 0xFFAF00FF,
             () -> ElementsOfPowerMod.amethyst, false, () -> ElementsOfPowerMod.amethystBlock, () -> ElementsOfPowerMod.amethystOre,
-            () -> ElementsOfPowerMod.unknown_amethyst), // purple
+            () -> ElementsOfPowerMod.unknown_amethyst, true, () -> ElementsOfPowerMod.amethyst_spelldust), // purple
 
     Diamond(null, "diamond", 0xFF7FFFCF,
             () -> ElementsOfPowerMod.diamond, true, ()->Blocks.DIAMOND_BLOCK, ()->Blocks.DIAMOND_ORE,
-            () -> Items.DIAMOND), // clear
+            () -> Items.DIAMOND, true, () -> ElementsOfPowerMod.diamond_spelldust), // clear
 
     Creativite(null, "creativite", 0xFF000000,
             () -> ElementsOfPowerMod.creativite, false, null, null,
-            () -> ElementsOfPowerMod.unknown_creativite);
+            () -> ElementsOfPowerMod.unknown_creativite, false, null);
 
     private final Element element;
     private final String name;
@@ -59,10 +59,13 @@ public enum Gemstone implements IStringSerializable, IItemProvider
     private final Supplier<Block> oreSupplier;
     @Nullable
     private final Supplier<Item> unknownItemSupplier;
+    @Nullable
+    private final Supplier<Item> spelldustItemSupplier;
+    private final boolean generateSpelldust;
 
     Gemstone(@Nullable Element element, String name, int tintColor,
              @Nullable Supplier<ItemGemstone> itemSupplier,
-             boolean isVanilla, @Nullable Supplier<Block> blockSupplier, @Nullable Supplier<Block> oreSupplier, @Nullable Supplier<Item> unknownItemSupplier)
+             boolean isVanilla, @Nullable Supplier<Block> blockSupplier, @Nullable Supplier<Block> oreSupplier, @Nullable Supplier<Item> unknownItemSupplier, boolean generateSpelldust, @Nullable Supplier<Item> spelldustItemSupplier)
     {
         this.element = element;
         this.name = name;
@@ -72,6 +75,8 @@ public enum Gemstone implements IStringSerializable, IItemProvider
         this.oreSupplier = oreSupplier;
         this.itemSupplier = itemSupplier;
         this.unknownItemSupplier = unknownItemSupplier;
+        this.generateSpelldust = generateSpelldust;
+        this.spelldustItemSupplier = spelldustItemSupplier;
     }
 
     @Nullable
@@ -108,6 +113,11 @@ public enum Gemstone implements IStringSerializable, IItemProvider
         return !isVanilla && unknownItemSupplier != null;
     }
 
+    public boolean generateSpelldust()
+    {
+        return spelldustItemSupplier != null;
+    }
+
     @Override
     public Item asItem()
     {
@@ -131,6 +141,11 @@ public enum Gemstone implements IStringSerializable, IItemProvider
 
     public Item getUnexamined()
     {
-        return itemSupplier != null ? itemSupplier.get() : Items.AIR;
+        return unknownItemSupplier != null ? unknownItemSupplier.get() : Items.AIR;
+    }
+
+    public Item getSpelldust()
+    {
+        return spelldustItemSupplier != null ? spelldustItemSupplier.get() : Items.AIR;
     }
 }

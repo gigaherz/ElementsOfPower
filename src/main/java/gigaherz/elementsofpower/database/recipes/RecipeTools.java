@@ -5,7 +5,6 @@ import com.google.common.collect.Maps;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.database.Utils;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -18,7 +17,6 @@ public class RecipeTools
     static
     {
         recipeEnumerators.add(new RecipeEnumerator.Crafting());
-        recipeEnumerators.add(new RecipeEnumerator.Furnace());
     }
 
     public static Map<ItemStack, List<ItemStack>> gatherRecipes()
@@ -57,7 +55,7 @@ public class RecipeTools
                 }
             }
 
-            if (Utils.stackMapContainsKey(itemSources, output))
+            if (itemSources.keySet().stream().anyMatch(stack -> stack.getItem() == output.getItem()))
             {
                 return;
             }
@@ -65,12 +63,12 @@ public class RecipeTools
             List<ItemStack> inputs = reduceItemsList(recipe.getRecipeInputs());
             List<ItemStack> expandedInputs = Lists.newArrayList();
 
-            output = applyExistingRecipes(output, inputs, expandedInputs);
+            ItemStack output2 = applyExistingRecipes(output, inputs, expandedInputs);
 
-            if (!isRecipeAggregating(expandedInputs, output))
-                replaceExistingSources(output, expandedInputs);
+            if (!isRecipeAggregating(expandedInputs, output2))
+                replaceExistingSources(output2, expandedInputs);
 
-            itemSources.put(output, expandedInputs);
+            itemSources.put(output2, expandedInputs);
         }
 
         private boolean isRecipeAggregating(@Nonnull List<ItemStack> inputs, @Nonnull ItemStack output)
@@ -101,7 +99,7 @@ public class RecipeTools
                 for (ItemStack s : entry.getValue())
                 {
 
-                    if (OreDictionary.itemMatches(s, output, false))
+                    if (s.getItem() == output.getItem())
                     {
 
                         int numNeeded = s.getCount();
@@ -164,7 +162,7 @@ public class RecipeTools
 
                 for (Map.Entry<ItemStack, List<ItemStack>> entry : itemSources.entrySet())
                 {
-                    if (OreDictionary.itemMatches(is, entry.getKey(), true))
+                    if (is.getItem() == entry.getKey().getItem())
                     {
                         List<ItemStack> ss = entry.getValue();
 
@@ -255,7 +253,7 @@ public class RecipeTools
 
             for (ItemStack k : aggregate)
             {
-                if (OreDictionary.itemMatches(input, k, false))
+                if (input.getItem() == k.getItem())
                 {
                     if (k != input)
                     {

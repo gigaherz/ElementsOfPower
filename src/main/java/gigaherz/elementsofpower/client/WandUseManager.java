@@ -6,28 +6,29 @@ import gigaherz.elementsofpower.spells.Element;
 import gigaherz.elementsofpower.items.ItemWand;
 import gigaherz.elementsofpower.network.SpellSequenceUpdate;
 import gigaherz.elementsofpower.spells.SpellManager;
+import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.client.util.InputMappings;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
+import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.settings.IKeyConflictContext;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.InputEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
-import org.lwjgl.input.Keyboard;
+import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
 
 public class WandUseManager
 {
     private final static int[] defaultKeys = {
-            Keyboard.KEY_1,Keyboard.KEY_2,Keyboard.KEY_3,Keyboard.KEY_4,
-            Keyboard.KEY_5,Keyboard.KEY_6,Keyboard.KEY_7,Keyboard.KEY_8
+            GLFW.GLFW_KEY_1, GLFW.GLFW_KEY_2, GLFW.GLFW_KEY_3, GLFW.GLFW_KEY_4,
+            GLFW.GLFW_KEY_5, GLFW.GLFW_KEY_6, GLFW.GLFW_KEY_7, GLFW.GLFW_KEY_8
     };
 
     public static WandUseManager instance;
@@ -109,9 +110,9 @@ public class WandUseManager
         }
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
+            String translationKey = "key.elementsofpower.spellkey." + Element.values[i].getName();
             ClientRegistry.registerKeyBinding(spellKeys[i] =
-                    new KeyBinding("key.elementsofpower.spellkey."+ Element.values[i].getName(),
-                            new OnUseContext(), defaultKeys[i], "key.elementsofpower.category"));
+                    new KeyBinding(translationKey, new OnUseContext(), InputMappings.Type.SCANCODE, defaultKeys[i], "key.elementsofpower.category"));
 
             s.keyBindsHotbar[i].setKeyConflictContext(new VanillaHotbarResolverContext(s.keyBindsHotbar[i].getKeyConflictContext()));
         }
@@ -203,7 +204,7 @@ public class WandUseManager
     {
         activeStack = itemUsing;
         handInUse = hand;
-        itemInUseCount = activeStack.getMaxItemUseDuration();
+        itemInUseCount = activeStack.getUseDuration();
         slotInUse = slotNumber;
         sequence = "";
 

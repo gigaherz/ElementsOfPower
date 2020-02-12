@@ -5,7 +5,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -51,20 +51,20 @@ public class TeleportEffect extends SpellEffect
 
                 if (playerMP.connection.getNetworkManager().isChannelOpen()
                         && playerMP.world == cast.world
-                        && !playerMP.isPlayerSleeping())
+                        && !playerMP.isSleeping())
                 {
-                    if (playerMP.isRiding())
+                    if (playerMP.isPassenger())
                     {
-                        playerMP.dismountRidingEntity();
+                        playerMP.stopRiding();
                     }
 
-                    playerMP.setPositionAndUpdate(getHitVec().x, getHitVec().y, getHitVec().z);
+                    playerMP.setPositionAndUpdate(hitVec.x, hitVec.y, hitVec.z);
                     playerMP.fallDistance = 0.0F;
                 }
             }
             else if (cast.player != null)
             {
-                cast.player.setPositionAndUpdate(getHitVec().x, getHitVec().y, getHitVec().z);
+                cast.player.setPositionAndUpdate(hitVec.x, hitVec.y, hitVec.z);
                 cast.player.fallDistance = 0.0F;
             }
         }
@@ -84,8 +84,8 @@ public class TeleportEffect extends SpellEffect
     {
         for (int i = 0; i < 32; ++i)
         {
-            cast.spawnRandomParticle(EnumParticleTypes.PORTAL,
-                    mop.getHitVec().x, mop.getHitVec().y, mop.getHitVec().z);
+            Vec3d hitVec = mop.getHitVec();
+            cast.spawnRandomParticle(ParticleTypes.PORTAL, hitVec.x, hitVec.y, hitVec.z);
         }
     }
 

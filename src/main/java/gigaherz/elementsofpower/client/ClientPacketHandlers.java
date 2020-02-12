@@ -20,9 +20,7 @@ public class ClientPacketHandlers
         {
             World world = Minecraft.getInstance().world;
             PlayerEntity player = (PlayerEntity) world.getEntityByID(message.casterID);
-            SpellcastEntityData data = SpellcastEntityData.get(player);
-
-            data.sync(message.changeMode, message.spellcast);
+            SpellcastEntityData.get(player).ifPresent(data -> data.sync(message.changeMode, message.spellcast));
         });
         return true;
     }
@@ -33,7 +31,6 @@ public class ClientPacketHandlers
         mc.execute(() ->
         {
             PlayerEntity player = mc.player;
-
             if (message.windowId != -1)
             {
                 if (message.windowId == player.openContainer.windowId)
