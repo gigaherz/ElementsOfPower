@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class EntityEssence extends AmbientEntity
 {
-    @ObjectHolder("elementsofpower:ball")
+    @ObjectHolder("elementsofpower:essence")
     public static EntityType<EntityEssence> TYPE;
 
     public static final float[][] EssenceColors = {

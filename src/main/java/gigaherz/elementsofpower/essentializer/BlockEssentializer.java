@@ -47,7 +47,7 @@ public class BlockEssentializer extends Block
 
         NetworkHooks.openGui((ServerPlayerEntity)player, new SimpleNamedContainerProvider((id,playerInventory,playerEntity) ->
                 new ContainerEssentializer(id,(TileEssentializer) tileEntity,playerInventory),
-                new TranslationTextComponent("container.elementsofpower.essentializer.title")), pos);
+                new TranslationTextComponent("container.elementsofpower.essentializer")), pos);
 
         return ActionResultType.SUCCESS;
     }

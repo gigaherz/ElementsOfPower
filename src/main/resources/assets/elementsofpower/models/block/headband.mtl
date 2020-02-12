@@ -1,6 +1,0 @@
-# Rhino
-newmtl Gem
-map_Kd elementsofpower:transparent
-
-newmtl Ring
-map_Kd minecraft:blocks/gold_block

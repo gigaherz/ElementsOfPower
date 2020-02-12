@@ -1,0 +1,19 @@
+{
+  "parent": "forge:item/default",
+  "loader": "elementsofpower:nbt_to_model",
+  "tag":"gemstone",
+  "values": {
+      "":  { "parent":"elementsofpower:item/necklace_base" },
+      "0": { "parent":"elementsofpower:item/necklace_base", "textures": { "gem": "elementsofpower:block/block_ruby" } },
+      "1": { "parent":"elementsofpower:item/necklace_base", "textures": { "gem": "elementsofpower:block/block_sapphire" } },
+      "2": { "parent":"elementsofpower:item/necklace_base", "textures": { "gem": "elementsofpower:block/block_citrine" } },
+      "3": { "parent":"elementsofpower:item/necklace_base", "textures": { "gem": "elementsofpower:block/block_agate" } },
+      "4": { "parent":"elementsofpower:item/necklace_base", "textures": { "gem": "minecraft:block/quartz_block_bottom" } },
+      "5": { "parent":"elementsofpower:item/necklace_base", "textures": { "gem": "elementsofpower:block/block_serendibite" } },
+      "6": { "parent":"elementsofpower:item/necklace_base", "textures": { "gem": "minecraft:block/emerald_block" } },
+      "7": { "parent":"elementsofpower:item/necklace_base", "textures": { "gem": "elementsofpower:block/block_amethyst" } },
+      "8": { "parent":"elementsofpower:item/necklace_base", "textures": { "gem": "minecraft:block/diamond_block" } },
+      "9": { "parent":"elementsofpower:item/necklace_base", "textures": { "gem": "minecraft:block/bedrock" } }
+    }
+  }
+}

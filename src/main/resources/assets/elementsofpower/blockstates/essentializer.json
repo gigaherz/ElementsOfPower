@@ -1,17 +1,7 @@
 {
-  "forge_marker": 1,
   "variants": {
-    "normal": [{
-      "model": "elementsofpower:essentializer.obj",
-      "transform": "forge:default-block"
-    }],
-    "inventory": [{
-      "model": "minecraft:cube_all",
-      "transform": "forge:default-block",
-      "textures": {
-        "all": "elementsofpower:blocks/side_obsidian",
-        "up": "elementsofpower:blocks/side_obsidian_with_diamond"
-      }
-    }]
+    "": {
+      "model": "elementsofpower:block/essentializer"
+    }
   }
 }

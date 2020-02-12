@@ -6,9 +6,9 @@
     "IOI"
   ],
   "key": {
-    "I": { "type": "forge:ore_dict", "ore": "ingotIron" },
+    "I": { "item": "minecraft:iron_ingot" },
     "O": { "item": "minecraft:obsidian" },
-    "Q": { "type": "forge:ore_dict", "ore": "magicGemstone" },
+    "Q": { "tag": "elementsofpower:gemstones" },
     "N": { "item": "minecraft:nether_star" }
   },
   "result": {

@@ -1,0 +1,12 @@
+{
+  "loader": "forge:obj",
+  "model": "elementsofpower:models/item/wand.obj",
+  "textures": {
+    "gem": "elementsofpower:transparent"
+  },
+  "display": {
+    "gui": {
+      "rotation": [0,0,45]
+    }
+  }
+}

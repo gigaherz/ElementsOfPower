@@ -1,16 +1,16 @@
 # Rhino
 newmtl Sides
-map_Kd elementsofpower:blocks/side_obsidian
+map_Kd elementsofpower:block/side_obsidian
 
 newmtl Bottom
-map_Kd elementsofpower:blocks/side_obsidian
+map_Kd elementsofpower:block/side_obsidian
 
 newmtl Top
-map_Kd elementsofpower:blocks/obsidian_with_diamond
+map_Kd elementsofpower:block/obsidian_with_diamond
 
 newmtl Middleup
-map_Kd elementsofpower:blocks/obsidian_with_diamond
+map_Kd elementsofpower:block/obsidian_with_diamond
 
 newmtl Middledown
-map_Kd minecraft:blocks/obsidian
+map_Kd minecraft:block/obsidian
 

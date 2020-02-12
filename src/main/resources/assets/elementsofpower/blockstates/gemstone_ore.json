@@ -6,12 +6,12 @@
   },
   "variants": {
     "type": {
-      "agate": { "textures": { "all": "elementsofpower:blocks/ore_agate" } },
-      "amethyst": { "textures": { "all": "elementsofpower:blocks/ore_amethyst" } },
-      "citrine": { "textures": { "all": "elementsofpower:blocks/ore_citrine" } },
-      "ruby":  { "textures": { "all": "elementsofpower:blocks/ore_ruby" } },
-      "sapphire":   { "textures": { "all": "elementsofpower:blocks/ore_sapphire" } },
-      "serendibite":  { "textures": { "all": "elementsofpower:blocks/ore_serendibite" } }
+      "agate": { "textures": { "all": "elementsofpower:block/ore_agate" } },
+      "amethyst": { "textures": { "all": "elementsofpower:block/ore_amethyst" } },
+      "citrine": { "textures": { "all": "elementsofpower:block/ore_citrine" } },
+      "ruby":  { "textures": { "all": "elementsofpower:block/ore_ruby" } },
+      "sapphire":   { "textures": { "all": "elementsofpower:block/ore_sapphire" } },
+      "serendibite":  { "textures": { "all": "elementsofpower:block/ore_serendibite" } }
     }
   }
 }

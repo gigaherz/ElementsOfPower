@@ -1,0 +1,14 @@
+{
+  "parent": "forge:item/default",
+  "loader": "forge:obj",
+  "model": "elementsofpower:models/item/necklace.obj",
+  "textures": {
+    "gem": "elementsofpower:transparent"
+  },
+  "display": {
+    "gui": {
+      "rotation": [ 30, 0, 0 ],
+      "translation": [ 0, 0.3, 0 ]
+    }
+  }
+}

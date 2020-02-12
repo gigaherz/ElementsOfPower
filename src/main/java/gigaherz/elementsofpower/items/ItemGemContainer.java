@@ -261,7 +261,7 @@ public abstract class ItemGemContainer extends ItemMagicContainer
         @SuppressWarnings("deprecation")
         ITextComponent quality = new TranslationTextComponent("elementsofpower.gemContainer.quality" + q.getUnlocalizedName());
 
-        return new StringTextComponent(quality + " " + namePart);
+        return new StringTextComponent(quality.getFormattedText() + " " + namePart.getFormattedText());
     }
 
     @Override

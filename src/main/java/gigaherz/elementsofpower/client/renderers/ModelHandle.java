@@ -60,7 +60,7 @@ public class ModelHandle
         protected FakeSprite()
         {
             super(null,
-                    new Info(LOCATION, 1, 1, new AnimationMetadataSection(Collections.emptyList(), 0, 0, 0, false)),
+                    new Info(LOCATION, 1, 1, AnimationMetadataSection.EMPTY),
                     0, 1, 1,
                     0, 0, new NativeImage(1,1,false));
         }

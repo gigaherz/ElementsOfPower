@@ -4,6 +4,7 @@ import gigaherz.elementsofpower.analyzer.ItemAnalyzer;
 import gigaherz.elementsofpower.analyzer.gui.ContainerAnalyzer;
 import gigaherz.elementsofpower.analyzer.gui.GuiAnalyzer;
 import gigaherz.elementsofpower.capabilities.CapabilityMagicContainer;
+import gigaherz.elementsofpower.client.NbtToModel;
 import gigaherz.elementsofpower.client.WandUseManager;
 import gigaherz.elementsofpower.client.renderers.MagicContainerOverlay;
 import gigaherz.elementsofpower.client.renderers.RenderBall;
@@ -23,6 +24,8 @@ import gigaherz.elementsofpower.essentializer.gui.GuiEssentializer;
 import gigaherz.elementsofpower.gemstones.*;
 import gigaherz.elementsofpower.items.*;
 import gigaherz.elementsofpower.network.*;
+import gigaherz.elementsofpower.recipes.ContainerChargeRecipeFactory;
+import gigaherz.elementsofpower.recipes.GemstoneChangeRecipeFactory;
 import gigaherz.elementsofpower.spelldust.ItemSpelldust;
 import gigaherz.elementsofpower.spells.Element;
 import gigaherz.elementsofpower.spells.SpellcastEntityData;
@@ -37,6 +40,7 @@ import net.minecraft.block.material.MaterialColor;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
+import net.minecraft.client.resources.ReloadListener;
 import net.minecraft.data.CookingRecipeBuilder;
 import net.minecraft.data.IFinishedRecipe;
 import net.minecraft.data.RecipeProvider;
@@ -44,31 +48,32 @@ import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.*;
+import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.profiler.IProfiler;
+import net.minecraft.resources.IResourceManager;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.InterModComms;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.*;
+import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 import net.minecraftforge.registries.ObjectHolder;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.File;
-import java.nio.file.attribute.AclEntry;
 import java.text.DecimalFormat;
 import java.text.Format;
 import java.util.Arrays;
@@ -257,7 +262,7 @@ public class ElementsOfPowerMod
             .networkProtocolVersion(() -> PROTOCOL_VERSION)
             .simpleChannel();
 
-    public static Logger logger;
+    public static Logger logger = LogManager.getLogger(MODID);
 
     public final static Format prettyNumberFormatter = new DecimalFormat("#.#");
     public final static Format prettyNumberFormatter2 = new DecimalFormat("#0.0");
@@ -282,7 +287,6 @@ public class ElementsOfPowerMod
 
     public ElementsOfPowerMod()
     {
-        ModLoadingContext modLoadingContext = ModLoadingContext.get();
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         modEventBus.addGenericListener(Block.class, this::registerBlocks);
@@ -290,9 +294,13 @@ public class ElementsOfPowerMod
         modEventBus.addGenericListener(EntityType.class, this::registerEntities);
         modEventBus.addGenericListener(TileEntityType.class, this::registerTileEntities);
         modEventBus.addGenericListener(ContainerType.class, this::registerContainerTypes);
+        modEventBus.addGenericListener(IRecipeSerializer.class, this::registerRecipes);
 
+        modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::clientSetup);
+        modEventBus.addListener(this::loadComplete);
 
+        MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
     }
 
     public void registerBlocks(RegistryEvent.Register<Block> event)
@@ -380,8 +388,10 @@ public class ElementsOfPowerMod
         );
     }
 
-    public void clientSetup(ModelRegistryEvent event)
+    public void clientSetup(FMLClientSetupEvent event)
     {
+        ModelLoaderRegistry.registerLoader(location("nbt_to_model"), NbtToModel.Loader.INSTANCE);
+
         RenderingRegistry.registerEntityRenderingHandler(EntityEssence.TYPE, RenderEssence::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityBall.TYPE, RenderBall::new);
 
@@ -389,7 +399,6 @@ public class ElementsOfPowerMod
 
         ScreenManager.registerFactory(ContainerAnalyzer.TYPE, GuiAnalyzer::new);
         ScreenManager.registerFactory(ContainerEssentializer.TYPE, GuiEssentializer::new);
-
         RenderTypeLookup.setRenderLayer(dust, RenderType.translucent());
         RenderTypeLookup.setRenderLayer(mist, RenderType.translucent());
         RenderTypeLookup.setRenderLayer(cushion, RenderType.translucent());
@@ -401,12 +410,24 @@ public class ElementsOfPowerMod
         WandUseManager.instance.initialize();
     }
 
-    public static void registerBook(InterModEnqueueEvent event)
+    public void modelRegistry(ModelRegistryEvent event)
+    {
+    }
+
+    public void registerBook(InterModEnqueueEvent event)
     {
         InterModComms.sendTo("gbook", "registerBook", () -> ElementsOfPowerMod.location("xml/guidebook.xml"));
     }
 
-    public static void registerRecipes(GatherDataEvent event)
+    public void registerRecipes(RegistryEvent.Register<IRecipeSerializer<?>> event)
+    {
+        event.getRegistry().registerAll(
+                ContainerChargeRecipeFactory.INSTANCE.setRegistryName("container_charge"),
+                GemstoneChangeRecipeFactory.INSTANCE.setRegistryName("gemstone_change")
+        );
+    }
+
+    public void gatherData(GatherDataEvent event)
     {
         new RecipeProvider(event.getGenerator()){
             @Override
@@ -418,14 +439,17 @@ public class ElementsOfPowerMod
         };
     }
 
-    public void preInit(FMLCommonSetupEvent event)
+    public void commonSetup(FMLCommonSetupEvent event)
     {
-        //ConfigManager.init(event.getSuggestedConfigurationFile());
+        int messageNumber = 0;
+        channel.messageBuilder(SpellSequenceUpdate.class, messageNumber++).encoder(SpellSequenceUpdate::encode).decoder(SpellSequenceUpdate::new).consumer(SpellSequenceUpdate::handle).add();
+        channel.messageBuilder(SpellcastSync.class, messageNumber++).encoder(SpellcastSync::encode).decoder(SpellcastSync::new).consumer(SpellcastSync::handle).add();
+        channel.messageBuilder(EssentializerAmountsUpdate.class, messageNumber++).encoder(EssentializerAmountsUpdate::encode).decoder(EssentializerAmountsUpdate::new).consumer(EssentializerAmountsUpdate::handle).add();
+        channel.messageBuilder(EssentializerTileUpdate.class, messageNumber++).encoder(EssentializerTileUpdate::encode).decoder(EssentializerTileUpdate::new).consumer(EssentializerTileUpdate::handle).add();
+        channel.messageBuilder(AddVelocityPlayer.class, messageNumber++).encoder(AddVelocityPlayer::encode).decoder(AddVelocityPlayer::new).consumer(AddVelocityPlayer::handle).add();
+        logger.debug("Final message number: " + messageNumber);
 
         CapabilityMagicContainer.register();
-
-        registerNetwork();
-
         SpellcastEntityData.register();
         //DiscoveryHandler.init();
     }
@@ -466,35 +490,37 @@ public class ElementsOfPowerMod
         OreDictionary.registerOre("magicGemstone", gemstone.getStack(Gemstone.Amethyst));
         OreDictionary.registerOre("magicGemstone", gemstone.getStack(Gemstone.Diamond));*/
 
-        registerWorldGenerators();
-
-        // TODO: Calculate on server resource reloading (needs recipes)
-        //StockConversions.registerEssenceSources();
-        //EssenceOverrides.loadOverrides();
-    }
-
-    public void postInit(FMLLoadCompleteEvent event)
-    {
-        EssenceConversions.registerEssencesForRecipes();
-    }
-
-    private void registerNetwork()
-    {
-        int messageNumber = 0;
-        channel.messageBuilder(SpellSequenceUpdate.class, messageNumber++).encoder(SpellSequenceUpdate::encode).decoder(SpellSequenceUpdate::new).consumer(SpellSequenceUpdate::handle);
-        channel.messageBuilder(SpellcastSync.class, messageNumber++).encoder(SpellcastSync::encode).decoder(SpellcastSync::new).consumer(SpellcastSync::handle);
-        channel.messageBuilder(EssentializerAmountsUpdate.class, messageNumber++).encoder(EssentializerAmountsUpdate::encode).decoder(EssentializerAmountsUpdate::new).consumer(EssentializerAmountsUpdate::handle);
-        channel.messageBuilder(EssentializerTileUpdate.class, messageNumber++).encoder(EssentializerTileUpdate::encode).decoder(EssentializerTileUpdate::new).consumer(EssentializerTileUpdate::handle);
-        channel.messageBuilder(AddVelocityPlayer.class, messageNumber++).encoder(AddVelocityPlayer::encode).decoder(AddVelocityPlayer::new).consumer(AddVelocityPlayer::handle);
-        logger.debug("Final message number: " + messageNumber);
-    }
-
-    private void registerWorldGenerators()
-    {
         /*if (ConfigManager.EnableGemstoneOregen)
             GameRegistry.registerWorldGenerator(new BlockGemstoneOre.Generator(), 1);
         if (ConfigManager.EnableCocoonGeneration)
             GameRegistry.registerWorldGenerator(new BlockCocoon.Generator(), 1);*/
+    }
+
+
+    public void loadComplete(FMLLoadCompleteEvent event)
+    {
+        StockConversions.registerEssenceSources();
+        EssenceOverrides.loadOverrides();
+    }
+
+    public void serverStarting(FMLServerAboutToStartEvent event)
+    {
+        event.getServer().getResourceManager().addReloadListener(
+                new ReloadListener<Void>()
+                 {
+                     @Override
+                     protected Void prepare(IResourceManager resourceManagerIn, IProfiler profilerIn)
+                     {
+                         return null;
+                     }
+
+                     @Override
+                     protected void apply(Void splashList, IResourceManager resourceManagerIn, IProfiler profilerIn)
+                     {
+                         EssenceConversions.registerEssencesForRecipes();
+                     }
+                 }
+        );
     }
 
     private static ItemStack copyStack(ItemStack original, int quantity)

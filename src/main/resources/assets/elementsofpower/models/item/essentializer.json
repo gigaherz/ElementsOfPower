@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "elementsofpower:block/side_obsidian",
+    "up": "elementsofpower:block/side_obsidian_with_diamond"
+  }
+}

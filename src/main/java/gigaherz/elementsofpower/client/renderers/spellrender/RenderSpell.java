@@ -19,9 +19,9 @@ import javax.annotation.Nullable;
 
 public abstract class RenderSpell
 {
-    public static final Lazy<ModelHandle> modelCone = Lazy.of(() -> ModelHandle.of("elementsofpower:entity/cone.obj"));
-    public static final Lazy<ModelHandle> modelSphere = Lazy.of(() -> ModelHandle.of("elementsofpower:entity/sphere.obj"));
-    public static final Lazy<ModelHandle> modelCyl = Lazy.of(() -> ModelHandle.of("elementsofpower:entity/cylinder.obj"));
+    public static final Lazy<ModelHandle> modelCone = Lazy.of(() -> ModelHandle.of("elementsofpower:models/entity/cone.obj"));
+    public static final Lazy<ModelHandle> modelSphere = Lazy.of(() -> ModelHandle.of("elementsofpower:models/entity/sphere.obj"));
+    public static final Lazy<ModelHandle> modelCyl = Lazy.of(() -> ModelHandle.of("elementsofpower:models/entity/cylinder.obj"));
 
     public static int getColor(Spellcast spellcast)
     {
@@ -51,15 +51,15 @@ public abstract class RenderSpell
         {
             if (spellcast.getEffect() instanceof FlameEffect)
             {
-                tex = "minecraft:blocks/lava_still";
+                tex = "minecraft:block/lava_still";
             }
             else if (spellcast.getEffect() instanceof WaterEffect)
             {
-                tex = "minecraft:blocks/water_still";
+                tex = "minecraft:block/water_still";
             }
             else if (spellcast.getEffect() instanceof WindEffect)
             {
-                tex = "elementsofpower:blocks/cone";
+                tex = "elementsofpower:block/cone";
             }
         }
 

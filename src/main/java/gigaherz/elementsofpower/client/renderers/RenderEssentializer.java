@@ -10,12 +10,15 @@ import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.Lazy;
 
 public class RenderEssentializer extends TileEntityRenderer<TileEssentializer>
 {
-    Lazy<ModelHandle> handle = Lazy.of(() -> ModelHandle.of("elementsofpower:block/essentializer_2.obj") );
+    private final Lazy<ModelHandle> handle = Lazy.of(() -> ModelHandle.of("elementsofpower:models/block/essentializer_2.obj") );
+
+    private final ResourceLocation texture = new ResourceLocation("elementsofpower:block/side_obsidian");
 
     public RenderEssentializer(TileEntityRendererDispatcher rendererDispatcherIn)
     {
@@ -51,7 +54,7 @@ public class RenderEssentializer extends TileEntityRenderer<TileEssentializer>
 
             matrixStack.rotate(Vector3f.YP.rotationDegrees(angle1));
 
-            handle.get().render(bufferIn, RenderType.translucent(), matrixStack, combinedLightIn, 0xFFFFFFFF);
+            handle.get().render(bufferIn, RenderType.entityTranslucent(texture), matrixStack, combinedLightIn, 0xFFFFFFFF);
 
             matrixStack.pop();
         }

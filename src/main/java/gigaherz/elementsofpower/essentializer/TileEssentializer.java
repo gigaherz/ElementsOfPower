@@ -125,8 +125,6 @@ public class TileEssentializer
         readInventoryFromNBT(tagCompound);
         containedMagic = readAmountsFromNBT(tagCompound, "Contained");
         remainingToConvert = readAmountsFromNBT(tagCompound, "Remaining");
-        if (containedMagic == null)
-            containedMagic = MagicAmounts.EMPTY;
     }
 
     @Override
@@ -158,7 +156,10 @@ public class TileEssentializer
 
     private void readInventoryFromNBT(CompoundNBT tagCompound)
     {
-        CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.readNBT(inventory, null, tagCompound.getCompound("Slots"));
+        if (tagCompound.contains("Slots", Constants.NBT.TAG_LIST))
+        {
+            CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.readNBT(inventory, null, tagCompound.getCompound("Slots"));
+        }
     }
 
     private void writeInventoryToNBT(CompoundNBT tagCompound)
