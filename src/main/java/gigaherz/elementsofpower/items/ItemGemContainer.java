@@ -1,12 +1,10 @@
 package gigaherz.elementsofpower.items;
 
-import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.capabilities.CapabilityMagicContainer;
-import gigaherz.elementsofpower.capabilities.IMagicContainer;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.spells.Element;
 import gigaherz.elementsofpower.gemstones.Gemstone;
-import gigaherz.elementsofpower.gemstones.ItemGemstone;
+import gigaherz.elementsofpower.gemstones.GemstoneItem;
 import gigaherz.elementsofpower.gemstones.Quality;
 import gigaherz.elementsofpower.network.SpellSequenceUpdate;
 import gigaherz.elementsofpower.spells.SpellManager;
@@ -57,7 +55,7 @@ public abstract class ItemGemContainer extends ItemMagicContainer
         if (q == null)
             return MagicAmounts.EMPTY;
 
-        MagicAmounts magic = ItemGemstone.capacities[q.ordinal()];
+        MagicAmounts magic = GemstoneItem.capacities[q.ordinal()];
 
         Element e = g.getElement();
         if (e == null)
@@ -196,12 +194,12 @@ public abstract class ItemGemContainer extends ItemMagicContainer
     public ItemStack setContainedGemstone(ItemStack stack, ItemStack gemStack)
     {
 
-        if (gemStack.getCount() <= 0 || !(gemStack.getItem() instanceof ItemGemstone))
+        if (gemStack.getCount() <= 0 || !(gemStack.getItem() instanceof GemstoneItem))
         {
             return setQuality(setGemstone(stack, null), null);
         }
 
-        ItemGemstone g = ((ItemGemstone) gemStack.getItem());
+        GemstoneItem g = ((GemstoneItem) gemStack.getItem());
         Gemstone gem = g.getGemstone();
         Quality q = g.getQuality(gemStack);
         ItemStack result = setQuality(setGemstone(stack, gem), q);
@@ -275,7 +273,7 @@ public abstract class ItemGemContainer extends ItemMagicContainer
             {
                 CompoundNBT tag = itemStackIn.getTag();
                 if (tag != null)
-                    tag.remove(ItemWand.SPELL_SEQUENCE_TAG);
+                    tag.remove(WandItem.SPELL_SEQUENCE_TAG);
             }
         }
 
@@ -305,7 +303,7 @@ public abstract class ItemGemContainer extends ItemMagicContainer
             CompoundNBT tag = stack.getTag();
             if (tag != null)
             {
-                sequence = tag.getString(ItemWand.SPELL_SEQUENCE_TAG);
+                sequence = tag.getString(WandItem.SPELL_SEQUENCE_TAG);
             }
         }
         else
@@ -361,7 +359,7 @@ public abstract class ItemGemContainer extends ItemMagicContainer
 
             if (onSpellCommit(stack, player, message.sequence))
             {
-                nbt.putString(ItemWand.SPELL_SEQUENCE_TAG, message.sequence);
+                nbt.putString(WandItem.SPELL_SEQUENCE_TAG, message.sequence);
             }
         }
     }

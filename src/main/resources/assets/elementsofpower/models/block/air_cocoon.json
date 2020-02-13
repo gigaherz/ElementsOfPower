@@ -1,0 +1,8 @@
+{
+  "parent": "block/block",
+  "loader": "forge:obj",
+  "model": "elementsofpower:models/block/cocoon.obj",
+  "textures": {
+    "default": "elementsofpower:misc/orb_air"
+  }
+}

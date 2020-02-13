@@ -1,6 +1,6 @@
 package gigaherz.elementsofpower;
 
-import gigaherz.elementsofpower.analyzer.ItemAnalyzer;
+import gigaherz.elementsofpower.analyzer.AnalyzerItem;
 import gigaherz.elementsofpower.analyzer.gui.ContainerAnalyzer;
 import gigaherz.elementsofpower.analyzer.gui.GuiAnalyzer;
 import gigaherz.elementsofpower.capabilities.CapabilityMagicContainer;
@@ -10,14 +10,14 @@ import gigaherz.elementsofpower.client.renderers.MagicContainerOverlay;
 import gigaherz.elementsofpower.client.renderers.RenderBall;
 import gigaherz.elementsofpower.client.renderers.RenderEssence;
 import gigaherz.elementsofpower.client.renderers.RenderEssentializer;
-import gigaherz.elementsofpower.cocoons.BlockCocoon;
+import gigaherz.elementsofpower.cocoons.CocoonBlock;
 import gigaherz.elementsofpower.cocoons.TileCocoon;
 import gigaherz.elementsofpower.database.EssenceConversions;
 import gigaherz.elementsofpower.database.EssenceOverrides;
 import gigaherz.elementsofpower.database.StockConversions;
 import gigaherz.elementsofpower.entities.EntityBall;
 import gigaherz.elementsofpower.entities.EntityEssence;
-import gigaherz.elementsofpower.essentializer.BlockEssentializer;
+import gigaherz.elementsofpower.essentializer.EssentializerBlock;
 import gigaherz.elementsofpower.essentializer.TileEssentializer;
 import gigaherz.elementsofpower.essentializer.gui.ContainerEssentializer;
 import gigaherz.elementsofpower.essentializer.gui.GuiEssentializer;
@@ -26,13 +26,13 @@ import gigaherz.elementsofpower.items.*;
 import gigaherz.elementsofpower.network.*;
 import gigaherz.elementsofpower.recipes.ContainerChargeRecipeFactory;
 import gigaherz.elementsofpower.recipes.GemstoneChangeRecipeFactory;
-import gigaherz.elementsofpower.spelldust.ItemSpelldust;
+import gigaherz.elementsofpower.spelldust.SpelldustItem;
 import gigaherz.elementsofpower.spells.Element;
 import gigaherz.elementsofpower.spells.SpellcastEntityData;
-import gigaherz.elementsofpower.spells.blocks.BlockCushion;
-import gigaherz.elementsofpower.spells.blocks.BlockDust;
-import gigaherz.elementsofpower.spells.blocks.BlockLight;
-import gigaherz.elementsofpower.spells.blocks.BlockMist;
+import gigaherz.elementsofpower.spells.blocks.CushionBlock;
+import gigaherz.elementsofpower.spells.blocks.DustBlock;
+import gigaherz.elementsofpower.spells.blocks.LightBlock;
+import gigaherz.elementsofpower.spells.blocks.MistBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -61,6 +61,7 @@ import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -70,7 +71,6 @@ import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
-import net.minecraftforge.registries.ObjectHolder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -91,161 +91,8 @@ public class ElementsOfPowerMod
 
     public static ElementsOfPowerMod instance;
 
-    // Block templates
-    @ObjectHolder("elementsofpower:essentializer")
-    public static Block essentializer;
-    @ObjectHolder("elementsofpower:dust")
-    public static Block dust;
-    @ObjectHolder("elementsofpower:mist")
-    public static Block mist;
-    @ObjectHolder("elementsofpower:light")
-    public static BlockLight light;
-    @ObjectHolder("elementsofpower:cushion")
-    public static Block cushion;
-    @ObjectHolder("elementsofpower:fire_cocoon")
-    public static Block fireCocoon;
-    @ObjectHolder("elementsofpower:water_cocoon")
-    public static Block waterCocoon;
-    @ObjectHolder("elementsofpower:air_cocoon")
-    public static Block airCocoon;
-    @ObjectHolder("elementsofpower:earth_cocoon")
-    public static Block earthCocoon;
-    @ObjectHolder("elementsofpower:light_cocoon")
-    public static Block lightCocoon;
-    @ObjectHolder("elementsofpower:darkness_cocoon")
-    public static Block darknessCocoon;
-    @ObjectHolder("elementsofpower:life_cocoon")
-    public static Block lifeCocoon;
-    @ObjectHolder("elementsofpower:death_cocoon")
-    public static Block deathCocoon;
-    @ObjectHolder("elementsofpower:ruby_ore")
-    public static BlockGemstone rubyOre;
-    @ObjectHolder("elementsofpower:ruby_block")
-    public static BlockGemstone rubyBlock;
-    @ObjectHolder("elementsofpower:sapphire_ore")
-    public static BlockGemstone sapphireOre;
-    @ObjectHolder("elementsofpower:sapphire_block")
-    public static BlockGemstone sapphireBlock;
-    @ObjectHolder("elementsofpower:citrine_ore")
-    public static BlockGemstone citrineOre;
-    @ObjectHolder("elementsofpower:citrine_block")
-    public static BlockGemstone citrineBlock;
-    @ObjectHolder("elementsofpower:agate_ore")
-    public static BlockGemstone agateOre;
-    @ObjectHolder("elementsofpower:agate_block")
-    public static BlockGemstone agateBlock;
-    @ObjectHolder("elementsofpower:serendibite_ore")
-    public static BlockGemstone serendibiteOre;
-    @ObjectHolder("elementsofpower:serendibite_block")
-    public static BlockGemstone serendibiteBlock;
-    @ObjectHolder("elementsofpower:amethyst_ore")
-    public static BlockGemstone amethystOre;
-    @ObjectHolder("elementsofpower:amethyst_block")
-    public static BlockGemstone amethystBlock;
-
     // Block Materials
     public static Material materialCushion = (new Material.Builder(MaterialColor.BLACK)).doesNotBlockMovement().notOpaque().notSolid().replaceable().pushDestroys().build();
-
-    // Item templates
-    @ObjectHolder("elementsofpower:fire_orb")
-    public static ItemMagicOrb fire_orb;
-    @ObjectHolder("elementsofpower:water_orb")
-    public static ItemMagicOrb water_orb;
-    @ObjectHolder("elementsofpower:air_orb")
-    public static ItemMagicOrb air_orb;
-    @ObjectHolder("elementsofpower:earth_orb")
-    public static ItemMagicOrb earth_orb;
-    @ObjectHolder("elementsofpower:light_orb")
-    public static ItemMagicOrb light_orb;
-    @ObjectHolder("elementsofpower:darkness_orb")
-    public static ItemMagicOrb darkness_orb;
-    @ObjectHolder("elementsofpower:life_orb")
-    public static ItemMagicOrb life_orb;
-    @ObjectHolder("elementsofpower:death_orb")
-    public static ItemMagicOrb death_orb;
-    @ObjectHolder("elementsofpower:wand")
-    public static ItemWand wand;
-    @ObjectHolder("elementsofpower:staff")
-    public static ItemWand staff;
-    @ObjectHolder("elementsofpower:ring")
-    public static ItemBauble ring;
-    @ObjectHolder("elementsofpower:headband")
-    public static ItemBauble headband;
-    @ObjectHolder("elementsofpower:necklace")
-    public static ItemBauble necklace;
-    @ObjectHolder("elementsofpower:analyzer")
-    public static ItemAnalyzer analyzer;
-    @ObjectHolder("elementsofpower:ruby")
-    public static ItemGemstone ruby;
-    @ObjectHolder("elementsofpower:sapphire")
-    public static ItemGemstone sapphire;
-    @ObjectHolder("elementsofpower:citrine")
-    public static ItemGemstone citrine;
-    @ObjectHolder("elementsofpower:agate")
-    public static ItemGemstone agate;
-    @ObjectHolder("elementsofpower:quartz")
-    public static ItemGemstone quartz;
-    @ObjectHolder("elementsofpower:serendibite")
-    public static ItemGemstone serendibite;
-    @ObjectHolder("elementsofpower:emerald")
-    public static ItemGemstone emerald;
-    @ObjectHolder("elementsofpower:amethyst")
-    public static ItemGemstone amethyst;
-    @ObjectHolder("elementsofpower:diamond")
-    public static ItemGemstone diamond;
-    @ObjectHolder("elementsofpower:creativite")
-    public static ItemGemstone creativite;
-    @ObjectHolder("elementsofpower:unknown_ruby")
-    public static ItemGemstone unknown_ruby;
-    @ObjectHolder("elementsofpower:unknown_sapphire")
-    public static ItemGemstone unknown_sapphire;
-    @ObjectHolder("elementsofpower:unknown_citrine")
-    public static ItemGemstone unknown_citrine;
-    @ObjectHolder("elementsofpower:unknown_agate")
-    public static ItemGemstone unknown_agate;
-    @ObjectHolder("elementsofpower:unknown_serendibite")
-    public static ItemGemstone unknown_serendibite;
-    @ObjectHolder("elementsofpower:unknown_amethyst")
-    public static ItemGemstone unknown_amethyst;
-    @ObjectHolder("elementsofpower:unknown_creativite")
-    public static ItemGemstone unknown_creativite;
-    @ObjectHolder("elementsofpower:fire_cocoon")
-    public static Item fireCocoonItem;
-    @ObjectHolder("elementsofpower:water_cocoon")
-    public static Item waterCocoonItem;
-    @ObjectHolder("elementsofpower:air_cocoon")
-    public static Item airCocoonItem;
-    @ObjectHolder("elementsofpower:earth_cocoon")
-    public static Item earthCocoonItem;
-    @ObjectHolder("elementsofpower:light_cocoon")
-    public static Item lightCocoonItem;
-    @ObjectHolder("elementsofpower:darkness_cocoon")
-    public static Item darknessCocoonItem;
-    @ObjectHolder("elementsofpower:life_cocoon")
-    public static Item lifeCocoonItem;
-    @ObjectHolder("elementsofpower:death_cocoon")
-    public static Item deathCocoonItem;
-    @ObjectHolder("elementsofpower:ruby_spelldust")
-    public static ItemSpelldust ruby_spelldust;
-    @ObjectHolder("elementsofpower:sapphire_spelldust")
-    public static ItemSpelldust sapphire_spelldust;
-    @ObjectHolder("elementsofpower:citrine_spelldust")
-    public static ItemSpelldust citrine_spelldust;
-    @ObjectHolder("elementsofpower:agate_spelldust")
-    public static ItemSpelldust agate_spelldust;
-    @ObjectHolder("elementsofpower:quartz_spelldust")
-    public static ItemSpelldust quartz_spelldust;
-    @ObjectHolder("elementsofpower:serendibite_spelldust")
-    public static ItemSpelldust serendibite_spelldust;
-    @ObjectHolder("elementsofpower:emerald_spelldust")
-    public static ItemSpelldust emerald_spelldust;
-    @ObjectHolder("elementsofpower:amethyst_spelldust")
-    public static ItemSpelldust amethyst_spelldust;
-    @ObjectHolder("elementsofpower:diamond_spelldust")
-    public static ItemSpelldust diamond_spelldust;
-
-    //@ItemStackHolder(value = "gbook:guidebook", nbt = "{Book:\"" + "elementsofpowerxml/guidebook.xml\"}")
-    public ItemStack guidebookStack;
 
     // To be used only during loading.
     private final Lazy<EntityType<EntityBall>> spellBallInit = Lazy.of(() -> EntityType.Builder.<EntityBall>create(EntityBall::new, EntityClassification.MISC)
@@ -272,7 +119,7 @@ public class ElementsOfPowerMod
         @Override
         public ItemStack createIcon()
         {
-            return wand.getStack(Gemstone.Diamond, Quality.Common);
+            return ElementsOfPowerItems.WAND.getStack(Gemstone.Diamond, Quality.Common);
         }
     };
 
@@ -301,28 +148,33 @@ public class ElementsOfPowerMod
         modEventBus.addListener(this::loadComplete);
 
         MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
+
+        //noinspection deprecation
+        DeferredWorkQueue.runLater(() -> {
+            InterModComms.sendTo("gbook", "registerBook", () -> ElementsOfPowerMod.location("xml/guidebook.xml"));
+        });
     }
 
     public void registerBlocks(RegistryEvent.Register<Block> event)
     {
         event.getRegistry().registerAll(
-                new BlockEssentializer(Block.Properties.create(Material.IRON).hardnessAndResistance(15.0F).sound(SoundType.METAL).lightValue(1)).setRegistryName("essentializer"),
-                new BlockDust(Block.Properties.create(Material.CLAY).hardnessAndResistance(0.1F).sound(SoundType.CLOTH).variableOpacity()).setRegistryName("dust"),
-                new BlockMist(Block.Properties.create(Material.SNOW).hardnessAndResistance(0.1F).sound(SoundType.CLOTH).variableOpacity()).setRegistryName("mist"),
-                new BlockLight(Block.Properties.create(Material.IRON).hardnessAndResistance(15.0F).sound(SoundType.METAL)).setRegistryName("light"),
-                new BlockCushion(Block.Properties.create(Material.IRON).hardnessAndResistance(15.0F).sound(SoundType.METAL)).setRegistryName("cushion")
+                new EssentializerBlock(Block.Properties.create(Material.IRON).hardnessAndResistance(15.0F).sound(SoundType.METAL).lightValue(1)).setRegistryName("essentializer"),
+                new DustBlock(Block.Properties.create(Material.CLAY).hardnessAndResistance(0.1F).sound(SoundType.CLOTH).variableOpacity()).setRegistryName("dust"),
+                new MistBlock(Block.Properties.create(Material.SNOW).hardnessAndResistance(0.1F).sound(SoundType.CLOTH).variableOpacity()).setRegistryName("mist"),
+                new LightBlock(Block.Properties.create(Material.IRON).hardnessAndResistance(15.0F).sound(SoundType.METAL)).setRegistryName("light"),
+                new CushionBlock(Block.Properties.create(Material.IRON).hardnessAndResistance(15.0F).sound(SoundType.METAL)).setRegistryName("cushion")
         );
         for(Gemstone type : Gemstone.values())
         {
             event.getRegistry().registerAll(
-                    new BlockGemstone(type, Block.Properties.create(Material.IRON).hardnessAndResistance(5F, 10F).sound(SoundType.METAL)).setRegistryName(type.getName() + "_block"),
-                    new BlockGemstone(type, Block.Properties.create(Material.IRON).hardnessAndResistance(15.0F).sound(SoundType.METAL)).setRegistryName(type.getName() + "_ore")
+                    new GemstoneBlock(type, Block.Properties.create(Material.IRON).hardnessAndResistance(5F, 10F).sound(SoundType.METAL)).setRegistryName(type.getName() + "_block"),
+                    new GemstoneBlock(type, Block.Properties.create(Material.IRON).hardnessAndResistance(15.0F).sound(SoundType.METAL)).setRegistryName(type.getName() + "_ore")
             );
         }
         for(Element type : Element.values())
         {
             event.getRegistry().registerAll(
-                    new BlockCocoon(type, Block.Properties.create(Material.IRON).hardnessAndResistance(1F).sound(SoundType.METAL).lightValue(5).tickRandomly()).setRegistryName(type.getName() + "_cocoon")
+                    new CocoonBlock(type, Block.Properties.create(Material.IRON).hardnessAndResistance(1F).sound(SoundType.METAL).lightValue(5).tickRandomly()).setRegistryName(type.getName() + "_cocoon")
             );
         }
     }
@@ -330,33 +182,31 @@ public class ElementsOfPowerMod
     public void registerItems(RegistryEvent.Register<Item> event)
     {
         event.getRegistry().registerAll(
-                new BlockItem(essentializer, new Item.Properties().group(tabMagic)).setRegistryName(essentializer.getRegistryName()),
+                new BlockItem(ElementsOfPowerBlocks.essentializer, new Item.Properties().group(tabMagic)).setRegistryName(ElementsOfPowerBlocks.essentializer.getRegistryName()),
 
-                new ItemWand(new Item.Properties().group(tabMagic).maxStackSize(1)).setRegistryName("wand"),
-                new ItemStaff(new Item.Properties().group(tabMagic).maxStackSize(1)).setRegistryName("staff"),
-                new ItemBauble(new Item.Properties().group(tabMagic).maxStackSize(1)).setRegistryName("ring"),
-                new ItemBauble(new Item.Properties().group(tabMagic).maxStackSize(1)).setRegistryName("headband"),
-                new ItemBauble(new Item.Properties().group(tabMagic).maxStackSize(1)).setRegistryName("necklace"),
-                new ItemAnalyzer(new Item.Properties().group(tabMagic).maxStackSize(1)).setRegistryName("analyzer"),
+                new WandItem(new Item.Properties().group(tabMagic).maxStackSize(1)).setRegistryName("wand"),
+                new StaffItem(new Item.Properties().group(tabMagic).maxStackSize(1)).setRegistryName("staff"),
+                new BaubleItem(new Item.Properties().group(tabMagic).maxStackSize(1)).setRegistryName("ring"),
+                new BaubleItem(new Item.Properties().group(tabMagic).maxStackSize(1)).setRegistryName("headband"),
+                new BaubleItem(new Item.Properties().group(tabMagic).maxStackSize(1)).setRegistryName("necklace"),
+                new AnalyzerItem(new Item.Properties().group(tabMagic).maxStackSize(1)).setRegistryName("analyzer"),
 
                 new SpawnEggItem(essenceInit.get(), 0x0000FF, 0xFFFF00, new Item.Properties().group(tabMagic)).setRegistryName("essence")
         );
         for(Gemstone type : Gemstone.values())
         {
-            event.getRegistry().register(new ItemGemstone(type, new Item.Properties().group(tabGemstones).maxStackSize(1)).setRegistryName(type.getName()));
-            if (type.generateCustomUnexamined())
-                event.getRegistry().register(new ItemGemstone(type, new Item.Properties().group(tabGemstones)).setRegistryName("unknown_" + type.getName()));
+            event.getRegistry().register(new GemstoneItem(type, new Item.Properties().group(tabGemstones).maxStackSize(1)).setRegistryName(type.getName()));
             if (type.generateCustomBlock())
                 event.getRegistry().register(new BlockItem(type.getBlock(), new Item.Properties().group(tabMagic)).setRegistryName(type.getName() + "_block"));
             if (type.generateCustomOre())
                 event.getRegistry().register(new BlockItem(type.getOre(), new Item.Properties().group(tabMagic)).setRegistryName(type.getName() + "_ore"));
             if (type.generateSpelldust())
-                event.getRegistry().register(new ItemSpelldust(type, new Item.Properties().group(tabMagic)).setRegistryName(type.getName() + "_spelldust"));
+                event.getRegistry().register(new SpelldustItem(type, new Item.Properties().group(tabMagic)).setRegistryName(type.getName() + "_spelldust"));
         }
         for(Element type : Element.values())
         {
             event.getRegistry().registerAll(
-                    new ItemMagicOrb(type, new Item.Properties().group(tabMagic)).setRegistryName(type.getName() + "_orb"),
+                    new MagicOrbItem(type, new Item.Properties().group(tabMagic)).setRegistryName(type.getName() + "_orb"),
                     new BlockItem(type.getBlock(), new Item.Properties().group(tabMagic)).setRegistryName(type.getName() + "_cocoon")
             );
         }
@@ -373,7 +223,7 @@ public class ElementsOfPowerMod
     public void registerTileEntities(RegistryEvent.Register<TileEntityType<?>> event)
     {
         event.getRegistry().registerAll(
-                TileEntityType.Builder.create(TileEssentializer::new, essentializer).build(null).setRegistryName("essentializer"),
+                TileEntityType.Builder.create(TileEssentializer::new, ElementsOfPowerBlocks.essentializer).build(null).setRegistryName("essentializer"),
                 TileEntityType.Builder.create(TileCocoon::new,
                         Arrays.stream(Element.values()).map(Element::getBlock).toArray(Block[]::new)
                         ).build(null).setRegistryName("cocoon")
@@ -399,10 +249,10 @@ public class ElementsOfPowerMod
 
         ScreenManager.registerFactory(ContainerAnalyzer.TYPE, GuiAnalyzer::new);
         ScreenManager.registerFactory(ContainerEssentializer.TYPE, GuiEssentializer::new);
-        RenderTypeLookup.setRenderLayer(dust, RenderType.translucent());
-        RenderTypeLookup.setRenderLayer(mist, RenderType.translucent());
-        RenderTypeLookup.setRenderLayer(cushion, RenderType.translucent());
-        RenderTypeLookup.setRenderLayer(light, RenderType.translucent());
+        RenderTypeLookup.setRenderLayer(ElementsOfPowerBlocks.dust, RenderType.translucent());
+        RenderTypeLookup.setRenderLayer(ElementsOfPowerBlocks.mist, RenderType.translucent());
+        RenderTypeLookup.setRenderLayer(ElementsOfPowerBlocks.cushion, RenderType.translucent());
+        RenderTypeLookup.setRenderLayer(ElementsOfPowerBlocks.light, RenderType.translucent());
 
         MinecraftForge.EVENT_BUS.register(new WandUseManager());
         MinecraftForge.EVENT_BUS.register(new MagicContainerOverlay());
@@ -412,11 +262,6 @@ public class ElementsOfPowerMod
 
     public void modelRegistry(ModelRegistryEvent event)
     {
-    }
-
-    public void registerBook(InterModEnqueueEvent event)
-    {
-        InterModComms.sendTo("gbook", "registerBook", () -> ElementsOfPowerMod.location("xml/guidebook.xml"));
     }
 
     public void registerRecipes(RegistryEvent.Register<IRecipeSerializer<?>> event)

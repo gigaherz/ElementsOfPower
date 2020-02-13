@@ -1,6 +1,6 @@
 package gigaherz.elementsofpower.recipes;
 
-import gigaherz.elementsofpower.gemstones.ItemGemstone;
+import gigaherz.elementsofpower.gemstones.GemstoneItem;
 import gigaherz.elementsofpower.items.ItemGemContainer;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.Item;
@@ -37,7 +37,7 @@ public class GemstoneChangeRecipe implements ICraftingRecipe
                     return false;
                 gemContainer = current;
             }
-            else if (item instanceof ItemGemstone)
+            else if (item instanceof GemstoneItem)
             {
                 if (gem.getCount() > 0)
                     return false;
@@ -69,7 +69,7 @@ public class GemstoneChangeRecipe implements ICraftingRecipe
                     return ItemStack.EMPTY;
                 gemContainer = current;
             }
-            else if (item instanceof ItemGemstone)
+            else if (item instanceof GemstoneItem)
             {
                 if (gem.getCount() > 0)
                     return ItemStack.EMPTY;

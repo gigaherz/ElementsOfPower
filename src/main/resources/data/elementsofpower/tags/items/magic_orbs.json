@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    "elementsofpower:air_orb",
+    "elementsofpower:water_orb",
+    "elementsofpower:earth_orb",
+    "elementsofpower:fire_orb",
+    "elementsofpower:life_orb",
+    "elementsofpower:death_orb",
+    "elementsofpower:light_orb",
+    "elementsofpower:darkness_orb"
+  ]
+}

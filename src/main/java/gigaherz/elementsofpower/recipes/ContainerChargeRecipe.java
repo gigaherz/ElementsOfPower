@@ -2,7 +2,7 @@ package gigaherz.elementsofpower.recipes;
 
 import com.google.common.collect.Lists;
 import gigaherz.elementsofpower.items.ItemMagicContainer;
-import gigaherz.elementsofpower.items.ItemMagicOrb;
+import gigaherz.elementsofpower.items.MagicOrbItem;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -40,7 +40,7 @@ public class ContainerChargeRecipe implements ICraftingRecipe
                     return false;
                 gemContainer = current;
             }
-            else if (item instanceof ItemMagicOrb)
+            else if (item instanceof MagicOrbItem)
             {
                 orb = current;
             }
@@ -70,7 +70,7 @@ public class ContainerChargeRecipe implements ICraftingRecipe
                     return ItemStack.EMPTY;
                 gemContainer = current.copy();
             }
-            else if (item instanceof ItemMagicOrb)
+            else if (item instanceof MagicOrbItem)
             {
                 orbs.add(current);
             }

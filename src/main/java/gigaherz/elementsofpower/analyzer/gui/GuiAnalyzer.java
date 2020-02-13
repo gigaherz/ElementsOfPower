@@ -6,7 +6,7 @@ import gigaherz.elementsofpower.capabilities.CapabilityMagicContainer;
 import gigaherz.elementsofpower.capabilities.IMagicContainer;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.gemstones.Gemstone;
-import gigaherz.elementsofpower.gemstones.ItemGemstone;
+import gigaherz.elementsofpower.gemstones.GemstoneItem;
 import gigaherz.elementsofpower.gemstones.Quality;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerEntity;
@@ -64,11 +64,11 @@ public class GuiAnalyzer extends ContainerScreen<ContainerAnalyzer>
             MagicAmounts am = null;
 
             Item item = stack.getItem();
-            if (item instanceof ItemGemstone)
+            if (item instanceof GemstoneItem)
             {
                 font.drawString("Item: Gemstone", 32, 18, 0xffffff);
 
-                ItemGemstone gemstone = (ItemGemstone) item;
+                GemstoneItem gemstone = (GemstoneItem) item;
                 gem = gemstone.getGemstone();
                 q = gemstone.getQuality(stack);
 

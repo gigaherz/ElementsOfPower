@@ -3,7 +3,7 @@ package gigaherz.elementsofpower.database;
 import com.google.common.collect.ImmutableMap;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.gemstones.Gemstone;
-import gigaherz.elementsofpower.gemstones.ItemGemstone;
+import gigaherz.elementsofpower.gemstones.GemstoneItem;
 import gigaherz.elementsofpower.gemstones.Quality;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -45,9 +45,9 @@ public class GemstoneExaminer
             return ItemStack.EMPTY;
 
         Item item = stack.getItem();
-        if (item instanceof ItemGemstone)
+        if (item instanceof GemstoneItem)
         {
-            if (((ItemGemstone) item).getQuality(stack) != null)
+            if (((GemstoneItem) item).getQuality(stack) != null)
                 return stack;
         }
 

@@ -3,8 +3,8 @@
   "defaults": {
     "model": "builtin/generated",
     "textures": {
-      "layer0": "elementsofpower:items/spelldust",
-      "layer1": "elementsofpower:items/spelldust1"
+      "layer0": "elementsofpower:item/spelldust",
+      "layer1": "elementsofpower:item/spelldust1"
     },
     "transform": "forge:default-item"
   },

@@ -1,13 +1,9 @@
 package gigaherz.elementsofpower.network;
 
-import gigaherz.elementsofpower.common.Used;
-import gigaherz.elementsofpower.items.ItemWand;
-import net.minecraft.entity.player.PlayerEntity;
+import gigaherz.elementsofpower.items.WandItem;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import javax.annotation.Nullable;
@@ -69,9 +65,9 @@ public class SpellSequenceUpdate
             ServerPlayerEntity player = context.get().getSender();
             ItemStack stack = player.inventory.getStackInSlot(slotNumber);
 
-            if (stack.getItem() instanceof ItemWand)
+            if (stack.getItem() instanceof WandItem)
             {
-                ItemWand wand = (ItemWand) stack.getItem();
+                WandItem wand = (WandItem) stack.getItem();
                 wand.processSequenceUpdate(this, stack, player);
             }
         });

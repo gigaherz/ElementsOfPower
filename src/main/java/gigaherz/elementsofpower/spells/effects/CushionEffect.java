@@ -1,8 +1,8 @@
 package gigaherz.elementsofpower.spells.effects;
 
-import gigaherz.elementsofpower.ElementsOfPowerMod;
+import gigaherz.elementsofpower.ElementsOfPowerBlocks;
 import gigaherz.elementsofpower.spells.Spellcast;
-import gigaherz.elementsofpower.spells.blocks.BlockCushion;
+import gigaherz.elementsofpower.spells.blocks.CushionBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
@@ -66,7 +66,7 @@ public class CushionEffect extends SpellEffect
 
         if (block == Blocks.AIR)
         {
-            cast.world.setBlockState(blockPos, ElementsOfPowerMod.cushion.getDefaultState().with(BlockCushion.DENSITY, 16));
+            cast.world.setBlockState(blockPos, ElementsOfPowerBlocks.cushion.getDefaultState().with(CushionBlock.DENSITY, 16));
         }
     }
 

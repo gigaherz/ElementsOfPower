@@ -10,6 +10,9 @@
     "elementsofpower:emerald",
     "elementsofpower:amethyst",
     "elementsofpower:diamond",
-    "elementsofpower:creativite"
+    "elementsofpower:creativite",
+    "minecraft:quartz",
+    "minecraft:emerald",
+    "minecraft:diamond"
   ]
 }

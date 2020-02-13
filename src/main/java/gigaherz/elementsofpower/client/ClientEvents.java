@@ -1,23 +1,13 @@
 package gigaherz.elementsofpower.client;
 
+import gigaherz.elementsofpower.ElementsOfPowerItems;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
-import gigaherz.elementsofpower.gemstones.Gemstone;
-import gigaherz.elementsofpower.items.ItemGemContainer;
-import gigaherz.elementsofpower.spelldust.ItemSpelldust;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import gigaherz.elementsofpower.spelldust.SpelldustItem;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ColorHandlerEvent;
-import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-
-import javax.annotation.Nullable;
-import java.security.InvalidParameterException;
 
 @Mod.EventBusSubscriber(value= Dist.CLIENT, modid= ElementsOfPowerMod.MODID)
 public class ClientEvents
@@ -37,20 +27,20 @@ public class ClientEvents
                     if (tintIndex != 0)
                         return 0xFFFFFFFF;
 
-                    if (stack.getItem() instanceof ItemSpelldust)
-                        return ((ItemSpelldust)stack.getItem()).getType().getTintColor();
+                    if (stack.getItem() instanceof SpelldustItem)
+                        return ((SpelldustItem)stack.getItem()).getType().getTintColor();
 
                     return 0xFFFFFFFF;
                 },
-                ElementsOfPowerMod.ruby_spelldust,
-                ElementsOfPowerMod.sapphire_spelldust,
-                ElementsOfPowerMod.citrine_spelldust,
-                ElementsOfPowerMod.agate_spelldust,
-                ElementsOfPowerMod.quartz_spelldust,
-                ElementsOfPowerMod.serendibite_spelldust,
-                ElementsOfPowerMod.emerald_spelldust,
-                ElementsOfPowerMod.amethyst_spelldust,
-                ElementsOfPowerMod.diamond_spelldust
+                ElementsOfPowerItems.RUBY_SPELLDUST,
+                ElementsOfPowerItems.SAPPHIRE_SPELLDUST,
+                ElementsOfPowerItems.CITRINE_SPELLDUST,
+                ElementsOfPowerItems.AGATE_SPELLDUST,
+                ElementsOfPowerItems.QUARTZ_SPELLDUST,
+                ElementsOfPowerItems.SERENDIBITE_SPELLDUST,
+                ElementsOfPowerItems.EMERALD_SPELLDUST,
+                ElementsOfPowerItems.AMETHYST_SPELLDUST,
+                ElementsOfPowerItems.DIAMOND_SPELLDUST
         );
     }
 }

@@ -3,8 +3,6 @@ package gigaherz.elementsofpower.items;
 import gigaherz.elementsofpower.capabilities.CapabilityMagicContainer;
 import gigaherz.elementsofpower.capabilities.IMagicContainer;
 import gigaherz.elementsofpower.database.MagicAmounts;
-import gigaherz.elementsofpower.spells.Element;
-import gigaherz.elementsofpower.gemstones.Gemstone;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -111,7 +109,7 @@ public abstract class ItemMagicContainer extends Item
                 if (orb.getCount() <= 0)
                     continue;
 
-                totalMagic = totalMagic.add(((ItemMagicOrb)orb.getItem()).getElement(), 8);
+                totalMagic = totalMagic.add(((MagicOrbItem)orb.getItem()).getElement(), 8);
             }
 
             if (!magic.insertMagic(totalMagic, true).isEmpty())

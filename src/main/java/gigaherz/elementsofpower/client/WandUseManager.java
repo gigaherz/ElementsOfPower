@@ -3,7 +3,7 @@ package gigaherz.elementsofpower.client;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.spells.Element;
-import gigaherz.elementsofpower.items.ItemWand;
+import gigaherz.elementsofpower.items.WandItem;
 import gigaherz.elementsofpower.network.SpellSequenceUpdate;
 import gigaherz.elementsofpower.spells.SpellManager;
 import net.minecraft.client.GameSettings;
@@ -143,7 +143,7 @@ public class WandUseManager
             PlayerEntity player = mc.player;
             int slotNumber = player.inventory.currentItem;
             ItemStack itemUsing = player.inventory.getCurrentItem();
-            if (!(itemUsing.getItem() instanceof ItemWand))
+            if (!(itemUsing.getItem() instanceof WandItem))
                 return;
 
             Hand hand = handInUse;

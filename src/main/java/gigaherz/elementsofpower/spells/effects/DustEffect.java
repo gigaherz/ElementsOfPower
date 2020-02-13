@@ -1,8 +1,8 @@
 package gigaherz.elementsofpower.spells.effects;
 
-import gigaherz.elementsofpower.ElementsOfPowerMod;
+import gigaherz.elementsofpower.ElementsOfPowerBlocks;
 import gigaherz.elementsofpower.spells.Spellcast;
-import gigaherz.elementsofpower.spells.blocks.BlockDust;
+import gigaherz.elementsofpower.spells.blocks.DustBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
@@ -76,7 +76,7 @@ public class DustEffect extends SpellEffect
 
         if (block == Blocks.AIR)
         {
-            cast.world.setBlockState(blockPos, ElementsOfPowerMod.dust.getDefaultState().with(BlockDust.DENSITY, 16));
+            cast.world.setBlockState(blockPos, ElementsOfPowerBlocks.dust.getDefaultState().with(DustBlock.DENSITY, 16));
         }
     }
 }

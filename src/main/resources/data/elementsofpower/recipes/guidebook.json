@@ -1,0 +1,23 @@
+{
+  "type": "forge:conditional",
+  "recipes": [
+    {
+      "conditions": [
+        { "type":"forge:mod_loaded", "modid": "gbook"}
+      ],
+      "recipe": {
+        "type":"minecraft:crafting_shapeless",
+        "ingredients": [
+          { "item": "minecraft:book" },
+          { "tag": "elementsofpower:magic_orbs" }
+        ],
+        "result": {
+          "item": "gbook:guidebook",
+          "nbt": {
+            "book": "elementsofpower:xml/guidebook.xml"
+          }
+        }
+      }
+    }
+  ]
+}

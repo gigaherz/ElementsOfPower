@@ -1,8 +1,8 @@
 package gigaherz.elementsofpower.spells.effects;
 
-import gigaherz.elementsofpower.ElementsOfPowerMod;
+import gigaherz.elementsofpower.ElementsOfPowerBlocks;
 import gigaherz.elementsofpower.spells.Spellcast;
-import gigaherz.elementsofpower.spells.blocks.BlockLight;
+import gigaherz.elementsofpower.spells.blocks.LightBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -75,11 +75,11 @@ public class LightEffect extends SpellEffect
 
         if (block == Blocks.AIR)
         {
-            cast.world.setBlockState(blockPos, ElementsOfPowerMod.light.getDefaultState().with(BlockLight.DENSITY, density));
+            cast.world.setBlockState(blockPos, ElementsOfPowerBlocks.light.getDefaultState().with(LightBlock.DENSITY, density));
         }
-        else if (block == ElementsOfPowerMod.light)
+        else if (block == ElementsOfPowerBlocks.light)
         {
-            ElementsOfPowerMod.light.resetCooldown(cast.world, blockPos, currentState, density);
+            ElementsOfPowerBlocks.light.resetCooldown(cast.world, blockPos, currentState, density);
         }
     }
 }

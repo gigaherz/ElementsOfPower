@@ -1,0 +1,14 @@
+{
+  "type":"minecraft:crafting_shaped",
+  "pattern":[
+    "aaa",
+    "aaa",
+    "aaa"
+  ],
+  "key": {
+    "a": { "item": "elementsofpower:amethyst" }
+  },
+  "result": {
+    "item": "elementsofpower:amethyst_block"
+  }
+}

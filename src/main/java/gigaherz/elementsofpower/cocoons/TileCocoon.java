@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.cocoons;
 
 import gigaherz.elementsofpower.database.MagicAmounts;
-import gigaherz.elementsofpower.items.ItemMagicOrb;
+import gigaherz.elementsofpower.items.MagicOrbItem;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -60,7 +60,7 @@ public class TileCocoon extends TileEntity implements ITickableTileEntity
 
     public void addEssences(ItemStack stack)
     {
-        essenceContained = essenceContained.add(((ItemMagicOrb)stack.getItem()).getElement(), 1);
+        essenceContained = essenceContained.add(((MagicOrbItem)stack.getItem()).getElement(), 1);
 
         BlockState state = world.getBlockState(pos);
         world.notifyBlockUpdate(pos, state, state, 3);

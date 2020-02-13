@@ -3,12 +3,11 @@ package gigaherz.elementsofpower.client.renderers;
 import com.mojang.blaze3d.systems.RenderSystem;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.capabilities.CapabilityMagicContainer;
-import gigaherz.elementsofpower.capabilities.IMagicContainer;
 import gigaherz.elementsofpower.client.StackRenderingHelper;
 import gigaherz.elementsofpower.client.WandUseManager;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.spells.Element;
-import gigaherz.elementsofpower.items.ItemWand;
+import gigaherz.elementsofpower.items.WandItem;
 import gigaherz.elementsofpower.spells.SpellManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
@@ -80,7 +79,7 @@ public class MagicContainerOverlay extends AbstractGui
             CompoundNBT nbt = heldItem.getTag();
             if (nbt != null)
             {
-                String savedSequence = nbt.getString(ItemWand.SPELL_SEQUENCE_TAG);
+                String savedSequence = nbt.getString(WandItem.SPELL_SEQUENCE_TAG);
 
                 if (savedSequence.length() > 0)
                 {

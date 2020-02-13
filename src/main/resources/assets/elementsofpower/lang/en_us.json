@@ -110,7 +110,8 @@
     "block.elementsofpower.serendibite_block": "Block of Serendibite",
     "block.elementsofpower.amethyst_block": "Block of Amethyst",
 
-    "itemGroup.elementsofpower": "Elements Of Power",
+    "itemGroup.elementsofpower.magic": "Elements Of Power Gear & Elements",
+    "itemGroup.elementsofpower.gemstones": "Elements Of Power Gemstones",
 
     "item.elementsofpower.Essence": "Spawn Living Essence",
     "entity.elementsofpower.Essence": "Living Essence",

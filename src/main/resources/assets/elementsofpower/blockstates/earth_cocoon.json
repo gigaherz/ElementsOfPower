@@ -1,0 +1,27 @@
+{
+  "variants": {
+    "facing=up": {
+      "model": "elementsofpower:block/earth_cocoon",
+      "x": 90
+    },
+    "facing=down": {
+      "model": "elementsofpower:block/earth_cocoon",
+      "x": 270
+    },
+    "facing=east": {
+      "model": "elementsofpower:block/earth_cocoon",
+      "y": 270
+    },
+    "facing=west": {
+      "model": "elementsofpower:block/earth_cocoon",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "elementsofpower:block/earth_cocoon",
+      "y": 180
+    },
+    "facing=south": {
+      "model": "elementsofpower:block/earth_cocoon"
+    }
+  }
+}
