@@ -1,6 +1,6 @@
 package gigaherz.elementsofpower.items;
 
-import gigaherz.elementsofpower.capabilities.CapabilityMagicContainer;
+import gigaherz.elementsofpower.capabilities.MagicContainerCapability;
 import gigaherz.elementsofpower.capabilities.IMagicContainer;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.gemstones.Gemstone;
@@ -14,7 +14,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nullable;
 
-public class BaubleItem extends ItemGemContainer
+public class BaubleItem extends GemContainerItem
 {
     private static final float MAX_TRANSFER_TICK = 1 / 20.0f;
     private static final float[] TRANSFER_RATES = {
@@ -110,7 +110,7 @@ public class BaubleItem extends ItemGemContainer
     private static boolean canReceiveMagic(ItemStack thisStack, ItemStack s, MagicAmounts available)
     {
         return s != thisStack
-                && CapabilityMagicContainer.isNotFull(s, available);
+                && MagicContainerCapability.isNotFull(s, available);
     }
 
 
@@ -138,7 +138,7 @@ public class BaubleItem extends ItemGemContainer
 
     protected void tryTransferToWands(ItemStack thisStack, PlayerEntity p)
     {
-        CapabilityMagicContainer.getContainer(thisStack).ifPresent(magic -> {
+        MagicContainerCapability.getContainer(thisStack).ifPresent(magic -> {
             MagicAmounts available = magic.getContainedMagic();
 
             if (available.isEmpty())
@@ -164,7 +164,7 @@ public class BaubleItem extends ItemGemContainer
                             ItemSlotReference slotReference)
     {
         ItemStack stack = slotReference.get();
-        CapabilityMagicContainer.getContainer(stack).ifPresent(magic -> {
+        MagicContainerCapability.getContainer(stack).ifPresent(magic -> {
 
             MagicAmounts limits = magic.getCapacity();
             MagicAmounts amounts = magic.getContainedMagic();

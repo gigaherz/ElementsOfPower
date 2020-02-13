@@ -2,7 +2,7 @@ package gigaherz.elementsofpower.client.renderers;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
-import gigaherz.elementsofpower.capabilities.CapabilityMagicContainer;
+import gigaherz.elementsofpower.capabilities.MagicContainerCapability;
 import gigaherz.elementsofpower.client.StackRenderingHelper;
 import gigaherz.elementsofpower.client.WandUseManager;
 import gigaherz.elementsofpower.database.MagicAmounts;
@@ -37,7 +37,7 @@ public class MagicContainerOverlay extends AbstractGui
         if (heldItem.getCount() <= 0)
             return;
 
-        CapabilityMagicContainer.getContainer(heldItem).ifPresent(magic -> {
+        MagicContainerCapability.getContainer(heldItem).ifPresent(magic -> {
 
             // Contained essences
             MagicAmounts amounts = magic.getContainedMagic();

@@ -1,31 +1,31 @@
 package gigaherz.elementsofpower;
 
 import gigaherz.elementsofpower.analyzer.AnalyzerItem;
-import gigaherz.elementsofpower.analyzer.gui.ContainerAnalyzer;
-import gigaherz.elementsofpower.analyzer.gui.GuiAnalyzer;
-import gigaherz.elementsofpower.capabilities.CapabilityMagicContainer;
+import gigaherz.elementsofpower.analyzer.gui.AnalyzerContainer;
+import gigaherz.elementsofpower.analyzer.gui.AnalyzerScreen;
+import gigaherz.elementsofpower.capabilities.MagicContainerCapability;
 import gigaherz.elementsofpower.client.NbtToModel;
 import gigaherz.elementsofpower.client.WandUseManager;
 import gigaherz.elementsofpower.client.renderers.MagicContainerOverlay;
-import gigaherz.elementsofpower.client.renderers.RenderBall;
-import gigaherz.elementsofpower.client.renderers.RenderEssence;
-import gigaherz.elementsofpower.client.renderers.RenderEssentializer;
+import gigaherz.elementsofpower.client.renderers.BallEntityRenderer;
+import gigaherz.elementsofpower.client.renderers.EssenceEntityRenderer;
+import gigaherz.elementsofpower.client.renderers.EssentializerTileEntityRender;
 import gigaherz.elementsofpower.cocoons.CocoonBlock;
-import gigaherz.elementsofpower.cocoons.TileCocoon;
+import gigaherz.elementsofpower.cocoons.CocoonTileEntity;
 import gigaherz.elementsofpower.database.EssenceConversions;
 import gigaherz.elementsofpower.database.EssenceOverrides;
 import gigaherz.elementsofpower.database.StockConversions;
-import gigaherz.elementsofpower.entities.EntityBall;
-import gigaherz.elementsofpower.entities.EntityEssence;
+import gigaherz.elementsofpower.entities.BallEntity;
+import gigaherz.elementsofpower.entities.EssenceEntity;
 import gigaherz.elementsofpower.essentializer.EssentializerBlock;
-import gigaherz.elementsofpower.essentializer.TileEssentializer;
-import gigaherz.elementsofpower.essentializer.gui.ContainerEssentializer;
-import gigaherz.elementsofpower.essentializer.gui.GuiEssentializer;
+import gigaherz.elementsofpower.essentializer.EssentializerTileEntity;
+import gigaherz.elementsofpower.essentializer.gui.EssentializerContainer;
+import gigaherz.elementsofpower.essentializer.gui.EssentializerScreen;
 import gigaherz.elementsofpower.gemstones.*;
 import gigaherz.elementsofpower.items.*;
 import gigaherz.elementsofpower.network.*;
-import gigaherz.elementsofpower.recipes.ContainerChargeRecipeFactory;
-import gigaherz.elementsofpower.recipes.GemstoneChangeRecipeFactory;
+import gigaherz.elementsofpower.recipes.ContainerChargeRecipe;
+import gigaherz.elementsofpower.recipes.GemstoneChangeRecipe;
 import gigaherz.elementsofpower.spelldust.SpelldustItem;
 import gigaherz.elementsofpower.spells.Element;
 import gigaherz.elementsofpower.spells.SpellcastEntityData;
@@ -36,7 +36,6 @@ import gigaherz.elementsofpower.spells.blocks.MistBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.material.MaterialColor;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
@@ -87,17 +86,10 @@ public class ElementsOfPowerMod
 {
     public static final String MODID = "elementsofpower";
 
-    public static final String CHANNEL = "ElementsOfPower";
-
-    public static ElementsOfPowerMod instance;
-
-    // Block Materials
-    public static Material materialCushion = (new Material.Builder(MaterialColor.BLACK)).doesNotBlockMovement().notOpaque().notSolid().replaceable().pushDestroys().build();
-
     // To be used only during loading.
-    private final Lazy<EntityType<EntityBall>> spellBallInit = Lazy.of(() -> EntityType.Builder.<EntityBall>create(EntityBall::new, EntityClassification.MISC)
+    private final Lazy<EntityType<BallEntity>> spellBallInit = Lazy.of(() -> EntityType.Builder.<BallEntity>create(BallEntity::new, EntityClassification.MISC)
             .setTrackingRange(80).setUpdateInterval(3).setShouldReceiveVelocityUpdates(true).build(location("spell_ball").toString()));
-    private final Lazy<EntityType<EntityEssence>> essenceInit = Lazy.of(() -> EntityType.Builder.<EntityEssence>create(EntityEssence::new, EntityClassification.AMBIENT)
+    private final Lazy<EntityType<EssenceEntity>> essenceInit = Lazy.of(() -> EntityType.Builder.<EssenceEntity>create(EssenceEntity::new, EntityClassification.AMBIENT)
             .setTrackingRange(80).setUpdateInterval(3).setShouldReceiveVelocityUpdates(true).build(location("essence").toString()));
 
     // Handlers
@@ -162,12 +154,17 @@ public class ElementsOfPowerMod
                 new DustBlock(Block.Properties.create(Material.CLAY).hardnessAndResistance(0.1F).sound(SoundType.CLOTH).variableOpacity()).setRegistryName("dust"),
                 new MistBlock(Block.Properties.create(Material.SNOW).hardnessAndResistance(0.1F).sound(SoundType.CLOTH).variableOpacity()).setRegistryName("mist"),
                 new LightBlock(Block.Properties.create(Material.IRON).hardnessAndResistance(15.0F).sound(SoundType.METAL)).setRegistryName("light"),
-                new CushionBlock(Block.Properties.create(Material.IRON).hardnessAndResistance(15.0F).sound(SoundType.METAL)).setRegistryName("cushion")
+                new CushionBlock(Block.Properties.create(ElementsOfPowerBlocks.BlockMaterials.CUSHION).hardnessAndResistance(15.0F).sound(SoundType.METAL)).setRegistryName("cushion")
         );
         for(Gemstone type : Gemstone.values())
         {
+            event.getRegistry().register(
+                    new GemstoneBlock(type, Block.Properties.create(Material.IRON).hardnessAndResistance(5F, 10F).sound(SoundType.METAL)).setRegistryName(type.getName() + "_block")
+            );
+        }
+        for(Gemstone type : Gemstone.values())
+        {
             event.getRegistry().registerAll(
-                    new GemstoneBlock(type, Block.Properties.create(Material.IRON).hardnessAndResistance(5F, 10F).sound(SoundType.METAL)).setRegistryName(type.getName() + "_block"),
                     new GemstoneBlock(type, Block.Properties.create(Material.IRON).hardnessAndResistance(15.0F).sound(SoundType.METAL)).setRegistryName(type.getName() + "_ore")
             );
         }
@@ -196,17 +193,31 @@ public class ElementsOfPowerMod
         for(Gemstone type : Gemstone.values())
         {
             event.getRegistry().register(new GemstoneItem(type, new Item.Properties().group(tabGemstones).maxStackSize(1)).setRegistryName(type.getName()));
+        }
+        for(Gemstone type : Gemstone.values())
+        {
             if (type.generateCustomBlock())
                 event.getRegistry().register(new BlockItem(type.getBlock(), new Item.Properties().group(tabMagic)).setRegistryName(type.getName() + "_block"));
+        }
+        for(Gemstone type : Gemstone.values())
+        {
             if (type.generateCustomOre())
                 event.getRegistry().register(new BlockItem(type.getOre(), new Item.Properties().group(tabMagic)).setRegistryName(type.getName() + "_ore"));
+        }
+        for(Gemstone type : Gemstone.values())
+        {
             if (type.generateSpelldust())
                 event.getRegistry().register(new SpelldustItem(type, new Item.Properties().group(tabMagic)).setRegistryName(type.getName() + "_spelldust"));
         }
         for(Element type : Element.values())
         {
-            event.getRegistry().registerAll(
-                    new MagicOrbItem(type, new Item.Properties().group(tabMagic)).setRegistryName(type.getName() + "_orb"),
+            event.getRegistry().register(
+                    new MagicOrbItem(type, new Item.Properties().group(tabMagic)).setRegistryName(type.getName() + "_orb")
+            );
+        }
+        for(Element type : Element.values())
+        {
+            event.getRegistry().register(
                     new BlockItem(type.getBlock(), new Item.Properties().group(tabMagic)).setRegistryName(type.getName() + "_cocoon")
             );
         }
@@ -223,8 +234,8 @@ public class ElementsOfPowerMod
     public void registerTileEntities(RegistryEvent.Register<TileEntityType<?>> event)
     {
         event.getRegistry().registerAll(
-                TileEntityType.Builder.create(TileEssentializer::new, ElementsOfPowerBlocks.essentializer).build(null).setRegistryName("essentializer"),
-                TileEntityType.Builder.create(TileCocoon::new,
+                TileEntityType.Builder.create(EssentializerTileEntity::new, ElementsOfPowerBlocks.essentializer).build(null).setRegistryName("essentializer"),
+                TileEntityType.Builder.create(CocoonTileEntity::new,
                         Arrays.stream(Element.values()).map(Element::getBlock).toArray(Block[]::new)
                         ).build(null).setRegistryName("cocoon")
         );
@@ -233,8 +244,8 @@ public class ElementsOfPowerMod
     public void registerContainerTypes(RegistryEvent.Register<ContainerType<?>> event)
     {
         event.getRegistry().registerAll(
-                new ContainerType<>(ContainerEssentializer::new).setRegistryName("essentializer"),
-                IForgeContainerType.create(ContainerAnalyzer::new).setRegistryName("analyzer")
+                new ContainerType<>(EssentializerContainer::new).setRegistryName("essentializer"),
+                IForgeContainerType.create(AnalyzerContainer::new).setRegistryName("analyzer")
         );
     }
 
@@ -242,13 +253,13 @@ public class ElementsOfPowerMod
     {
         ModelLoaderRegistry.registerLoader(location("nbt_to_model"), NbtToModel.Loader.INSTANCE);
 
-        RenderingRegistry.registerEntityRenderingHandler(EntityEssence.TYPE, RenderEssence::new);
-        RenderingRegistry.registerEntityRenderingHandler(EntityBall.TYPE, RenderBall::new);
+        RenderingRegistry.registerEntityRenderingHandler(EssenceEntity.TYPE, EssenceEntityRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(BallEntity.TYPE, BallEntityRenderer::new);
 
-        ClientRegistry.bindTileEntityRenderer(TileEssentializer.TYPE, RenderEssentializer::new);
+        ClientRegistry.bindTileEntityRenderer(EssentializerTileEntity.TYPE, EssentializerTileEntityRender::new);
 
-        ScreenManager.registerFactory(ContainerAnalyzer.TYPE, GuiAnalyzer::new);
-        ScreenManager.registerFactory(ContainerEssentializer.TYPE, GuiEssentializer::new);
+        ScreenManager.registerFactory(AnalyzerContainer.TYPE, AnalyzerScreen::new);
+        ScreenManager.registerFactory(EssentializerContainer.TYPE, EssentializerScreen::new);
         RenderTypeLookup.setRenderLayer(ElementsOfPowerBlocks.dust, RenderType.translucent());
         RenderTypeLookup.setRenderLayer(ElementsOfPowerBlocks.mist, RenderType.translucent());
         RenderTypeLookup.setRenderLayer(ElementsOfPowerBlocks.cushion, RenderType.translucent());
@@ -267,8 +278,8 @@ public class ElementsOfPowerMod
     public void registerRecipes(RegistryEvent.Register<IRecipeSerializer<?>> event)
     {
         event.getRegistry().registerAll(
-                ContainerChargeRecipeFactory.INSTANCE.setRegistryName("container_charge"),
-                GemstoneChangeRecipeFactory.INSTANCE.setRegistryName("gemstone_change")
+                ContainerChargeRecipe.Serializer.INSTANCE.setRegistryName("container_charge"),
+                GemstoneChangeRecipe.Serializer.INSTANCE.setRegistryName("gemstone_change")
         );
     }
 
@@ -287,14 +298,14 @@ public class ElementsOfPowerMod
     public void commonSetup(FMLCommonSetupEvent event)
     {
         int messageNumber = 0;
-        channel.messageBuilder(SpellSequenceUpdate.class, messageNumber++).encoder(SpellSequenceUpdate::encode).decoder(SpellSequenceUpdate::new).consumer(SpellSequenceUpdate::handle).add();
-        channel.messageBuilder(SpellcastSync.class, messageNumber++).encoder(SpellcastSync::encode).decoder(SpellcastSync::new).consumer(SpellcastSync::handle).add();
-        channel.messageBuilder(EssentializerAmountsUpdate.class, messageNumber++).encoder(EssentializerAmountsUpdate::encode).decoder(EssentializerAmountsUpdate::new).consumer(EssentializerAmountsUpdate::handle).add();
-        channel.messageBuilder(EssentializerTileUpdate.class, messageNumber++).encoder(EssentializerTileUpdate::encode).decoder(EssentializerTileUpdate::new).consumer(EssentializerTileUpdate::handle).add();
-        channel.messageBuilder(AddVelocityPlayer.class, messageNumber++).encoder(AddVelocityPlayer::encode).decoder(AddVelocityPlayer::new).consumer(AddVelocityPlayer::handle).add();
+        channel.messageBuilder(UpdateSpellSequence.class, messageNumber++).encoder(UpdateSpellSequence::encode).decoder(UpdateSpellSequence::new).consumer(UpdateSpellSequence::handle).add();
+        channel.messageBuilder(SynchronizeSpellcastState.class, messageNumber++).encoder(SynchronizeSpellcastState::encode).decoder(SynchronizeSpellcastState::new).consumer(SynchronizeSpellcastState::handle).add();
+        channel.messageBuilder(UpdateEssentializerAmounts.class, messageNumber++).encoder(UpdateEssentializerAmounts::encode).decoder(UpdateEssentializerAmounts::new).consumer(UpdateEssentializerAmounts::handle).add();
+        channel.messageBuilder(UpdateEssentializerTileEntity.class, messageNumber++).encoder(UpdateEssentializerTileEntity::encode).decoder(UpdateEssentializerTileEntity::new).consumer(UpdateEssentializerTileEntity::handle).add();
+        channel.messageBuilder(AddVelocityToPlayer.class, messageNumber++).encoder(AddVelocityToPlayer::encode).decoder(AddVelocityToPlayer::new).consumer(AddVelocityToPlayer::handle).add();
         logger.debug("Final message number: " + messageNumber);
 
-        CapabilityMagicContainer.register();
+        MagicContainerCapability.register();
         SpellcastEntityData.register();
         //DiscoveryHandler.init();
     }

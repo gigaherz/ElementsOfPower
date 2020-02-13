@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.spells;
 
 import gigaherz.elementsofpower.ElementsOfPowerMod;
-import gigaherz.elementsofpower.network.SpellcastSync;
+import gigaherz.elementsofpower.network.SynchronizeSpellcastState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -86,7 +86,7 @@ public class SpellcastEntityData implements INBTSerializable<CompoundNBT>
         if (!player.world.isRemote)
         {
             ElementsOfPowerMod.channel.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player),
-                    new SpellcastSync(SpellcastSync.ChangeMode.BEGIN, spell));
+                    new SynchronizeSpellcastState(SynchronizeSpellcastState.ChangeMode.BEGIN, spell));
         }
     }
 
@@ -97,7 +97,7 @@ public class SpellcastEntityData implements INBTSerializable<CompoundNBT>
             if (!player.world.isRemote)
             {
                 ElementsOfPowerMod.channel.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player),
-                        new SpellcastSync(SpellcastSync.ChangeMode.END, currentCasting));
+                        new SynchronizeSpellcastState(SynchronizeSpellcastState.ChangeMode.END, currentCasting));
             }
 
             currentCasting = null;
@@ -111,7 +111,7 @@ public class SpellcastEntityData implements INBTSerializable<CompoundNBT>
             if (!player.world.isRemote)
             {
                 ElementsOfPowerMod.channel.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player),
-                        new SpellcastSync(SpellcastSync.ChangeMode.INTERRUPT, currentCasting));
+                        new SynchronizeSpellcastState(SynchronizeSpellcastState.ChangeMode.INTERRUPT, currentCasting));
             }
 
             currentCasting = null;
@@ -125,7 +125,7 @@ public class SpellcastEntityData implements INBTSerializable<CompoundNBT>
             if (!player.world.isRemote)
             {
                 ElementsOfPowerMod.channel.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player),
-                        new SpellcastSync(SpellcastSync.ChangeMode.CANCEL, currentCasting));
+                        new SynchronizeSpellcastState(SynchronizeSpellcastState.ChangeMode.CANCEL, currentCasting));
             }
 
             currentCasting = null;
@@ -164,7 +164,7 @@ public class SpellcastEntityData implements INBTSerializable<CompoundNBT>
         }
     }
 
-    public void sync(SpellcastSync.ChangeMode changeMode, Spellcast cast)
+    public void sync(SynchronizeSpellcastState.ChangeMode changeMode, Spellcast cast)
     {
         switch (changeMode)
         {

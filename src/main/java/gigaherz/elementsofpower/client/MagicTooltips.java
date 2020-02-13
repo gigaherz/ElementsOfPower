@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.client;
 
 import gigaherz.elementsofpower.ElementsOfPowerMod;
-import gigaherz.elementsofpower.capabilities.CapabilityMagicContainer;
+import gigaherz.elementsofpower.capabilities.MagicContainerCapability;
 import gigaherz.elementsofpower.database.EssenceConversions;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import net.minecraft.client.Minecraft;
@@ -81,7 +81,7 @@ public class MagicTooltips
 
     public static void addContainedTooltip(List<ITextComponent> toolTip, ItemStack stack)
     {
-        CapabilityMagicContainer.getContainer(stack).ifPresent(magic -> {
+        MagicContainerCapability.getContainer(stack).ifPresent(magic -> {
 
             MagicAmounts amounts = magic.getContainedMagic();
             if (amounts.isEmpty() && !magic.isInfinite())

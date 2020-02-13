@@ -1,15 +1,20 @@
 package gigaherz.elementsofpower.recipes;
 
+import com.google.gson.JsonObject;
 import gigaherz.elementsofpower.gemstones.GemstoneItem;
-import gigaherz.elementsofpower.items.ItemGemContainer;
+import gigaherz.elementsofpower.items.GemContainerItem;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ICraftingRecipe;
 import net.minecraft.item.crafting.IRecipeSerializer;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.registries.ForgeRegistryEntry;
+
+import javax.annotation.Nullable;
 
 public class GemstoneChangeRecipe implements ICraftingRecipe
 {
@@ -31,7 +36,7 @@ public class GemstoneChangeRecipe implements ICraftingRecipe
             if (current.getCount() <= 0)
                 continue;
             Item item = current.getItem();
-            if (item instanceof ItemGemContainer)
+            if (item instanceof GemContainerItem)
             {
                 if (gemContainer.getCount() > 0)
                     return false;
@@ -63,7 +68,7 @@ public class GemstoneChangeRecipe implements ICraftingRecipe
             if (current.getCount() <= 0)
                 continue;
             Item item = current.getItem();
-            if (item instanceof ItemGemContainer)
+            if (item instanceof GemContainerItem)
             {
                 if (gemContainer.getCount() > 0)
                     return ItemStack.EMPTY;
@@ -86,7 +91,7 @@ public class GemstoneChangeRecipe implements ICraftingRecipe
             return ItemStack.EMPTY;
         }
 
-        return ((ItemGemContainer) gemContainer.getItem()).setContainedGemstone(gemContainer.copy(), gem);
+        return ((GemContainerItem) gemContainer.getItem()).setContainedGemstone(gemContainer.copy(), gem);
     }
 
     @Override
@@ -106,7 +111,7 @@ public class GemstoneChangeRecipe implements ICraftingRecipe
     {
         NonNullList<ItemStack> arr = NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
 
-        ItemGemContainer gemContainerItem = null;
+        GemContainerItem gemContainerItem = null;
 
         ItemStack gemContainer = null;
 
@@ -114,12 +119,12 @@ public class GemstoneChangeRecipe implements ICraftingRecipe
         {
             ItemStack current = inv.getStackInSlot(i);
             Item item = current.getItem();
-            if (item instanceof ItemGemContainer)
+            if (item instanceof GemContainerItem)
             {
                 if (gemContainer != null)
                     return arr;
                 gemContainer = current;
-                gemContainerItem = (ItemGemContainer) item;
+                gemContainerItem = (GemContainerItem) item;
             }
         }
 
@@ -147,6 +152,30 @@ public class GemstoneChangeRecipe implements ICraftingRecipe
     @Override
     public IRecipeSerializer<?> getSerializer()
     {
-        return GemstoneChangeRecipeFactory.INSTANCE;
+        return Serializer.INSTANCE;
+    }
+
+    public static class Serializer extends ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<GemstoneChangeRecipe>
+    {
+        public static final Serializer INSTANCE = new Serializer();
+
+        @Override
+        public GemstoneChangeRecipe read(ResourceLocation recipeId, JsonObject json)
+        {
+            return new GemstoneChangeRecipe(recipeId);
+        }
+
+        @Nullable
+        @Override
+        public GemstoneChangeRecipe read(ResourceLocation recipeId, PacketBuffer buffer)
+        {
+            return new GemstoneChangeRecipe(recipeId);
+        }
+
+        @Override
+        public void write(PacketBuffer buffer, GemstoneChangeRecipe recipe)
+        {
+
+        }
     }
 }

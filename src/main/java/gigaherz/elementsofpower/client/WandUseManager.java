@@ -4,7 +4,7 @@ import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.spells.Element;
 import gigaherz.elementsofpower.items.WandItem;
-import gigaherz.elementsofpower.network.SpellSequenceUpdate;
+import gigaherz.elementsofpower.network.UpdateSpellSequence;
 import gigaherz.elementsofpower.spells.SpellManager;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
@@ -208,18 +208,18 @@ public class WandUseManager
         slotInUse = slotNumber;
         sequence = "";
 
-        ElementsOfPowerMod.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.BEGIN, slotInUse, null));
+        ElementsOfPowerMod.channel.sendToServer(new UpdateSpellSequence(UpdateSpellSequence.ChangeMode.BEGIN, slotInUse, null));
     }
 
     private void endHoldingRightButton(boolean cancelMagicSetting)
     {
         if (cancelMagicSetting)
         {
-            ElementsOfPowerMod.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.CANCEL, slotInUse, null));
+            ElementsOfPowerMod.channel.sendToServer(new UpdateSpellSequence(UpdateSpellSequence.ChangeMode.CANCEL, slotInUse, null));
         }
         else
         {
-            ElementsOfPowerMod.channel.sendToServer(new SpellSequenceUpdate(SpellSequenceUpdate.ChangeMode.COMMIT, slotInUse, sequence));
+            ElementsOfPowerMod.channel.sendToServer(new UpdateSpellSequence(UpdateSpellSequence.ChangeMode.COMMIT, slotInUse, sequence));
         }
 
         handInUse = null;

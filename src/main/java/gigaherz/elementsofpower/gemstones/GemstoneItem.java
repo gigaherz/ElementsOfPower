@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.gemstones;
 
 import gigaherz.elementsofpower.database.MagicAmounts;
-import gigaherz.elementsofpower.items.ItemMagicContainer;
+import gigaherz.elementsofpower.items.MagicContainerItem;
 import gigaherz.elementsofpower.spells.Element;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemGroup;
@@ -21,7 +21,7 @@ import net.minecraftforge.common.util.Constants;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class GemstoneItem extends ItemMagicContainer
+public class GemstoneItem extends MagicContainerItem
 {
     public static final MagicAmounts[] capacities = {
             MagicAmounts.EMPTY.all(10),

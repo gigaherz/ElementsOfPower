@@ -1,6 +1,6 @@
 package gigaherz.elementsofpower.spells.shapes;
 
-import gigaherz.elementsofpower.entities.EntityBall;
+import gigaherz.elementsofpower.entities.BallEntity;
 import gigaherz.elementsofpower.spells.Spellcast;
 import gigaherz.elementsofpower.spells.effects.SpellEffect;
 import net.minecraft.block.BlockState;
@@ -21,7 +21,7 @@ public class BallShape extends SpellShape
     public Spellcast castSpell(ItemStack stack, PlayerEntity player, Spellcast cast)
     {
         World world = player.world;
-        EntityBall entity = new EntityBall(world, cast, player);
+        BallEntity entity = new BallEntity(world, cast, player);
 
         entity.shoot(player, player.rotationPitch, player.rotationYaw, 0.0F, 2.5F, 1.0F);
 

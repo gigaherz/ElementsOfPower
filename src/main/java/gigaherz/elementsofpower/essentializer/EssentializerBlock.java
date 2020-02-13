@@ -1,11 +1,9 @@
 package gigaherz.elementsofpower.essentializer;
 
-import gigaherz.elementsofpower.essentializer.gui.ContainerEssentializer;
+import gigaherz.elementsofpower.essentializer.gui.EssentializerContainer;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.particle.ParticleManager;
-import net.minecraft.client.particle.SmokeParticle;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.SimpleNamedContainerProvider;
@@ -36,7 +34,7 @@ public class EssentializerBlock extends Block
     {
         TileEntity tileEntity = worldIn.getTileEntity(pos);
 
-        if (!(tileEntity instanceof TileEssentializer))
+        if (!(tileEntity instanceof EssentializerTileEntity))
             return ActionResultType.FAIL;
 
         if (player.isShiftKeyDown())
@@ -46,7 +44,7 @@ public class EssentializerBlock extends Block
             return ActionResultType.SUCCESS;
 
         NetworkHooks.openGui((ServerPlayerEntity)player, new SimpleNamedContainerProvider((id,playerInventory,playerEntity) ->
-                new ContainerEssentializer(id,(TileEssentializer) tileEntity,playerInventory),
+                new EssentializerContainer(id,(EssentializerTileEntity) tileEntity,playerInventory),
                 new TranslationTextComponent("container.elementsofpower.essentializer")), pos);
 
         return ActionResultType.SUCCESS;
@@ -62,16 +60,16 @@ public class EssentializerBlock extends Block
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world)
     {
-        return new TileEssentializer();
+        return new EssentializerTileEntity();
     }
 
     @Override
     public void animateTick(BlockState stateIn, World worldIn, BlockPos pos, Random rand)
     {
         TileEntity te = worldIn.getTileEntity(pos);
-        if (te instanceof TileEssentializer)
+        if (te instanceof EssentializerTileEntity)
         {
-            TileEssentializer essentializer = (TileEssentializer) te;
+            EssentializerTileEntity essentializer = (EssentializerTileEntity) te;
             if (essentializer.remainingToConvert != null)
             {
                 double x = (double) pos.getX() + 0.5;

@@ -1,17 +1,21 @@
 package gigaherz.elementsofpower.recipes;
 
 import com.google.common.collect.Lists;
-import gigaherz.elementsofpower.items.ItemMagicContainer;
+import com.google.gson.JsonObject;
+import gigaherz.elementsofpower.items.MagicContainerItem;
 import gigaherz.elementsofpower.items.MagicOrbItem;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ICraftingRecipe;
 import net.minecraft.item.crafting.IRecipeSerializer;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.registries.ForgeRegistryEntry;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class ContainerChargeRecipe implements ICraftingRecipe
@@ -34,7 +38,7 @@ public class ContainerChargeRecipe implements ICraftingRecipe
             if (current.getCount() <= 0)
                 continue;
             Item item = current.getItem();
-            if (item instanceof ItemMagicContainer)
+            if (item instanceof MagicContainerItem)
             {
                 if (gemContainer.getCount() > 0)
                     return false;
@@ -64,7 +68,7 @@ public class ContainerChargeRecipe implements ICraftingRecipe
             if (current == ItemStack.EMPTY)
                 continue;
             Item item = current.getItem();
-            if (item instanceof ItemMagicContainer)
+            if (item instanceof MagicContainerItem)
             {
                 if (gemContainer.getCount() > 0)
                     return ItemStack.EMPTY;
@@ -85,7 +89,7 @@ public class ContainerChargeRecipe implements ICraftingRecipe
             return ItemStack.EMPTY;
         }
 
-        gemContainer = ((ItemMagicContainer) gemContainer.getItem()).addContainedMagic(gemContainer, orbs);
+        gemContainer = ((MagicContainerItem) gemContainer.getItem()).addContainedMagic(gemContainer, orbs);
         return gemContainer;
     }
 
@@ -121,6 +125,29 @@ public class ContainerChargeRecipe implements ICraftingRecipe
     @Override
     public IRecipeSerializer<?> getSerializer()
     {
-        return ContainerChargeRecipeFactory.INSTANCE;
+        return Serializer.INSTANCE;
+    }
+
+    public static class Serializer extends ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<ContainerChargeRecipe>
+    {
+        public static final Serializer INSTANCE = new Serializer();
+
+        @Override
+        public ContainerChargeRecipe read(ResourceLocation recipeId, JsonObject json)
+        {
+            return new ContainerChargeRecipe(recipeId);
+        }
+
+        @Nullable
+        @Override
+        public ContainerChargeRecipe read(ResourceLocation recipeId, PacketBuffer buffer)
+        {
+            return new ContainerChargeRecipe(recipeId);
+        }
+
+        @Override
+        public void write(PacketBuffer buffer, ContainerChargeRecipe recipe)
+        {
+        }
     }
 }

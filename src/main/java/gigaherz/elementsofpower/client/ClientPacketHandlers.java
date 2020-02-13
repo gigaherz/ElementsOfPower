@@ -1,11 +1,11 @@
 package gigaherz.elementsofpower.client;
 
-import gigaherz.elementsofpower.essentializer.TileEssentializer;
-import gigaherz.elementsofpower.essentializer.gui.ContainerEssentializer;
-import gigaherz.elementsofpower.network.AddVelocityPlayer;
-import gigaherz.elementsofpower.network.EssentializerAmountsUpdate;
-import gigaherz.elementsofpower.network.EssentializerTileUpdate;
-import gigaherz.elementsofpower.network.SpellcastSync;
+import gigaherz.elementsofpower.essentializer.EssentializerTileEntity;
+import gigaherz.elementsofpower.essentializer.gui.EssentializerContainer;
+import gigaherz.elementsofpower.network.AddVelocityToPlayer;
+import gigaherz.elementsofpower.network.UpdateEssentializerAmounts;
+import gigaherz.elementsofpower.network.UpdateEssentializerTileEntity;
+import gigaherz.elementsofpower.network.SynchronizeSpellcastState;
 import gigaherz.elementsofpower.spells.SpellcastEntityData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
@@ -14,7 +14,7 @@ import net.minecraft.world.World;
 
 public class ClientPacketHandlers
 {
-    public static boolean handleSpellcastSync(SpellcastSync message)
+    public static boolean handleSpellcastSync(SynchronizeSpellcastState message)
     {
         Minecraft.getInstance().execute(() ->
         {
@@ -25,7 +25,7 @@ public class ClientPacketHandlers
         return true;
     }
 
-    public static boolean handleRemainingAmountsUpdate(EssentializerAmountsUpdate message)
+    public static boolean handleRemainingAmountsUpdate(UpdateEssentializerAmounts message)
     {
         Minecraft mc = Minecraft.getInstance();
         mc.execute(() ->
@@ -35,9 +35,9 @@ public class ClientPacketHandlers
             {
                 if (message.windowId == player.openContainer.windowId)
                 {
-                    if ((player.openContainer instanceof ContainerEssentializer))
+                    if ((player.openContainer instanceof EssentializerContainer))
                     {
-                        ((ContainerEssentializer) player.openContainer).updateAmounts(message.contained, message.remaining);
+                        ((EssentializerContainer) player.openContainer).updateAmounts(message.contained, message.remaining);
                     }
                 }
             }
@@ -45,15 +45,15 @@ public class ClientPacketHandlers
         return true;
     }
 
-    public static boolean handleEssentializerTileUpdate(EssentializerTileUpdate message)
+    public static boolean handleEssentializerTileUpdate(UpdateEssentializerTileEntity message)
     {
         Minecraft mc = Minecraft.getInstance();
         mc.execute(() ->
         {
             TileEntity te = mc.world.getTileEntity(message.pos);
-            if (te instanceof TileEssentializer)
+            if (te instanceof EssentializerTileEntity)
             {
-                TileEssentializer essentializer = (TileEssentializer) te;
+                EssentializerTileEntity essentializer = (EssentializerTileEntity) te;
                 essentializer.getInventory().setStackInSlot(0, message.activeItem);
                 essentializer.remainingToConvert = message.remaining;
             }
@@ -61,7 +61,7 @@ public class ClientPacketHandlers
         return true;
     }
 
-    public static boolean handleAddVelocityPlayer(AddVelocityPlayer message)
+    public static boolean handleAddVelocityPlayer(AddVelocityToPlayer message)
     {
         Minecraft mc = Minecraft.getInstance();
         mc.execute(() -> mc.player.addVelocity(message.vx, message.vy, message.vz));

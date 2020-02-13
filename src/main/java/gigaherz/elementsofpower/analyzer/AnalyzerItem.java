@@ -1,6 +1,6 @@
 package gigaherz.elementsofpower.analyzer;
 
-import gigaherz.elementsofpower.analyzer.gui.ContainerAnalyzer;
+import gigaherz.elementsofpower.analyzer.gui.AnalyzerContainer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.SimpleNamedContainerProvider;
@@ -24,7 +24,7 @@ public class AnalyzerItem extends Item
     private void openGui(ServerPlayerEntity playerIn, ItemStack heldItem)
     {
         int slot = playerIn.inventory.getSlotFor(heldItem);
-        NetworkHooks.openGui(playerIn, new SimpleNamedContainerProvider((id, playerInventory, player) -> new ContainerAnalyzer(id, playerInventory, slot),
+        NetworkHooks.openGui(playerIn, new SimpleNamedContainerProvider((id, playerInventory, player) -> new AnalyzerContainer(id, playerInventory, slot),
                         new TranslationTextComponent("container.elementsofpower.analyzer")),
                 (packetBuffer) -> packetBuffer.writeInt(slot));
     }

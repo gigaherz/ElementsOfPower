@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.cocoons;
 
 import gigaherz.elementsofpower.database.MagicAmounts;
-import gigaherz.elementsofpower.entities.EntityEssence;
+import gigaherz.elementsofpower.entities.EssenceEntity;
 import gigaherz.elementsofpower.items.MagicOrbItem;
 import gigaherz.elementsofpower.spells.Element;
 import net.minecraft.block.Block;
@@ -48,7 +48,7 @@ public class CocoonBlock extends Block
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world)
     {
-        return new TileCocoon();
+        return new CocoonTileEntity();
     }
 
     @Override
@@ -62,7 +62,7 @@ public class CocoonBlock extends Block
     {
         if (!worldIn.isRemote)
         {
-            TileCocoon te = (TileCocoon) worldIn.getTileEntity(pos);
+            CocoonTileEntity te = (CocoonTileEntity) worldIn.getTileEntity(pos);
 
             assert te != null;
 
@@ -76,7 +76,7 @@ public class CocoonBlock extends Block
 
                 if (!am.isEmpty())
                 {
-                    EntityEssence e = new EntityEssence(worldIn, am);
+                    EssenceEntity e = new EssenceEntity(worldIn, am);
 
                     BlockPos p = pos.offset(worldIn.getBlockState(pos).get(FACING).getOpposite());
 
@@ -99,10 +99,10 @@ public class CocoonBlock extends Block
         {
             TileEntity te = worldIn.getTileEntity(pos);
 
-            if (!(te instanceof TileCocoon))
+            if (!(te instanceof CocoonTileEntity))
                 return ActionResultType.FAIL;
 
-            ((TileCocoon) te).addEssences(heldItem);
+            ((CocoonTileEntity) te).addEssences(heldItem);
 
             if (!player.abilities.isCreativeMode)
                 heldItem.shrink(1);

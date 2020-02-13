@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.spells.effects;
 
 import gigaherz.elementsofpower.ElementsOfPowerMod;
-import gigaherz.elementsofpower.network.AddVelocityPlayer;
+import gigaherz.elementsofpower.network.AddVelocityToPlayer;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -122,7 +122,7 @@ public class WindEffect extends SpellEffect
         e.addVelocity(vx, vy, vz);
         if (e instanceof ServerPlayerEntity)
         {
-            ElementsOfPowerMod.channel.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) e), new AddVelocityPlayer(vx, vy, vz));
+            ElementsOfPowerMod.channel.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) e), new AddVelocityToPlayer(vx, vy, vz));
         }
     }
 
