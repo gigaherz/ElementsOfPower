@@ -10,14 +10,14 @@ import java.util.function.Supplier;
 
 public enum Element
 {
-    Fire("fire", 1, Shape.Sphere, () -> ElementsOfPowerBlocks.FIRE_COCOON, () -> ElementsOfPowerItems.FIRE_COCOON, () -> ElementsOfPowerItems.FIRE_ORB),
-    Water("water", 0, Shape.Ball, () -> ElementsOfPowerBlocks.WATER_COCOON, () -> ElementsOfPowerItems.WATER_COCOON, () -> ElementsOfPowerItems.WATER_ORB),
-    Air("air", 3, Shape.Cone, () -> ElementsOfPowerBlocks.AIR_COCOON, () -> ElementsOfPowerItems.AIR_COCOON, () -> ElementsOfPowerItems.AIR_ORB),
-    Earth("earth", 2, Shape.Ball, () -> ElementsOfPowerBlocks.EARTH_COCOON, () -> ElementsOfPowerItems.EARTH_COCOON, () -> ElementsOfPowerItems.EARTH_ORB),
-    Light("light", 5, Shape.Beam, () -> ElementsOfPowerBlocks.LIGHT_COCOON, () -> ElementsOfPowerItems.LIGHT_COCOON, () -> ElementsOfPowerItems.LIGHT_ORB),
-    Darkness("darkness", 4, Shape.Beam, () -> ElementsOfPowerBlocks.DARKNESS_COCOON, () -> ElementsOfPowerItems.DARKNESS_COCOON, () -> ElementsOfPowerItems.DARKNESS_ORB),
-    Life("life", 7, Shape.Self, () -> ElementsOfPowerBlocks.LIFE_COCOON, () -> ElementsOfPowerItems.LIFE_COCOON, () -> ElementsOfPowerItems.LIFE_ORB),
-    Death("death", 6, Shape.Single, () -> ElementsOfPowerBlocks.DEATH_COCOON, () -> ElementsOfPowerItems.DEATH_COCOON, () -> ElementsOfPowerItems.DEATH_ORB);
+    FIRE("fire", 1, Shape.SPHERE, () -> ElementsOfPowerBlocks.FIRE_COCOON, () -> ElementsOfPowerItems.FIRE_COCOON, () -> ElementsOfPowerItems.FIRE_ORB),
+    WATER("water", 0, Shape.BALL, () -> ElementsOfPowerBlocks.WATER_COCOON, () -> ElementsOfPowerItems.WATER_COCOON, () -> ElementsOfPowerItems.WATER_ORB),
+    AIR("air", 3, Shape.CONE, () -> ElementsOfPowerBlocks.AIR_COCOON, () -> ElementsOfPowerItems.AIR_COCOON, () -> ElementsOfPowerItems.AIR_ORB),
+    EARTH("earth", 2, Shape.BALL, () -> ElementsOfPowerBlocks.EARTH_COCOON, () -> ElementsOfPowerItems.EARTH_COCOON, () -> ElementsOfPowerItems.EARTH_ORB),
+    LIGHT("light", 5, Shape.BEAM, () -> ElementsOfPowerBlocks.LIGHT_COCOON, () -> ElementsOfPowerItems.LIGHT_COCOON, () -> ElementsOfPowerItems.LIGHT_ORB),
+    DARKNESS("darkness", 4, Shape.BEAM, () -> ElementsOfPowerBlocks.DARKNESS_COCOON, () -> ElementsOfPowerItems.DARKNESS_COCOON, () -> ElementsOfPowerItems.DARKNESS_ORB),
+    LIFE("life", 7, Shape.SELF, () -> ElementsOfPowerBlocks.LIFE_COCOON, () -> ElementsOfPowerItems.LIFE_COCOON, () -> ElementsOfPowerItems.LIFE_ORB),
+    DEATH("death", 6, Shape.SINGLE, () -> ElementsOfPowerBlocks.DEATH_COCOON, () -> ElementsOfPowerItems.DEATH_COCOON, () -> ElementsOfPowerItems.DEATH_ORB);
 
     private final int opposite;
     private final Shape shape;

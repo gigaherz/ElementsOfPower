@@ -169,15 +169,15 @@ public class StockConversions
         essences(Items.EMERALD).earth(100).life(50);
         essences(Items.QUARTZ).earth(100).light(50);
 
-        essences(Gemstone.Ruby.getItem()).earth(100).fire(50);
-        essences(Gemstone.Sapphire.getItem()).earth(100).water(50);
-        essences(Gemstone.Citrine.getItem()).earth(100).air(50);
-        essences(Gemstone.Agate.getItem()).earth(100).earth(50);
-        essences(Gemstone.Quartz.getItem()).earth(100).light(50);
-        essences(Gemstone.Serendibite.getItem()).earth(100).darkness(50);
-        essences(Gemstone.Emerald.getItem()).earth(100).life(50);
-        essences(Gemstone.Amethyst.getItem()).earth(100).death(50);
-        essences(Gemstone.Diamond.getItem()).earth(128);
+        essences(Gemstone.RUBY.getItem()).earth(100).fire(50);
+        essences(Gemstone.SAPPHIRE.getItem()).earth(100).water(50);
+        essences(Gemstone.CITRINE.getItem()).earth(100).air(50);
+        essences(Gemstone.AGATE.getItem()).earth(100).earth(50);
+        essences(Gemstone.QUARTZ.getItem()).earth(100).light(50);
+        essences(Gemstone.SERENDIBITE.getItem()).earth(100).darkness(50);
+        essences(Gemstone.EMERALD.getItem()).earth(100).life(50);
+        essences(Gemstone.AMETHYST.getItem()).earth(100).death(50);
+        essences(Gemstone.DIAMOND.getItem()).earth(128);
 
         essences(Items.CLAY_BALL).earth(8).water(2);
 

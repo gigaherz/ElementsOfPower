@@ -4,11 +4,11 @@ import net.minecraft.item.Rarity;
 
 public enum Quality
 {
-    Rough(".rough", Rarity.COMMON, 0.9f),
-    Common(".common", Rarity.COMMON, 1.0f),
-    Smooth(".smooth", Rarity.UNCOMMON, 1.25f),
-    Flawless(".flawless", Rarity.RARE, 1.5f),
-    Pure(".pure", Rarity.EPIC, 2.0f);
+    ROUGH(".rough", Rarity.COMMON, 0.9f),
+    COMMON(".common", Rarity.COMMON, 1.0f),
+    SMOOTH(".smooth", Rarity.UNCOMMON, 1.25f),
+    FLAWLESS(".flawless", Rarity.RARE, 1.5f),
+    PURE(".pure", Rarity.EPIC, 2.0f);
 
     public static final Quality[] values = values();
 

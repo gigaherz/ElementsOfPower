@@ -26,15 +26,15 @@ public class GemstoneExaminer
     public static final Tag<Item> GEM_DIAMOND = new ItemTags.Wrapper(ElementsOfPowerMod.location("gems/diamond"));
 
     private static final Map<Gemstone, Tag<Item>> GEMS = ImmutableMap.<Gemstone, Tag<Item>>builder()
-            .put(Gemstone.Ruby, GEM_RUBY)
-            .put(Gemstone.Sapphire, GEM_SAPPHIRE)
-            .put(Gemstone.Citrine, GEM_CITRINE)
-            .put(Gemstone.Agate, GEM_AGATE)
-            .put(Gemstone.Quartz, GEM_QUARTZ)
-            .put(Gemstone.Serendibite, GEM_SERENDIBITE)
-            .put(Gemstone.Emerald, GEM_EMERALD)
-            .put(Gemstone.Amethyst, GEM_AMETHYST)
-            .put(Gemstone.Diamond, GEM_DIAMOND)
+            .put(Gemstone.RUBY, GEM_RUBY)
+            .put(Gemstone.SAPPHIRE, GEM_SAPPHIRE)
+            .put(Gemstone.CITRINE, GEM_CITRINE)
+            .put(Gemstone.AGATE, GEM_AGATE)
+            .put(Gemstone.QUARTZ, GEM_QUARTZ)
+            .put(Gemstone.SERENDIBITE, GEM_SERENDIBITE)
+            .put(Gemstone.EMERALD, GEM_EMERALD)
+            .put(Gemstone.AMETHYST, GEM_AMETHYST)
+            .put(Gemstone.DIAMOND, GEM_DIAMOND)
             .build();
 
     static Random rand = new Random();
@@ -62,14 +62,14 @@ public class GemstoneExaminer
     {
         float rnd = rand.nextFloat();
         if (rnd > 0.3f)
-            return target.getItem().getStack(Quality.Rough);
+            return target.getItem().getStack(Quality.ROUGH);
         if (rnd > 0.1f)
-            return target.getItem().getStack(Quality.Common);
+            return target.getItem().getStack(Quality.COMMON);
         if (rnd > 0.01f)
-            return target.getItem().getStack(Quality.Smooth);
+            return target.getItem().getStack(Quality.SMOOTH);
         if (rnd > 0.001f)
-            return target.getItem().getStack(Quality.Flawless);
+            return target.getItem().getStack(Quality.FLAWLESS);
 
-        return target.getItem().getStack(Quality.Pure);
+        return target.getItem().getStack(Quality.PURE);
     }
 }

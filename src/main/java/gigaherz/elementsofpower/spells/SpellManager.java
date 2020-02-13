@@ -71,27 +71,27 @@ public class SpellManager
 
         static
         {
-            shapes.put(Shape.Sphere, sphere);
-            shapes.put(Shape.Ball, ball);
-            shapes.put(Shape.Beam, beam);
-            shapes.put(Shape.Cone, cone);
-            shapes.put(Shape.Self, self);
-            shapes.put(Shape.Single, single);
-            effects.put(Effect.Flame, flame);
-            effects.put(Effect.Water, water);
-            effects.put(Effect.Wind, wind);
-            effects.put(Effect.Dust, dust);
-            effects.put(Effect.Mist, mist);
-            effects.put(Effect.Light, light);
-            effects.put(Effect.Mining, mining);
-            effects.put(Effect.Healing, healing);
-            effects.put(Effect.Breaking, breaking);
-            effects.put(Effect.Cushion, cushion);
-            effects.put(Effect.Lava, lava);
-            effects.put(Effect.Resurrection, resurrection);
-            effects.put(Effect.WaterSource, waterSource);
-            effects.put(Effect.LavaSource, lavaSource);
-            effects.put(Effect.Teleport, teleport);
+            shapes.put(Shape.SPHERE, sphere);
+            shapes.put(Shape.BALL, ball);
+            shapes.put(Shape.BEAM, beam);
+            shapes.put(Shape.CONE, cone);
+            shapes.put(Shape.SELF, self);
+            shapes.put(Shape.SINGLE, single);
+            effects.put(Effect.FLAME, flame);
+            effects.put(Effect.WATER, water);
+            effects.put(Effect.WIND, wind);
+            effects.put(Effect.DUST, dust);
+            effects.put(Effect.MIST, mist);
+            effects.put(Effect.LIGHT, light);
+            effects.put(Effect.MINING, mining);
+            effects.put(Effect.HEALING, healing);
+            effects.put(Effect.BREAKING, breaking);
+            effects.put(Effect.CUSHION, cushion);
+            effects.put(Effect.LAVA, lava);
+            effects.put(Effect.RESURRECTION, resurrection);
+            effects.put(Effect.WATER_SOURCE, waterSource);
+            effects.put(Effect.LAVA_SOURCE, lavaSource);
+            effects.put(Effect.TELEPORT, teleport);
         }
 
         Element primary = null;
@@ -117,28 +117,28 @@ public class SpellManager
             switch (Character.toUpperCase(c))
             {
                 case 'F':
-                    apply(Element.Fire);
+                    apply(Element.FIRE);
                     break;
                 case 'W':
-                    apply(Element.Water);
+                    apply(Element.WATER);
                     break;
                 case 'A':
-                    apply(Element.Air);
+                    apply(Element.AIR);
                     break;
                 case 'E':
-                    apply(Element.Earth);
+                    apply(Element.EARTH);
                     break;
                 case 'G':
-                    apply(Element.Light);
+                    apply(Element.LIGHT);
                     break;
                 case 'K':
-                    apply(Element.Darkness);
+                    apply(Element.DARKNESS);
                     break;
                 case 'L':
-                    apply(Element.Life);
+                    apply(Element.LIFE);
                     break;
                 case 'D':
-                    apply(Element.Death);
+                    apply(Element.DEATH);
                     break;
             }
         }
@@ -204,29 +204,29 @@ public class SpellManager
             primaryPower = 1;
             switch (e)
             {
-                case Fire:
-                    effect = Effect.Flame;
+                case FIRE:
+                    effect = Effect.FLAME;
                     break;
-                case Water:
-                    effect = Effect.Water;
+                case WATER:
+                    effect = Effect.WATER;
                     break;
-                case Air:
-                    effect = Effect.Wind;
+                case AIR:
+                    effect = Effect.WIND;
                     break;
-                case Earth:
-                    effect = Effect.Dust;
+                case EARTH:
+                    effect = Effect.DUST;
                     break;
-                case Light:
-                    effect = Effect.Light;
+                case LIGHT:
+                    effect = Effect.LIGHT;
                     break;
-                case Darkness:
-                    effect = Effect.Mining;
+                case DARKNESS:
+                    effect = Effect.MINING;
                     break;
-                case Life:
-                    effect = Effect.Healing;
+                case LIFE:
+                    effect = Effect.HEALING;
                     break;
-                case Death:
-                    effect = Effect.Breaking;
+                case DEATH:
+                    effect = Effect.BREAKING;
                     break;
             }
             shape = e.getShape();
@@ -255,61 +255,61 @@ public class SpellManager
 
             switch (e)
             {
-                case Fire:
+                case FIRE:
                     empowering++;
                     break;
-                case Water:
+                case WATER:
                     empowering--;
                     break;
-                case Air:
+                case AIR:
                     switch (effect)
                     {
-                        case Flame:
+                        case FLAME:
                             break;
-                        case Wind:
+                        case WIND:
                             break;
-                        case Dust:
-                            effect = Effect.Cushion;
+                        case DUST:
+                            effect = Effect.CUSHION;
                             break;
-                        case Cushion:
+                        case CUSHION:
                             break;
-                        case Water:
-                            effect = Effect.Mist;
+                        case WATER:
+                            effect = Effect.MIST;
                             break;
-                        case Lava:
-                            effect = Effect.Flame;
+                        case LAVA:
+                            effect = Effect.FLAME;
                             break;
-                        case Light:
+                        case LIGHT:
                             reset();
                             break;
-                        case Mining:
+                        case MINING:
                             reset();
                             break;
-                        case Healing:
+                        case HEALING:
                             reset();
                             break;
-                        case Breaking:
+                        case BREAKING:
                             reset();
                             break;
-                        case Resurrection:
+                        case RESURRECTION:
                             reset();
                             break;
-                        case WaterSource:
+                        case WATER_SOURCE:
                             reset();
                             break;
-                        case LavaSource:
-                            effect = Effect.Flame;
+                        case LAVA_SOURCE:
+                            effect = Effect.FLAME;
                             break;
                     }
                     break;
-                case Life:
+                case LIFE:
                     switch (effect)
                     {
                         default:
                             break;
-                        case Mining:
-                            effect = Effect.Teleport;
-                            shape = Shape.Ball;
+                        case MINING:
+                            effect = Effect.TELEPORT;
+                            shape = Shape.BALL;
                             break;
                     }
                     break;

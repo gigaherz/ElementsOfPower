@@ -12,13 +12,20 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 
+import java.text.DecimalFormat;
+import java.text.Format;
 import java.util.List;
 
 public class EssentializerScreen extends ContainerScreen<EssentializerContainer>
 {
     public static final ResourceLocation GUI_TEXTURE_LOCATION = ElementsOfPowerMod.location("textures/gui/essentializer.png");
+
+    public static final Format PRETTY_NUMBER_FORMATTER = new DecimalFormat("#.#");
+    public static final Format PRETTY_NUMBER_FORMATTER_2 = new DecimalFormat("#0.0");
+
 
     protected PlayerInventory player;
 
@@ -150,7 +157,7 @@ public class EssentializerScreen extends ContainerScreen<EssentializerContainer>
                 count /= 1000;
             }
 
-            String formatted = ElementsOfPowerMod.prettyNumberFormatter.format(count) + suffix;
+            String formatted = PRETTY_NUMBER_FORMATTER.format(count) + suffix;
 
             float x1 = (x0 + 16) * 1.5f - font.getStringWidth(formatted);
             float y1 = (y0 + 10.5f) * 1.5f;
@@ -183,7 +190,7 @@ public class EssentializerScreen extends ContainerScreen<EssentializerContainer>
 
             List<String> tooltip = Lists.newArrayList();
             tooltip.add(MagicAmounts.getMagicName(i));
-            tooltip.add(TextFormatting.GRAY + ElementsOfPowerMod.prettyNumberFormatter2.format(am.get(i)) + " / " + EssentializerTileEntity.MaxEssentializerMagic);
+            tooltip.add(new StringTextComponent(PRETTY_NUMBER_FORMATTER_2.format(am.get(i)) + " / " + EssentializerTileEntity.MaxEssentializerMagic).applyTextStyle(TextFormatting.GRAY).toString());
 
             renderTooltip(tooltip, mx - x0, my - y0);
         }

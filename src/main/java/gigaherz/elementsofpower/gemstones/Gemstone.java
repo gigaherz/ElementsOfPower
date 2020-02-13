@@ -16,36 +16,36 @@ import java.util.function.Supplier;
 
 public enum Gemstone implements IStringSerializable, IItemProvider
 {
-    Ruby(Element.Fire, "ruby", 0xFFFF0000,
+    RUBY(Element.FIRE, "ruby", 0xFFFF0000,
             () -> ElementsOfPowerItems.RUBY, false, () -> ElementsOfPowerBlocks.RUBY_BLOCK, () -> ElementsOfPowerBlocks.RUBY_ORE,
             true, () -> ElementsOfPowerItems.RUBY_SPELLDUST), // red
-    Sapphire(Element.Water, "sapphire", 0xFF0000FF,
+    SAPPHIRE(Element.WATER, "sapphire", 0xFF0000FF,
             () -> ElementsOfPowerItems.SAPPHIRE, false, () -> ElementsOfPowerBlocks.SAPPHIRE_BLOCK, () -> ElementsOfPowerBlocks.SAPPHIRE_ORE,
             true, () -> ElementsOfPowerItems.SAPPHIRE_SPELLDUST), // blue
-    Citrine(Element.Air, "citrine", 0xFFFFFF00,
+    CITRINE(Element.AIR, "citrine", 0xFFFFFF00,
             () -> ElementsOfPowerItems.CITRINE, false, () -> ElementsOfPowerBlocks.CITRINE_BLOCK, () -> ElementsOfPowerBlocks.CITRINE_ORE,
             true, () -> ElementsOfPowerItems.CITRINE_SPELLDUST), // yellow
-    Agate(Element.Earth, "agate", 0xFF7F3F00,
+    AGATE(Element.EARTH, "agate", 0xFF7F3F00,
             () -> ElementsOfPowerItems.AGATE, false, () -> ElementsOfPowerBlocks.AGATE_BLOCK, () -> ElementsOfPowerBlocks.AGATE_ORE,
             true, () -> ElementsOfPowerItems.AGATE_SPELLDUST), // brown
-    Quartz(Element.Light, "quartz", 0xFFFFFFFF,
+    QUARTZ(Element.LIGHT, "quartz", 0xFFFFFFFF,
             () -> ElementsOfPowerItems.QUARTZ, true, () -> Blocks.QUARTZ_BLOCK, () -> Blocks.NETHER_QUARTZ_ORE,
             true, () -> ElementsOfPowerItems.QUARTZ_SPELLDUST), // white
-    Serendibite(Element.Darkness, "serendibite", 0xFF0F0F0F,
+    SERENDIBITE(Element.DARKNESS, "serendibite", 0xFF0F0F0F,
             () -> ElementsOfPowerItems.SERENDIBITE, false, () -> ElementsOfPowerBlocks.SERENDIBITE_BLOCK, () -> ElementsOfPowerBlocks.SERENDIBITE_ORE,
             true, () -> ElementsOfPowerItems.SERENDIBITE_SPELLDUST), // black
-    Emerald(Element.Life, "emerald", 0xFF00FF00,
+    EMERALD(Element.LIFE, "emerald", 0xFF00FF00,
             () -> ElementsOfPowerItems.EMERALD, true, ()->Blocks.EMERALD_BLOCK, ()->Blocks.EMERALD_ORE,
             true, () -> ElementsOfPowerItems.EMERALD_SPELLDUST), // green
-    Amethyst(Element.Death, "amethyst", 0xFFAF00FF,
+    AMETHYST(Element.DEATH, "amethyst", 0xFFAF00FF,
             () -> ElementsOfPowerItems.AMETHYST, false, () -> ElementsOfPowerBlocks.AMETHYST_BLOCK, () -> ElementsOfPowerBlocks.AMETHYST_ORE,
             true, () -> ElementsOfPowerItems.AMETHYST_SPELLDUST), // purple
 
-    Diamond(null, "diamond", 0xFF7FFFCF,
+    DIAMOND(null, "diamond", 0xFF7FFFCF,
             () -> ElementsOfPowerItems.DIAMOND, true, ()->Blocks.DIAMOND_BLOCK, ()->Blocks.DIAMOND_ORE,
             true, () -> ElementsOfPowerItems.DIAMOND_SPELLDUST), // clear
 
-    Creativite(null, "creativite", 0xFF000000,
+    CREATIVITE(null, "creativite", 0xFF000000,
             () -> ElementsOfPowerItems.CREATIVITE, false, null, null,
             false, null);
 

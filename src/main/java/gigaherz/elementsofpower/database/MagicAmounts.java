@@ -2,6 +2,7 @@ package gigaherz.elementsofpower.database;
 
 import com.google.gson.*;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
+import gigaherz.elementsofpower.essentializer.gui.EssentializerScreen;
 import gigaherz.elementsofpower.spells.Element;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.nbt.CompoundNBT;
@@ -116,7 +117,7 @@ public class MagicAmounts implements INBTSerializable<CompoundNBT>
             else
                 b.append(",");
 
-            String str = ElementsOfPowerMod.prettyNumberFormatter.format(amounts[i]);
+            String str = EssentializerScreen.PRETTY_NUMBER_FORMATTER.format(amounts[i]);
             b.append(str);
 
             first = false;

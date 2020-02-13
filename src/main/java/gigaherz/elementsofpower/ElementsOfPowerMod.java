@@ -60,8 +60,6 @@ import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.DeferredWorkQueue;
-import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -73,8 +71,6 @@ import net.minecraftforge.fml.network.simple.SimpleChannel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.text.DecimalFormat;
-import java.text.Format;
 import java.util.Arrays;
 import java.util.function.Consumer;
 
@@ -86,13 +82,13 @@ public class ElementsOfPowerMod
 {
     public static final String MODID = "elementsofpower";
 
+    // FIXME: Remove once spawn eggs can take a supplier
     // To be used only during loading.
     private final Lazy<EntityType<BallEntity>> spellBallInit = Lazy.of(() -> EntityType.Builder.<BallEntity>create(BallEntity::new, EntityClassification.MISC)
             .setTrackingRange(80).setUpdateInterval(3).setShouldReceiveVelocityUpdates(true).build(location("spell_ball").toString()));
     private final Lazy<EntityType<EssenceEntity>> essenceInit = Lazy.of(() -> EntityType.Builder.<EssenceEntity>create(EssenceEntity::new, EntityClassification.AMBIENT)
             .setTrackingRange(80).setUpdateInterval(3).setShouldReceiveVelocityUpdates(true).build(location("essence").toString()));
 
-    // Handlers
     private static final String PROTOCOL_VERSION = "1.0";
     public static SimpleChannel channel = NetworkRegistry.ChannelBuilder
             .named(location("general"))
@@ -103,15 +99,12 @@ public class ElementsOfPowerMod
 
     public static Logger logger = LogManager.getLogger(MODID);
 
-    public final static Format prettyNumberFormatter = new DecimalFormat("#.#");
-    public final static Format prettyNumberFormatter2 = new DecimalFormat("#0.0");
-
     public static ItemGroup tabMagic = new ItemGroup("elementsofpower.magic")
     {
         @Override
         public ItemStack createIcon()
         {
-            return ElementsOfPowerItems.WAND.getStack(Gemstone.Diamond, Quality.Common);
+            return ElementsOfPowerItems.WAND.getStack(Gemstone.DIAMOND, Quality.COMMON);
         }
     };
 
@@ -120,7 +113,7 @@ public class ElementsOfPowerMod
         @Override
         public ItemStack createIcon()
         {
-            return new ItemStack(Gemstone.Ruby);
+            return new ItemStack(Gemstone.RUBY);
         }
     };
 
@@ -140,11 +133,6 @@ public class ElementsOfPowerMod
         modEventBus.addListener(this::loadComplete);
 
         MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
-
-        //noinspection deprecation
-        DeferredWorkQueue.runLater(() -> {
-            InterModComms.sendTo("gbook", "registerBook", () -> ElementsOfPowerMod.location("xml/guidebook.xml"));
-        });
     }
 
     public void registerBlocks(RegistryEvent.Register<Block> event)

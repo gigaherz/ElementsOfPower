@@ -55,7 +55,7 @@ public class GemstoneItem extends MagicContainerItem
     @Override
     public boolean isInfinite(ItemStack stack)
     {
-        return getGemstone() == Gemstone.Creativite;
+        return getGemstone() == Gemstone.CREATIVITE;
     }
 
     @Override

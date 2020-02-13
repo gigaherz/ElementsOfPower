@@ -185,7 +185,7 @@ public class BaubleItem extends GemContainerItem
                 {
                     float maxTransfer = maxTransferFrom;
 
-                    if (g == Gemstone.Diamond || g.ordinal() == i)
+                    if (g == Gemstone.DIAMOND || g.ordinal() == i)
                         maxTransfer *= boost;
 
                     float transfer = Math.min(maxTransfer, limits.get(i) - amounts.get(i));
