@@ -234,32 +234,27 @@ public abstract class GemContainerItem extends MagicContainerItem
                 || getQuality(oldStack) != getQuality(newStack);
     }
 
-    @Override
-    public String getTranslationKey(ItemStack stack)
+    public ITextComponent getGemstoneName(ItemStack stack)
     {
+        ITextComponent baseName = super.getDisplayName(stack);
+
         Gemstone g = getGemstone(stack);
-
         if (g == null)
-            return getTranslationKey();
+            return new TranslationTextComponent("elementsofpower.gem_container.unbound", baseName);
 
-        return getTranslationKey() + "." + g.getName();
+        return new TranslationTextComponent(g.getContainerTranslationKey(), baseName);
     }
 
-    // FIXME: Make this not suck.
     @Override
     public ITextComponent getDisplayName(ItemStack stack)
     {
+        ITextComponent gemstoneName = getGemstoneName(stack);
+
         Quality q = getQuality(stack);
-
-        ITextComponent namePart = new TranslationTextComponent(getTranslationKey(stack) + ".name");
-
         if (q == null)
-            return namePart;
+            return gemstoneName;
 
-        @SuppressWarnings("deprecation")
-        ITextComponent quality = new TranslationTextComponent("elementsofpower.gemContainer.quality" + q.getUnlocalizedName());
-
-        return new StringTextComponent(quality.getFormattedText() + " " + namePart.getFormattedText());
+        return new TranslationTextComponent(q.getContainerTranslationKey(), gemstoneName);
     }
 
     @Override

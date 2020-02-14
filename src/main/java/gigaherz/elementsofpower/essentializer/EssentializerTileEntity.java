@@ -37,9 +37,9 @@ public class EssentializerTileEntity
     @ObjectHolder("elementsofpower:essentializer")
     public static TileEntityType<EssentializerTileEntity> TYPE;
 
-    public static final int MaxEssentializerMagic = 32768;
-    public static final float MaxConvertPerTick = 5 / 20.0f;
-    public static final float MaxTransferPerTick = 50 / 20.0f;
+    public static final int MAX_ESSENTIALIZER_MAGIC = 32768;
+    public static final float MAX_CONVERT_PER_TICK = 5 / 20.0f;
+    public static final float MAX_TRANSFER_PER_TICK = 50 / 20.0f;
 
     public final IItemHandlerModifiable inventory = new ItemStackHandler(3)
     {
@@ -223,7 +223,7 @@ public class EssentializerTileEntity
         float totalAdded = 0;
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            float maxTransfer = Math.min(MaxConvertPerTick, MaxEssentializerMagic - containedMagic.get(i));
+            float maxTransfer = Math.min(MAX_CONVERT_PER_TICK, MAX_ESSENTIALIZER_MAGIC - containedMagic.get(i));
             float transfer = Math.min(maxTransfer, remainingToConvert.get(i));
             if (transfer > 0)
             {
@@ -282,7 +282,7 @@ public class EssentializerTileEntity
             float totalAdded = 0;
             for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
             {
-                float maxTransfer = Math.min(MaxTransferPerTick, MaxEssentializerMagic - containedMagic.get(i));
+                float maxTransfer = Math.min(MAX_TRANSFER_PER_TICK, MAX_ESSENTIALIZER_MAGIC - containedMagic.get(i));
                 float transfer = isInfinite ? maxTransfer : Math.min(maxTransfer, contained.get(i));
                 if (transfer > 0)
                 {
@@ -324,7 +324,7 @@ public class EssentializerTileEntity
             float totalAdded = 0;
             for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
             {
-                float maxTransfer = Math.min(MaxTransferPerTick, limits.get(i) - contained.get(i));
+                float maxTransfer = Math.min(MAX_TRANSFER_PER_TICK, limits.get(i) - contained.get(i));
                 float transfer = Math.min(maxTransfer, containedMagic.get(i));
                 if (transfer > 0)
                 {
@@ -351,7 +351,7 @@ public class EssentializerTileEntity
             if (amount <= 0)
                 continue;
 
-            if (containedMagic.get(i) + amount > MaxEssentializerMagic)
+            if (containedMagic.get(i) + amount > MAX_ESSENTIALIZER_MAGIC)
             {
                 return false;
             }

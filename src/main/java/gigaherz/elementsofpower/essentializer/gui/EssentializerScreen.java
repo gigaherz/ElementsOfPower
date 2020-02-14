@@ -3,6 +3,7 @@ package gigaherz.elementsofpower.essentializer.gui;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
+import gigaherz.elementsofpower.client.MagicTooltips;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.essentializer.EssentializerTileEntity;
 import gigaherz.elementsofpower.spells.Element;
@@ -15,16 +16,11 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 
-import java.text.DecimalFormat;
-import java.text.Format;
 import java.util.List;
 
 public class EssentializerScreen extends ContainerScreen<EssentializerContainer>
 {
     public static final ResourceLocation GUI_TEXTURE_LOCATION = ElementsOfPowerMod.location("textures/gui/essentializer.png");
-
-    public static final Format PRETTY_NUMBER_FORMATTER = new DecimalFormat("#.#");
-    public static final Format PRETTY_NUMBER_FORMATTER_2 = new DecimalFormat("#0.0");
 
 
     protected PlayerInventory player;
@@ -93,7 +89,7 @@ public class EssentializerScreen extends ContainerScreen<EssentializerContainer>
         font.drawString(title.getFormattedText(), 8, 6, 0x404040);
         font.drawString(playerInventory.getName().getFormattedText(), 8, ySize - 96 + 3, 0x404040);
 
-        float opaqueLevel = EssentializerTileEntity.MaxConvertPerTick * 20; // approx 3s fadeout
+        float opaqueLevel = EssentializerTileEntity.MAX_CONVERT_PER_TICK * 20; // approx 3s fadeout
 
         MagicAmounts am = container.getMagicHolder().getRemainingToConvert();
         if (!am.isEmpty())
@@ -157,7 +153,7 @@ public class EssentializerScreen extends ContainerScreen<EssentializerContainer>
                 count /= 1000;
             }
 
-            String formatted = PRETTY_NUMBER_FORMATTER.format(count) + suffix;
+            String formatted = MagicTooltips.PRETTY_NUMBER_FORMATTER.format(count) + suffix;
 
             float x1 = (x0 + 16) * 1.5f - font.getStringWidth(formatted);
             float y1 = (y0 + 10.5f) * 1.5f;
@@ -189,8 +185,8 @@ public class EssentializerScreen extends ContainerScreen<EssentializerContainer>
                 continue;
 
             List<String> tooltip = Lists.newArrayList();
-            tooltip.add(MagicAmounts.getMagicName(i));
-            tooltip.add(new StringTextComponent(PRETTY_NUMBER_FORMATTER_2.format(am.get(i)) + " / " + EssentializerTileEntity.MaxEssentializerMagic).applyTextStyle(TextFormatting.GRAY).toString());
+            tooltip.add(MagicAmounts.getMagicName(i).getFormattedText());
+            tooltip.add(new StringTextComponent(MagicTooltips.PRETTY_NUMBER_FORMATTER_2.format(am.get(i)) + " / " + EssentializerTileEntity.MAX_ESSENTIALIZER_MAGIC).applyTextStyle(TextFormatting.GRAY).getFormattedText());
 
             renderTooltip(tooltip, mx - x0, my - y0);
         }

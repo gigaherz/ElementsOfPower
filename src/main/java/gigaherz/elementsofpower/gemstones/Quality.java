@@ -4,28 +4,30 @@ import net.minecraft.item.Rarity;
 
 public enum Quality
 {
-    ROUGH(".rough", Rarity.COMMON, 0.9f),
-    COMMON(".common", Rarity.COMMON, 1.0f),
-    SMOOTH(".smooth", Rarity.UNCOMMON, 1.25f),
-    FLAWLESS(".flawless", Rarity.RARE, 1.5f),
-    PURE(".pure", Rarity.EPIC, 2.0f);
+    ROUGH(Rarity.COMMON, 0.9f, "elementsofpower.gemstone.quality.rough", "elementsofpower.gem_container.quality.rough"),
+    COMMON(Rarity.COMMON, 1.0f, "elementsofpower.gemstone.quality.common", "elementsofpower.gem_container.quality.common"),
+    SMOOTH(Rarity.UNCOMMON, 1.25f, "elementsofpower.gemstone.quality.smooth", "elementsofpower.gem_container.quality.smooth"),
+    FLAWLESS(Rarity.RARE, 1.5f, "elementsofpower.gemstone.quality.flawless", "elementsofpower.gem_container.quality.flawless"),
+    PURE(Rarity.EPIC, 2.0f, "elementsofpower.gemstone.quality.pure", "elementsofpower.gem_container.quality.pure");
 
     public static final Quality[] values = values();
 
-    private final String unlocalizedName;
+    private final String translationKey;
     private final Rarity rarity;
     private final float transferSpeed;
+    private final String containerTranslationKey;
 
-    Quality(String unlocalizedName, Rarity rarity, float transferSpeed)
+    Quality(Rarity rarity, float transferSpeed, String translationKey, String containerTranslationKey)
     {
-        this.unlocalizedName = unlocalizedName;
+        this.translationKey = translationKey;
         this.rarity = rarity;
         this.transferSpeed = transferSpeed;
+        this.containerTranslationKey = containerTranslationKey;
     }
 
-    public String getUnlocalizedName()
+    public String getTranslationKey()
     {
-        return unlocalizedName;
+        return translationKey;
     }
 
     public Rarity getRarity()
@@ -36,5 +38,10 @@ public enum Quality
     public float getTransferSpeed()
     {
         return transferSpeed;
+    }
+
+    public String getContainerTranslationKey()
+    {
+        return containerTranslationKey;
     }
 }

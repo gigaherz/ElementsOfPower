@@ -5,7 +5,9 @@ import gigaherz.elementsofpower.spells.effects.SpellEffect;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 
 public class SphereShape extends SpellShape
 {
@@ -34,13 +36,13 @@ public class SphereShape extends SpellShape
 
         PlayerEntity player = cast.player;
 
-        if (!effect.processEntitiesAroundBefore(cast, player.getPositionVector()))
+        if (!effect.processEntitiesAroundBefore(cast, player.getEyePosition(1.0f)))
             return;
 
         int force = cast.getDamageForce();
         if (force > 0)
         {
-            BlockPos bp = player.getPosition();
+            BlockPos bp = player.getPosition().offset(Direction.UP, MathHelper.floor(player.getEyeHeight()+0.25));
 
             int px = bp.getX();
             int py = bp.getY();

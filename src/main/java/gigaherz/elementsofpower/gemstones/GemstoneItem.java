@@ -98,19 +98,13 @@ public class GemstoneItem extends MagicContainerItem
     @Override
     public ITextComponent getDisplayName(ItemStack stack)
     {
-        ITextComponent gemPart = new TranslationTextComponent(getTranslationKey(stack));
+        ITextComponent gemstoneName = super.getDisplayName(stack);
 
         Quality q = getQuality(stack);
-
-        String qName = "elementsofpower.gemstone.quality";
         if (q == null)
-            return gemPart;
+            return gemstoneName;
 
-        qName += q.getUnlocalizedName();
-
-        ITextComponent qualityPart = new TranslationTextComponent(qName);
-
-        return qualityPart.appendSibling(new StringTextComponent(" ")).appendSibling(gemPart);
+        return new TranslationTextComponent(q.getTranslationKey(), gemstoneName);
     }
 
     @Override

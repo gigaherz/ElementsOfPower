@@ -1,8 +1,8 @@
 package gigaherz.elementsofpower.client.renderers;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.capabilities.MagicContainerCapability;
+import gigaherz.elementsofpower.client.MagicTooltips;
 import gigaherz.elementsofpower.client.StackRenderingHelper;
 import gigaherz.elementsofpower.client.WandUseManager;
 import gigaherz.elementsofpower.database.MagicAmounts;
@@ -68,7 +68,7 @@ public class MagicContainerOverlay extends AbstractGui
 
                 StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yPos, stack, alpha);
 
-                String formatted = magic.isInfinite() ? "\u221E" : ElementsOfPowerMod.prettyNumberFormatter.format(amounts.get(i));
+                String formatted = magic.isInfinite() ? "\u221E" : MagicTooltips.PRETTY_NUMBER_FORMATTER.format(amounts.get(i));
                 this.drawCenteredString(font, formatted, xPos + 8, yPos + 11, 0xFFC0C0C0);
                 if (WandUseManager.instance.handInUse != null)
                     this.drawCenteredString(font, "K:" + (i + 1), xPos + 8, yPos + 24, 0xFFC0C0C0);
@@ -99,12 +99,14 @@ public class MagicContainerOverlay extends AbstractGui
                 }
             }
 
-            if (WandUseManager.instance.sequence != null)
+            StringBuilder sequence = WandUseManager.instance.sequence;
+            int spellLength = sequence.length();
+            if (spellLength > 0)
             {
                 // New spell sequence
-                xPos = (rescaledWidth - 6 * (WandUseManager.instance.sequence.length() - 1) - 14) / 2;
+                xPos = (rescaledWidth - 6 * (spellLength - 1) - 14) / 2;
                 yPos = rescaledHeight / 2 + 16;
-                for (char c : WandUseManager.instance.sequence.toCharArray())
+                for (char c : sequence.toString().toCharArray())
                 {
                     int i = SpellManager.elementIndices[c - 'A'];
 

@@ -17,15 +17,18 @@ apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
 repositories {
-    maven {
+    /*maven {
         url "http://dvs1.progwml6.com/files/maven"
-    }
+    }*/
     maven {
         url 'http://dogforce-games.com/maven'
     }
     maven {
         name = "thiakil"
         url = "http://maven.thiakil.com/"
+    }
+    flatDir {
+        dirs 'deps'
     }
 }
 
@@ -86,6 +89,8 @@ minecraft {
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.15.2-31.1.1'
+
+    compile fg.deobf("ignored:Guidebook-1.15.2:3.0.2")
 }
 
 jar {

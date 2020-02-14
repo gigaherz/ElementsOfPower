@@ -90,6 +90,11 @@ public enum Gemstone implements IStringSerializable, IItemProvider
         return name;
     }
 
+    public String getContainerTranslationKey()
+    {
+        return "elementsofpower.gem_container." + name;
+    }
+
     public int getTintColor()
     {
         return tintColor;

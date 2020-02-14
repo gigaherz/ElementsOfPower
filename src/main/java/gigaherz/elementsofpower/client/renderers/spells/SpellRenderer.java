@@ -21,6 +21,7 @@ public abstract class SpellRenderer
 {
     public static final Lazy<ModelHandle> modelCone = Lazy.of(() -> ModelHandle.of("elementsofpower:models/entity/cone.obj"));
     public static final Lazy<ModelHandle> modelSphere = Lazy.of(() -> ModelHandle.of("elementsofpower:models/entity/sphere.obj"));
+    public static final Lazy<ModelHandle> modelSphereInside = Lazy.of(() -> ModelHandle.of("elementsofpower:models/entity/sphere_inside.obj"));
     public static final Lazy<ModelHandle> modelCyl = Lazy.of(() -> ModelHandle.of("elementsofpower:models/entity/cylinder.obj"));
 
     public static int getColor(Spellcast spellcast)
@@ -45,21 +46,21 @@ public abstract class SpellRenderer
 
     public static ResourceLocation getTexture(@Nullable Spellcast spellcast)
     {
-        String tex = "minecraft:white";
+        String tex = "forge:textures/white.png";
 
         if (spellcast != null)
         {
             if (spellcast.getEffect() instanceof FlameEffect)
             {
-                tex = "minecraft:block/lava_still";
+                tex = "minecraft:textures/block/lava_still.png";
             }
             else if (spellcast.getEffect() instanceof WaterEffect)
             {
-                tex = "minecraft:block/water_still";
+                tex = "minecraft:textures/block/water_still.png";
             }
             else if (spellcast.getEffect() instanceof WindEffect)
             {
-                tex = "elementsofpower:block/cone";
+                tex = "elementsofpower:textures/block/cone.png";
             }
         }
 

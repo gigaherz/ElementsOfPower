@@ -15,10 +15,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -40,76 +42,71 @@ public class SpellRenderingHandler
     public static void renderFirstPerson(RenderWorldLastEvent event)
     {
         PlayerEntity player = Minecraft.getInstance().player;
-        EntityRendererManager renderManager = Minecraft.getInstance().getRenderManager();
-
-        float partialTicks = event.getPartialTicks();
-
-        float ppitch = player.prevRotationPitch + partialTicks * (player.rotationPitch - player.prevRotationPitch);
-        float pyaw = player.prevRotationYawHead + partialTicks * (player.rotationYawHead - player.prevRotationYawHead);
-
-        Vec3d off = new Vec3d(0, -0.15, 0);
-        off = off.rotatePitch(-(float) Math.toRadians(ppitch));
-        off = off.rotateYaw(-(float) Math.toRadians(pyaw));
-
-        IRenderTypeBuffer buffers = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
-        MatrixStack stack = event.getMatrixStack();
-        stack.push();
-        stack.translate(0,player.getEyeHeight(),0);
-        drawSpellsOnPlayer(player, renderManager, partialTicks, stack, buffers, 0x00F000F0, off);
-        stack.pop();
-    }
-
-    @SubscribeEvent
-    public static void playerRenderPost(RenderPlayerEvent.Post event)
-    {
-        PlayerEntity player = event.getPlayer();
-        if (player == Minecraft.getInstance().player)
+        if (player == null)
             return;
-
-        boolean isSelf = player.getEntityId() == Minecraft.getInstance().player.getEntityId();
-        EntityRendererManager renderManager = event.getRenderer().getRenderManager();
-
-        float partialTicks = event.getPartialRenderTick();
-
-        float ppitch = player.prevRotationPitch + partialTicks * (player.rotationPitch - player.prevRotationPitch);
-        float pyaw = player.prevRotationYawHead + partialTicks * (player.rotationYawHead - player.prevRotationYawHead);
-
-        Vec3d off;
-        if (isSelf)
-        {
-            off = new Vec3d(0, -0.15, 0);
-            off = off.rotatePitch(-(float) Math.toRadians(ppitch));
-            off = off.rotateYaw(-(float) Math.toRadians(pyaw));
-        }
-        else
-        {
-            off = new Vec3d(0, 0, 0.4);
-            off = off.rotatePitch(-(float) Math.toRadians(ppitch));
-            off = off.rotateYaw(-(float) Math.toRadians(pyaw));
-            off = off.add(new Vec3d(0, -0.25, 0));
-        }
-
-        MatrixStack stack = event.getMatrixStack();
-        stack.push();
-        stack.translate(0,player.getEyeHeight(),0);
-        drawSpellsOnPlayer(player, renderManager, partialTicks, stack, event.getBuffers(), event.getLight(), off);
-        stack.pop();
-    }
-
-    @SuppressWarnings("unchecked")
-    public static void drawSpellsOnPlayer(PlayerEntity player, EntityRendererManager renderManager, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, Vec3d offset)
-    {
         SpellcastEntityData.get(player).ifPresent(data -> {
-
             Spellcast cast = data.getCurrentCasting();
-
             if (cast == null)
                 return;
 
             SpellRenderer renderer = rendererRegistry.get(cast.getShape());
             if (renderer != null)
             {
-                renderer.render(cast, player, renderManager, partialTicks, matrixStackIn, bufferIn, packedLightIn, offset);
+                EntityRendererManager renderManager = Minecraft.getInstance().getRenderManager();
+
+                float partialTicks = Minecraft.getInstance().getRenderPartialTicks();
+
+                Vec3d off = player.getUpVector(partialTicks).scale(-0.15);
+
+                IRenderTypeBuffer buffers = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
+                MatrixStack stack = event.getMatrixStack();
+
+                stack.push();
+                renderer.render(cast, player, renderManager, partialTicks, stack, buffers, 0x00F000F0, off);
+                stack.pop();
+            }
+        });
+    }
+
+    @SubscribeEvent
+    public static void playerRenderPost(RenderPlayerEvent.Post event)
+    {
+        PlayerEntity player = event.getPlayer();
+
+        SpellcastEntityData.get(player).ifPresent(data -> {
+            Spellcast cast = data.getCurrentCasting();
+            if (cast == null)
+                return;
+
+            SpellRenderer renderer = rendererRegistry.get(cast.getShape());
+            if (renderer != null)
+            {
+                boolean isSelf = player.getEntityId() == Minecraft.getInstance().player.getEntityId();
+                EntityRendererManager renderManager = event.getRenderer().getRenderManager();
+
+                float partialTicks = event.getPartialRenderTick();
+
+                Vec3d upVector = player.getUpVector(partialTicks);
+
+                Vec3d off;
+                if (isSelf)
+                {
+                    off = upVector.scale(-0.15);
+                }
+                else
+                {
+                    Vec3d lookVector = player.getLook(partialTicks);
+                    Vec3d sideVector = lookVector.crossProduct(upVector);
+
+                    off = sideVector.scale(0.4).add(lookVector.scale(-0.25));
+                }
+                off = off.add(0, player.getEyeHeight(),0);
+
+                MatrixStack stack = event.getMatrixStack();
+
+                stack.push();
+                renderer.render(cast, player, renderManager, partialTicks, stack, event.getBuffers(), event.getLight(), off);
+                stack.pop();
             }
         });
     }

@@ -2,11 +2,12 @@ package gigaherz.elementsofpower.database;
 
 import com.google.gson.*;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
-import gigaherz.elementsofpower.essentializer.gui.EssentializerScreen;
+import gigaherz.elementsofpower.client.MagicTooltips;
 import gigaherz.elementsofpower.spells.Element;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -31,9 +32,9 @@ public class MagicAmounts implements INBTSerializable<CompoundNBT>
             ElementsOfPowerMod.MODID + ".element.death",
     };
 
-    public static String getMagicName(int i)
+    public static ITextComponent getMagicName(int i)
     {
-        return new TranslationTextComponent(magicNames[i]).getFormattedText();
+        return new TranslationTextComponent(magicNames[i]);
     }
 
     private final float[] amounts = new float[ELEMENTS];
@@ -89,7 +90,7 @@ public class MagicAmounts implements INBTSerializable<CompoundNBT>
             else
                 b.append(", ");
 
-            String magicName = getMagicName(i);
+            String magicName = getMagicName(i).getFormattedText();
             String str = String.format("%s: %f", magicName, amounts[i]);
             b.append(str);
 
@@ -117,7 +118,7 @@ public class MagicAmounts implements INBTSerializable<CompoundNBT>
             else
                 b.append(",");
 
-            String str = EssentializerScreen.PRETTY_NUMBER_FORMATTER.format(amounts[i]);
+            String str = MagicTooltips.PRETTY_NUMBER_FORMATTER.format(amounts[i]);
             b.append(str);
 
             first = false;

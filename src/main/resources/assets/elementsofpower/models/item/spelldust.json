@@ -1,0 +1,7 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "elementsofpower:item/spelldust",
+    "layer1": "elementsofpower:item/spelldust1"
+  }
+}

@@ -33,7 +33,7 @@ public class WandUseManager
 
     public static WandUseManager instance;
 
-    public String sequence;
+    public StringBuilder sequence = new StringBuilder();
     public Hand handInUse = null;
     public ItemStack activeStack = null;
     public int slotInUse;
@@ -92,7 +92,7 @@ public class WandUseManager
 
         GameSettings s = mc.gameSettings;
 
-        int l = s.keyBindings.length;
+        /*int l = s.keyBindings.length;
         int[] indices = new int[MagicAmounts.ELEMENTS];
         int f = 0;
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
@@ -107,7 +107,8 @@ public class WandUseManager
                     break;
                 }
             }
-        }
+        }*/
+
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
             String translationKey = "key.elementsofpower.spellkey." + Element.values[i].getName();
@@ -189,13 +190,13 @@ public class WandUseManager
     }
 
     @SubscribeEvent
-    public void onKeyPress(InputEvent.KeyInputEvent event)
+    public void onKeyPress(TickEvent.ClientTickEvent event)
     {
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
             while (spellKeys[i].isPressed())
             {
-                sequence += SpellManager.elementChars[i];
+                sequence.append(SpellManager.elementChars[i]);
             }
         }
     }
@@ -206,7 +207,7 @@ public class WandUseManager
         handInUse = hand;
         itemInUseCount = activeStack.getUseDuration();
         slotInUse = slotNumber;
-        sequence = "";
+        sequence = new StringBuilder();
 
         ElementsOfPowerMod.channel.sendToServer(new UpdateSpellSequence(UpdateSpellSequence.ChangeMode.BEGIN, slotInUse, null));
     }
@@ -219,14 +220,14 @@ public class WandUseManager
         }
         else
         {
-            ElementsOfPowerMod.channel.sendToServer(new UpdateSpellSequence(UpdateSpellSequence.ChangeMode.COMMIT, slotInUse, sequence));
+            ElementsOfPowerMod.channel.sendToServer(new UpdateSpellSequence(UpdateSpellSequence.ChangeMode.COMMIT, slotInUse, sequence.toString()));
         }
 
         handInUse = null;
         activeStack = null;
         itemInUseCount = 0;
         slotInUse = -1;
-        sequence = null;
+        sequence = new StringBuilder();
 
         mc.player.resetActiveHand();
     }
