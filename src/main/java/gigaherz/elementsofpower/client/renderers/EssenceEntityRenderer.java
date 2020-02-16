@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.Lazy;
+import net.minecraftforge.common.util.NonNullLazy;
 
 public class EssenceEntityRenderer extends EntityRenderer<EssenceEntity>
 {
@@ -17,7 +18,7 @@ public class EssenceEntityRenderer extends EntityRenderer<EssenceEntity>
         super(renderManager);
     }
 
-    Lazy<ModelHandle> handle = SpellRenderer.modelSphere;
+    NonNullLazy<ModelHandle> handle = SpellRenderer.modelSphere;
 
     @Override
     public void render(EssenceEntity entity, float entityYaw, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn)

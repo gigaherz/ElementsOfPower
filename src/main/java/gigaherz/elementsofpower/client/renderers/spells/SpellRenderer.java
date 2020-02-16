@@ -13,16 +13,17 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.util.Lazy;
+import net.minecraftforge.common.util.NonNullLazy;
 
 import javax.annotation.Nullable;
 
 
 public abstract class SpellRenderer
 {
-    public static final Lazy<ModelHandle> modelCone = Lazy.of(() -> ModelHandle.of("elementsofpower:models/entity/cone.obj"));
-    public static final Lazy<ModelHandle> modelSphere = Lazy.of(() -> ModelHandle.of("elementsofpower:models/entity/sphere.obj"));
-    public static final Lazy<ModelHandle> modelSphereInside = Lazy.of(() -> ModelHandle.of("elementsofpower:models/entity/sphere_inside.obj"));
-    public static final Lazy<ModelHandle> modelCyl = Lazy.of(() -> ModelHandle.of("elementsofpower:models/entity/cylinder.obj"));
+    public static final NonNullLazy<ModelHandle> modelCone = NonNullLazy.of(() -> ModelHandle.of("elementsofpower:models/entity/cone.obj"));
+    public static final NonNullLazy<ModelHandle> modelSphere = NonNullLazy.of(() -> ModelHandle.of("elementsofpower:models/entity/sphere.obj"));
+    public static final NonNullLazy<ModelHandle> modelSphereInside = NonNullLazy.of(() -> ModelHandle.of("elementsofpower:models/entity/sphere_inside.obj"));
+    public static final NonNullLazy<ModelHandle> modelCyl = NonNullLazy.of(() -> ModelHandle.of("elementsofpower:models/entity/cylinder.obj"));
 
     public static int getColor(Spellcast spellcast)
     {

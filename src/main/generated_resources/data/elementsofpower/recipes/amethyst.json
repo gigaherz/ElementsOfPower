@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smelting",
+  "ingredient": {
+    "item": "elementsofpower:amethyst_ore"
+  },
+  "result": "elementsofpower:amethyst",
+  "experience": 1.0,
+  "cookingtime": 200
+}

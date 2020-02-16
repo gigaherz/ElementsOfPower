@@ -76,7 +76,7 @@ public class DustEffect extends SpellEffect
 
         if (block == Blocks.AIR)
         {
-            cast.world.setBlockState(blockPos, ElementsOfPowerBlocks.dust.getDefaultState().with(DustBlock.DENSITY, 16));
+            cast.world.setBlockState(blockPos, ElementsOfPowerBlocks.DUST.getDefaultState().with(DustBlock.DENSITY, 16));
         }
     }
 }

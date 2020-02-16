@@ -8,6 +8,7 @@ import net.minecraft.state.IntegerProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.server.ServerWorld;
 
 import java.util.Random;
@@ -27,6 +28,24 @@ public class MistBlock extends Block
         setLightOpacity(0);
          */
         setDefaultState(this.getStateContainer().getBaseState().with(DENSITY, 16));
+    }
+
+    @Override
+    public boolean causesSuffocation(BlockState state, IBlockReader worldIn, BlockPos pos) {
+        return false;
+    }
+
+    @Override
+    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
+        return false;
+    }
+
+    @Override
+    public int getOpacity(BlockState state, IBlockReader worldIn, BlockPos pos)
+    {
+        if (state.getBlock() != this)
+            return 16;
+        return state.get(DENSITY)/4;
     }
 
     @Override

@@ -25,6 +25,16 @@ public class DustBlock extends Block
     }
 
     @Override
+    public boolean causesSuffocation(BlockState state, IBlockReader worldIn, BlockPos pos) {
+        return true;
+    }
+
+    @Override
+    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
+        return false;
+    }
+
+    @Override
     public int getOpacity(BlockState state, IBlockReader worldIn, BlockPos pos)
     {
         if (state.getBlock() != this)

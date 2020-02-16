@@ -24,10 +24,10 @@ public class ElementsOfPowerBlocks
     }
 
     public static final EssentializerBlock essentializer = toBeInitialized();
-    public static final DustBlock dust = toBeInitialized();
-    public static final MistBlock mist = toBeInitialized();
-    public static final LightBlock light = toBeInitialized();
-    public static final CushionBlock cushion = toBeInitialized();
+    public static final DustBlock DUST = toBeInitialized();
+    public static final MistBlock MIST = toBeInitialized();
+    public static final LightBlock LIGHT = toBeInitialized();
+    public static final CushionBlock CUSHION = toBeInitialized();
 
     public static final CocoonBlock FIRE_COCOON = toBeInitialized();
     public static final CocoonBlock WATER_COCOON = toBeInitialized();
@@ -54,6 +54,9 @@ public class ElementsOfPowerBlocks
 
     public static class BlockMaterials
     {
+        public static Material DUST = (new Material.Builder(MaterialColor.BLACK)).notOpaque().notSolid().replaceable().pushDestroys().build();
+        public static Material MIST = (new Material.Builder(MaterialColor.BLACK)).doesNotBlockMovement().notOpaque().notSolid().replaceable().pushDestroys().build();
+        public static Material LIGHT = (new Material.Builder(MaterialColor.BLACK)).doesNotBlockMovement().notOpaque().notSolid().replaceable().pushDestroys().build();
         public static Material CUSHION = (new Material.Builder(MaterialColor.BLACK)).doesNotBlockMovement().notOpaque().notSolid().replaceable().pushDestroys().build();
     }
 }

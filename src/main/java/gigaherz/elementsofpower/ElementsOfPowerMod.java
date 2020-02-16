@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower;
 
+import com.google.common.collect.Maps;
 import gigaherz.elementsofpower.analyzer.AnalyzerItem;
 import gigaherz.elementsofpower.analyzer.gui.AnalyzerContainer;
 import gigaherz.elementsofpower.analyzer.gui.AnalyzerScreen;
@@ -41,6 +42,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.resources.ReloadListener;
 import net.minecraft.data.CookingRecipeBuilder;
+import net.minecraft.data.DataGenerator;
 import net.minecraft.data.IFinishedRecipe;
 import net.minecraft.data.RecipeProvider;
 import net.minecraft.entity.EntityClassification;
@@ -51,13 +53,16 @@ import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IResourceManager;
+import net.minecraft.state.IntegerProperty;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.client.model.generators.BlockStateProvider;
+import net.minecraftforge.client.model.generators.ConfiguredModel;
+import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.extensions.IForgeContainerType;
-import net.minecraftforge.common.util.Lazy;
+import net.minecraftforge.common.util.NonNullLazy;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -72,7 +77,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 //import gigaherz.elementsofpower.progression.DiscoveryHandler;
 
@@ -84,9 +92,9 @@ public class ElementsOfPowerMod
 
     // FIXME: Remove once spawn eggs can take a supplier
     // To be used only during loading.
-    private final Lazy<EntityType<BallEntity>> spellBallInit = Lazy.of(() -> EntityType.Builder.<BallEntity>create(BallEntity::new, EntityClassification.MISC)
+    private final NonNullLazy<EntityType<BallEntity>> spellBallInit = NonNullLazy.of(() -> EntityType.Builder.<BallEntity>create(BallEntity::new, EntityClassification.MISC)
             .setTrackingRange(80).setUpdateInterval(3).setShouldReceiveVelocityUpdates(true).build(location("spell_ball").toString()));
-    private final Lazy<EntityType<EssenceEntity>> essenceInit = Lazy.of(() -> EntityType.Builder.<EssenceEntity>create(EssenceEntity::new, EntityClassification.AMBIENT)
+    private final NonNullLazy<EntityType<EssenceEntity>> essenceInit = NonNullLazy.of(() -> EntityType.Builder.<EssenceEntity>create(EssenceEntity::new, EntityClassification.AMBIENT)
             .setTrackingRange(80).setUpdateInterval(3).setShouldReceiveVelocityUpdates(true).build(location("essence").toString()));
 
     private static final String PROTOCOL_VERSION = "1.0";
@@ -132,6 +140,8 @@ public class ElementsOfPowerMod
         modEventBus.addListener(this::clientSetup);
         modEventBus.addListener(this::loadComplete);
 
+        modEventBus.addListener(this::gatherData);
+
         MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
     }
 
@@ -139,10 +149,10 @@ public class ElementsOfPowerMod
     {
         event.getRegistry().registerAll(
                 new EssentializerBlock(Block.Properties.create(Material.IRON).hardnessAndResistance(15.0F).sound(SoundType.METAL).lightValue(1)).setRegistryName("essentializer"),
-                new DustBlock(Block.Properties.create(Material.CLAY).hardnessAndResistance(0.1F).sound(SoundType.CLOTH).variableOpacity()).setRegistryName("dust"),
-                new MistBlock(Block.Properties.create(Material.SNOW).hardnessAndResistance(0.1F).sound(SoundType.CLOTH).variableOpacity()).setRegistryName("mist"),
-                new LightBlock(Block.Properties.create(Material.IRON).hardnessAndResistance(15.0F).sound(SoundType.METAL)).setRegistryName("light"),
-                new CushionBlock(Block.Properties.create(ElementsOfPowerBlocks.BlockMaterials.CUSHION).hardnessAndResistance(15.0F).sound(SoundType.METAL)).setRegistryName("cushion")
+                new DustBlock(Block.Properties.create(ElementsOfPowerBlocks.BlockMaterials.DUST).doesNotBlockMovement().notSolid().hardnessAndResistance(0.1F).sound(SoundType.CLOTH).variableOpacity()).setRegistryName("dust"),
+                new MistBlock(Block.Properties.create(ElementsOfPowerBlocks.BlockMaterials.MIST).doesNotBlockMovement().notSolid().hardnessAndResistance(0.1F).sound(SoundType.CLOTH).variableOpacity()).setRegistryName("mist"),
+                new LightBlock(Block.Properties.create(ElementsOfPowerBlocks.BlockMaterials.LIGHT).doesNotBlockMovement().notSolid().hardnessAndResistance(15.0F).lightValue(15).sound(SoundType.METAL)).setRegistryName("light"),
+                new CushionBlock(Block.Properties.create(ElementsOfPowerBlocks.BlockMaterials.CUSHION).doesNotBlockMovement().notSolid().hardnessAndResistance(15.0F).sound(SoundType.METAL).variableOpacity()).setRegistryName("cushion")
         );
         for(Gemstone type : Gemstone.values())
         {
@@ -248,19 +258,15 @@ public class ElementsOfPowerMod
 
         ScreenManager.registerFactory(AnalyzerContainer.TYPE, AnalyzerScreen::new);
         ScreenManager.registerFactory(EssentializerContainer.TYPE, EssentializerScreen::new);
-        RenderTypeLookup.setRenderLayer(ElementsOfPowerBlocks.dust, RenderType.translucent());
-        RenderTypeLookup.setRenderLayer(ElementsOfPowerBlocks.mist, RenderType.translucent());
-        RenderTypeLookup.setRenderLayer(ElementsOfPowerBlocks.cushion, RenderType.translucent());
-        RenderTypeLookup.setRenderLayer(ElementsOfPowerBlocks.light, RenderType.translucent());
+        RenderTypeLookup.setRenderLayer(ElementsOfPowerBlocks.DUST, RenderType.translucent());
+        RenderTypeLookup.setRenderLayer(ElementsOfPowerBlocks.MIST, RenderType.translucent());
+        RenderTypeLookup.setRenderLayer(ElementsOfPowerBlocks.CUSHION, RenderType.translucent());
+        RenderTypeLookup.setRenderLayer(ElementsOfPowerBlocks.LIGHT, RenderType.translucent());
 
         MinecraftForge.EVENT_BUS.register(new WandUseManager());
         MinecraftForge.EVENT_BUS.register(new MagicContainerOverlay());
 
         WandUseManager.instance.initialize();
-    }
-
-    public void modelRegistry(ModelRegistryEvent event)
-    {
     }
 
     public void registerRecipes(RegistryEvent.Register<IRecipeSerializer<?>> event)
@@ -273,14 +279,54 @@ public class ElementsOfPowerMod
 
     public void gatherData(GatherDataEvent event)
     {
-        new RecipeProvider(event.getGenerator()){
-            @Override
-            protected void registerRecipes(Consumer<IFinishedRecipe> consumer)
+        DataGenerator gen = event.getGenerator();
+
+        if (event.includeServer())
+        {
+            gen.addProvider(new RecipeProvider(event.getGenerator())
             {
-                for(Gemstone gemstone : Gemstone.values())
-                    CookingRecipeBuilder.smeltingRecipe(Ingredient.fromItems(gemstone.getOre()), gemstone, 1.0F, 200).build(consumer);
-            }
-        };
+                @Override
+                protected void registerRecipes(Consumer<IFinishedRecipe> consumer)
+                {
+                    for (Gemstone gemstone : Gemstone.values())
+                        CookingRecipeBuilder.smeltingRecipe(Ingredient.fromItems(gemstone.getOre()), gemstone, 1.0F, 200)
+                                .addCriterion("has_ore", hasItem(gemstone.getOre()))
+                                .build(consumer);
+                }
+            });
+        }
+        if (event.includeClient())
+        {
+            gen.addProvider(new BlockStateProvider(event.getGenerator(), MODID, event.getExistingFileHelper())
+            {
+                @Override
+                protected void registerStatesAndModels()
+                {
+                    densityBlock(ElementsOfPowerBlocks.MIST, MistBlock.DENSITY);
+                    densityBlock(ElementsOfPowerBlocks.DUST, DustBlock.DENSITY);
+                    densityBlock(ElementsOfPowerBlocks.LIGHT, LightBlock.DENSITY, (value) -> location("transparent"));
+                    densityBlock(ElementsOfPowerBlocks.CUSHION, CushionBlock.DENSITY, (density) -> location("block/dust_" + density));
+                }
+
+                private void densityBlock(Block block, IntegerProperty densityProperty)
+                {
+                    densityBlock(block, densityProperty, (density) -> location("block/" +  block.getRegistryName().getPath() + "_" + density));
+                }
+
+                private void densityBlock(Block block, IntegerProperty densityProperty, Function<Integer, ResourceLocation> texMapper)
+                {
+                    Map<Integer, ModelFile> densityModels = Maps.asMap(
+                            new HashSet<>(densityProperty.getAllowedValues()),
+                            density -> models().cubeAll(location(block.getRegistryName().getPath() + "_" + density).getPath(), texMapper.apply(density)));
+
+                    getVariantBuilder(block)
+                            .forAllStates(state -> ConfiguredModel.builder()
+                                    .modelFile(densityModels.get(state.get(MistBlock.DENSITY)))
+                                    .build()
+                            );
+                }
+            });
+        }
     }
 
     public void commonSetup(FMLCommonSetupEvent event)

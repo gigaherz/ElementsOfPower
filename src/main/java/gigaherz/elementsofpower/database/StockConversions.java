@@ -34,7 +34,6 @@ public class StockConversions
         essences(Items.LAPIS_LAZULI).earth(8);
         essences(Items.BONE_MEAL).earth(1).death(1);
 
-        essences(Items.CLAY_BALL).earth(1).water(1);
         essences(Blocks.CLAY).earth(4).water(4);
         essences(Items.BRICK).earth(1).fire(1);
         essences(Blocks.BRICKS).earth(4).fire(4);
@@ -97,10 +96,6 @@ public class StockConversions
                 Blocks.LILY_OF_THE_VALLEY
         ).life(1);
         essences(Blocks.WITHER_ROSE).life(1).death(2);
-        essences(
-                Blocks.BROWN_MUSHROOM,
-                Blocks.RED_MUSHROOM
-        ).life(1).earth(1);
 
         essences(
                 Blocks.OAK_LOG,

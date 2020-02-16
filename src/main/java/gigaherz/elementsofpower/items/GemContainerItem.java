@@ -92,14 +92,27 @@ public abstract class GemContainerItem extends MagicContainerItem
         if (tag == null)
             return null;
 
-        if (!tag.contains("gemstone", Constants.NBT.TAG_INT))
-            return null;
+        if (tag.contains("gemstone", Constants.NBT.TAG_INT))
+        {
+            int g = tag.getInt("gemstone");
+            if (g < 0 || g > Gemstone.values.size())
+                return null;
 
-        int g = tag.getInt("gemstone");
-        if (g < 0 || g > Gemstone.values.size())
-            return null;
+            Gemstone gem = Gemstone.values.get(g);
 
-        return Gemstone.values.get(g);
+            tag.remove("gemstone");
+            tag.putString("gemstone", gem.getName());
+
+            return gem;
+        }
+
+        if (tag.contains("gemstone", Constants.NBT.TAG_STRING))
+        {
+            String g = tag.getString("gemstone");
+            return Gemstone.byName(g);
+        }
+
+        return null;
     }
 
     public ItemStack setGemstone(ItemStack stack, @Nullable Gemstone gemstone)
@@ -120,7 +133,7 @@ public abstract class GemContainerItem extends MagicContainerItem
             stack.setTag(tag);
         }
 
-        tag.putInt("gemstone", gemstone.ordinal());
+        tag.putString("gemstone", gemstone.getName());
 
         return stack;
     }
@@ -136,10 +149,7 @@ public abstract class GemContainerItem extends MagicContainerItem
             return null;
 
         int q = tag.getInt("quality");
-        if (q < 0 || q > Quality.values.length)
-            return null;
-
-        return Quality.values[q];
+        return Quality.byIndex(q);
     }
 
     public ItemStack setQuality(ItemStack stack, @Nullable Quality q)
@@ -161,7 +171,7 @@ public abstract class GemContainerItem extends MagicContainerItem
             stack.setTag(tag);
         }
 
-        tag.putInt("quality", q.ordinal());
+        tag.putInt("quality", q.getIndex());
 
         return stack;
     }

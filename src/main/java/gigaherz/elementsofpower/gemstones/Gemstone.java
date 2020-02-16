@@ -142,4 +142,13 @@ public enum Gemstone implements IStringSerializable, IItemProvider
     {
         return spelldustItemSupplier != null ? spelldustItemSupplier.get() : Items.AIR;
     }
+
+    @Nullable
+    public static Gemstone byName(String name)
+    {
+        for(Gemstone g : values())
+            if (g.getName().equals(name))
+                return g;
+        return null;
+    }
 }

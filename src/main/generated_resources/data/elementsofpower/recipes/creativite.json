@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:smelting",
+  "ingredient": [],
+  "result": "elementsofpower:creativite",
+  "experience": 1.0,
+  "cookingtime": 200
+}

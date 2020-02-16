@@ -3,6 +3,7 @@ package gigaherz.elementsofpower.spells.blocks;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 
 public class CushionBlock extends DustBlock
@@ -12,10 +13,13 @@ public class CushionBlock extends DustBlock
         super(properties);
     }
 
-    @Deprecated
-    //@Override
-    public boolean causesSuffocation(BlockState state)
-    {
+    @Override
+    public boolean causesSuffocation(BlockState state, IBlockReader worldIn, BlockPos pos) {
+        return false;
+    }
+
+    @Override
+    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
         return false;
     }
 

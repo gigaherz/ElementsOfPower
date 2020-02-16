@@ -58,20 +58,20 @@ public class MagicContainerOverlay extends AbstractGui
             ItemModelMesher mesher = mc.getItemRenderer().getItemModelMesher();
             TextureManager renderEngine = mc.textureManager;
 
-            int xPos = (rescaledWidth - 7 * 28 - 16) / 2;
+            int xPos = (rescaledWidth - 7 * 28 - 8) / 2;
             int yPos = 2;
             for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
             {
                 int alpha = (amounts.get(i) < 0.001) ? 0x3FFFFFFF : 0xFFFFFFFF;
 
-                ItemStack stack = new ItemStack(Element.values[i].getOrb(), (int) amounts.get(i));
+                ItemStack stack = new ItemStack(Element.values[i].getOrb());
 
                 StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yPos, stack, alpha);
 
                 String formatted = magic.isInfinite() ? "\u221E" : MagicTooltips.PRETTY_NUMBER_FORMATTER.format(amounts.get(i));
-                this.drawCenteredString(font, formatted, xPos + 8, yPos + 11, 0xFFC0C0C0);
+                this.drawCenteredString(font, formatted, xPos+1, yPos + 11, 0xFFC0C0C0);
                 if (WandUseManager.instance.handInUse != null)
-                    this.drawCenteredString(font, "K:" + (i + 1), xPos + 8, yPos + 24, 0xFFC0C0C0);
+                    this.drawCenteredString(font, "K:" + (i + 1), xPos+1, yPos + 24, 0xFFC0C0C0);
 
                 xPos += 28;
             }

@@ -40,7 +40,7 @@ public class StackRenderingHelper
         setupGuiTransform(xPos, yPos, model.isGui3d());
         model = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(m, model, ItemCameraTransforms.TransformType.GUI, false);
 
-        RenderSystem.translatef(-0.5F, -0.5F, -0.5F);
+        //RenderSystem.translatef(0.45F, 0, 0);
 
         renderItem(model, color, m);
 

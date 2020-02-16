@@ -1,3 +1,10 @@
+Spells to be coded:
+------
+Illusion: Light+Air+<shape>
+    Illusion clone: Light+Air+Life
+
+
+
 Will Do
 ----------
 Player progression/leveling
