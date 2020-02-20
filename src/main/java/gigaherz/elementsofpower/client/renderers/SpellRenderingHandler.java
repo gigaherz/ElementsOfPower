@@ -15,12 +15,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -33,9 +31,9 @@ public class SpellRenderingHandler
 
     static
     {
-        rendererRegistry.put(SpellManager.beam, new BeamSpellRenderer());
-        rendererRegistry.put(SpellManager.cone, new ConeSpellRenderer());
-        rendererRegistry.put(SpellManager.sphere, new SphereSpellRenderer());
+        rendererRegistry.put(SpellManager.BEAM, new BeamSpellRenderer());
+        rendererRegistry.put(SpellManager.CONE, new ConeSpellRenderer());
+        rendererRegistry.put(SpellManager.SPHERE, new SphereSpellRenderer());
     }
 
     @SubscribeEvent

@@ -6,6 +6,8 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ThrowableEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.datasync.DataParameter;
@@ -13,6 +15,7 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.registries.ObjectHolder;
@@ -26,7 +29,7 @@ public class BallEntity extends ThrowableEntity implements IEntityAdditionalSpaw
     
     Spellcast spellcast;
 
-    private static final DataParameter<String> SEQ = EntityDataManager.createKey(BallEntity.class, DataSerializers.STRING);
+    private static final DataParameter<CompoundNBT> SEQ = EntityDataManager.createKey(BallEntity.class, DataSerializers.COMPOUND_NBT);
 
     public BallEntity(World worldIn, Spellcast spellcast, LivingEntity thrower)
     {
@@ -34,8 +37,10 @@ public class BallEntity extends ThrowableEntity implements IEntityAdditionalSpaw
 
         this.spellcast = spellcast;
         spellcast.setProjectile(this);
-        
-        getDataManager().set(SEQ, spellcast.getSequence());
+
+        CompoundNBT tag = new CompoundNBT();
+        tag.put("sequence", spellcast.getSequenceNBT());
+        getDataManager().set(SEQ, tag);
     }
 
     public BallEntity(EntityType<BallEntity> type, World world)
@@ -46,8 +51,9 @@ public class BallEntity extends ThrowableEntity implements IEntityAdditionalSpaw
     @Override
     protected void registerData()
     {
-
-        getDataManager().register(SEQ, "");
+        CompoundNBT tag = new CompoundNBT();
+        tag.put("sequence", new ListNBT());
+        getDataManager().register(SEQ, tag);
     }
 
     @Override
@@ -87,11 +93,13 @@ public class BallEntity extends ThrowableEntity implements IEntityAdditionalSpaw
     {
         if (spellcast == null)
         {
-            String sequence = getDataManager().get(SEQ);
-            if (sequence.length() > 0)
+            CompoundNBT tag = getDataManager().get(SEQ);
+            if (tag.contains("sequence", Constants.NBT.TAG_LIST))
             {
+                ListNBT sequence = tag.getList("sequence", Constants.NBT.TAG_STRING);
                 spellcast = SpellManager.makeSpell(sequence);
-                spellcast.init(world, (PlayerEntity) getThrower());
+                if (spellcast != null)
+                    spellcast.init(world, (PlayerEntity) getThrower());
             }
         }
         return spellcast;

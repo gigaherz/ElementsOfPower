@@ -45,7 +45,7 @@ public class MagicTooltips
             toolTip.add(1, new TranslationTextComponent("text.elementsofpower.gemstone.use").applyTextStyles(TextFormatting.DARK_GRAY, TextFormatting.ITALIC));
         }
 
-        MagicAmounts amounts = EssenceConversions.getEssences(stack, false);
+        MagicAmounts amounts = EssenceConversions.CLIENT.getEssences(stack, false);
         if (amounts.isEmpty())
             return;
 

@@ -8,7 +8,6 @@ import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.essentializer.EssentializerTileEntity;
 import gigaherz.elementsofpower.spells.Element;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -17,6 +16,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.List;
+import java.util.Objects;
 
 public class EssentializerScreen extends ContainerScreen<EssentializerContainer>
 {
@@ -76,7 +76,7 @@ public class EssentializerScreen extends ContainerScreen<EssentializerContainer>
     @Override
     protected void drawGuiContainerBackgroundLayer(float f, int i, int j)
     {
-        minecraft.textureManager.bindTexture(GUI_TEXTURE_LOCATION);
+        Objects.requireNonNull(minecraft).textureManager.bindTexture(GUI_TEXTURE_LOCATION);
         RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1.0f);
         int x = (width - xSize) / 2;
         int y = (height - ySize) / 2;
@@ -86,15 +86,20 @@ public class EssentializerScreen extends ContainerScreen<EssentializerContainer>
     @Override
     protected void drawGuiContainerForegroundLayer(int x, int y)
     {
+        Objects.requireNonNull(minecraft);
+
         font.drawString(title.getFormattedText(), 8, 6, 0x404040);
         font.drawString(playerInventory.getName().getFormattedText(), 8, ySize - 96 + 3, 0x404040);
+
+        RenderSystem.enableBlend();
+        RenderSystem.disableAlphaTest();
 
         float opaqueLevel = EssentializerTileEntity.MAX_CONVERT_PER_TICK * 20; // approx 3s fadeout
 
         MagicAmounts am = container.getMagicHolder().getRemainingToConvert();
         if (!am.isEmpty())
         {
-            minecraft.textureManager.bindTexture(GUI_TEXTURE_LOCATION);
+            Objects.requireNonNull(minecraft).textureManager.bindTexture(GUI_TEXTURE_LOCATION);
             for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
             {
                 float alpha = (float) (0.9 + 0.1 * Math.sin(Math.PI * 8 * am.get(i) / opaqueLevel))
@@ -118,7 +123,8 @@ public class EssentializerScreen extends ContainerScreen<EssentializerContainer>
 
         RenderSystem.depthMask(false);
 
-        ItemModelMesher mesher = minecraft.getItemRenderer().getItemModelMesher();
+        RenderSystem.disableBlend();
+        RenderSystem.enableAlphaTest();
 
         am = container.getMagicHolder().getContainedMagic();
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)

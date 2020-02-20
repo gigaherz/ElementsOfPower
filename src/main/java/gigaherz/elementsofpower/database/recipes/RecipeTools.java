@@ -3,12 +3,13 @@ package gigaherz.elementsofpower.database.recipes;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
+import gigaherz.elementsofpower.database.EssenceConversions;
 import gigaherz.elementsofpower.database.Utils;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class RecipeTools
 {
@@ -19,7 +20,7 @@ public class RecipeTools
         recipeEnumerators.add(new RecipeEnumerator.Crafting());
     }
 
-    public static Map<ItemStack, List<ItemStack>> gatherRecipes()
+    public static Map<Item, ItemSource> gatherRecipes()
     {
         Processor p = new Processor();
         for (RecipeEnumerator re : recipeEnumerators)
@@ -29,229 +30,28 @@ public class RecipeTools
         return p.itemSources;
     }
 
-    private static class Processor
-    {
-        public Map<ItemStack, List<ItemStack>> itemSources = Maps.newHashMap();
+    public static class ItemSource {
+        public int numProduced;
+        public final Set<Item> allIntermediates = new HashSet<>();
+        public final List<ItemStack> sources = new ArrayList<>();
 
-        private void processRecipe(@Nonnull IRecipeInfoProvider recipe)
+        public ItemSource(int count, Set<Item> allIntermediates)
         {
-            ItemStack output = recipe.getRecipeOutput();
-
-            if (output.getCount() == 0)
-            {
-                ElementsOfPowerMod.logger.warn("Recipe with output '" + output + "' has stack size 0. This recipe will be ignored.");
-                return;
-            }
-
-            for (ItemStack s : recipe.getRecipeInputs())
-            {
-                if (s != null)
-                {
-                    if (s.getCount() == 0)
-                    {
-                        ElementsOfPowerMod.logger.warn("Recipe with output '" + output + "' has input stack of size 0. This recipe will be ignored.");
-                        return;
-                    }
-                }
-            }
-
-            if (itemSources.keySet().stream().anyMatch(stack -> stack.getItem() == output.getItem()))
-            {
-                return;
-            }
-
-            List<ItemStack> inputs = reduceItemsList(recipe.getRecipeInputs());
-            List<ItemStack> expandedInputs = Lists.newArrayList();
-
-            ItemStack output2 = applyExistingRecipes(output, inputs, expandedInputs);
-
-            if (!isRecipeAggregating(expandedInputs, output2))
-                replaceExistingSources(output2, expandedInputs);
-
-            itemSources.put(output2, expandedInputs);
+            this.numProduced = count;
+            this.allIntermediates.addAll(allIntermediates);
         }
 
-        private boolean isRecipeAggregating(@Nonnull List<ItemStack> inputs, @Nonnull ItemStack output)
+        private boolean isRecipeAggregating()
         {
-            if (inputs.size() == 1)
-            {
-                if (inputs.get(0).getCount() < output.getCount())
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return sources.size() == 1
+                    && sources.get(0).getCount() < numProduced;
         }
 
-        private void replaceExistingSources(@Nonnull ItemStack output, @Nonnull List<ItemStack> items)
-        {
-            List<ItemStack> stacksToRemove = Lists.newArrayList();
-            Map<ItemStack, List<ItemStack>> stacksToAdd = Maps.newHashMap();
-
-            for (Map.Entry<ItemStack, List<ItemStack>> entry : itemSources.entrySet())
-            {
-                ItemStack result = entry.getKey().copy();
-                List<ItemStack> stacks = Lists.newArrayList();
-                int totalMult = 1;
-                boolean anythingChanged = false;
-
-                for (ItemStack s : entry.getValue())
-                {
-
-                    if (s.getItem() == output.getItem())
-                    {
-
-                        int numNeeded = s.getCount();
-                        int numProduced = output.getCount();
-                        int num = Utils.lcm(numNeeded, numProduced);
-
-                        int mult = num / numNeeded;
-
-                        result.setCount(result.getCount() * mult);
-                        for (ItemStack t : stacks)
-                        {
-                            t.setCount(t.getCount() * mult);
-                        }
-
-                        totalMult *= mult;
-
-                        int mult2 = num / numProduced;
-                        for (ItemStack t : items)
-                        {
-                            ItemStack r = t.copy();
-                            r.setCount(r.getCount() * mult2);
-                            stacks.add(r);
-                        }
-
-                        anythingChanged = true;
-                    }
-                    else
-                    {
-                        ItemStack r = s.copy();
-                        r.setCount(r.getCount() * totalMult);
-                        stacks.add(r);
-                    }
-                }
-
-                if (anythingChanged)
-                {
-                    stacksToRemove.add(entry.getKey());
-                    stacksToAdd.put(result, stacks);
-                }
-            }
-
-            for (ItemStack s : stacksToRemove)
-            {
-                itemSources.remove(s);
-            }
-
-            itemSources.putAll(stacksToAdd);
-        }
-
-        @Nonnull
-        public ItemStack applyExistingRecipes(@Nonnull ItemStack output, @Nonnull List<ItemStack> items, @Nonnull List<ItemStack> applied)
-        {
-            ItemStack result = output.copy();
-            int numProduced = output.getCount();
-            int totalMult = 1;
-
-            for (ItemStack is : items)
-            {
-                Map.Entry<ItemStack, List<ItemStack>> found = null;
-
-                for (Map.Entry<ItemStack, List<ItemStack>> entry : itemSources.entrySet())
-                {
-                    if (is.getItem() == entry.getKey().getItem())
-                    {
-                        List<ItemStack> ss = entry.getValue();
-
-                        if (ss.size() == 1)
-                        {
-                            if (ss.get(0).getCount() < entry.getKey().getCount())
-                            {
-                                continue;
-                            }
-                        }
-
-                        found = entry;
-                        break;
-                    }
-                }
-
-                if (found != null)
-                {
-                    int numNeeded = is.getCount();
-                    int num = Utils.lcm(numNeeded, numProduced);
-
-                    int mult = num / numNeeded;
-
-                    result.setCount(result.getCount() * mult);
-                    for (ItemStack t : applied)
-                    {
-                        t.setCount(t.getCount() * mult);
-                    }
-
-                    totalMult *= mult;
-
-                    int mult2 = num / numProduced;
-                    for (ItemStack t : found.getValue())
-                    {
-                        ItemStack q = t.copy();
-                        q.setCount(q.getCount() * mult2);
-                        addCompacting(applied, q);
-                    }
-                }
-                else
-                {
-                    ItemStack q = is.copy();
-                    q.setCount(q.getCount() * totalMult);
-                    addCompacting(applied, q);
-                }
-            }
-
-            if (result.getCount() > 1)
-            {
-                int cd = result.getCount();
-                for (ItemStack is : applied)
-                {
-                    cd = Utils.gcd(cd, is.getCount());
-                }
-
-                if (cd > 1)
-                {
-                    for (ItemStack is : applied)
-                    {
-                        is.setCount(is.getCount() / cd);
-                    }
-                    result.setCount(result.getCount() / cd);
-                }
-            }
-
-            return result;
-        }
-
-        @Nonnull
-        public List<ItemStack> reduceItemsList(@Nonnull List<ItemStack> items)
-        {
-            List<ItemStack> itemsResolved = Lists.newArrayList();
-
-            for (ItemStack is : items)
-            {
-                if (is == null)
-                    continue;
-
-                addCompacting(itemsResolved, is);
-            }
-
-            return itemsResolved;
-        }
-
-        private void addCompacting(@Nonnull List<ItemStack> aggregate, @Nonnull ItemStack input)
+        private void addCompacting(@Nonnull ItemStack input)
         {
             boolean found = false;
 
-            for (ItemStack k : aggregate)
+            for (ItemStack k : sources)
             {
                 if (input.getItem() == k.getItem())
                 {
@@ -266,8 +66,188 @@ public class RecipeTools
 
             if (!found)
             {
-                aggregate.add(input.copy());
+                sources.add(input.copy());
             }
+        }
+    }
+
+    private static class Processor
+    {
+
+        public Map<Item, ItemSource> itemSources = Maps.newHashMap();
+
+        private void processRecipe(@Nonnull IRecipeInfoProvider recipe)
+        {
+            ItemStack output = recipe.getRecipeOutput();
+
+            if (output.getCount() == 0)
+            {
+                ElementsOfPowerMod.LOGGER.warn("Recipe with output '" + output + "' has stack size 0. This recipe will be ignored.");
+                return;
+            }
+
+            Item item = output.getItem();
+            if (EssenceConversions.SERVER.itemHasEssence(item))
+            {
+                ElementsOfPowerMod.LOGGER.warn("Recipe with output '" + output + "' results in item with explicitly-set values. This recipe will be ignored.");
+                return;
+            }
+
+            for (ItemStack s : recipe.getRecipeInputs())
+            {
+                if (s != null)
+                {
+                    if (s.getItem() == item)
+                    {
+                        ElementsOfPowerMod.LOGGER.warn("Recipe with output '" + output + "' uses itself as an input. This recipe will be ignored.");
+                        return;
+                    }
+                }
+            }
+
+            if (itemSources.containsKey(item))
+            {
+                ElementsOfPowerMod.LOGGER.warn("Recipe with output '" + output + "', results in item that has already been seen in another recipe. This recipe will be ignored.");
+                return;
+            }
+
+            ItemSource source1 = reduceItemsList(item, recipe.getRecipeInputs(), output.getCount());
+            ItemSource source2 = applyExistingRecipes(source1);
+
+            replaceExistingSources(item, source2);
+
+            itemSources.put(item, source2);
+        }
+
+        @Nonnull
+        public ItemSource applyExistingRecipes(@Nonnull ItemSource source)
+        {
+            return replaceSources(source, itemSources);
+        }
+
+        private void replaceExistingSources(Item item, @Nonnull ItemSource source)
+        {
+            Map<Item, ItemSource> itemsToReplace = Maps.newHashMap();
+            Map<Item, ItemSource> singletonMap = Collections.singletonMap(item, source);
+
+            for (Map.Entry<Item, ItemSource> entry : itemSources.entrySet())
+            {
+                Item result = entry.getKey();
+                ItemSource oldSource = entry.getValue();
+                ItemSource newSource = replaceSources(oldSource, singletonMap);
+                if (newSource != oldSource)
+                {
+                    itemsToReplace.put(result, newSource);
+                }
+            }
+
+            itemSources.putAll(itemsToReplace);
+        }
+
+        @Nonnull
+        public ItemSource replaceSources(@Nonnull ItemSource source, Map<Item, ItemSource> sources)
+        {
+            ItemSource result = new ItemSource(source.numProduced, source.allIntermediates);
+
+            int totalMult = 1;
+            boolean anythingChanged = false;
+
+            // Replace each input by the contents of its sources, if available.
+            for (ItemStack is : source.sources)
+            {
+                Item item = is.getItem();
+                ItemSource sourceData = sources.get(item);
+
+                boolean good = false;
+                if (sourceData != null)
+                {
+                    int numNeeded = is.getCount();
+                    int numProduced = sourceData.numProduced;
+                    int num = Utils.lcm(numNeeded, numProduced);
+
+                    int mult = num / numNeeded;
+
+                    totalMult *= mult;
+                    result.numProduced *= mult;
+
+                    good = true;
+                    for (ItemStack t : sourceData.sources)
+                    {
+                        if (source.allIntermediates.contains(t.getItem()))
+                        {
+                            good = false;
+                            break;
+                        }
+                    }
+
+                    if (good)
+                    {
+                        for (ItemStack t : result.sources)
+                        {
+                            t.setCount(t.getCount() * mult);
+                        }
+
+                        int mult2 = num / numProduced;
+                        for (ItemStack t : sourceData.sources)
+                        {
+                            ItemStack q = t.copy();
+                            q.setCount(q.getCount() * mult2);
+                            result.addCompacting(q);
+                        }
+
+                        anythingChanged = true;
+                    }
+                }
+
+                if (!good)
+                {
+                    ItemStack q = is.copy();
+                    q.setCount(q.getCount() * totalMult);
+                    result.addCompacting(q);
+                }
+            }
+
+            if (anythingChanged)
+            {
+                // Simplify
+                if (result.numProduced > 1)
+                {
+                    int cd = result.numProduced;
+                    for (ItemStack is : result.sources)
+                    {
+                        cd = Utils.gcd(cd, is.getCount());
+                    }
+
+                    if (cd > 1)
+                    {
+                        for (ItemStack is : result.sources)
+                        {
+                            is.setCount(is.getCount() / cd);
+                        }
+                        result.numProduced /= cd;
+                    }
+                }
+
+                return result;
+            }
+
+            return source;
+        }
+
+        @Nonnull
+        public ItemSource reduceItemsList(Item item, @Nonnull List<ItemStack> items, int count)
+        {
+            ItemSource source = new ItemSource(count, Collections.singleton(item));
+
+            for (ItemStack is : items)
+            {
+                if (is.isEmpty())
+                    continue;
+
+                source.addCompacting(is);
+            }
+
+            return source;
         }
     }
 }

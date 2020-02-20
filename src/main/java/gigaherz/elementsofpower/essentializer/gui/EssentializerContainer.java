@@ -75,7 +75,7 @@ public class EssentializerContainer
 
         this.magicHolder = magicHolder;
 
-        addSlot(new MagicSourceSlot(inv, 0, 80, 44));
+        addSlot(new MagicSourceSlot(EssenceConversions.get(playerInventory.player.world), inv, 0, 80, 44));
         addSlot(new MagicContainerInputSlot(inv, 1, 8, 56));
         addSlot(new MagicContainerOutputSlot(inv, 2, 152, 56));
 
@@ -162,7 +162,7 @@ public class EssentializerContainer
         if (slotIndex >= 3)
         {
             boolean itemIsContainer = MagicContainerCapability.hasContainer(stack);
-            boolean itemHasEssence = EssenceConversions.itemHasEssence(stack.getItem());
+            boolean itemHasEssence = EssenceConversions.get(player.world).itemHasEssence(stack.getItem());
 
             if (itemIsContainer)
             {

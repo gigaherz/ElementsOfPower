@@ -29,6 +29,7 @@ import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 public class EssentializerTileEntity
         extends TileEntity
@@ -49,6 +50,8 @@ public class EssentializerTileEntity
         {
             super.onContentsChanged(slot);
             markDirty();
+            if (world == null)
+                return;
             BlockState state = world.getBlockState(pos);
             world.notifyBlockUpdate(pos, state, state, 3);
         }
@@ -58,7 +61,7 @@ public class EssentializerTileEntity
             switch (index)
             {
                 case 0:
-                    return EssenceConversions.itemHasEssence(stack.getItem());
+                    return EssenceConversions.get(world).itemHasEssence(stack.getItem());
                 case 1:
                     return MagicContainerCapability.hasContainer(stack);
                 case 2:
@@ -156,13 +159,13 @@ public class EssentializerTileEntity
     {
         if (tagCompound.contains("Slots", Constants.NBT.TAG_LIST))
         {
-            CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.readNBT(inventory, null, tagCompound.getCompound("Slots"));
+            CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.readNBT(inventory, null, tagCompound.getList("Slots", Constants.NBT.TAG_COMPOUND));
         }
     }
 
     private void writeInventoryToNBT(CompoundNBT tagCompound)
     {
-        tagCompound.put("Slots", CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.writeNBT(inventory, null));
+        tagCompound.put("Slots", Objects.requireNonNull(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.writeNBT(inventory, null)));
     }
 
     @Override
@@ -248,7 +251,7 @@ public class EssentializerTileEntity
             return false;
         }
 
-        MagicAmounts contained = EssenceConversions.getEssences(input, false);
+        MagicAmounts contained = EssenceConversions.get(world).getEssences(input, false);
 
         if (contained.isEmpty())
             return false;

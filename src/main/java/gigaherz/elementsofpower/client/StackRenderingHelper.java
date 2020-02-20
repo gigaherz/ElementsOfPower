@@ -22,9 +22,10 @@ public class StackRenderingHelper
     {
         RenderHelper.disableStandardItemLighting();
         RenderSystem.enableRescaleNormal();
-        RenderSystem.enableAlphaTest();
+        RenderSystem.disableAlphaTest();
         RenderSystem.alphaFunc(GL11.GL_GREATER, 0.1F);
         RenderSystem.enableBlend();
+        RenderSystem.blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 

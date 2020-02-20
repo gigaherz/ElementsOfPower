@@ -48,7 +48,7 @@ public abstract class RecipeEnumerator
                     if (!seenClasses.contains(c))
                     {
                         seenClasses.add(c);
-                        ElementsOfPowerMod.logger.warn("Ignoring unhandled recipe serializer: " + c.getRegistryName());
+                        ElementsOfPowerMod.LOGGER.warn("Ignoring unhandled recipe serializer: " + c.getRegistryName());
                     }
                     continue;
                 }

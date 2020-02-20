@@ -5,72 +5,30 @@ import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.database.recipes.RecipeTools;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 
-import java.util.List;
+import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.Map;
 
 public class EssenceConversions
 {
-    public static Map<Item, MagicAmounts> itemEssences = Maps.newHashMap();
+    public static final EssenceConversions CLIENT = new EssenceConversions();
+    public static final EssenceConversions SERVER = new EssenceConversions();
 
-    public static void registerEssencesForRecipes()
+    private final Map<Item, MagicAmounts> essenceMappings = Maps.newHashMap();
+
+    public static EssenceConversions get(@Nullable World world)
     {
-        Map<ItemStack, List<ItemStack>> itemSources = RecipeTools.gatherRecipes();
-
-        for (Map.Entry<ItemStack, List<ItemStack>> it : itemSources.entrySet())
-        {
-            ItemStack output = it.getKey();
-            List<ItemStack> inputs = it.getValue();
-
-            int count = output.getCount();
-            if (count < 1)
-            {
-                ElementsOfPowerMod.logger.warn("StackSize is invalid! " + output.toString());
-                continue;
-            }
-
-            if (output.getCount() > 1)
-            {
-                output = output.copy();
-                output.setCount(1);
-            }
-
-            if (itemHasEssence(output.getItem()))
-                continue;
-
-            boolean allFound = true;
-            MagicAmounts am = MagicAmounts.EMPTY;
-            for (ItemStack b : inputs)
-            {
-                MagicAmounts m = getEssences(b, true);
-
-                if (m.isEmpty())
-                {
-                    allFound = false;
-                    break;
-                }
-
-                am = am.add(m);
-            }
-
-            if (!allFound)
-                continue;
-
-            if (count > 1)
-            {
-                am = am.multiply(1.0f / count);
-            }
-
-            addConversion(output.getItem(), am);
-        }
+        return (world != null && world.isRemote) ? CLIENT : SERVER;
     }
 
-    public static boolean itemHasEssence(Item item)
+    public boolean itemHasEssence(Item item)
     {
-        return itemEssences.containsKey(item);
+        return essenceMappings.containsKey(item);
     }
 
-    public static MagicAmounts getEssences(ItemStack stack, boolean wholeStack)
+    public MagicAmounts getEssences(ItemStack stack, boolean wholeStack)
     {
         int count = stack.getCount();
         if (count > 1)
@@ -89,19 +47,81 @@ public class EssenceConversions
         return m;
     }
 
-    public static MagicAmounts getEssences(Item stack)
+    public MagicAmounts getEssences(Item stack)
     {
-        return itemEssences.getOrDefault(stack, MagicAmounts.EMPTY);
+        return essenceMappings.getOrDefault(stack, MagicAmounts.EMPTY);
     }
 
-    public static void addConversion(Item item, MagicAmounts amounts)
+    public void addConversion(Item item, MagicAmounts amounts)
     {
-        if (itemEssences.containsKey(item))
+        if (essenceMappings.containsKey(item))
         {
-            ElementsOfPowerMod.logger.error("Stack already inserted! " + item.toString());
+            ElementsOfPowerMod.LOGGER.error("Stack already inserted! " + item.toString());
             return;
         }
 
-        itemEssences.put(item, amounts);
+        essenceMappings.put(item, amounts);
+    }
+
+    public Map<Item, MagicAmounts> getAllConversions()
+    {
+        return Collections.unmodifiableMap(essenceMappings);
+    }
+
+    public void clear()
+    {
+        essenceMappings.clear();
+    }
+
+    public void receiveFromServer(Map<Item, MagicAmounts> data)
+    {
+        essenceMappings.clear();
+        essenceMappings.putAll(data);
+    }
+
+    public static void registerEssencesForRecipes()
+    {
+        Map<Item, RecipeTools.ItemSource> itemSources = RecipeTools.gatherRecipes();
+
+        for (Map.Entry<Item, RecipeTools.ItemSource> it : itemSources.entrySet())
+        {
+            Item output = it.getKey();
+            RecipeTools.ItemSource inputs = it.getValue();
+
+            float count = inputs.numProduced;
+            if (count < 1)
+            {
+                ElementsOfPowerMod.LOGGER.warn("StackSize is invalid! " + output.toString());
+                continue;
+            }
+
+            if (SERVER.itemHasEssence(output))
+                continue;
+
+            boolean allFound = true;
+            MagicAmounts am = MagicAmounts.EMPTY;
+            for (ItemStack b : inputs.sources)
+            {
+                MagicAmounts m = SERVER.getEssences(b, true);
+
+                if (m.isEmpty())
+                {
+                    allFound = false;
+                    break;
+                }
+
+                am = am.add(m);
+            }
+
+            if (!allFound)
+                continue;
+
+            if (count > 1)
+            {
+                am = am.multiply(1.0f / count);
+            }
+
+            SERVER.addConversion(output.getItem(), am);
+        }
     }
 }

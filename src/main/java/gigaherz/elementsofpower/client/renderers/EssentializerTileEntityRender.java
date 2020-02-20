@@ -18,7 +18,7 @@ public class EssentializerTileEntityRender extends TileEntityRenderer<Essentiali
 {
     private final Lazy<ModelHandle> handle = Lazy.of(() -> ModelHandle.of("elementsofpower:models/block/essentializer_2.obj") );
 
-    private final ResourceLocation texture = new ResourceLocation("elementsofpower:block/side_obsidian");
+    private final ResourceLocation texture = new ResourceLocation("elementsofpower:textures/block/side_obsidian.png");
 
     public EssentializerTileEntityRender(TileEntityRendererDispatcher rendererDispatcherIn)
     {

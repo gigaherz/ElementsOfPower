@@ -7,15 +7,18 @@ import net.minecraftforge.items.SlotItemHandler;
 
 public class MagicSourceSlot extends SlotItemHandler
 {
-    public MagicSourceSlot(IItemHandler inventory, int par2, int par3, int par4)
+    private final EssenceConversions magicDatabase;
+
+    public MagicSourceSlot(EssenceConversions magicDatabase, IItemHandler inventory, int par2, int par3, int par4)
     {
         super(inventory, par2, par3, par4);
+        this.magicDatabase = magicDatabase;
     }
 
     @Override
     public boolean isItemValid(ItemStack stack)
     {
-        return stack == null || EssenceConversions.itemHasEssence(stack.getItem());
+        return stack == null || magicDatabase.itemHasEssence(stack.getItem());
     }
 
     @Override

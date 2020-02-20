@@ -17,8 +17,12 @@ import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+
+import java.util.List;
 
 public class MagicContainerOverlay extends AbstractGui
 {
@@ -79,18 +83,17 @@ public class MagicContainerOverlay extends AbstractGui
             CompoundNBT nbt = heldItem.getTag();
             if (nbt != null)
             {
-                String savedSequence = nbt.getString(WandItem.SPELL_SEQUENCE_TAG);
+                ListNBT seq = nbt.getList(WandItem.SPELL_SEQUENCE_TAG, Constants.NBT.TAG_LIST);
+                List<Element> savedSequence = SpellManager.sequenceFromList(seq);
 
-                if (savedSequence.length() > 0)
+                if (savedSequence.size() > 0)
                 {
                     // Saved spell sequence
-                    xPos = (rescaledWidth - 6 * (savedSequence.length() - 1) - 14) / 2;
+                    xPos = (rescaledWidth - 6 * (savedSequence.size() - 1) - 14) / 2;
                     yPos = rescaledHeight / 2 - 16 - 16;
-                    for (char c : savedSequence.toCharArray())
+                    for (Element e : savedSequence)
                     {
-                        int i = SpellManager.elementIndices[c - 'A'];
-
-                        ItemStack stack = new ItemStack(Element.values[i].getOrb());
+                        ItemStack stack = new ItemStack(e.getOrb());
 
                         StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yPos, stack, 0xFFFFFFFF);
 
@@ -99,18 +102,16 @@ public class MagicContainerOverlay extends AbstractGui
                 }
             }
 
-            StringBuilder sequence = WandUseManager.instance.sequence;
-            int spellLength = sequence.length();
+            List<Element> sequence = WandUseManager.instance.sequence;
+            int spellLength = sequence.size();
             if (spellLength > 0)
             {
                 // New spell sequence
                 xPos = (rescaledWidth - 6 * (spellLength - 1) - 14) / 2;
                 yPos = rescaledHeight / 2 + 16;
-                for (char c : sequence.toString().toCharArray())
+                for (Element e : sequence)
                 {
-                    int i = SpellManager.elementIndices[c - 'A'];
-
-                    ItemStack stack = new ItemStack(Element.values[i].getOrb());
+                    ItemStack stack = new ItemStack(e.getOrb());
 
                     StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yPos, stack, 0xFFFFFFFF);
 

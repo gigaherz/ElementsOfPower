@@ -6,6 +6,7 @@ import gigaherz.elementsofpower.items.MagicOrbItem;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 
+import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
 public enum Element
@@ -25,6 +26,15 @@ public enum Element
     private final Supplier<Block> blockSupplier;
     private final Supplier<Item> itemSupplier;
     private final Supplier<MagicOrbItem> orbSupplier;
+
+    @Nullable
+    public static Element byName(String name)
+    {
+        for (Element e : values())
+            if (e.getName().equals(name))
+                return e;
+        return null;
+    }
 
     public Element getOpposite()
     {

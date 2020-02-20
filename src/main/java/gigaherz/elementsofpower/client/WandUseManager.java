@@ -23,6 +23,9 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class WandUseManager
 {
@@ -33,7 +36,7 @@ public class WandUseManager
 
     public static WandUseManager instance;
 
-    public StringBuilder sequence = new StringBuilder();
+    public final List<Element> sequence = new ArrayList<>();
     public Hand handInUse = null;
     public ItemStack activeStack = null;
     public int slotInUse;
@@ -126,7 +129,7 @@ public class WandUseManager
         {
             if (handInUse != null)
             {
-                PlayerEntity player = Minecraft.getInstance().player;
+                PlayerEntity player = Objects.requireNonNull(Minecraft.getInstance().player);
                 if (!player.isHandActive()
                         || player.getItemInUseCount() > itemInUseCount)
                 {
@@ -141,7 +144,7 @@ public class WandUseManager
     {
         if (activeStack == null)
         {
-            PlayerEntity player = mc.player;
+            PlayerEntity player = Objects.requireNonNull(mc.player);
             int slotNumber = player.inventory.currentItem;
             ItemStack itemUsing = player.inventory.getCurrentItem();
             if (!(itemUsing.getItem() instanceof WandItem))
@@ -196,7 +199,7 @@ public class WandUseManager
         {
             while (spellKeys[i].isPressed())
             {
-                sequence.append(SpellManager.elementChars[i]);
+                sequence.add(Element.values[i]);
             }
         }
     }
@@ -207,7 +210,7 @@ public class WandUseManager
         handInUse = hand;
         itemInUseCount = activeStack.getUseDuration();
         slotInUse = slotNumber;
-        sequence = new StringBuilder();
+        sequence.clear();
 
         ElementsOfPowerMod.channel.sendToServer(new UpdateSpellSequence(UpdateSpellSequence.ChangeMode.BEGIN, slotInUse, null));
     }
@@ -220,15 +223,15 @@ public class WandUseManager
         }
         else
         {
-            ElementsOfPowerMod.channel.sendToServer(new UpdateSpellSequence(UpdateSpellSequence.ChangeMode.COMMIT, slotInUse, sequence.toString()));
+            ElementsOfPowerMod.channel.sendToServer(new UpdateSpellSequence(UpdateSpellSequence.ChangeMode.COMMIT, slotInUse, sequence));
         }
 
         handInUse = null;
         activeStack = null;
         itemInUseCount = 0;
         slotInUse = -1;
-        sequence = new StringBuilder();
+        sequence.clear();
 
-        mc.player.resetActiveHand();
+        Objects.requireNonNull(mc.player).resetActiveHand();
     }
 }

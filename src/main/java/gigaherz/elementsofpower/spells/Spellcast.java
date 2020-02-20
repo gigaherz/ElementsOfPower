@@ -7,12 +7,15 @@ import gigaherz.elementsofpower.spells.shapes.SpellShape;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.StringNBT;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.Direction;
 import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.math.*;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.INBTSerializable;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -21,7 +24,7 @@ import java.util.Random;
 
 public class Spellcast
 {
-    public final String sequence;
+    public final List<Element> sequence;
     public int remainingCastTime;
     public int remainingInterval;
     public int totalCastTime;
@@ -45,7 +48,7 @@ public class Spellcast
     private int radiating;
     private MagicAmounts spellCost;
 
-    public Spellcast(SpellShape shape, SpellEffect effect, int power, String sequence)
+    public Spellcast(SpellShape shape, SpellEffect effect, int power, List<Element> sequence)
     {
         this.shape = shape;
         this.effect = effect;
@@ -64,7 +67,7 @@ public class Spellcast
         totalCastTime = remainingCastTime;
     }
 
-    public String getSequence()
+    public List<Element> getSequence()
     {
         return sequence;
     }
@@ -331,5 +334,15 @@ public class Spellcast
     public void setSpellCost(MagicAmounts spellCost)
     {
         this.spellCost = spellCost;
+    }
+
+    public ListNBT getSequenceNBT()
+    {
+        ListNBT list = new ListNBT();
+        for(Element e : sequence)
+        {
+            list.add(StringNBT.valueOf(e.getName()));
+        }
+        return list;
     }
 }

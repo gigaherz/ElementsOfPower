@@ -3,10 +3,12 @@ package gigaherz.elementsofpower.spells;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.network.SynchronizeSpellcastState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
@@ -19,10 +21,13 @@ import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 import javax.annotation.Nullable;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class SpellcastEntityData implements INBTSerializable<CompoundNBT>
 {
@@ -53,7 +58,7 @@ public class SpellcastEntityData implements INBTSerializable<CompoundNBT>
         {
             CompoundNBT cast = new CompoundNBT();
             currentCasting.writeToNBT(cast);
-            cast.putString("sequence", currentCasting.getSequence());
+            cast.put("sequence", currentCasting.getSequenceNBT());
             compound.put("currentSpell", cast);
         }
         return compound;
@@ -64,13 +69,15 @@ public class SpellcastEntityData implements INBTSerializable<CompoundNBT>
         if (compound.contains("currentSpell", Constants.NBT.TAG_COMPOUND))
         {
             CompoundNBT cast = compound.getCompound("currentSpell");
-            String sequence = cast.getString("sequence");
-
-            currentCasting = SpellManager.makeSpell(sequence);
-            if (currentCasting != null)
+            if (cast.contains("sequence", Constants.NBT.TAG_LIST))
             {
-                currentCasting.init(player.world, player);
-                currentCasting.readFromNBT(cast);
+                ListNBT seq = cast.getList("sequence", Constants.NBT.TAG_STRING);
+                currentCasting = SpellManager.makeSpell(seq);
+                if (currentCasting != null)
+                {
+                    currentCasting.init(player.world, player);
+                    currentCasting.readFromNBT(cast);
+                }
             }
         }
     }
@@ -83,52 +90,36 @@ public class SpellcastEntityData implements INBTSerializable<CompoundNBT>
         currentCasting = spell;
         currentCasting.init(player.world, player);
 
-        if (!player.world.isRemote)
-        {
-            ElementsOfPowerMod.channel.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player),
-                    new SynchronizeSpellcastState(SynchronizeSpellcastState.ChangeMode.BEGIN, spell));
-        }
+        sync(SynchronizeSpellcastState.ChangeMode.BEGIN);
     }
 
     public void end()
     {
-        if (currentCasting != null)
-        {
-            if (!player.world.isRemote)
-            {
-                ElementsOfPowerMod.channel.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player),
-                        new SynchronizeSpellcastState(SynchronizeSpellcastState.ChangeMode.END, currentCasting));
-            }
+        sync(SynchronizeSpellcastState.ChangeMode.END);
 
-            currentCasting = null;
-        }
+        currentCasting = null;
     }
 
     public void interrupt()
     {
-        if (currentCasting != null)
-        {
-            if (!player.world.isRemote)
-            {
-                ElementsOfPowerMod.channel.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player),
-                        new SynchronizeSpellcastState(SynchronizeSpellcastState.ChangeMode.INTERRUPT, currentCasting));
-            }
+        sync(SynchronizeSpellcastState.ChangeMode.INTERRUPT);
 
-            currentCasting = null;
-        }
+        currentCasting = null;
     }
 
     public void cancel()
     {
-        if (currentCasting != null)
-        {
-            if (!player.world.isRemote)
-            {
-                ElementsOfPowerMod.channel.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player),
-                        new SynchronizeSpellcastState(SynchronizeSpellcastState.ChangeMode.CANCEL, currentCasting));
-            }
+        sync(SynchronizeSpellcastState.ChangeMode.CANCEL);
 
-            currentCasting = null;
+        currentCasting = null;
+    }
+
+    private void sync(SynchronizeSpellcastState.ChangeMode mode)
+    {
+        if (currentCasting != null && !player.world.isRemote)
+        {
+            ElementsOfPowerMod.channel.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player),
+                    new SynchronizeSpellcastState(mode, currentCasting));
         }
     }
 
@@ -261,6 +252,16 @@ public class SpellcastEntityData implements INBTSerializable<CompoundNBT>
             if (e.phase == TickEvent.Phase.END)
             {
                 SpellcastEntityData.get(e.player).ifPresent(SpellcastEntityData::updateSpell);
+            }
+        }
+
+        @SubscribeEvent
+        public void playerTickEvent(LivingEvent.LivingJumpEvent e)
+        {
+            LivingEntity entity = e.getEntityLiving();
+            if (entity instanceof PlayerEntity)
+            {
+                SpellcastEntityData.get((PlayerEntity) entity).ifPresent(SpellcastEntityData::interrupt);
             }
         }
     }

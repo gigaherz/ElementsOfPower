@@ -93,7 +93,7 @@ public class EssenceOverrides
                 ItemStack stack = new ItemStack(item, 1);
                 MagicAmounts m = e.getValue();
 
-                EssenceConversions.addConversion(stack.getItem(), m);
+                EssenceConversions.SERVER.addConversion(stack.getItem(), m);
             }
         }
     }

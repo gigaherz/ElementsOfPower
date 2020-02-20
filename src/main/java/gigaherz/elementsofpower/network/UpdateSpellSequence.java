@@ -1,12 +1,16 @@
 package gigaherz.elementsofpower.network;
 
 import gigaherz.elementsofpower.items.WandItem;
+import gigaherz.elementsofpower.spells.Element;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 public class UpdateSpellSequence
@@ -17,15 +21,15 @@ public class UpdateSpellSequence
         PARTIAL,
         COMMIT,
         CANCEL;
-        public static final ChangeMode values[] = values();
+        public static final ChangeMode[] values = values();
     }
 
     public int slotNumber;
 
     public ChangeMode changeMode;
-    public String sequence;
+    public List<Element> sequence;
 
-    public UpdateSpellSequence(ChangeMode mode, int slotNumber, @Nullable String sequence)
+    public UpdateSpellSequence(ChangeMode mode, int slotNumber, @Nullable List<Element> sequence)
     {
         changeMode = mode;
         this.sequence = sequence;
@@ -37,10 +41,12 @@ public class UpdateSpellSequence
         int r = buf.readInt();
         changeMode = ChangeMode.values[r];
         slotNumber = buf.readByte();
-        sequence = buf.readString();
-        if (sequence.length() == 0)
+        int count = buf.readVarInt();
+        if (count > 0)
         {
-            sequence = null;
+            sequence = new ArrayList<>();
+            for(int i=0;i<count;i++)
+                sequence.add(Element.byName(buf.readString()));
         }
     }
 
@@ -50,11 +56,13 @@ public class UpdateSpellSequence
         buf.writeByte(slotNumber);
         if (sequence != null)
         {
-            buf.writeString(sequence);
+            buf.writeVarInt(sequence.size());
+            for(Element e : sequence)
+                buf.writeString(e.getName());
         }
         else
         {
-            buf.writeString("");
+            buf.writeVarInt(0);
         }
     }
 
@@ -63,7 +71,7 @@ public class UpdateSpellSequence
         context.get().enqueueWork(() ->
         {
             ServerPlayerEntity player = context.get().getSender();
-            ItemStack stack = player.inventory.getStackInSlot(slotNumber);
+            ItemStack stack = Objects.requireNonNull(player).inventory.getStackInSlot(slotNumber);
 
             if (stack.getItem() instanceof WandItem)
             {

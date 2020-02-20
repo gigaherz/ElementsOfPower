@@ -4,6 +4,7 @@ import gigaherz.elementsofpower.database.GemstoneExaminer;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.inventory.container.IContainerListener;
@@ -11,6 +12,7 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.World;
 import net.minecraftforge.registries.ObjectHolder;
 
 import java.util.List;
@@ -42,7 +44,6 @@ public class AnalyzerContainer extends Container
 
         bindPlayerInventory(playerInventory);
     }
-
 
     protected void bindPlayerInventory(PlayerInventory playerInventory)
     {
@@ -280,12 +281,20 @@ public class AnalyzerContainer extends Container
             ItemStack itemstack = internalInventory.removeStackFromSlot(0);
             if (itemstack.getCount() > 0)
             {
-                playerIn.dropItem(itemstack, false);
+                if (!playerIn.isAlive() || playerIn instanceof ServerPlayerEntity && ((ServerPlayerEntity)playerIn).hasDisconnected())
+                {
+                    playerIn.dropItem(itemstack, false);
+                }
+                else
+                {
+                    playerIn.inventory.placeItemBackInInventory(player.world, itemstack);
+                }
             }
         }
     }
 
-    class InventoryInternal extends Inventory
+
+    static class InventoryInternal extends Inventory
     {
         public InventoryInternal()
         {

@@ -6,7 +6,7 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.0.9999.3-intellij-data', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.0.9999.9-intellij-data', changing: true
     }
 }
 apply plugin: 'net.minecraftforge.gradle'

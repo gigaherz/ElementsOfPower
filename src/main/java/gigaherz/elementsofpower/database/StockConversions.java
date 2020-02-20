@@ -15,8 +15,10 @@ public class StockConversions
 {
     private static final List<ItemEssenceConversion> CONVERSIONS = Lists.newArrayList();
 
-    public static void registerEssenceSources()
+    public static void addStockConversions()
     {
+        CONVERSIONS.clear();
+
         for (Element e : Element.values())
         {
             essences(e.getItem()).element(e, 8);
@@ -80,6 +82,7 @@ public class StockConversions
         essences(Blocks.TALL_GRASS).earth(2).life(2);
         essences(Blocks.GRASS).earth(2).life(2);
         essences(Blocks.GRASS_BLOCK).earth(3).life(2);
+        essences(Blocks.PODZOL).earth(3).life(1).death(1);
 
         essences(
                 Blocks.DANDELION,
@@ -98,6 +101,14 @@ public class StockConversions
         essences(Blocks.WITHER_ROSE).life(1).death(2);
 
         essences(
+                Blocks.OAK_SAPLING,
+                Blocks.BIRCH_SAPLING,
+                Blocks.JUNGLE_SAPLING,
+                Blocks.SPRUCE_SAPLING,
+                Blocks.DARK_OAK_SAPLING,
+                Blocks.ACACIA_SAPLING
+        ).life(4);
+        essences(
                 Blocks.OAK_LOG,
                 Blocks.BIRCH_LOG,
                 Blocks.JUNGLE_LOG,
@@ -106,21 +117,29 @@ public class StockConversions
                 Blocks.ACACIA_LOG
         ).life(16);
         essences(
-                Blocks.OAK_PLANKS,
-                Blocks.BIRCH_PLANKS,
-                Blocks.JUNGLE_PLANKS,
-                Blocks.SPRUCE_PLANKS,
-                Blocks.DARK_OAK_PLANKS,
-                Blocks.ACACIA_PLANKS
-        ).life(4);
+                Blocks.OAK_WOOD,
+                Blocks.BIRCH_WOOD,
+                Blocks.JUNGLE_WOOD,
+                Blocks.SPRUCE_WOOD,
+                Blocks.DARK_OAK_WOOD,
+                Blocks.ACACIA_WOOD
+        ).life(16);
         essences(
-                Blocks.OAK_SLAB,
-                Blocks.BIRCH_SLAB,
-                Blocks.JUNGLE_SLAB,
-                Blocks.SPRUCE_SLAB,
-                Blocks.DARK_OAK_SLAB,
-                Blocks.ACACIA_SLAB
-        ).life(2);
+                Blocks.STRIPPED_OAK_LOG,
+                Blocks.STRIPPED_BIRCH_LOG,
+                Blocks.STRIPPED_JUNGLE_LOG,
+                Blocks.STRIPPED_SPRUCE_LOG,
+                Blocks.STRIPPED_DARK_OAK_LOG,
+                Blocks.STRIPPED_ACACIA_LOG
+        ).life(16);
+        essences(
+                Blocks.STRIPPED_OAK_WOOD,
+                Blocks.STRIPPED_BIRCH_WOOD,
+                Blocks.STRIPPED_JUNGLE_WOOD,
+                Blocks.STRIPPED_SPRUCE_WOOD,
+                Blocks.STRIPPED_DARK_OAK_WOOD,
+                Blocks.STRIPPED_ACACIA_WOOD
+        ).life(16);
         essences(
                 Blocks.OAK_STAIRS,
                 Blocks.BIRCH_STAIRS,
@@ -292,7 +311,7 @@ public class StockConversions
         @Override
         public void apply()
         {
-            EssenceConversions.addConversion(item, amounts);
+            EssenceConversions.SERVER.addConversion(item, amounts);
         }
 
         @Override

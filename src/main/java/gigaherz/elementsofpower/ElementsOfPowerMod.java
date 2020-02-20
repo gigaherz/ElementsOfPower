@@ -47,6 +47,7 @@ import net.minecraft.data.IFinishedRecipe;
 import net.minecraft.data.RecipeProvider;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.*;
 import net.minecraft.item.crafting.IRecipeSerializer;
@@ -64,6 +65,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.common.util.NonNullLazy;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -72,6 +74,7 @@ import net.minecraftforge.fml.event.lifecycle.*;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.network.NetworkRegistry;
+import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -79,6 +82,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -105,7 +109,7 @@ public class ElementsOfPowerMod
             .networkProtocolVersion(() -> PROTOCOL_VERSION)
             .simpleChannel();
 
-    public static Logger logger = LogManager.getLogger(MODID);
+    public static Logger LOGGER = LogManager.getLogger(MODID);
 
     public static ItemGroup tabMagic = new ItemGroup("elementsofpower.magic")
     {
@@ -142,6 +146,7 @@ public class ElementsOfPowerMod
 
         modEventBus.addListener(this::gatherData);
 
+        MinecraftForge.EVENT_BUS.addListener(this::playerLoggedIn);
         MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
     }
 
@@ -177,7 +182,7 @@ public class ElementsOfPowerMod
     public void registerItems(RegistryEvent.Register<Item> event)
     {
         event.getRegistry().registerAll(
-                new BlockItem(ElementsOfPowerBlocks.essentializer, new Item.Properties().group(tabMagic)).setRegistryName(ElementsOfPowerBlocks.essentializer.getRegistryName()),
+                new BlockItem(ElementsOfPowerBlocks.essentializer, new Item.Properties().group(tabMagic)).setRegistryName(Objects.requireNonNull(ElementsOfPowerBlocks.essentializer.getRegistryName())),
 
                 new WandItem(new Item.Properties().group(tabMagic).maxStackSize(1)).setRegistryName("wand"),
                 new StaffItem(new Item.Properties().group(tabMagic).maxStackSize(1)).setRegistryName("staff"),
@@ -289,9 +294,14 @@ public class ElementsOfPowerMod
                 protected void registerRecipes(Consumer<IFinishedRecipe> consumer)
                 {
                     for (Gemstone gemstone : Gemstone.values())
-                        CookingRecipeBuilder.smeltingRecipe(Ingredient.fromItems(gemstone.getOre()), gemstone, 1.0F, 200)
-                                .addCriterion("has_ore", hasItem(gemstone.getOre()))
-                                .build(consumer);
+                    {
+                        if (gemstone.generateCustomOre())
+                        {
+                            CookingRecipeBuilder.smeltingRecipe(Ingredient.fromItems(gemstone.getOre()), gemstone, 1.0F, 200)
+                                    .addCriterion("has_ore", hasItem(gemstone.getOre()))
+                                    .build(consumer);
+                        }
+                    }
                 }
             });
         }
@@ -310,14 +320,14 @@ public class ElementsOfPowerMod
 
                 private void densityBlock(Block block, IntegerProperty densityProperty)
                 {
-                    densityBlock(block, densityProperty, (density) -> location("block/" +  block.getRegistryName().getPath() + "_" + density));
+                    densityBlock(block, densityProperty, (density) -> location("block/" +  Objects.requireNonNull(block.getRegistryName()).getPath() + "_" + density));
                 }
 
                 private void densityBlock(Block block, IntegerProperty densityProperty, Function<Integer, ResourceLocation> texMapper)
                 {
                     Map<Integer, ModelFile> densityModels = Maps.asMap(
                             new HashSet<>(densityProperty.getAllowedValues()),
-                            density -> models().cubeAll(location(block.getRegistryName().getPath() + "_" + density).getPath(), texMapper.apply(density)));
+                            density -> models().cubeAll(location(Objects.requireNonNull(block.getRegistryName()).getPath() + "_" + density).getPath(), texMapper.apply(density)));
 
                     getVariantBuilder(block)
                             .forAllStates(state -> ConfiguredModel.builder()
@@ -337,16 +347,17 @@ public class ElementsOfPowerMod
         channel.messageBuilder(UpdateEssentializerAmounts.class, messageNumber++).encoder(UpdateEssentializerAmounts::encode).decoder(UpdateEssentializerAmounts::new).consumer(UpdateEssentializerAmounts::handle).add();
         channel.messageBuilder(UpdateEssentializerTileEntity.class, messageNumber++).encoder(UpdateEssentializerTileEntity::encode).decoder(UpdateEssentializerTileEntity::new).consumer(UpdateEssentializerTileEntity::handle).add();
         channel.messageBuilder(AddVelocityToPlayer.class, messageNumber++).encoder(AddVelocityToPlayer::encode).decoder(AddVelocityToPlayer::new).consumer(AddVelocityToPlayer::handle).add();
-        logger.debug("Final message number: " + messageNumber);
+        channel.messageBuilder(SyncEssenceConversions.class, messageNumber++).encoder(SyncEssenceConversions::encode).decoder(SyncEssenceConversions::new).consumer(SyncEssenceConversions::handle).add();
+        LOGGER.debug("Final message number: " + messageNumber);
 
         MagicContainerCapability.register();
         SpellcastEntityData.register();
         //DiscoveryHandler.init();
     }
 
-    public void init(FMLCommonSetupEvent event)
+    /*public void init(FMLCommonSetupEvent event)
     {
-        /*OreDictionary.registerOre("blockAgate", gemstoneBlock.getStack(GemstoneBlockType.Agate));
+        OreDictionary.registerOre("blockAgate", gemstoneBlock.getStack(GemstoneBlockType.Agate));
         OreDictionary.registerOre("blockAmethyst", gemstoneBlock.getStack(GemstoneBlockType.Amethyst));
         OreDictionary.registerOre("blockCitrine", gemstoneBlock.getStack(GemstoneBlockType.Citrine));
         OreDictionary.registerOre("blockRuby", gemstoneBlock.getStack(GemstoneBlockType.Ruby));
@@ -383,14 +394,17 @@ public class ElementsOfPowerMod
         /*if (ConfigManager.EnableGemstoneOregen)
             GameRegistry.registerWorldGenerator(new BlockGemstoneOre.Generator(), 1);
         if (ConfigManager.EnableCocoonGeneration)
-            GameRegistry.registerWorldGenerator(new BlockCocoon.Generator(), 1);*/
-    }
-
+            GameRegistry.registerWorldGenerator(new BlockCocoon.Generator(), 1);
+    }*/
 
     public void loadComplete(FMLLoadCompleteEvent event)
     {
-        StockConversions.registerEssenceSources();
-        EssenceOverrides.loadOverrides();
+    }
+
+    public void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event)
+    {
+        if (event.getPlayer().isServerWorld())
+            channel.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)event.getPlayer()), new SyncEssenceConversions());
     }
 
     public void serverStarting(FMLServerAboutToStartEvent event)
@@ -407,17 +421,14 @@ public class ElementsOfPowerMod
                      @Override
                      protected void apply(Void splashList, IResourceManager resourceManagerIn, IProfiler profilerIn)
                      {
+                         EssenceConversions.SERVER.clear();
+                         StockConversions.addStockConversions();
+                         EssenceOverrides.loadOverrides();
                          EssenceConversions.registerEssencesForRecipes();
+                         channel.send(PacketDistributor.ALL.with(null), new SyncEssenceConversions());
                      }
                  }
         );
-    }
-
-    private static ItemStack copyStack(ItemStack original, int quantity)
-    {
-        ItemStack copy = original.copy();
-        copy.setCount(quantity);
-        return copy;
     }
 
     public static ResourceLocation location(String location)

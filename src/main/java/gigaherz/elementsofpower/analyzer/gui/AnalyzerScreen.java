@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.capabilities.MagicContainerCapability;
 import gigaherz.elementsofpower.capabilities.IMagicContainer;
+import gigaherz.elementsofpower.client.MagicTooltips;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.gemstones.Gemstone;
 import gigaherz.elementsofpower.gemstones.GemstoneItem;
@@ -82,7 +83,16 @@ public class AnalyzerScreen extends ContainerScreen<AnalyzerContainer>
                 if (!am.isEmpty())
                 {
                     font.drawString("Effective Capacity:", 32, 50, 0xffffff);
-                    font.drawString(am.toShortString(), 40, 60, 0xffffff);
+                    font.drawString(String.format("%s, %s, %s, %s",
+                            MagicTooltips.PRETTY_NUMBER_FORMATTER.format(am.get(0)),
+                            MagicTooltips.PRETTY_NUMBER_FORMATTER.format(am.get(1)),
+                            MagicTooltips.PRETTY_NUMBER_FORMATTER.format(am.get(2)),
+                            MagicTooltips.PRETTY_NUMBER_FORMATTER.format(am.get(3))), 40, 60, 0xffffff);
+                    font.drawString(String.format("%s, %s, %s, %s",
+                            MagicTooltips.PRETTY_NUMBER_FORMATTER.format(am.get(4)),
+                            MagicTooltips.PRETTY_NUMBER_FORMATTER.format(am.get(5)),
+                            MagicTooltips.PRETTY_NUMBER_FORMATTER.format(am.get(6)),
+                            MagicTooltips.PRETTY_NUMBER_FORMATTER.format(am.get(7))), 40, 70, 0xffffff);
                 }
             }
             else

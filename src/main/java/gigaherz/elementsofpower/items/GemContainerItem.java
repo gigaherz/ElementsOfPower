@@ -15,6 +15,7 @@ import net.minecraft.item.Rarity;
 import net.minecraft.item.UseAction;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.ITextComponent;
@@ -24,6 +25,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 public abstract class GemContainerItem extends MagicContainerItem
 {
@@ -299,7 +301,7 @@ public abstract class GemContainerItem extends MagicContainerItem
         return UseAction.BOW;
     }
 
-    public boolean onSpellCommit(ItemStack stack, PlayerEntity player, @Nullable String sequence)
+    public boolean onSpellCommit(ItemStack stack, PlayerEntity player, @Nullable List<Element> sequence)
     {
         final boolean updateSequenceOnWand;
         if (sequence == null)
@@ -308,7 +310,8 @@ public abstract class GemContainerItem extends MagicContainerItem
             CompoundNBT tag = stack.getTag();
             if (tag != null)
             {
-                sequence = tag.getString(WandItem.SPELL_SEQUENCE_TAG);
+                ListNBT seq = tag.getList(WandItem.SPELL_SEQUENCE_TAG, Constants.NBT.TAG_STRING);
+                sequence = SpellManager.sequenceFromList(seq);
             }
         }
         else
@@ -316,7 +319,7 @@ public abstract class GemContainerItem extends MagicContainerItem
              updateSequenceOnWand = true;
         }
 
-        if (sequence == null || sequence.length() == 0)
+        if (sequence == null || sequence.size() == 0)
             return false;
 
         final Spellcast cast = SpellManager.makeSpell(sequence);
@@ -364,7 +367,7 @@ public abstract class GemContainerItem extends MagicContainerItem
 
             if (onSpellCommit(stack, player, message.sequence))
             {
-                nbt.putString(WandItem.SPELL_SEQUENCE_TAG, message.sequence);
+                nbt.put(WandItem.SPELL_SEQUENCE_TAG, SpellManager.serquenceToList(message.sequence));
             }
         }
     }
