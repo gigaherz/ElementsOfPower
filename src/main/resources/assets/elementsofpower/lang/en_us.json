@@ -150,5 +150,10 @@
     "key.elementsofpower.spellkey.light": "Add Light to Spell",
     "key.elementsofpower.spellkey.darkness": "Add Darkness to Spell",
     "key.elementsofpower.spellkey.life": "Add Life to Spell",
-    "key.elementsofpower.spellkey.death": "Add Death to Spell"
+    "key.elementsofpower.spellkey.death": "Add Death to Spell",
+
+    "text.elementsofpower.spell.invalid_sequence": "The sequence does not result in a valid spell",
+    "text.elementsofpower.spell.cost_too_high": "Not enough elements",
+
+    "curios.identifier.headband": "Headband"
 }

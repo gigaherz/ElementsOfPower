@@ -1,4 +1,4 @@
-package gigaherz.elementsofpower.common;
+package gigaherz.elementsofpower.misc;
 
 /**
  * Lets me ignore unused warnings on individual identifiers.

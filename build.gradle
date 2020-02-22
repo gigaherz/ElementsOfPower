@@ -3,21 +3,30 @@ buildscript {
         maven { url = 'https://files.minecraftforge.net/maven' }
         jcenter()
         mavenCentral()
-        mavenLocal()
+        maven {
+            url 'http://dogforce-games.com/maven'
+        }
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.0.9999.9-intellij-data', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.0.163+pull-657', changing: true
     }
 }
+
 apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
 repositories {
-    /*maven {
-        url "http://dvs1.progwml6.com/files/maven"
-    }*/
+    maven {
+        url "$projectDir/../CommonMaven"
+    }
+    maven {
+        url "http://dvs1.progwml6.com/files/maven/"
+    }
+    maven {
+        url "https://maven.tterrag.com/"
+    }
     maven {
         url 'http://dogforce-games.com/maven'
     }
@@ -25,9 +34,13 @@ repositories {
         name = "thiakil"
         url = "http://maven.thiakil.com/"
     }
+    maven {
+        url = "https://maven.theillusivec4.top/"
+    }
     flatDir {
         dirs 'deps'
     }
+    mavenLocal()
 }
 
 version = "0.7.14-alpha"
@@ -51,6 +64,10 @@ minecraft {
 
             property 'forge.logging.markers', ''
             property 'forge.logging.console.level', 'debug'
+
+            property 'test', "a b c"
+
+            arg "a b c"
 
             mods {
                 examplemod {
@@ -92,7 +109,13 @@ minecraft {
 dependencies {
     minecraft 'net.minecraftforge:forge:1.15.2-31.1.1'
 
-    //compile fg.deobf("ignored:Guidebook-1.15.2:3.0.2")
+    compileOnly fg.deobf("mezz.jei:jei-1.15.2:6.0.0.2:api")
+    runtimeOnly fg.deobf("mezz.jei:jei-1.15.2:6.0.0.2")
+
+    compile fg.deobf("gigaherz.guidebook:Guidebook-1.15.2:3.0.4")
+
+    runtimeOnly fg.deobf("top.theillusivec4.curios:curios:FORGE-1.15.2-2.0-beta2")
+    compileOnly fg.deobf("top.theillusivec4.curios:curios:FORGE-1.15.2-2.0-beta2:api")
 }
 
 jar {
@@ -108,3 +131,22 @@ jar {
         ])
     }
 }
+
+tasks.publish.dependsOn build
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId project.archivesBaseName
+            from components.java
+
+            //artifact sourceJar
+        }
+    }
+
+    repositories {
+        maven {
+            url "$projectDir/../CommonMaven"
+        }
+    }
+}
+

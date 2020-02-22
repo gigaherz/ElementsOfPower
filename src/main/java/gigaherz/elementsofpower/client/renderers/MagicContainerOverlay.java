@@ -9,15 +9,18 @@ import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.spells.Element;
 import gigaherz.elementsofpower.items.WandItem;
 import gigaherz.elementsofpower.spells.SpellManager;
+import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -62,42 +65,61 @@ public class MagicContainerOverlay extends AbstractGui
             ItemModelMesher mesher = mc.getItemRenderer().getItemModelMesher();
             TextureManager renderEngine = mc.textureManager;
 
-            int xPos = (rescaledWidth - 7 * 28 - 8) / 2;
-            int yPos = 2;
+            int yTop = 13;
+
             for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
             {
+                int xPos = (rescaledWidth - 7 * 28 - 8) / 2 + 28 * i + 1;
                 int alpha = (amounts.get(i) < 0.001) ? 0x3FFFFFFF : 0xFFFFFFFF;
 
                 ItemStack stack = new ItemStack(Element.values[i].getOrb());
 
-                StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yPos, stack, alpha);
+                StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yTop-11, stack, alpha);
+
+                if (!magic.isInfinite() && MathHelper.epsilonEquals(amounts.get(i),0))
+                    continue;
 
                 String formatted = magic.isInfinite() ? "\u221E" : MagicTooltips.PRETTY_NUMBER_FORMATTER.format(amounts.get(i));
-                this.drawCenteredString(font, formatted, xPos+1, yPos + 11, 0xFFC0C0C0);
-                if (WandUseManager.instance.handInUse != null)
-                    this.drawCenteredString(font, "K:" + (i + 1), xPos+1, yPos + 24, 0xFFC0C0C0);
-
-                xPos += 28;
+                this.drawCenteredString(font, formatted, xPos, yTop, 0xFFC0C0C0);
             }
+
+            yTop += 12;
 
             CompoundNBT nbt = heldItem.getTag();
             if (nbt != null)
             {
-                ListNBT seq = nbt.getList(WandItem.SPELL_SEQUENCE_TAG, Constants.NBT.TAG_LIST);
+                ListNBT seq = nbt.getList(WandItem.SPELL_SEQUENCE_TAG, Constants.NBT.TAG_STRING);
                 List<Element> savedSequence = SpellManager.sequenceFromList(seq);
 
                 if (savedSequence.size() > 0)
                 {
                     // Saved spell sequence
-                    xPos = (rescaledWidth - 6 * (savedSequence.size() - 1) - 14) / 2;
-                    yPos = rescaledHeight / 2 - 16 - 16;
-                    for (Element e : savedSequence)
+                    for (int i = 0; i < savedSequence.size(); i++)
                     {
+                        int xPos = (rescaledWidth - 6 * (savedSequence.size() - 1) - 14) / 2 + 6*i;
+                        int yPos = rescaledHeight / 2 - 16 - 16;
+                        Element e = savedSequence.get(i);
                         ItemStack stack = new ItemStack(e.getOrb());
 
                         StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yPos, stack, 0xFFFFFFFF);
+                    }
 
-                        xPos += 6;
+                    Spellcast temp = SpellManager.makeSpell(savedSequence);
+                    if (temp != null)
+                    {
+                        MagicAmounts cost = temp.getSpellCost();
+                        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+                        {
+                            if (MathHelper.epsilonEquals(cost.get(i),0))
+                                continue;
+
+                            int xPos = (rescaledWidth - 7 * 28 - 8) / 2 + 28 * i + 1;
+
+                            String formatted = MagicTooltips.PRETTY_NUMBER_FORMATTER.format(-cost.get(i));
+                            this.drawCenteredString(font, formatted, xPos, yTop, 0xFFC0C0C0);
+                        }
+
+                        yTop += 12;
                     }
                 }
             }
@@ -107,15 +129,43 @@ public class MagicContainerOverlay extends AbstractGui
             if (spellLength > 0)
             {
                 // New spell sequence
-                xPos = (rescaledWidth - 6 * (spellLength - 1) - 14) / 2;
-                yPos = rescaledHeight / 2 + 16;
-                for (Element e : sequence)
+                for (int i = 0; i < sequence.size(); i++)
                 {
+                    int xPos = (rescaledWidth - 6 * (spellLength - 1) - 14) / 2 + 6 * i;
+                    int yPos = rescaledHeight / 2 + 16;
+                    Element e = sequence.get(i);
                     ItemStack stack = new ItemStack(e.getOrb());
 
                     StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yPos, stack, 0xFFFFFFFF);
+                }
 
-                    xPos += 6;
+                Spellcast temp = SpellManager.makeSpell(sequence);
+                if (temp != null)
+                {
+                    MagicAmounts cost = temp.getSpellCost();
+                    for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+                    {
+                        if (MathHelper.epsilonEquals(cost.get(i),0))
+                            continue;
+
+                        int xPos = (rescaledWidth - 7 * 28 - 8) / 2 + 28 * i + 1;
+
+                        String formatted = MagicTooltips.PRETTY_NUMBER_FORMATTER.format(-cost.get(i));
+                        this.drawCenteredString(font, formatted, xPos, yTop, 0xFFC0C0C0);
+                    }
+
+                    yTop += 12;
+                }
+            }
+
+            for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+            {
+                int xPos = (rescaledWidth - 7 * 28 - 8) / 2 + 28 * i + 1;
+
+                if (WandUseManager.instance.handInUse != null)
+                {
+                    KeyBinding key = WandUseManager.instance.spellKeys[i];
+                    this.drawCenteredString(font, String.format("(%s)", key.getLocalizedName()), xPos, yTop, 0xFFC0C0C0);
                 }
             }
 

@@ -6,6 +6,7 @@ import gigaherz.elementsofpower.spells.Element;
 import gigaherz.elementsofpower.items.WandItem;
 import gigaherz.elementsofpower.network.UpdateSpellSequence;
 import gigaherz.elementsofpower.spells.SpellManager;
+import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
@@ -36,15 +37,16 @@ public class WandUseManager
 
     public static WandUseManager instance;
 
+    public final KeyBinding[] spellKeys = new KeyBinding[8];
     public final List<Element> sequence = new ArrayList<>();
     public Hand handInUse = null;
     public ItemStack activeStack = null;
     public int slotInUse;
     public int itemInUseCount;
+    private boolean failedSequence;
 
     private Minecraft mc;
 
-    final KeyBinding[] spellKeys = new KeyBinding[8];
 
     class OnUseContext implements IKeyConflictContext
     {
@@ -195,11 +197,23 @@ public class WandUseManager
     @SubscribeEvent
     public void onKeyPress(TickEvent.ClientTickEvent event)
     {
+        boolean anyChanged = false;
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
             while (spellKeys[i].isPressed())
             {
                 sequence.add(Element.values[i]);
+                anyChanged = true;
+            }
+        }
+
+        if(anyChanged)
+        {
+            Spellcast temp = SpellManager.makeSpell(sequence);
+            failedSequence = (temp == null);
+            if (failedSequence)
+            {
+                sequence.clear();
             }
         }
     }
@@ -217,7 +231,7 @@ public class WandUseManager
 
     private void endHoldingRightButton(boolean cancelMagicSetting)
     {
-        if (cancelMagicSetting)
+        if (cancelMagicSetting || (failedSequence && sequence.size() == 0))
         {
             ElementsOfPowerMod.channel.sendToServer(new UpdateSpellSequence(UpdateSpellSequence.ChangeMode.CANCEL, slotInUse, null));
         }

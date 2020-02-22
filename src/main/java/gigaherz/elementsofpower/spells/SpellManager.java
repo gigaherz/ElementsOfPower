@@ -62,7 +62,7 @@ public class SpellManager
         return seq.stream().map(e -> Element.byName(e.getString())).collect(Collectors.toList());
     }
 
-    public static ListNBT serquenceToList(List<Element> sequence)
+    public static ListNBT sequenceToList(List<Element> sequence)
     {
         ListNBT list = new ListNBT();
         for(Element e : sequence)
@@ -270,6 +270,11 @@ public class SpellManager
             sequence.add(primary);
         }
 
+        private void recordPrimary()
+        {
+            sequence.add(primary);
+        }
+
         private boolean applySecondary(Element e)
         {
             effect = getMutationResult(effect, e);
@@ -359,7 +364,7 @@ public class SpellManager
             ));
             transitions.put(SpellState.PRIMARY, Lists.newArrayList(
                     conditional(SpellBuilder::isPrimary, makeTransition(SpellBuilder::increasePrimary, SpellState.PRIMARY)),
-                    conditional(SpellBuilder::isOpposite, makeOppositeTransition(SpellState.PRIMARY_CANCEL)),
+                    conditional(SpellBuilder::isOpposite, makeOppositeTransition(SpellBuilder::recordPrimary, SpellState.PRIMARY_CANCEL)),
                     conditional(SpellBuilder::canMutate, makeTransition(SpellBuilder::increasePrimary, SpellState.SECONDARY)),
                     unconditional(makeTransition(SpellBuilder::increasePrimary, SpellState.AUGMENT))
             ));
@@ -436,6 +441,15 @@ public class SpellManager
         private static BiPredicate<SpellBuilder, Element> makeTransition(SpellState next)
         {
             return (b,e) -> b.transition(e, next);
+        }
+
+        private static BiPredicate<SpellBuilder, Element> makeOppositeTransition(Consumer<SpellBuilder> action, SpellState next)
+        {
+            return (b,e) -> {
+                action.accept(b);
+
+                return b.transition(b.last, next);
+            };
         }
 
         private static BiPredicate<SpellBuilder, Element> makeOppositeTransition(SpellState next)

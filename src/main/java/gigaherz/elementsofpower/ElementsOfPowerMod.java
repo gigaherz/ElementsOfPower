@@ -1,6 +1,7 @@
 package gigaherz.elementsofpower;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 import gigaherz.elementsofpower.analyzer.AnalyzerItem;
 import gigaherz.elementsofpower.analyzer.gui.AnalyzerContainer;
 import gigaherz.elementsofpower.analyzer.gui.AnalyzerScreen;
@@ -55,18 +56,26 @@ import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.state.IntegerProperty;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Tuple;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.extensions.IForgeContainerType;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.common.util.NonNullLazy;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -76,8 +85,11 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraftforge.items.IItemHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import top.theillusivec4.curios.api.CuriosAPI;
+import top.theillusivec4.curios.api.imc.CurioIMCMessage;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -144,10 +156,22 @@ public class ElementsOfPowerMod
         modEventBus.addListener(this::clientSetup);
         modEventBus.addListener(this::loadComplete);
 
+        modEventBus.addListener(this::imcEnqueue);
+
         modEventBus.addListener(this::gatherData);
 
         MinecraftForge.EVENT_BUS.addListener(this::playerLoggedIn);
         MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
+    }
+
+    private void imcEnqueue(InterModEnqueueEvent event)
+    {
+        InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_TYPE, () -> new CurioIMCMessage("headband").setSize(1).setEnabled(true).setHidden(false));
+        InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_ICON, () -> new Tuple<>("headband", location("gui/headband_slot_background")));
+        InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_TYPE, () -> new CurioIMCMessage("necklace").setSize(1).setEnabled(true).setHidden(false));
+        InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_ICON, () -> new Tuple<>("necklace", location("gui/necklace_slot_background")));
+        InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_TYPE, () -> new CurioIMCMessage("ring").setSize(2).setEnabled(true).setHidden(false));
+        InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_ICON, () -> new Tuple<>("ring", location("gui/ring_slot_background")));
     }
 
     public void registerBlocks(RegistryEvent.Register<Block> event)
@@ -263,6 +287,7 @@ public class ElementsOfPowerMod
 
         ScreenManager.registerFactory(AnalyzerContainer.TYPE, AnalyzerScreen::new);
         ScreenManager.registerFactory(EssentializerContainer.TYPE, EssentializerScreen::new);
+
         RenderTypeLookup.setRenderLayer(ElementsOfPowerBlocks.DUST, RenderType.translucent());
         RenderTypeLookup.setRenderLayer(ElementsOfPowerBlocks.MIST, RenderType.translucent());
         RenderTypeLookup.setRenderLayer(ElementsOfPowerBlocks.CUSHION, RenderType.translucent());

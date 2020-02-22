@@ -19,7 +19,6 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -270,26 +269,6 @@ public abstract class GemContainerItem extends MagicContainerItem
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand hand)
-    {
-        ItemStack itemStackIn = playerIn.getHeldItem(hand);
-
-        if (!worldIn.isRemote)
-        {
-            if (playerIn.isShiftKeyDown())
-            {
-                CompoundNBT tag = itemStackIn.getTag();
-                if (tag != null)
-                    tag.remove(WandItem.SPELL_SEQUENCE_TAG);
-            }
-        }
-
-        // itemInUse handled by TickEventWandControl
-
-        return ActionResult.func_226248_a_(itemStackIn);
-    }
-
-    @Override
     public int getUseDuration(ItemStack stack)
     {
         return 72000;
@@ -301,74 +280,4 @@ public abstract class GemContainerItem extends MagicContainerItem
         return UseAction.BOW;
     }
 
-    public boolean onSpellCommit(ItemStack stack, PlayerEntity player, @Nullable List<Element> sequence)
-    {
-        final boolean updateSequenceOnWand;
-        if (sequence == null)
-        {
-            updateSequenceOnWand = false;
-            CompoundNBT tag = stack.getTag();
-            if (tag != null)
-            {
-                ListNBT seq = tag.getList(WandItem.SPELL_SEQUENCE_TAG, Constants.NBT.TAG_STRING);
-                sequence = SpellManager.sequenceFromList(seq);
-            }
-        }
-        else
-        {
-             updateSequenceOnWand = true;
-        }
-
-        if (sequence == null || sequence.size() == 0)
-            return false;
-
-        final Spellcast cast = SpellManager.makeSpell(sequence);
-
-        if (cast == null)
-            return false;
-
-        return MagicContainerCapability.getContainer(stack).map(magic -> {
-
-            MagicAmounts amounts = magic.getContainedMagic();
-            MagicAmounts cost = cast.getSpellCost();
-
-            if (!magic.isInfinite() && !amounts.hasEnough(cost))
-                return false;
-
-            Spellcast cast2 = cast.getShape().castSpell(stack, player, cast);
-            if (cast2 != null)
-            {
-                SpellcastEntityData.get(player).ifPresent(data -> data.begin(cast2));
-            }
-
-            if (!magic.isInfinite())
-                amounts = amounts.subtract(cost);
-
-            magic.setContainedMagic(amounts);
-
-            //DiscoveryHandler.instance.onSpellcast(player, cast);
-            return updateSequenceOnWand;
-        }).orElse(false);
-    }
-
-    public void processSequenceUpdate(UpdateSpellSequence message, ItemStack stack, PlayerEntity player)
-    {
-        if (message.changeMode == UpdateSpellSequence.ChangeMode.COMMIT)
-        {
-            CompoundNBT nbt = stack.getTag();
-            if (nbt == null)
-            {
-                if (!MagicContainerCapability.getContainer(stack).filter(magic -> !magic.isInfinite()).isPresent())
-                    return;
-
-                nbt = new CompoundNBT();
-                stack.setTag(nbt);
-            }
-
-            if (onSpellCommit(stack, player, message.sequence))
-            {
-                nbt.put(WandItem.SPELL_SEQUENCE_TAG, SpellManager.serquenceToList(message.sequence));
-            }
-        }
-    }
 }

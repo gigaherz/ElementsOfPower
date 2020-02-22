@@ -1,6 +1,6 @@
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-package gigaherz.elementsofpower.common;
+package gigaherz.elementsofpower.misc;
 
 import mcp.MethodsReturnNonnullByDefault;
 

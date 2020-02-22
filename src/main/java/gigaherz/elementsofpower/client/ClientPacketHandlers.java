@@ -20,7 +20,7 @@ public class ClientPacketHandlers
         {
             World world = Minecraft.getInstance().world;
             PlayerEntity player = (PlayerEntity) world.getEntityByID(message.casterID);
-            SpellcastEntityData.get(player).ifPresent(data -> data.sync(message.changeMode, message.spellcast));
+            SpellcastEntityData.get(player).ifPresent(data -> data.onSync(message.changeMode, message.spellcast));
         });
         return true;
     }

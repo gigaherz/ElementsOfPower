@@ -3,7 +3,7 @@ newmtl Bottom
 map_Kd minecraft:block/jungle_planks
 
 newmtl Arm
-map_Kd minecraft:block/anvil_base
+map_Kd minecraft:block/anvil
 
 newmtl Sides
 map_Kd minecraft:block/dark_oak_planks

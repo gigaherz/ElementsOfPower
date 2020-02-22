@@ -3,16 +3,16 @@
   "loader": "elementsofpower:nbt_to_model",
   "tag":"gemstone",
   "values": {
-    "":  { "parent":"elementsofpower:item/wand_base" },
-    "ruby":  { "parent":"elementsofpower:item/wand_base", "textures": { "gem": "elementsofpower:block/block_ruby" } },
-    "sapphire":   { "parent":"elementsofpower:item/wand_base", "textures": { "gem": "elementsofpower:block/block_sapphire" } },
-    "citrine": { "parent":"elementsofpower:item/wand_base", "textures": { "gem": "elementsofpower:block/block_citrine" } },
-    "agate": { "parent":"elementsofpower:item/wand_base", "textures": { "gem": "elementsofpower:block/block_agate" } },
-    "quartz": { "parent":"elementsofpower:item/wand_base", "textures": { "gem": "minecraft:block/quartz_block_bottom" } },
-    "serendibite":  { "parent":"elementsofpower:item/wand_base", "textures": { "gem": "elementsofpower:block/block_serendibite" } },
-    "emerald":  { "parent":"elementsofpower:item/wand_base", "textures": { "gem": "minecraft:block/emerald_block" } },
-    "amethyst": { "parent":"elementsofpower:item/wand_base", "textures": { "gem": "elementsofpower:block/block_amethyst" } },
-    "diamond": { "parent":"elementsofpower:item/wand_base", "textures": { "gem": "minecraft:block/diamond_block" } },
-    "creativite": { "parent":"elementsofpower:item/wand_base", "textures": { "gem": "minecraft:block/bedrock" } }
+    "":  { "parent":"elementsofpower:item/staff_base" },
+    "ruby":  { "parent":"elementsofpower:item/staff_base", "textures": { "gem": "elementsofpower:block/block_ruby" } },
+    "sapphire":   { "parent":"elementsofpower:item/staff_base", "textures": { "gem": "elementsofpower:block/block_sapphire" } },
+    "citrine": { "parent":"elementsofpower:item/staff_base", "textures": { "gem": "elementsofpower:block/block_citrine" } },
+    "agate": { "parent":"elementsofpower:item/staff_base", "textures": { "gem": "elementsofpower:block/block_agate" } },
+    "quartz": { "parent":"elementsofpower:item/staff_base", "textures": { "gem": "minecraft:block/quartz_block_bottom" } },
+    "serendibite":  { "parent":"elementsofpower:item/staff_base", "textures": { "gem": "elementsofpower:block/block_serendibite" } },
+    "emerald":  { "parent":"elementsofpower:item/staff_base", "textures": { "gem": "minecraft:block/emerald_block" } },
+    "amethyst": { "parent":"elementsofpower:item/staff_base", "textures": { "gem": "elementsofpower:block/block_amethyst" } },
+    "diamond": { "parent":"elementsofpower:item/staff_base", "textures": { "gem": "minecraft:block/diamond_block" } },
+    "creativite": { "parent":"elementsofpower:item/staff_base", "textures": { "gem": "minecraft:block/bedrock" } }
   }
 }

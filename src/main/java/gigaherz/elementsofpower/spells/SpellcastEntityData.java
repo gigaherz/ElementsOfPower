@@ -155,7 +155,7 @@ public class SpellcastEntityData implements INBTSerializable<CompoundNBT>
         }
     }
 
-    public void sync(SynchronizeSpellcastState.ChangeMode changeMode, Spellcast cast)
+    public void onSync(SynchronizeSpellcastState.ChangeMode changeMode, Spellcast cast)
     {
         switch (changeMode)
         {
