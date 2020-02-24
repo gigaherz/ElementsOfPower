@@ -39,9 +39,9 @@ public class MagicContainerCapability
         return stack.getCapability(INSTANCE).map(cap -> (cap.isInfinite() || !cap.getContainedMagic().isEmpty())).orElse(false);
     }
 
-    public static boolean isNotFull(ItemStack stack, MagicAmounts self)
+    public static boolean isNotFull(ItemStack stack)
     {
-        return stack.getCapability(INSTANCE).map(cap -> cap != null && !cap.isInfinite() && !cap.isFull() && !cap.getCapacity().isEmpty()).orElse(true);
+        return stack.getCapability(INSTANCE).map(cap -> !cap.isInfinite() && !cap.isFull() && !cap.getCapacity().isEmpty()).orElse(false);
     }
 
     private static class Storage implements Capability.IStorage<IMagicContainer>

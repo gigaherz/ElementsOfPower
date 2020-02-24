@@ -29,7 +29,7 @@ public class GemstoneItem extends MagicContainerItem
             MagicAmounts.EMPTY.all(100),
             MagicAmounts.EMPTY.all(250),
             MagicAmounts.EMPTY.all(500),
-            MagicAmounts.EMPTY.infinite(),
+            MagicAmounts.INFINITE,
     };
 
     private final Gemstone gem;

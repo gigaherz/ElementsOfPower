@@ -100,7 +100,6 @@ import java.util.function.Function;
 
 //import gigaherz.elementsofpower.progression.DiscoveryHandler;
 
-@Mod.EventBusSubscriber
 @Mod(ElementsOfPowerMod.MODID)
 public class ElementsOfPowerMod
 {
@@ -171,7 +170,7 @@ public class ElementsOfPowerMod
         InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_TYPE, () -> new CurioIMCMessage("necklace").setSize(1).setEnabled(true).setHidden(false));
         InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_ICON, () -> new Tuple<>("necklace", location("gui/necklace_slot_background")));
         InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_TYPE, () -> new CurioIMCMessage("ring").setSize(2).setEnabled(true).setHidden(false));
-        InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_ICON, () -> new Tuple<>("ring", location("gui/ring_slot_background")));
+        //InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_ICON, () -> new Tuple<>("ring", location("gui/ring_slot_background")));
     }
 
     public void registerBlocks(RegistryEvent.Register<Block> event)

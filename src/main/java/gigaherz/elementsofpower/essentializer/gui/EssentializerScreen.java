@@ -152,14 +152,7 @@ public class EssentializerScreen extends ContainerScreen<EssentializerContainer>
             if (count <= 0)
                 continue;
 
-            String suffix = "";
-            if (count >= 900)
-            {
-                suffix = "k";
-                count /= 1000;
-            }
-
-            String formatted = MagicTooltips.PRETTY_NUMBER_FORMATTER.format(count) + suffix;
+            String formatted = formatQuantityWithSuffix(count);
 
             float x1 = (x0 + 16) * 1.5f - font.getStringWidth(formatted);
             float y1 = (y0 + 10.5f) * 1.5f;
@@ -171,6 +164,18 @@ public class EssentializerScreen extends ContainerScreen<EssentializerContainer>
         drawOrbTooltips(x, y);
 
         RenderSystem.depthMask(true);
+    }
+
+    public static String formatQuantityWithSuffix(float count)
+    {
+        String suffix = "";
+        if (count >= 1100 || count <= -1100)
+        {
+            suffix = "k";
+            count /= 1000;
+        }
+
+        return MagicTooltips.PRETTY_NUMBER_FORMATTER.format(count) + suffix;
     }
 
     private void drawOrbTooltips(int mx, int my)

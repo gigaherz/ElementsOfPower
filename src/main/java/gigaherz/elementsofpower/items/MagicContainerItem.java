@@ -51,6 +51,8 @@ public abstract class MagicContainerItem extends Item
                 @Override
                 public MagicAmounts getContainedMagic()
                 {
+                    if (isInfinite())
+                        return MagicAmounts.INFINITE;
                     CompoundNBT compound = stack.getTag();
                     if (compound == null || !compound.contains("ContainedMagic"))
                         return MagicAmounts.EMPTY;
@@ -60,8 +62,11 @@ public abstract class MagicContainerItem extends Item
                 @Override
                 public void setContainedMagic(MagicAmounts containedMagic)
                 {
+                    if (isInfinite())
+                        return;
+                    MagicAmounts am = MagicAmounts.min(getCapacity(), containedMagic);
                     CompoundNBT compound = stack.getOrCreateTag();
-                    compound.put("ContainedMagic", containedMagic.serializeNBT());
+                    compound.put("ContainedMagic", am.serializeNBT());
                 }
             };
             final LazyOptional<IMagicContainer> containerGetter = LazyOptional.of(() -> container);

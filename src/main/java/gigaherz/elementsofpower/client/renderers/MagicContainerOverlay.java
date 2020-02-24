@@ -6,6 +6,7 @@ import gigaherz.elementsofpower.client.MagicTooltips;
 import gigaherz.elementsofpower.client.StackRenderingHelper;
 import gigaherz.elementsofpower.client.WandUseManager;
 import gigaherz.elementsofpower.database.MagicAmounts;
+import gigaherz.elementsofpower.essentializer.gui.EssentializerScreen;
 import gigaherz.elementsofpower.spells.Element;
 import gigaherz.elementsofpower.items.WandItem;
 import gigaherz.elementsofpower.spells.SpellManager;
@@ -47,7 +48,17 @@ public class MagicContainerOverlay extends AbstractGui
         MagicContainerCapability.getContainer(heldItem).ifPresent(magic -> {
 
             // Contained essences
-            MagicAmounts amounts = magic.getContainedMagic();
+            MagicAmounts contained = magic.getContainedMagic();
+
+            MagicAmounts reservoir = MagicAmounts.EMPTY;
+
+            MagicAmounts amounts = contained;
+            if (heldItem.getItem() instanceof WandItem)
+            {
+                reservoir = WandItem.getTotalPlayerReservoir(player);
+                amounts = amounts.add(reservoir);
+            }
+
             if (!magic.isInfinite() && amounts.isEmpty())
                 return;
 
@@ -76,14 +87,26 @@ public class MagicContainerOverlay extends AbstractGui
 
                 StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yTop-11, stack, alpha);
 
-                if (!magic.isInfinite() && MathHelper.epsilonEquals(amounts.get(i),0))
-                    continue;
-
-                String formatted = magic.isInfinite() ? "\u221E" : MagicTooltips.PRETTY_NUMBER_FORMATTER.format(amounts.get(i));
+                float e = contained.get(i);
+                String formatted = Float.isInfinite(e) ? "\u221E" : EssentializerScreen.formatQuantityWithSuffix(e);
                 this.drawCenteredString(font, formatted, xPos, yTop, 0xFFC0C0C0);
             }
 
             yTop += 12;
+
+            if (!reservoir.isEmpty())
+            {
+                for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+                {
+                    int xPos = (rescaledWidth - 7 * 28 - 8) / 2 + 28 * i + 1;
+
+                    float e = reservoir.get(i);
+                    String formatted = String.format("(%s)", Float.isInfinite(e) ? "\u221E" : EssentializerScreen.formatQuantityWithSuffix(e));
+                    this.drawCenteredString(font, formatted, xPos, yTop, 0xFFC0C0C0);
+                }
+
+                yTop += 12;
+            }
 
             CompoundNBT nbt = heldItem.getTag();
             if (nbt != null)
@@ -115,7 +138,7 @@ public class MagicContainerOverlay extends AbstractGui
 
                             int xPos = (rescaledWidth - 7 * 28 - 8) / 2 + 28 * i + 1;
 
-                            String formatted = MagicTooltips.PRETTY_NUMBER_FORMATTER.format(-cost.get(i));
+                            String formatted = EssentializerScreen.formatQuantityWithSuffix(-cost.get(i));
                             this.drawCenteredString(font, formatted, xPos, yTop, 0xFFC0C0C0);
                         }
 

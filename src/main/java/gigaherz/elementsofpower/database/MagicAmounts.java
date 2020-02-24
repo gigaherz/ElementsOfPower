@@ -19,6 +19,7 @@ import java.util.Arrays;
 public class MagicAmounts implements INBTSerializable<CompoundNBT>
 {
     public static final MagicAmounts EMPTY = new MagicAmounts();
+    public static final MagicAmounts INFINITE = infinite();
     public static final int ELEMENTS = 8;
 
     public final static String[] magicNames = {
@@ -280,14 +281,25 @@ public class MagicAmounts implements INBTSerializable<CompoundNBT>
     }
 
     @CheckReturnValue
-    public MagicAmounts infinite()
+    public static MagicAmounts infinite()
     {
         MagicAmounts n = new MagicAmounts();
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            n.amounts[i] = Integer.MAX_VALUE;
+            n.amounts[i] = Float.POSITIVE_INFINITY;
         }
-        return this;
+        return n;
+    }
+
+    @CheckReturnValue
+    public boolean isInfinite()
+    {
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+        {
+            if (Float.isInfinite(amounts[i]))
+                return true;
+        }
+        return false;
     }
 
     public static MagicAmounts min(MagicAmounts a, MagicAmounts b)
@@ -434,6 +446,47 @@ public class MagicAmounts implements INBTSerializable<CompoundNBT>
     public int hashCode()
     {
         return Arrays.hashCode(amounts);
+    }
+
+    public static Accumulator builder()
+    {
+        return new Accumulator();
+    }
+
+    public static class Accumulator
+    {
+        private final float[] amounts = new float[ELEMENTS];
+
+        public void add(MagicAmounts value)
+        {
+            for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+            {
+                amounts[i] += value.amounts[i];
+            }
+        }
+
+        public void subtract(MagicAmounts value)
+        {
+            for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+            {
+                amounts[i] -= value.amounts[i];
+            }
+        }
+
+        public void add(Accumulator value)
+        {
+            for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+            {
+                amounts[i] += value.amounts[i];
+            }
+        }
+
+        public MagicAmounts toAmounts()
+        {
+            MagicAmounts am = new MagicAmounts();
+            System.arraycopy(amounts, 0, am.amounts, 0, MagicAmounts.ELEMENTS);
+            return am;
+        }
     }
 
     public static class Serializer

@@ -68,6 +68,9 @@
     "elementsofpower.gem_container.agate": "Agate %s",
     "elementsofpower.gem_container.serendibite": "Serendibite %s",
     "elementsofpower.gem_container.amethyst": "Amethyst %s",
+    "elementsofpower.gem_container.emerald": "Emerald %s",
+    "elementsofpower.gem_container.quartz": "Quartz %s",
+    "elementsofpower.gem_container.diamond": "Diamond %s",
     "elementsofpower.gem_container.creativite": "Creative %s",
 
     "elementsofpower.gem_container.quality.unknown": "%s",
@@ -154,6 +157,11 @@
 
     "text.elementsofpower.spell.invalid_sequence": "The sequence does not result in a valid spell",
     "text.elementsofpower.spell.cost_too_high": "Not enough elements",
+
+    "text.elementsofpower.bauble.active": "Actively Transferring",
+    "text.elementsofpower.bauble.passive": "Passive Reservoir",
+    "text.elementsofpower.bauble.disabled": "Inactive",
+    "text.elementsofpower.bauble.toggle": "  (Sneak-Rightclick to change)",
 
     "curios.identifier.headband": "Headband"
 }

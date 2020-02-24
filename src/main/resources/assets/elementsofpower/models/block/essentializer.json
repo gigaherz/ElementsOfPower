@@ -1,5 +1,6 @@
 {
   "parent": "block/block",
   "loader": "forge:obj",
-  "model": "elementsofpower:models/block/essentializer.obj"
+  "model": "elementsofpower:models/block/essentializer.obj",
+  "detectCullableFaces": true
 }
