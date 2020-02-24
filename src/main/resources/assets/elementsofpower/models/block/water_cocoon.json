@@ -3,6 +3,7 @@
   "loader": "forge:obj",
   "model": "elementsofpower:models/block/cocoon.obj",
   "textures": {
-    "default": "elementsofpower:misc/orb_water"
+    "default": "elementsofpower:misc/orb_water",
+    "particle": "#default"
   }
 }

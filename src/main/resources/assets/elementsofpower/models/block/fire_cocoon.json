@@ -3,6 +3,7 @@
   "loader": "forge:obj",
   "model": "elementsofpower:models/block/cocoon.obj",
   "textures": {
-    "default": "elementsofpower:misc/orb_fire"
+    "default": "elementsofpower:misc/orb_fire",
+    "particle": "#default"
   }
 }

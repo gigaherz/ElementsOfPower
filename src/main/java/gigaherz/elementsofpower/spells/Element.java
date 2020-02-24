@@ -2,6 +2,7 @@ package gigaherz.elementsofpower.spells;
 
 import gigaherz.elementsofpower.ElementsOfPowerBlocks;
 import gigaherz.elementsofpower.ElementsOfPowerItems;
+import gigaherz.elementsofpower.cocoons.CocoonBlock;
 import gigaherz.elementsofpower.items.MagicOrbItem;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -23,7 +24,7 @@ public enum Element
     private final int opposite;
     private final Shape shape;
     private final String name;
-    private final Supplier<Block> blockSupplier;
+    private final Supplier<CocoonBlock> blockSupplier;
     private final Supplier<Item> itemSupplier;
     private final Supplier<MagicOrbItem> orbSupplier;
 
@@ -46,7 +47,7 @@ public enum Element
         return name;
     }
 
-    Element(String name, int opposite, Shape shape, Supplier<Block> blockSupplier, Supplier<Item> itemSupplier, Supplier<MagicOrbItem> orbSupplier)
+    Element(String name, int opposite, Shape shape, Supplier<CocoonBlock> blockSupplier, Supplier<Item> itemSupplier, Supplier<MagicOrbItem> orbSupplier)
     {
         this.opposite = opposite;
         this.shape = shape;
@@ -63,7 +64,7 @@ public enum Element
 
     public static final Element[] values = values();
 
-    public Block getBlock()
+    public CocoonBlock getCocoon()
     {
         return blockSupplier.get();
     }

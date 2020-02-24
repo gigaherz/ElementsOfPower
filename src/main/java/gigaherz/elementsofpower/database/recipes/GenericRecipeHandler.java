@@ -41,7 +41,7 @@ public class GenericRecipeHandler implements IRecipeHandler
 
         public RecipeInfo(IRecipe<?> recipe)
         {
-            output = recipe.getRecipeOutput();
+            output = recipe.getRecipeOutput().copy();
 
             NonNullList<Ingredient> ingredients = recipe.getIngredients();
             for (Ingredient ingredient : ingredients)
@@ -52,7 +52,7 @@ public class GenericRecipeHandler implements IRecipeHandler
 
                 ItemStack actualInput = stacks[0];
 
-                ItemStack stack = (actualInput).copy();
+                ItemStack stack = actualInput.copy();
                 stack.setCount(1);
                 inputs.add(stack);
             }

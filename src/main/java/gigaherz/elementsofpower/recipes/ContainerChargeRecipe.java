@@ -1,30 +1,25 @@
 package gigaherz.elementsofpower.recipes;
 
 import com.google.common.collect.Lists;
-import com.google.gson.JsonObject;
 import gigaherz.elementsofpower.items.MagicContainerItem;
 import gigaherz.elementsofpower.items.MagicOrbItem;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.ICraftingRecipe;
 import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.item.crafting.SpecialRecipe;
+import net.minecraft.item.crafting.SpecialRecipeSerializer;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
-public class ContainerChargeRecipe implements ICraftingRecipe
+public class ContainerChargeRecipe extends SpecialRecipe
 {
-    private final ResourceLocation id;
-
-    public ContainerChargeRecipe(ResourceLocation id)
+    public ContainerChargeRecipe(ResourceLocation idIn)
     {
-        this.id = id;
+        super(idIn);
     }
 
     @Override
@@ -99,55 +94,16 @@ public class ContainerChargeRecipe implements ICraftingRecipe
         return (width * height) >= 2;
     }
 
-    @Override
-    public ItemStack getRecipeOutput()
-    {
-        return ItemStack.EMPTY;
-    }
-
     public NonNullList<ItemStack> getRemainingItems(CraftingInventory inv)
     {
         return NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
     }
 
     @Override
-    public boolean isDynamic()
-    {
-        return true;
-    }
-
-    @Override
-    public ResourceLocation getId()
-    {
-        return id;
-    }
-
-    @Override
     public IRecipeSerializer<?> getSerializer()
     {
-        return Serializer.INSTANCE;
+        return SERIALIZER;
     }
 
-    public static class Serializer extends ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<ContainerChargeRecipe>
-    {
-        public static final Serializer INSTANCE = new Serializer();
-
-        @Override
-        public ContainerChargeRecipe read(ResourceLocation recipeId, JsonObject json)
-        {
-            return new ContainerChargeRecipe(recipeId);
-        }
-
-        @Nullable
-        @Override
-        public ContainerChargeRecipe read(ResourceLocation recipeId, PacketBuffer buffer)
-        {
-            return new ContainerChargeRecipe(recipeId);
-        }
-
-        @Override
-        public void write(PacketBuffer buffer, ContainerChargeRecipe recipe)
-        {
-        }
-    }
+    public static final SpecialRecipeSerializer<ContainerChargeRecipe> SERIALIZER = new SpecialRecipeSerializer<>(ContainerChargeRecipe::new);
 }

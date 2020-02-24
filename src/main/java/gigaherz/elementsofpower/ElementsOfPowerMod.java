@@ -1,7 +1,8 @@
 package gigaherz.elementsofpower;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
+import com.mojang.datafixers.util.Pair;
 import gigaherz.elementsofpower.analyzer.AnalyzerItem;
 import gigaherz.elementsofpower.analyzer.gui.AnalyzerContainer;
 import gigaherz.elementsofpower.analyzer.gui.AnalyzerScreen;
@@ -12,10 +13,10 @@ import gigaherz.elementsofpower.client.renderers.MagicContainerOverlay;
 import gigaherz.elementsofpower.client.renderers.BallEntityRenderer;
 import gigaherz.elementsofpower.client.renderers.EssenceEntityRenderer;
 import gigaherz.elementsofpower.client.renderers.EssentializerTileEntityRender;
-import gigaherz.elementsofpower.cocoons.CocoonBlock;
-import gigaherz.elementsofpower.cocoons.CocoonTileEntity;
+import gigaherz.elementsofpower.cocoons.*;
 import gigaherz.elementsofpower.database.EssenceConversions;
 import gigaherz.elementsofpower.database.EssenceOverrides;
+import gigaherz.elementsofpower.database.GemstoneExaminer;
 import gigaherz.elementsofpower.database.StockConversions;
 import gigaherz.elementsofpower.entities.BallEntity;
 import gigaherz.elementsofpower.entities.EssenceEntity;
@@ -42,10 +43,8 @@ import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.resources.ReloadListener;
-import net.minecraft.data.CookingRecipeBuilder;
-import net.minecraft.data.DataGenerator;
-import net.minecraft.data.IFinishedRecipe;
-import net.minecraft.data.RecipeProvider;
+import net.minecraft.data.*;
+import net.minecraft.data.loot.BlockLootTables;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -56,21 +55,29 @@ import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.state.IntegerProperty;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.gen.GenerationStage;
+import net.minecraft.world.gen.feature.Feature;
+import net.minecraft.world.gen.feature.NoFeatureConfig;
+import net.minecraft.world.gen.feature.OreFeatureConfig;
+import net.minecraft.world.gen.placement.CountRangeConfig;
+import net.minecraft.world.gen.placement.NoPlacementConfig;
+import net.minecraft.world.gen.placement.Placement;
+import net.minecraft.world.storage.loot.*;
+import net.minecraft.world.storage.loot.functions.LootFunctionManager;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
+import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.Tags;
+import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.extensions.IForgeContainerType;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.common.util.NonNullLazy;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -85,18 +92,19 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
-import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.theillusivec4.curios.api.CuriosAPI;
 import top.theillusivec4.curios.api.imc.CurioIMCMessage;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
+import javax.annotation.Nullable;
+import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 //import gigaherz.elementsofpower.progression.DiscoveryHandler;
 
@@ -104,6 +112,11 @@ import java.util.function.Function;
 public class ElementsOfPowerMod
 {
     public static final String MODID = "elementsofpower";
+
+    public static ResourceLocation location(String location)
+    {
+        return new ResourceLocation(MODID, location);
+    }
 
     // FIXME: Remove once spawn eggs can take a supplier
     // To be used only during loading.
@@ -161,6 +174,9 @@ public class ElementsOfPowerMod
 
         MinecraftForge.EVENT_BUS.addListener(this::playerLoggedIn);
         MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
+
+        LootFunctionManager.registerFunction(ApplyOrbSizeFunction.Serializer.INSTANCE);
+        CraftingHelper.register(AnalyzedFilteringIngredient.ID, AnalyzedFilteringIngredient.Serializer.INSTANCE);
     }
 
     private void imcEnqueue(InterModEnqueueEvent event)
@@ -177,27 +193,33 @@ public class ElementsOfPowerMod
     {
         event.getRegistry().registerAll(
                 new EssentializerBlock(Block.Properties.create(Material.IRON).hardnessAndResistance(15.0F).sound(SoundType.METAL).lightValue(1)).setRegistryName("essentializer"),
-                new DustBlock(Block.Properties.create(ElementsOfPowerBlocks.BlockMaterials.DUST).doesNotBlockMovement().notSolid().hardnessAndResistance(0.1F).sound(SoundType.CLOTH).variableOpacity()).setRegistryName("dust"),
-                new MistBlock(Block.Properties.create(ElementsOfPowerBlocks.BlockMaterials.MIST).doesNotBlockMovement().notSolid().hardnessAndResistance(0.1F).sound(SoundType.CLOTH).variableOpacity()).setRegistryName("mist"),
-                new LightBlock(Block.Properties.create(ElementsOfPowerBlocks.BlockMaterials.LIGHT).doesNotBlockMovement().notSolid().hardnessAndResistance(15.0F).lightValue(15).sound(SoundType.METAL)).setRegistryName("light"),
-                new CushionBlock(Block.Properties.create(ElementsOfPowerBlocks.BlockMaterials.CUSHION).doesNotBlockMovement().notSolid().hardnessAndResistance(15.0F).sound(SoundType.METAL).variableOpacity()).setRegistryName("cushion")
+                new DustBlock(Block.Properties.create(ElementsOfPowerBlocks.BlockMaterials.DUST).noDrops().doesNotBlockMovement().notSolid().hardnessAndResistance(0.1F).sound(SoundType.CLOTH).variableOpacity()).setRegistryName("dust"),
+                new MistBlock(Block.Properties.create(ElementsOfPowerBlocks.BlockMaterials.MIST).noDrops().doesNotBlockMovement().notSolid().hardnessAndResistance(0.1F).sound(SoundType.CLOTH).variableOpacity()).setRegistryName("mist"),
+                new LightBlock(Block.Properties.create(ElementsOfPowerBlocks.BlockMaterials.LIGHT).noDrops().doesNotBlockMovement().notSolid().hardnessAndResistance(15.0F).lightValue(15).sound(SoundType.METAL)).setRegistryName("light"),
+                new CushionBlock(Block.Properties.create(ElementsOfPowerBlocks.BlockMaterials.CUSHION).noDrops().doesNotBlockMovement().notSolid().hardnessAndResistance(15.0F).sound(SoundType.METAL).variableOpacity()).setRegistryName("cushion")
         );
         for(Gemstone type : Gemstone.values())
         {
-            event.getRegistry().register(
-                    new GemstoneBlock(type, Block.Properties.create(Material.IRON).hardnessAndResistance(5F, 10F).sound(SoundType.METAL)).setRegistryName(type.getName() + "_block")
-            );
+            if (type.generateCustomBlock())
+            {
+                event.getRegistry().register(
+                        new GemstoneBlock(type, Block.Properties.create(Material.IRON).hardnessAndResistance(5F, 10F).sound(SoundType.METAL)).setRegistryName(type.getName() + "_block")
+                );
+            }
         }
         for(Gemstone type : Gemstone.values())
         {
-            event.getRegistry().registerAll(
-                    new GemstoneBlock(type, Block.Properties.create(Material.IRON).hardnessAndResistance(15.0F).sound(SoundType.METAL)).setRegistryName(type.getName() + "_ore")
-            );
+            if (type.generateCustomOre())
+            {
+                event.getRegistry().registerAll(
+                        new GemstoneBlock(type, Block.Properties.create(Material.IRON).hardnessAndResistance(15.0F).sound(SoundType.METAL)).setRegistryName(type.getName() + "_ore")
+                );
+            }
         }
         for(Element type : Element.values())
         {
             event.getRegistry().registerAll(
-                    new CocoonBlock(type, Block.Properties.create(Material.IRON).hardnessAndResistance(1F).sound(SoundType.METAL).lightValue(5).tickRandomly()).setRegistryName(type.getName() + "_cocoon")
+                    new CocoonBlock(type, Block.Properties.create(Material.IRON).hardnessAndResistance(1F).sound(SoundType.METAL).lightValue(11).tickRandomly()).setRegistryName(type.getName() + "_cocoon")
             );
         }
     }
@@ -205,7 +227,7 @@ public class ElementsOfPowerMod
     public void registerItems(RegistryEvent.Register<Item> event)
     {
         event.getRegistry().registerAll(
-                new BlockItem(ElementsOfPowerBlocks.essentializer, new Item.Properties().group(tabMagic)).setRegistryName(Objects.requireNonNull(ElementsOfPowerBlocks.essentializer.getRegistryName())),
+                new BlockItem(ElementsOfPowerBlocks.ESSENTIALIZER, new Item.Properties().group(tabMagic)).setRegistryName(Objects.requireNonNull(ElementsOfPowerBlocks.ESSENTIALIZER.getRegistryName())),
 
                 new WandItem(new Item.Properties().group(tabMagic).maxStackSize(1)).setRegistryName("wand"),
                 new StaffItem(new Item.Properties().group(tabMagic).maxStackSize(1)).setRegistryName("staff"),
@@ -244,7 +266,7 @@ public class ElementsOfPowerMod
         for(Element type : Element.values())
         {
             event.getRegistry().register(
-                    new BlockItem(type.getBlock(), new Item.Properties().group(tabMagic)).setRegistryName(type.getName() + "_cocoon")
+                    new BlockItem(type.getCocoon(), new Item.Properties().group(tabMagic)).setRegistryName(type.getName() + "_cocoon")
             );
         }
     }
@@ -260,9 +282,9 @@ public class ElementsOfPowerMod
     public void registerTileEntities(RegistryEvent.Register<TileEntityType<?>> event)
     {
         event.getRegistry().registerAll(
-                TileEntityType.Builder.create(EssentializerTileEntity::new, ElementsOfPowerBlocks.essentializer).build(null).setRegistryName("essentializer"),
+                TileEntityType.Builder.create(EssentializerTileEntity::new, ElementsOfPowerBlocks.ESSENTIALIZER).build(null).setRegistryName("essentializer"),
                 TileEntityType.Builder.create(CocoonTileEntity::new,
-                        Arrays.stream(Element.values()).map(Element::getBlock).toArray(Block[]::new)
+                        Arrays.stream(Element.values()).map(Element::getCocoon).toArray(Block[]::new)
                         ).build(null).setRegistryName("cocoon")
         );
     }
@@ -301,66 +323,9 @@ public class ElementsOfPowerMod
     public void registerRecipes(RegistryEvent.Register<IRecipeSerializer<?>> event)
     {
         event.getRegistry().registerAll(
-                ContainerChargeRecipe.Serializer.INSTANCE.setRegistryName("container_charge"),
-                GemstoneChangeRecipe.Serializer.INSTANCE.setRegistryName("gemstone_change")
+                ContainerChargeRecipe.SERIALIZER.setRegistryName("container_charge"),
+                GemstoneChangeRecipe.SERIALIZER.setRegistryName("gemstone_change")
         );
-    }
-
-    public void gatherData(GatherDataEvent event)
-    {
-        DataGenerator gen = event.getGenerator();
-
-        if (event.includeServer())
-        {
-            gen.addProvider(new RecipeProvider(event.getGenerator())
-            {
-                @Override
-                protected void registerRecipes(Consumer<IFinishedRecipe> consumer)
-                {
-                    for (Gemstone gemstone : Gemstone.values())
-                    {
-                        if (gemstone.generateCustomOre())
-                        {
-                            CookingRecipeBuilder.smeltingRecipe(Ingredient.fromItems(gemstone.getOre()), gemstone, 1.0F, 200)
-                                    .addCriterion("has_ore", hasItem(gemstone.getOre()))
-                                    .build(consumer);
-                        }
-                    }
-                }
-            });
-        }
-        if (event.includeClient())
-        {
-            gen.addProvider(new BlockStateProvider(event.getGenerator(), MODID, event.getExistingFileHelper())
-            {
-                @Override
-                protected void registerStatesAndModels()
-                {
-                    densityBlock(ElementsOfPowerBlocks.MIST, MistBlock.DENSITY);
-                    densityBlock(ElementsOfPowerBlocks.DUST, DustBlock.DENSITY);
-                    densityBlock(ElementsOfPowerBlocks.LIGHT, LightBlock.DENSITY, (value) -> location("transparent"));
-                    densityBlock(ElementsOfPowerBlocks.CUSHION, CushionBlock.DENSITY, (density) -> location("block/dust_" + density));
-                }
-
-                private void densityBlock(Block block, IntegerProperty densityProperty)
-                {
-                    densityBlock(block, densityProperty, (density) -> location("block/" +  Objects.requireNonNull(block.getRegistryName()).getPath() + "_" + density));
-                }
-
-                private void densityBlock(Block block, IntegerProperty densityProperty, Function<Integer, ResourceLocation> texMapper)
-                {
-                    Map<Integer, ModelFile> densityModels = Maps.asMap(
-                            new HashSet<>(densityProperty.getAllowedValues()),
-                            density -> models().cubeAll(location(Objects.requireNonNull(block.getRegistryName()).getPath() + "_" + density).getPath(), texMapper.apply(density)));
-
-                    getVariantBuilder(block)
-                            .forAllStates(state -> ConfiguredModel.builder()
-                                    .modelFile(densityModels.get(state.get(MistBlock.DENSITY)))
-                                    .build()
-                            );
-                }
-            });
-        }
     }
 
     public void commonSetup(FMLCommonSetupEvent event)
@@ -379,6 +344,7 @@ public class ElementsOfPowerMod
         //DiscoveryHandler.init();
     }
 
+    // TODO: TAGS
     /*public void init(FMLCommonSetupEvent event)
     {
         OreDictionary.registerOre("blockAgate", gemstoneBlock.getStack(GemstoneBlockType.Agate));
@@ -413,16 +379,61 @@ public class ElementsOfPowerMod
         OreDictionary.registerOre("magicGemstone", gemstone.getStack(Gemstone.Serendibite));
         OreDictionary.registerOre("magicGemstone", gemstone.getStack(Gemstone.Emerald));
         OreDictionary.registerOre("magicGemstone", gemstone.getStack(Gemstone.Amethyst));
-        OreDictionary.registerOre("magicGemstone", gemstone.getStack(Gemstone.Diamond));*/
-
-        /*if (ConfigManager.EnableGemstoneOregen)
-            GameRegistry.registerWorldGenerator(new BlockGemstoneOre.Generator(), 1);
-        if (ConfigManager.EnableCocoonGeneration)
-            GameRegistry.registerWorldGenerator(new BlockCocoon.Generator(), 1);
+        OreDictionary.registerOre("magicGemstone", gemstone.getStack(Gemstone.Diamond));
     }*/
 
     public void loadComplete(FMLLoadCompleteEvent event)
     {
+        for(Biome biome : ForgeRegistries.BIOMES)
+        {
+            for(Gemstone g : Gemstone.values)
+            {
+                if (g.generateCustomOre())
+                {
+                    int numPerChunk = 1 + getBiomeBonus(g.getElement(),biome);
+                    biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Feature.ORE
+                                    .withConfiguration(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, g.getOre().getDefaultState(), 8))
+                                    .func_227228_a_(Placement.COUNT_RANGE.func_227446_a_(new CountRangeConfig(numPerChunk, 0, 0, 16))));
+                }
+            }
+
+            biome.addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, CocoonFeature.INSTANCE.withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG)
+                    .func_227228_a_(CocoonPlacement.INSTANCE.func_227446_a_(NoPlacementConfig.NO_PLACEMENT_CONFIG)));
+        }
+    }
+
+    private int getBiomeBonus(@Nullable Element e, Biome biome)
+    {
+        if (e == null)
+            return 1;
+        switch(e)
+        {
+            case FIRE:
+                if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.HOT))
+                    return 2;
+                if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.COLD))
+                    return 0;
+                return 1;
+            case WATER:
+                if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.WET))
+                    return 2;
+                if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.DRY))
+                    return 0;
+                return 1;
+            case LIFE:
+                if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.DENSE))
+                    return 2;
+                if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.SPARSE))
+                    return 0;
+                return 1;
+            case DEATH:
+                if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.SPARSE))
+                    return 2;
+                if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.DENSE))
+                    return 0;
+                return 1;
+        }
+        return 1;
     }
 
     public void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event)
@@ -455,8 +466,228 @@ public class ElementsOfPowerMod
         );
     }
 
-    public static ResourceLocation location(String location)
+    public void gatherData(GatherDataEvent event)
     {
-        return new ResourceLocation(MODID, location);
+        DataGenerator gen = event.getGenerator();
+
+        if (event.includeServer())
+        {
+            gen.addProvider(new Recipes(gen));
+            gen.addProvider(new LootTables(gen));
+        }
+        if (event.includeClient())
+        {
+            gen.addProvider(new BlockStates(gen, event));
+        }
+    }
+
+    private static class LootTables extends LootTableProvider implements IDataProvider
+    {
+        public LootTables(DataGenerator gen)
+        {
+            super(gen);
+        }
+
+        private final List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootParameterSet>> tables = ImmutableList.of(
+                Pair.of(BlockTables::new, LootParameterSets.BLOCK)
+                //Pair.of(FishingLootTables::new, LootParameterSets.FISHING),
+                //Pair.of(ChestLootTables::new, LootParameterSets.CHEST),
+                //Pair.of(EntityLootTables::new, LootParameterSets.ENTITY),
+                //Pair.of(GiftLootTables::new, LootParameterSets.GIFT)
+        );
+
+        @Override
+        protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootParameterSet>> getTables()
+        {
+            return tables;
+        }
+
+        @Override
+        protected void validate(Map<ResourceLocation, LootTable> map, ValidationTracker validationtracker) {
+            map.forEach((p_218436_2_, p_218436_3_) -> {
+                LootTableManager.func_227508_a_(validationtracker, p_218436_2_, p_218436_3_);
+            });
+        }
+
+        public static class BlockTables extends BlockLootTables
+        {
+            @Override
+            protected void addTables()
+            {
+                for(Element e : Element.values)
+                {
+                    this.registerLootTable(e.getCocoon(), BlockTables::dropWithOrbs);
+                }
+                this.registerLootTable(ElementsOfPowerBlocks.ESSENTIALIZER, dropping(ElementsOfPowerBlocks.ESSENTIALIZER));
+                for(Gemstone g : Gemstone.values)
+                {
+                    if(g.generateCustomBlock())
+                        this.registerLootTable(g.getBlock(), dropping(g.getBlock()));
+                    if(g.generateCustomOre())
+                        this.registerLootTable(g.getOre(), (block) -> droppingItemWithFortune(block, g.getItem()));
+                }
+            }
+
+            protected static LootTable.Builder dropWithOrbs(Block block) {
+                LootTable.Builder builder = LootTable.builder();
+                for(Element e : Element.values)
+                {
+                    LootPool.Builder pool = LootPool.builder()
+                            .rolls(ConstantRange.of(1))
+                            .addEntry(ItemLootEntry.builder(e.getOrb())
+                                    .acceptFunction(ApplyOrbSizeFunction.builder(e)));
+                    builder = builder.addLootPool(withSurvivesExplosion(block, pool));
+                }
+                return builder;
+            }
+
+            @Override
+            protected Iterable<Block> getKnownBlocks()
+            {
+                return ForgeRegistries.BLOCKS.getValues().stream()
+                        .filter(b -> b.getRegistryName().getNamespace().equals(MODID))
+                        .collect(Collectors.toList());
+            }
+        }
+    }
+
+    private static class BlockStates extends BlockStateProvider
+    {
+        public BlockStates(DataGenerator gen, GatherDataEvent event)
+        {
+            super(gen, ElementsOfPowerMod.MODID, event.getExistingFileHelper());
+        }
+
+        @Override
+        protected void registerStatesAndModels()
+        {
+            densityBlock(ElementsOfPowerBlocks.MIST, MistBlock.DENSITY);
+            densityBlock(ElementsOfPowerBlocks.DUST, DustBlock.DENSITY);
+            densityBlock(ElementsOfPowerBlocks.LIGHT, LightBlock.DENSITY, (value) -> location("transparent"));
+            densityBlock(ElementsOfPowerBlocks.CUSHION, CushionBlock.DENSITY, (density) -> location("block/dust_" + density));
+        }
+
+        private void densityBlock(Block block, IntegerProperty densityProperty)
+        {
+            densityBlock(block, densityProperty, (density) -> location("block/" +  Objects.requireNonNull(block.getRegistryName()).getPath() + "_" + density));
+        }
+
+        private void densityBlock(Block block, IntegerProperty densityProperty, Function<Integer, ResourceLocation> texMapper)
+        {
+            Map<Integer, ModelFile> densityModels = Maps.asMap(
+                    new HashSet<>(densityProperty.getAllowedValues()),
+                    density -> models().cubeAll(location(Objects.requireNonNull(block.getRegistryName()).getPath() + "_" + density).getPath(), texMapper.apply(density)));
+
+            getVariantBuilder(block)
+                    .forAllStates(state -> ConfiguredModel.builder()
+                            .modelFile(densityModels.get(state.get(MistBlock.DENSITY)))
+                            .build()
+                    );
+        }
+    }
+
+    private static class Recipes extends RecipeProvider
+    {
+        public Recipes(DataGenerator gen)
+        {
+            super(gen);
+        }
+
+        @Override
+        protected void registerRecipes(Consumer<IFinishedRecipe> consumer)
+        {
+            ShapedRecipeBuilder.shapedRecipe(ElementsOfPowerItems.ANALYZER)
+                    .patternLine("glg")
+                    .patternLine("i  ")
+                    .patternLine("psp")
+                    .key('l', Items.GOLD_INGOT)
+                    .key('i', Items.IRON_INGOT)
+                    .key('g', Tags.Items.GLASS_PANES)
+                    .key('p', ItemTags.PLANKS)
+                    .key('s', ItemTags.WOODEN_SLABS)
+                    .addCriterion("has_gold", hasItem(Items.GOLD_INGOT))
+                    .build(consumer);
+
+            ShapedRecipeBuilder.shapedRecipe(ElementsOfPowerItems.ESSENTIALIZER)
+                    .patternLine("IQI")
+                    .patternLine("ONO")
+                    .patternLine("IOI")
+                    .key('I', Items.IRON_INGOT)
+                    .key('O', Items.OBSIDIAN)
+                    .key('Q', GemstoneExaminer.GEMSTONES)
+                    .key('N', Items.NETHER_STAR)
+                    .addCriterion("has_star", hasItem(Items.NETHER_STAR))
+                    .build(consumer);
+
+            ShapedRecipeBuilder.shapedRecipe(ElementsOfPowerItems.WAND)
+                    .patternLine(" G")
+                    .patternLine("S ")
+                    .key('G', Items.GOLD_INGOT)
+                    .key('S', Items.STICK)
+                    .addCriterion("has_gold", hasItem(Items.GOLD_INGOT))
+                    .build(consumer);
+
+            ShapedRecipeBuilder.shapedRecipe(ElementsOfPowerItems.STAFF)
+                    .patternLine(" GW")
+                    .patternLine(" SG")
+                    .patternLine("S  ")
+                    .key('G', Items.IRON_BLOCK)
+                    .key('S', Items.STICK)
+                    .key('W', ElementsOfPowerItems.WAND)
+                    .addCriterion("has_wand", hasItem(ElementsOfPowerItems.WAND))
+                    .build(consumer);
+
+            ShapedRecipeBuilder.shapedRecipe(ElementsOfPowerItems.RING)
+                    .patternLine(" GG")
+                    .patternLine("G G")
+                    .patternLine(" G ")
+                    .key('G', Items.GOLD_INGOT)
+                    .addCriterion("has_gold", hasItem(Items.GOLD_INGOT))
+                    .build(consumer);
+
+            ShapedRecipeBuilder.shapedRecipe(ElementsOfPowerItems.NECKLACE)
+                    .patternLine("GGG")
+                    .patternLine("G G")
+                    .patternLine(" G ")
+                    .key('G', Items.GOLD_INGOT)
+                    .addCriterion("has_gold", hasItem(Items.GOLD_INGOT))
+                    .build(consumer);
+
+            ShapedRecipeBuilder.shapedRecipe(ElementsOfPowerItems.HEADBAND)
+                    .patternLine(" G ")
+                    .patternLine("G G")
+                    .patternLine("GGG")
+                    .key('G', Items.GOLD_INGOT)
+                    .addCriterion("has_gold", hasItem(Items.GOLD_INGOT))
+                    .build(consumer);
+
+            CustomRecipeBuilder.func_218656_a(ContainerChargeRecipe.SERIALIZER).build(consumer, location("gemstone_change").toString());
+            CustomRecipeBuilder.func_218656_a(GemstoneChangeRecipe.SERIALIZER).build(consumer, location("container_charge").toString());
+
+            for (Gemstone gemstone : Gemstone.values())
+            {
+                if (gemstone.generateCustomOre())
+                {
+                    CookingRecipeBuilder.smeltingRecipe(Ingredient.fromItems(gemstone.getOre()), gemstone, 1.0F, 200)
+                            .addCriterion("has_ore", hasItem(gemstone.getOre()))
+                            .build(consumer, location("smelting/" + gemstone.getName()));
+                }
+                if(gemstone.generateCustomBlock())
+                {
+                    ShapedRecipeBuilder.shapedRecipe(gemstone.getBlock())
+                            .patternLine("ggg")
+                            .patternLine("ggg")
+                            .patternLine("ggg")
+                            .key('g', AnalyzedFilteringIngredient.wrap(Ingredient.fromItems(gemstone.getItem())))
+                            .addCriterion("has_item", hasItem(gemstone.getItem()))
+                            .build(consumer);
+
+                    ShapelessRecipeBuilder.shapelessRecipe(gemstone.getItem(), 9)
+                            .addIngredient(Ingredient.fromItems(gemstone.getBlock()))
+                            .addCriterion("has_item", hasItem(gemstone.getItem()))
+                            .build(consumer, location(gemstone.getName() + "_from_block"));
+                }
+            }
+        }
     }
 }

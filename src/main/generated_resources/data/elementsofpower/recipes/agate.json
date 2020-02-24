@@ -1,9 +1,0 @@
-{
-  "type": "minecraft:smelting",
-  "ingredient": {
-    "item": "elementsofpower:agate_ore"
-  },
-  "result": "elementsofpower:agate",
-  "experience": 1.0,
-  "cookingtime": 200
-}

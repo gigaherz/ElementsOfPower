@@ -2,5 +2,8 @@
   "parent": "block/block",
   "loader": "forge:obj",
   "model": "elementsofpower:models/block/essentializer.obj",
-  "detectCullableFaces": true
+  "detectCullableFaces": true,
+  "textures": {
+    "particle": "elementsofpower:block/side_obsidian"
+  }
 }

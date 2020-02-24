@@ -359,7 +359,7 @@ public class MagicAmounts implements INBTSerializable<CompoundNBT>
         }
     }
 
-    public int getDominantElement()
+    public Element getDominantElement()
     {
         float domAmount = 0;
         int dominant = MagicAmounts.ELEMENTS;
@@ -373,7 +373,7 @@ public class MagicAmounts implements INBTSerializable<CompoundNBT>
             }
         }
 
-        return dominant;
+        return Element.values[dominant];
     }
 
     public void writeTo(PacketBuffer buf)

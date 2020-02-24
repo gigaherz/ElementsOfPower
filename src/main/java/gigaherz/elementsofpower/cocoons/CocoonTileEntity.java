@@ -53,11 +53,6 @@ public class CocoonTileEntity extends TileEntity implements ITickableTileEntity
 
     }
 
-    public int getDominantElement()
-    {
-        return essenceContained.getDominantElement();
-    }
-
     public void addEssences(ItemStack stack)
     {
         essenceContained = essenceContained.add(((MagicOrbItem)stack.getItem()).getElement(), 1);

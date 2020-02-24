@@ -3,6 +3,7 @@
   "loader": "forge:obj",
   "model": "elementsofpower:models/block/cocoon.obj",
   "textures": {
-    "default": "elementsofpower:misc/orb_death"
+    "default": "elementsofpower:misc/orb_death",
+    "particle": "#default"
   }
 }

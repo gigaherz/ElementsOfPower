@@ -23,7 +23,7 @@ public class ElementsOfPowerBlocks
         return null;
     }
 
-    public static final EssentializerBlock essentializer = toBeInitialized();
+    public static final EssentializerBlock ESSENTIALIZER = toBeInitialized();
     public static final DustBlock DUST = toBeInitialized();
     public static final MistBlock MIST = toBeInitialized();
     public static final LightBlock LIGHT = toBeInitialized();

@@ -15,6 +15,7 @@ import java.util.Random;
 
 public class GemstoneExaminer
 {
+    public static final Tag<Item> GEMSTONES = new ItemTags.Wrapper(ElementsOfPowerMod.location("gemstones"));
     public static final Tag<Item> GEM_RUBY = new ItemTags.Wrapper(ElementsOfPowerMod.location("gems/ruby"));
     public static final Tag<Item> GEM_SAPPHIRE = new ItemTags.Wrapper(ElementsOfPowerMod.location("gems/sapphire"));
     public static final Tag<Item> GEM_CITRINE = new ItemTags.Wrapper(ElementsOfPowerMod.location("gems/citrine"));

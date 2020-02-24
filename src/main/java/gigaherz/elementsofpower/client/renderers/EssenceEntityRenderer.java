@@ -65,6 +65,6 @@ public class EssenceEntityRenderer extends EntityRenderer<EssenceEntity>
     @Override
     public ResourceLocation getEntityTexture(EssenceEntity entity)
     {
-        return new ResourceLocation("forge:white");
+        return new ResourceLocation("forge:textures/white.png");
     }
 }
