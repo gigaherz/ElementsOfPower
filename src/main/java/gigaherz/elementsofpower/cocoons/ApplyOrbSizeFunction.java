@@ -1,47 +1,55 @@
 package gigaherz.elementsofpower.cocoons;
 
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
+import com.google.common.collect.Maps;
+import com.google.gson.*;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.database.MagicAmounts;
+import gigaherz.elementsofpower.essentializer.gui.IMagicAmountContainer;
 import gigaherz.elementsofpower.spells.Element;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.JSONUtils;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.storage.loot.LootContext;
 import net.minecraft.world.storage.loot.LootFunction;
-import net.minecraft.world.storage.loot.LootParameter;
 import net.minecraft.world.storage.loot.LootParameters;
 import net.minecraft.world.storage.loot.conditions.ILootCondition;
 import net.minecraft.world.storage.loot.functions.ILootFunction;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 
 public class ApplyOrbSizeFunction extends LootFunction
 {
-    public static final LootParameter<MagicAmounts> CONTAINED_MAGIC = new LootParameter<>(ElementsOfPowerMod.location("contained_magic"));
+    private final float[] factors;
 
-    private final Element element;
-
-    protected ApplyOrbSizeFunction(ILootCondition[] conditionsIn, Element element)
+    protected ApplyOrbSizeFunction(ILootCondition[] conditionsIn, float[] factors)
     {
         super(conditionsIn);
-        this.element = element;
+        this.factors = factors;
     }
 
     @Override
     protected ItemStack doApply(ItemStack stack, LootContext context)
     {
-        MagicAmounts am = Objects.requireNonNull(context.get(CONTAINED_MAGIC));
+        TileEntity te = Objects.requireNonNull(context.get(LootParameters.BLOCK_ENTITY));
+
+        if (!(te instanceof IMagicAmountContainer))
+            return stack;
+
+        MagicAmounts am = ((IMagicAmountContainer)te).getContainedMagic();
         Random rand = context.getRandom();
         ItemStack tool = Objects.requireNonNull(context.get(LootParameters.TOOL));
 
-        int i = element.ordinal();
+        float a = 0;
+        for(int i=0;i<8;i++)
+        {
+            a += am.get(i) * factors[i];
+        }
 
-        float a = am.get(i);
         int whole = (int) Math.floor(a);
         if (rand.nextFloat() < (a - whole))
             whole++;
@@ -49,29 +57,36 @@ public class ApplyOrbSizeFunction extends LootFunction
         if (whole > 0)
         {
             int fortune = EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, tool);
-            if (fortune >= 1)
-                whole = (int) (Math.pow(rand.nextFloat(), 1 / (fortune - 1.0)) * whole);
-            else
-                whole = (int) (Math.pow(rand.nextFloat(), 3 - fortune) * whole);
-
-            stack.setCount(whole);
+            whole = Math.round((float)Math.pow(rand.nextFloat(), 1 / (fortune + 1.0f)) * whole);
         }
+
+        stack.setCount(whole);
 
         return stack;
     }
 
-    public static IBuilder builder(Element e)
+    public static Builder builder()
     {
-        return new Builder(e);
+        return new Builder();
     }
 
     public static class Builder extends LootFunction.Builder<Builder>
     {
-        private final Element element;
+        private final Map<Element, Float> factors = Maps.newHashMap();
 
-        public Builder(Element e)
+        public Builder()
         {
-            this.element = e;
+        }
+
+        public Builder with(Element e)
+        {
+            return with(e, 1);
+        }
+
+        public Builder with(Element e, float factor)
+        {
+            factors.put(e, factor);
+            return this;
         }
 
         @Override
@@ -81,9 +96,14 @@ public class ApplyOrbSizeFunction extends LootFunction
         }
 
         @Override
-        public ILootFunction build()
+        public ApplyOrbSizeFunction build()
         {
-            return new ApplyOrbSizeFunction(this.getConditions(), element);
+            float[] values = new float[8];
+            for(Map.Entry<Element, Float> kv : factors.entrySet())
+            {
+                values[kv.getKey().ordinal()] = kv.getValue();
+            }
+            return new ApplyOrbSizeFunction(this.getConditions(), values);
         }
     }
 
@@ -99,18 +119,31 @@ public class ApplyOrbSizeFunction extends LootFunction
         @Override
         public ApplyOrbSizeFunction deserialize(JsonObject object, JsonDeserializationContext deserializationContext, ILootCondition[] conditionsIn)
         {
-            String elementName = JSONUtils.getString(object, "element");
-            Element e = Element.byName(elementName);
-            if (e == null)
-                throw new RuntimeException("Unknown value for property 'element': '" + elementName + "'");
-            return new ApplyOrbSizeFunction(conditionsIn, e);
+            Builder b = builder();
+            JsonObject elements = JSONUtils.getJsonObject(object, "factors");
+            for(Map.Entry<String, JsonElement> kv : elements.entrySet())
+            {
+                String elementName = kv.getKey();
+                Element e = Element.byName(elementName);
+                if (e == null)
+                    throw new RuntimeException("Unknown key for property 'elements': '" + elementName + "'");
+                float f = JSONUtils.getFloat(kv.getValue(), elementName);
+                b.with(e, f);
+            }
+            return b.build();
         }
 
         @Override
         public void serialize(JsonObject object, ApplyOrbSizeFunction lootFunction, JsonSerializationContext serializationContext)
         {
             super.serialize(object, lootFunction, serializationContext);
-            object.addProperty("element", lootFunction.element.getName());
+            JsonObject factors = new JsonObject();
+            for(int i=0;i<8;i++)
+            {
+                if (!MathHelper.epsilonEquals( lootFunction.factors[i], 0))
+                    factors.addProperty(Element.values[i].getName(), lootFunction.factors[i]);
+            }
+            object.add("factors", factors);
         }
     }
 }

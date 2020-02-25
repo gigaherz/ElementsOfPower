@@ -7,6 +7,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
+import net.minecraft.fluid.Fluids;
+import net.minecraft.fluid.IFluidState;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
@@ -61,15 +63,16 @@ public class CocoonFeature extends Feature<NoFeatureConfig>
     @Override
     public boolean place(IWorld worldIn, ChunkGenerator<? extends GenerationSettings> generator, Random rand, BlockPos pos, NoFeatureConfig config)
     {
-        if (!worldIn.getBlockState(pos).isAir(worldIn, pos))
-            return false;
-        for (Direction f : Direction.values())
+        if (worldIn.isAirBlock(pos) || worldIn.getBlockState(pos).getBlock() == Blocks.WATER)
         {
-            BlockPos pos1 = pos.offset(f);
-            if (worldIn.getBlockState(pos1).isSolidSide(worldIn, pos1, f.getOpposite()))
+            for (Direction f : Direction.values())
             {
-                generateOne(pos, f, rand, worldIn, worldIn.getDimension().getType());
-                return true;
+                BlockPos pos1 = pos.offset(f);
+                if (worldIn.getBlockState(pos1).isSolidSide(worldIn, pos1, f.getOpposite()))
+                {
+                    generateOne(pos, f, rand, worldIn, worldIn.getDimension().getType());
+                    return true;
+                }
             }
         }
         return false;
@@ -124,7 +127,7 @@ public class CocoonFeature extends Feature<NoFeatureConfig>
                 }
                 else if (mat == Material.WATER)
                 {
-                    am = am.water(1);
+                    am = am.water(1.5f);
                 }
                 else if (mat == Material.LAVA)
                 {
@@ -235,7 +238,8 @@ public class CocoonFeature extends Feature<NoFeatureConfig>
 
         if (!am.isEmpty())
         {
-            world.setBlockState(pos, am.getDominantElement().getCocoon().getDefaultState().with(CocoonBlock.FACING, f), 2);
+            IFluidState fluidState = world.getFluidState(pos);
+            world.setBlockState(pos, am.getDominantElement().getCocoon().getDefaultState().with(CocoonBlock.FACING, f).with(CocoonBlock.WATERLOGGED, fluidState.getFluid() == Fluids.WATER), 2);
             CocoonTileEntity te = Objects.requireNonNull((CocoonTileEntity) world.getTileEntity(pos));
             te.essenceContained = te.essenceContained.add(am);
 

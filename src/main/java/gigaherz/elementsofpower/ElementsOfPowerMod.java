@@ -176,7 +176,6 @@ public class ElementsOfPowerMod
         MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
 
         LootFunctionManager.registerFunction(ApplyOrbSizeFunction.Serializer.INSTANCE);
-        CraftingHelper.register(AnalyzedFilteringIngredient.ID, AnalyzedFilteringIngredient.Serializer.INSTANCE);
     }
 
     private void imcEnqueue(InterModEnqueueEvent event)
@@ -342,6 +341,8 @@ public class ElementsOfPowerMod
         MagicContainerCapability.register();
         SpellcastEntityData.register();
         //DiscoveryHandler.init();
+
+        CraftingHelper.register(AnalyzedFilteringIngredient.ID, AnalyzedFilteringIngredient.Serializer.INSTANCE);
     }
 
     // TODO: TAGS
@@ -535,7 +536,7 @@ public class ElementsOfPowerMod
                     LootPool.Builder pool = LootPool.builder()
                             .rolls(ConstantRange.of(1))
                             .addEntry(ItemLootEntry.builder(e.getOrb())
-                                    .acceptFunction(ApplyOrbSizeFunction.builder(e)));
+                                    .acceptFunction(ApplyOrbSizeFunction.builder().with(e)));
                     builder = builder.addLootPool(withSurvivesExplosion(block, pool));
                 }
                 return builder;

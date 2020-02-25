@@ -1,6 +1,7 @@
 package gigaherz.elementsofpower.cocoons;
 
 import gigaherz.elementsofpower.database.MagicAmounts;
+import gigaherz.elementsofpower.essentializer.gui.IMagicAmountContainer;
 import gigaherz.elementsofpower.items.MagicOrbItem;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
@@ -12,7 +13,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.registries.ObjectHolder;
 
-public class CocoonTileEntity extends TileEntity implements ITickableTileEntity
+public class CocoonTileEntity extends TileEntity implements ITickableTileEntity, IMagicAmountContainer
 {
     @ObjectHolder("elementsofpower:cocoon")
     public static TileEntityType<CocoonTileEntity> TYPE;
@@ -84,5 +85,11 @@ public class CocoonTileEntity extends TileEntity implements ITickableTileEntity
     {
         super.onDataPacket(net, packet);
         handleUpdateTag(packet.getNbtCompound());
+    }
+
+    @Override
+    public MagicAmounts getContainedMagic()
+    {
+        return essenceContained;
     }
 }

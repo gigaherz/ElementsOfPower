@@ -6,14 +6,19 @@ import gigaherz.elementsofpower.items.MagicOrbItem;
 import gigaherz.elementsofpower.spells.Element;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.IWaterLoggable;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.Fluids;
+import net.minecraft.fluid.IFluidState;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
@@ -29,9 +34,10 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Random;
 
-public class CocoonBlock extends Block
+public class CocoonBlock extends Block implements IWaterLoggable
 {
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
+    public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
     private final Element type;
 
@@ -39,6 +45,7 @@ public class CocoonBlock extends Block
     {
         super(properties);
         this.type = type;
+        setDefaultState(getStateContainer().getBaseState().with(FACING, Direction.NORTH).with(WATERLOGGED, false));
     }
 
     public Element getType()
@@ -61,7 +68,13 @@ public class CocoonBlock extends Block
     @Override
     protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder)
     {
-        builder.add(FACING);
+        builder.add(FACING, WATERLOGGED);
+    }
+
+    @Override
+    public IFluidState getFluidState(BlockState state)
+    {
+        return state.get(WATERLOGGED) ? Fluids.WATER.getDefaultState() : Fluids.EMPTY.getDefaultState();
     }
 
     @Override
@@ -83,7 +96,8 @@ public class CocoonBlock extends Block
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext context)
     {
-        return getDefaultState().with(FACING, context.getFace().getOpposite());
+        IFluidState fluid = context.getWorld().getFluidState(context.getPos());
+        return getDefaultState().with(FACING, context.getFace().getOpposite()).with(WATERLOGGED, fluid.getFluid() == Fluids.WATER);
     }
 
     @Override
@@ -142,14 +156,4 @@ public class CocoonBlock extends Block
         return super.onBlockActivated(state, worldIn, pos, player, hand, rayTraceResult);
     }
 
-    @Override
-    public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder)
-    {
-        TileEntity te = builder.get(LootParameters.BLOCK_ENTITY);
-        if (te instanceof CocoonTileEntity)
-        {
-            builder = builder.withParameter(ApplyOrbSizeFunction.CONTAINED_MAGIC, ((CocoonTileEntity)te).essenceContained);
-        }
-        return super.getDrops(state, builder);
-    }
 }
