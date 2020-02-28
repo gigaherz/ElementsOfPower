@@ -16,12 +16,12 @@ public class EssenceConversions
     public static final EssenceConversions CLIENT = new EssenceConversions();
     public static final EssenceConversions SERVER = new EssenceConversions();
 
-    private final Map<Item, MagicAmounts> essenceMappings = Maps.newHashMap();
-
     public static EssenceConversions get(@Nullable World world)
     {
         return (world != null && world.isRemote) ? CLIENT : SERVER;
     }
+
+    private final Map<Item, MagicAmounts> essenceMappings = Maps.newHashMap();
 
     public boolean itemHasEssence(Item item)
     {

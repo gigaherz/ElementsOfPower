@@ -166,7 +166,6 @@ public class ElementsOfPowerMod
 
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::clientSetup);
-        modEventBus.addListener(this::loadComplete);
 
         modEventBus.addListener(this::imcEnqueue);
 
@@ -343,6 +342,26 @@ public class ElementsOfPowerMod
         //DiscoveryHandler.init();
 
         CraftingHelper.register(AnalyzedFilteringIngredient.ID, AnalyzedFilteringIngredient.Serializer.INSTANCE);
+
+        for(Biome biome : ForgeRegistries.BIOMES)
+        {
+            if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.VOID))
+                continue;
+
+            for(Gemstone g : Gemstone.values)
+            {
+                if (g.generateCustomOre())
+                {
+                    int numPerChunk = 1 + getBiomeBonus(g.getElement(),biome);
+                    biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Feature.ORE
+                            .withConfiguration(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, g.getOre().getDefaultState(), 8))
+                            .func_227228_a_(Placement.COUNT_RANGE.func_227446_a_(new CountRangeConfig(numPerChunk, 0, 0, 16))));
+                }
+            }
+
+            biome.addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, CocoonFeature.INSTANCE.withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG)
+                    .func_227228_a_(CocoonPlacement.INSTANCE.func_227446_a_(NoPlacementConfig.NO_PLACEMENT_CONFIG)));
+        }
     }
 
     // TODO: TAGS
@@ -382,26 +401,6 @@ public class ElementsOfPowerMod
         OreDictionary.registerOre("magicGemstone", gemstone.getStack(Gemstone.Amethyst));
         OreDictionary.registerOre("magicGemstone", gemstone.getStack(Gemstone.Diamond));
     }*/
-
-    public void loadComplete(FMLLoadCompleteEvent event)
-    {
-        for(Biome biome : ForgeRegistries.BIOMES)
-        {
-            for(Gemstone g : Gemstone.values)
-            {
-                if (g.generateCustomOre())
-                {
-                    int numPerChunk = 1 + getBiomeBonus(g.getElement(),biome);
-                    biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Feature.ORE
-                                    .withConfiguration(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, g.getOre().getDefaultState(), 8))
-                                    .func_227228_a_(Placement.COUNT_RANGE.func_227446_a_(new CountRangeConfig(numPerChunk, 0, 0, 16))));
-                }
-            }
-
-            biome.addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, CocoonFeature.INSTANCE.withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG)
-                    .func_227228_a_(CocoonPlacement.INSTANCE.func_227446_a_(NoPlacementConfig.NO_PLACEMENT_CONFIG)));
-        }
-    }
 
     private int getBiomeBonus(@Nullable Element e, Biome biome)
     {
@@ -577,7 +576,9 @@ public class ElementsOfPowerMod
         {
             Map<Integer, ModelFile> densityModels = Maps.asMap(
                     new HashSet<>(densityProperty.getAllowedValues()),
-                    density -> models().cubeAll(location(Objects.requireNonNull(block.getRegistryName()).getPath() + "_" + density).getPath(), texMapper.apply(density)));
+                    density -> {
+                        return models().cubeAll(location(Objects.requireNonNull(block.getRegistryName()).getPath() + "_" + density).getPath(), texMapper.apply(density));
+                    });
 
             getVariantBuilder(block)
                     .forAllStates(state -> ConfiguredModel.builder()

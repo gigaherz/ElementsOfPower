@@ -27,7 +27,8 @@ public class CocoonPlacement extends Placement<NoPlacementConfig>
     public Stream<BlockPos> getPositions(IWorld worldIn, ChunkGenerator<? extends GenerationSettings> generatorIn, Random random, NoPlacementConfig configIn, BlockPos pos)
     {
         List<BlockPos> positions = new ArrayList<>();
-        for(int y = 0; y < worldIn.getChunk(pos).getTopFilledSegment(); y+=16)
+        int topFilledSegment = worldIn.getChunk(pos).getTopFilledSegment();
+        for(int y = 0; y < topFilledSegment; y+=16)
         {
             int n = random.nextInt(2)+4;
             for(int i=0;i<n;i++)

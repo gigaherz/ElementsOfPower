@@ -59,6 +59,21 @@ public class GemstoneItem extends MagicContainerItem
     }
 
     @Override
+    public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items)
+    {
+        if (this.isInGroup(group))
+        {
+            // Unexamined
+            items.add(new ItemStack(this));
+            // Qualities
+            for (Quality q : Quality.values)
+            {
+                items.add(setQuality(new ItemStack(this), q));
+            }
+        }
+    }
+
+    @Override
     public MagicAmounts getCapacity(ItemStack stack)
     {
         Gemstone g = getGemstone();
@@ -78,21 +93,6 @@ public class GemstoneItem extends MagicContainerItem
             magic = magic.add(g.getElement(), magic.get(g.getElement()) * 0.25f);
 
         return magic;
-    }
-
-    @Override
-    public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items)
-    {
-        if (this.isInGroup(group))
-        {
-            // Unexamined
-            items.add(new ItemStack(this));
-            // Qualities
-            for (Quality q : Quality.values)
-            {
-                items.add(setQuality(new ItemStack(this), q));
-            }
-        }
     }
 
     @Override

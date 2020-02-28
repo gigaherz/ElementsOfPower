@@ -12,8 +12,6 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.util.LazyOptional;
 
-import javax.annotation.Nullable;
-
 public class MagicContainerCapability
 {
     @CapabilityInject(IMagicContainer.class)
@@ -21,7 +19,7 @@ public class MagicContainerCapability
 
     public static void register()
     {
-        CapabilityManager.INSTANCE.register(IMagicContainer.class, new Storage(), MagicContainer::new);
+        CapabilityManager.INSTANCE.register(IMagicContainer.class, new Storage(), Impl::new);
     }
 
     public static LazyOptional<IMagicContainer> getContainer(ItemStack stack)
@@ -83,6 +81,38 @@ public class MagicContainerCapability
             }
 
             instance.setContainedMagic(amounts);
+        }
+    }
+
+    public static class Impl implements IMagicContainer
+    {
+        private MagicAmounts capacity;
+        private MagicAmounts containedMagic;
+
+        public Impl() {}
+
+        @Override
+        public MagicAmounts getCapacity()
+        {
+            return capacity;
+        }
+
+        @Override
+        public void setCapacity(MagicAmounts capacity)
+        {
+            this.capacity = capacity;
+        }
+
+        @Override
+        public MagicAmounts getContainedMagic()
+        {
+            return containedMagic;
+        }
+
+        @Override
+        public void setContainedMagic(MagicAmounts containedMagic)
+        {
+            this.containedMagic = containedMagic;
         }
     }
 }
