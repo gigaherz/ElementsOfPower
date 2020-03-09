@@ -2,6 +2,7 @@ package gigaherz.elementsofpower.client.renderers;
 
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.client.renderers.spells.BeamSpellRenderer;
 import gigaherz.elementsofpower.client.renderers.spells.ConeSpellRenderer;
@@ -56,12 +57,15 @@ public class SpellRenderingHandler
 
                 Vec3d off = player.getUpVector(partialTicks).scale(-0.15);
 
-                IRenderTypeBuffer buffers = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
+                IRenderTypeBuffer.Impl buffers = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
                 MatrixStack stack = event.getMatrixStack();
 
                 stack.push();
                 renderer.render(cast, player, renderManager, partialTicks, stack, buffers, 0x00F000F0, off);
                 stack.pop();
+
+                RenderSystem.disableDepthTest();
+                buffers.finish();
             }
         });
     }

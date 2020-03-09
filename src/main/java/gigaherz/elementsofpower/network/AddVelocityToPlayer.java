@@ -1,7 +1,6 @@
 package gigaherz.elementsofpower.network;
 
 import gigaherz.elementsofpower.client.ClientPacketHandlers;
-import gigaherz.elementsofpower.client.ClientProxy;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 

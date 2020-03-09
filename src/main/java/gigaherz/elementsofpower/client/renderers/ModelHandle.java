@@ -39,6 +39,11 @@ public class ModelHandle
 
     public void render(IRenderTypeBuffer bufferIn, RenderType rt, MatrixStack matrixStackIn, int packedLightIn, int color)
     {
+        render(bufferIn, rt, matrixStackIn, packedLightIn, OverlayTexture.DEFAULT_LIGHT, color);
+    }
+
+    public void render(IRenderTypeBuffer bufferIn, RenderType rt, MatrixStack matrixStackIn, int packedLightIn, int overlay, int color)
+    {
         float a = ((color>>24)&0xFF)/255.0f;
         float r = ((color>>16)&0xFF)/255.0f;
         float g = ((color>>8)&0xFF)/255.0f;
@@ -47,7 +52,7 @@ public class ModelHandle
         IVertexBuilder bb = bufferIn.getBuffer(rt);
         for(BakedQuad quad : model.getQuads(null, null, rand, EmptyModelData.INSTANCE))
         {
-            bb.addVertexData(matrixStackIn.getLast(), quad, r, g, b, a, packedLightIn, OverlayTexture.DEFAULT_LIGHT, true);
+            bb.addVertexData(matrixStackIn.getLast(), quad, r, g, b, a, packedLightIn, overlay, true);
         }
     }
 

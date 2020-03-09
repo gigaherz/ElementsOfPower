@@ -80,7 +80,7 @@ public class AnalyzedFilteringIngredient extends Ingredient
     @Override
     public IIngredientSerializer<? extends Ingredient> getSerializer()
     {
-        return super.getSerializer();
+        return Serializer.INSTANCE;
     }
 
     public static class Serializer implements IIngredientSerializer<AnalyzedFilteringIngredient>

@@ -2,6 +2,8 @@ package gigaherz.elementsofpower;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
 import gigaherz.elementsofpower.analyzer.AnalyzerItem;
 import gigaherz.elementsofpower.analyzer.gui.AnalyzerContainer;
@@ -42,6 +44,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
+import net.minecraft.client.resources.JsonReloadListener;
 import net.minecraft.client.resources.ReloadListener;
 import net.minecraft.data.*;
 import net.minecraft.data.loot.BlockLootTables;
@@ -70,9 +73,7 @@ import net.minecraft.world.gen.placement.Placement;
 import net.minecraft.world.storage.loot.*;
 import net.minecraft.world.storage.loot.functions.LootFunctionManager;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
-import net.minecraftforge.client.model.generators.BlockStateProvider;
-import net.minecraftforge.client.model.generators.ConfiguredModel;
-import net.minecraftforge.client.model.generators.ModelFile;
+import net.minecraftforge.client.model.generators.*;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.Tags;
@@ -295,6 +296,14 @@ public class ElementsOfPowerMod
         );
     }
 
+    public void registerRecipes(RegistryEvent.Register<IRecipeSerializer<?>> event)
+    {
+        event.getRegistry().registerAll(
+                ContainerChargeRecipe.SERIALIZER.setRegistryName("container_charge"),
+                GemstoneChangeRecipe.SERIALIZER.setRegistryName("gemstone_change")
+        );
+    }
+
     public void clientSetup(FMLClientSetupEvent event)
     {
         ModelLoaderRegistry.registerLoader(location("nbt_to_model"), NbtToModel.Loader.INSTANCE);
@@ -316,14 +325,6 @@ public class ElementsOfPowerMod
         MinecraftForge.EVENT_BUS.register(new MagicContainerOverlay());
 
         WandUseManager.instance.initialize();
-    }
-
-    public void registerRecipes(RegistryEvent.Register<IRecipeSerializer<?>> event)
-    {
-        event.getRegistry().registerAll(
-                ContainerChargeRecipe.SERIALIZER.setRegistryName("container_charge"),
-                GemstoneChangeRecipe.SERIALIZER.setRegistryName("gemstone_change")
-        );
     }
 
     public void commonSetup(FMLCommonSetupEvent event)
