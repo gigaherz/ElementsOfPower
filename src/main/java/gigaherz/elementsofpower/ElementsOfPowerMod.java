@@ -2,13 +2,12 @@ package gigaherz.elementsofpower;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
 import gigaherz.elementsofpower.analyzer.AnalyzerItem;
 import gigaherz.elementsofpower.analyzer.gui.AnalyzerContainer;
 import gigaherz.elementsofpower.analyzer.gui.AnalyzerScreen;
 import gigaherz.elementsofpower.capabilities.MagicContainerCapability;
+import gigaherz.elementsofpower.client.ColoredSmokeData;
 import gigaherz.elementsofpower.client.NbtToModel;
 import gigaherz.elementsofpower.client.WandUseManager;
 import gigaherz.elementsofpower.client.renderers.MagicContainerOverlay;
@@ -41,10 +40,10 @@ import gigaherz.elementsofpower.spells.blocks.MistBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
-import net.minecraft.client.resources.JsonReloadListener;
 import net.minecraft.client.resources.ReloadListener;
 import net.minecraft.data.*;
 import net.minecraft.data.loot.BlockLootTables;
@@ -55,6 +54,9 @@ import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.*;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.item.crafting.SpecialRecipeSerializer;
+import net.minecraft.particles.BasicParticleType;
+import net.minecraft.particles.ParticleType;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.state.IntegerProperty;
@@ -72,6 +74,7 @@ import net.minecraft.world.gen.placement.NoPlacementConfig;
 import net.minecraft.world.gen.placement.Placement;
 import net.minecraft.world.storage.loot.*;
 import net.minecraft.world.storage.loot.functions.LootFunctionManager;
+import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.generators.*;
 import net.minecraftforge.common.BiomeDictionary;
@@ -83,6 +86,7 @@ import net.minecraftforge.common.util.NonNullLazy;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -160,13 +164,15 @@ public class ElementsOfPowerMod
 
         modEventBus.addGenericListener(Block.class, this::registerBlocks);
         modEventBus.addGenericListener(Item.class, this::registerItems);
-        modEventBus.addGenericListener(EntityType.class, this::registerEntities);
-        modEventBus.addGenericListener(TileEntityType.class, this::registerTileEntities);
+        modEventBus.addGenericListener(EntityType.class, this::registerEntityTypes);
+        modEventBus.addGenericListener(TileEntityType.class, this::registerTileEntityTypes);
         modEventBus.addGenericListener(ContainerType.class, this::registerContainerTypes);
-        modEventBus.addGenericListener(IRecipeSerializer.class, this::registerRecipes);
+        modEventBus.addGenericListener(IRecipeSerializer.class, this::registerRecipeSerializers);
+        modEventBus.addGenericListener(ParticleType.class, this::registerParticleTypes);
 
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::clientSetup);
+        modEventBus.addListener(this::registerParticleFactory);
 
         modEventBus.addListener(this::imcEnqueue);
 
@@ -270,7 +276,7 @@ public class ElementsOfPowerMod
         }
     }
 
-    public void registerEntities(RegistryEvent.Register<EntityType<?>> event)
+    public void registerEntityTypes(RegistryEvent.Register<EntityType<?>> event)
     {
         event.getRegistry().registerAll(
             spellBallInit.get().setRegistryName("ball"),
@@ -278,7 +284,7 @@ public class ElementsOfPowerMod
         );
     }
 
-    public void registerTileEntities(RegistryEvent.Register<TileEntityType<?>> event)
+    public void registerTileEntityTypes(RegistryEvent.Register<TileEntityType<?>> event)
     {
         event.getRegistry().registerAll(
                 TileEntityType.Builder.create(EssentializerTileEntity::new, ElementsOfPowerBlocks.ESSENTIALIZER).build(null).setRegistryName("essentializer"),
@@ -296,12 +302,24 @@ public class ElementsOfPowerMod
         );
     }
 
-    public void registerRecipes(RegistryEvent.Register<IRecipeSerializer<?>> event)
+    public void registerRecipeSerializers(RegistryEvent.Register<IRecipeSerializer<?>> event)
     {
         event.getRegistry().registerAll(
-                ContainerChargeRecipe.SERIALIZER.setRegistryName("container_charge"),
-                GemstoneChangeRecipe.SERIALIZER.setRegistryName("gemstone_change")
+                new SpecialRecipeSerializer<>(ContainerChargeRecipe::new).setRegistryName("container_charge"),
+                new SpecialRecipeSerializer<>(GemstoneChangeRecipe::new).setRegistryName("gemstone_change")
         );
+    }
+
+    public void registerParticleTypes(RegistryEvent.Register<ParticleType<?>> event)
+    {
+        event.getRegistry().registerAll(
+                new ColoredSmokeData.Type(false).setRegistryName("white_smoke")
+        );
+    }
+
+    public void registerParticleFactory(ParticleFactoryRegisterEvent event)
+    {
+        Minecraft.getInstance().particles.registerFactory(ColoredSmokeData.TYPE, ColoredSmokeData.Factory::new);
     }
 
     public void clientSetup(FMLClientSetupEvent event)
@@ -353,10 +371,10 @@ public class ElementsOfPowerMod
             {
                 if (g.generateCustomOre())
                 {
-                    int numPerChunk = 1 + getBiomeBonus(g.getElement(),biome);
+                    int numPerChunk = 3 + getBiomeBonus(g.getElement(),biome);
                     biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Feature.ORE
-                            .withConfiguration(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, g.getOre().getDefaultState(), 8))
-                            .func_227228_a_(Placement.COUNT_RANGE.func_227446_a_(new CountRangeConfig(numPerChunk, 0, 0, 16))));
+                            .withConfiguration(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, g.getOre().getDefaultState(), numPerChunk))
+                            .func_227228_a_(Placement.COUNT_RANGE.func_227446_a_(new CountRangeConfig(1, 0, 0, 16))));
                 }
             }
 

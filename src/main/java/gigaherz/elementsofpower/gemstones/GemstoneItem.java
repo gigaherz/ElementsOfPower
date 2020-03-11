@@ -157,6 +157,12 @@ public class GemstoneItem extends MagicContainerItem
         return stack;
     }
 
+    @Override
+    public int getItemStackLimit(ItemStack stack)
+    {
+        return getQuality(stack) != null ? 64 : 1;
+    }
+
     @OnlyIn(Dist.CLIENT)
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn)

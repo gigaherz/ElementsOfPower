@@ -12,6 +12,7 @@ import net.minecraft.item.crafting.SpecialRecipeSerializer;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.registries.ObjectHolder;
 
 import java.util.List;
 
@@ -105,5 +106,6 @@ public class ContainerChargeRecipe extends SpecialRecipe
         return SERIALIZER;
     }
 
-    public static final SpecialRecipeSerializer<ContainerChargeRecipe> SERIALIZER = new SpecialRecipeSerializer<>(ContainerChargeRecipe::new);
+    @ObjectHolder("elementsofpower:container_charge")
+    public static SpecialRecipeSerializer<ContainerChargeRecipe> SERIALIZER;
 }

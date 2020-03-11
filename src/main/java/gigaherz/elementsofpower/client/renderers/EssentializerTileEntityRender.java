@@ -16,9 +16,10 @@ import net.minecraftforge.common.util.Lazy;
 
 public class EssentializerTileEntityRender extends TileEntityRenderer<EssentializerTileEntity>
 {
-    private final Lazy<ModelHandle> handle = Lazy.of(() -> ModelHandle.of("elementsofpower:models/block/essentializer_2.obj") );
+    private final Lazy<ModelHandle> corner_handle = Lazy.of(() -> ModelHandle.of("elementsofpower:models/block/essentializer_corner.obj") );
+    private final Lazy<ModelHandle> side_handle = Lazy.of(() -> ModelHandle.of("elementsofpower:models/block/essentializer_sides.obj") );
 
-    private final ResourceLocation texture = new ResourceLocation("elementsofpower:textures/block/side_obsidian.png");
+    private final ResourceLocation texture = new ResourceLocation("minecraft:textures/block/side_obsidian.png");
 
     public EssentializerTileEntityRender(TileEntityRendererDispatcher rendererDispatcherIn)
     {
@@ -54,11 +55,31 @@ public class EssentializerTileEntityRender extends TileEntityRenderer<Essentiali
 
             matrixStack.rotate(Vector3f.YP.rotationDegrees(angle1));
 
-            handle.get().render(bufferIn, RenderType.entityTranslucent(texture), matrixStack, combinedLightIn, 0xFFFFFFFF);
+            corner_handle.get().render(bufferIn, RenderType.entityTranslucent(texture), matrixStack, combinedLightIn, 0xFFFFFFFF);
 
             matrixStack.pop();
         }
         matrixStack.pop();
+
+        /*
+        matrixStack.push();
+        for (int i = 0; i < 4; i++)
+        {
+            matrixStack.push();
+
+            float angle3 = angle2 + 90 * i;
+            matrixStack.rotate(Vector3f.YP.rotationDegrees(angle3));
+            matrixStack.translate(0.6, 0, 0);
+            matrixStack.rotate(Vector3f.ZP.rotationDegrees(-45));
+
+            matrixStack.rotate(Vector3f.YP.rotationDegrees(angle1));
+
+            side_handle.get().render(bufferIn, RenderType.entityTranslucent(texture), matrixStack, combinedLightIn, 0xFFFFFFFF);
+
+            matrixStack.pop();
+        }
+        matrixStack.pop();
+         */
 
         ItemStack stack = te.getInventory().getStackInSlot(0);
         if (stack.getCount() > 0)
@@ -68,13 +89,12 @@ public class EssentializerTileEntityRender extends TileEntityRenderer<Essentiali
 
             matrixStack.push();
 
-            matrixStack.translate(0.5, 0.55 + bob2, 0.5);
+            matrixStack.translate(0.5, 0.45 + bob2, 0.5);
 
             matrixStack.rotate(Vector3f.YP.rotationDegrees(angle3));
-            matrixStack.rotate(Vector3f.XP.rotationDegrees(90));
 
-            //matrixStack.color(1f, 1f, 1f, 1f);
-            matrixStack.scale(0.35f, 0.35f, 0.35f);
+            float scale = 0.45f;
+            matrixStack.scale(scale, scale, scale);
 
             Minecraft mc = Minecraft.getInstance();
             mc.getItemRenderer().renderItem(stack, ItemCameraTransforms.TransformType.GROUND, combinedLightIn, combinedOverlayIn, matrixStack, bufferIn);

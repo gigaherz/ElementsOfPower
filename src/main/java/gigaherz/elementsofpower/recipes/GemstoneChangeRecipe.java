@@ -11,6 +11,7 @@ import net.minecraft.item.crafting.SpecialRecipeSerializer;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.registries.ObjectHolder;
 
 public class GemstoneChangeRecipe extends SpecialRecipe
 {
@@ -131,5 +132,6 @@ public class GemstoneChangeRecipe extends SpecialRecipe
         return SERIALIZER;
     }
 
-    public static final SpecialRecipeSerializer<GemstoneChangeRecipe> SERIALIZER = new SpecialRecipeSerializer<>(GemstoneChangeRecipe::new);
+    @ObjectHolder("elementsofpower:gemstone_change")
+    public static SpecialRecipeSerializer<GemstoneChangeRecipe> SERIALIZER;
 }

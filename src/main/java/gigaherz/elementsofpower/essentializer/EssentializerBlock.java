@@ -1,13 +1,12 @@
 package gigaherz.elementsofpower.essentializer;
 
+import gigaherz.elementsofpower.client.ColoredSmokeData;
 import gigaherz.elementsofpower.essentializer.gui.EssentializerContainer;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.SimpleNamedContainerProvider;
-import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
@@ -88,7 +87,7 @@ public class EssentializerBlock extends Block
         if (te instanceof EssentializerTileEntity)
         {
             EssentializerTileEntity essentializer = (EssentializerTileEntity) te;
-            if (essentializer.remainingToConvert != null)
+            if (!essentializer.remainingToConvert.isEmpty())
             {
                 double x = (double) pos.getX() + 0.5;
                 double y = (double) pos.getY() + (8.5 / 16.0);
@@ -96,18 +95,15 @@ public class EssentializerBlock extends Block
                 double rx = rand.nextDouble() * 0.2D - 0.1D;
                 double rz = rand.nextDouble() * 0.2D - 0.1D;
 
-                //FIXME: reimplement particle
-                //ParticleSmallCloud.spawn
-
                 int sides = rand.nextInt(16);
                 if ((sides & 1) != 0)
-                    Minecraft.getInstance().particles.addParticle(ParticleTypes.SMOKE, x + rx + 0.4, y, z + rz, 0.0D, 0.05D, 0.0D);
+                    worldIn.addParticle(ColoredSmokeData.withRandomColor(essentializer.remainingToConvert), x + rx + 0.4, y, z + rz, 0.0D, 0.05D, 0.0D);
                 if ((sides & 2) != 0)
-                    Minecraft.getInstance().particles.addParticle(ParticleTypes.SMOKE, x + rx - 0.4, y, z + rz, 0.0D, 0.05D, 0.0D);
+                    worldIn.addParticle(ColoredSmokeData.withRandomColor(essentializer.remainingToConvert), x + rx - 0.4, y, z + rz, 0.0D, 0.05D, 0.0D);
                 if ((sides & 4) != 0)
-                    Minecraft.getInstance().particles.addParticle(ParticleTypes.SMOKE, x + rx, y, z + rz + 0.4, 0.0D, 0.05D, 0.0D);
+                    worldIn.addParticle(ColoredSmokeData.withRandomColor(essentializer.remainingToConvert), x + rx, y, z + rz + 0.4, 0.0D, 0.05D, 0.0D);
                 if ((sides & 8) != 0)
-                    Minecraft.getInstance().particles.addParticle(ParticleTypes.SMOKE, x + rx, y, z + rz - 0.4, 0.0D, 0.05D, 0.0D);
+                    worldIn.addParticle(ColoredSmokeData.withRandomColor(essentializer.remainingToConvert), x + rx, y, z + rz - 0.4, 0.0D, 0.05D, 0.0D);
             }
         }
     }
