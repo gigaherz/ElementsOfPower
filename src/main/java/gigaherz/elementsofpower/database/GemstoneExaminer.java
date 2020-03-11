@@ -26,7 +26,7 @@ public class GemstoneExaminer
     public static final Tag<Item> GEM_AMETHYST = new ItemTags.Wrapper(ElementsOfPowerMod.location("gems/amethyst"));
     public static final Tag<Item> GEM_DIAMOND = new ItemTags.Wrapper(ElementsOfPowerMod.location("gems/diamond"));
 
-    private static final Map<Gemstone, Tag<Item>> GEMS = ImmutableMap.<Gemstone, Tag<Item>>builder()
+    public static final Map<Gemstone, Tag<Item>> GEMS = ImmutableMap.<Gemstone, Tag<Item>>builder()
             .put(Gemstone.RUBY, GEM_RUBY)
             .put(Gemstone.SAPPHIRE, GEM_SAPPHIRE)
             .put(Gemstone.CITRINE, GEM_CITRINE)

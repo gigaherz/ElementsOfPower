@@ -110,6 +110,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 //import gigaherz.elementsofpower.progression.DiscoveryHandler;
 
@@ -493,10 +494,31 @@ public class ElementsOfPowerMod
         {
             gen.addProvider(new Recipes(gen));
             gen.addProvider(new LootTables(gen));
+            gen.addProvider(new ItemTagGens(gen));
         }
         if (event.includeClient())
         {
             gen.addProvider(new BlockStates(gen, event));
+        }
+    }
+
+    private static class ItemTagGens extends ItemTagsProvider implements IDataProvider
+    {
+        public ItemTagGens(DataGenerator gen)
+        {
+            super(gen);
+        }
+
+        @Override
+        protected void registerTags()
+        {
+            GemstoneExaminer.GEMS.forEach((gem, tag) -> {
+                this.getBuilder(tag).add(gem.getTagItems()).build(tag.getId());
+            });
+
+            this.getBuilder(GemstoneExaminer.GEMSTONES).add(
+                    Arrays.stream(Gemstone.values()).flatMap(g -> Arrays.stream(g.getTagItems())).toArray(Item[]::new)
+            ).build(GemstoneExaminer.GEMSTONES.getId());
         }
     }
 

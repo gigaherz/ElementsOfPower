@@ -36,9 +36,9 @@ public class MultiVBORenderer implements Closeable
             Objects.requireNonNull(rt);
             Objects.requireNonNull(builder);
 
-            builder.finishDrawing();
-
             sortCaches.put(rt, builder.getVertexState());
+
+            builder.finishDrawing();
 
             VertexFormat fmt = rt.getVertexFormat();
             VertexBuffer vbo = new VertexBuffer(fmt);
@@ -65,8 +65,13 @@ public class MultiVBORenderer implements Closeable
             RenderType rt = kv.getKey();
             BufferBuilder.State state = kv.getValue();
             BufferBuilder builder = new BufferBuilder(BUFFER_SIZE);
+
+            builder.begin(rt.getGlMode(), rt.getVertexFormat());
+
             builder.setVertexState(state);
             builder.sortVertexData(x,y,z);
+
+            builder.finishDrawing();
 
             VertexBuffer vbo = buffers.get(rt);
             vbo.upload(builder);

@@ -2,6 +2,7 @@ package gigaherz.elementsofpower.analyzer;
 
 import gigaherz.elementsofpower.analyzer.gui.AnalyzerContainer;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.SimpleNamedContainerProvider;
 import net.minecraft.item.Item;
@@ -21,9 +22,23 @@ public class AnalyzerItem extends Item
         super(properties);
     }
 
+    // Grumbles at getSlotFor being client-only
+    public static int getSlotIndex(PlayerInventory inv, ItemStack stack) {
+        for(int i = 0; i < inv.mainInventory.size(); ++i) {
+            ItemStack stack2 = inv.mainInventory.get(i);
+            if (!inv.mainInventory.get(i).isEmpty()
+                    && stack.getItem() == stack2.getItem()
+                    && ItemStack.areItemStackTagsEqual(stack, stack2)) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
     private void openGui(ServerPlayerEntity playerIn, ItemStack heldItem)
     {
-        int slot = playerIn.inventory.getSlotFor(heldItem);
+        int slot = getSlotIndex(playerIn.inventory, heldItem);
         NetworkHooks.openGui(playerIn, new SimpleNamedContainerProvider((id, playerInventory, player) -> new AnalyzerContainer(id, playerInventory, slot),
                         new TranslationTextComponent("container.elementsofpower.analyzer")),
                 (packetBuffer) -> packetBuffer.writeInt(slot));

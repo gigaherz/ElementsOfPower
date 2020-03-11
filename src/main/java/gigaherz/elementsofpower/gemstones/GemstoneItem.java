@@ -160,7 +160,7 @@ public class GemstoneItem extends MagicContainerItem
     @Override
     public int getItemStackLimit(ItemStack stack)
     {
-        return getQuality(stack) != null ? 64 : 1;
+        return getQuality(stack) == null ? 64 : 1;
     }
 
     @OnlyIn(Dist.CLIENT)

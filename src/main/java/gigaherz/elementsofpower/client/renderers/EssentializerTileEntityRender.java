@@ -17,9 +17,8 @@ import net.minecraftforge.common.util.Lazy;
 public class EssentializerTileEntityRender extends TileEntityRenderer<EssentializerTileEntity>
 {
     private final Lazy<ModelHandle> corner_handle = Lazy.of(() -> ModelHandle.of("elementsofpower:models/block/essentializer_corner.obj") );
-    private final Lazy<ModelHandle> side_handle = Lazy.of(() -> ModelHandle.of("elementsofpower:models/block/essentializer_sides.obj") );
 
-    private final ResourceLocation texture = new ResourceLocation("minecraft:textures/block/side_obsidian.png");
+    private final ResourceLocation texture = new ResourceLocation("elementsofpower:textures/block/side_obsidian.png");
 
     public EssentializerTileEntityRender(TileEntityRendererDispatcher rendererDispatcherIn)
     {
