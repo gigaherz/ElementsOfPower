@@ -1,4 +1,4 @@
-package gigaherz.elementsofpower.client;
+package gigaherz.elementsofpower.essentializer;
 
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;

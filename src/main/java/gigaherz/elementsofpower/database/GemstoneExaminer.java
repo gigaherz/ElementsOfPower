@@ -62,13 +62,13 @@ public class GemstoneExaminer
     private static ItemStack setRandomQualityVariant(Gemstone target)
     {
         float rnd = rand.nextFloat();
-        if (rnd > 0.3f)
+        if (rnd >= 0.8f)
             return target.getItem().getStack(Quality.ROUGH);
-        if (rnd > 0.1f)
+        if (rnd >= 0.1f)
             return target.getItem().getStack(Quality.COMMON);
-        if (rnd > 0.01f)
+        if (rnd >= 0.01f)
             return target.getItem().getStack(Quality.SMOOTH);
-        if (rnd > 0.001f)
+        if (rnd >= 0.001f)
             return target.getItem().getStack(Quality.FLAWLESS);
 
         return target.getItem().getStack(Quality.PURE);

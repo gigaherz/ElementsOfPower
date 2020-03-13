@@ -1,6 +1,5 @@
 package gigaherz.elementsofpower.essentializer;
 
-import gigaherz.elementsofpower.client.ColoredSmokeData;
 import gigaherz.elementsofpower.essentializer.gui.EssentializerContainer;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
