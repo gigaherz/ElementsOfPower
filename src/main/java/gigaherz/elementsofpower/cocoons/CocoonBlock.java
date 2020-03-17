@@ -101,39 +101,6 @@ public class CocoonBlock extends Block implements IWaterLoggable
     }
 
     @Override
-    public void randomTick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random)
-    {
-        if (!worldIn.isRemote)
-        {
-            CocoonTileEntity te = (CocoonTileEntity) worldIn.getTileEntity(pos);
-
-            assert te != null;
-
-            if (!te.essenceContained.isEmpty())
-            {
-                MagicAmounts am = te.essenceContained;
-                for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-                {
-                    am = am.with(i, (float) Math.floor(am.get(i) * random.nextFloat()));
-                }
-
-                if (!am.isEmpty())
-                {
-                    EssenceEntity e = new EssenceEntity(worldIn, am);
-
-                    BlockPos p = pos.offset(worldIn.getBlockState(pos).get(FACING).getOpposite());
-
-                    e.setLocationAndAngles(p.getX(), p.getY(), p.getZ(), 0, 0);
-
-                    worldIn.addEntity(e);
-                }
-            }
-        }
-
-        super.randomTick(state, worldIn, pos, random);
-    }
-
-    @Override
     public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult rayTraceResult)
     {
         ItemStack heldItem = player.getHeldItem(hand);
@@ -156,4 +123,10 @@ public class CocoonBlock extends Block implements IWaterLoggable
         return super.onBlockActivated(state, worldIn, pos, player, hand, rayTraceResult);
     }
 
+    @Override
+    public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving)
+    {
+        if (state.getBlock() != newState.getBlock())
+            super.onReplaced(state, worldIn, pos, newState, isMoving);
+    }
 }

@@ -43,7 +43,7 @@ repositories {
     mavenLocal()
 }
 
-version = "0.8.6" +
+version = "0.8.7" +
         "-alpha"
 group = "gigaherz.elementsofpower" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "ElementsOfPower-1.15.2"

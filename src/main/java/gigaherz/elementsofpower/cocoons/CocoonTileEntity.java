@@ -1,6 +1,7 @@
 package gigaherz.elementsofpower.cocoons;
 
 import gigaherz.elementsofpower.database.MagicAmounts;
+import gigaherz.elementsofpower.entities.EssenceEntity;
 import gigaherz.elementsofpower.essentializer.gui.IMagicAmountContainer;
 import gigaherz.elementsofpower.items.MagicOrbItem;
 import net.minecraft.block.BlockState;
@@ -11,7 +12,11 @@ import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.registries.ObjectHolder;
+
+import java.util.Random;
 
 public class CocoonTileEntity extends TileEntity implements ITickableTileEntity, IMagicAmountContainer
 {
@@ -48,10 +53,45 @@ public class CocoonTileEntity extends TileEntity implements ITickableTileEntity,
         return compound;
     }
 
+    private static final int SPAWN_COOLDOWN = 400;
+    private static final int SPAWN_COOLDOWN_RANDOM = 200;
+    private int spawnLivingEssenceCooldown = SPAWN_COOLDOWN;
+
     @Override
     public void tick()
     {
+        if (world == null ||world.isRemote)
+            return;
 
+        if (spawnLivingEssenceCooldown > 0)
+        {
+            spawnLivingEssenceCooldown--;
+            return;
+        }
+
+        if (!essenceContained.isEmpty())
+        {
+            Random random = ((ServerWorld) world).rand;
+
+            MagicAmounts am = essenceContained;
+            for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+            {
+                am = am.with(i, (float) Math.floor(am.get(i) * random.nextFloat()));
+            }
+
+            if (!am.isEmpty())
+            {
+                EssenceEntity e = new EssenceEntity(world, am);
+
+                BlockPos p = pos.offset(getBlockState().get(CocoonBlock.FACING).getOpposite());
+
+                e.setLocationAndAngles(p.getX(), p.getY(), p.getZ(), 0, 0);
+
+                world.addEntity(e);
+            }
+
+            spawnLivingEssenceCooldown = SPAWN_COOLDOWN + random.nextInt(SPAWN_COOLDOWN_RANDOM);
+        }
     }
 
     public void addEssences(ItemStack stack)

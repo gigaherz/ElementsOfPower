@@ -185,7 +185,10 @@ public class EssenceEntity extends AmbientEntity
     @Override
     public void tick()
     {
+        this.noClip = true;
         super.tick();
+        this.noClip = false;
+        this.setNoGravity(true);
 
         int numEssences = 0;
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
@@ -231,6 +234,8 @@ public class EssenceEntity extends AmbientEntity
         }
     }
 
+    private PlayerEntity target = null;
+
     @Override
     protected void updateAITasks()
     {
@@ -243,7 +248,22 @@ public class EssenceEntity extends AmbientEntity
 
         double dp = Double.POSITIVE_INFINITY;
 
-        Entity entity = world.getClosestPlayer(this, 8.0D);
+        if (ticksExisted % 80 == 0)
+        {
+            if (target == null)
+            {
+                target = world.getClosestPlayer(this, 8.0D);
+            }
+            else
+            {
+                if (getDistance(target) > 12.0f)
+                {
+                    target = null;
+                }
+            }
+        }
+
+        final Entity entity = target;
         if (entity != null)
         {
             dp = getDistanceSq(entity);
@@ -528,7 +548,15 @@ public class EssenceEntity extends AmbientEntity
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount)
     {
+        if (source.isUnblockable() || source.getDamageType().equals(DamageSource.OUT_OF_WORLD.getDamageType()))
+            return super.attackEntityFrom(source, amount);
         return false;
+    }
+
+    @Override
+    public boolean canBreatheUnderwater()
+    {
+        return true;
     }
 
     @Override
