@@ -32,8 +32,10 @@ public enum Element
     public static Element byName(String name)
     {
         for (Element e : values())
+        {
             if (e.getName().equals(name))
                 return e;
+        }
         return null;
     }
 

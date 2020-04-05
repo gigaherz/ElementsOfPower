@@ -45,8 +45,8 @@ public class UpdateSpellSequence
         if (count > 0)
         {
             sequence = new ArrayList<>();
-            for(int i=0;i<count;i++)
-                sequence.add(Element.byName(buf.readString()));
+            for (int i = 0; i < count; i++)
+            { sequence.add(Element.byName(buf.readString())); }
         }
     }
 
@@ -57,8 +57,8 @@ public class UpdateSpellSequence
         if (sequence != null)
         {
             buf.writeVarInt(sequence.size());
-            for(Element e : sequence)
-                buf.writeString(e.getName());
+            for (Element e : sequence)
+            { buf.writeString(e.getName()); }
         }
         else
         {

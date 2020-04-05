@@ -5,9 +5,9 @@ import gigaherz.elementsofpower.capabilities.MagicContainerCapability;
 import gigaherz.elementsofpower.database.EssenceConversions;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.item.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -93,7 +93,7 @@ public class MagicTooltips
                 return;
             }
 
-            if(magic.isInfinite())
+            if (magic.isInfinite())
             {
                 for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
                 {

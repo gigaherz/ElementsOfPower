@@ -30,20 +30,20 @@ public enum Gemstone implements IStringSerializable, IItemProvider
             true, () -> ElementsOfPowerItems.AGATE_SPELLDUST, null), // brown
     QUARTZ(Element.LIGHT, "quartz", 0xFFFFFFFF,
             () -> ElementsOfPowerItems.QUARTZ, true, () -> Blocks.QUARTZ_BLOCK, () -> Blocks.NETHER_QUARTZ_ORE,
-            true, () -> ElementsOfPowerItems.QUARTZ_SPELLDUST, ()->Items.QUARTZ), // white
+            true, () -> ElementsOfPowerItems.QUARTZ_SPELLDUST, () -> Items.QUARTZ), // white
     SERENDIBITE(Element.DARKNESS, "serendibite", 0xFF0F0F0F,
             () -> ElementsOfPowerItems.SERENDIBITE, false, () -> ElementsOfPowerBlocks.SERENDIBITE_BLOCK, () -> ElementsOfPowerBlocks.SERENDIBITE_ORE,
             true, () -> ElementsOfPowerItems.SERENDIBITE_SPELLDUST, null), // black
     EMERALD(Element.LIFE, "emerald", 0xFF00FF00,
-            () -> ElementsOfPowerItems.EMERALD, true, ()->Blocks.EMERALD_BLOCK, ()->Blocks.EMERALD_ORE,
-            true, () -> ElementsOfPowerItems.EMERALD_SPELLDUST, ()->Items.EMERALD), // green
+            () -> ElementsOfPowerItems.EMERALD, true, () -> Blocks.EMERALD_BLOCK, () -> Blocks.EMERALD_ORE,
+            true, () -> ElementsOfPowerItems.EMERALD_SPELLDUST, () -> Items.EMERALD), // green
     AMETHYST(Element.DEATH, "amethyst", 0xFFAF00FF,
             () -> ElementsOfPowerItems.AMETHYST, false, () -> ElementsOfPowerBlocks.AMETHYST_BLOCK, () -> ElementsOfPowerBlocks.AMETHYST_ORE,
             true, () -> ElementsOfPowerItems.AMETHYST_SPELLDUST, null), // purple
 
     DIAMOND(null, "diamond", 0xFF7FFFCF,
-            () -> ElementsOfPowerItems.DIAMOND, true, ()->Blocks.DIAMOND_BLOCK, ()->Blocks.DIAMOND_ORE,
-            true, () -> ElementsOfPowerItems.DIAMOND_SPELLDUST, ()->Items.DIAMOND), // clear
+            () -> ElementsOfPowerItems.DIAMOND, true, () -> Blocks.DIAMOND_BLOCK, () -> Blocks.DIAMOND_ORE,
+            true, () -> ElementsOfPowerItems.DIAMOND_SPELLDUST, () -> Items.DIAMOND), // clear
 
     CREATIVITE(null, "creativite", 0xFF000000,
             () -> ElementsOfPowerItems.CREATIVITE, false, null, null,
@@ -149,9 +149,11 @@ public enum Gemstone implements IStringSerializable, IItemProvider
     @Nullable
     public static Gemstone byName(String name)
     {
-        for(Gemstone g : values())
+        for (Gemstone g : values())
+        {
             if (g.getName().equals(name))
                 return g;
+        }
         return null;
     }
 

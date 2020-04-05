@@ -1,10 +1,12 @@
 package gigaherz.elementsofpower.cocoons;
 
+import gigaherz.elementsofpower.capabilities.PlayerCombinedMagicContainers;
 import gigaherz.elementsofpower.database.MagicAmounts;
-import gigaherz.elementsofpower.entities.EssenceEntity;
 import gigaherz.elementsofpower.essentializer.gui.IMagicAmountContainer;
 import gigaherz.elementsofpower.items.MagicOrbItem;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
@@ -12,10 +14,11 @@ import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.registries.ObjectHolder;
 
+import java.util.List;
 import java.util.Random;
 
 public class CocoonTileEntity extends TileEntity implements ITickableTileEntity, IMagicAmountContainer
@@ -53,14 +56,14 @@ public class CocoonTileEntity extends TileEntity implements ITickableTileEntity,
         return compound;
     }
 
-    private static final int SPAWN_COOLDOWN = 400;
-    private static final int SPAWN_COOLDOWN_RANDOM = 200;
-    private int spawnLivingEssenceCooldown = SPAWN_COOLDOWN;
+    private static final int SPAWN_COOLDOWN = 100;
+    private static final int SPAWN_COOLDOWN_RANDOM = 100;
+    private int spawnLivingEssenceCooldown = SPAWN_COOLDOWN + (this.hashCode() % SPAWN_COOLDOWN_RANDOM);
 
     @Override
     public void tick()
     {
-        if (world == null ||world.isRemote)
+        if (world == null || world.isRemote)
             return;
 
         if (spawnLivingEssenceCooldown > 0)
@@ -73,21 +76,29 @@ public class CocoonTileEntity extends TileEntity implements ITickableTileEntity,
         {
             Random random = ((ServerWorld) world).rand;
 
-            MagicAmounts am = essenceContained;
-            for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+            List<PlayerEntity> players = world.getEntitiesWithinAABB(ServerPlayerEntity.class, new AxisAlignedBB(pos).expand(8, 8, 8),
+                    player -> player.getCapability(PlayerCombinedMagicContainers.CAPABILITY).isPresent());
+
+            if (players.size() > 0)
             {
-                am = am.with(i, (float) Math.floor(am.get(i) * random.nextFloat()));
-            }
+                MagicAmounts am = essenceContained;
+                for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+                {
+                    am = am.with(i, (float) Math.floor(essenceContained.get(i) * random.nextFloat()));
+                }
 
-            if (!am.isEmpty())
-            {
-                EssenceEntity e = new EssenceEntity(world, am);
-
-                BlockPos p = pos.offset(getBlockState().get(CocoonBlock.FACING).getOpposite());
-
-                e.setLocationAndAngles(p.getX(), p.getY(), p.getZ(), 0, 0);
-
-                world.addEntity(e);
+                if (!am.isEmpty())
+                {
+                    MagicAmounts[] refRemaining = new MagicAmounts[]{am};
+                    for (PlayerEntity e : players)
+                    {
+                        if (e.getCapability(PlayerCombinedMagicContainers.CAPABILITY).map(magic -> {
+                            refRemaining[0] = magic.addMagic(refRemaining[0]);
+                            return refRemaining[0].isEmpty();
+                        }).orElse(false))
+                            break;
+                    }
+                }
             }
 
             spawnLivingEssenceCooldown = SPAWN_COOLDOWN + random.nextInt(SPAWN_COOLDOWN_RANDOM);
@@ -96,7 +107,7 @@ public class CocoonTileEntity extends TileEntity implements ITickableTileEntity,
 
     public void addEssences(ItemStack stack)
     {
-        essenceContained = essenceContained.add(((MagicOrbItem)stack.getItem()).getElement(), 1);
+        essenceContained = essenceContained.add(((MagicOrbItem) stack.getItem()).getElement(), 1);
 
         BlockState state = world.getBlockState(pos);
         world.notifyBlockUpdate(pos, state, state, 3);

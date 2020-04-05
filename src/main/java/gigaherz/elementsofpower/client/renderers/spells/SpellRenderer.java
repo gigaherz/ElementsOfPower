@@ -12,7 +12,6 @@ import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
-import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.common.util.NonNullLazy;
 
 import javax.annotation.Nullable;

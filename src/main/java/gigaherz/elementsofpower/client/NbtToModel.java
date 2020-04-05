@@ -6,7 +6,6 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
-import joptsimple.internal.Strings;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -14,8 +13,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.IntNBT;
-import net.minecraft.nbt.StringNBT;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.Direction;
 import net.minecraft.util.JSONUtils;
@@ -54,8 +51,8 @@ public class NbtToModel implements IModelGeometry<NbtToModel>
     public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
     {
         Set<Material> materials = new HashSet<>();
-        for(BlockModel model : modelMap.values())
-            materials.addAll(model.getTextures(modelGetter, missingTextureErrors));
+        for (BlockModel model : modelMap.values())
+        { materials.addAll(model.getTextures(modelGetter, missingTextureErrors)); }
         return materials;
     }
 
@@ -151,7 +148,7 @@ public class NbtToModel implements IModelGeometry<NbtToModel>
             String key = JSONUtils.getString(modelContents, "tag");
             JsonObject obj = JSONUtils.getJsonObject(modelContents, "values");
             ImmutableMap.Builder<String, BlockModel> builder = ImmutableMap.<String, BlockModel>builder();
-            for(Map.Entry<String, JsonElement> kv : obj.entrySet())
+            for (Map.Entry<String, JsonElement> kv : obj.entrySet())
             {
                 builder.put(kv.getKey(), deserializationContext.deserialize(kv.getValue(), BlockModel.class));
             }

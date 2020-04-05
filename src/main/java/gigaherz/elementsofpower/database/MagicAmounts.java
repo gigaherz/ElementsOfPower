@@ -4,9 +4,9 @@ import com.google.gson.*;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.client.MagicTooltips;
 import gigaherz.elementsofpower.spells.Element;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.util.Constants;
@@ -439,7 +439,7 @@ public class MagicAmounts implements INBTSerializable<CompoundNBT>
     @Override
     public boolean equals(Object obj)
     {
-        return obj instanceof MagicAmounts && equals((MagicAmounts)obj);
+        return obj instanceof MagicAmounts && equals((MagicAmounts) obj);
     }
 
     @Override

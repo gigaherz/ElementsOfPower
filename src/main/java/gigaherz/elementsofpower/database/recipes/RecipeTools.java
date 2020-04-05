@@ -30,7 +30,8 @@ public class RecipeTools
         return p.itemSources;
     }
 
-    public static class ItemSource {
+    public static class ItemSource
+    {
         public int numProduced;
         public final Set<Item> allIntermediates = new HashSet<>();
         public final List<ItemStack> sources = new ArrayList<>();
@@ -82,14 +83,19 @@ public class RecipeTools
 
             if (output.getCount() == 0)
             {
-                ElementsOfPowerMod.LOGGER.warn("Recipe with output '" + output + "' has stack size 0. This recipe will be ignored.");
+                ElementsOfPowerMod.LOGGER.debug("Recipe with output '" + output + "' has stack size 0. This recipe will be ignored.");
                 return;
             }
 
             Item item = output.getItem();
+            if (itemSources.containsKey(item))
+            {
+                return;
+            }
+
             if (EssenceConversions.SERVER.itemHasEssence(item))
             {
-                ElementsOfPowerMod.LOGGER.warn("Recipe with output '" + output + "' results in item with explicitly-set values. This recipe will be ignored.");
+                ElementsOfPowerMod.LOGGER.debug("Recipe with output '" + output + "' results in item with explicitly-set values. This recipe will be ignored.");
                 return;
             }
 
@@ -99,16 +105,10 @@ public class RecipeTools
                 {
                     if (s.getItem() == item)
                     {
-                        ElementsOfPowerMod.LOGGER.warn("Recipe with output '" + output + "' uses itself as an input. This recipe will be ignored.");
+                        ElementsOfPowerMod.LOGGER.debug("Recipe with output '" + output + "' uses itself as an input. This recipe will be ignored.");
                         return;
                     }
                 }
-            }
-
-            if (itemSources.containsKey(item))
-            {
-                ElementsOfPowerMod.LOGGER.warn("Recipe with output '" + output + "', results in item that has already been seen in another recipe. This recipe will be ignored.");
-                return;
             }
 
             ItemSource source1 = reduceItemsList(item, recipe.getRecipeInputs(), output.getCount());

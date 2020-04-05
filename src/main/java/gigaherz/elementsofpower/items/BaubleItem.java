@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.items;
 
-import gigaherz.elementsofpower.capabilities.MagicContainerCapability;
 import gigaherz.elementsofpower.capabilities.IMagicContainer;
+import gigaherz.elementsofpower.capabilities.MagicContainerCapability;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.gemstones.Gemstone;
 import gigaherz.elementsofpower.gemstones.Quality;
@@ -40,7 +40,8 @@ public class BaubleItem extends GemContainerItem
             MAX_TRANSFER_TICK * 25
     };
 
-    static {
+    static
+    {
         assert TRANSFER_RATES.length == Quality.values().length;
     }
 
@@ -141,7 +142,7 @@ public class BaubleItem extends GemContainerItem
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn)
     {
-        if (worldIn.isRemote ||!playerIn.isShiftKeyDown())
+        if (worldIn.isRemote || !playerIn.isShiftKeyDown())
             return super.onItemRightClick(worldIn, playerIn, handIn);
 
         ItemStack stack = playerIn.getHeldItem(handIn);
@@ -155,7 +156,7 @@ public class BaubleItem extends GemContainerItem
 
         TransferMode oldValue = getTransferMode(stack);
 
-        TransferMode newValue = TransferMode.values[(oldValue.ordinal()+1)%TransferMode.values.length];
+        TransferMode newValue = TransferMode.values[(oldValue.ordinal() + 1) % TransferMode.values.length];
 
         tag.putByte("Active", (byte) newValue.ordinal());
 
@@ -203,7 +204,7 @@ public class BaubleItem extends GemContainerItem
 
         CompoundNBT tag = stack.getTag();
         if (tag != null && tag.contains("Active", Constants.NBT.TAG_BYTE))
-            return TransferMode.values[tag.getByte("Active")%TransferMode.values.length];
+            return TransferMode.values[tag.getByte("Active") % TransferMode.values.length];
         return TransferMode.PASSIVE;
     }
 
@@ -243,7 +244,6 @@ public class BaubleItem extends GemContainerItem
 
             doTransfer(thisStack, magic, available, slotReference);
         });
-
     }
 
     private void doTransfer(ItemStack thisStack, IMagicContainer thisMagic,

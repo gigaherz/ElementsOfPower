@@ -18,7 +18,8 @@ public class ElementsOfPowerItems
 {
     @SuppressWarnings("ConstantConditions")
     @Nonnull
-    private static <T extends Item> T toBeInitialized() {
+    private static <T extends Item> T toBeInitialized()
+    {
         return null;
     }
 

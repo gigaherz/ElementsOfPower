@@ -4,7 +4,6 @@ import com.google.common.collect.Maps;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
-import gigaherz.elementsofpower.client.StackRenderingHelper;
 import gigaherz.elementsofpower.client.renderers.spells.BeamSpellRenderer;
 import gigaherz.elementsofpower.client.renderers.spells.ConeSpellRenderer;
 import gigaherz.elementsofpower.client.renderers.spells.SpellRenderer;
@@ -15,15 +14,8 @@ import gigaherz.elementsofpower.spells.SpellcastEntityData;
 import gigaherz.elementsofpower.spells.shapes.SpellShape;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.ItemModelMesher;
-import net.minecraft.client.renderer.Matrix4f;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderPlayerEvent;
@@ -110,7 +102,7 @@ public class SpellRenderingHandler
 
                     off = sideVector.scale(0.4).add(lookVector.scale(-0.25));
                 }
-                off = off.add(0, player.getEyeHeight(),0);
+                off = off.add(0, player.getEyeHeight(), 0);
 
                 MatrixStack stack = event.getMatrixStack();
 

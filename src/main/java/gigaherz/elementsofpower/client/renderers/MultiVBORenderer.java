@@ -2,7 +2,6 @@ package gigaherz.elementsofpower.client.renderers;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import gigaherz.elementsofpower.ElementsOfPowerMod;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.Matrix4f;
@@ -17,7 +16,7 @@ import java.util.function.Consumer;
 
 public class MultiVBORenderer implements Closeable
 {
-    private static final int BUFFER_SIZE = 2*1024*1024;
+    private static final int BUFFER_SIZE = 2 * 1024 * 1024;
 
     public static MultiVBORenderer of(Consumer<IRenderTypeBuffer> vertexProducer)
     {
@@ -61,7 +60,8 @@ public class MultiVBORenderer implements Closeable
 
     public void sort(float x, float y, float z)
     {
-        for (Map.Entry<RenderType, BufferBuilder.State> kv : sortCaches.entrySet()) {
+        for (Map.Entry<RenderType, BufferBuilder.State> kv : sortCaches.entrySet())
+        {
             RenderType rt = kv.getKey();
             BufferBuilder.State state = kv.getValue();
             BufferBuilder builder = new BufferBuilder(BUFFER_SIZE);
@@ -69,7 +69,7 @@ public class MultiVBORenderer implements Closeable
             builder.begin(rt.getGlMode(), rt.getVertexFormat());
 
             builder.setVertexState(state);
-            builder.sortVertexData(x,y,z);
+            builder.sortVertexData(x, y, z);
 
             builder.finishDrawing();
 
@@ -80,7 +80,7 @@ public class MultiVBORenderer implements Closeable
 
     public void render(Matrix4f matrix)
     {
-        buffers.entrySet().forEach(kv ->  {
+        buffers.entrySet().forEach(kv -> {
             RenderType rt = kv.getKey();
             VertexBuffer vbo = kv.getValue();
             VertexFormat fmt = rt.getVertexFormat();

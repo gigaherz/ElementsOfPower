@@ -2,9 +2,9 @@ package gigaherz.elementsofpower.client;
 
 import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.database.MagicAmounts;
-import gigaherz.elementsofpower.spells.Element;
 import gigaherz.elementsofpower.items.WandItem;
 import gigaherz.elementsofpower.network.UpdateSpellSequence;
+import gigaherz.elementsofpower.spells.Element;
 import gigaherz.elementsofpower.spells.SpellManager;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.client.GameSettings;
@@ -15,7 +15,6 @@ import net.minecraft.client.util.InputMappings;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
-import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.settings.IKeyConflictContext;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
@@ -118,7 +117,7 @@ public class WandUseManager
         {
             String translationKey = "key.elementsofpower.spellkey." + Element.values[i].getName();
             ClientRegistry.registerKeyBinding(spellKeys[i] =
-                    new KeyBinding(translationKey, new OnUseContext(), InputMappings.Type.SCANCODE, defaultKeys[i], "key.elementsofpower.category"));
+                    new KeyBinding(translationKey, new OnUseContext(), InputMappings.Type.KEYSYM, defaultKeys[i], "key.elementsofpower.category"));
 
             s.keyBindsHotbar[i].setKeyConflictContext(new VanillaHotbarResolverContext(s.keyBindsHotbar[i].getKeyConflictContext()));
         }
@@ -207,7 +206,7 @@ public class WandUseManager
             }
         }
 
-        if(anyChanged)
+        if (anyChanged)
         {
             Spellcast temp = SpellManager.makeSpell(sequence);
             failedSequence = (temp == null);

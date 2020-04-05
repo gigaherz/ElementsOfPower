@@ -3,10 +3,11 @@ package gigaherz.elementsofpower;
 import gigaherz.elementsofpower.cocoons.CocoonBlock;
 import gigaherz.elementsofpower.essentializer.EssentializerBlock;
 import gigaherz.elementsofpower.gemstones.GemstoneBlock;
+import gigaherz.elementsofpower.gemstones.GemstoneOreBlock;
 import gigaherz.elementsofpower.spells.blocks.CushionBlock;
 import gigaherz.elementsofpower.spells.blocks.DustBlock;
-import gigaherz.elementsofpower.spells.blocks.MistBlock;
 import gigaherz.elementsofpower.spells.blocks.LightBlock;
+import gigaherz.elementsofpower.spells.blocks.MistBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
@@ -19,7 +20,8 @@ public class ElementsOfPowerBlocks
 {
     @SuppressWarnings("ConstantConditions")
     @Nonnull
-    private static <T extends Block> T toBeInitialized() {
+    private static <T extends Block> T toBeInitialized()
+    {
         return null;
     }
 
@@ -38,12 +40,12 @@ public class ElementsOfPowerBlocks
     public static final CocoonBlock LIFE_COCOON = toBeInitialized();
     public static final CocoonBlock DEATH_COCOON = toBeInitialized();
 
-    public static final GemstoneBlock RUBY_ORE = toBeInitialized();
-    public static final GemstoneBlock SAPPHIRE_ORE = toBeInitialized();
-    public static final GemstoneBlock CITRINE_ORE = toBeInitialized();
-    public static final GemstoneBlock AGATE_ORE = toBeInitialized();
-    public static final GemstoneBlock SERENDIBITE_ORE = toBeInitialized();
-    public static final GemstoneBlock AMETHYST_ORE = toBeInitialized();
+    public static final GemstoneOreBlock RUBY_ORE = toBeInitialized();
+    public static final GemstoneOreBlock SAPPHIRE_ORE = toBeInitialized();
+    public static final GemstoneOreBlock CITRINE_ORE = toBeInitialized();
+    public static final GemstoneOreBlock AGATE_ORE = toBeInitialized();
+    public static final GemstoneOreBlock SERENDIBITE_ORE = toBeInitialized();
+    public static final GemstoneOreBlock AMETHYST_ORE = toBeInitialized();
 
     public static final GemstoneBlock RUBY_BLOCK = toBeInitialized();
     public static final GemstoneBlock SAPPHIRE_BLOCK = toBeInitialized();

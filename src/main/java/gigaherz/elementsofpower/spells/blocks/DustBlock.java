@@ -25,12 +25,14 @@ public class DustBlock extends Block
     }
 
     @Override
-    public boolean causesSuffocation(BlockState state, IBlockReader worldIn, BlockPos pos) {
+    public boolean causesSuffocation(BlockState state, IBlockReader worldIn, BlockPos pos)
+    {
         return true;
     }
 
     @Override
-    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
+    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos)
+    {
         return false;
     }
 

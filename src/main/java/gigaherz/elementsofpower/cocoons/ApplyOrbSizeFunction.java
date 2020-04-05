@@ -1,7 +1,10 @@
 package gigaherz.elementsofpower.cocoons;
 
 import com.google.common.collect.Maps;
-import com.google.gson.*;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.essentializer.gui.IMagicAmountContainer;
@@ -16,7 +19,6 @@ import net.minecraft.world.storage.loot.LootContext;
 import net.minecraft.world.storage.loot.LootFunction;
 import net.minecraft.world.storage.loot.LootParameters;
 import net.minecraft.world.storage.loot.conditions.ILootCondition;
-import net.minecraft.world.storage.loot.functions.ILootFunction;
 
 import java.util.Map;
 import java.util.Objects;
@@ -40,12 +42,12 @@ public class ApplyOrbSizeFunction extends LootFunction
         if (!(te instanceof IMagicAmountContainer))
             return stack;
 
-        MagicAmounts am = ((IMagicAmountContainer)te).getContainedMagic();
+        MagicAmounts am = ((IMagicAmountContainer) te).getContainedMagic();
         Random rand = context.getRandom();
         ItemStack tool = Objects.requireNonNull(context.get(LootParameters.TOOL));
 
         float a = 0;
-        for(int i=0;i<8;i++)
+        for (int i = 0; i < 8; i++)
         {
             a += am.get(i) * factors[i];
         }
@@ -57,7 +59,7 @@ public class ApplyOrbSizeFunction extends LootFunction
         if (whole > 0)
         {
             int fortune = EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, tool);
-            whole = Math.round((float)Math.pow(rand.nextFloat(), 1 / (fortune + 1.0f)) * whole);
+            whole = Math.round((float) Math.pow(rand.nextFloat(), 1 / (fortune + 1.0f)) * whole);
         }
 
         stack.setCount(whole);
@@ -99,7 +101,7 @@ public class ApplyOrbSizeFunction extends LootFunction
         public ApplyOrbSizeFunction build()
         {
             float[] values = new float[8];
-            for(Map.Entry<Element, Float> kv : factors.entrySet())
+            for (Map.Entry<Element, Float> kv : factors.entrySet())
             {
                 values[kv.getKey().ordinal()] = kv.getValue();
             }
@@ -121,7 +123,7 @@ public class ApplyOrbSizeFunction extends LootFunction
         {
             Builder b = builder();
             JsonObject elements = JSONUtils.getJsonObject(object, "factors");
-            for(Map.Entry<String, JsonElement> kv : elements.entrySet())
+            for (Map.Entry<String, JsonElement> kv : elements.entrySet())
             {
                 String elementName = kv.getKey();
                 Element e = Element.byName(elementName);
@@ -138,9 +140,9 @@ public class ApplyOrbSizeFunction extends LootFunction
         {
             super.serialize(object, lootFunction, serializationContext);
             JsonObject factors = new JsonObject();
-            for(int i=0;i<8;i++)
+            for (int i = 0; i < 8; i++)
             {
-                if (!MathHelper.epsilonEquals( lootFunction.factors[i], 0))
+                if (!MathHelper.epsilonEquals(lootFunction.factors[i], 0))
                     factors.addProperty(Element.values[i].getName(), lootFunction.factors[i]);
             }
             object.add("factors", factors);

@@ -3,8 +3,8 @@ package gigaherz.elementsofpower.spells.effects;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.Entity;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.fluid.LavaFluid;
 import net.minecraft.particles.ParticleTypes;
@@ -81,7 +81,7 @@ public class LavaEffect extends SpellEffect
     {
         if (mop != null && mop.getType() == RayTraceResult.Type.BLOCK)
         {
-            blockPos = blockPos.offset(((BlockRayTraceResult)mop).getFace());
+            blockPos = blockPos.offset(((BlockRayTraceResult) mop).getFace());
             currentState = cast.world.getBlockState(blockPos);
         }
 

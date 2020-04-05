@@ -37,11 +37,11 @@ public class BeamShape extends SpellShape
         {
             if (mop.getType() == RayTraceResult.Type.ENTITY)
             {
-                cast.getEffect().processDirectHit(cast, ((EntityRayTraceResult)mop).getEntity(), mop.getHitVec());
+                cast.getEffect().processDirectHit(cast, ((EntityRayTraceResult) mop).getEntity(), mop.getHitVec());
             }
             else if (mop.getType() == RayTraceResult.Type.BLOCK)
             {
-                BlockPos pos = ((BlockRayTraceResult)mop).getPos();
+                BlockPos pos = ((BlockRayTraceResult) mop).getPos();
                 BlockState state = cast.world.getBlockState(pos);
                 if (cast.getRadiating() > 0)
                 {
@@ -62,7 +62,7 @@ public class BeamShape extends SpellShape
 
         if (trace1.getType() == RayTraceResult.Type.ENTITY)
         {
-            effect.processDirectHit(cast, ((EntityRayTraceResult)trace1).getEntity(), trace1.getHitVec());
+            effect.processDirectHit(cast, ((EntityRayTraceResult) trace1).getEntity(), trace1.getHitVec());
         }
 
         effect.spawnBallParticles(cast, trace1);

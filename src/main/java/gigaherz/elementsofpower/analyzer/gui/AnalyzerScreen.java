@@ -2,8 +2,8 @@ package gigaherz.elementsofpower.analyzer.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
-import gigaherz.elementsofpower.capabilities.MagicContainerCapability;
 import gigaherz.elementsofpower.capabilities.IMagicContainer;
+import gigaherz.elementsofpower.capabilities.MagicContainerCapability;
 import gigaherz.elementsofpower.client.MagicTooltips;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.gemstones.Gemstone;

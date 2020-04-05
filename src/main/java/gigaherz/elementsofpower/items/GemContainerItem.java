@@ -2,29 +2,19 @@ package gigaherz.elementsofpower.items;
 
 import gigaherz.elementsofpower.capabilities.MagicContainerCapability;
 import gigaherz.elementsofpower.database.MagicAmounts;
-import gigaherz.elementsofpower.spells.Element;
 import gigaherz.elementsofpower.gemstones.Gemstone;
 import gigaherz.elementsofpower.gemstones.GemstoneItem;
 import gigaherz.elementsofpower.gemstones.Quality;
-import gigaherz.elementsofpower.network.UpdateSpellSequence;
-import gigaherz.elementsofpower.spells.SpellManager;
-import gigaherz.elementsofpower.spells.Spellcast;
-import gigaherz.elementsofpower.spells.SpellcastEntityData;
-import net.minecraft.entity.player.PlayerEntity;
+import gigaherz.elementsofpower.spells.Element;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Rarity;
 import net.minecraft.item.UseAction;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nullable;
-import java.util.List;
 
 public abstract class GemContainerItem extends MagicContainerItem
 {
@@ -279,5 +269,4 @@ public abstract class GemContainerItem extends MagicContainerItem
     {
         return UseAction.BOW;
     }
-
 }

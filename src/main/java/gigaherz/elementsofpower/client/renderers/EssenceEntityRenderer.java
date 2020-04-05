@@ -8,7 +8,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.common.util.NonNullLazy;
 
 public class EssenceEntityRenderer extends EntityRenderer<EssenceEntity>
@@ -41,7 +40,7 @@ public class EssenceEntityRenderer extends EntityRenderer<EssenceEntity>
         for (int i = 0; i <= 8; i++)
         {
             float tt = (i + cycle) / 9.0f;
-            float subScale = EssenceEntity.lerp(0.01f, 1.0f, tt);
+            float subScale = EssenceEntity.lerp(0.01f, 1.0f, tt) * 10;
 
             float rtt = (1 - tt);
             int alpha = (i == 0 ? 255 : (int) (rtt * 255));

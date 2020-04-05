@@ -8,9 +8,11 @@ buildscript {
         }
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.0.163+pull-657', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.0.168', changing: true
     }
 }
+
+System.out.println(System.getProperty("java.version"))
 
 apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
@@ -43,8 +45,7 @@ repositories {
     mavenLocal()
 }
 
-version = "0.8.7" +
-        "-alpha"
+version = "0.8.9-alpha"
 group = "gigaherz.elementsofpower" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "ElementsOfPower-1.15.2"
 
@@ -108,7 +109,7 @@ minecraft {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.15.2-31.1.18'
+    minecraft 'net.minecraftforge:forge:1.15.2-31.1.25'
 
     compileOnly fg.deobf("mezz.jei:jei-1.15.2:6.0.0.2:api")
     runtimeOnly fg.deobf("mezz.jei:jei-1.15.2:6.0.0.2")
@@ -118,8 +119,6 @@ dependencies {
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios:FORGE-1.15.2-2.0-beta2")
     compileOnly fg.deobf("top.theillusivec4.curios:curios:FORGE-1.15.2-2.0-beta2:api")
 }
-
-System.out.println("Version: " + System.getProperty("java.version"));
 
 jar {
     manifest {

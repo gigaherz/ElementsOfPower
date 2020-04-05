@@ -1,25 +1,12 @@
 package gigaherz.elementsofpower.client.renderers.spells;
 
-import com.google.common.collect.Maps;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.RenderState;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
-import org.lwjgl.opengl.GL11;
-
-import javax.annotation.Nullable;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 
 public class SphereSpellRenderer extends SpellRenderer
 {
@@ -51,7 +38,7 @@ public class SphereSpellRenderer extends SpellRenderer
 
         matrixStackIn.push();
 
-        matrixStackIn.translate( (float) (offset.x), (float) (offset.y), (float) (offset.z));
+        matrixStackIn.translate((float) (offset.x), (float) (offset.y), (float) (offset.z));
         matrixStackIn.scale(scale, scale, scale);
 
         modelSphereInside.get().render(bufferIn, getSphereRenderType(cast), matrixStackIn, 0x00F000F0, color);

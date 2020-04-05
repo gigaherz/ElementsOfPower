@@ -4,7 +4,10 @@ import com.google.common.collect.Lists;
 import gigaherz.elementsofpower.gemstones.Gemstone;
 import gigaherz.elementsofpower.spells.Element;
 import net.minecraft.block.Blocks;
-import net.minecraft.item.*;
+import net.minecraft.item.DyeColor;
+import net.minecraft.item.DyeItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.Items;
 import net.minecraft.util.IItemProvider;
 
 import java.util.ArrayList;
@@ -173,10 +176,10 @@ public class StockConversions
         essences(Items.BLAZE_ROD).fire(12).life(8);
 
         essences(
-            Items.COD,
-            Items.SALMON,
-            Items.TROPICAL_FISH,
-            Items.PUFFERFISH
+                Items.COD,
+                Items.SALMON,
+                Items.TROPICAL_FISH,
+                Items.PUFFERFISH
         ).life(4).water(2);
 
         essences(Items.DIAMOND).earth(128);

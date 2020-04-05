@@ -26,7 +26,7 @@ public class BallEntity extends ThrowableEntity implements IEntityAdditionalSpaw
 {
     @ObjectHolder("elementsofpower:ball")
     public static EntityType<BallEntity> TYPE;
-    
+
     Spellcast spellcast;
 
     private static final DataParameter<CompoundNBT> SEQ = EntityDataManager.createKey(BallEntity.class, DataSerializers.COMPOUND_NBT);

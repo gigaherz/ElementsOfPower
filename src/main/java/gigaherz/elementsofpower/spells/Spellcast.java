@@ -1,6 +1,5 @@
 package gigaherz.elementsofpower.spells;
 
-import com.google.common.base.Predicates;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.spells.effects.SpellEffect;
 import gigaherz.elementsofpower.spells.shapes.SpellShape;
@@ -10,12 +9,9 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
 import net.minecraft.particles.IParticleData;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.Direction;
 import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.math.*;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.INBTSerializable;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -203,7 +199,7 @@ public class Spellcast
                 player.getBoundingBox()
                         .expand(direction.x, direction.y, direction.z)
                         .grow(1.0, 1.0, 1.0),
-                            entity -> EntityPredicates.NOT_SPECTATING.test(entity) && entity.canBeCollidedWith());
+                entity -> EntityPredicates.NOT_SPECTATING.test(entity) && entity.canBeCollidedWith());
 
         double distanceToEntity = distance;
         Entity pointedEntity = null;
@@ -339,7 +335,7 @@ public class Spellcast
     public ListNBT getSequenceNBT()
     {
         ListNBT list = new ListNBT();
-        for(Element e : sequence)
+        for (Element e : sequence)
         {
             list.add(StringNBT.valueOf(e.getName()));
         }

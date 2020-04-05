@@ -65,8 +65,8 @@ public class SpellManager
     public static ListNBT sequenceToList(List<Element> sequence)
     {
         ListNBT list = new ListNBT();
-        for(Element e : sequence)
-            list.add(StringNBT.valueOf(e.getName()));
+        for (Element e : sequence)
+        { list.add(StringNBT.valueOf(e.getName())); }
         return list;
     }
 
@@ -110,7 +110,7 @@ public class SpellManager
                     return null;
             }
 
-            switch(spellState)
+            switch (spellState)
             {
                 case PRIMARY:
                     increasePrimary();
@@ -231,7 +231,7 @@ public class SpellManager
             switch (modifier)
             {
                 case EARTH:
-                    switch(base)
+                    switch (base)
                     {
                         case FLAME:
                             return Effect.LAVA;
@@ -323,18 +323,18 @@ public class SpellManager
         private static final Map<Character, Element> elements = Maps.newHashMap();
         private static final EnumMap<Effect, SpellEffect> effects = Maps.newEnumMap(Effect.class);
         private static final EnumMap<Shape, SpellShape> shapes = Maps.newEnumMap(Shape.class);
-        private static final EnumMap<SpellState, List<Pair<BiPredicate<SpellBuilder, Element>,BiPredicate<SpellBuilder, Element>>>> transitions = Maps.newEnumMap(SpellState.class);
+        private static final EnumMap<SpellState, List<Pair<BiPredicate<SpellBuilder, Element>, BiPredicate<SpellBuilder, Element>>>> transitions = Maps.newEnumMap(SpellState.class);
 
         static
         {
-            elements.put('F',Element.FIRE);
-            elements.put('W',Element.WATER);
-            elements.put('A',Element.AIR);
-            elements.put('E',Element.EARTH);
-            elements.put('G',Element.LIGHT);
-            elements.put('K',Element.DARKNESS);
-            elements.put('L',Element.LIFE);
-            elements.put('D',Element.DEATH);
+            elements.put('F', Element.FIRE);
+            elements.put('W', Element.WATER);
+            elements.put('A', Element.AIR);
+            elements.put('E', Element.EARTH);
+            elements.put('G', Element.LIGHT);
+            elements.put('K', Element.DARKNESS);
+            elements.put('L', Element.LIFE);
+            elements.put('D', Element.DEATH);
 
             shapes.put(Shape.SPHERE, SPHERE);
             shapes.put(Shape.BALL, BALL);
@@ -388,9 +388,10 @@ public class SpellManager
 
         private static boolean processTransition(SpellBuilder b, Element e)
         {
-            for(Pair<BiPredicate<SpellBuilder, Element>,BiPredicate<SpellBuilder, Element>> item : transitions.computeIfAbsent(b.spellState, state -> Lists.newArrayList(
+            for (Pair<BiPredicate<SpellBuilder, Element>, BiPredicate<SpellBuilder, Element>> item : transitions.computeIfAbsent(b.spellState, state -> Lists.newArrayList(
                     unconditional(makeTransition(logUnimplementedState(), SpellState.INVALID))
-            ))) {
+            )))
+            {
                 if (item.getLeft().test(b, e))
                 {
                     return item.getRight().test(b, e);
@@ -400,20 +401,20 @@ public class SpellManager
             return b.invalid();
         }
 
-        private static Pair<BiPredicate<SpellBuilder, Element>,BiPredicate<SpellBuilder, Element>> conditional(BiPredicate<SpellBuilder, Element> condition, BiPredicate<SpellBuilder, Element> transition)
+        private static Pair<BiPredicate<SpellBuilder, Element>, BiPredicate<SpellBuilder, Element>> conditional(BiPredicate<SpellBuilder, Element> condition, BiPredicate<SpellBuilder, Element> transition)
         {
             return Pair.of(condition, transition);
         }
 
-        private static Pair<BiPredicate<SpellBuilder, Element>,BiPredicate<SpellBuilder, Element>> unconditional(BiPredicate<SpellBuilder, Element> transition)
+        private static Pair<BiPredicate<SpellBuilder, Element>, BiPredicate<SpellBuilder, Element>> unconditional(BiPredicate<SpellBuilder, Element> transition)
         {
-            return Pair.of((b,e) -> true, transition);
+            return Pair.of((b, e) -> true, transition);
         }
 
         private static BiPredicate<SpellBuilder, Element> makeTransition(BiPredicate<SpellBuilder, Element> action, SpellState next)
         {
-            return (b,e) -> {
-                if (!action.test(b,e))
+            return (b, e) -> {
+                if (!action.test(b, e))
                     return false;
 
                 return b.transition(e, next);
@@ -422,8 +423,8 @@ public class SpellManager
 
         private static BiPredicate<SpellBuilder, Element> makeTransition(BiConsumer<SpellBuilder, Element> action, SpellState next)
         {
-            return (b,e) -> {
-                action.accept(b,e);
+            return (b, e) -> {
+                action.accept(b, e);
 
                 return b.transition(e, next);
             };
@@ -431,7 +432,7 @@ public class SpellManager
 
         private static BiPredicate<SpellBuilder, Element> makeTransition(Consumer<SpellBuilder> action, SpellState next)
         {
-            return (b,e) -> {
+            return (b, e) -> {
                 action.accept(b);
 
                 return b.transition(e, next);
@@ -440,12 +441,12 @@ public class SpellManager
 
         private static BiPredicate<SpellBuilder, Element> makeTransition(SpellState next)
         {
-            return (b,e) -> b.transition(e, next);
+            return (b, e) -> b.transition(e, next);
         }
 
         private static BiPredicate<SpellBuilder, Element> makeOppositeTransition(Consumer<SpellBuilder> action, SpellState next)
         {
-            return (b,e) -> {
+            return (b, e) -> {
                 action.accept(b);
 
                 return b.transition(b.last, next);
@@ -454,12 +455,12 @@ public class SpellManager
 
         private static BiPredicate<SpellBuilder, Element> makeOppositeTransition(SpellState next)
         {
-            return (b,e) -> b.transition(b.last, next);
+            return (b, e) -> b.transition(b.last, next);
         }
 
         private static BiPredicate<SpellBuilder, Element> logUnimplementedState()
         {
-            return (b,e) -> {
+            return (b, e) -> {
                 ElementsOfPowerMod.LOGGER.error("Spell sequence transitioned to invalid state.");
                 return false;
             };

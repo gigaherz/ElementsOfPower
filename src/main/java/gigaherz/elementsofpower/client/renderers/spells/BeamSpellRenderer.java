@@ -64,13 +64,13 @@ public class BeamSpellRenderer extends SpellRenderer
 
             float angle = time * (6 + 3 * (4 + i)) * ((i & 1) == 0 ? 1 : -1) * 0.1f;
 
-            Quaternion rot = Vector3f.YP.rotation((float) (Math.PI*0.5-beamYaw));
+            Quaternion rot = Vector3f.YP.rotation((float) (Math.PI * 0.5 - beamYaw));
             rot.multiply(Vector3f.XP.rotation((float) -beamPitch));
             rot.multiply(Vector3f.ZP.rotationDegrees(angle));
 
             {
                 matrixStackIn.push();
-                matrixStackIn.translate( (float) (offset.x), (float) (offset.y), (float) (offset.z));
+                matrixStackIn.translate((float) (offset.x), (float) (offset.y), (float) (offset.z));
                 matrixStackIn.rotate(rot);
                 matrixStackIn.scale(scale_start, scale_start, scale_start);
 
@@ -81,7 +81,7 @@ public class BeamSpellRenderer extends SpellRenderer
 
             {
                 matrixStackIn.push();
-                matrixStackIn.translate( (float) (offset.x), (float) (offset.y), (float) (offset.z));
+                matrixStackIn.translate((float) (offset.x), (float) (offset.y), (float) (offset.z));
                 matrixStackIn.rotate(rot);
                 matrixStackIn.scale(scale_beam, scale_beam, (float) distance);
 
@@ -93,7 +93,7 @@ public class BeamSpellRenderer extends SpellRenderer
             if (mop != null && mop.getType() != RayTraceResult.Type.MISS)
             {
                 matrixStackIn.push();
-                matrixStackIn.translate( (float) (beam0.x), (float) (beam0.y), (float) (beam0.z));
+                matrixStackIn.translate((float) (beam0.x), (float) (beam0.y), (float) (beam0.z));
                 matrixStackIn.rotate(rot);
                 matrixStackIn.scale(scale_end, scale_end, scale_end);
 

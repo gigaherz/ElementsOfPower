@@ -8,7 +8,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.common.util.NonNullLazy;
 
 public class BallEntityRenderer extends EntityRenderer<BallEntity>

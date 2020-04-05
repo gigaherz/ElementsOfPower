@@ -16,6 +16,7 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -24,6 +25,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.registries.ObjectHolder;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class EssenceEntity extends AmbientEntity
@@ -177,7 +179,8 @@ public class EssenceEntity extends AmbientEntity
     }
 
     @Override
-    protected void registerAttributes() {
+    protected void registerAttributes()
+    {
         super.registerAttributes();
         this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(2.0D);
     }
@@ -225,7 +228,7 @@ public class EssenceEntity extends AmbientEntity
             }
 
             if (amounts.getTotalMagic() <= 0)
-                remove();
+                attackEntityFrom(DamageSource.GENERIC, 1);
             else
             {
                 sequence = null;
@@ -295,7 +298,7 @@ public class EssenceEntity extends AmbientEntity
             }
 
             if (spawnPosition != null)
-                new Vec3d(spawnPosition.getX(), spawnPosition.getY() + 1, spawnPosition.getZ());
+                followPos = new Vec3d(spawnPosition);
         }
 
         Vec3d home = followPos.subtract(getPositionVec());
@@ -308,7 +311,7 @@ public class EssenceEntity extends AmbientEntity
         double factor = Math.sqrt(currentDistance / wantedDistance);
         double r = MathHelper.clamp(1 + rand.nextGaussian() - factor, 0, 2); // 0: point home. 1: stay forward. 2: move outward.
 
-        double speedMax = (entity != null ? 0.1f : 0.01) / scale;
+        double speedMax = (entity != null ? 0.1f : 0.01) * Math.min(1, 1 / scale);
 
         double sa = entity != null ? 0.1 : 0.01f;
         double sm = entity != null ? 0.8 : 0.25f;
@@ -359,7 +362,7 @@ public class EssenceEntity extends AmbientEntity
             if (s.getCount() <= 0)
                 continue;
 
-            MagicAmounts[] _self = { self };
+            MagicAmounts[] _self = {self};
             if (MagicContainerCapability.getContainer(s).filter(magic -> !magic.isFull()).map(magic -> {
                 MagicAmounts am = _self[0];
                 if (!magic.isFull())
@@ -453,6 +456,33 @@ public class EssenceEntity extends AmbientEntity
 
         this.limbSwingAmount += (f2 - this.limbSwingAmount) * 0.4F;
         this.limbSwing += this.limbSwingAmount;
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getDeathSound()
+    {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getHurtSound(DamageSource p_184601_1_)
+    {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getAmbientSound()
+    {
+        return null;
+    }
+
+    @Override
+    public void spawnExplosionParticle()
+    {
+        super.spawnExplosionParticle();
     }
 
     @Override

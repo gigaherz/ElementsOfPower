@@ -57,14 +57,14 @@ public class ConeSpellRenderer extends SpellRenderer
 
             float angle = time * (6 + 3 * (4 - i)) * ((i & 1) == 0 ? 1 : -1);
 
-            Quaternion rot = Vector3f.YP.rotation((float) (Math.PI*0.5-beamYaw));
+            Quaternion rot = Vector3f.YP.rotation((float) (Math.PI * 0.5 - beamYaw));
             rot.multiply(Vector3f.XP.rotation((float) -beamPitch));
             rot.multiply(Vector3f.ZP.rotationDegrees(angle));
 
             matrixStackIn.push();
-            matrixStackIn.translate( (float) (offset.x), (float) (offset.y), (float) (offset.z));
+            matrixStackIn.translate((float) (offset.x), (float) (offset.y), (float) (offset.z));
             matrixStackIn.rotate(rot);
-            matrixStackIn.translate(0,0,offset_z);
+            matrixStackIn.translate(0, 0, offset_z);
             matrixStackIn.scale(scale_xy, scale_xy, scale_z);
 
             modelCone.get().render(bufferIn, rt, matrixStackIn, 0x00F000F0, color);

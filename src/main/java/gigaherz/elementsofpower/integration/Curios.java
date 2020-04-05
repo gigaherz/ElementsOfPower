@@ -22,7 +22,7 @@ public class Curios
         public static Stream<IItemHandler> getCurios(PlayerEntity player)
         {
             return CuriosAPI.getCuriosHandler(player)
-                    .map((curiosHandler) -> curiosHandler.getCurioMap().values().stream().map(c -> (IItemHandler)c))
+                    .map((curiosHandler) -> curiosHandler.getCurioMap().values().stream().map(c -> (IItemHandler) c))
                     .orElse(Stream.empty());
         }
     }

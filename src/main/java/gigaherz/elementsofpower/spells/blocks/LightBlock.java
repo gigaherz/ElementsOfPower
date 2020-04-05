@@ -1,24 +1,17 @@
 package gigaherz.elementsofpower.spells.blocks;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.material.PushReaction;
-import net.minecraft.block.material.Material;
+import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.item.ItemStack;
 import net.minecraft.state.IntegerProperty;
-import net.minecraft.block.BlockRenderType;
 import net.minecraft.state.StateContainer;
-import net.minecraft.util.Direction;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 
-import javax.annotation.Nullable;
 import java.util.Random;
 
 public class LightBlock extends Block
@@ -42,19 +35,21 @@ public class LightBlock extends Block
     }
 
     @Override
-    public boolean causesSuffocation(BlockState state, IBlockReader worldIn, BlockPos pos) {
+    public boolean causesSuffocation(BlockState state, IBlockReader worldIn, BlockPos pos)
+    {
         return false;
     }
 
     @Override
-    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
+    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos)
+    {
         return false;
     }
 
     @Override
     public int getLightValue(BlockState state, IBlockReader world, BlockPos pos)
     {
-        return Math.min(15,(4*(state.get(DENSITY)/4)));
+        return Math.min(15, (4 * (state.get(DENSITY) / 4)));
     }
 
     @Override

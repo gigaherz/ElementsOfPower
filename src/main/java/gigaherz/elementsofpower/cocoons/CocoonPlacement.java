@@ -28,10 +28,10 @@ public class CocoonPlacement extends Placement<NoPlacementConfig>
     {
         List<BlockPos> positions = new ArrayList<>();
         int topFilledSegment = worldIn.getChunk(pos).getTopFilledSegment();
-        for(int y = 0; y < topFilledSegment; y+=16)
+        for (int y = 0; y < topFilledSegment; y += 16)
         {
-            int n = random.nextInt(2)+4;
-            for(int i=0;i<n;i++)
+            int n = random.nextInt(2) + 4;
+            for (int i = 0; i < n; i++)
             {
                 int px = random.nextInt(16) + pos.getX();
                 int pz = random.nextInt(16) + pos.getZ();

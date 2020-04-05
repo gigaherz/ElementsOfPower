@@ -89,7 +89,9 @@ public class MagicContainerCapability
         private MagicAmounts capacity;
         private MagicAmounts containedMagic;
 
-        public Impl() {}
+        public Impl()
+        {
+        }
 
         @Override
         public MagicAmounts getCapacity()

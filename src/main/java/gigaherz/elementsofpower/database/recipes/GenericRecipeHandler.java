@@ -1,8 +1,6 @@
 package gigaherz.elementsofpower.database.recipes;
 
 import com.google.common.collect.Lists;
-import gigaherz.elementsofpower.database.recipes.IRecipeHandler;
-import gigaherz.elementsofpower.database.recipes.IRecipeInfoProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.AbstractCookingRecipe;
 import net.minecraft.item.crafting.IRecipe;
@@ -28,9 +26,9 @@ public class GenericRecipeHandler implements IRecipeHandler
     {
         IRecipeType<?> type = recipe.getType();
         if (type == IRecipeType.SMELTING ||
-            type == IRecipeType.SMOKING ||
-            type == IRecipeType.BLASTING)
-            return new FurnaceRecipeInfo((AbstractCookingRecipe)recipe);
+                type == IRecipeType.SMOKING ||
+                type == IRecipeType.BLASTING)
+            return new FurnaceRecipeInfo((AbstractCookingRecipe) recipe);
         return new RecipeInfo(recipe);
     }
 
@@ -79,8 +77,8 @@ public class GenericRecipeHandler implements IRecipeHandler
 
             int itemsPerCoal = MathHelper.floor(1600.0 / recipe.getCookTime());
 
-            for(ItemStack input : inputs)
-                input.setCount(input.getCount() * itemsPerCoal);
+            for (ItemStack input : inputs)
+            { input.setCount(input.getCount() * itemsPerCoal); }
             output.setCount(output.getCount() * itemsPerCoal);
         }
     }

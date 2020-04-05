@@ -44,8 +44,8 @@ public class EssentializerBlock extends Block
         if (worldIn.isRemote)
             return ActionResultType.SUCCESS;
 
-        NetworkHooks.openGui((ServerPlayerEntity)player, new SimpleNamedContainerProvider((id,playerInventory,playerEntity) ->
-                new EssentializerContainer(id,(EssentializerTileEntity) tileEntity,playerInventory),
+        NetworkHooks.openGui((ServerPlayerEntity) player, new SimpleNamedContainerProvider((id, playerInventory, playerEntity) ->
+                new EssentializerContainer(id, (EssentializerTileEntity) tileEntity, playerInventory),
                 new TranslationTextComponent("container.elementsofpower.essentializer")), pos);
 
         return ActionResultType.SUCCESS;
@@ -55,14 +55,14 @@ public class EssentializerBlock extends Block
     public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context)
     {
         return VoxelShapes.or(
-                Block.makeCuboidShape(0,0,0, 16, 7, 16),
+                Block.makeCuboidShape(0, 0, 0, 16, 7, 16),
 
-                Block.makeCuboidShape(0,7,0, 4, 12, 4),
-                Block.makeCuboidShape(12,7,0, 16, 12, 4),
-                Block.makeCuboidShape(0,7,12, 4, 12, 16),
-                Block.makeCuboidShape(12,7,12, 16, 12, 16),
+                Block.makeCuboidShape(0, 7, 0, 4, 12, 4),
+                Block.makeCuboidShape(12, 7, 0, 16, 12, 4),
+                Block.makeCuboidShape(0, 7, 12, 4, 12, 16),
+                Block.makeCuboidShape(12, 7, 12, 16, 12, 16),
 
-                Block.makeCuboidShape(4,12,4, 12, 16, 12)
+                Block.makeCuboidShape(4, 12, 4, 12, 16, 12)
         );
     }
 

@@ -2,7 +2,6 @@ package gigaherz.elementsofpower.gemstones;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import gigaherz.elementsofpower.ElementsOfPowerItems;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.item.ItemStack;
@@ -44,7 +43,7 @@ public class AnalyzedFilteringIngredient extends Ingredient
     {
         if (stack != null && stack.getItem() instanceof GemstoneItem)
         {
-            if (((GemstoneItem)stack.getItem()).getQuality(stack) != null)
+            if (((GemstoneItem) stack.getItem()).getQuality(stack) != null)
                 return false;
         }
         return inner.test(stack);

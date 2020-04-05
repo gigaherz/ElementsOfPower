@@ -12,7 +12,8 @@ public interface IMultiOutputRecipe<T extends IInventory> extends IRecipe<T>
     /* Provide a default implementation so that subclasses don't need to implement this exception themselves.
      */
     @Override
-    default ItemStack getCraftingResult(T inv) {
+    default ItemStack getCraftingResult(T inv)
+    {
         throw new RuntimeException("This recipe has multiple outputs. Use getCraftingResults instead.");
     }
 

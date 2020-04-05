@@ -10,9 +10,8 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.monster.BlazeEntity;
 import net.minecraft.entity.projectile.DamagingProjectileEntity;
-import net.minecraft.entity.projectile.SmallFireballEntity;
-import net.minecraft.util.DamageSource;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.*;
 
 import javax.annotation.Nullable;
@@ -102,7 +101,7 @@ public class FlameEffect extends SpellEffect
     {
         if (mop != null && mop.getType() == RayTraceResult.Type.BLOCK)
         {
-            blockPos = blockPos.offset(((BlockRayTraceResult)mop).getFace());
+            blockPos = blockPos.offset(((BlockRayTraceResult) mop).getFace());
             currentState = cast.world.getBlockState(blockPos);
         }
 

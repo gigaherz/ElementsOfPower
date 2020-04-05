@@ -3,7 +3,6 @@ package gigaherz.elementsofpower.spells.shapes;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.Vec3d;
 
 public class SelfShape extends SpellShape
 {

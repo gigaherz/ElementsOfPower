@@ -136,7 +136,7 @@ public class EssentializerScreen extends ContainerScreen<EssentializerContainer>
 
             ItemStack stack = new ItemStack(Element.values[i].getOrb());
 
-            RenderSystem.color4f(1,1,1,alpha/255.0f);
+            RenderSystem.color4f(1, 1, 1, alpha / 255.0f);
             minecraft.getItemRenderer().renderItemAndEffectIntoGUI(stack, x0, y0);
         }
 

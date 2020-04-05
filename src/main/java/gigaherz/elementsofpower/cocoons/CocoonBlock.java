@@ -1,7 +1,5 @@
 package gigaherz.elementsofpower.cocoons;
 
-import gigaherz.elementsofpower.database.MagicAmounts;
-import gigaherz.elementsofpower.entities.EssenceEntity;
 import gigaherz.elementsofpower.items.MagicOrbItem;
 import gigaherz.elementsofpower.spells.Element;
 import net.minecraft.block.Block;
@@ -26,13 +24,8 @@ import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.storage.loot.LootContext;
-import net.minecraft.world.storage.loot.LootParameters;
 
 import javax.annotation.Nullable;
-import java.util.List;
-import java.util.Random;
 
 public class CocoonBlock extends Block implements IWaterLoggable
 {
@@ -80,16 +73,22 @@ public class CocoonBlock extends Block implements IWaterLoggable
     @Override
     public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context)
     {
-        switch(state.get(FACING))
+        switch (state.get(FACING))
         {
-            case UP: return Block.makeCuboidShape(3,7, 3, 13, 16, 13);
-            case DOWN: return Block.makeCuboidShape(3,0, 3, 13, 9, 13);
-            case EAST: return Block.makeCuboidShape(7,3, 3, 16, 13, 13);
-            case WEST: return Block.makeCuboidShape(0,3, 3, 9, 13, 13);
-            case SOUTH: return Block.makeCuboidShape(3,3, 7, 13, 13, 16);
-            case NORTH: return Block.makeCuboidShape(3,3, 0, 13, 13, 9);
+            case UP:
+                return Block.makeCuboidShape(3, 7, 3, 13, 16, 13);
+            case DOWN:
+                return Block.makeCuboidShape(3, 0, 3, 13, 9, 13);
+            case EAST:
+                return Block.makeCuboidShape(7, 3, 3, 16, 13, 13);
+            case WEST:
+                return Block.makeCuboidShape(0, 3, 3, 9, 13, 13);
+            case SOUTH:
+                return Block.makeCuboidShape(3, 3, 7, 13, 13, 16);
+            case NORTH:
+                return Block.makeCuboidShape(3, 3, 0, 13, 13, 9);
         }
-        return Block.makeCuboidShape(3,0, 3, 13, 9, 13);
+        return Block.makeCuboidShape(3, 0, 3, 13, 9, 13);
     }
 
     @Nullable

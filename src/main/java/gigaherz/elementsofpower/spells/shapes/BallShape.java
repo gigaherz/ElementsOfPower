@@ -37,7 +37,7 @@ public class BallShape extends SpellShape
 
         if (mop.getType() == RayTraceResult.Type.ENTITY)
         {
-            effect.processDirectHit(cast, ((EntityRayTraceResult)mop).getEntity(), mop.getHitVec());
+            effect.processDirectHit(cast, ((EntityRayTraceResult) mop).getEntity(), mop.getHitVec());
         }
 
         effect.spawnBallParticles(cast, mop);
@@ -63,7 +63,7 @@ public class BallShape extends SpellShape
             {
                 bp = new BlockPos(mop.getHitVec());
                 vec = mop.getHitVec();
-                dir = new Vec3d(0,0,0);
+                dir = new Vec3d(0, 0, 0);
             }
 
             int px = bp.getX();

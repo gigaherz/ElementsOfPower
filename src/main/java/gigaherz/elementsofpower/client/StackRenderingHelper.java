@@ -2,7 +2,10 @@ package gigaherz.elementsofpower.client;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.ItemModelMesher;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
@@ -11,7 +14,6 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.client.model.pipeline.LightUtil;
 import org.lwjgl.opengl.GL11;
 
 import java.util.Random;
@@ -62,10 +64,10 @@ public class StackRenderingHelper
         Random random = new Random();
         random.setSeed(42);
 
-        float a = ((color>>24)&0xFF)/255.0f;
-        float r = ((color>>16)&0xFF)/255.0f;
-        float g = ((color>>8)&0xFF)/255.0f;
-        float b = ((color>>0)&0xFF)/255.0f;
+        float a = ((color >> 24) & 0xFF) / 255.0f;
+        float r = ((color >> 16) & 0xFF) / 255.0f;
+        float g = ((color >> 8) & 0xFF) / 255.0f;
+        float b = ((color >> 0) & 0xFF) / 255.0f;
 
         for (BakedQuad bakedquad : model.getQuads(null, null, random))
         {

@@ -17,7 +17,6 @@ import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.client.model.obj.OBJModel;
 
 import javax.annotation.Nullable;
-import java.util.Collections;
 import java.util.Random;
 import java.util.function.Function;
 
@@ -33,7 +32,7 @@ public class ModelHandle
 
     public ModelHandle(ResourceLocation modelLocation)
     {
-        OBJModel model = OBJLoader.INSTANCE.loadModel(new OBJModel.ModelSettings(modelLocation, false, true, true, true,null));
+        OBJModel model = OBJLoader.INSTANCE.loadModel(new OBJModel.ModelSettings(modelLocation, false, true, true, true, null));
         this.model = model.bake(new FakeModelConfiguration(modelLocation), ModelLoader.instance(), FakeSprite.GETTER, ModelRotation.X0_Y0, null, modelLocation);
     }
 
@@ -44,13 +43,13 @@ public class ModelHandle
 
     public void render(IRenderTypeBuffer bufferIn, RenderType rt, MatrixStack matrixStackIn, int packedLightIn, int overlay, int color)
     {
-        float a = ((color>>24)&0xFF)/255.0f;
-        float r = ((color>>16)&0xFF)/255.0f;
-        float g = ((color>>8)&0xFF)/255.0f;
-        float b = ((color>>0)&0xFF)/255.0f;
+        float a = ((color >> 24) & 0xFF) / 255.0f;
+        float r = ((color >> 16) & 0xFF) / 255.0f;
+        float g = ((color >> 8) & 0xFF) / 255.0f;
+        float b = ((color >> 0) & 0xFF) / 255.0f;
 
         IVertexBuilder bb = bufferIn.getBuffer(rt);
-        for(BakedQuad quad : model.getQuads(null, null, rand, EmptyModelData.INSTANCE))
+        for (BakedQuad quad : model.getQuads(null, null, rand, EmptyModelData.INSTANCE))
         {
             bb.addVertexData(matrixStackIn.getLast(), quad, r, g, b, a, packedLightIn, overlay, true);
         }
@@ -58,7 +57,7 @@ public class ModelHandle
 
     private static class FakeSprite extends TextureAtlasSprite
     {
-        public static final ResourceLocation LOCATION=new ResourceLocation("elementsofpower","fake");
+        public static final ResourceLocation LOCATION = new ResourceLocation("elementsofpower", "fake");
         public static final FakeSprite INSTANCE = new FakeSprite();
         public static final Function<Material, TextureAtlasSprite> GETTER = (x) -> INSTANCE;
 
@@ -67,19 +66,19 @@ public class ModelHandle
             super(null,
                     new Info(LOCATION, 1, 1, AnimationMetadataSection.EMPTY),
                     0, 1, 1,
-                    0, 0, new NativeImage(1,1,false));
+                    0, 0, new NativeImage(1, 1, false));
         }
 
         @Override
         public float getInterpolatedU(double u)
         {
-            return (float)u/16;
+            return (float) u / 16;
         }
 
         @Override
         public float getInterpolatedV(double v)
         {
-            return (float)v/16;
+            return (float) v / 16;
         }
     }
 

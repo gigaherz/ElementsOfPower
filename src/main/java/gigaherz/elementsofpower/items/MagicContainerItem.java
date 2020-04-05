@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.items;
 
-import gigaherz.elementsofpower.capabilities.MagicContainerCapability;
 import gigaherz.elementsofpower.capabilities.IMagicContainer;
+import gigaherz.elementsofpower.capabilities.MagicContainerCapability;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -26,9 +26,11 @@ public abstract class MagicContainerItem extends Item
     @Override
     public ICapabilityProvider initCapabilities(ItemStack _stack, @Nullable CompoundNBT nbt)
     {
-        return new ICapabilityProvider() {
+        return new ICapabilityProvider()
+        {
             final ItemStack stack = _stack;
-            final IMagicContainer container = new IMagicContainer() {
+            final IMagicContainer container = new IMagicContainer()
+            {
 
                 @Override
                 public boolean isInfinite()
@@ -82,7 +84,9 @@ public abstract class MagicContainerItem extends Item
     }
 
     public abstract boolean canContainMagic(ItemStack stack);
+
     public abstract boolean isInfinite(ItemStack stack);
+
     public abstract MagicAmounts getCapacity(ItemStack stack);
 
     @Override
@@ -109,12 +113,12 @@ public abstract class MagicContainerItem extends Item
 
             MagicAmounts totalMagic = MagicAmounts.EMPTY;
 
-            for(ItemStack orb : orbs)
+            for (ItemStack orb : orbs)
             {
                 if (orb.getCount() <= 0)
                     continue;
 
-                totalMagic = totalMagic.add(((MagicOrbItem)orb.getItem()).getElement(), 8);
+                totalMagic = totalMagic.add(((MagicOrbItem) orb.getItem()).getElement(), 8);
             }
 
             if (!magic.insertMagic(totalMagic, true).isEmpty())

@@ -57,9 +57,11 @@ public enum Quality
     @Nullable
     public static Quality byIndex(int index)
     {
-        for(Quality q : values)
+        for (Quality q : values)
+        {
             if (q.index == index)
                 return q;
+        }
 
         return null;
     }

@@ -65,7 +65,7 @@ public class FrostEffect extends SpellEffect
     {
         if (mop != null && mop.getType() == RayTraceResult.Type.BLOCK)
         {
-            blockPos = blockPos.offset(((BlockRayTraceResult)mop).getFace());
+            blockPos = blockPos.offset(((BlockRayTraceResult) mop).getFace());
             currentState = cast.world.getBlockState(blockPos);
         }
 

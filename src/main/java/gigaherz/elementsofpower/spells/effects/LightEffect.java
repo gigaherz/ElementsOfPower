@@ -65,11 +65,11 @@ public class LightEffect extends SpellEffect
     {
         if (mop != null && mop.getType() == RayTraceResult.Type.BLOCK)
         {
-            blockPos = blockPos.offset(((BlockRayTraceResult)mop).getFace());
+            blockPos = blockPos.offset(((BlockRayTraceResult) mop).getFace());
             currentState = cast.world.getBlockState(blockPos);
         }
 
-        int density = MathHelper.clamp((int)(16-16*r),1,16);
+        int density = MathHelper.clamp((int) (16 - 16 * r), 1, 16);
 
         Block block = currentState.getBlock();
 

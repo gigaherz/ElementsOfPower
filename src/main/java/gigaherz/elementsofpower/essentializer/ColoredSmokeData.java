@@ -87,7 +87,7 @@ public class ColoredSmokeData implements IParticleData
         float rnd = RANDOM.nextFloat() * 1.1f * total;
 
         Element e = null;
-        for (int i=0;i<8;i++)
+        for (int i = 0; i < 8; i++)
         {
             float v = amounts.get(i);
             if (rnd <= v)
@@ -106,9 +106,9 @@ public class ColoredSmokeData implements IParticleData
         if (e != null)
         {
             int color = e.getColor();
-            red = ((color >> 16)&0xFF)/255.0f;
-            green = ((color >> 8)&0xFF)/255.0f;
-            blue = ((color >> 0)&0xFF)/255.0f;
+            red = ((color >> 16) & 0xFF) / 255.0f;
+            green = ((color >> 8) & 0xFF) / 255.0f;
+            blue = ((color >> 0) & 0xFF) / 255.0f;
         }
 
         return withColor(red, green, blue);
@@ -118,11 +118,13 @@ public class ColoredSmokeData implements IParticleData
     {
         private final IAnimatedSprite spriteSet;
 
-        public Factory(IAnimatedSprite p_i51045_1_) {
+        public Factory(IAnimatedSprite p_i51045_1_)
+        {
             this.spriteSet = p_i51045_1_;
         }
 
-        public Particle makeParticle(ColoredSmokeData colorData, World worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
+        public Particle makeParticle(ColoredSmokeData colorData, World worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed)
+        {
             return new SmokeParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, 1.0F, this.spriteSet)
             {
                 {

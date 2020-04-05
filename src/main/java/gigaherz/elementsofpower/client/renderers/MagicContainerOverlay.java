@@ -7,8 +7,8 @@ import gigaherz.elementsofpower.client.StackRenderingHelper;
 import gigaherz.elementsofpower.client.WandUseManager;
 import gigaherz.elementsofpower.database.MagicAmounts;
 import gigaherz.elementsofpower.essentializer.gui.EssentializerScreen;
-import gigaherz.elementsofpower.spells.Element;
 import gigaherz.elementsofpower.items.WandItem;
+import gigaherz.elementsofpower.spells.Element;
 import gigaherz.elementsofpower.spells.SpellManager;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.client.Minecraft;
@@ -85,7 +85,7 @@ public class MagicContainerOverlay extends AbstractGui
 
                 ItemStack stack = new ItemStack(Element.values[i].getOrb());
 
-                StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yTop-11, stack, alpha);
+                StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yTop - 11, stack, alpha);
 
                 float e = contained.get(i);
                 String formatted = Float.isInfinite(e) ? "\u221E" : EssentializerScreen.formatQuantityWithSuffix(e);
@@ -119,7 +119,7 @@ public class MagicContainerOverlay extends AbstractGui
                     // Saved spell sequence
                     for (int i = 0; i < savedSequence.size(); i++)
                     {
-                        int xPos = (rescaledWidth - 6 * (savedSequence.size() - 1) - 14) / 2 + 6*i;
+                        int xPos = (rescaledWidth - 6 * (savedSequence.size() - 1) - 14) / 2 + 6 * i;
                         int yPos = rescaledHeight / 2 - 16 - 16;
                         Element e = savedSequence.get(i);
                         ItemStack stack = new ItemStack(e.getOrb());
@@ -133,7 +133,7 @@ public class MagicContainerOverlay extends AbstractGui
                         MagicAmounts cost = temp.getSpellCost();
                         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
                         {
-                            if (MathHelper.epsilonEquals(cost.get(i),0))
+                            if (MathHelper.epsilonEquals(cost.get(i), 0))
                                 continue;
 
                             int xPos = (rescaledWidth - 7 * 28 - 8) / 2 + 28 * i + 1;
@@ -168,7 +168,7 @@ public class MagicContainerOverlay extends AbstractGui
                     MagicAmounts cost = temp.getSpellCost();
                     for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
                     {
-                        if (MathHelper.epsilonEquals(cost.get(i),0))
+                        if (MathHelper.epsilonEquals(cost.get(i), 0))
                             continue;
 
                         int xPos = (rescaledWidth - 7 * 28 - 8) / 2 + 28 * i + 1;

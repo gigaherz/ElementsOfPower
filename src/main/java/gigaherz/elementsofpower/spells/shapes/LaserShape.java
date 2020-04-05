@@ -42,16 +42,16 @@ public class LaserShape extends SpellShape
 
             if (mop.getType() == RayTraceResult.Type.ENTITY)
             {
-                cast.getEffect().processDirectHit(cast, ((EntityRayTraceResult)mop).getEntity(), mop.getHitVec());
+                cast.getEffect().processDirectHit(cast, ((EntityRayTraceResult) mop).getEntity(), mop.getHitVec());
             }
             else if (mop.getType() == RayTraceResult.Type.BLOCK)
             {
-                BlockPos pos = ((BlockRayTraceResult)mop).getPos();
+                BlockPos pos = ((BlockRayTraceResult) mop).getPos();
                 BlockState state = cast.world.getBlockState(pos);
                 cast.getEffect().processBlockWithinRadius(cast, pos, state, 0, mop);
             }
 
-            for(BlockPos pos : intersections)
+            for (BlockPos pos : intersections)
             {
                 cast.getEffect().processBlockWithinRadius(cast, pos, cast.world.getBlockState(pos), 0, null);
             }
@@ -64,12 +64,12 @@ public class LaserShape extends SpellShape
         intersections.add(new BlockPos(start.x, start.y, start.z));
         look = look.normalize();
         Vec3d pos = start;
-        Vec3d end = start.add(look.x*range,look.y*range,look.z*range);
+        Vec3d end = start.add(look.x * range, look.y * range, look.z * range);
         BlockPos block = new BlockPos(start);
-        while(true)
+        while (true)
         {
             // begin
-            double maxTime = (range-pos.subtract(start).length())/look.length();
+            double maxTime = (range - pos.subtract(start).length()) / look.length();
 
             // X crossing
             double xTime;
@@ -77,14 +77,14 @@ public class LaserShape extends SpellShape
             int xBlock = block.getX();
             if (look.x > 0)
             {
-                xBoundary = xBlock+1;
-                xBlock = xBlock+1;
+                xBoundary = xBlock + 1;
+                xBlock = xBlock + 1;
                 xTime = ((xBoundary - pos.x) / look.x);
             }
             else if (look.x < 0)
             {
                 xBoundary = block.getX();
-                xBlock = xBlock-1;
+                xBlock = xBlock - 1;
                 xTime = ((xBoundary - pos.x) / look.x); // the subtraction will result negative, but since look.x is also negative, the result will be positive
             }
             else
@@ -97,8 +97,8 @@ public class LaserShape extends SpellShape
             int yBlock = block.getY();
             if (look.y > 0)
             {
-                yBoundary = yBlock+1;
-                yBlock = yBlock+1;
+                yBoundary = yBlock + 1;
+                yBlock = yBlock + 1;
                 yTime = ((yBoundary - pos.y) / look.y);
             }
             else if (look.y < 0)
@@ -117,7 +117,7 @@ public class LaserShape extends SpellShape
             int zBlock = block.getZ();
             if (look.z > 0)
             {
-                zBoundary = zBlock+1;
+                zBoundary = zBlock + 1;
                 zBlock = zBlock + 1;
                 zTime = ((zBoundary - pos.z) / look.z);
             }
@@ -136,35 +136,36 @@ public class LaserShape extends SpellShape
             Vec3d oldPos = pos;
 
             boolean xWins = false, yWins = false, zWins = false;
-            if(xTime <= yTime && xTime <= zTime && xTime <= maxTime)
+            if (xTime <= yTime && xTime <= zTime && xTime <= maxTime)
             {
                 xWins = true;
-                block = new BlockPos(xBlock,block.getY(),block.getZ());
+                block = new BlockPos(xBlock, block.getY(), block.getZ());
             }
-            if(yTime <= xTime && yTime <= zTime && yTime <= maxTime)
+            if (yTime <= xTime && yTime <= zTime && yTime <= maxTime)
             {
                 yWins = true;
-                block = new BlockPos(block.getX(),yBlock,block.getZ());
+                block = new BlockPos(block.getX(), yBlock, block.getZ());
             }
-            else if(zTime <= xTime && zTime <= yTime && zTime <= maxTime)
+            else if (zTime <= xTime && zTime <= yTime && zTime <= maxTime)
             {
                 zWins = true;
-                block = new BlockPos(block.getX(),block.getY(),zBlock);
+                block = new BlockPos(block.getX(), block.getY(), zBlock);
             }
 
-            if(xWins)
+            if (xWins)
             {
                 pos = new Vec3d(xBoundary, pos.y + look.y * xTime, pos.z + look.z * xTime);
             }
-            else if(yWins)
+            else if (yWins)
             {
                 pos = new Vec3d(pos.x + look.x * yTime, yBoundary, pos.z + look.z * yTime);
             }
-            else if(zWins)
+            else if (zWins)
             {
                 pos = new Vec3d(pos.x + look.x * zTime, pos.y + look.y * zTime, zBoundary);
             }
-            else {
+            else
+            {
                 pos = end;
             }
 
@@ -173,7 +174,7 @@ public class LaserShape extends SpellShape
                 intersections.add(block);
             }
 
-            if(!xWins && !yWins && !zWins)
+            if (!xWins && !yWins && !zWins)
             {
                 break;
             }

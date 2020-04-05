@@ -1,11 +1,13 @@
 package gigaherz.elementsofpower.capabilities;
 
 import gigaherz.elementsofpower.database.MagicAmounts;
-import net.minecraft.item.ItemStack;
 
 public interface IMagicContainer
 {
-    default boolean isInfinite() { return false; }
+    default boolean isInfinite()
+    {
+        return false;
+    }
 
     MagicAmounts getCapacity();
 

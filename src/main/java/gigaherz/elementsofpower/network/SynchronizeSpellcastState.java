@@ -1,18 +1,15 @@
 package gigaherz.elementsofpower.network;
 
 import gigaherz.elementsofpower.client.ClientPacketHandlers;
-import gigaherz.elementsofpower.spells.Element;
 import gigaherz.elementsofpower.spells.SpellManager;
 import gigaherz.elementsofpower.spells.Spellcast;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.network.NetworkEvent;
 
-import java.util.List;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 public class SynchronizeSpellcastState
 {

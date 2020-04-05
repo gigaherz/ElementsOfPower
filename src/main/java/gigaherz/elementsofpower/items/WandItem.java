@@ -132,13 +132,13 @@ public class WandItem extends GemContainerItem
     {
         MagicAmounts.Accumulator accumulator = MagicAmounts.builder();
 
-        for(int i=0;i<player.inventory.getSizeInventory();i++)
+        for (int i = 0; i < player.inventory.getSizeInventory(); i++)
         {
             accumulateReservoir(accumulator, player.inventory.getStackInSlot(i));
         }
 
         Curios.getCurios(player).forEach(value -> {
-            for (int i=0; i< value.getSlots(); i++)
+            for (int i = 0; i < value.getSlots(); i++)
             {
                 accumulateReservoir(accumulator, value.getStackInSlot(i));
             }
@@ -167,13 +167,13 @@ public class WandItem extends GemContainerItem
 
         accumulator.add(cost);
 
-        for(int i=0;i<player.inventory.getSizeInventory();i++)
+        for (int i = 0; i < player.inventory.getSizeInventory(); i++)
         {
             subtractFromReservoir(accumulator, player.inventory.getStackInSlot(i));
         }
 
         Curios.getCurios(player).forEach(value -> {
-            for (int i=0; i< value.getSlots(); i++)
+            for (int i = 0; i < value.getSlots(); i++)
             {
                 subtractFromReservoir(accumulator, value.getStackInSlot(i));
             }

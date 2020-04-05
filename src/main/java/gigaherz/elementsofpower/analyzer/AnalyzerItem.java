@@ -23,12 +23,15 @@ public class AnalyzerItem extends Item
     }
 
     // Grumbles at getSlotFor being client-only
-    public static int getSlotIndex(PlayerInventory inv, ItemStack stack) {
-        for(int i = 0; i < inv.mainInventory.size(); ++i) {
+    public static int getSlotIndex(PlayerInventory inv, ItemStack stack)
+    {
+        for (int i = 0; i < inv.mainInventory.size(); ++i)
+        {
             ItemStack stack2 = inv.mainInventory.get(i);
             if (!inv.mainInventory.get(i).isEmpty()
                     && stack.getItem() == stack2.getItem()
-                    && ItemStack.areItemStackTagsEqual(stack, stack2)) {
+                    && ItemStack.areItemStackTagsEqual(stack, stack2))
+            {
                 return i;
             }
         }
@@ -51,7 +54,7 @@ public class AnalyzerItem extends Item
             return ActionResultType.PASS;
 
         if (!context.getWorld().isRemote)
-            openGui((ServerPlayerEntity)context.getPlayer(), context.getItem());
+            openGui((ServerPlayerEntity) context.getPlayer(), context.getItem());
 
         return ActionResultType.SUCCESS;
     }
@@ -60,7 +63,7 @@ public class AnalyzerItem extends Item
     public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand hand)
     {
         if (!worldIn.isRemote)
-            openGui((ServerPlayerEntity)playerIn, playerIn.getHeldItem(hand));
+            openGui((ServerPlayerEntity) playerIn, playerIn.getHeldItem(hand));
 
         return ActionResult.func_226248_a_(playerIn.getHeldItem(hand));
     }

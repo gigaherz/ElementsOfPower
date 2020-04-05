@@ -5,8 +5,8 @@ import gigaherz.elementsofpower.spells.Spellcast;
 import gigaherz.elementsofpower.spells.blocks.DustBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.Entity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
@@ -68,7 +68,7 @@ public class DustEffect extends SpellEffect
     {
         if (mop != null && mop.getType() == RayTraceResult.Type.BLOCK)
         {
-            blockPos = blockPos.offset(((BlockRayTraceResult)mop).getFace());
+            blockPos = blockPos.offset(((BlockRayTraceResult) mop).getFace());
             currentState = cast.world.getBlockState(blockPos);
         }
 

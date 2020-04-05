@@ -31,12 +31,14 @@ public class MistBlock extends Block
     }
 
     @Override
-    public boolean causesSuffocation(BlockState state, IBlockReader worldIn, BlockPos pos) {
+    public boolean causesSuffocation(BlockState state, IBlockReader worldIn, BlockPos pos)
+    {
         return false;
     }
 
     @Override
-    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
+    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos)
+    {
         return false;
     }
 
@@ -45,7 +47,7 @@ public class MistBlock extends Block
     {
         if (state.getBlock() != this)
             return 16;
-        return state.get(DENSITY)/4;
+        return state.get(DENSITY) / 4;
     }
 
     @Override

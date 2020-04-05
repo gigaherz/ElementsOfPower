@@ -124,7 +124,7 @@ public class EssentializerContainer
                 if (watcher instanceof ServerPlayerEntity)
                 {
                     ElementsOfPowerMod.channel.send(
-                            PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)watcher),
+                            PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) watcher),
                             new UpdateEssentializerAmounts(windowId, magicHolder));
                 }
             }

@@ -42,7 +42,7 @@ public class SphereShape extends SpellShape
         int force = cast.getDamageForce();
         if (force > 0)
         {
-            BlockPos bp = player.getPosition().offset(Direction.UP, MathHelper.floor(player.getEyeHeight()+0.25));
+            BlockPos bp = player.getPosition().offset(Direction.UP, MathHelper.floor(player.getEyeHeight() + 0.25));
 
             int px = bp.getX();
             int py = bp.getY();

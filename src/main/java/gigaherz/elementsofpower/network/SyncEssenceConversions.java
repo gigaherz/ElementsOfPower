@@ -23,7 +23,7 @@ public class SyncEssenceConversions
     public SyncEssenceConversions(PacketBuffer buffer)
     {
         int entries = buffer.readInt();
-        for(int i=0;i<entries;i++)
+        for (int i = 0; i < entries; i++)
         {
             Item item = buffer.readRegistryIdUnsafe(ForgeRegistries.ITEMS);
             MagicAmounts am = new MagicAmounts(buffer);
@@ -34,7 +34,7 @@ public class SyncEssenceConversions
     public void encode(PacketBuffer buffer)
     {
         buffer.writeInt(data.size());
-        for(Map.Entry<Item, MagicAmounts> entry : data.entrySet())
+        for (Map.Entry<Item, MagicAmounts> entry : data.entrySet())
         {
             buffer.writeRegistryIdUnsafe(ForgeRegistries.ITEMS, entry.getKey());
             entry.getValue().writeTo(buffer);
