@@ -207,7 +207,7 @@ public class EssentializerTileEntity
             boolean b3 = addMagicToOutput(inventory);
             if (b0 || b1 || b2 || b3)
             {
-                ElementsOfPowerMod.channel.send(
+                ElementsOfPowerMod.CHANNEL.send(
                         PacketDistributor.TRACKING_CHUNK.with(() -> (Chunk) world.getChunk(pos)),
                         new UpdateEssentializerTileEntity(this));
             }

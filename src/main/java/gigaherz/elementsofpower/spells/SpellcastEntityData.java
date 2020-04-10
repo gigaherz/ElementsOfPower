@@ -116,7 +116,7 @@ public class SpellcastEntityData implements INBTSerializable<CompoundNBT>
     {
         if (currentCasting != null && !player.world.isRemote)
         {
-            ElementsOfPowerMod.channel.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player),
+            ElementsOfPowerMod.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player),
                     new SynchronizeSpellcastState(mode, currentCasting));
         }
     }

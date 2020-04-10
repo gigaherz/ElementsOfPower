@@ -225,18 +225,18 @@ public class WandUseManager
         slotInUse = slotNumber;
         sequence.clear();
 
-        ElementsOfPowerMod.channel.sendToServer(new UpdateSpellSequence(UpdateSpellSequence.ChangeMode.BEGIN, slotInUse, null));
+        ElementsOfPowerMod.CHANNEL.sendToServer(new UpdateSpellSequence(UpdateSpellSequence.ChangeMode.BEGIN, slotInUse, null));
     }
 
     private void endHoldingRightButton(boolean cancelMagicSetting)
     {
         if (cancelMagicSetting || (failedSequence && sequence.size() == 0))
         {
-            ElementsOfPowerMod.channel.sendToServer(new UpdateSpellSequence(UpdateSpellSequence.ChangeMode.CANCEL, slotInUse, null));
+            ElementsOfPowerMod.CHANNEL.sendToServer(new UpdateSpellSequence(UpdateSpellSequence.ChangeMode.CANCEL, slotInUse, null));
         }
         else
         {
-            ElementsOfPowerMod.channel.sendToServer(new UpdateSpellSequence(UpdateSpellSequence.ChangeMode.COMMIT, slotInUse, sequence));
+            ElementsOfPowerMod.CHANNEL.sendToServer(new UpdateSpellSequence(UpdateSpellSequence.ChangeMode.COMMIT, slotInUse, sequence));
         }
 
         handInUse = null;

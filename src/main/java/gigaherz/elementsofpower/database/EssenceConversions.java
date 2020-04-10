@@ -5,8 +5,6 @@ import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.database.recipes.RecipeTools;
@@ -14,14 +12,21 @@ import gigaherz.elementsofpower.network.SyncEssenceConversions;
 import net.minecraft.client.resources.ReloadListener;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.profiler.IProfiler;
+import net.minecraft.resources.IFutureReloadListener;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -33,12 +38,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.function.Supplier;
 
 public class EssenceConversions
 {
-    public static final Supplier<Path> OVERRIDES_PATH = () -> FMLPaths.CONFIGDIR.get().resolve("elementsofpower-essence_overrides.json");
-    public static final Supplier<Path> CACHE_PATH = () -> FMLPaths.CONFIGDIR.get().resolve("elementsofpower-essence_cache.json");
+    private static final Supplier<Path> OVERRIDES_PATH = () -> FMLPaths.CONFIGDIR.get().resolve("elementsofpower-essence_overrides.json");
+    private static final Supplier<Path> CACHE_PATH = () -> FMLPaths.CONFIGDIR.get().resolve("elementsofpower-essence_cache.json");
 
     private static final Gson SERIALIZER = new GsonBuilder()
             .registerTypeAdapter(MagicAmounts.class, new MagicAmounts.Serializer()).create();
@@ -52,6 +59,24 @@ public class EssenceConversions
     }
 
     private final Map<Item, MagicAmounts> essenceMappings = Maps.newHashMap();
+
+    public static void init()
+    {
+        MinecraftForge.EVENT_BUS.addListener(EssenceConversions::playerLoggedIn);
+        MinecraftForge.EVENT_BUS.addListener(EssenceConversions::serverAboutToStart);
+    }
+
+    private static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event)
+    {
+        PlayerEntity player = event.getPlayer();
+        if (player.isServerWorld())
+            ElementsOfPowerMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncEssenceConversions());
+    }
+
+    private static void serverAboutToStart(FMLServerAboutToStartEvent event)
+    {
+        registerResourceReloadListener(event.getServer().getResourceManager());
+    }
 
     public boolean itemHasEssence(Item item)
     {
@@ -109,7 +134,7 @@ public class EssenceConversions
         essenceMappings.putAll(data);
     }
 
-    public static void registerEssencesForRecipes()
+    private static void registerEssencesForRecipes()
     {
         Map<Item, RecipeTools.ItemSource> itemSources = RecipeTools.gatherRecipes();
 
@@ -155,7 +180,7 @@ public class EssenceConversions
         }
     }
 
-    public static void loadOverrides()
+    private static void loadOverrides()
     {
         Path path = OVERRIDES_PATH.get();
         if (Files.exists(path))
@@ -176,7 +201,7 @@ public class EssenceConversions
     }
 
     @Nullable
-    public static Map<String, MagicAmounts> loadConfig(Path path) throws FileNotFoundException
+    private static Map<String, MagicAmounts> loadConfig(Path path) throws FileNotFoundException
     {
         Reader r = new FileReader(path.toFile());
         Type type = new TypeToken<Map<String, MagicAmounts>>()
@@ -186,7 +211,7 @@ public class EssenceConversions
         return SERIALIZER.fromJson(r, type);
     }
 
-    public static void applyConversions(Map<String, MagicAmounts> map)
+    private static void applyConversions(Map<String, MagicAmounts> map)
     {
         for (Map.Entry<String, MagicAmounts> e : map.entrySet())
         {
@@ -201,7 +226,7 @@ public class EssenceConversions
         }
     }
 
-    public static void saveConversions(Path path, Map<Item, MagicAmounts> map)
+    private static void saveConversions(Path path, Map<Item, MagicAmounts> map)
     {
         try
         {
@@ -221,7 +246,7 @@ public class EssenceConversions
         }
     }
 
-    public static void recalculateConversions()
+    private static void recalculateConversions()
     {
         ElementsOfPowerMod.LOGGER.info("Recalculating essence conversion table...");
         Stopwatch sw = Stopwatch.createStarted();
@@ -234,7 +259,7 @@ public class EssenceConversions
         ElementsOfPowerMod.LOGGER.info("Done. Time elapsed: {}", sw);
     }
 
-    public static void invalidateCache()
+    private static void invalidateCache()
     {
         Path path = CACHE_PATH.get();
         if (Files.exists(path))
@@ -253,27 +278,27 @@ public class EssenceConversions
     public static void registerSubcommands(LiteralArgumentBuilder<CommandSource> argumentBuilder)
     {
         argumentBuilder
-        .then(Commands.literal("invalidate")
-                .requires(cs -> cs.hasPermissionLevel(4)) //permission
-                .executes(ctx -> {
-                            invalidateCache();
-                            ctx.getSource().sendFeedback(new StringTextComponent("Cache invalidated. Will recalculate conversions on next restart"), true);
-                            return 0;
-                        }
+                .then(Commands.literal("invalidate")
+                        .requires(cs -> cs.hasPermissionLevel(4)) //permission
+                        .executes(ctx -> {
+                                    invalidateCache();
+                                    ctx.getSource().sendFeedback(new StringTextComponent("Cache invalidated. Will recalculate conversions on next restart"), true);
+                                    return 0;
+                                }
+                        )
                 )
-        )
-        .then(Commands.literal("recalculate")
-                .requires(cs -> cs.hasPermissionLevel(4)) //permission
-                .executes(ctx -> {
-                            recalculateConversions();
-                            ctx.getSource().sendFeedback(new StringTextComponent("Conversions recalculated."), true);
-                            return 0;
-                        }
-                )
-        );
+                .then(Commands.literal("recalculate")
+                        .requires(cs -> cs.hasPermissionLevel(4)) //permission
+                        .executes(ctx -> {
+                                    recalculateConversions();
+                                    ctx.getSource().sendFeedback(new StringTextComponent("Conversions recalculated."), true);
+                                    return 0;
+                                }
+                        )
+                );
     }
 
-    public static void registerResourceReloadListener(IReloadableResourceManager serverResourceManager)
+    private static void registerResourceReloadListener(IReloadableResourceManager serverResourceManager)
     {
         serverResourceManager.addReloadListener(
                 new ReloadListener<Map<String, MagicAmounts>>()
@@ -310,7 +335,7 @@ public class EssenceConversions
                         {
                             recalculateConversions();
                         }
-                        ElementsOfPowerMod.channel.send(PacketDistributor.ALL.with(null), new SyncEssenceConversions());
+                        ElementsOfPowerMod.CHANNEL.send(PacketDistributor.ALL.with(null), new SyncEssenceConversions());
                     }
                 }
         );

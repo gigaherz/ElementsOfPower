@@ -48,25 +48,21 @@ import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
 import net.minecraft.data.*;
 import net.minecraft.data.loot.BlockLootTables;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.*;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.SpecialRecipeSerializer;
 import net.minecraft.particles.ParticleType;
-import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.state.IntegerProperty;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.feature.Feature;
@@ -105,7 +101,6 @@ import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.network.NetworkRegistry;
-import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
@@ -120,8 +115,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-
-//import gigaherz.elementsofpower.progression.DiscoveryHandler;
 
 @Mod(ElementsOfPowerMod.MODID)
 public class ElementsOfPowerMod
@@ -145,7 +138,7 @@ public class ElementsOfPowerMod
             .setTrackingRange(20).setUpdateInterval(5).setShouldReceiveVelocityUpdates(true).build(location("essence").toString()));
 
     private static final String PROTOCOL_VERSION = "1.0";
-    public static SimpleChannel channel = NetworkRegistry.ChannelBuilder
+    public static SimpleChannel CHANNEL = NetworkRegistry.ChannelBuilder
             .named(location("general"))
             .clientAcceptedVersions(PROTOCOL_VERSION::equals)
             .serverAcceptedVersions(PROTOCOL_VERSION::equals)
@@ -187,13 +180,9 @@ public class ElementsOfPowerMod
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::clientSetup);
         modEventBus.addListener(this::registerParticleFactory);
-
         modEventBus.addListener(this::imcEnqueue);
-
         modEventBus.addListener(this::gatherData);
 
-        MinecraftForge.EVENT_BUS.addListener(this::playerLoggedIn);
-        MinecraftForge.EVENT_BUS.addListener(this::serverAboutToStart);
         MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
 
         LootFunctionManager.registerFunction(ApplyOrbSizeFunction.Serializer.INSTANCE);
@@ -363,12 +352,12 @@ public class ElementsOfPowerMod
     public void commonSetup(FMLCommonSetupEvent event)
     {
         int messageNumber = 0;
-        channel.messageBuilder(UpdateSpellSequence.class, messageNumber++).encoder(UpdateSpellSequence::encode).decoder(UpdateSpellSequence::new).consumer(UpdateSpellSequence::handle).add();
-        channel.messageBuilder(SynchronizeSpellcastState.class, messageNumber++).encoder(SynchronizeSpellcastState::encode).decoder(SynchronizeSpellcastState::new).consumer(SynchronizeSpellcastState::handle).add();
-        channel.messageBuilder(UpdateEssentializerAmounts.class, messageNumber++).encoder(UpdateEssentializerAmounts::encode).decoder(UpdateEssentializerAmounts::new).consumer(UpdateEssentializerAmounts::handle).add();
-        channel.messageBuilder(UpdateEssentializerTileEntity.class, messageNumber++).encoder(UpdateEssentializerTileEntity::encode).decoder(UpdateEssentializerTileEntity::new).consumer(UpdateEssentializerTileEntity::handle).add();
-        channel.messageBuilder(AddVelocityToPlayer.class, messageNumber++).encoder(AddVelocityToPlayer::encode).decoder(AddVelocityToPlayer::new).consumer(AddVelocityToPlayer::handle).add();
-        channel.messageBuilder(SyncEssenceConversions.class, messageNumber++).encoder(SyncEssenceConversions::encode).decoder(SyncEssenceConversions::new).consumer(SyncEssenceConversions::handle).add();
+        CHANNEL.messageBuilder(UpdateSpellSequence.class, messageNumber++).encoder(UpdateSpellSequence::encode).decoder(UpdateSpellSequence::new).consumer(UpdateSpellSequence::handle).add();
+        CHANNEL.messageBuilder(SynchronizeSpellcastState.class, messageNumber++).encoder(SynchronizeSpellcastState::encode).decoder(SynchronizeSpellcastState::new).consumer(SynchronizeSpellcastState::handle).add();
+        CHANNEL.messageBuilder(UpdateEssentializerAmounts.class, messageNumber++).encoder(UpdateEssentializerAmounts::encode).decoder(UpdateEssentializerAmounts::new).consumer(UpdateEssentializerAmounts::handle).add();
+        CHANNEL.messageBuilder(UpdateEssentializerTileEntity.class, messageNumber++).encoder(UpdateEssentializerTileEntity::encode).decoder(UpdateEssentializerTileEntity::new).consumer(UpdateEssentializerTileEntity::handle).add();
+        CHANNEL.messageBuilder(AddVelocityToPlayer.class, messageNumber++).encoder(AddVelocityToPlayer::encode).decoder(AddVelocityToPlayer::new).consumer(AddVelocityToPlayer::handle).add();
+        CHANNEL.messageBuilder(SyncEssenceConversions.class, messageNumber++).encoder(SyncEssenceConversions::encode).decoder(SyncEssenceConversions::new).consumer(SyncEssenceConversions::handle).add();
         LOGGER.debug("Final message number: " + messageNumber);
 
         MagicContainerCapability.register();
@@ -380,6 +369,8 @@ public class ElementsOfPowerMod
 
         //noinspection deprecation
         DeferredWorkQueue.runLater(this::addFeatures);
+
+        EssenceConversions.init();
     }
 
     private void addFeatures()
@@ -473,17 +464,6 @@ public class ElementsOfPowerMod
         InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_ICON, () -> new Tuple<>("necklace", location("gui/necklace_slot_background")));
         InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_TYPE, () -> new CurioIMCMessage("ring").setSize(2).setEnabled(true).setHidden(false));
         //InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_ICON, () -> new Tuple<>("ring", location("gui/ring_slot_background")));
-    }
-
-    public void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event)
-    {
-        if (event.getPlayer().isServerWorld())
-            channel.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) event.getPlayer()), new SyncEssenceConversions());
-    }
-
-    public void serverAboutToStart(FMLServerAboutToStartEvent event)
-    {
-        EssenceConversions.registerResourceReloadListener(event.getServer().getResourceManager());
     }
 
     public void serverStarting(FMLServerStartingEvent event)
