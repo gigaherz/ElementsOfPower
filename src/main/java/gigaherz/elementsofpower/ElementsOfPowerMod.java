@@ -338,10 +338,10 @@ public class ElementsOfPowerMod
         ScreenManager.registerFactory(AnalyzerContainer.TYPE, AnalyzerScreen::new);
         ScreenManager.registerFactory(EssentializerContainer.TYPE, EssentializerScreen::new);
 
-        RenderTypeLookup.setRenderLayer(ElementsOfPowerBlocks.DUST, RenderType.translucent());
-        RenderTypeLookup.setRenderLayer(ElementsOfPowerBlocks.MIST, RenderType.translucent());
-        RenderTypeLookup.setRenderLayer(ElementsOfPowerBlocks.CUSHION, RenderType.translucent());
-        RenderTypeLookup.setRenderLayer(ElementsOfPowerBlocks.LIGHT, RenderType.translucent());
+        RenderTypeLookup.setRenderLayer(ElementsOfPowerBlocks.DUST, RenderType.getTranslucent());
+        RenderTypeLookup.setRenderLayer(ElementsOfPowerBlocks.MIST, RenderType.getTranslucent());
+        RenderTypeLookup.setRenderLayer(ElementsOfPowerBlocks.CUSHION, RenderType.getTranslucent());
+        RenderTypeLookup.setRenderLayer(ElementsOfPowerBlocks.LIGHT, RenderType.getTranslucent());
 
         MinecraftForge.EVENT_BUS.register(new WandUseManager());
         MinecraftForge.EVENT_BUS.register(new MagicContainerOverlay());
@@ -389,16 +389,16 @@ public class ElementsOfPowerMod
                             int numPerChunk = 3 + getBiomeBonus(g.getElement(), biome);
                             biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Feature.ORE
                                     .withConfiguration(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, g.getOre().getDefaultState(), numPerChunk))
-                                    .func_227228_a_(Placement.COUNT_RANGE.func_227446_a_(new CountRangeConfig(1, 0, 0, 16))));
+                                    .withPlacement(Placement.COUNT_RANGE.configure(new CountRangeConfig(1, 0, 0, 16))));
                         }
                     }
 
                     biome.addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, CocoonFeature.INSTANCE.withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG)
-                            .func_227228_a_(CocoonPlacement.INSTANCE.func_227446_a_(NoPlacementConfig.NO_PLACEMENT_CONFIG)));
+                            .withPlacement(CocoonPlacement.INSTANCE.configure(NoPlacementConfig.NO_PLACEMENT_CONFIG)));
                 }
 
                 biome.addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, CocoonFeature.INSTANCE.withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG)
-                        .func_227228_a_(CocoonPlacement.INSTANCE.func_227446_a_(NoPlacementConfig.NO_PLACEMENT_CONFIG)));
+                        .withPlacement(CocoonPlacement.INSTANCE.configure(NoPlacementConfig.NO_PLACEMENT_CONFIG)));
             }
         }
     }
@@ -728,8 +728,8 @@ public class ElementsOfPowerMod
                     .addCriterion("has_gold", hasItem(Items.GOLD_INGOT))
                     .build(consumer);
 
-            CustomRecipeBuilder.func_218656_a(ContainerChargeRecipe.SERIALIZER).build(consumer, location("gemstone_change").toString());
-            CustomRecipeBuilder.func_218656_a(GemstoneChangeRecipe.SERIALIZER).build(consumer, location("container_charge").toString());
+            CustomRecipeBuilder.customRecipe(ContainerChargeRecipe.SERIALIZER).build(consumer, location("gemstone_change").toString());
+            CustomRecipeBuilder.customRecipe(GemstoneChangeRecipe.SERIALIZER).build(consumer, location("container_charge").toString());
 
             for (Gemstone gemstone : Gemstone.values())
             {

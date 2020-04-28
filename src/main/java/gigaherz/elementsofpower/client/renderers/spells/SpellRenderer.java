@@ -69,7 +69,7 @@ public abstract class SpellRenderer
 
     public static RenderType getRenderType(Spellcast spellcast)
     {
-        return RenderType.entityTranslucent(getTexture(spellcast));
+        return RenderType.getEntityTranslucent(getTexture(spellcast));
     }
 
     public abstract void render(Spellcast spellcast, PlayerEntity player, EntityRendererManager renderManager, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, Vec3d offset);

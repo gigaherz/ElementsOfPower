@@ -142,7 +142,7 @@ public class BaubleItem extends GemContainerItem
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn)
     {
-        if (worldIn.isRemote || !playerIn.isShiftKeyDown())
+        if (worldIn.isRemote || !playerIn.isSneaking())
             return super.onItemRightClick(worldIn, playerIn, handIn);
 
         ItemStack stack = playerIn.getHeldItem(handIn);
@@ -173,7 +173,7 @@ public class BaubleItem extends GemContainerItem
                 break;
         }
 
-        return ActionResult.func_226248_a_(stack);
+        return ActionResult.resultSuccess(stack);
     }
 
     @OnlyIn(Dist.CLIENT)

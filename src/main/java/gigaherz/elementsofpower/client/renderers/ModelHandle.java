@@ -38,7 +38,7 @@ public class ModelHandle
 
     public void render(IRenderTypeBuffer bufferIn, RenderType rt, MatrixStack matrixStackIn, int packedLightIn, int color)
     {
-        render(bufferIn, rt, matrixStackIn, packedLightIn, OverlayTexture.DEFAULT_LIGHT, color);
+        render(bufferIn, rt, matrixStackIn, packedLightIn, OverlayTexture.NO_OVERLAY, color);
     }
 
     public void render(IRenderTypeBuffer bufferIn, RenderType rt, MatrixStack matrixStackIn, int packedLightIn, int overlay, int color)

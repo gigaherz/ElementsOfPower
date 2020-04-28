@@ -38,7 +38,7 @@ public class EssentializerBlock extends Block
         if (!(tileEntity instanceof EssentializerTileEntity))
             return ActionResultType.FAIL;
 
-        if (player.isShiftKeyDown())
+        if (player.isSneaking())
             return ActionResultType.PASS;
 
         if (worldIn.isRemote)

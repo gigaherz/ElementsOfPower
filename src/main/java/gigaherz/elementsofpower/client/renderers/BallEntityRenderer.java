@@ -39,7 +39,7 @@ public class BallEntityRenderer extends EntityRenderer<BallEntity>
             matrixStackIn.push();
             matrixStackIn.scale(subScale, subScale, subScale);
 
-            handle.get().render(bufferIn, RenderType.entityTranslucent(getEntityTexture(entity)), matrixStackIn, 0x00F000F0, color);
+            handle.get().render(bufferIn, RenderType.getEntityTranslucent(getEntityTexture(entity)), matrixStackIn, 0x00F000F0, color);
 
             matrixStackIn.pop();
         }

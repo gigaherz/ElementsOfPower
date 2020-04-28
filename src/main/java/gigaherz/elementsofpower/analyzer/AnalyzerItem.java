@@ -65,6 +65,6 @@ public class AnalyzerItem extends Item
         if (!worldIn.isRemote)
             openGui((ServerPlayerEntity) playerIn, playerIn.getHeldItem(hand));
 
-        return ActionResult.func_226248_a_(playerIn.getHeldItem(hand));
+        return ActionResult.resultSuccess(playerIn.getHeldItem(hand));
     }
 }

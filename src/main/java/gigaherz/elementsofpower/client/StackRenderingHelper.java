@@ -59,7 +59,7 @@ public class StackRenderingHelper
     {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferBuil = tessellator.getBuffer();
-        bufferBuil.begin(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
+        bufferBuil.begin(GL11.GL_QUADS, DefaultVertexFormats.ENTITY);
 
         Random random = new Random();
         random.setSeed(42);
@@ -71,7 +71,7 @@ public class StackRenderingHelper
 
         for (BakedQuad bakedquad : model.getQuads(null, null, random))
         {
-            bufferBuil.addVertexData(m.getLast(), bakedquad, r, g, b, a, 0x00F000F0, OverlayTexture.DEFAULT_LIGHT, true);
+            bufferBuil.addVertexData(m.getLast(), bakedquad, r, g, b, a, 0x00F000F0, OverlayTexture.NO_OVERLAY, true);
         }
 
         tessellator.draw();

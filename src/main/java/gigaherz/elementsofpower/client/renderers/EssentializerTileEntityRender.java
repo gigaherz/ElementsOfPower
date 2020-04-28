@@ -54,7 +54,7 @@ public class EssentializerTileEntityRender extends TileEntityRenderer<Essentiali
 
             matrixStack.rotate(Vector3f.YP.rotationDegrees(angle1));
 
-            corner_handle.get().render(bufferIn, RenderType.entityTranslucent(texture), matrixStack, combinedLightIn, 0xFFFFFFFF);
+            corner_handle.get().render(bufferIn, RenderType.getEntityTranslucent(texture), matrixStack, combinedLightIn, 0xFFFFFFFF);
 
             matrixStack.pop();
         }
@@ -73,7 +73,7 @@ public class EssentializerTileEntityRender extends TileEntityRenderer<Essentiali
 
             matrixStack.rotate(Vector3f.YP.rotationDegrees(angle1));
 
-            side_handle.get().render(bufferIn, RenderType.entityTranslucent(texture), matrixStack, combinedLightIn, 0xFFFFFFFF);
+            side_handle.get().render(bufferIn, RenderType.getEntityTranslucent(texture), matrixStack, combinedLightIn, 0xFFFFFFFF);
 
             matrixStack.pop();
         }

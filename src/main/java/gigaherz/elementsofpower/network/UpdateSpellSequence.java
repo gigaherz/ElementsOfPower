@@ -46,7 +46,7 @@ public class UpdateSpellSequence
         {
             sequence = new ArrayList<>();
             for (int i = 0; i < count; i++)
-            { sequence.add(Element.byName(buf.readString())); }
+            { sequence.add(Element.byName(buf.readString(100))); }
         }
     }
 

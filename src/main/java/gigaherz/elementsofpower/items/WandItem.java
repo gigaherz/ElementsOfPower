@@ -40,7 +40,7 @@ public class WandItem extends GemContainerItem
 
         if (!worldIn.isRemote)
         {
-            if (playerIn.isShiftKeyDown())
+            if (playerIn.isSneaking())
             {
                 CompoundNBT tag = itemStackIn.getTag();
                 if (tag != null)
@@ -56,10 +56,10 @@ public class WandItem extends GemContainerItem
             }
 
             playerIn.setActiveHand(hand);
-            return ActionResult.func_226248_a_(itemStackIn);
+            return ActionResult.resultSuccess(itemStackIn);
         }
 
-        return ActionResult.func_226251_d_(itemStackIn);
+        return ActionResult.resultPass(itemStackIn);
     }
 
     public static void beginTracking(PlayerEntity playerIn, Hand hand)

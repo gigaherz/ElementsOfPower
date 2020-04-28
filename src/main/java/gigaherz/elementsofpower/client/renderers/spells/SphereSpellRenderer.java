@@ -49,6 +49,6 @@ public class SphereSpellRenderer extends SpellRenderer
 
     private static RenderType getSphereRenderType(Spellcast cast)
     {
-        return RenderType.entityTranslucentCull(getTexture(cast));
+        return RenderType.getEntityTranslucentCull(getTexture(cast));
     }
 }
