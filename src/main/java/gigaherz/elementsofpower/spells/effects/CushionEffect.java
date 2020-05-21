@@ -62,9 +62,7 @@ public class CushionEffect extends SpellEffect
             currentState = cast.world.getBlockState(blockPos);
         }
 
-        Block block = currentState.getBlock();
-
-        if (block == Blocks.AIR)
+        if (currentState.isAir(cast.world, blockPos))
         {
             cast.world.setBlockState(blockPos, ElementsOfPowerBlocks.CUSHION.getDefaultState().with(CushionBlock.DENSITY, 16));
         }

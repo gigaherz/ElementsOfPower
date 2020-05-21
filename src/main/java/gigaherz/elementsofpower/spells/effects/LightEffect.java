@@ -6,6 +6,7 @@ import gigaherz.elementsofpower.spells.blocks.LightBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.math.*;
@@ -73,7 +74,7 @@ public class LightEffect extends SpellEffect
 
         Block block = currentState.getBlock();
 
-        if (block == Blocks.AIR)
+        if (currentState.isAir(cast.world, blockPos))
         {
             cast.world.setBlockState(blockPos, ElementsOfPowerBlocks.LIGHT.getDefaultState().with(LightBlock.DENSITY, density));
         }

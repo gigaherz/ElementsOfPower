@@ -4,13 +4,18 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.state.IntegerProperty;
 import net.minecraft.state.StateContainer;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.Random;
 
@@ -49,13 +54,13 @@ public class LightBlock extends Block
     @Override
     public int getLightValue(BlockState state, IBlockReader world, BlockPos pos)
     {
-        return Math.min(15, (4 * (state.get(DENSITY) / 4)));
+        return Math.min(15, state.get(DENSITY) * 4);
     }
 
     @Override
     public int tickRate(IWorldReader worldIn)
     {
-        return 30;
+        return 200;
     }
 
     @Override
@@ -89,5 +94,19 @@ public class LightBlock extends Block
     public BlockRenderType getRenderType(BlockState state)
     {
         return BlockRenderType.INVISIBLE;
+    }
+
+    @Override
+    public void animateTick(BlockState stateIn, World worldIn, BlockPos pos, Random rand) {
+        if (rand.nextInt(16) <= (3+stateIn.get(DENSITY)))
+        {
+            double theta = rand.nextDouble() * 2.0 * Math.PI;
+            double phi = rand.nextDouble() * Math.PI;
+            double r = rand.nextDouble() * 0.5;
+            double dx = r * Math.sin(phi) * Math.cos(theta);
+            double dy = r * Math.sin(phi) * Math.sin(theta);
+            double dz = r * Math.cos(phi);
+            worldIn.addParticle(ParticleTypes.END_ROD, pos.getX() + 0.5 + dx, pos.getY() + 0.5 + dy, pos.getZ() + 0.5 + dz, rand.nextGaussian() * 0.005D, rand.nextGaussian() * 0.005D, rand.nextGaussian() * 0.005D);
+        }
     }
 }

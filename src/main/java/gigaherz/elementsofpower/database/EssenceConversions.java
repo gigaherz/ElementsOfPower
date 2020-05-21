@@ -48,7 +48,8 @@ public class EssenceConversions
     private static final Supplier<Path> CACHE_PATH = () -> FMLPaths.CONFIGDIR.get().resolve("elementsofpower-essence_cache.json");
 
     private static final Gson SERIALIZER = new GsonBuilder()
-            .registerTypeAdapter(MagicAmounts.class, new MagicAmounts.Serializer()).create();
+            .registerTypeAdapter(MagicAmounts.class, new MagicAmounts.Serializer())
+            .create();
 
     public static final EssenceConversions CLIENT = new EssenceConversions();
     public static final EssenceConversions SERVER = new EssenceConversions();
@@ -193,7 +194,7 @@ public class EssenceConversions
                     applyConversions(ovr);
                 }
             }
-            catch (FileNotFoundException e)
+            catch (IOException e)
             {
                 ElementsOfPowerMod.LOGGER.warn("Unexpected error", e);
             }
@@ -201,14 +202,16 @@ public class EssenceConversions
     }
 
     @Nullable
-    private static Map<String, MagicAmounts> loadConfig(Path path) throws FileNotFoundException
+    private static Map<String, MagicAmounts> loadConfig(Path path) throws IOException
     {
-        Reader r = new FileReader(path.toFile());
-        Type type = new TypeToken<Map<String, MagicAmounts>>()
+        try (Reader r = new FileReader(path.toFile()))
         {
-        }.getType();
+            Type type = new TypeToken<Map<String, MagicAmounts>>()
+            {
+            }.getType();
 
-        return SERIALIZER.fromJson(r, type);
+            return SERIALIZER.fromJson(r, type);
+        }
     }
 
     private static void applyConversions(Map<String, MagicAmounts> map)

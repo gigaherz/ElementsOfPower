@@ -86,7 +86,6 @@ import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.common.util.NonNullLazy;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.InterModComms;
@@ -97,7 +96,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
-import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.network.NetworkRegistry;
@@ -187,6 +185,7 @@ public class ElementsOfPowerMod
 
         LootFunctionManager.registerFunction(ApplyOrbSizeFunction.Serializer.INSTANCE);
     }
+
 
     public void registerBlocks(RegistryEvent.Register<Block> event)
     {
@@ -728,8 +727,8 @@ public class ElementsOfPowerMod
                     .addCriterion("has_gold", hasItem(Items.GOLD_INGOT))
                     .build(consumer);
 
-            CustomRecipeBuilder.customRecipe(ContainerChargeRecipe.SERIALIZER).build(consumer, location("gemstone_change").toString());
-            CustomRecipeBuilder.customRecipe(GemstoneChangeRecipe.SERIALIZER).build(consumer, location("container_charge").toString());
+            CustomRecipeBuilder.customRecipe(GemstoneChangeRecipe.SERIALIZER).build(consumer, location("gemstone_change").toString());
+            CustomRecipeBuilder.customRecipe(ContainerChargeRecipe.SERIALIZER).build(consumer, location("container_charge").toString());
 
             for (Gemstone gemstone : Gemstone.values())
             {

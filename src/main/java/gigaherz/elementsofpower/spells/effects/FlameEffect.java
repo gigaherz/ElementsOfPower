@@ -107,7 +107,7 @@ public class FlameEffect extends SpellEffect
 
         Block block = currentState.getBlock();
 
-        if (block == Blocks.AIR)
+        if (currentState.isAir(cast.world, blockPos))
         {
             cast.world.setBlockState(blockPos, Blocks.FIRE.getDefaultState());
         }

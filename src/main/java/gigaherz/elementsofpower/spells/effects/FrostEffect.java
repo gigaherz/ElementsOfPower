@@ -133,7 +133,7 @@ public class FrostEffect extends SpellEffect
                     world.setBlockState(blockPos, currentState.with(SnowBlock.LAYERS, l));
                     layers -= add;
                 }
-                else if (block == Blocks.AIR)
+                else if (currentState.isAir(cast.world, blockPos))
                 {
                     int add = Math.min(8, layers);
                     world.setBlockState(blockPos, Blocks.SNOW.getDefaultState().with(SnowBlock.LAYERS, add));
