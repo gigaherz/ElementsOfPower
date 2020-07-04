@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower.spells.shapes;
 
+import gigaherz.elementsofpower.spells.InitializedSpellcast;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
@@ -7,21 +8,22 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.*;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.List;
 
 public class ConeShape extends SpellShape
 {
     @Override
-    public float getScale(Spellcast cast)
+    public float getScale(InitializedSpellcast cast)
     {
         return 1 + 0.25f * cast.getDamageForce();
     }
 
     @Override
-    public Spellcast castSpell(ItemStack stack, PlayerEntity player, Spellcast cast)
+    public InitializedSpellcast castSpell(ItemStack stack, PlayerEntity player, Spellcast cast)
     {
-        return cast;
+        return cast.init(player.world, player);
     }
 
     @Override
@@ -30,7 +32,7 @@ public class ConeShape extends SpellShape
         return false;
     }
 
-    private AxisAlignedBB getConeBounds(Spellcast cast)
+    private AxisAlignedBB getConeBounds(InitializedSpellcast cast)
     {
         PlayerEntity player = cast.player;
 
@@ -38,21 +40,21 @@ public class ConeShape extends SpellShape
         float radius = 2;
         float hyp = (float) Math.sqrt(radius * radius + length * length);
 
-        Vec3d p0 = player.getEyePosition(1.0f);
+        Vector3d p0 = player.getEyePosition(1.0f);
 
         float y = player.rotationYawHead;
         float p = player.rotationPitch;
         float f = (float) Math.toDegrees(Math.atan2(radius, length));
 
-        Vec3d v0 = (getVectorFromRPY(hyp, y, p, 0 - f));
-        Vec3d v1 = (getVectorFromRPY(hyp, y, p, 0 + f));
-        Vec3d v2 = (getVectorFromRPY(hyp, y, p - f, 0));
-        Vec3d v3 = (getVectorFromRPY(hyp, y, p + f, 0));
+        Vector3d v0 = (getVectorFromRPY(hyp, y, p, 0 - f));
+        Vector3d v1 = (getVectorFromRPY(hyp, y, p, 0 + f));
+        Vector3d v2 = (getVectorFromRPY(hyp, y, p - f, 0));
+        Vector3d v3 = (getVectorFromRPY(hyp, y, p + f, 0));
 
-        Vec3d q0 = p0.add(v0);
-        Vec3d q1 = p0.add(v1);
-        Vec3d q2 = p0.add(v2);
-        Vec3d q3 = p0.add(v3);
+        Vector3d q0 = p0.add(v0);
+        Vector3d q1 = p0.add(v1);
+        Vector3d q2 = p0.add(v2);
+        Vector3d q3 = p0.add(v3);
 
         float mx = (float) max5(p0.x, q0.x, q1.x, q2.x, q3.x);
         float nx = (float) min5(p0.x, q0.x, q1.x, q2.x, q3.x);
@@ -64,7 +66,7 @@ public class ConeShape extends SpellShape
         return new AxisAlignedBB(mx, my, mz, nx, ny, nz);
     }
 
-    private Vec3d getVectorFromRPY(double length, double y, double p, double r)
+    private Vector3d getVectorFromRPY(double length, double y, double p, double r)
     {
         y = Math.toRadians(y + 90);
         p = Math.toRadians(180 - p);
@@ -85,7 +87,7 @@ public class ConeShape extends SpellShape
         double xx = xl + xs;
         double zz = zl + zs;
 
-        return new Vec3d(xx, yy, zz);
+        return new Vector3d(xx, yy, zz);
     }
 
     private static double max5(double a, double b, double c, double d, double e)
@@ -98,7 +100,7 @@ public class ConeShape extends SpellShape
         return Math.min(Math.min(Math.min(Math.min(a, b), c), d), e);
     }
 
-    private boolean isPointInCone(Spellcast cast, Vec3d point)
+    private boolean isPointInCone(InitializedSpellcast cast, Vector3d point)
     {
         PlayerEntity player = cast.player;
 
@@ -110,9 +112,9 @@ public class ConeShape extends SpellShape
         double p = player.rotationPitch;
         double f = Math.abs(Math.atan(tang));
 
-        Vec3d p0 = player.getEyePosition(1.0f);
-        Vec3d ab = getVectorFromRPY(length, y, p, 0);
-        Vec3d ap = point.subtract(p0);
+        Vector3d p0 = player.getEyePosition(1.0f);
+        Vector3d ab = getVectorFromRPY(length, y, p, 0);
+        Vector3d ap = point.subtract(p0);
 
         double dot1 = ap.dotProduct(ab);
         double dot2 = ab.dotProduct(ab);
@@ -128,9 +130,9 @@ public class ConeShape extends SpellShape
     }
 
     @Override
-    public void spellTick(Spellcast cast)
+    public void spellTick(InitializedSpellcast cast)
     {
-        Vec3d playerPos = cast.player.getEyePosition(1.0f);
+        Vector3d playerPos = cast.player.getEyePosition(1.0f);
 
         final AxisAlignedBB aabb = getConeBounds(cast);
 
@@ -149,7 +151,7 @@ public class ConeShape extends SpellShape
                     {
                         double z = MathHelper.clampedLerp(aabb_.minZ, aabb_.maxZ, k / 2.0);
 
-                        if (isPointInCone(cast, new Vec3d(x, y, z)))
+                        if (isPointInCone(cast, new Vector3d(x, y, z)))
                             return true;
                     }
                 }
@@ -176,7 +178,7 @@ public class ConeShape extends SpellShape
             {
                 for (int x = x0; x <= x1; x++)
                 {
-                    Vec3d pt = new Vec3d(x + 0.5, y + 0.5, z + 0.5);
+                    Vector3d pt = new Vector3d(x + 0.5, y + 0.5, z + 0.5);
                     if (isPointInCone(cast, pt))
                     {
                         BlockRayTraceResult mop = cast.world.rayTraceBlocks(new RayTraceContext(playerPos, pt, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, cast.player));
@@ -203,7 +205,7 @@ public class ConeShape extends SpellShape
     {
         public final Direction direction;
 
-        public FacePos(Vec3d vec, Direction face)
+        public FacePos(Vector3d vec, Direction face)
         {
             super(vec);
             direction = face;

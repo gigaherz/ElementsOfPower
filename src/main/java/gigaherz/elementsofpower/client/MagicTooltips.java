@@ -3,11 +3,12 @@ package gigaherz.elementsofpower.client;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.capabilities.MagicContainerCapability;
 import gigaherz.elementsofpower.database.EssenceConversions;
-import gigaherz.elementsofpower.database.MagicAmounts;
+import gigaherz.elementsofpower.magic.MagicAmounts;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -42,17 +43,17 @@ public class MagicTooltips
 
         if (item == Items.DIAMOND || item == Items.EMERALD || item == Items.QUARTZ)
         {
-            toolTip.add(1, new TranslationTextComponent("text.elementsofpower.gemstone.use").applyTextStyles(TextFormatting.DARK_GRAY, TextFormatting.ITALIC));
+            toolTip.add(1, new TranslationTextComponent("text.elementsofpower.gemstone.use").func_240701_a_(TextFormatting.DARK_GRAY, TextFormatting.ITALIC));
         }
 
         MagicAmounts amounts = EssenceConversions.CLIENT.getEssences(stack, false);
         if (amounts.isEmpty())
             return;
 
-        toolTip.add(new TranslationTextComponent("elementsofpower.magic.converts").applyTextStyle(TextFormatting.YELLOW));
+        toolTip.add(new TranslationTextComponent("elementsofpower.magic.converts").func_240699_a_(TextFormatting.YELLOW));
         if (!Screen.hasShiftDown())
         {
-            toolTip.add(new TranslationTextComponent("elementsofpower.magic.more_info").applyTextStyle(TextFormatting.GRAY));
+            toolTip.add(new TranslationTextComponent("elementsofpower.magic.more_info").func_240699_a_(TextFormatting.GRAY));
             return;
         }
 
@@ -68,11 +69,11 @@ public class MagicTooltips
 
             ITextComponent magicName = MagicAmounts.getMagicName(i);
 
-            ITextComponent magicAmount = stack.getCount() > 1
+            IFormattableTextComponent magicAmount = stack.getCount() > 1
                     ? new TranslationTextComponent("elementsofpower.magic.amount_stacked", magicName, str, str2)
                     : new TranslationTextComponent("elementsofpower.magic.amount", magicName, str);
 
-            toolTip.add(magicAmount.applyTextStyle(TextFormatting.GRAY));
+            toolTip.add(magicAmount.func_240699_a_(TextFormatting.GRAY));
         }
     }
 
@@ -86,10 +87,10 @@ public class MagicTooltips
                 return;
             }
 
-            toolTip.add(new TranslationTextComponent("elementsofpower.magic.contains").applyTextStyle(TextFormatting.YELLOW));
+            toolTip.add(new TranslationTextComponent("elementsofpower.magic.contains").func_240699_a_(TextFormatting.YELLOW));
             if (!Screen.hasShiftDown())
             {
-                toolTip.add(new TranslationTextComponent("elementsofpower.magic.more_info").applyTextStyle(TextFormatting.GRAY));
+                toolTip.add(new TranslationTextComponent("elementsofpower.magic.more_info").func_240699_a_(TextFormatting.GRAY));
                 return;
             }
 
@@ -98,9 +99,9 @@ public class MagicTooltips
                 for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
                 {
                     ITextComponent magicName = MagicAmounts.getMagicName(i);
-                    ITextComponent magicAmount = new TranslationTextComponent("elementsofpower.magic.amount_infinite", magicName);
+                    IFormattableTextComponent magicAmount = new TranslationTextComponent("elementsofpower.magic.amount_infinite", magicName);
 
-                    toolTip.add(magicAmount.applyTextStyle(TextFormatting.GRAY));
+                    toolTip.add(magicAmount.func_240699_a_(TextFormatting.GRAY));
                 }
             }
             else
@@ -115,9 +116,9 @@ public class MagicTooltips
                     String str = PRETTY_NUMBER_FORMATTER_2.format(amounts.get(i));
 
                     ITextComponent magicName = MagicAmounts.getMagicName(i);
-                    ITextComponent magicAmount = new TranslationTextComponent("elementsofpower.magic.amount", magicName, str);
+                    IFormattableTextComponent magicAmount = new TranslationTextComponent("elementsofpower.magic.amount", magicName, str);
 
-                    toolTip.add(magicAmount.applyTextStyle(TextFormatting.GRAY));
+                    toolTip.add(magicAmount.func_240699_a_(TextFormatting.GRAY));
                 }
             }
         });

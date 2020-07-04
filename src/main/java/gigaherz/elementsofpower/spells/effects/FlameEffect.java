@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower.spells.effects;
 
+import gigaherz.elementsofpower.spells.InitializedSpellcast;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -10,9 +11,11 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.monster.BlazeEntity;
 import net.minecraft.entity.projectile.DamagingProjectileEntity;
+import net.minecraft.entity.projectile.SmallFireballEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.*;
+import net.minecraft.util.math.vector.Vector3d;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -20,25 +23,25 @@ import java.util.List;
 public class FlameEffect extends SpellEffect
 {
     @Override
-    public int getDuration(Spellcast cast)
+    public int getDuration(InitializedSpellcast cast)
     {
         return 20 * cast.getDamageForce();
     }
 
     @Override
-    public int getInterval(Spellcast cast)
+    public int getInterval(InitializedSpellcast cast)
     {
         return 4;
     }
 
     @Override
-    public int getColor(Spellcast cast)
+    public int getColor(InitializedSpellcast cast)
     {
         return 0x0000ff;
     }
 
     @Override
-    public void processDirectHit(Spellcast cast, Entity entity, Vec3d hitVec)
+    public void processDirectHit(InitializedSpellcast cast, Entity entity, Vector3d hitVec)
     {
         float damage = (entity instanceof BlazeEntity) ? 3 + cast.getDamageForce() : cast.getDamageForce();
 
@@ -47,13 +50,13 @@ public class FlameEffect extends SpellEffect
     }
 
     @Override
-    public boolean processEntitiesAroundBefore(Spellcast cast, Vec3d hitVec)
+    public boolean processEntitiesAroundBefore(InitializedSpellcast cast, Vector3d hitVec)
     {
         return true;
     }
 
     @Override
-    public void processEntitiesAroundAfter(Spellcast cast, Vec3d hitVec)
+    public void processEntitiesAroundAfter(InitializedSpellcast cast, Vector3d hitVec)
     {
         AxisAlignedBB aabb = new AxisAlignedBB(
                 hitVec.x - cast.getDamageForce(),
@@ -67,9 +70,9 @@ public class FlameEffect extends SpellEffect
         burnEntities(cast, hitVec, cast.world.getEntitiesWithinAABB(ItemEntity.class, aabb));
     }
 
-    private void burnEntities(Spellcast cast, Vec3d hitVec, List<? extends Entity> living)
+    private void burnEntities(InitializedSpellcast cast, Vector3d hitVec, List<? extends Entity> living)
     {
-        DamagingProjectileEntity ef = EntityType.SMALL_FIREBALL.create(cast.world);
+        SmallFireballEntity ef = EntityType.SMALL_FIREBALL.create(cast.world);
 
         for (Entity e : living)
         {
@@ -84,11 +87,11 @@ public class FlameEffect extends SpellEffect
 
             double lv = Math.max(0, cast.getDamageForce() - ll);
 
-            boolean canAttack = e.attackEntityFrom(DamageSource.causeFireballDamage(ef, cast.player), 5.0F);
+            boolean canAttack = e.attackEntityFrom(DamageSource.func_233547_a_(ef, cast.player), 5.0F);
 
             if (canAttack)
             {
-                if (!e.isImmuneToFire())
+                if (!e.func_230279_az_())
                 {
                     e.setFire((int) lv);
                 }
@@ -97,7 +100,7 @@ public class FlameEffect extends SpellEffect
     }
 
     @Override
-    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, BlockState currentState, float r, @Nullable RayTraceResult mop)
+    public void processBlockWithinRadius(InitializedSpellcast cast, BlockPos blockPos, BlockState currentState, float r, @Nullable RayTraceResult mop)
     {
         if (mop != null && mop.getType() == RayTraceResult.Type.BLOCK)
         {
@@ -114,9 +117,9 @@ public class FlameEffect extends SpellEffect
     }
 
     @Override
-    public void spawnBallParticles(Spellcast cast, RayTraceResult mop)
+    public void spawnBallParticles(InitializedSpellcast cast, RayTraceResult mop)
     {
-        Vec3d hitVec = mop.getHitVec();
+        Vector3d hitVec = mop.getHitVec();
         cast.spawnRandomParticle(ParticleTypes.FLAME, hitVec.x, hitVec.y, hitVec.z);
     }
 }

@@ -2,7 +2,7 @@ package gigaherz.elementsofpower.items;
 
 import gigaherz.elementsofpower.capabilities.IMagicContainer;
 import gigaherz.elementsofpower.capabilities.MagicContainerCapability;
-import gigaherz.elementsofpower.database.MagicAmounts;
+import gigaherz.elementsofpower.magic.MagicAmounts;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;

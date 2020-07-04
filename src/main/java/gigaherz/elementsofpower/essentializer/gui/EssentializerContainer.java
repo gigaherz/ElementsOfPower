@@ -3,7 +3,7 @@ package gigaherz.elementsofpower.essentializer.gui;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.capabilities.MagicContainerCapability;
 import gigaherz.elementsofpower.database.EssenceConversions;
-import gigaherz.elementsofpower.database.MagicAmounts;
+import gigaherz.elementsofpower.magic.MagicAmounts;
 import gigaherz.elementsofpower.essentializer.EssentializerTileEntity;
 import gigaherz.elementsofpower.network.UpdateEssentializerAmounts;
 import net.minecraft.entity.player.PlayerEntity;

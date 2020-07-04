@@ -42,7 +42,11 @@ repositories {
 
 version = "0.9.2-alpha"
 group = "gigaherz.elementsofpower" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "ElementsOfPower-1.15.2"
+archivesBaseName = "ElementsOfPower-UNKNOWN"
+
+project.afterEvaluate {
+    archivesBaseName = "ElementsOfPower-${project.MC_VERSION}"
+}
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
@@ -51,7 +55,7 @@ sourceSets {
 }
 
 minecraft {
-    mappings channel: 'snapshot', version: '20200602-1.15.1'
+    mappings channel: 'snapshot', version: '20200703-unofficial-1.16.1'
 
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
@@ -61,8 +65,6 @@ minecraft {
 
             property 'forge.logging.markers', ''
             property 'forge.logging.console.level', 'debug'
-
-            ideaModule 'whatever.main'
 
             mods {
                 thismod {
@@ -102,15 +104,15 @@ minecraft {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.15.2-31.2.5'
+    minecraft 'net.minecraftforge:forge:1.16.1-32.0.47'
 
-    compileOnly fg.deobf("mezz.jei:jei-1.15.2:6.0.0.4:api")
-    runtimeOnly fg.deobf("mezz.jei:jei-1.15.2:6.0.0.4")
+    compileOnly fg.deobf("mezz.jei:jei-1.16.1:7.0.0.6:api")
+    runtimeOnly fg.deobf("mezz.jei:jei-1.16.1:7.0.0.6")
 
     //compile fg.deobf("gigaherz.guidebook:Guidebook-1.15.2:3.0.4")
 
-    runtimeOnly fg.deobf("top.theillusivec4.curios:curios:FORGE-1.15.2-2.0.2.2")
-    compileOnly fg.deobf("top.theillusivec4.curios:curios:FORGE-1.15.2-2.0.2.2:api")
+    runtimeOnly fg.deobf("top.theillusivec4.curios:curios:FORGE-1.16.1-3.0-beta2")
+    compileOnly fg.deobf("top.theillusivec4.curios:curios:FORGE-1.16.1-3.0-beta2:api")
 }
 
 jar {

@@ -1,10 +1,11 @@
 package gigaherz.elementsofpower.essentializer.gui;
 
 import com.google.common.collect.Lists;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.client.MagicTooltips;
-import gigaherz.elementsofpower.database.MagicAmounts;
+import gigaherz.elementsofpower.magic.MagicAmounts;
 import gigaherz.elementsofpower.essentializer.EssentializerTileEntity;
 import gigaherz.elementsofpower.spells.Element;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
@@ -12,6 +13,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.ITextProperties;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 
@@ -63,33 +65,33 @@ public class EssentializerScreen extends ContainerScreen<EssentializerContainer>
         super(container, playerInventory, title);
         this.player = playerInventory;
         ySize = 176;
+        this.field_238745_s_ = this.ySize - 94;
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float partialTicks)
+    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks)
     {
-        this.renderBackground();
-        super.render(mouseX, mouseY, partialTicks);
-        this.renderHoveredToolTip(mouseX, mouseY);
+        this.renderBackground(matrixStack);
+        super.render(matrixStack, mouseX, mouseY, partialTicks);
+        this.func_230459_a_(matrixStack, mouseX, mouseY);
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float f, int i, int j)
+    protected void func_230450_a_(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY)
     {
         Objects.requireNonNull(minecraft).textureManager.bindTexture(GUI_TEXTURE_LOCATION);
         RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1.0f);
         int x = (width - xSize) / 2;
         int y = (height - ySize) / 2;
-        this.blit(x, y, 0, 0, xSize, ySize);
+        this.blit(matrixStack, x, y, 0, 0, xSize, ySize);
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(int x, int y)
+    protected void func_230451_b_(MatrixStack matrixStack, int mouseX, int mouseY)
     {
-        Objects.requireNonNull(minecraft);
+        super.func_230451_b_(matrixStack, mouseX, mouseY);
 
-        font.drawString(title.getFormattedText(), 8, 6, 0x404040);
-        font.drawString(playerInventory.getName().getFormattedText(), 8, ySize - 96 + 3, 0x404040);
+        Objects.requireNonNull(minecraft);
 
         RenderSystem.enableBlend();
         RenderSystem.disableAlphaTest();
@@ -117,7 +119,7 @@ public class EssentializerScreen extends ContainerScreen<EssentializerContainer>
                 int sx = TRANSFER_RECTS[i * 6 + 4];
                 int sy = TRANSFER_RECTS[i * 6 + 5];
 
-                this.blit(x0, y0, x1, y1, sx, sy);
+                this.blit(matrixStack, x0, y0, x1, y1, sx, sy);
             }
         }
 
@@ -157,11 +159,11 @@ public class EssentializerScreen extends ContainerScreen<EssentializerContainer>
             float x1 = (x0 + 16) * 1.5f - font.getStringWidth(formatted);
             float y1 = (y0 + 10.5f) * 1.5f;
 
-            font.drawStringWithShadow(formatted, x1, y1, 0xFFFFFFFF);
+            font.drawStringWithShadow(matrixStack, formatted, x1, y1, 0xFFFFFFFF);
         }
         RenderSystem.popMatrix();
 
-        drawOrbTooltips(x, y);
+        drawOrbTooltips(matrixStack, mouseX, mouseY);
 
         RenderSystem.depthMask(true);
     }
@@ -178,7 +180,7 @@ public class EssentializerScreen extends ContainerScreen<EssentializerContainer>
         return MagicTooltips.PRETTY_NUMBER_FORMATTER.format(count) + suffix;
     }
 
-    private void drawOrbTooltips(int mx, int my)
+    private void drawOrbTooltips(MatrixStack matrixStack, int mx, int my)
     {
         int x0 = (width - xSize) / 2;
         int y0 = (height - ySize) / 2;
@@ -195,11 +197,11 @@ public class EssentializerScreen extends ContainerScreen<EssentializerContainer>
             if (rx < 0 || ry < 0 || rx > 16 || ry > 16)
                 continue;
 
-            List<String> tooltip = Lists.newArrayList();
-            tooltip.add(MagicAmounts.getMagicName(i).getFormattedText());
-            tooltip.add(new StringTextComponent(MagicTooltips.PRETTY_NUMBER_FORMATTER_2.format(am.get(i)) + " / " + EssentializerTileEntity.MAX_ESSENTIALIZER_MAGIC).applyTextStyle(TextFormatting.GRAY).getFormattedText());
+            List<ITextProperties> tooltip = Lists.newArrayList();
+            tooltip.add(MagicAmounts.getMagicName(i));
+            tooltip.add(new StringTextComponent(MagicTooltips.PRETTY_NUMBER_FORMATTER_2.format(am.get(i)) + " / " + EssentializerTileEntity.MAX_ESSENTIALIZER_MAGIC).func_240699_a_(TextFormatting.GRAY));
 
-            renderTooltip(tooltip, mx - x0, my - y0);
+            renderTooltip(matrixStack, tooltip, mx - x0, my - y0);
         }
     }
 }

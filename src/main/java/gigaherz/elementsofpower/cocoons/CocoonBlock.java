@@ -6,8 +6,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.IWaterLoggable;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
-import net.minecraft.fluid.IFluidState;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.BooleanProperty;
@@ -65,7 +65,7 @@ public class CocoonBlock extends Block implements IWaterLoggable
     }
 
     @Override
-    public IFluidState getFluidState(BlockState state)
+    public FluidState getFluidState(BlockState state)
     {
         return state.get(WATERLOGGED) ? Fluids.WATER.getDefaultState() : Fluids.EMPTY.getDefaultState();
     }
@@ -95,7 +95,7 @@ public class CocoonBlock extends Block implements IWaterLoggable
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext context)
     {
-        IFluidState fluid = context.getWorld().getFluidState(context.getPos());
+        FluidState fluid = context.getWorld().getFluidState(context.getPos());
         return getDefaultState().with(FACING, context.getFace().getOpposite()).with(WATERLOGGED, fluid.getFluid() == Fluids.WATER);
     }
 

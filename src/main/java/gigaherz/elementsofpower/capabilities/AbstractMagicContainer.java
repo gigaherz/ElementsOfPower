@@ -1,6 +1,6 @@
 package gigaherz.elementsofpower.capabilities;
 
-import gigaherz.elementsofpower.database.MagicAmounts;
+import gigaherz.elementsofpower.magic.MagicAmounts;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.util.INBTSerializable;
 

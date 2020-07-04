@@ -4,7 +4,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.common.util.NonNullLazy;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.items.IItemHandler;
-import top.theillusivec4.curios.api.CuriosAPI;
+import top.theillusivec4.curios.api.CuriosCapability;
+import top.theillusivec4.curios.api.type.inventory.ICurioStacksHandler;
 
 import java.util.stream.Stream;
 
@@ -21,9 +22,9 @@ public class Curios
     {
         public static Stream<IItemHandler> getCurios(PlayerEntity player)
         {
-            return CuriosAPI.getCuriosHandler(player)
-                    .map((curiosHandler) -> curiosHandler.getCurioMap().values().stream().map(c -> (IItemHandler) c))
-                    .orElse(Stream.empty());
+            return player.getCapability(CuriosCapability.INVENTORY).map((curios) ->
+                    curios.getCurios().values().stream().<IItemHandler>map(ICurioStacksHandler::getStacks)
+            ).orElse(Stream.empty());
         }
     }
 }

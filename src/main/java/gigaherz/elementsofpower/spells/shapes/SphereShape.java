@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower.spells.shapes;
 
+import gigaherz.elementsofpower.spells.InitializedSpellcast;
 import gigaherz.elementsofpower.spells.Spellcast;
 import gigaherz.elementsofpower.spells.effects.SpellEffect;
 import net.minecraft.block.BlockState;
@@ -12,9 +13,9 @@ import net.minecraft.util.math.MathHelper;
 public class SphereShape extends SpellShape
 {
     @Override
-    public Spellcast castSpell(ItemStack stack, PlayerEntity player, Spellcast cast)
+    public InitializedSpellcast castSpell(ItemStack stack, PlayerEntity player, Spellcast cast)
     {
-        return cast;
+        return cast.init(player.world, player);
     }
 
     @Override
@@ -24,13 +25,13 @@ public class SphereShape extends SpellShape
     }
 
     @Override
-    public float getScale(Spellcast spellcast)
+    public float getScale(InitializedSpellcast spellcast)
     {
         return 1 + spellcast.getDamageForce();
     }
 
     @Override
-    public void spellTick(Spellcast cast)
+    public void spellTick(InitializedSpellcast cast)
     {
         SpellEffect effect = cast.getEffect();
 
@@ -42,7 +43,7 @@ public class SphereShape extends SpellShape
         int force = cast.getDamageForce();
         if (force > 0)
         {
-            BlockPos bp = player.getPosition().offset(Direction.UP, MathHelper.floor(player.getEyeHeight() + 0.25));
+            BlockPos bp = player.func_233580_cy_().offset(Direction.UP, MathHelper.floor(player.getEyeHeight() + 0.25));
 
             int px = bp.getX();
             int py = bp.getY();
@@ -73,6 +74,6 @@ public class SphereShape extends SpellShape
             }
         }
 
-        effect.processEntitiesAroundAfter(cast, player.getPositionVector());
+        effect.processEntitiesAroundAfter(cast, player.getPositionVec());
     }
 }

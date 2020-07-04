@@ -1,6 +1,6 @@
 package gigaherz.elementsofpower.essentializer.gui;
 
-import gigaherz.elementsofpower.database.MagicAmounts;
+import gigaherz.elementsofpower.magic.MagicAmounts;
 
 public interface IMagicAmountHolder extends IMagicAmountContainer
 {

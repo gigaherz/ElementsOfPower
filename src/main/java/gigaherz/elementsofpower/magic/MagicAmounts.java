@@ -1,12 +1,15 @@
-package gigaherz.elementsofpower.database;
+package gigaherz.elementsofpower.magic;
 
 import com.google.gson.*;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.client.MagicTooltips;
 import gigaherz.elementsofpower.spells.Element;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.util.Constants;
@@ -15,9 +18,24 @@ import net.minecraftforge.common.util.INBTSerializable;
 import javax.annotation.CheckReturnValue;
 import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class MagicAmounts implements INBTSerializable<CompoundNBT>
 {
+    public static final Codec<MagicAmounts> CODEC = RecordCodecBuilder
+        .create(instance -> instance.group(
+                        Codec.FLOAT.fieldOf("fire").forGetter(i -> i.get(0)),
+                        Codec.FLOAT.fieldOf("water").forGetter(i -> i.get(1)),
+                        Codec.FLOAT.fieldOf("air").forGetter(i -> i.get(2)),
+                        Codec.FLOAT.fieldOf("earth").forGetter(i -> i.get(3)),
+                        Codec.FLOAT.fieldOf("light").forGetter(i -> i.get(4)),
+                        Codec.FLOAT.fieldOf("darkness").forGetter(i -> i.get(5)),
+                        Codec.FLOAT.fieldOf("life").forGetter(i -> i.get(6)),
+                        Codec.FLOAT.fieldOf("death").forGetter(i -> i.get(7))
+                ).apply(instance, MagicAmounts::new));
+
     public static final MagicAmounts EMPTY = new MagicAmounts();
     public static final MagicAmounts INFINITE = infinite();
     public static final int ELEMENTS = 8;
@@ -33,7 +51,7 @@ public class MagicAmounts implements INBTSerializable<CompoundNBT>
             ElementsOfPowerMod.MODID + ".element.death",
     };
 
-    public static ITextComponent getMagicName(int i)
+    public static IFormattableTextComponent getMagicName(int i)
     {
         return new TranslationTextComponent(magicNames[i]);
     }
@@ -42,6 +60,18 @@ public class MagicAmounts implements INBTSerializable<CompoundNBT>
 
     private MagicAmounts()
     {
+    }
+
+    private MagicAmounts(float fire, float water, float air, float earth, float light, float darkness, float life, float death)
+    {
+        amounts[0]=fire;
+        amounts[1]=water;
+        amounts[2]=air;
+        amounts[3]=earth;
+        amounts[4]=light;
+        amounts[5]=darkness;
+        amounts[6]=life;
+        amounts[7]=death;
     }
 
     private MagicAmounts(final MagicAmounts other)
@@ -73,6 +103,11 @@ public class MagicAmounts implements INBTSerializable<CompoundNBT>
         return EMPTY.add(value, count);
     }
 
+    public static MagicAmounts lerp(MagicGradient.GradientPoint pt0, MagicGradient.GradientPoint pt1, float t)
+    {
+        return pt0.value.add(pt1.value.subtract(pt0.value).multiply(t));
+    }
+
     @Override
     public String toString()
     {
@@ -91,7 +126,7 @@ public class MagicAmounts implements INBTSerializable<CompoundNBT>
             else
                 b.append(", ");
 
-            String magicName = getMagicName(i).getFormattedText();
+            String magicName = getMagicName(i).getString();
             String str = String.format("%s: %f", magicName, amounts[i]);
             b.append(str);
 
@@ -323,6 +358,9 @@ public class MagicAmounts implements INBTSerializable<CompoundNBT>
         return amounts[element.ordinal()];
     }
 
+    public Stream<Float> stream() {
+        return IntStream.range(0, amounts.length).mapToObj(i -> amounts[i]);
+    }
 
     @Override
     public CompoundNBT serializeNBT()

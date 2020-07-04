@@ -2,6 +2,7 @@ package gigaherz.elementsofpower.spells.effects;
 
 import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.network.AddVelocityToPlayer;
+import gigaherz.elementsofpower.spells.InitializedSpellcast;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -13,6 +14,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.*;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.PacketDistributor;
 
@@ -22,25 +24,25 @@ import java.util.List;
 public class WindEffect extends SpellEffect
 {
     @Override
-    public int getColor(Spellcast cast)
+    public int getColor(InitializedSpellcast cast)
     {
         return 0xAAFFFF;
     }
 
     @Override
-    public int getDuration(Spellcast cast)
+    public int getDuration(InitializedSpellcast cast)
     {
         return 20 * 5;
     }
 
     @Override
-    public int getInterval(Spellcast cast)
+    public int getInterval(InitializedSpellcast cast)
     {
         return 2;
     }
 
     @Override
-    public void processDirectHit(Spellcast cast, Entity entity, Vec3d hitVec)
+    public void processDirectHit(InitializedSpellcast cast, Entity entity, Vector3d hitVec)
     {
         int force = cast.getDamageForce();
 
@@ -52,7 +54,7 @@ public class WindEffect extends SpellEffect
     }
 
     @Override
-    public boolean processEntitiesAroundBefore(Spellcast cast, Vec3d hitVec)
+    public boolean processEntitiesAroundBefore(InitializedSpellcast cast, Vector3d hitVec)
     {
         int force = cast.getDamageForce();
 
@@ -74,11 +76,11 @@ public class WindEffect extends SpellEffect
     }
 
     @Override
-    public void processEntitiesAroundAfter(Spellcast cast, Vec3d hitVec)
+    public void processEntitiesAroundAfter(InitializedSpellcast cast, Vector3d hitVec)
     {
     }
 
-    private void pushEntities(Spellcast cast, int force, Vec3d hitVec, List<? extends Entity> entities)
+    private void pushEntities(InitializedSpellcast cast, int force, Vector3d hitVec, List<? extends Entity> entities)
     {
         for (Entity e : entities)
         {
@@ -89,13 +91,13 @@ public class WindEffect extends SpellEffect
         }
     }
 
-    private void applyVelocity(Spellcast cast, int force, Vec3d hitVec, Entity e, boolean distanceForce)
+    private void applyVelocity(InitializedSpellcast cast, int force, Vector3d hitVec, Entity e, boolean distanceForce)
     {
         double vx = 0, vy = 0, vz = 0;
 
         if (e == cast.player && !distanceForce)
         {
-            Vec3d look = e.getLookVec();
+            Vector3d look = e.getLookVec();
 
             vx += force * look.x;
             vy += force * look.y;
@@ -127,9 +129,9 @@ public class WindEffect extends SpellEffect
     }
 
     @Override
-    public void spawnBallParticles(Spellcast cast, RayTraceResult mop)
+    public void spawnBallParticles(InitializedSpellcast cast, RayTraceResult mop)
     {
-        Vec3d hitVec = mop.getHitVec();
+        Vector3d hitVec = mop.getHitVec();
         if (cast.getDamageForce() >= 5)
         {
             // FIXME: huge
@@ -148,7 +150,7 @@ public class WindEffect extends SpellEffect
     }
 
     @Override
-    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, BlockState currentState, float r, @Nullable RayTraceResult mop)
+    public void processBlockWithinRadius(InitializedSpellcast cast, BlockPos blockPos, BlockState currentState, float r, @Nullable RayTraceResult mop)
     {
         if (mop != null && mop.getType() == RayTraceResult.Type.BLOCK)
         {

@@ -6,19 +6,20 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
-import gigaherz.elementsofpower.database.MagicAmounts;
+import gigaherz.elementsofpower.magic.MagicAmounts;
 import gigaherz.elementsofpower.essentializer.gui.IMagicAmountContainer;
 import gigaherz.elementsofpower.spells.Element;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.ItemStack;
+import net.minecraft.loot.LootFunctionType;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.storage.loot.LootContext;
-import net.minecraft.world.storage.loot.LootFunction;
-import net.minecraft.world.storage.loot.LootParameters;
-import net.minecraft.world.storage.loot.conditions.ILootCondition;
+import net.minecraft.loot.LootContext;
+import net.minecraft.loot.LootFunction;
+import net.minecraft.loot.LootParameters;
+import net.minecraft.loot.conditions.ILootCondition;
 
 import java.util.Map;
 import java.util.Objects;
@@ -72,6 +73,12 @@ public class ApplyOrbSizeFunction extends LootFunction
         return new Builder();
     }
 
+    @Override
+    public LootFunctionType func_230425_b_()
+    {
+        return ElementsOfPowerMod.APPLY_ORB_SIZE;
+    }
+
     public static class Builder extends LootFunction.Builder<Builder>
     {
         private final Map<Element, Float> factors = Maps.newHashMap();
@@ -111,13 +118,6 @@ public class ApplyOrbSizeFunction extends LootFunction
 
     public static class Serializer extends LootFunction.Serializer<ApplyOrbSizeFunction>
     {
-        public static final Serializer INSTANCE = new Serializer();
-
-        private Serializer()
-        {
-            super(ElementsOfPowerMod.location("apply_orb_size"), ApplyOrbSizeFunction.class);
-        }
-
         @Override
         public ApplyOrbSizeFunction deserialize(JsonObject object, JsonDeserializationContext deserializationContext, ILootCondition[] conditionsIn)
         {
@@ -136,16 +136,17 @@ public class ApplyOrbSizeFunction extends LootFunction
         }
 
         @Override
-        public void serialize(JsonObject object, ApplyOrbSizeFunction lootFunction, JsonSerializationContext serializationContext)
+        public void func_230424_a_(JsonObject json, ApplyOrbSizeFunction lootFunction, JsonSerializationContext ctx)
         {
-            super.serialize(object, lootFunction, serializationContext);
+            super.func_230424_a_(json, lootFunction, ctx);
+
             JsonObject factors = new JsonObject();
             for (int i = 0; i < 8; i++)
             {
                 if (!MathHelper.epsilonEquals(lootFunction.factors[i], 0))
                     factors.addProperty(Element.values[i].getName(), lootFunction.factors[i]);
             }
-            object.add("factors", factors);
+            json.add("factors", factors);
         }
     }
 }

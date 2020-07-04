@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.capabilities;
 
 import gigaherz.elementsofpower.ElementsOfPowerMod;
-import gigaherz.elementsofpower.database.MagicAmounts;
+import gigaherz.elementsofpower.magic.MagicAmounts;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.INBT;

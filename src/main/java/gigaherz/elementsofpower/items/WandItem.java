@@ -3,13 +3,10 @@ package gigaherz.elementsofpower.items;
 import gigaherz.elementsofpower.capabilities.IMagicContainer;
 import gigaherz.elementsofpower.capabilities.MagicContainerCapability;
 import gigaherz.elementsofpower.client.WandUseManager;
-import gigaherz.elementsofpower.database.MagicAmounts;
+import gigaherz.elementsofpower.magic.MagicAmounts;
 import gigaherz.elementsofpower.integration.Curios;
 import gigaherz.elementsofpower.network.UpdateSpellSequence;
-import gigaherz.elementsofpower.spells.Element;
-import gigaherz.elementsofpower.spells.SpellManager;
-import gigaherz.elementsofpower.spells.Spellcast;
-import gigaherz.elementsofpower.spells.SpellcastEntityData;
+import gigaherz.elementsofpower.spells.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -106,7 +103,7 @@ public class WandItem extends GemContainerItem
                 return updateSequenceOnWand;
             }
 
-            Spellcast cast2 = cast.getShape().castSpell(stack, player, cast);
+            InitializedSpellcast cast2 = cast.getShape().castSpell(stack, player, cast);
             if (cast2 != null)
             {
                 SpellcastEntityData.get(player).ifPresent(data -> data.begin(cast2));

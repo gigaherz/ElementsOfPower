@@ -88,7 +88,7 @@ public enum Gemstone implements IStringSerializable, IItemProvider
     }
 
     @Override
-    public String getName()
+    public String func_176610_l()
     {
         return name;
     }
@@ -151,7 +151,7 @@ public enum Gemstone implements IStringSerializable, IItemProvider
     {
         for (Gemstone g : values())
         {
-            if (g.getName().equals(name))
+            if (g.func_176610_l().equals(name))
                 return g;
         }
         return null;

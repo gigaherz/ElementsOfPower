@@ -2,7 +2,7 @@ package gigaherz.elementsofpower.items;
 
 import gigaherz.elementsofpower.capabilities.IMagicContainer;
 import gigaherz.elementsofpower.capabilities.MagicContainerCapability;
-import gigaherz.elementsofpower.database.MagicAmounts;
+import gigaherz.elementsofpower.magic.MagicAmounts;
 import gigaherz.elementsofpower.gemstones.Gemstone;
 import gigaherz.elementsofpower.gemstones.Quality;
 import gigaherz.elementsofpower.integration.Curios;
@@ -185,16 +185,16 @@ public class BaubleItem extends GemContainerItem
         switch (getTransferMode(stack))
         {
             case ACTIVE:
-                tooltip.add(new TranslationTextComponent("text.elementsofpower.bauble.active").applyTextStyles(TextFormatting.BOLD, TextFormatting.WHITE));
+                tooltip.add(new TranslationTextComponent("text.elementsofpower.bauble.active").func_240701_a_(TextFormatting.BOLD, TextFormatting.WHITE));
                 break;
             case PASSIVE:
-                tooltip.add(new TranslationTextComponent("text.elementsofpower.bauble.passive").applyTextStyles(TextFormatting.ITALIC, TextFormatting.GRAY));
+                tooltip.add(new TranslationTextComponent("text.elementsofpower.bauble.passive").func_240701_a_(TextFormatting.ITALIC, TextFormatting.GRAY));
                 break;
             case DISABLED:
-                tooltip.add(new TranslationTextComponent("text.elementsofpower.bauble.disabled").applyTextStyles(TextFormatting.ITALIC, TextFormatting.DARK_RED));
+                tooltip.add(new TranslationTextComponent("text.elementsofpower.bauble.disabled").func_240701_a_(TextFormatting.ITALIC, TextFormatting.DARK_RED));
                 break;
         }
-        tooltip.add(new TranslationTextComponent("text.elementsofpower.bauble.toggle").applyTextStyles(TextFormatting.ITALIC, TextFormatting.DARK_GRAY));
+        tooltip.add(new TranslationTextComponent("text.elementsofpower.bauble.toggle").func_240701_a_(TextFormatting.ITALIC, TextFormatting.DARK_GRAY));
     }
 
     public static TransferMode getTransferMode(ItemStack stack)

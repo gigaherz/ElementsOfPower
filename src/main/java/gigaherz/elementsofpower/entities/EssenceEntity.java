@@ -2,9 +2,12 @@ package gigaherz.elementsofpower.entities;
 
 import com.google.common.collect.Lists;
 import gigaherz.elementsofpower.capabilities.MagicContainerCapability;
-import gigaherz.elementsofpower.database.MagicAmounts;
+import gigaherz.elementsofpower.magic.MagicAmounts;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
+import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.passive.AmbientEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
@@ -14,12 +17,13 @@ import net.minecraft.network.IPacket;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
@@ -91,6 +95,12 @@ public class EssenceEntity extends AmbientEntity
         scale = 0.025f * numEssences;
 
         //setEntityBoundingBox(new AxisAlignedBB(0, 0, 0, 0, 0, 0));
+    }
+
+    public static AttributeModifierMap.MutableAttribute prepareAttributes()
+    {
+        return MonsterEntity.func_234295_eP_()
+                .func_233815_a_(Attributes.field_233818_a_, 2.0D);
     }
 
     public float getScale()
@@ -179,13 +189,6 @@ public class EssenceEntity extends AmbientEntity
     }
 
     @Override
-    protected void registerAttributes()
-    {
-        super.registerAttributes();
-        this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(2.0D);
-    }
-
-    @Override
     public void tick()
     {
         this.noClip = true;
@@ -247,7 +250,7 @@ public class EssenceEntity extends AmbientEntity
         if (world.isRemote)
             return;
 
-        Vec3d followPos = getPositionVec();
+        Vector3d followPos = getPositionVec();
 
         double dp = Double.POSITIVE_INFINITY;
 
@@ -282,7 +285,7 @@ public class EssenceEntity extends AmbientEntity
         {
             if (spawnPosition == null)
             {
-                BlockPos blockPos = getPosition();
+                BlockPos blockPos = func_233580_cy_();
 
                 do
                 {
@@ -298,12 +301,12 @@ public class EssenceEntity extends AmbientEntity
             }
 
             if (spawnPosition != null)
-                followPos = new Vec3d(spawnPosition);
+                followPos = Vector3d.func_237491_b_(spawnPosition);
         }
 
-        Vec3d home = followPos.subtract(getPositionVec());
-        Vec3d forward = getLookVec();
-        Vec3d random = new Vec3d(rand.nextGaussian(), rand.nextGaussian(), rand.nextGaussian());
+        Vector3d home = followPos.subtract(getPositionVec());
+        Vector3d forward = getLookVec();
+        Vector3d random = new Vector3d(rand.nextGaussian(), rand.nextGaussian(), rand.nextGaussian());
 
         double wantedDistance = Math.min(dp * 0.5f, 2.0f * scale);
         double currentDistance = home.length();
@@ -328,8 +331,8 @@ public class EssenceEntity extends AmbientEntity
             accelY = lerp(accelY, lerp(forward.y, random.y, r), sa);
             accelZ = lerp(accelZ, lerp(forward.z, random.z, r), sa);
         }
-        Vec3d motion = getMotion();
-        motion = new Vec3d(
+        Vector3d motion = getMotion();
+        motion = new Vector3d(
                 MathHelper.clamp(motion.x + lerp(0, accelX, sm), -speedMax, speedMax),
                 MathHelper.clamp(motion.y + lerp(0, accelY, sm), -speedMax, speedMax),
                 MathHelper.clamp(motion.z + lerp(0, accelZ, sm), -speedMax, speedMax)
@@ -434,7 +437,7 @@ public class EssenceEntity extends AmbientEntity
     }
 
     @Override
-    public void travel(Vec3d direction)
+    public void travel(Vector3d direction)
     {
         {
             this.moveRelative(1.0f, direction);
@@ -497,7 +500,7 @@ public class EssenceEntity extends AmbientEntity
     }
 
     @Override
-    protected void dealFireDamage(int amount)
+    public void func_241209_g_(int amount)
     {
     }
 
@@ -525,9 +528,9 @@ public class EssenceEntity extends AmbientEntity
     }
 
     @Override
-    protected boolean processInteract(PlayerEntity player, Hand p_184645_2_)
+    protected ActionResultType func_230254_b_(PlayerEntity p_230254_1_, Hand p_230254_2_)
     {
-        return false;
+        return ActionResultType.PASS;
     }
 
     @Override

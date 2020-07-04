@@ -2,6 +2,7 @@ package gigaherz.elementsofpower.database;
 
 import com.google.common.collect.Lists;
 import gigaherz.elementsofpower.gemstones.Gemstone;
+import gigaherz.elementsofpower.magic.MagicAmounts;
 import gigaherz.elementsofpower.spells.Element;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.DyeColor;

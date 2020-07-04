@@ -59,7 +59,7 @@ public class ModelHandle
     {
         public static final ResourceLocation LOCATION = new ResourceLocation("elementsofpower", "fake");
         public static final FakeSprite INSTANCE = new FakeSprite();
-        public static final Function<Material, TextureAtlasSprite> GETTER = (x) -> INSTANCE;
+        public static final Function<RenderMaterial, TextureAtlasSprite> GETTER = (x) -> INSTANCE;
 
         protected FakeSprite()
         {
@@ -111,9 +111,9 @@ public class ModelHandle
         }
 
         @Override
-        public Material resolveTexture(String name)
+        public RenderMaterial resolveTexture(String name)
         {
-            return new Material(FakeSprite.LOCATION, FakeSprite.LOCATION);
+            return new RenderMaterial(FakeSprite.LOCATION, FakeSprite.LOCATION);
         }
 
         @Override

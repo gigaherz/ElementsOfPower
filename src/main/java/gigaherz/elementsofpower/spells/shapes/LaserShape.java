@@ -1,26 +1,28 @@
 package gigaherz.elementsofpower.spells.shapes;
 
 import com.google.common.collect.Lists;
+import gigaherz.elementsofpower.spells.InitializedSpellcast;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.*;
+import net.minecraft.util.math.vector.Vector3d;
 
 import java.util.List;
 
 public class LaserShape extends SpellShape
 {
     @Override
-    public float getScale(Spellcast cast)
+    public float getScale(InitializedSpellcast cast)
     {
         return 1 + 0.25f * cast.getDamageForce();
     }
 
     @Override
-    public Spellcast castSpell(ItemStack stack, PlayerEntity player, Spellcast cast)
+    public InitializedSpellcast castSpell(ItemStack stack, PlayerEntity player, Spellcast cast)
     {
-        return cast;
+        return cast.init(player.world, player);
     }
 
     @Override
@@ -30,13 +32,13 @@ public class LaserShape extends SpellShape
     }
 
     @Override
-    public void spellTick(Spellcast cast)
+    public void spellTick(InitializedSpellcast cast)
     {
         RayTraceResult mop = cast.getHitPosition();
 
         if (mop != null)
         {
-            Vec3d diff = mop.getHitVec().subtract(cast.start);
+            Vector3d diff = mop.getHitVec().subtract(cast.start);
 
             List<BlockPos> intersections = getAllBlocksInRay(cast.start, diff.normalize(), diff.length());
 
@@ -58,13 +60,13 @@ public class LaserShape extends SpellShape
         }
     }
 
-    private List<BlockPos> getAllBlocksInRay(Vec3d start, Vec3d look, double range)
+    private List<BlockPos> getAllBlocksInRay(Vector3d start, Vector3d look, double range)
     {
         List<BlockPos> intersections = Lists.newArrayList();
         intersections.add(new BlockPos(start.x, start.y, start.z));
         look = look.normalize();
-        Vec3d pos = start;
-        Vec3d end = start.add(look.x * range, look.y * range, look.z * range);
+        Vector3d pos = start;
+        Vector3d end = start.add(look.x * range, look.y * range, look.z * range);
         BlockPos block = new BlockPos(start);
         while (true)
         {
@@ -133,7 +135,7 @@ public class LaserShape extends SpellShape
             }
 
             BlockPos currentBlock = block;
-            Vec3d oldPos = pos;
+            Vector3d oldPos = pos;
 
             boolean xWins = false, yWins = false, zWins = false;
             if (xTime <= yTime && xTime <= zTime && xTime <= maxTime)
@@ -154,15 +156,15 @@ public class LaserShape extends SpellShape
 
             if (xWins)
             {
-                pos = new Vec3d(xBoundary, pos.y + look.y * xTime, pos.z + look.z * xTime);
+                pos = new Vector3d(xBoundary, pos.y + look.y * xTime, pos.z + look.z * xTime);
             }
             else if (yWins)
             {
-                pos = new Vec3d(pos.x + look.x * yTime, yBoundary, pos.z + look.z * yTime);
+                pos = new Vector3d(pos.x + look.x * yTime, yBoundary, pos.z + look.z * yTime);
             }
             else if (zWins)
             {
-                pos = new Vec3d(pos.x + look.x * zTime, pos.y + look.y * zTime, zBoundary);
+                pos = new Vector3d(pos.x + look.x * zTime, pos.y + look.y * zTime, zBoundary);
             }
             else
             {
@@ -182,7 +184,7 @@ public class LaserShape extends SpellShape
         return intersections;
     }
 
-    private boolean testBoundingBox(BlockPos currentBlock, Vec3d oldPos, Vec3d pos)
+    private boolean testBoundingBox(BlockPos currentBlock, Vector3d oldPos, Vector3d pos)
     {
         return true;
     }

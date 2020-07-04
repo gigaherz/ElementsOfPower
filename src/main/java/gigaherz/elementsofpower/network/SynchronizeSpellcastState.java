@@ -1,6 +1,7 @@
 package gigaherz.elementsofpower.network;
 
 import gigaherz.elementsofpower.client.ClientPacketHandlers;
+import gigaherz.elementsofpower.spells.InitializedSpellcast;
 import gigaherz.elementsofpower.spells.SpellManager;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.nbt.CompoundNBT;
@@ -24,12 +25,12 @@ public class SynchronizeSpellcastState
 
     public int casterID;
     public ChangeMode changeMode;
-    public Spellcast spellcast;
+    public CompoundNBT spellcast = new CompoundNBT();
 
-    public SynchronizeSpellcastState(ChangeMode mode, Spellcast cast)
+    public SynchronizeSpellcastState(ChangeMode mode, InitializedSpellcast cast)
     {
         changeMode = mode;
-        spellcast = cast;
+        cast.writeToNBT(spellcast);
         casterID = cast.getCastingPlayer().getEntityId();
     }
 
@@ -37,28 +38,14 @@ public class SynchronizeSpellcastState
     {
         changeMode = ChangeMode.values[buf.readInt()];
         casterID = buf.readInt();
-
-        CompoundNBT cast = buf.readCompoundTag();
-        if (cast != null && cast.contains("sequence", Constants.NBT.TAG_LIST))
-        {
-            ListNBT seq = cast.getList("sequence", Constants.NBT.TAG_STRING);
-            spellcast = SpellManager.makeSpell(seq);
-            if (spellcast != null)
-                spellcast.readFromNBT(cast);
-        }
+        spellcast = buf.readCompoundTag();
     }
 
     public void encode(PacketBuffer buf)
     {
         buf.writeInt(changeMode.ordinal());
         buf.writeInt(casterID);
-
-        CompoundNBT tagData = new CompoundNBT();
-        spellcast.writeToNBT(tagData);
-
-        tagData.put("sequence", spellcast.getSequenceNBT());
-
-        buf.writeCompoundTag(tagData);
+        buf.writeCompoundTag(spellcast);
     }
 
     public boolean handle(Supplier<NetworkEvent.Context> context)

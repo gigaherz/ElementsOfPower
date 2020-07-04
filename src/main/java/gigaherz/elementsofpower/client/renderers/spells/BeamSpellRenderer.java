@@ -1,35 +1,36 @@
 package gigaherz.elementsofpower.client.renderers.spells;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import gigaherz.elementsofpower.spells.InitializedSpellcast;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.Quaternion;
+import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.Vector3f;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class BeamSpellRenderer extends SpellRenderer
 {
     @Override
-    public void render(Spellcast cast, PlayerEntity player, EntityRendererManager renderManager, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, Vec3d offset)
+    public void render(InitializedSpellcast cast, PlayerEntity player, EntityRendererManager renderManager, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, Vector3d offset)
     {
         float scale = 0.15f * cast.getScale();
 
 
         RayTraceResult mop = cast.getHitPosition(partialTicks);
 
-        Vec3d start = cast.start;
-        Vec3d end = cast.end;
+        Vector3d start = cast.start;
+        Vector3d end = cast.end;
 
-        Vec3d beam0 = end.subtract(start);
+        Vector3d beam0 = end.subtract(start);
 
         start = start.add(offset);
 
-        Vec3d beam = end.subtract(start);
-        Vec3d dir = beam.normalize();
+        Vector3d beam = end.subtract(start);
+        Vector3d dir = beam.normalize();
 
         double distance = beam.length();
 

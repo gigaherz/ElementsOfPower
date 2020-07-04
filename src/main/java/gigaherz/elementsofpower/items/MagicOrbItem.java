@@ -28,8 +28,8 @@ public class MagicOrbItem extends Item
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn)
     {
-        tooltip.add(new TranslationTextComponent("text.elementsofpower.orb.use").applyTextStyles(TextFormatting.DARK_GRAY, TextFormatting.ITALIC));
-        tooltip.add(new TranslationTextComponent("text.elementsofpower.orb.cocoon").applyTextStyles(TextFormatting.DARK_GRAY, TextFormatting.ITALIC));
+        tooltip.add(new TranslationTextComponent("text.elementsofpower.orb.use").func_240701_a_(TextFormatting.DARK_GRAY, TextFormatting.ITALIC));
+        tooltip.add(new TranslationTextComponent("text.elementsofpower.orb.cocoon").func_240701_a_(TextFormatting.DARK_GRAY, TextFormatting.ITALIC));
     }
 
     public Element getElement()

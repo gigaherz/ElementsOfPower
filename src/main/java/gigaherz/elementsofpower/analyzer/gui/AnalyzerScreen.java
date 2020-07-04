@@ -1,11 +1,12 @@
 package gigaherz.elementsofpower.analyzer.gui;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.capabilities.IMagicContainer;
 import gigaherz.elementsofpower.capabilities.MagicContainerCapability;
 import gigaherz.elementsofpower.client.MagicTooltips;
-import gigaherz.elementsofpower.database.MagicAmounts;
+import gigaherz.elementsofpower.magic.MagicAmounts;
 import gigaherz.elementsofpower.gemstones.Gemstone;
 import gigaherz.elementsofpower.gemstones.GemstoneItem;
 import gigaherz.elementsofpower.gemstones.Quality;
@@ -32,29 +33,27 @@ public class AnalyzerScreen extends ContainerScreen<AnalyzerContainer>
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float partialTicks)
+    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks)
     {
-        this.renderBackground();
-        super.render(mouseX, mouseY, partialTicks);
-        this.renderHoveredToolTip(mouseX, mouseY);
+        this.renderBackground(matrixStack);
+        super.render(matrixStack, mouseX, mouseY, partialTicks);
+        this.func_230459_a_(matrixStack, mouseX, mouseY);
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float f, int i, int j)
+    protected void func_230450_a_(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY)
     {
         minecraft.textureManager.bindTexture(GUI_TEXTURE_LOCATION);
         RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1.0f);
         int x = (width - xSize) / 2;
         int y = (height - ySize) / 2;
-        this.blit(x, y, 0, 0, xSize, ySize);
+        this.blit(matrixStack, x, y, 0, 0, xSize, ySize);
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(int x, int y)
+    protected void func_230451_b_(MatrixStack matrixStack, int mouseX, int mouseY)
     {
-        String name = title.getFormattedText();
-        font.drawString(name, (xSize - font.getStringWidth(name)) / 2, 6, 0x404040);
-        font.drawString(this.player.inventory.getName().getFormattedText(), 8, ySize - 96 + 3, 0x404040);
+        super.func_230451_b_(matrixStack, mouseX, mouseY);
 
         Slot slotAnalyze = container.inventorySlots.get(0);
         ItemStack stack = slotAnalyze.getStack();
@@ -67,7 +66,7 @@ public class AnalyzerScreen extends ContainerScreen<AnalyzerContainer>
             Item item = stack.getItem();
             if (item instanceof GemstoneItem)
             {
-                font.drawString("Item: Gemstone", 32, 18, 0xffffff);
+                font.drawString(matrixStack, "Item: Gemstone", 32, 18, 0xffffff);
 
                 GemstoneItem gemstone = (GemstoneItem) item;
                 gem = gemstone.getGemstone();
@@ -78,17 +77,17 @@ public class AnalyzerScreen extends ContainerScreen<AnalyzerContainer>
 
             if (gem != null)
             {
-                font.drawString("Gemstone type: " + gem.toString(), 32, 30, 0xffffff);
-                font.drawString("Quality level: " + (q != null ? q.toString() : "Unknown"), 32, 40, 0xffffff);
+                font.drawString(matrixStack, "Gemstone type: " + gem.toString(), 32, 30, 0xffffff);
+                font.drawString(matrixStack, "Quality level: " + (q != null ? q.toString() : "Unknown"), 32, 40, 0xffffff);
                 if (!am.isEmpty())
                 {
-                    font.drawString("Effective Capacity:", 32, 50, 0xffffff);
-                    font.drawString(String.format("%s, %s, %s, %s",
+                    font.drawString(matrixStack, "Effective Capacity:", 32, 50, 0xffffff);
+                    font.drawString(matrixStack, String.format("%s, %s, %s, %s",
                             MagicTooltips.PRETTY_NUMBER_FORMATTER.format(am.get(0)),
                             MagicTooltips.PRETTY_NUMBER_FORMATTER.format(am.get(1)),
                             MagicTooltips.PRETTY_NUMBER_FORMATTER.format(am.get(2)),
                             MagicTooltips.PRETTY_NUMBER_FORMATTER.format(am.get(3))), 40, 60, 0xffffff);
-                    font.drawString(String.format("%s, %s, %s, %s",
+                    font.drawString(matrixStack, String.format("%s, %s, %s, %s",
                             MagicTooltips.PRETTY_NUMBER_FORMATTER.format(am.get(4)),
                             MagicTooltips.PRETTY_NUMBER_FORMATTER.format(am.get(5)),
                             MagicTooltips.PRETTY_NUMBER_FORMATTER.format(am.get(6)),
@@ -97,10 +96,12 @@ public class AnalyzerScreen extends ContainerScreen<AnalyzerContainer>
             }
             else
             {
-                font.drawString("Item: " + stack.getDisplayName(), 32, 18, 0xffffff);
+                font.drawString(matrixStack, "Item: " + stack.getDisplayName(), 32, 18, 0xffffff);
 
-                font.drawSplitString("Does not look like a useful gemstone.", 32, 30, 166 - 32, 0xffffff);
+                //TODO: font.drawSplitString(matrixStack,"Does not look like a useful gemstone.", 32, 30, 166 - 32, 0xffffff);
+                font.drawString(matrixStack,"Does not look like a useful gemstone.", 32, 30, 0xffffff);
             }
         }
     }
 }
+

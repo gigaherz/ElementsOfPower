@@ -2,6 +2,7 @@ package gigaherz.elementsofpower.client.renderers.spells;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import gigaherz.elementsofpower.client.renderers.ModelHandle;
+import gigaherz.elementsofpower.spells.InitializedSpellcast;
 import gigaherz.elementsofpower.spells.Spellcast;
 import gigaherz.elementsofpower.spells.effects.FlameEffect;
 import gigaherz.elementsofpower.spells.effects.WaterEffect;
@@ -11,7 +12,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.common.util.NonNullLazy;
 
 import javax.annotation.Nullable;
@@ -24,7 +25,7 @@ public abstract class SpellRenderer
     public static final NonNullLazy<ModelHandle> modelSphereInside = NonNullLazy.of(() -> ModelHandle.of("elementsofpower:models/entity/sphere_inside.obj"));
     public static final NonNullLazy<ModelHandle> modelCyl = NonNullLazy.of(() -> ModelHandle.of("elementsofpower:models/entity/cylinder.obj"));
 
-    public static int getColor(Spellcast spellcast)
+    public static int getColor(InitializedSpellcast spellcast)
     {
         int color = spellcast.getColor();
 
@@ -44,7 +45,7 @@ public abstract class SpellRenderer
         return color;
     }
 
-    public static ResourceLocation getTexture(@Nullable Spellcast spellcast)
+    public static ResourceLocation getTexture(@Nullable InitializedSpellcast spellcast)
     {
         String tex = "forge:textures/white.png";
 
@@ -67,10 +68,10 @@ public abstract class SpellRenderer
         return new ResourceLocation(tex);
     }
 
-    public static RenderType getRenderType(Spellcast spellcast)
+    public static RenderType getRenderType(InitializedSpellcast spellcast)
     {
         return RenderType.getEntityTranslucent(getTexture(spellcast));
     }
 
-    public abstract void render(Spellcast spellcast, PlayerEntity player, EntityRendererManager renderManager, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, Vec3d offset);
+    public abstract void render(InitializedSpellcast spellcast, PlayerEntity player, EntityRendererManager renderManager, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, Vector3d offset);
 }

@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower.spells.effects;
 
+import gigaherz.elementsofpower.spells.InitializedSpellcast;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
@@ -8,39 +9,39 @@ import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 import javax.annotation.Nullable;
 
 public abstract class SpellEffect
 {
-    public abstract int getColor(Spellcast cast);
+    public abstract int getColor(InitializedSpellcast cast);
 
-    public abstract int getDuration(Spellcast cast);
+    public abstract int getDuration(InitializedSpellcast cast);
 
-    public abstract int getInterval(Spellcast cast);
+    public abstract int getInterval(InitializedSpellcast cast);
 
-    public int getForceModifier(Spellcast cast)
+    public int getForceModifier(InitializedSpellcast cast)
     {
         return 0;
     }
 
-    public abstract void processDirectHit(Spellcast cast, Entity entity, Vec3d hitVec);
+    public abstract void processDirectHit(InitializedSpellcast cast, Entity entity, Vector3d hitVec);
 
-    public abstract boolean processEntitiesAroundBefore(Spellcast cast, Vec3d hitVec);
+    public abstract boolean processEntitiesAroundBefore(InitializedSpellcast cast, Vector3d hitVec);
 
-    public abstract void processEntitiesAroundAfter(Spellcast cast, Vec3d hitVec);
+    public abstract void processEntitiesAroundAfter(InitializedSpellcast cast, Vector3d hitVec);
 
-    public abstract void spawnBallParticles(Spellcast cast, RayTraceResult mop);
+    public abstract void spawnBallParticles(InitializedSpellcast cast, RayTraceResult mop);
 
-    public void processBlockAtBeamEnd(Spellcast cast, BlockPos blockPos, BlockState currentState, @Nullable RayTraceResult mop)
+    public void processBlockAtBeamEnd(InitializedSpellcast cast, BlockPos blockPos, BlockState currentState, @Nullable RayTraceResult mop)
     {
         processBlockWithinRadius(cast, blockPos, currentState, 0, mop);
     }
 
-    public abstract void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, BlockState currentState, float distance, @Nullable RayTraceResult mop);
+    public abstract void processBlockWithinRadius(InitializedSpellcast cast, BlockPos blockPos, BlockState currentState, float distance, @Nullable RayTraceResult mop);
 
-    protected static void causePotionEffect(Spellcast cast, LivingEntity e, Effect potion, int amplifier, double distance, double durationBase)
+    protected static void causePotionEffect(InitializedSpellcast cast, LivingEntity e, Effect potion, int amplifier, double distance, double durationBase)
     {
         if (potion.isInstant())
         {

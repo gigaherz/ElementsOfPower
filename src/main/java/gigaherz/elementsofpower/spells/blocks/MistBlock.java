@@ -31,18 +31,6 @@ public class MistBlock extends Block
     }
 
     @Override
-    public boolean causesSuffocation(BlockState state, IBlockReader worldIn, BlockPos pos)
-    {
-        return false;
-    }
-
-    @Override
-    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos)
-    {
-        return false;
-    }
-
-    @Override
     public int getOpacity(BlockState state, IBlockReader worldIn, BlockPos pos)
     {
         if (state.getBlock() != this)

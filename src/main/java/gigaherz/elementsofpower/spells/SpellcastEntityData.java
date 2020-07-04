@@ -32,7 +32,7 @@ public class SpellcastEntityData implements INBTSerializable<CompoundNBT>
     private static final ResourceLocation PROP_KEY = ElementsOfPowerMod.location("spellcast_data");
 
     private final PlayerEntity player;
-    private Spellcast currentCasting;
+    private InitializedSpellcast currentCasting;
 
     public static LazyOptional<SpellcastEntityData> get(PlayerEntity p)
     {
@@ -70,17 +70,17 @@ public class SpellcastEntityData implements INBTSerializable<CompoundNBT>
             if (cast.contains("sequence", Constants.NBT.TAG_LIST))
             {
                 ListNBT seq = cast.getList("sequence", Constants.NBT.TAG_STRING);
-                currentCasting = SpellManager.makeSpell(seq);
-                if (currentCasting != null)
+                Spellcast ccast = SpellManager.makeSpell(seq);
+                if (ccast != null)
                 {
-                    currentCasting.init(player.world, player);
+                    currentCasting = ccast.init(player.world, player);
                     currentCasting.readFromNBT(cast);
                 }
             }
         }
     }
 
-    public void begin(Spellcast spell)
+    public void begin(InitializedSpellcast spell)
     {
         // If another spell was in progress, interrupt first
         interrupt();
@@ -153,7 +153,7 @@ public class SpellcastEntityData implements INBTSerializable<CompoundNBT>
         }
     }
 
-    public void onSync(SynchronizeSpellcastState.ChangeMode changeMode, Spellcast cast)
+    public void onSync(SynchronizeSpellcastState.ChangeMode changeMode, InitializedSpellcast cast)
     {
         switch (changeMode)
         {
@@ -180,7 +180,7 @@ public class SpellcastEntityData implements INBTSerializable<CompoundNBT>
     }
 
     @Nullable
-    public Spellcast getCurrentCasting()
+    public InitializedSpellcast getCurrentCasting()
     {
         return currentCasting;
     }

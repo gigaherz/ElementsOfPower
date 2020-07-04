@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower.spells.shapes;
 
+import gigaherz.elementsofpower.spells.InitializedSpellcast;
 import gigaherz.elementsofpower.spells.Spellcast;
 import gigaherz.elementsofpower.spells.effects.SpellEffect;
 import net.minecraft.block.BlockState;
@@ -7,19 +8,20 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.*;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class BeamShape extends SpellShape
 {
     @Override
-    public float getScale(Spellcast cast)
+    public float getScale(InitializedSpellcast cast)
     {
         return 1 + 0.25f * cast.getDamageForce();
     }
 
     @Override
-    public Spellcast castSpell(ItemStack stack, PlayerEntity player, Spellcast cast)
+    public InitializedSpellcast castSpell(ItemStack stack, PlayerEntity player, Spellcast cast)
     {
-        return cast;
+        return cast.init(player.world, player);
     }
 
     @Override
@@ -29,7 +31,7 @@ public class BeamShape extends SpellShape
     }
 
     @Override
-    public void spellTick(Spellcast cast)
+    public void spellTick(InitializedSpellcast cast)
     {
         RayTraceResult mop = cast.getHitPosition();
 
@@ -55,8 +57,7 @@ public class BeamShape extends SpellShape
         }
     }
 
-
-    public void radiate(Spellcast cast, RayTraceResult trace1, int radius)
+    public void radiate(InitializedSpellcast cast, RayTraceResult trace1, int radius)
     {
         SpellEffect effect = cast.getEffect();
 
@@ -104,8 +105,8 @@ public class BeamShape extends SpellShape
 
                         BlockPos np = new BlockPos(x, y, z);
 
-                        Vec3d start = trace1.getHitVec().add(new Vec3d(facing.getDirectionVec()).scale(0.5));
-                        Vec3d end = new Vec3d(px + 0.5, py + 0.5, pz + 0.5);
+                        Vector3d start = trace1.getHitVec().add(Vector3d.func_237491_b_(facing.getDirectionVec()).scale(0.5));
+                        Vector3d end = new Vector3d(px + 0.5, py + 0.5, pz + 0.5);
                         BlockRayTraceResult trace2 = cast.world.rayTraceBlocks(new RayTraceContext(start, end, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, cast.player));
                         if (trace2.getType() != RayTraceResult.Type.MISS)
                             if (!trace2.getPos().equals(np))

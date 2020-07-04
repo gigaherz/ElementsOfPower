@@ -8,25 +8,25 @@ import gigaherz.elementsofpower.gemstones.Quality;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.ITag;
 
 import java.util.Map;
 import java.util.Random;
 
 public class GemstoneExaminer
 {
-    public static final Tag<Item> GEMSTONES = new ItemTags.Wrapper(ElementsOfPowerMod.location("gemstones"));
-    public static final Tag<Item> GEM_RUBY = new ItemTags.Wrapper(ElementsOfPowerMod.location("gems/ruby"));
-    public static final Tag<Item> GEM_SAPPHIRE = new ItemTags.Wrapper(ElementsOfPowerMod.location("gems/sapphire"));
-    public static final Tag<Item> GEM_CITRINE = new ItemTags.Wrapper(ElementsOfPowerMod.location("gems/citrine"));
-    public static final Tag<Item> GEM_AGATE = new ItemTags.Wrapper(ElementsOfPowerMod.location("gems/agate"));
-    public static final Tag<Item> GEM_QUARTZ = new ItemTags.Wrapper(ElementsOfPowerMod.location("gems/quartz"));
-    public static final Tag<Item> GEM_SERENDIBITE = new ItemTags.Wrapper(ElementsOfPowerMod.location("gems/serendibite"));
-    public static final Tag<Item> GEM_EMERALD = new ItemTags.Wrapper(ElementsOfPowerMod.location("gems/emerald"));
-    public static final Tag<Item> GEM_AMETHYST = new ItemTags.Wrapper(ElementsOfPowerMod.location("gems/amethyst"));
-    public static final Tag<Item> GEM_DIAMOND = new ItemTags.Wrapper(ElementsOfPowerMod.location("gems/diamond"));
+    public static final ITag.INamedTag<Item> GEMSTONES = ItemTags.makeWrapperTag(ElementsOfPowerMod.location("gemstones").toString());
+    public static final ITag.INamedTag<Item> GEM_RUBY = ItemTags.makeWrapperTag(ElementsOfPowerMod.location("gems/ruby").toString());
+    public static final ITag.INamedTag<Item> GEM_SAPPHIRE = ItemTags.makeWrapperTag(ElementsOfPowerMod.location("gems/sapphire").toString());
+    public static final ITag.INamedTag<Item> GEM_CITRINE = ItemTags.makeWrapperTag(ElementsOfPowerMod.location("gems/citrine").toString());
+    public static final ITag.INamedTag<Item> GEM_AGATE = ItemTags.makeWrapperTag(ElementsOfPowerMod.location("gems/agate").toString());
+    public static final ITag.INamedTag<Item> GEM_QUARTZ = ItemTags.makeWrapperTag(ElementsOfPowerMod.location("gems/quartz").toString());
+    public static final ITag.INamedTag<Item> GEM_SERENDIBITE = ItemTags.makeWrapperTag(ElementsOfPowerMod.location("gems/serendibite").toString());
+    public static final ITag.INamedTag<Item> GEM_EMERALD = ItemTags.makeWrapperTag(ElementsOfPowerMod.location("gems/emerald").toString());
+    public static final ITag.INamedTag<Item> GEM_AMETHYST = ItemTags.makeWrapperTag(ElementsOfPowerMod.location("gems/amethyst").toString());
+    public static final ITag.INamedTag<Item> GEM_DIAMOND = ItemTags.makeWrapperTag(ElementsOfPowerMod.location("gems/diamond").toString());
 
-    public static final Map<Gemstone, Tag<Item>> GEMS = ImmutableMap.<Gemstone, Tag<Item>>builder()
+    public static final Map<Gemstone, ITag.INamedTag<Item>> GEMS = ImmutableMap.<Gemstone, ITag.INamedTag<Item>>builder()
             .put(Gemstone.RUBY, GEM_RUBY)
             .put(Gemstone.SAPPHIRE, GEM_SAPPHIRE)
             .put(Gemstone.CITRINE, GEM_CITRINE)
@@ -53,7 +53,7 @@ public class GemstoneExaminer
         }
 
         return GEMS.entrySet().stream()
-                .filter(kv -> kv.getValue().contains(item))
+                .filter(kv -> kv.getValue().func_230235_a_(item))
                 .findFirst()
                 .map(kv -> setRandomQualityVariant(kv.getKey()))
                 .orElse(stack);

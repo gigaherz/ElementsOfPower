@@ -1,32 +1,33 @@
 package gigaherz.elementsofpower.client.renderers.spells;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import gigaherz.elementsofpower.spells.InitializedSpellcast;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.Quaternion;
+import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class ConeSpellRenderer extends SpellRenderer
 {
     @Override
-    public void render(Spellcast cast, PlayerEntity player, EntityRendererManager renderManager, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, Vec3d offset)
+    public void render(InitializedSpellcast cast, PlayerEntity player, EntityRendererManager renderManager, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, Vector3d offset)
     {
         float scale = 2 * cast.getScale();
 
 
         cast.getHitPosition(partialTicks);
 
-        Vec3d start = cast.start;
-        Vec3d end = cast.end;
+        Vector3d start = cast.start;
+        Vector3d end = cast.end;
 
         start = start.add(offset);
 
-        Vec3d beam = end.subtract(start);
-        Vec3d dir = beam.normalize();
+        Vector3d beam = end.subtract(start);
+        Vector3d dir = beam.normalize();
 
         double beamPlane = Math.sqrt(dir.x * dir.x + dir.z * dir.z);
         double beamYaw = Math.atan2(dir.z, dir.x);

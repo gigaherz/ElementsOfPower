@@ -1,6 +1,6 @@
 package gigaherz.elementsofpower.capabilities;
 
-import gigaherz.elementsofpower.database.MagicAmounts;
+import gigaherz.elementsofpower.magic.MagicAmounts;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.ReportedException;
 import net.minecraft.item.ItemStack;

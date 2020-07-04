@@ -50,7 +50,7 @@ public class GemstoneContainerCapability
             if (g != null)
             {
                 CompoundNBT tag = stack.getOrCreateChildTag("GemstoneContainer");
-                tag.putString("Gemstone", g.getName());
+                tag.putString("Gemstone", g.func_176610_l());
             }
             else
             {

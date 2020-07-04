@@ -9,6 +9,7 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -38,7 +39,7 @@ public class NbtToModel implements IModelGeometry<NbtToModel>
     }
 
     @Override
-    public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ItemOverrideList overrides, ResourceLocation modelLocation)
+    public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ItemOverrideList overrides, ResourceLocation modelLocation)
     {
         return new BakedModel(
                 spriteGetter.apply(owner.resolveTexture("particle")),
@@ -48,9 +49,9 @@ public class NbtToModel implements IModelGeometry<NbtToModel>
     }
 
     @Override
-    public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
+    public Collection<RenderMaterial> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
     {
-        Set<Material> materials = new HashSet<>();
+        Set<RenderMaterial> materials = new HashSet<>();
         for (BlockModel model : modelMap.values())
         { materials.addAll(model.getTextures(modelGetter, missingTextureErrors)); }
         return materials;
@@ -62,7 +63,7 @@ public class NbtToModel implements IModelGeometry<NbtToModel>
         private final TextureAtlasSprite particle;
         private final ItemOverrideList overrides;
 
-        public BakedModel(TextureAtlasSprite particle, boolean isSideLit, ModelBakery bakery, IUnbakedModel ownerModel, Function<ResourceLocation, IUnbakedModel> modelGetter, Function<Material, TextureAtlasSprite> textureGetter,
+        public BakedModel(TextureAtlasSprite particle, boolean isSideLit, ModelBakery bakery, IUnbakedModel ownerModel, Function<ResourceLocation, IUnbakedModel> modelGetter, Function<RenderMaterial, TextureAtlasSprite> textureGetter,
                           String key, Map<String, IBakedModel> modelMap)
         {
             this.isSideLit = isSideLit;
@@ -74,7 +75,7 @@ public class NbtToModel implements IModelGeometry<NbtToModel>
 
                 @Nullable
                 @Override
-                public IBakedModel getModelWithOverrides(IBakedModel model, ItemStack stack, @Nullable World worldIn, @Nullable LivingEntity entityIn)
+                public IBakedModel func_239290_a_(IBakedModel originalModel, ItemStack stack, @Nullable ClientWorld world, @Nullable LivingEntity entity)
                 {
                     CompoundNBT tag = stack.getTag();
                     INBT tagValue = (tag != null) ? tag.get(nbtKey) : null;

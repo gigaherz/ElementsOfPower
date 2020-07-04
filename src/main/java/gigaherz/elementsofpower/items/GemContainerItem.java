@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.items;
 
 import gigaherz.elementsofpower.capabilities.MagicContainerCapability;
-import gigaherz.elementsofpower.database.MagicAmounts;
+import gigaherz.elementsofpower.magic.MagicAmounts;
 import gigaherz.elementsofpower.gemstones.Gemstone;
 import gigaherz.elementsofpower.gemstones.GemstoneItem;
 import gigaherz.elementsofpower.gemstones.Quality;
@@ -92,7 +92,7 @@ public abstract class GemContainerItem extends MagicContainerItem
             Gemstone gem = Gemstone.values.get(g);
 
             tag.remove("gemstone");
-            tag.putString("gemstone", gem.getName());
+            tag.putString("gemstone", gem.func_176610_l());
 
             return gem;
         }
@@ -124,7 +124,7 @@ public abstract class GemContainerItem extends MagicContainerItem
             stack.setTag(tag);
         }
 
-        tag.putString("gemstone", gemstone.getName());
+        tag.putString("gemstone", gemstone.func_176610_l());
 
         return stack;
     }

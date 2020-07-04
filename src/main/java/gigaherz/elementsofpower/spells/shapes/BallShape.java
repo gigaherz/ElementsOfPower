@@ -1,37 +1,42 @@
 package gigaherz.elementsofpower.spells.shapes;
 
 import gigaherz.elementsofpower.entities.BallEntity;
+import gigaherz.elementsofpower.spells.InitializedSpellcast;
 import gigaherz.elementsofpower.spells.Spellcast;
 import gigaherz.elementsofpower.spells.effects.SpellEffect;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.*;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 
 public class BallShape extends SpellShape
 {
     @Override
-    public float getScale(Spellcast cast)
+    public float getScale(InitializedSpellcast cast)
     {
         return 1 + 0.25f * cast.getDamageForce();
     }
 
     @Override
-    public Spellcast castSpell(ItemStack stack, PlayerEntity player, Spellcast cast)
+    public InitializedSpellcast castSpell(ItemStack stack, PlayerEntity player, Spellcast cast)
     {
-        World world = player.world;
-        BallEntity entity = new BallEntity(world, cast, player);
+        InitializedSpellcast spellcast = cast.init(player.world, player);
 
-        entity.shoot(player, player.rotationPitch, player.rotationYaw, 0.0F, 2.5F, 1.0F);
+        World world = player.world;
+        BallEntity entity = new BallEntity(world, player, spellcast);
+
+        entity.func_234612_a_(player, player.rotationPitch, player.rotationYaw, 0.0F, 2.5F, 1.0F);
 
         if (world.addEntity(entity))
-            return cast;
+            return spellcast;
 
         return null;
     }
 
-    public void onImpact(Spellcast cast, RayTraceResult mop)
+    @Override
+    public void onImpact(InitializedSpellcast cast, RayTraceResult mop)
     {
         SpellEffect effect = cast.getEffect();
 
@@ -49,21 +54,21 @@ public class BallShape extends SpellShape
         if (force > 0)
         {
             BlockPos bp;
-            Vec3d vec;
-            Vec3d dir;
+            Vector3d vec;
+            Vector3d dir;
             if (mop.getType() == RayTraceResult.Type.BLOCK)
             {
                 BlockRayTraceResult blockTrace = (BlockRayTraceResult) mop;
                 bp = blockTrace.getPos();
                 bp = bp.offset(blockTrace.getFace());
-                vec = new Vec3d(bp);
-                dir = new Vec3d(blockTrace.getFace().getDirectionVec());
+                vec = Vector3d.func_237491_b_(bp);
+                dir = Vector3d.func_237491_b_(blockTrace.getFace().getDirectionVec());
             }
             else
             {
                 bp = new BlockPos(mop.getHitVec());
                 vec = mop.getHitVec();
-                dir = new Vec3d(0, 0, 0);
+                dir = new Vector3d(0, 0, 0);
             }
 
             int px = bp.getX();
@@ -85,8 +90,8 @@ public class BallShape extends SpellShape
 
                         BlockPos np = new BlockPos(x, y, z);
 
-                        Vec3d start = vec.add(dir.scale(0.5));
-                        Vec3d end = new Vec3d(px + 0.5, py + 0.5, pz + 0.5);
+                        Vector3d start = vec.add(dir.scale(0.5));
+                        Vector3d end = new Vector3d(px + 0.5, py + 0.5, pz + 0.5);
                         BlockRayTraceResult mop2 = cast.world.rayTraceBlocks(new RayTraceContext(start, end, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, cast.player));
                         if (mop2.getType() != RayTraceResult.Type.MISS)
                             if (!mop2.getPos().equals(np))

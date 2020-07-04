@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.cocoons;
 
 import gigaherz.elementsofpower.capabilities.PlayerCombinedMagicContainers;
-import gigaherz.elementsofpower.database.MagicAmounts;
+import gigaherz.elementsofpower.magic.MagicAmounts;
 import gigaherz.elementsofpower.essentializer.gui.IMagicAmountContainer;
 import gigaherz.elementsofpower.items.MagicOrbItem;
 import net.minecraft.block.BlockState;
@@ -39,10 +39,9 @@ public class CocoonTileEntity extends TileEntity implements ITickableTileEntity,
     }
 
     @Override
-    public void read(CompoundNBT compound)
+    public void func_230337_a_(BlockState state, CompoundNBT compound)
     {
-        super.read(compound);
-
+        super.func_230337_a_(state, compound);
         essenceContained = new MagicAmounts(compound.getCompound("Magic"));
     }
 
@@ -120,9 +119,9 @@ public class CocoonTileEntity extends TileEntity implements ITickableTileEntity,
     }
 
     @Override
-    public void handleUpdateTag(CompoundNBT tag)
+    public void handleUpdateTag(BlockState state, CompoundNBT tag)
     {
-        read(tag);
+        func_230337_a_(state, tag);
     }
 
     @Override
@@ -135,7 +134,7 @@ public class CocoonTileEntity extends TileEntity implements ITickableTileEntity,
     public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket packet)
     {
         super.onDataPacket(net, packet);
-        handleUpdateTag(packet.getNbtCompound());
+        handleUpdateTag(getBlockState(), packet.getNbtCompound());
     }
 
     @Override

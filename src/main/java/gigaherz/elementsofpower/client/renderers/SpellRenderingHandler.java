@@ -8,6 +8,7 @@ import gigaherz.elementsofpower.client.renderers.spells.BeamSpellRenderer;
 import gigaherz.elementsofpower.client.renderers.spells.ConeSpellRenderer;
 import gigaherz.elementsofpower.client.renderers.spells.SpellRenderer;
 import gigaherz.elementsofpower.client.renderers.spells.SphereSpellRenderer;
+import gigaherz.elementsofpower.spells.InitializedSpellcast;
 import gigaherz.elementsofpower.spells.SpellManager;
 import gigaherz.elementsofpower.spells.Spellcast;
 import gigaherz.elementsofpower.spells.SpellcastEntityData;
@@ -16,7 +17,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -44,7 +45,7 @@ public class SpellRenderingHandler
         if (player == null)
             return;
         SpellcastEntityData.get(player).ifPresent(data -> {
-            Spellcast cast = data.getCurrentCasting();
+            InitializedSpellcast cast = data.getCurrentCasting();
             if (cast == null)
                 return;
 
@@ -55,7 +56,7 @@ public class SpellRenderingHandler
 
                 float partialTicks = Minecraft.getInstance().getRenderPartialTicks();
 
-                Vec3d off = player.getUpVector(partialTicks).scale(-0.15);
+                Vector3d off = player.getUpVector(partialTicks).scale(-0.15);
 
                 IRenderTypeBuffer.Impl buffers = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
                 MatrixStack stack = event.getMatrixStack();
@@ -76,7 +77,7 @@ public class SpellRenderingHandler
         PlayerEntity player = event.getPlayer();
 
         SpellcastEntityData.get(player).ifPresent(data -> {
-            Spellcast cast = data.getCurrentCasting();
+            InitializedSpellcast cast = data.getCurrentCasting();
             if (cast == null)
                 return;
 
@@ -88,17 +89,17 @@ public class SpellRenderingHandler
 
                 float partialTicks = event.getPartialRenderTick();
 
-                Vec3d upVector = player.getUpVector(partialTicks);
+                Vector3d upVector = player.getUpVector(partialTicks);
 
-                Vec3d off;
+                Vector3d off;
                 if (isSelf)
                 {
                     off = upVector.scale(-0.15);
                 }
                 else
                 {
-                    Vec3d lookVector = player.getLook(partialTicks);
-                    Vec3d sideVector = lookVector.crossProduct(upVector);
+                    Vector3d lookVector = player.getLook(partialTicks);
+                    Vector3d sideVector = lookVector.crossProduct(upVector);
 
                     off = sideVector.scale(0.4).add(lookVector.scale(-0.25));
                 }

@@ -40,24 +40,11 @@ public class LightBlock extends Block
     }
 
     @Override
-    public boolean causesSuffocation(BlockState state, IBlockReader worldIn, BlockPos pos)
-    {
-        return false;
-    }
-
-    @Override
-    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos)
-    {
-        return false;
-    }
-
-    @Override
     public int getLightValue(BlockState state, IBlockReader world, BlockPos pos)
     {
         return Math.min(15, state.get(DENSITY) * 4);
     }
 
-    @Override
     public int tickRate(IWorldReader worldIn)
     {
         return 200;

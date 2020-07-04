@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.network;
 
 import gigaherz.elementsofpower.client.ClientPacketHandlers;
-import gigaherz.elementsofpower.database.MagicAmounts;
+import gigaherz.elementsofpower.magic.MagicAmounts;
 import gigaherz.elementsofpower.essentializer.gui.IMagicAmountHolder;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;

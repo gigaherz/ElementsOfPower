@@ -1,18 +1,19 @@
 package gigaherz.elementsofpower.client.renderers.spells;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import gigaherz.elementsofpower.spells.InitializedSpellcast;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class SphereSpellRenderer extends SpellRenderer
 {
     @Override
-    public void render(Spellcast cast, PlayerEntity player, EntityRendererManager renderManager,
-                       float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, Vec3d offset)
+    public void render(InitializedSpellcast cast, PlayerEntity player, EntityRendererManager renderManager,
+                       float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, Vector3d offset)
     {
         float scale = cast.getScale();
 
@@ -47,7 +48,7 @@ public class SphereSpellRenderer extends SpellRenderer
         matrixStackIn.pop();
     }
 
-    private static RenderType getSphereRenderType(Spellcast cast)
+    private static RenderType getSphereRenderType(InitializedSpellcast cast)
     {
         return RenderType.getEntityTranslucentCull(getTexture(cast));
     }

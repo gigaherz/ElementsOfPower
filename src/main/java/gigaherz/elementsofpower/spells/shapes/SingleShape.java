@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower.spells.shapes;
 
+import gigaherz.elementsofpower.spells.InitializedSpellcast;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -12,9 +13,9 @@ import net.minecraft.util.math.RayTraceResult;
 public class SingleShape extends SpellShape
 {
     @Override
-    public Spellcast castSpell(ItemStack stack, PlayerEntity player, Spellcast cast)
+    public InitializedSpellcast castSpell(ItemStack stack, PlayerEntity player, Spellcast cast)
     {
-        return cast;
+        return cast.init(player.world, player);
     }
 
     @Override
@@ -24,7 +25,7 @@ public class SingleShape extends SpellShape
     }
 
     @Override
-    public void spellTick(Spellcast cast)
+    public void spellTick(InitializedSpellcast cast)
     {
         RayTraceResult mop = cast.getHitPosition();
 

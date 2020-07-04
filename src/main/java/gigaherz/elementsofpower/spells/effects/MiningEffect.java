@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower.spells.effects;
 
+import gigaherz.elementsofpower.spells.InitializedSpellcast;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -12,7 +13,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -20,49 +21,49 @@ import javax.annotation.Nullable;
 public class MiningEffect extends SpellEffect
 {
     @Override
-    public int getColor(Spellcast cast)
+    public int getColor(InitializedSpellcast cast)
     {
         return 0;
     }
 
     @Override
-    public int getDuration(Spellcast cast)
+    public int getDuration(InitializedSpellcast cast)
     {
         return 40 + 20 * cast.getDamageForce();
     }
 
     @Override
-    public int getInterval(Spellcast cast)
+    public int getInterval(InitializedSpellcast cast)
     {
         return 10 / cast.getDamageForce();
     }
 
     @Override
-    public void processDirectHit(Spellcast cast, Entity entity, Vec3d hitVec)
+    public void processDirectHit(InitializedSpellcast cast, Entity entity, Vector3d hitVec)
     {
 
     }
 
     @Override
-    public boolean processEntitiesAroundBefore(Spellcast cast, Vec3d hitVec)
+    public boolean processEntitiesAroundBefore(InitializedSpellcast cast, Vector3d hitVec)
     {
         return true;
     }
 
     @Override
-    public void processEntitiesAroundAfter(Spellcast cast, Vec3d hitVec)
+    public void processEntitiesAroundAfter(InitializedSpellcast cast, Vector3d hitVec)
     {
 
     }
 
     @Override
-    public void spawnBallParticles(Spellcast cast, RayTraceResult mop)
+    public void spawnBallParticles(InitializedSpellcast cast, RayTraceResult mop)
     {
 
     }
 
     @Override
-    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, BlockState currentState, float r, @Nullable RayTraceResult mop)
+    public void processBlockWithinRadius(InitializedSpellcast cast, BlockPos blockPos, BlockState currentState, float r, @Nullable RayTraceResult mop)
     {
         PlayerEntity player = cast.player;
         World world = cast.world;

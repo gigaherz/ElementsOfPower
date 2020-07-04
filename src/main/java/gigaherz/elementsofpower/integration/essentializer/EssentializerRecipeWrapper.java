@@ -2,7 +2,7 @@ package gigaherz.elementsofpower.integration.essentializer;
 /*
 import com.google.common.collect.Lists;
 import gigaherz.elementsofpower.database.EssenceConversions;
-import gigaherz.elementsofpower.database.MagicAmounts;
+import gigaherz.elementsofpower.magic.MagicAmounts;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.client.Minecraft;

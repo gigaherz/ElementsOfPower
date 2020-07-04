@@ -2,7 +2,7 @@ package gigaherz.elementsofpower.network;
 
 import com.google.common.collect.Maps;
 import gigaherz.elementsofpower.database.EssenceConversions;
-import gigaherz.elementsofpower.database.MagicAmounts;
+import gigaherz.elementsofpower.magic.MagicAmounts;
 import net.minecraft.item.Item;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;

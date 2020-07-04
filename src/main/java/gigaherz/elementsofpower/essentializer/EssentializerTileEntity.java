@@ -3,7 +3,7 @@ package gigaherz.elementsofpower.essentializer;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.capabilities.MagicContainerCapability;
 import gigaherz.elementsofpower.database.EssenceConversions;
-import gigaherz.elementsofpower.database.MagicAmounts;
+import gigaherz.elementsofpower.magic.MagicAmounts;
 import gigaherz.elementsofpower.essentializer.gui.IMagicAmountHolder;
 import gigaherz.elementsofpower.network.UpdateEssentializerTileEntity;
 import net.minecraft.block.BlockState;
@@ -120,12 +120,13 @@ public class EssentializerTileEntity
     }
 
     @Override
-    public void read(CompoundNBT tagCompound)
+    public void func_230337_a_(BlockState state, CompoundNBT compound)
     {
-        super.read(tagCompound);
-        readInventoryFromNBT(tagCompound);
-        containedMagic = readAmountsFromNBT(tagCompound, "Contained");
-        remainingToConvert = readAmountsFromNBT(tagCompound, "Remaining");
+        super.func_230337_a_(state, compound);
+
+        readInventoryFromNBT(compound);
+        containedMagic = readAmountsFromNBT(compound, "Contained");
+        remainingToConvert = readAmountsFromNBT(compound, "Remaining");
     }
 
     @Override
@@ -175,9 +176,9 @@ public class EssentializerTileEntity
     }
 
     @Override
-    public void handleUpdateTag(CompoundNBT tag)
+    public void handleUpdateTag(BlockState state, CompoundNBT tag)
     {
-        read(tag);
+        func_230337_a_(state, tag);
     }
 
     @Override
@@ -190,7 +191,7 @@ public class EssentializerTileEntity
     public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket packet)
     {
         super.onDataPacket(net, packet);
-        handleUpdateTag(packet.getNbtCompound());
+        handleUpdateTag(getBlockState(), packet.getNbtCompound());
 
         BlockState state = world.getBlockState(pos);
         world.notifyBlockUpdate(pos, state, state, 3);

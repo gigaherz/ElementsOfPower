@@ -1,6 +1,6 @@
 package gigaherz.elementsofpower.items;
 
-import gigaherz.elementsofpower.database.MagicAmounts;
+import gigaherz.elementsofpower.magic.MagicAmounts;
 import net.minecraft.item.ItemStack;
 
 public class StaffItem extends WandItem

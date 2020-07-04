@@ -52,27 +52,28 @@ import net.minecraft.data.*;
 import net.minecraft.data.loot.BlockLootTables;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.*;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.SpecialRecipeSerializer;
+import net.minecraft.loot.functions.LimitCount;
 import net.minecraft.particles.ParticleType;
 import net.minecraft.state.IntegerProperty;
+import net.minecraft.tags.ITag;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.feature.Feature;
-import net.minecraft.world.gen.feature.NoFeatureConfig;
 import net.minecraft.world.gen.feature.OreFeatureConfig;
 import net.minecraft.world.gen.placement.CountRangeConfig;
 import net.minecraft.world.gen.placement.NoPlacementConfig;
 import net.minecraft.world.gen.placement.Placement;
-import net.minecraft.world.storage.loot.*;
-import net.minecraft.world.storage.loot.functions.LootFunctionManager;
+import net.minecraft.loot.*;
+import net.minecraft.loot.functions.LootFunctionManager;
 import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
@@ -103,8 +104,7 @@ import net.minecraftforge.fml.network.simple.SimpleChannel;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import top.theillusivec4.curios.api.CuriosAPI;
-import top.theillusivec4.curios.api.imc.CurioIMCMessage;
+import top.theillusivec4.curios.api.SlotTypeMessage;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -119,12 +119,14 @@ public class ElementsOfPowerMod
 {
     public static final String MODID = "elementsofpower";
 
+    public static LootFunctionType APPLY_ORB_SIZE;
+
     public static ResourceLocation location(String location)
     {
         return new ResourceLocation(MODID, location);
     }
 
-    public static final EntityClassification ESSENCE_CLASSIFICATION = EntityClassification.create("EOP_LIVING_ESSENCE", "eop_living_essence", 15, true, false);
+    public static final EntityClassification ESSENCE_CLASSIFICATION = EntityClassification.create("EOP_LIVING_ESSENCE", "eop_living_essence", 15, true, false, 32);
 
     // FIXME: Remove once spawn eggs can take a supplier
     // To be used only during loading.
@@ -182,19 +184,24 @@ public class ElementsOfPowerMod
         modEventBus.addListener(this::gatherData);
 
         MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
-
-        LootFunctionManager.registerFunction(ApplyOrbSizeFunction.Serializer.INSTANCE);
     }
-
 
     public void registerBlocks(RegistryEvent.Register<Block> event)
     {
         event.getRegistry().registerAll(
-                new EssentializerBlock(Block.Properties.create(Material.IRON).hardnessAndResistance(15.0F).sound(SoundType.METAL).lightValue(1)).setRegistryName("essentializer"),
-                new DustBlock(Block.Properties.create(ElementsOfPowerBlocks.BlockMaterials.DUST).noDrops().doesNotBlockMovement().notSolid().hardnessAndResistance(0.1F).sound(SoundType.CLOTH).variableOpacity()).setRegistryName("dust"),
-                new MistBlock(Block.Properties.create(ElementsOfPowerBlocks.BlockMaterials.MIST).noDrops().doesNotBlockMovement().notSolid().hardnessAndResistance(0.1F).sound(SoundType.CLOTH).variableOpacity()).setRegistryName("mist"),
-                new LightBlock(Block.Properties.create(ElementsOfPowerBlocks.BlockMaterials.LIGHT).noDrops().doesNotBlockMovement().notSolid().hardnessAndResistance(15.0F).lightValue(15).sound(SoundType.METAL)).setRegistryName("light"),
-                new CushionBlock(Block.Properties.create(ElementsOfPowerBlocks.BlockMaterials.CUSHION).noDrops().doesNotBlockMovement().notSolid().hardnessAndResistance(15.0F).sound(SoundType.METAL).variableOpacity()).setRegistryName("cushion")
+                new EssentializerBlock(Block.Properties.create(Material.IRON).hardnessAndResistance(15.0F).sound(SoundType.METAL).func_235838_a_(b -> 1)).setRegistryName("essentializer"),
+                new DustBlock(Block.Properties.create(ElementsOfPowerBlocks.BlockMaterials.DUST).noDrops().doesNotBlockMovement().notSolid()
+                        .func_235842_b_((s,w,p) -> true).func_235847_c_((s,w,p)-> false)
+                        .hardnessAndResistance(0.1F).sound(SoundType.CLOTH).variableOpacity()).setRegistryName("dust"),
+                new MistBlock(Block.Properties.create(ElementsOfPowerBlocks.BlockMaterials.MIST).noDrops().doesNotBlockMovement().notSolid()
+                        .func_235842_b_((s,w,p) -> false).func_235847_c_((s,w,p)-> false)
+                        .hardnessAndResistance(0.1F).sound(SoundType.CLOTH).variableOpacity()).setRegistryName("mist"),
+                new LightBlock(Block.Properties.create(ElementsOfPowerBlocks.BlockMaterials.LIGHT).noDrops().doesNotBlockMovement().notSolid()
+                        .func_235842_b_((s,w,p) -> false).func_235847_c_((s,w,p)-> false)
+                        .hardnessAndResistance(15.0F).func_235838_a_(b -> 15).sound(SoundType.METAL)).setRegistryName("light"),
+                new CushionBlock(Block.Properties.create(ElementsOfPowerBlocks.BlockMaterials.CUSHION).noDrops().doesNotBlockMovement().notSolid()
+                        .func_235842_b_((s,w,p) -> false).func_235847_c_((s,w,p)-> false)
+                        .hardnessAndResistance(15.0F).sound(SoundType.METAL).variableOpacity()).setRegistryName("cushion")
         );
         for (Gemstone type : Gemstone.values())
         {
@@ -206,7 +213,7 @@ public class ElementsOfPowerMod
                                 .harvestTool(ToolType.PICKAXE)
                                 .harvestLevel(ItemTier.IRON.getHarvestLevel())
                                 .sound(SoundType.METAL)
-                        ).setRegistryName(type.getName() + "_block")
+                        ).setRegistryName(type.func_176610_l() + "_block")
                 );
             }
         }
@@ -219,7 +226,7 @@ public class ElementsOfPowerMod
                                 .hardnessAndResistance(3.0F, 3.0F)
                                 .harvestTool(ToolType.PICKAXE)
                                 .harvestLevel(ItemTier.IRON.getHarvestLevel())
-                        ).setRegistryName(type.getName() + "_ore")
+                        ).setRegistryName(type.func_176610_l() + "_ore")
                 );
             }
         }
@@ -227,7 +234,7 @@ public class ElementsOfPowerMod
         {
             event.getRegistry().registerAll(
                     new CocoonBlock(type, Block.Properties.create(Material.ROCK).hardnessAndResistance(1F)
-                            .sound(SoundType.WOOD).lightValue(11).tickRandomly()).setRegistryName(type.getName() + "_cocoon")
+                            .sound(SoundType.WOOD).func_235838_a_(b -> 11).tickRandomly()).setRegistryName(type.getName() + "_cocoon")
             );
         }
     }
@@ -248,22 +255,22 @@ public class ElementsOfPowerMod
         );
         for (Gemstone type : Gemstone.values())
         {
-            event.getRegistry().register(new GemstoneItem(type, new Item.Properties().group(tabGemstones).maxStackSize(1)).setRegistryName(type.getName()));
+            event.getRegistry().register(new GemstoneItem(type, new Item.Properties().group(tabGemstones).maxStackSize(1)).setRegistryName(type.func_176610_l()));
         }
         for (Gemstone type : Gemstone.values())
         {
             if (type.generateCustomBlock())
-                event.getRegistry().register(new BlockItem(type.getBlock(), new Item.Properties().group(tabMagic)).setRegistryName(type.getName() + "_block"));
+                event.getRegistry().register(new BlockItem(type.getBlock(), new Item.Properties().group(tabMagic)).setRegistryName(type.func_176610_l() + "_block"));
         }
         for (Gemstone type : Gemstone.values())
         {
             if (type.generateCustomOre())
-                event.getRegistry().register(new BlockItem(type.getOre(), new Item.Properties().group(tabMagic)).setRegistryName(type.getName() + "_ore"));
+                event.getRegistry().register(new BlockItem(type.getOre(), new Item.Properties().group(tabMagic)).setRegistryName(type.func_176610_l() + "_ore"));
         }
         for (Gemstone type : Gemstone.values())
         {
             if (type.generateSpelldust())
-                event.getRegistry().register(new SpelldustItem(type, new Item.Properties().group(tabMagic)).setRegistryName(type.getName() + "_spelldust"));
+                event.getRegistry().register(new SpelldustItem(type, new Item.Properties().group(tabMagic)).setRegistryName(type.func_176610_l() + "_spelldust"));
         }
         for (Element type : Element.values())
         {
@@ -311,6 +318,9 @@ public class ElementsOfPowerMod
                 new SpecialRecipeSerializer<>(ContainerChargeRecipe::new).setRegistryName("container_charge"),
                 new SpecialRecipeSerializer<>(GemstoneChangeRecipe::new).setRegistryName("gemstone_change")
         );
+
+        // FIXME
+        APPLY_ORB_SIZE = LootFunctionManager.func_237451_a_(location("apply_orb_size").toString(), new ApplyOrbSizeFunction.Serializer());
     }
 
     public void registerParticleTypes(RegistryEvent.Register<ParticleType<?>> event)
@@ -370,6 +380,8 @@ public class ElementsOfPowerMod
         DeferredWorkQueue.runLater(this::addFeatures);
 
         EssenceConversions.init();
+
+        GlobalEntityTypeAttributes.put(EssenceEntity.TYPE, EssenceEntity.prepareAttributes().func_233813_a_());
     }
 
     private void addFeatures()
@@ -378,8 +390,9 @@ public class ElementsOfPowerMod
         {
             if (!BiomeDictionary.hasType(biome, BiomeDictionary.Type.VOID))
             {
-                if (!BiomeDictionary.hasType(biome, BiomeDictionary.Type.END) &&
-                        !BiomeDictionary.hasType(biome, BiomeDictionary.Type.NETHER))
+                boolean isEndBiome = BiomeDictionary.hasType(biome, BiomeDictionary.Type.END);
+                boolean isNetherBiome = BiomeDictionary.hasType(biome, BiomeDictionary.Type.NETHER);
+                if (!isEndBiome && !isNetherBiome)
                 {
                     for (Gemstone g : Gemstone.values)
                     {
@@ -391,12 +404,17 @@ public class ElementsOfPowerMod
                                     .withPlacement(Placement.COUNT_RANGE.configure(new CountRangeConfig(1, 0, 0, 16))));
                         }
                     }
-
-                    biome.addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, CocoonFeature.INSTANCE.withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG)
-                            .withPlacement(CocoonPlacement.INSTANCE.configure(NoPlacementConfig.NO_PLACEMENT_CONFIG)));
                 }
 
-                biome.addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, CocoonFeature.INSTANCE.withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG)
+                CocoonFeatureConfig cfg;
+                if (isNetherBiome)
+                    cfg = CocoonFeatureConfig.THE_NETHER;
+                else if(isEndBiome)
+                    cfg = CocoonFeatureConfig.THE_END;
+                else
+                    cfg = CocoonFeatureConfig.OVERWORLD;
+
+                biome.addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, CocoonFeature.INSTANCE.withConfiguration(cfg)
                         .withPlacement(CocoonPlacement.INSTANCE.configure(NoPlacementConfig.NO_PLACEMENT_CONFIG)));
             }
         }
@@ -457,12 +475,9 @@ public class ElementsOfPowerMod
 
     private void imcEnqueue(InterModEnqueueEvent event)
     {
-        InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_TYPE, () -> new CurioIMCMessage("headband").setSize(1).setEnabled(true).setHidden(false));
-        InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_ICON, () -> new Tuple<>("headband", location("gui/headband_slot_background")));
-        InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_TYPE, () -> new CurioIMCMessage("necklace").setSize(1).setEnabled(true).setHidden(false));
-        InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_ICON, () -> new Tuple<>("necklace", location("gui/necklace_slot_background")));
-        InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_TYPE, () -> new CurioIMCMessage("ring").setSize(2).setEnabled(true).setHidden(false));
-        //InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_ICON, () -> new Tuple<>("ring", location("gui/ring_slot_background")));
+        InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> new SlotTypeMessage.Builder("headband").icon(location("gui/headband_slot_background")).size(1).build());
+        InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> new SlotTypeMessage.Builder("necklace").icon(location("gui/necklace_slot_background")).size(1).build());
+        InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> new SlotTypeMessage.Builder("ring").size(2).build());
     }
 
     public void serverStarting(FMLServerStartingEvent event)
@@ -480,10 +495,11 @@ public class ElementsOfPowerMod
 
         if (event.includeServer())
         {
+            BlockTagGens blockTags = new BlockTagGens(gen);
             gen.addProvider(new Recipes(gen));
             gen.addProvider(new LootTables(gen));
-            gen.addProvider(new ItemTagGens(gen));
-            gen.addProvider(new BlockTagGens(gen));
+            gen.addProvider(blockTags);
+            gen.addProvider(new ItemTagGens(gen, blockTags));
         }
         if (event.includeClient())
         {
@@ -493,40 +509,40 @@ public class ElementsOfPowerMod
 
     private static class ItemTagGens extends ItemTagsProvider implements IDataProvider
     {
-        public ItemTagGens(DataGenerator gen)
+        public ItemTagGens(DataGenerator gen, BlockTagsProvider blockTags)
         {
-            super(gen);
+            super(gen, blockTags);
         }
 
         @Override
         protected void registerTags()
         {
             GemstoneExaminer.GEMS.forEach((gem, tag) -> {
-                this.getBuilder(tag).add(gem.getTagItems()).build(tag.getId());
+                this.func_240522_a_(tag).func_240534_a_(gem.getTagItems());
             });
             Gemstone.values.forEach(gem -> {
                 if (gem != Gemstone.CREATIVITE)
                 {
-                    ItemTags.Wrapper tag = new ItemTags.Wrapper(new ResourceLocation("forge", "gems/" + gem.getName()));
-                    this.getBuilder(tag).add(gem.getTagItems()).build(tag.getId());
+                    ITag.INamedTag<Item> tag = ItemTags.makeWrapperTag(new ResourceLocation("forge", "gems/" + gem.func_176610_l()).toString());
+                    this.func_240522_a_(tag).func_240534_a_(gem.getTagItems());
                 }
                 if (gem.generateCustomOre())
                 {
                     Block ore = gem.getOre();
-                    ItemTags.Wrapper tag = new ItemTags.Wrapper(new ResourceLocation("forge", "ores/" + gem.getName()));
-                    this.getBuilder(tag).add(ore.asItem()).build(tag.getId());
+                    ITag.INamedTag<Item> tag = ItemTags.makeWrapperTag(new ResourceLocation("forge", "ores/" + gem.func_176610_l()).toString());
+                    this.func_240522_a_(tag).func_240534_a_(ore.asItem());
                 }
                 if (gem.generateCustomBlock())
                 {
                     Block block = gem.getBlock();
-                    ItemTags.Wrapper tag = new ItemTags.Wrapper(new ResourceLocation("forge", "blocks/" + gem.getName()));
-                    this.getBuilder(tag).add(block.asItem()).build(tag.getId());
+                    ITag.INamedTag<Item> tag = ItemTags.makeWrapperTag(new ResourceLocation("forge", "blocks/" + gem.func_176610_l()).toString());
+                    this.func_240522_a_(tag).func_240534_a_(block.asItem());
                 }
             });
 
-            this.getBuilder(GemstoneExaminer.GEMSTONES).add(
+            this.func_240522_a_(GemstoneExaminer.GEMSTONES).func_240534_a_(
                     Arrays.stream(Gemstone.values()).flatMap(g -> Arrays.stream(g.getTagItems())).toArray(Item[]::new)
-            ).build(GemstoneExaminer.GEMSTONES.getId());
+            );
         }
     }
 
@@ -738,7 +754,7 @@ public class ElementsOfPowerMod
                 {
                     CookingRecipeBuilder.smeltingRecipe(Ingredient.fromItems(gemstone.getOre()), gemstone, 1.0F, 200)
                             .addCriterion("has_ore", hasItem(gemstone.getOre()))
-                            .build(consumer, location("smelting/" + gemstone.getName()));
+                            .build(consumer, location("smelting/" + gemstone.func_176610_l()));
                 }
                 if (gemstone.generateCustomBlock())
                 {
@@ -753,7 +769,7 @@ public class ElementsOfPowerMod
                     ShapelessRecipeBuilder.shapelessRecipe(gemstone.getItem(), 9)
                             .addIngredient(Ingredient.fromItems(gemstone.getBlock()))
                             .addCriterion("has_item", hasItem(gemstone.getItem()))
-                            .build(consumer, location(gemstone.getName() + "_from_block"));
+                            .build(consumer, location(gemstone.func_176610_l() + "_from_block"));
                 }
             }
         }

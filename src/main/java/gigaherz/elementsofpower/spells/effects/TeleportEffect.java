@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower.spells.effects;
 
+import gigaherz.elementsofpower.spells.InitializedSpellcast;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
@@ -8,32 +9,32 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 import javax.annotation.Nullable;
 
 public class TeleportEffect extends SpellEffect
 {
     @Override
-    public int getColor(Spellcast cast)
+    public int getColor(InitializedSpellcast cast)
     {
         return 0x20A020;
     }
 
     @Override
-    public int getDuration(Spellcast cast)
+    public int getDuration(InitializedSpellcast cast)
     {
         return 0;
     }
 
     @Override
-    public int getInterval(Spellcast cast)
+    public int getInterval(InitializedSpellcast cast)
     {
         return 0;
     }
 
     @Override
-    public void processDirectHit(Spellcast cast, Entity entity, Vec3d hitVec)
+    public void processDirectHit(InitializedSpellcast cast, Entity entity, Vector3d hitVec)
     {
         if (entity == cast.player)
             return;
@@ -41,7 +42,7 @@ public class TeleportEffect extends SpellEffect
     }
 
     @Override
-    public boolean processEntitiesAroundBefore(Spellcast cast, Vec3d hitVec)
+    public boolean processEntitiesAroundBefore(InitializedSpellcast cast, Vector3d hitVec)
     {
         if (!cast.world.isRemote)
         {
@@ -74,23 +75,23 @@ public class TeleportEffect extends SpellEffect
     }
 
     @Override
-    public void processEntitiesAroundAfter(Spellcast cast, Vec3d hitVec)
+    public void processEntitiesAroundAfter(InitializedSpellcast cast, Vector3d hitVec)
     {
 
     }
 
     @Override
-    public void spawnBallParticles(Spellcast cast, RayTraceResult mop)
+    public void spawnBallParticles(InitializedSpellcast cast, RayTraceResult mop)
     {
         for (int i = 0; i < 32; ++i)
         {
-            Vec3d hitVec = mop.getHitVec();
+            Vector3d hitVec = mop.getHitVec();
             cast.spawnRandomParticle(ParticleTypes.PORTAL, hitVec.x, hitVec.y, hitVec.z);
         }
     }
 
     @Override
-    public void processBlockWithinRadius(Spellcast cast, BlockPos blockPos, BlockState currentState, float r, @Nullable RayTraceResult mop)
+    public void processBlockWithinRadius(InitializedSpellcast cast, BlockPos blockPos, BlockState currentState, float r, @Nullable RayTraceResult mop)
     {
 
     }

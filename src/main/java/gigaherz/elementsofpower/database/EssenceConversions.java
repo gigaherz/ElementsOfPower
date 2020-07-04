@@ -8,6 +8,7 @@ import com.google.gson.reflect.TypeToken;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.database.recipes.RecipeTools;
+import gigaherz.elementsofpower.magic.MagicAmounts;
 import gigaherz.elementsofpower.network.SyncEssenceConversions;
 import net.minecraft.client.resources.ReloadListener;
 import net.minecraft.command.CommandSource;
@@ -17,7 +18,6 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.profiler.IProfiler;
-import net.minecraft.resources.IFutureReloadListener;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
@@ -26,7 +26,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
-import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -38,8 +37,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 import java.util.function.Supplier;
 
 public class EssenceConversions
@@ -74,9 +71,10 @@ public class EssenceConversions
             ElementsOfPowerMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncEssenceConversions());
     }
 
+    // FIXME: AddReloadListenersEvent
     private static void serverAboutToStart(FMLServerAboutToStartEvent event)
     {
-        registerResourceReloadListener(event.getServer().getResourceManager());
+        registerResourceReloadListener((IReloadableResourceManager) event.getServer().getDataPackRegistries().func_240970_h_());
     }
 
     public boolean itemHasEssence(Item item)

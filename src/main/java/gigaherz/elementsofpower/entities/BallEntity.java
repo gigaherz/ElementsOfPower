@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower.entities;
 
+import gigaherz.elementsofpower.spells.InitializedSpellcast;
 import gigaherz.elementsofpower.spells.SpellManager;
 import gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.entity.EntityType;
@@ -21,17 +22,18 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 public class BallEntity extends ThrowableEntity implements IEntityAdditionalSpawnData
 {
     @ObjectHolder("elementsofpower:ball")
     public static EntityType<BallEntity> TYPE;
 
-    Spellcast spellcast;
+    InitializedSpellcast spellcast;
 
     private static final DataParameter<CompoundNBT> SEQ = EntityDataManager.createKey(BallEntity.class, DataSerializers.COMPOUND_NBT);
 
-    public BallEntity(World worldIn, Spellcast spellcast, LivingEntity thrower)
+    public BallEntity(World worldIn, LivingEntity thrower, InitializedSpellcast spellcast)
     {
         super(TYPE, thrower, worldIn);
 
@@ -39,6 +41,7 @@ public class BallEntity extends ThrowableEntity implements IEntityAdditionalSpaw
         spellcast.setProjectile(this);
 
         CompoundNBT tag = new CompoundNBT();
+        tag.putInt("caster", spellcast.player.getEntityId());
         tag.put("sequence", spellcast.getSequenceNBT());
         getDataManager().set(SEQ, tag);
     }
@@ -89,17 +92,23 @@ public class BallEntity extends ThrowableEntity implements IEntityAdditionalSpaw
     }
 
     @Nullable
-    public Spellcast getSpellcast()
+    public InitializedSpellcast getSpellcast()
     {
         if (spellcast == null)
         {
             CompoundNBT tag = getDataManager().get(SEQ);
-            if (tag.contains("sequence", Constants.NBT.TAG_LIST))
+            if (tag.contains("sequence", Constants.NBT.TAG_LIST) && tag.contains("caster", Constants.NBT.TAG_INT))
             {
-                ListNBT sequence = tag.getList("sequence", Constants.NBT.TAG_STRING);
-                spellcast = SpellManager.makeSpell(sequence);
-                if (spellcast != null)
-                    spellcast.init(world, (PlayerEntity) getThrower());
+                PlayerEntity e = (PlayerEntity) this.world.getEntityByID(tag.getInt("caster"));
+                if (e != null)
+                {
+                    ListNBT sequence = tag.getList("sequence", Constants.NBT.TAG_STRING);
+                    Spellcast ccast = SpellManager.makeSpell(sequence);
+                    if (ccast != null)
+                    {
+                        spellcast = ccast.init(world, e);
+                    }
+                }
             }
         }
         return spellcast;

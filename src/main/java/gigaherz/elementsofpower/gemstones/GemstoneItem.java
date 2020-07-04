@@ -1,6 +1,6 @@
 package gigaherz.elementsofpower.gemstones;
 
-import gigaherz.elementsofpower.database.MagicAmounts;
+import gigaherz.elementsofpower.magic.MagicAmounts;
 import gigaherz.elementsofpower.items.MagicContainerItem;
 import gigaherz.elementsofpower.spells.Element;
 import net.minecraft.client.util.ITooltipFlag;
@@ -167,9 +167,9 @@ public class GemstoneItem extends MagicContainerItem
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn)
     {
         if (getQuality(stack) == null)
-            tooltip.add(new TranslationTextComponent("text.elementsofpower.gemstone.use").applyTextStyles(TextFormatting.DARK_GRAY, TextFormatting.ITALIC));
+            tooltip.add(new TranslationTextComponent("text.elementsofpower.gemstone.use").func_240701_a_(TextFormatting.DARK_GRAY, TextFormatting.ITALIC));
         else
-            tooltip.add(new TranslationTextComponent("text.elementsofpower.gemstone.combine").applyTextStyles(TextFormatting.DARK_GRAY, TextFormatting.ITALIC));
+            tooltip.add(new TranslationTextComponent("text.elementsofpower.gemstone.combine").func_240701_a_(TextFormatting.DARK_GRAY, TextFormatting.ITALIC));
     }
 
     public ItemStack getStack(Quality quality)

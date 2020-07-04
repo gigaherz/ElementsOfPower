@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.client;
 
 import gigaherz.elementsofpower.ElementsOfPowerMod;
-import gigaherz.elementsofpower.database.MagicAmounts;
+import gigaherz.elementsofpower.magic.MagicAmounts;
 import gigaherz.elementsofpower.items.WandItem;
 import gigaherz.elementsofpower.network.UpdateSpellSequence;
 import gigaherz.elementsofpower.spells.Element;

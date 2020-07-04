@@ -22,6 +22,9 @@ public class BallEntityRenderer extends EntityRenderer<BallEntity>
     @Override
     public void render(BallEntity entity, float entityYaw, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn)
     {
+        if (entity.ticksExisted < 2)
+            return;
+
         float scale = entity.getScale() * 0.25f;
 
         matrixStackIn.push();
