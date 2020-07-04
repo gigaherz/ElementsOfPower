@@ -577,11 +577,13 @@ public class ElementsOfPowerMod
             @Override
             protected void addTables()
             {
+                this.registerDropSelfLootTable(ElementsOfPowerBlocks.ESSENTIALIZER);
+
                 for (Element e : Element.values)
                 {
                     this.registerLootTable(e.getCocoon(), BlockTables::dropWithOrbs);
                 }
-                this.registerLootTable(ElementsOfPowerBlocks.ESSENTIALIZER, dropping(ElementsOfPowerBlocks.ESSENTIALIZER));
+
                 for (Gemstone g : Gemstone.values)
                 {
                     if (g.generateCustomBlock())

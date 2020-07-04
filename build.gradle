@@ -5,11 +5,9 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.0.170', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
     }
 }
-
-System.out.println(System.getProperty("java.version"))
 
 apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
@@ -53,7 +51,7 @@ sourceSets {
 }
 
 minecraft {
-    mappings channel: 'snapshot', version: '20200519-1.15.1'
+    mappings channel: 'snapshot', version: '20200602-1.15.1'
 
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
@@ -64,8 +62,10 @@ minecraft {
             property 'forge.logging.markers', ''
             property 'forge.logging.console.level', 'debug'
 
+            ideaModule 'whatever.main'
+
             mods {
-                examplemod {
+                thismod {
                     source sourceSets.main
                 }
             }
@@ -78,7 +78,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             mods {
-                examplemod {
+                thismod {
                     source sourceSets.main
                 }
             }
@@ -93,7 +93,7 @@ minecraft {
             args '--mod', 'elementsofpower', '--all', '--output', file('src/main/generated_resources/'), '--existing', file('src/main/resources/')
 
             mods {
-                examplemod {
+                thismod {
                     source sourceSets.main
                 }
             }
@@ -102,7 +102,7 @@ minecraft {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.15.2-31.2.0'
+    minecraft 'net.minecraftforge:forge:1.15.2-31.2.5'
 
     compileOnly fg.deobf("mezz.jei:jei-1.15.2:6.0.0.4:api")
     runtimeOnly fg.deobf("mezz.jei:jei-1.15.2:6.0.0.4")
