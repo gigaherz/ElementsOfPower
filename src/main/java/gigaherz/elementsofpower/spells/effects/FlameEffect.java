@@ -91,7 +91,7 @@ public class FlameEffect extends SpellEffect
 
             if (canAttack)
             {
-                if (!e.func_230279_az_())
+                if (!e.isImmuneToFire())
                 {
                     e.setFire((int) lv);
                 }

@@ -105,7 +105,7 @@ public class BeamShape extends SpellShape
 
                         BlockPos np = new BlockPos(x, y, z);
 
-                        Vector3d start = trace1.getHitVec().add(Vector3d.func_237491_b_(facing.getDirectionVec()).scale(0.5));
+                        Vector3d start = trace1.getHitVec().add(Vector3d.copyCentered(facing.getDirectionVec()).scale(0.5));
                         Vector3d end = new Vector3d(px + 0.5, py + 0.5, pz + 0.5);
                         BlockRayTraceResult trace2 = cast.world.rayTraceBlocks(new RayTraceContext(start, end, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, cast.player));
                         if (trace2.getType() != RayTraceResult.Type.MISS)

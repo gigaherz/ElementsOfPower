@@ -74,7 +74,7 @@ public class EssenceConversions
     // FIXME: AddReloadListenersEvent
     private static void serverAboutToStart(FMLServerAboutToStartEvent event)
     {
-        registerResourceReloadListener((IReloadableResourceManager) event.getServer().getDataPackRegistries().func_240970_h_());
+        registerResourceReloadListener((IReloadableResourceManager) event.getServer().getDataPackRegistries().getResourceManager());
     }
 
     public boolean itemHasEssence(Item item)

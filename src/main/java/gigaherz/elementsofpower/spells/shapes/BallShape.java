@@ -61,8 +61,8 @@ public class BallShape extends SpellShape
                 BlockRayTraceResult blockTrace = (BlockRayTraceResult) mop;
                 bp = blockTrace.getPos();
                 bp = bp.offset(blockTrace.getFace());
-                vec = Vector3d.func_237491_b_(bp);
-                dir = Vector3d.func_237491_b_(blockTrace.getFace().getDirectionVec());
+                vec = Vector3d.copyCentered(bp);
+                dir = Vector3d.copyCentered(blockTrace.getFace().getDirectionVec());
             }
             else
             {

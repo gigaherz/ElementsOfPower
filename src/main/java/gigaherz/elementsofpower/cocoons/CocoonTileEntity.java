@@ -39,9 +39,9 @@ public class CocoonTileEntity extends TileEntity implements ITickableTileEntity,
     }
 
     @Override
-    public void func_230337_a_(BlockState state, CompoundNBT compound)
+    public void read(BlockState state, CompoundNBT compound)
     {
-        super.func_230337_a_(state, compound);
+        super.read(state, compound);
         essenceContained = new MagicAmounts(compound.getCompound("Magic"));
     }
 
@@ -121,7 +121,7 @@ public class CocoonTileEntity extends TileEntity implements ITickableTileEntity,
     @Override
     public void handleUpdateTag(BlockState state, CompoundNBT tag)
     {
-        func_230337_a_(state, tag);
+        read(state, tag);
     }
 
     @Override

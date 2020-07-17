@@ -43,17 +43,17 @@ public class MagicTooltips
 
         if (item == Items.DIAMOND || item == Items.EMERALD || item == Items.QUARTZ)
         {
-            toolTip.add(1, new TranslationTextComponent("text.elementsofpower.gemstone.use").func_240701_a_(TextFormatting.DARK_GRAY, TextFormatting.ITALIC));
+            toolTip.add(1, new TranslationTextComponent("text.elementsofpower.gemstone.use").mergeStyle(TextFormatting.DARK_GRAY, TextFormatting.ITALIC));
         }
 
         MagicAmounts amounts = EssenceConversions.CLIENT.getEssences(stack, false);
         if (amounts.isEmpty())
             return;
 
-        toolTip.add(new TranslationTextComponent("elementsofpower.magic.converts").func_240699_a_(TextFormatting.YELLOW));
+        toolTip.add(new TranslationTextComponent("elementsofpower.magic.converts").mergeStyle(TextFormatting.YELLOW));
         if (!Screen.hasShiftDown())
         {
-            toolTip.add(new TranslationTextComponent("elementsofpower.magic.more_info").func_240699_a_(TextFormatting.GRAY));
+            toolTip.add(new TranslationTextComponent("elementsofpower.magic.more_info").mergeStyle(TextFormatting.GRAY));
             return;
         }
 
@@ -73,7 +73,7 @@ public class MagicTooltips
                     ? new TranslationTextComponent("elementsofpower.magic.amount_stacked", magicName, str, str2)
                     : new TranslationTextComponent("elementsofpower.magic.amount", magicName, str);
 
-            toolTip.add(magicAmount.func_240699_a_(TextFormatting.GRAY));
+            toolTip.add(magicAmount.mergeStyle(TextFormatting.GRAY));
         }
     }
 
@@ -87,10 +87,10 @@ public class MagicTooltips
                 return;
             }
 
-            toolTip.add(new TranslationTextComponent("elementsofpower.magic.contains").func_240699_a_(TextFormatting.YELLOW));
+            toolTip.add(new TranslationTextComponent("elementsofpower.magic.contains").mergeStyle(TextFormatting.YELLOW));
             if (!Screen.hasShiftDown())
             {
-                toolTip.add(new TranslationTextComponent("elementsofpower.magic.more_info").func_240699_a_(TextFormatting.GRAY));
+                toolTip.add(new TranslationTextComponent("elementsofpower.magic.more_info").mergeStyle(TextFormatting.GRAY));
                 return;
             }
 
@@ -101,7 +101,7 @@ public class MagicTooltips
                     ITextComponent magicName = MagicAmounts.getMagicName(i);
                     IFormattableTextComponent magicAmount = new TranslationTextComponent("elementsofpower.magic.amount_infinite", magicName);
 
-                    toolTip.add(magicAmount.func_240699_a_(TextFormatting.GRAY));
+                    toolTip.add(magicAmount.mergeStyle(TextFormatting.GRAY));
                 }
             }
             else
@@ -118,7 +118,7 @@ public class MagicTooltips
                     ITextComponent magicName = MagicAmounts.getMagicName(i);
                     IFormattableTextComponent magicAmount = new TranslationTextComponent("elementsofpower.magic.amount", magicName, str);
 
-                    toolTip.add(magicAmount.func_240699_a_(TextFormatting.GRAY));
+                    toolTip.add(magicAmount.mergeStyle(TextFormatting.GRAY));
                 }
             }
         });

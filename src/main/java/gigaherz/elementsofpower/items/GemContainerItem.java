@@ -92,7 +92,7 @@ public abstract class GemContainerItem extends MagicContainerItem
             Gemstone gem = Gemstone.values.get(g);
 
             tag.remove("gemstone");
-            tag.putString("gemstone", gem.func_176610_l());
+            tag.putString("gemstone", gem.getString());
 
             return gem;
         }
@@ -124,7 +124,7 @@ public abstract class GemContainerItem extends MagicContainerItem
             stack.setTag(tag);
         }
 
-        tag.putString("gemstone", gemstone.func_176610_l());
+        tag.putString("gemstone", gemstone.getString());
 
         return stack;
     }

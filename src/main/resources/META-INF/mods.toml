@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[31,)"
+loaderVersion="[32,)"
 issueTrackerURL="https://github.com/gigaherz/ElementsOfPower/issues"
 
 [[mods]] #mandatory
@@ -18,12 +18,12 @@ A magic mod about the raw power elemental essences
 [[dependencies.elementsofpower]] #optional
     modId="forge" #mandatory
     mandatory=true #mandatory
-    versionRange="[31,)" #mandatory
+    versionRange="[32.0.68,)" #mandatory
     ordering="NONE"
     side="BOTH"
 [[dependencies.elementsofpower]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.15.2,)"
+    versionRange="[1.16.1,1.17)"
     ordering="NONE"
     side="BOTH"

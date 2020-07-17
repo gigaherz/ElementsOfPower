@@ -58,7 +58,6 @@ import net.minecraft.item.*;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.SpecialRecipeSerializer;
-import net.minecraft.loot.functions.LimitCount;
 import net.minecraft.particles.ParticleType;
 import net.minecraft.state.IntegerProperty;
 import net.minecraft.tags.ITag;
@@ -86,6 +85,7 @@ import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.common.util.NonNullLazy;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DeferredWorkQueue;
@@ -97,7 +97,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
-import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
@@ -183,24 +182,24 @@ public class ElementsOfPowerMod
         modEventBus.addListener(this::imcEnqueue);
         modEventBus.addListener(this::gatherData);
 
-        MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
+        MinecraftForge.EVENT_BUS.addListener(this::registerCommands);
     }
 
     public void registerBlocks(RegistryEvent.Register<Block> event)
     {
         event.getRegistry().registerAll(
-                new EssentializerBlock(Block.Properties.create(Material.IRON).hardnessAndResistance(15.0F).sound(SoundType.METAL).func_235838_a_(b -> 1)).setRegistryName("essentializer"),
+                new EssentializerBlock(Block.Properties.create(Material.IRON).hardnessAndResistance(15.0F).sound(SoundType.METAL).setLightLevel(b -> 1)).setRegistryName("essentializer"),
                 new DustBlock(Block.Properties.create(ElementsOfPowerBlocks.BlockMaterials.DUST).noDrops().doesNotBlockMovement().notSolid()
-                        .func_235842_b_((s,w,p) -> true).func_235847_c_((s,w,p)-> false)
+                        .setSuffocates((s,w,p) -> true).setBlocksVision((s,w,p)-> false)
                         .hardnessAndResistance(0.1F).sound(SoundType.CLOTH).variableOpacity()).setRegistryName("dust"),
                 new MistBlock(Block.Properties.create(ElementsOfPowerBlocks.BlockMaterials.MIST).noDrops().doesNotBlockMovement().notSolid()
-                        .func_235842_b_((s,w,p) -> false).func_235847_c_((s,w,p)-> false)
+                        .setSuffocates((s,w,p) -> false).setBlocksVision((s,w,p)-> false)
                         .hardnessAndResistance(0.1F).sound(SoundType.CLOTH).variableOpacity()).setRegistryName("mist"),
                 new LightBlock(Block.Properties.create(ElementsOfPowerBlocks.BlockMaterials.LIGHT).noDrops().doesNotBlockMovement().notSolid()
-                        .func_235842_b_((s,w,p) -> false).func_235847_c_((s,w,p)-> false)
-                        .hardnessAndResistance(15.0F).func_235838_a_(b -> 15).sound(SoundType.METAL)).setRegistryName("light"),
+                        .setSuffocates((s,w,p) -> false).setBlocksVision((s,w,p)-> false)
+                        .hardnessAndResistance(15.0F).setLightLevel(b -> 15).sound(SoundType.METAL)).setRegistryName("light"),
                 new CushionBlock(Block.Properties.create(ElementsOfPowerBlocks.BlockMaterials.CUSHION).noDrops().doesNotBlockMovement().notSolid()
-                        .func_235842_b_((s,w,p) -> false).func_235847_c_((s,w,p)-> false)
+                        .setSuffocates((s,w,p) -> false).setBlocksVision((s,w,p)-> false)
                         .hardnessAndResistance(15.0F).sound(SoundType.METAL).variableOpacity()).setRegistryName("cushion")
         );
         for (Gemstone type : Gemstone.values())
@@ -213,7 +212,7 @@ public class ElementsOfPowerMod
                                 .harvestTool(ToolType.PICKAXE)
                                 .harvestLevel(ItemTier.IRON.getHarvestLevel())
                                 .sound(SoundType.METAL)
-                        ).setRegistryName(type.func_176610_l() + "_block")
+                        ).setRegistryName(type.getString() + "_block")
                 );
             }
         }
@@ -226,7 +225,7 @@ public class ElementsOfPowerMod
                                 .hardnessAndResistance(3.0F, 3.0F)
                                 .harvestTool(ToolType.PICKAXE)
                                 .harvestLevel(ItemTier.IRON.getHarvestLevel())
-                        ).setRegistryName(type.func_176610_l() + "_ore")
+                        ).setRegistryName(type.getString() + "_ore")
                 );
             }
         }
@@ -234,7 +233,7 @@ public class ElementsOfPowerMod
         {
             event.getRegistry().registerAll(
                     new CocoonBlock(type, Block.Properties.create(Material.ROCK).hardnessAndResistance(1F)
-                            .sound(SoundType.WOOD).func_235838_a_(b -> 11).tickRandomly()).setRegistryName(type.getName() + "_cocoon")
+                            .sound(SoundType.WOOD).setLightLevel(b -> 11).tickRandomly()).setRegistryName(type.getName() + "_cocoon")
             );
         }
     }
@@ -255,22 +254,22 @@ public class ElementsOfPowerMod
         );
         for (Gemstone type : Gemstone.values())
         {
-            event.getRegistry().register(new GemstoneItem(type, new Item.Properties().group(tabGemstones).maxStackSize(1)).setRegistryName(type.func_176610_l()));
+            event.getRegistry().register(new GemstoneItem(type, new Item.Properties().group(tabGemstones).maxStackSize(1)).setRegistryName(type.getString()));
         }
         for (Gemstone type : Gemstone.values())
         {
             if (type.generateCustomBlock())
-                event.getRegistry().register(new BlockItem(type.getBlock(), new Item.Properties().group(tabMagic)).setRegistryName(type.func_176610_l() + "_block"));
+                event.getRegistry().register(new BlockItem(type.getBlock(), new Item.Properties().group(tabMagic)).setRegistryName(type.getString() + "_block"));
         }
         for (Gemstone type : Gemstone.values())
         {
             if (type.generateCustomOre())
-                event.getRegistry().register(new BlockItem(type.getOre(), new Item.Properties().group(tabMagic)).setRegistryName(type.func_176610_l() + "_ore"));
+                event.getRegistry().register(new BlockItem(type.getOre(), new Item.Properties().group(tabMagic)).setRegistryName(type.getString() + "_ore"));
         }
         for (Gemstone type : Gemstone.values())
         {
             if (type.generateSpelldust())
-                event.getRegistry().register(new SpelldustItem(type, new Item.Properties().group(tabMagic)).setRegistryName(type.func_176610_l() + "_spelldust"));
+                event.getRegistry().register(new SpelldustItem(type, new Item.Properties().group(tabMagic)).setRegistryName(type.getString() + "_spelldust"));
         }
         for (Element type : Element.values())
         {
@@ -480,13 +479,13 @@ public class ElementsOfPowerMod
         InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> new SlotTypeMessage.Builder("ring").size(2).build());
     }
 
-    public void serverStarting(FMLServerStartingEvent event)
+    public void registerCommands(RegisterCommandsEvent event)
     {
         LiteralArgumentBuilder<CommandSource> s = LiteralArgumentBuilder.literal("elementsofpower");
         {
             EssenceConversions.registerSubcommands(s);
         }
-        event.getCommandDispatcher().register(s);
+        event.getDispatcher().register(s);
     }
 
     public void gatherData(GatherDataEvent event)
@@ -518,29 +517,29 @@ public class ElementsOfPowerMod
         protected void registerTags()
         {
             GemstoneExaminer.GEMS.forEach((gem, tag) -> {
-                this.func_240522_a_(tag).func_240534_a_(gem.getTagItems());
+                this.getOrCreateBuilder(tag).add(gem.getTagItems());
             });
             Gemstone.values.forEach(gem -> {
                 if (gem != Gemstone.CREATIVITE)
                 {
-                    ITag.INamedTag<Item> tag = ItemTags.makeWrapperTag(new ResourceLocation("forge", "gems/" + gem.func_176610_l()).toString());
-                    this.func_240522_a_(tag).func_240534_a_(gem.getTagItems());
+                    ITag.INamedTag<Item> tag = ItemTags.makeWrapperTag(new ResourceLocation("forge", "gems/" + gem.getString()).toString());
+                    this.getOrCreateBuilder(tag).add(gem.getTagItems());
                 }
                 if (gem.generateCustomOre())
                 {
                     Block ore = gem.getOre();
-                    ITag.INamedTag<Item> tag = ItemTags.makeWrapperTag(new ResourceLocation("forge", "ores/" + gem.func_176610_l()).toString());
-                    this.func_240522_a_(tag).func_240534_a_(ore.asItem());
+                    ITag.INamedTag<Item> tag = ItemTags.makeWrapperTag(new ResourceLocation("forge", "ores/" + gem.getString()).toString());
+                    this.getOrCreateBuilder(tag).add(ore.asItem());
                 }
                 if (gem.generateCustomBlock())
                 {
                     Block block = gem.getBlock();
-                    ITag.INamedTag<Item> tag = ItemTags.makeWrapperTag(new ResourceLocation("forge", "blocks/" + gem.func_176610_l()).toString());
-                    this.func_240522_a_(tag).func_240534_a_(block.asItem());
+                    ITag.INamedTag<Item> tag = ItemTags.makeWrapperTag(new ResourceLocation("forge", "blocks/" + gem.getString()).toString());
+                    this.getOrCreateBuilder(tag).add(block.asItem());
                 }
             });
 
-            this.func_240522_a_(GemstoneExaminer.GEMSTONES).func_240534_a_(
+            this.getOrCreateBuilder(GemstoneExaminer.GEMSTONES).add(
                     Arrays.stream(Gemstone.values()).flatMap(g -> Arrays.stream(g.getTagItems())).toArray(Item[]::new)
             );
         }
@@ -754,7 +753,7 @@ public class ElementsOfPowerMod
                 {
                     CookingRecipeBuilder.smeltingRecipe(Ingredient.fromItems(gemstone.getOre()), gemstone, 1.0F, 200)
                             .addCriterion("has_ore", hasItem(gemstone.getOre()))
-                            .build(consumer, location("smelting/" + gemstone.func_176610_l()));
+                            .build(consumer, location("smelting/" + gemstone.getString()));
                 }
                 if (gemstone.generateCustomBlock())
                 {
@@ -769,7 +768,7 @@ public class ElementsOfPowerMod
                     ShapelessRecipeBuilder.shapelessRecipe(gemstone.getItem(), 9)
                             .addIngredient(Ingredient.fromItems(gemstone.getBlock()))
                             .addCriterion("has_item", hasItem(gemstone.getItem()))
-                            .build(consumer, location(gemstone.func_176610_l() + "_from_block"));
+                            .build(consumer, location(gemstone.getString() + "_from_block"));
                 }
             }
         }

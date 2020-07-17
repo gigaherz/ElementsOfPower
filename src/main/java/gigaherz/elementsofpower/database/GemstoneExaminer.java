@@ -53,7 +53,7 @@ public class GemstoneExaminer
         }
 
         return GEMS.entrySet().stream()
-                .filter(kv -> kv.getValue().func_230235_a_(item))
+                .filter(kv -> kv.getValue().contains(item))
                 .findFirst()
                 .map(kv -> setRandomQualityVariant(kv.getKey()))
                 .orElse(stack);

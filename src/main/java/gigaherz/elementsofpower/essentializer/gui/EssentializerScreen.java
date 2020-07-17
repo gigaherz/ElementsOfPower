@@ -199,7 +199,7 @@ public class EssentializerScreen extends ContainerScreen<EssentializerContainer>
 
             List<ITextProperties> tooltip = Lists.newArrayList();
             tooltip.add(MagicAmounts.getMagicName(i));
-            tooltip.add(new StringTextComponent(MagicTooltips.PRETTY_NUMBER_FORMATTER_2.format(am.get(i)) + " / " + EssentializerTileEntity.MAX_ESSENTIALIZER_MAGIC).func_240699_a_(TextFormatting.GRAY));
+            tooltip.add(new StringTextComponent(MagicTooltips.PRETTY_NUMBER_FORMATTER_2.format(am.get(i)) + " / " + EssentializerTileEntity.MAX_ESSENTIALIZER_MAGIC).mergeStyle(TextFormatting.GRAY));
 
             renderTooltip(matrixStack, tooltip, mx - x0, my - y0);
         }

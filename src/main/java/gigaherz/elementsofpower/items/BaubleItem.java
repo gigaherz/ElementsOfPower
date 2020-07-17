@@ -185,16 +185,16 @@ public class BaubleItem extends GemContainerItem
         switch (getTransferMode(stack))
         {
             case ACTIVE:
-                tooltip.add(new TranslationTextComponent("text.elementsofpower.bauble.active").func_240701_a_(TextFormatting.BOLD, TextFormatting.WHITE));
+                tooltip.add(new TranslationTextComponent("text.elementsofpower.bauble.active").mergeStyle(TextFormatting.BOLD, TextFormatting.WHITE));
                 break;
             case PASSIVE:
-                tooltip.add(new TranslationTextComponent("text.elementsofpower.bauble.passive").func_240701_a_(TextFormatting.ITALIC, TextFormatting.GRAY));
+                tooltip.add(new TranslationTextComponent("text.elementsofpower.bauble.passive").mergeStyle(TextFormatting.ITALIC, TextFormatting.GRAY));
                 break;
             case DISABLED:
-                tooltip.add(new TranslationTextComponent("text.elementsofpower.bauble.disabled").func_240701_a_(TextFormatting.ITALIC, TextFormatting.DARK_RED));
+                tooltip.add(new TranslationTextComponent("text.elementsofpower.bauble.disabled").mergeStyle(TextFormatting.ITALIC, TextFormatting.DARK_RED));
                 break;
         }
-        tooltip.add(new TranslationTextComponent("text.elementsofpower.bauble.toggle").func_240701_a_(TextFormatting.ITALIC, TextFormatting.DARK_GRAY));
+        tooltip.add(new TranslationTextComponent("text.elementsofpower.bauble.toggle").mergeStyle(TextFormatting.ITALIC, TextFormatting.DARK_GRAY));
     }
 
     public static TransferMode getTransferMode(ItemStack stack)
