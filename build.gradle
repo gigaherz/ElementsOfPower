@@ -62,8 +62,6 @@ minecraft {
             property 'forge.logging.markers', ''
             property 'forge.logging.console.level', 'debug'
 
-            ideaModule 'whatever.main'
-
             mods {
                 thismod {
                     source sourceSets.main

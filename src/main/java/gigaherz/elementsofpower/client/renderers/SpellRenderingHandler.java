@@ -59,7 +59,6 @@ public class SpellRenderingHandler
 
                 IRenderTypeBuffer.Impl buffers = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
                 MatrixStack stack = event.getMatrixStack();
-
                 stack.push();
                 renderer.render(cast, player, renderManager, partialTicks, stack, buffers, 0x00F000F0, off);
                 stack.pop();
