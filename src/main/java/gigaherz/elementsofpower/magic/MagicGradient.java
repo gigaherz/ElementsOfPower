@@ -49,7 +49,7 @@ public class MagicGradient
         public static final Codec<GradientPoint> CODEC = RecordCodecBuilder
                 .create((instance) -> instance.group(
                         Codec.FLOAT.fieldOf("point").forGetter(i -> i.point),
-                        MagicAmounts.CODEC.fieldOf("value").forGetter(ceil -> ceil.value)
+                        MagicAmounts.CODEC.fieldOf("value").forGetter(i -> i.value)
                 ).apply(instance, GradientPoint::new));
 
         public final float point;

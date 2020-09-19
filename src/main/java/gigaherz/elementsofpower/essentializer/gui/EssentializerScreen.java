@@ -65,7 +65,7 @@ public class EssentializerScreen extends ContainerScreen<EssentializerContainer>
         super(container, playerInventory, title);
         this.player = playerInventory;
         ySize = 176;
-        this.field_238745_s_ = this.ySize - 94;
+        this.playerInventoryTitleY = this.ySize - 94;
     }
 
     @Override
@@ -73,11 +73,11 @@ public class EssentializerScreen extends ContainerScreen<EssentializerContainer>
     {
         this.renderBackground(matrixStack);
         super.render(matrixStack, mouseX, mouseY, partialTicks);
-        this.func_230459_a_(matrixStack, mouseX, mouseY);
+        this.renderHoveredTooltip(matrixStack, mouseX, mouseY);
     }
 
     @Override
-    protected void func_230450_a_(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY)
+    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY)
     {
         Objects.requireNonNull(minecraft).textureManager.bindTexture(GUI_TEXTURE_LOCATION);
         RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1.0f);
@@ -87,9 +87,9 @@ public class EssentializerScreen extends ContainerScreen<EssentializerContainer>
     }
 
     @Override
-    protected void func_230451_b_(MatrixStack matrixStack, int mouseX, int mouseY)
+    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY)
     {
-        super.func_230451_b_(matrixStack, mouseX, mouseY);
+        super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
 
         Objects.requireNonNull(minecraft);
 
@@ -197,11 +197,11 @@ public class EssentializerScreen extends ContainerScreen<EssentializerContainer>
             if (rx < 0 || ry < 0 || rx > 16 || ry > 16)
                 continue;
 
-            List<ITextProperties> tooltip = Lists.newArrayList();
+            List<ITextComponent> tooltip = Lists.newArrayList();
             tooltip.add(MagicAmounts.getMagicName(i));
             tooltip.add(new StringTextComponent(MagicTooltips.PRETTY_NUMBER_FORMATTER_2.format(am.get(i)) + " / " + EssentializerTileEntity.MAX_ESSENTIALIZER_MAGIC).mergeStyle(TextFormatting.GRAY));
 
-            renderTooltip(matrixStack, tooltip, mx - x0, my - y0);
+            func_243308_b(matrixStack, tooltip, mx - x0, my - y0);
         }
     }
 }

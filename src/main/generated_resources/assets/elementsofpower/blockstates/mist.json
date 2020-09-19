@@ -1,0 +1,52 @@
+{
+  "variants": {
+    "density=1": {
+      "model": "elementsofpower:block/mist_1"
+    },
+    "density=2": {
+      "model": "elementsofpower:block/mist_2"
+    },
+    "density=3": {
+      "model": "elementsofpower:block/mist_3"
+    },
+    "density=4": {
+      "model": "elementsofpower:block/mist_4"
+    },
+    "density=5": {
+      "model": "elementsofpower:block/mist_5"
+    },
+    "density=6": {
+      "model": "elementsofpower:block/mist_6"
+    },
+    "density=7": {
+      "model": "elementsofpower:block/mist_7"
+    },
+    "density=8": {
+      "model": "elementsofpower:block/mist_8"
+    },
+    "density=9": {
+      "model": "elementsofpower:block/mist_9"
+    },
+    "density=10": {
+      "model": "elementsofpower:block/mist_10"
+    },
+    "density=11": {
+      "model": "elementsofpower:block/mist_11"
+    },
+    "density=12": {
+      "model": "elementsofpower:block/mist_12"
+    },
+    "density=13": {
+      "model": "elementsofpower:block/mist_13"
+    },
+    "density=14": {
+      "model": "elementsofpower:block/mist_14"
+    },
+    "density=15": {
+      "model": "elementsofpower:block/mist_15"
+    },
+    "density=16": {
+      "model": "elementsofpower:block/mist_16"
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "elementsofpower:smelting/citrine"
+    ]
+  },
+  "criteria": {
+    "has_ore": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "elementsofpower:citrine_ore"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "elementsofpower:smelting/citrine"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_ore",
+      "has_the_recipe"
+    ]
+  ]
+}

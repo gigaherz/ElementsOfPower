@@ -38,7 +38,7 @@ public class ApplyOrbSizeFunction extends LootFunction
     @Override
     protected ItemStack doApply(ItemStack stack, LootContext context)
     {
-        TileEntity te = Objects.requireNonNull(context.get(LootParameters.BLOCK_ENTITY));
+        TileEntity te = context.get(LootParameters.BLOCK_ENTITY);
 
         if (!(te instanceof IMagicAmountContainer))
             return stack;
@@ -74,7 +74,7 @@ public class ApplyOrbSizeFunction extends LootFunction
     }
 
     @Override
-    public LootFunctionType func_230425_b_()
+    public LootFunctionType getFunctionType()
     {
         return ElementsOfPowerMod.APPLY_ORB_SIZE;
     }
@@ -136,9 +136,9 @@ public class ApplyOrbSizeFunction extends LootFunction
         }
 
         @Override
-        public void func_230424_a_(JsonObject json, ApplyOrbSizeFunction lootFunction, JsonSerializationContext ctx)
+        public void serialize(JsonObject json, ApplyOrbSizeFunction lootFunction, JsonSerializationContext ctx)
         {
-            super.func_230424_a_(json, lootFunction, ctx);
+            super.serialize(json, lootFunction, ctx);
 
             JsonObject factors = new JsonObject();
             for (int i = 0; i < 8; i++)

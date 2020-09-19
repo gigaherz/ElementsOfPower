@@ -90,6 +90,8 @@ public class EssentializerTileEntity
     private final LazyOptional<IItemHandler> topGetter = LazyOptional.of(() -> top);
     private final LazyOptional<IItemHandler> sideGetter = LazyOptional.of(() -> sides);
 
+    public float animateTick;
+
     public EssentializerTileEntity(TileEntityType<?> type)
     {
         super(type);
@@ -216,6 +218,10 @@ public class EssentializerTileEntity
             {
                 markDirty();
             }
+        }
+        else
+        {
+            animateTick++;
         }
     }
 

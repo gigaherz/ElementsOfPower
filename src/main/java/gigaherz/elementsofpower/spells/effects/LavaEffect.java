@@ -44,7 +44,7 @@ public class LavaEffect extends SpellEffect
     @Override
     public int getForceModifier(InitializedSpellcast cast)
     {
-        return cast.world.func_230315_m_().func_236040_e_() ? +1 : 0;
+        return cast.world.getDimensionType().isUltrawarm() ? +1 : 0;
     }
 
     @Override

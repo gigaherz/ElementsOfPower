@@ -41,6 +41,7 @@ import gigaherz.elementsofpower.spells.blocks.DustBlock;
 import gigaherz.elementsofpower.spells.blocks.LightBlock;
 import gigaherz.elementsofpower.spells.blocks.MistBlock;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -60,25 +61,23 @@ import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.SpecialRecipeSerializer;
 import net.minecraft.particles.ParticleType;
 import net.minecraft.state.IntegerProperty;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ITag;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.OreFeatureConfig;
-import net.minecraft.world.gen.placement.CountRangeConfig;
 import net.minecraft.world.gen.placement.NoPlacementConfig;
-import net.minecraft.world.gen.placement.Placement;
 import net.minecraft.loot.*;
 import net.minecraft.loot.functions.LootFunctionManager;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
-import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.ToolType;
@@ -87,8 +86,8 @@ import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.common.util.NonNullLazy;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -181,8 +180,10 @@ public class ElementsOfPowerMod
         modEventBus.addListener(this::registerParticleFactory);
         modEventBus.addListener(this::imcEnqueue);
         modEventBus.addListener(this::gatherData);
+        modEventBus.addListener(this::modelRegistry);
 
         MinecraftForge.EVENT_BUS.addListener(this::registerCommands);
+        MinecraftForge.EVENT_BUS.addListener(this::addStuffToBiomes);
     }
 
     public void registerBlocks(RegistryEvent.Register<Block> event)
@@ -233,7 +234,7 @@ public class ElementsOfPowerMod
         {
             event.getRegistry().registerAll(
                     new CocoonBlock(type, Block.Properties.create(Material.ROCK).hardnessAndResistance(1F)
-                            .sound(SoundType.WOOD).setLightLevel(b -> 11).tickRandomly()).setRegistryName(type.getName() + "_cocoon")
+                            .sound(SoundType.WOOD).setLightLevel(b -> 11)).setRegistryName(type.getName() + "_cocoon")
             );
         }
     }
@@ -334,10 +335,13 @@ public class ElementsOfPowerMod
         Minecraft.getInstance().particles.registerFactory(ColoredSmokeData.TYPE, ColoredSmokeData.Factory::new);
     }
 
-    public void clientSetup(FMLClientSetupEvent event)
+    public void modelRegistry(ModelRegistryEvent event)
     {
         ModelLoaderRegistry.registerLoader(location("nbt_to_model"), NbtToModel.Loader.INSTANCE);
+    }
 
+    public void clientSetup(FMLClientSetupEvent event)
+    {
         RenderingRegistry.registerEntityRenderingHandler(EssenceEntity.TYPE, EssenceEntityRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(BallEntity.TYPE, BallEntityRenderer::new);
 
@@ -375,97 +379,77 @@ public class ElementsOfPowerMod
 
         CraftingHelper.register(AnalyzedFilteringIngredient.ID, AnalyzedFilteringIngredient.Serializer.INSTANCE);
 
-        //noinspection deprecation
-        DeferredWorkQueue.runLater(this::addFeatures);
-
         EssenceConversions.init();
 
-        GlobalEntityTypeAttributes.put(EssenceEntity.TYPE, EssenceEntity.prepareAttributes().func_233813_a_());
+        GlobalEntityTypeAttributes.put(EssenceEntity.TYPE, EssenceEntity.prepareAttributes().create());
+
+        CocoonEventHandling.enable();
+
+        BiomeConfig.loadBiomeConfig();
     }
 
-    private void addFeatures()
+    private void addStuffToBiomes(BiomeLoadingEvent event)
     {
-        for (Biome biome : ForgeRegistries.BIOMES)
+        ResourceLocation biome = event.getName();
+        if (!BiomeConfig.hasType(biome, "void"))
         {
-            if (!BiomeDictionary.hasType(biome, BiomeDictionary.Type.VOID))
+            boolean isEndBiome = BiomeConfig.hasType(biome, "end");
+            boolean isNetherBiome = BiomeConfig.hasType(biome, "nether");
+            if (!isEndBiome && !isNetherBiome)
             {
-                boolean isEndBiome = BiomeDictionary.hasType(biome, BiomeDictionary.Type.END);
-                boolean isNetherBiome = BiomeDictionary.hasType(biome, BiomeDictionary.Type.NETHER);
-                if (!isEndBiome && !isNetherBiome)
+                for (Gemstone g : Gemstone.values)
                 {
-                    for (Gemstone g : Gemstone.values)
+                    if (g.generateCustomOre())
                     {
-                        if (g.generateCustomOre())
-                        {
-                            int numPerChunk = 3 + getBiomeBonus(g.getElement(), biome);
-                            biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Feature.ORE
-                                    .withConfiguration(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, g.getOre().getDefaultState(), numPerChunk))
-                                    .withPlacement(Placement.COUNT_RANGE.configure(new CountRangeConfig(1, 0, 0, 16))));
-                        }
+                        int numPerChunk = 3 + getBiomeBonus(g.getElement(), biome);
+                        event.getGeneration().withFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Feature.ORE
+                                .withConfiguration(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.field_241882_a, g.getOre().getDefaultState(), numPerChunk))
+                                .func_242733_d(16).func_242728_a());
                     }
                 }
-
-                CocoonFeatureConfig cfg;
-                if (isNetherBiome)
-                    cfg = CocoonFeatureConfig.THE_NETHER;
-                else if(isEndBiome)
-                    cfg = CocoonFeatureConfig.THE_END;
-                else
-                    cfg = CocoonFeatureConfig.OVERWORLD;
-
-                biome.addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, CocoonFeature.INSTANCE.withConfiguration(cfg)
-                        .withPlacement(CocoonPlacement.INSTANCE.configure(NoPlacementConfig.NO_PLACEMENT_CONFIG)));
             }
+
+            CocoonFeatureConfig cfg;
+            if (isNetherBiome)
+                cfg = CocoonFeatureConfig.THE_NETHER;
+            else if(isEndBiome)
+                cfg = CocoonFeatureConfig.THE_END;
+            else
+                cfg = CocoonFeatureConfig.OVERWORLD;
+
+            event.getGeneration().withFeature(GenerationStage.Decoration.VEGETAL_DECORATION, CocoonFeature.INSTANCE.withConfiguration(cfg)
+                    .withPlacement(CocoonPlacement.INSTANCE.configure(NoPlacementConfig.NO_PLACEMENT_CONFIG)));
         }
     }
 
-    // TODO: TAGS
-    /*public void init(FMLCommonSetupEvent event)
-    {
-        OreDictionary.registerOre("blockAgate", gemstoneBlock.getStack(GemstoneBlockType.Agate));
-        OreDictionary.registerOre("blockAmethyst", gemstoneBlock.getStack(GemstoneBlockType.Amethyst));
-        OreDictionary.registerOre("blockCitrine", gemstoneBlock.getStack(GemstoneBlockType.Citrine));
-        OreDictionary.registerOre("blockRuby", gemstoneBlock.getStack(GemstoneBlockType.Ruby));
-        OreDictionary.registerOre("blockSapphire", gemstoneBlock.getStack(GemstoneBlockType.Sapphire));
-        OreDictionary.registerOre("blockSerendibite", gemstoneBlock.getStack(GemstoneBlockType.Serendibite));
-
-        OreDictionary.registerOre("oreAgate", gemstoneOre.getStack(GemstoneBlockType.Agate));
-        OreDictionary.registerOre("oreAmethyst", gemstoneOre.getStack(GemstoneBlockType.Amethyst));
-        OreDictionary.registerOre("oreCitrine", gemstoneOre.getStack(GemstoneBlockType.Citrine));
-        OreDictionary.registerOre("oreRuby", gemstoneOre.getStack(GemstoneBlockType.Ruby));
-        OreDictionary.registerOre("oreSapphire", gemstoneOre.getStack(GemstoneBlockType.Sapphire));
-        OreDictionary.registerOre("oreSerendibite", gemstoneOre.getStack(GemstoneBlockType.Serendibite));
-
-    }*/
-
-    private int getBiomeBonus(@Nullable Element e, Biome biome)
+    private int getBiomeBonus(@Nullable Element e, ResourceLocation biome)
     {
         if (e == null)
             return 1;
         switch (e)
         {
             case FIRE:
-                if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.HOT))
+                if (BiomeConfig.hasType(biome, "hot"))
                     return 2;
-                if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.COLD))
+                if (BiomeConfig.hasType(biome, "cold"))
                     return 0;
                 return 1;
             case WATER:
-                if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.WET))
+                if (BiomeConfig.hasType(biome, "wet"))
                     return 2;
-                if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.DRY))
+                if (BiomeConfig.hasType(biome, "dry"))
                     return 0;
                 return 1;
             case LIFE:
-                if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.DENSE))
+                if (BiomeConfig.hasType(biome, "dense"))
                     return 2;
-                if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.SPARSE))
+                if (BiomeConfig.hasType(biome, "sparse"))
                     return 0;
                 return 1;
             case DEATH:
-                if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.SPARSE))
+                if (BiomeConfig.hasType(biome, "sparse"))
                     return 2;
-                if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.DENSE))
+                if (BiomeConfig.hasType(biome, "dense"))
                     return 0;
                 return 1;
         }
@@ -555,6 +539,8 @@ public class ElementsOfPowerMod
         @Override
         protected void registerTags()
         {
+            this.getOrCreateBuilder(CocoonFeature.REPLACEABLE_TAG)
+                    .add(Blocks.SAND, Blocks.RED_SAND, Blocks.DIRT, Blocks.NETHERRACK);
         }
     }
 
@@ -583,7 +569,7 @@ public class ElementsOfPowerMod
         protected void validate(Map<ResourceLocation, LootTable> map, ValidationTracker validationtracker)
         {
             map.forEach((p_218436_2_, p_218436_3_) -> {
-                LootTableManager.func_227508_a_(validationtracker, p_218436_2_, p_218436_3_);
+                LootTableManager.validateLootTable(validationtracker, p_218436_2_, p_218436_3_);
             });
         }
 

@@ -15,6 +15,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 
 import javax.annotation.Nullable;
 
@@ -104,7 +105,7 @@ public class MiningEffect extends SpellEffect
                         // Drop experiance
                         if (!mgr.isCreative() && exp > 0)
                         {
-                            block.dropXpOnBlockBreak(world, blockPos, exp);
+                            block.dropXpOnBlockBreak((ServerWorld)world, blockPos, exp);
                         }
                     }
                 }

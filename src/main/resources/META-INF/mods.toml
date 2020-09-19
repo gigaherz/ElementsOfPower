@@ -1,6 +1,7 @@
 modLoader="javafml"
 loaderVersion="[32,)"
 issueTrackerURL="https://github.com/gigaherz/ElementsOfPower/issues"
+license="BSD (3 clause)"
 
 [[mods]]
 modId="elementsofpower"
@@ -18,7 +19,7 @@ A magic mod about the raw power elemental essences
 [[dependencies.elementsofpower]]
     modId="forge"
     mandatory=true
-    versionRange="[32.0.68,)"
+    versionRange="[32.0.108,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.elementsofpower]]

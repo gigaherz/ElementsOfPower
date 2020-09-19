@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "elementsofpower:sapphire_block"
+    }
+  ],
+  "result": {
+    "item": "elementsofpower:sapphire",
+    "count": 9
+  }
+}

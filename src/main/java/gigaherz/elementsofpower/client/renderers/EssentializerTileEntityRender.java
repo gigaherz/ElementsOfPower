@@ -35,7 +35,7 @@ public class EssentializerTileEntityRender extends TileEntityRenderer<Essentiali
 
         float timeRandom = MathHelper.getPositionRandom(te.getPos()) % 360;
 
-        float time = (te.getWorld().getGameTime() + timeRandom + partialTicks) * 1.5f;
+        float time = (te.animateTick + timeRandom + partialTicks) * 1.5f;
 
         float angle1 = time * 2.5f + 120 * (1 + (float) Math.sin(time * 0.05f));
         float angle2 = time * 0.9f;

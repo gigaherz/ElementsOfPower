@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.datafixers.util.Either;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.database.recipes.RecipeTools;
 import gigaherz.elementsofpower.magic.MagicAmounts;
@@ -18,18 +19,21 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.profiler.IProfiler;
-import net.minecraft.resources.IReloadableResourceManager;
+import net.minecraft.resources.IFutureReloadListener;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Unit;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.*;
 import java.lang.reflect.Type;
@@ -37,6 +41,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class EssenceConversions
@@ -61,7 +66,7 @@ public class EssenceConversions
     public static void init()
     {
         MinecraftForge.EVENT_BUS.addListener(EssenceConversions::playerLoggedIn);
-        MinecraftForge.EVENT_BUS.addListener(EssenceConversions::serverAboutToStart);
+        MinecraftForge.EVENT_BUS.addListener(EssenceConversions::addReloadListeners);
     }
 
     private static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event)
@@ -71,10 +76,9 @@ public class EssenceConversions
             ElementsOfPowerMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncEssenceConversions());
     }
 
-    // FIXME: AddReloadListenersEvent
-    private static void serverAboutToStart(FMLServerAboutToStartEvent event)
+    private static void addReloadListeners(AddReloadListenerEvent event)
     {
-        registerResourceReloadListener((IReloadableResourceManager) event.getServer().getDataPackRegistries().getResourceManager());
+        registerResourceReloadListener(event::addListener);
     }
 
     public boolean itemHasEssence(Item item)
@@ -299,44 +303,41 @@ public class EssenceConversions
                 );
     }
 
-    private static void registerResourceReloadListener(IReloadableResourceManager serverResourceManager)
+    private static void registerResourceReloadListener(Consumer<IFutureReloadListener> listenerAdd)
     {
-        serverResourceManager.addReloadListener(
-                new ReloadListener<Map<String, MagicAmounts>>()
+        listenerAdd.accept(
+                new ReloadListener<Either<Map<String, MagicAmounts>, Unit>>()
                 {
-                    @Nullable
                     @Override
-                    protected Map<String, MagicAmounts> prepare(IResourceManager resourceManagerIn, IProfiler profilerIn)
+                    protected Either<Map<String, MagicAmounts>, Unit> prepare(IResourceManager resourceManagerIn, IProfiler profilerIn)
                     {
                         Path path = CACHE_PATH.get();
                         if (Files.exists(path))
                         {
                             try
                             {
-                                return loadConfig(path);
+                                return Either.left(loadConfig(path));
                             }
                             catch (Exception e)
                             {
                                 ElementsOfPowerMod.LOGGER.warn("Error loading conversion cache. Recalculation required", e);
                             }
                         }
-                        return null;
+                        return Either.right(Unit.INSTANCE);
                     }
 
                     @Override
-                    protected void apply(@Nullable Map<String, MagicAmounts> conversions, IResourceManager resourceManagerIn, IProfiler profilerIn)
+                    protected void apply(@Nonnull Either<Map<String, MagicAmounts>, Unit> data, IResourceManager resourceManagerIn, IProfiler profilerIn)
                     {
-                        if (conversions != null)
-                        {
+                        data.ifLeft(conversions -> {
                             ElementsOfPowerMod.LOGGER.info("Cache found and loaded. Applying...");
                             SERVER.clear();
                             applyConversions(conversions);
-                        }
-                        else
-                        {
+                        }).ifRight(unit -> {
                             recalculateConversions();
-                        }
-                        ElementsOfPowerMod.CHANNEL.send(PacketDistributor.ALL.with(null), new SyncEssenceConversions());
+                        });
+                        if (ServerLifecycleHooks.getCurrentServer() != null)
+                            ElementsOfPowerMod.CHANNEL.send(PacketDistributor.ALL.noArg(), new SyncEssenceConversions());
                     }
                 }
         );

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ggg",
+    "ggg",
+    "ggg"
+  ],
+  "key": {
+    "g": {
+      "type": "elementsofpower:not_analyzed",
+      "inner": {
+        "item": "elementsofpower:amethyst"
+      }
+    }
+  },
+  "result": {
+    "item": "elementsofpower:amethyst_block"
+  }
+}

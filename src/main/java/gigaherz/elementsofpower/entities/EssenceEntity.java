@@ -100,7 +100,7 @@ public class EssenceEntity extends AmbientEntity
     public static AttributeModifierMap.MutableAttribute prepareAttributes()
     {
         return MonsterEntity.func_234295_eP_()
-                .func_233815_a_(Attributes.MAX_HEALTH, 2.0D);
+                .createMutableAttribute(Attributes.MAX_HEALTH, 2.0D);
     }
 
     public float getScale()
@@ -285,7 +285,7 @@ public class EssenceEntity extends AmbientEntity
         {
             if (spawnPosition == null)
             {
-                BlockPos blockPos = func_233580_cy_();
+                BlockPos blockPos = getPosition();
 
                 do
                 {
@@ -500,7 +500,7 @@ public class EssenceEntity extends AmbientEntity
     }
 
     @Override
-    public void func_241209_g_(int amount)
+    public void forceFireTicks(int amount)
     {
     }
 

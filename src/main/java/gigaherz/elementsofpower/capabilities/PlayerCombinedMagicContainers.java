@@ -117,7 +117,7 @@ public class PlayerCombinedMagicContainers implements IMagicContainer
             }
         }, PlayerCombinedMagicContainers::new);
 
-        MinecraftForge.EVENT_BUS.addListener(PlayerCombinedMagicContainers::attachCapability);
+        MinecraftForge.EVENT_BUS.addGenericListener(Entity.class, PlayerCombinedMagicContainers::attachCapability);
     }
 
     private static void attachCapability(AttachCapabilitiesEvent<Entity> event)

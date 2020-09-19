@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "glg",
+    "i  ",
+    "psp"
+  ],
+  "key": {
+    "l": {
+      "item": "minecraft:gold_ingot"
+    },
+    "i": {
+      "item": "minecraft:iron_ingot"
+    },
+    "g": {
+      "tag": "forge:glass_panes"
+    },
+    "p": {
+      "tag": "minecraft:planks"
+    },
+    "s": {
+      "tag": "minecraft:wooden_slabs"
+    }
+  },
+  "result": {
+    "item": "elementsofpower:analyzer"
+  }
+}

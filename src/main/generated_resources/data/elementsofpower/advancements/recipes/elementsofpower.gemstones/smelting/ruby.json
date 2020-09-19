@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "elementsofpower:smelting/ruby"
+    ]
+  },
+  "criteria": {
+    "has_ore": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "elementsofpower:ruby_ore"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "elementsofpower:smelting/ruby"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_ore",
+      "has_the_recipe"
+    ]
+  ]
+}

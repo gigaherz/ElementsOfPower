@@ -9,11 +9,14 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ITag;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ISeedReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.gen.ChunkGenerator;
+import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.structure.StructureManager;
 
@@ -23,46 +26,18 @@ import java.util.Random;
 public class CocoonFeature extends Feature<CocoonFeatureConfig>
 {
     public static final CocoonFeature INSTANCE = new CocoonFeature(CocoonFeatureConfig.CODEC);
+    public static final ITag.INamedTag<Block> REPLACEABLE_TAG = BlockTags.makeWrapperTag("elementsofpower:can_cocoon_replace");
 
     public CocoonFeature(Codec<CocoonFeatureConfig> configFactoryIn)
     {
         super(configFactoryIn);
     }
 
-    /*public void generate(Random rand, int chunkX, int chunkZ, World world, ChunkGenerator chunkGenerator, AbstractChunkProvider chunkProvider)
-    {
-        int num = Math.max(0, rand.nextInt(7) - 5);
-        if (num == 0)
-            return;
-
-        DimensionType worldType = world.dimension.getType();
-
-        Set<BlockPos> positions = positionsTL.get();
-
-        if (positions == null)
-            positionsTL.set(positions = Sets.newHashSet());
-
-        positions.clear();
-        for (int i = 0; i < 250 && positions.size() < num; i++)
-        {
-            int x = rand.nextInt(16);
-            int z = rand.nextInt(16);
-            int y = rand.nextInt(255);
-            BlockPos pos = new BlockPos(chunkX * 16 + 8 + x, y, chunkZ * 16 + 8 + z);
-            if (positions.contains(pos))
-                continue;
-
-            if (!world.isAirBlock(pos))
-                continue;
-
-        }
-    }*/
-
-
     @Override
-    public boolean func_230362_a_(ISeedReader worldIn, StructureManager structureManager, ChunkGenerator chunkGenerator, Random rand, BlockPos pos, CocoonFeatureConfig config)
+    public boolean func_241855_a(ISeedReader worldIn, ChunkGenerator gen, Random rand, BlockPos pos, CocoonFeatureConfig config)
     {
-        if (worldIn.isAirBlock(pos) || worldIn.getBlockState(pos).getBlock() == Blocks.WATER)
+        int top = worldIn.getHeight(Heightmap.Type.MOTION_BLOCKING, pos.getX(), pos.getZ());
+        if (pos.getY() < top && (worldIn.isAirBlock(pos) || worldIn.getBlockState(pos).getBlock() == Blocks.WATER))
         {
             for (Direction f : Direction.values())
             {
@@ -227,7 +202,7 @@ public class CocoonFeature extends Feature<CocoonFeatureConfig>
             CocoonTileEntity te = Objects.requireNonNull((CocoonTileEntity) world.getTileEntity(pos));
             te.essenceContained = te.essenceContained.add(am);
 
-            ElementsOfPowerMod.LOGGER.debug("Generated cocoon at {} with amounts {}", pos, am);
+            //ElementsOfPowerMod.LOGGER.debug("Generated cocoon at {} with amounts {}", pos, am);
         }
     }
 }

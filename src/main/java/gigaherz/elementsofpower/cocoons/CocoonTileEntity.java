@@ -15,13 +15,14 @@ import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.registries.ObjectHolder;
 
 import java.util.List;
 import java.util.Random;
 
-public class CocoonTileEntity extends TileEntity implements ITickableTileEntity, IMagicAmountContainer
+public class CocoonTileEntity extends TileEntity implements IMagicAmountContainer
 {
     @ObjectHolder("elementsofpower:cocoon")
     public static TileEntityType<CocoonTileEntity> TYPE;
@@ -55,52 +56,17 @@ public class CocoonTileEntity extends TileEntity implements ITickableTileEntity,
         return compound;
     }
 
-    private static final int SPAWN_COOLDOWN = 100;
-    private static final int SPAWN_COOLDOWN_RANDOM = 100;
-    private int spawnLivingEssenceCooldown = SPAWN_COOLDOWN + (this.hashCode() % SPAWN_COOLDOWN_RANDOM);
-
-    @Override
-    public void tick()
+    public void transferToPlayer(Random random, PlayerCombinedMagicContainers cap)
     {
-        if (world == null || world.isRemote)
-            return;
-
-        if (spawnLivingEssenceCooldown > 0)
+        MagicAmounts am = essenceContained;
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            spawnLivingEssenceCooldown--;
-            return;
+            am = am.with(i, (float) Math.floor(essenceContained.get(i) * random.nextFloat()*2)/10.0f);
         }
 
-        if (!essenceContained.isEmpty())
+        if (!am.isEmpty())
         {
-            Random random = ((ServerWorld) world).rand;
-
-            List<PlayerEntity> players = world.getEntitiesWithinAABB(ServerPlayerEntity.class, new AxisAlignedBB(pos).expand(8, 8, 8),
-                    player -> player.getCapability(PlayerCombinedMagicContainers.CAPABILITY).isPresent());
-
-            if (players.size() > 0)
-            {
-                MagicAmounts am = essenceContained;
-                for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-                {
-                    am = am.with(i, (float) Math.floor(essenceContained.get(i) * random.nextFloat()));
-                }
-
-                if (!am.isEmpty())
-                {
-                    MagicAmounts[] refRemaining = new MagicAmounts[]{am};
-                    for (PlayerEntity e : players)
-                    {
-                        if (e.getCapability(PlayerCombinedMagicContainers.CAPABILITY).map(magic -> {
-                            refRemaining[0] = magic.addMagic(refRemaining[0]);
-                            return refRemaining[0].isEmpty();
-                        }).orElse(false))
-                            break;
-                    }
-                }
-            }
-
-            spawnLivingEssenceCooldown = SPAWN_COOLDOWN + random.nextInt(SPAWN_COOLDOWN_RANDOM);
+            cap.addMagic(am);
         }
     }
 
@@ -141,5 +107,19 @@ public class CocoonTileEntity extends TileEntity implements ITickableTileEntity,
     public MagicAmounts getContainedMagic()
     {
         return essenceContained;
+    }
+
+    @Override
+    public void validate()
+    {
+        super.validate();
+        CocoonEventHandling.track(this);
+    }
+
+    @Override
+    public void remove()
+    {
+        super.remove();
+        CocoonEventHandling.untrack(this);
     }
 }

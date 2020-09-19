@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "elementsofpower:smelting/sapphire"
+    ]
+  },
+  "criteria": {
+    "has_ore": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "elementsofpower:sapphire_ore"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "elementsofpower:smelting/sapphire"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_ore",
+      "has_the_recipe"
+    ]
+  ]
+}

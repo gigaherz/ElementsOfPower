@@ -1,0 +1,18 @@
+{
+  "replace": false,
+  "values": [
+    "elementsofpower:ruby",
+    "elementsofpower:sapphire",
+    "elementsofpower:citrine",
+    "elementsofpower:agate",
+    "elementsofpower:quartz",
+    "minecraft:quartz",
+    "elementsofpower:serendibite",
+    "elementsofpower:emerald",
+    "minecraft:emerald",
+    "elementsofpower:amethyst",
+    "elementsofpower:diamond",
+    "minecraft:diamond",
+    "elementsofpower:creativite"
+  ]
+}
