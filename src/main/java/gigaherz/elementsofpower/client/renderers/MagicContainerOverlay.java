@@ -23,6 +23,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -91,7 +92,7 @@ public class MagicContainerOverlay extends AbstractGui
 
                 float e = contained.get(i);
                 String formatted = Float.isInfinite(e) ? "\u221E" : EssentializerScreen.formatQuantityWithSuffix(e);
-                this.drawCenteredString(matrixStack, font, formatted, xPos, yTop, 0xFFC0C0C0);
+                drawCenteredString(matrixStack, font, formatted, xPos, yTop, 0xFFC0C0C0);
             }
 
             yTop += 12;
@@ -104,7 +105,7 @@ public class MagicContainerOverlay extends AbstractGui
 
                     float e = reservoir.get(i);
                     String formatted = String.format("(%s)", Float.isInfinite(e) ? "\u221E" : EssentializerScreen.formatQuantityWithSuffix(e));
-                    this.drawCenteredString(matrixStack, font, formatted, xPos, yTop, 0xFFC0C0C0);
+                    drawCenteredString(matrixStack, font, formatted, xPos, yTop, 0xFFC0C0C0);
                 }
 
                 yTop += 12;
@@ -140,8 +141,9 @@ public class MagicContainerOverlay extends AbstractGui
 
                             int xPos = (rescaledWidth - 7 * 28 - 8) / 2 + 28 * i + 1;
 
-                            String formatted = EssentializerScreen.formatQuantityWithSuffix(-cost.get(i));
-                            this.drawCenteredString(matrixStack, font, formatted, xPos, yTop, 0xFFC0C0C0);
+                            float e = -cost.get(i);
+                            String formatted = Float.isInfinite(e) ? "\u221E" : EssentializerScreen.formatQuantityWithSuffix(e);
+                            drawCenteredString(matrixStack, font, formatted, xPos, yTop, 0xFFC0C0C0);
                         }
 
                         yTop += 12;
@@ -175,8 +177,9 @@ public class MagicContainerOverlay extends AbstractGui
 
                         int xPos = (rescaledWidth - 7 * 28 - 8) / 2 + 28 * i + 1;
 
-                        String formatted = MagicTooltips.PRETTY_NUMBER_FORMATTER.format(-cost.get(i));
-                        this.drawCenteredString(matrixStack, font, formatted, xPos, yTop, 0xFFC0C0C0);
+                        float e = -cost.get(i);
+                        String formatted = Float.isInfinite(e) ? "\u221E" : MagicTooltips.PRETTY_NUMBER_FORMATTER.format(e);
+                        drawCenteredString(matrixStack, font, formatted, xPos, yTop, 0xFFC0C0C0);
                     }
 
                     yTop += 12;
@@ -190,7 +193,7 @@ public class MagicContainerOverlay extends AbstractGui
                 if (WandUseManager.instance.handInUse != null)
                 {
                     KeyBinding key = WandUseManager.instance.spellKeys[i];
-                    this.drawCenteredString(matrixStack, font, String.format("(%s)", key.func_238171_j_()), xPos, yTop, 0xFFC0C0C0);
+                    drawCenteredString(matrixStack, font, new TranslationTextComponent("text.elementsofpower.magic.key", key.func_238171_j_()), xPos, yTop, 0xFFC0C0C0);
                 }
             }
 

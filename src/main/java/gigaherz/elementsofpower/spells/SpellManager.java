@@ -258,6 +258,8 @@ public class SpellManager
                     {
                         case MINING:
                             return Effect.TELEPORT;
+                        case WIND:
+                            return Effect.WIND;
                     }
                     break;
             }

@@ -163,5 +163,7 @@
     "text.elementsofpower.bauble.disabled": "Inactive",
     "text.elementsofpower.bauble.toggle": "  (Sneak-Rightclick to change)",
 
+    "text.elementsofpower.magic.key": "(%s)",
+
     "curios.identifier.headband": "Headband"
 }
