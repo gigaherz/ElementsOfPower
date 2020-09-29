@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower.essentializer;
 
+import com.google.common.collect.Lists;
 import gigaherz.elementsofpower.essentializer.gui.EssentializerContainer;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -20,6 +21,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Random;
 
 public class EssentializerBlock extends Block

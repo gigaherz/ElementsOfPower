@@ -3,7 +3,6 @@ package gigaherz.elementsofpower;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.gson.*;
-import gigaherz.elementsofpower.magic.MagicAmounts;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
@@ -12,17 +11,20 @@ import net.minecraftforge.fml.loading.FMLPaths;
 
 import java.io.*;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class BiomeConfig
+public class BiomeLabels
 {
     public static final String BIOMELABELS_JSON = "elementsofpower.biomelabels.json";
     public static final Supplier<File> BIOMELABELS_JSON_FILE = () -> FMLPaths.CONFIGDIR.get().resolve(BIOMELABELS_JSON).toFile();
 
     private static final Multimap<ResourceLocation, String> biomeLabels = ArrayListMultimap.create();
-    private static final Map<String, MagicAmounts> labelAmounts = new HashMap<>();
+
+    public static boolean hasType(ResourceLocation biome, String label)
+    {
+        return biomeLabels.containsEntry(biome, label);
+    }
 
     public static void loadBiomeConfig()
     {
@@ -78,7 +80,7 @@ public class BiomeConfig
         }
         JsonObject root = new JsonObject();
         root.add("biomes", biomes);
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
         try (
                 FileOutputStream out = new FileOutputStream(BIOMELABELS_JSON_FILE.get());
                 OutputStreamWriter writer = new OutputStreamWriter(out);
@@ -90,11 +92,6 @@ public class BiomeConfig
         {
             throw new RuntimeException("Error writing to " + BIOMELABELS_JSON, ex);
         }
-    }
-
-    public static boolean hasType(ResourceLocation biome, String label)
-    {
-        return biomeLabels.containsEntry(biome, label);
     }
 
     private static void registerVanillaLabels()
@@ -172,11 +169,17 @@ public class BiomeConfig
         putMany(biomeLabels, Biomes.ERODED_BADLANDS, "hot", "dry", "sparse", "mountain", "rare", "overworld");
         putMany(biomeLabels, Biomes.MODIFIED_WOODED_BADLANDS_PLATEAU, "hot", "dry", "sparse", "hills", "rare", "overworld", "plateau", "modified");
         putMany(biomeLabels, Biomes.MODIFIED_BADLANDS_PLATEAU, "hot", "dry", "sparse", "mountain", "rare", "overworld", "plateau", "modified");
+        putMany(biomeLabels, Biomes.BAMBOO_JUNGLE, "hot", "wet", "dense", "jungle", "overworld");
+        putMany(biomeLabels, Biomes.BAMBOO_JUNGLE_HILLS, "hot", "wet", "dense", "jungle", "hills", "overworld");
+        putMany(biomeLabels, Biomes.SOUL_SAND_VALLEY, "hot", "dry", "nether");
+        putMany(biomeLabels, Biomes.CRIMSON_FOREST, "hot", "dry", "nether", "forest");
+        putMany(biomeLabels, Biomes.WARPED_FOREST, "hot", "dry", "nether", "forest");
+        putMany(biomeLabels, Biomes.BASALT_DELTAS, "hot", "dry", "nether");
 
     }
 
     private static void putMany(Multimap<ResourceLocation, String> map, RegistryKey<Biome> biome, String... labels)
     {
-        map.putAll(biome.getRegistryName(), Arrays.asList(labels));
+        map.putAll(biome.getLocation(), Arrays.asList(labels));
     }
 }

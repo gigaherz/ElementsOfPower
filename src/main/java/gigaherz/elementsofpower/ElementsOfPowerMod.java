@@ -61,7 +61,6 @@ import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.SpecialRecipeSerializer;
 import net.minecraft.particles.ParticleType;
 import net.minecraft.state.IntegerProperty;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ITag;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.TileEntityType;
@@ -174,6 +173,7 @@ public class ElementsOfPowerMod
         modEventBus.addGenericListener(ContainerType.class, this::registerContainerTypes);
         modEventBus.addGenericListener(IRecipeSerializer.class, this::registerRecipeSerializers);
         modEventBus.addGenericListener(ParticleType.class, this::registerParticleTypes);
+        modEventBus.addGenericListener(Feature.class, this::registerFeature);
 
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::clientSetup);
@@ -330,6 +330,13 @@ public class ElementsOfPowerMod
         );
     }
 
+    public void registerFeature(RegistryEvent.Register<Feature<?>> event)
+    {
+        event.getRegistry().registerAll(
+                new CocoonFeature(CocoonFeatureConfig.CODEC).setRegistryName("cocoon")
+        );
+    }
+
     public void registerParticleFactory(ParticleFactoryRegisterEvent event)
     {
         Minecraft.getInstance().particles.registerFactory(ColoredSmokeData.TYPE, ColoredSmokeData.Factory::new);
@@ -385,16 +392,16 @@ public class ElementsOfPowerMod
 
         CocoonEventHandling.enable();
 
-        BiomeConfig.loadBiomeConfig();
+        BiomeLabels.loadBiomeConfig();
     }
 
     private void addStuffToBiomes(BiomeLoadingEvent event)
     {
         ResourceLocation biome = event.getName();
-        if (!BiomeConfig.hasType(biome, "void"))
+        if (!BiomeLabels.hasType(biome, "void"))
         {
-            boolean isEndBiome = BiomeConfig.hasType(biome, "end");
-            boolean isNetherBiome = BiomeConfig.hasType(biome, "nether");
+            boolean isEndBiome = BiomeLabels.hasType(biome, "end");
+            boolean isNetherBiome = BiomeLabels.hasType(biome, "nether");
             if (!isEndBiome && !isNetherBiome)
             {
                 for (Gemstone g : Gemstone.values)
@@ -429,27 +436,27 @@ public class ElementsOfPowerMod
         switch (e)
         {
             case FIRE:
-                if (BiomeConfig.hasType(biome, "hot"))
+                if (BiomeLabels.hasType(biome, "hot"))
                     return 2;
-                if (BiomeConfig.hasType(biome, "cold"))
+                if (BiomeLabels.hasType(biome, "cold"))
                     return 0;
                 return 1;
             case WATER:
-                if (BiomeConfig.hasType(biome, "wet"))
+                if (BiomeLabels.hasType(biome, "wet"))
                     return 2;
-                if (BiomeConfig.hasType(biome, "dry"))
+                if (BiomeLabels.hasType(biome, "dry"))
                     return 0;
                 return 1;
             case LIFE:
-                if (BiomeConfig.hasType(biome, "dense"))
+                if (BiomeLabels.hasType(biome, "dense"))
                     return 2;
-                if (BiomeConfig.hasType(biome, "sparse"))
+                if (BiomeLabels.hasType(biome, "sparse"))
                     return 0;
                 return 1;
             case DEATH:
-                if (BiomeConfig.hasType(biome, "sparse"))
+                if (BiomeLabels.hasType(biome, "sparse"))
                     return 2;
-                if (BiomeConfig.hasType(biome, "dense"))
+                if (BiomeLabels.hasType(biome, "dense"))
                     return 0;
                 return 1;
         }

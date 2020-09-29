@@ -19,13 +19,16 @@ import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.structure.StructureManager;
+import net.minecraftforge.registries.ObjectHolder;
 
 import java.util.Objects;
 import java.util.Random;
 
 public class CocoonFeature extends Feature<CocoonFeatureConfig>
 {
-    public static final CocoonFeature INSTANCE = new CocoonFeature(CocoonFeatureConfig.CODEC);
+    @ObjectHolder("elementsofpower:cocoon")
+    public static CocoonFeature INSTANCE;
+
     public static final ITag.INamedTag<Block> REPLACEABLE_TAG = BlockTags.makeWrapperTag("elementsofpower:can_cocoon_replace");
 
     public CocoonFeature(Codec<CocoonFeatureConfig> configFactoryIn)
