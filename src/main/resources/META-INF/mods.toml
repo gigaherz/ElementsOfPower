@@ -1,6 +1,5 @@
 modLoader="javafml"
 loaderVersion="[32,)"
-issueTrackerURL="https://github.com/gigaherz/ElementsOfPower/issues"
 license="BSD (3 clause)"
 
 [[mods]]
@@ -8,6 +7,7 @@ modId="elementsofpower"
 version="${file.jarVersion}"
 displayName="Elements of Power"
 updateJSONURL="https://raw.githubusercontent.com/gigaherz/ElementsOfPower/master/update.json"
+issueTrackerURL="https://github.com/gigaherz/ElementsOfPower/issues"
 displayURL="https://www.curseforge.com/minecraft/mc-mods/elements-of-power"
 logoFile="logo.png" #optional
 credits="Thanks for this example mod goes to Java"

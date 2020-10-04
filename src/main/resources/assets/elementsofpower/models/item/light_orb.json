@@ -1,8 +1,6 @@
 {
-  "parent": "forge:block/default",
-  "loader":"forge:obj",
-  "model": "elementsofpower:models/item/sphere.obj",
+  "parent": "item/generated",
   "textures": {
-    "default": "elementsofpower:misc/orb_light"
+    "layer0": "elementsofpower:item/orb_light"
   }
 }

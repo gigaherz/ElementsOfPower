@@ -1,0 +1,6 @@
+# Rhino
+newmtl side
+map_Kd minecraft:block/obsidian
+
+newmtl top
+map_Kd minecraft:block/obsidian

@@ -16,15 +16,18 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleType;
+import net.minecraft.particles.RedstoneParticleData;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nullable;
+import java.util.Locale;
 import java.util.Random;
 
 public class ColoredSmokeData implements IParticleData
 {
-    @ObjectHolder("elementsofpower:white_smoke")
+    @ObjectHolder("elementsofpower:colored_smoke")
     public static ParticleType<ColoredSmokeData> TYPE = null;
 
     public static Codec<ColoredSmokeData> CODEC = RecordCodecBuilder
@@ -65,7 +68,7 @@ public class ColoredSmokeData implements IParticleData
     @Override
     public String getParameters()
     {
-        return "<red> <green> <blue>";
+        return String.format(Locale.ROOT, "%s %.2f %.2f %.2f", this.getType().getRegistryName(), this.red, this.green, this.blue);
     }
 
     public static final IDeserializer<ColoredSmokeData> DESERIALIZER = new IDeserializer<ColoredSmokeData>()
@@ -73,11 +76,13 @@ public class ColoredSmokeData implements IParticleData
         @Override
         public ColoredSmokeData deserialize(ParticleType<ColoredSmokeData> particleTypeIn, StringReader reader) throws CommandSyntaxException
         {
-            return new ColoredSmokeData(
-                    reader.readFloat(),
-                    reader.readFloat(),
-                    reader.readFloat()
-            );
+            reader.expect(' ');
+            float r = (float)reader.readDouble();
+            reader.expect(' ');
+            float g = (float)reader.readDouble();
+            reader.expect(' ');
+            float b = (float)reader.readDouble();
+            return new ColoredSmokeData(r,g,b);
         }
 
         @Override

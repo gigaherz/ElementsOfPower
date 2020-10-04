@@ -88,6 +88,7 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.InterModComms;
+import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -323,17 +324,17 @@ public class ElementsOfPowerMod
         APPLY_ORB_SIZE = LootFunctionManager.func_237451_a_(location("apply_orb_size").toString(), new ApplyOrbSizeFunction.Serializer());
     }
 
-    public void registerParticleTypes(RegistryEvent.Register<ParticleType<?>> event)
-    {
-        event.getRegistry().registerAll(
-                new ColoredSmokeData.Type(false).setRegistryName("white_smoke")
-        );
-    }
-
     public void registerFeature(RegistryEvent.Register<Feature<?>> event)
     {
         event.getRegistry().registerAll(
                 new CocoonFeature(CocoonFeatureConfig.CODEC).setRegistryName("cocoon")
+        );
+    }
+
+    public void registerParticleTypes(RegistryEvent.Register<ParticleType<?>> event)
+    {
+        event.getRegistry().registerAll(
+                new ColoredSmokeData.Type(false).setRegistryName("colored_smoke")
         );
     }
 
@@ -595,7 +596,7 @@ public class ElementsOfPowerMod
                 for (Gemstone g : Gemstone.values)
                 {
                     if (g.generateCustomBlock())
-                        this.registerLootTable(g.getBlock(), dropping(g.getBlock()));
+                        this.registerDropSelfLootTable(g.getBlock());
                     if (g.generateCustomOre())
                         this.registerLootTable(g.getOre(), (block) -> droppingItemWithFortune(block, g.getItem()));
                 }
