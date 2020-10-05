@@ -362,11 +362,15 @@ public class ElementsOfPowerMod
         RenderTypeLookup.setRenderLayer(ElementsOfPowerBlocks.MIST, RenderType.getTranslucent());
         RenderTypeLookup.setRenderLayer(ElementsOfPowerBlocks.CUSHION, RenderType.getTranslucent());
         RenderTypeLookup.setRenderLayer(ElementsOfPowerBlocks.LIGHT, RenderType.getTranslucent());
+        Arrays.stream(Element.values).forEach(e ->
+                RenderTypeLookup.setRenderLayer(e.getCocoon(), layer -> layer == RenderType.getTranslucent() || layer == RenderType.getSolid())
+        );
 
         MinecraftForge.EVENT_BUS.register(new WandUseManager());
         MinecraftForge.EVENT_BUS.register(new MagicContainerOverlay());
 
         WandUseManager.instance.initialize();
+
     }
 
     public void commonSetup(FMLCommonSetupEvent event)

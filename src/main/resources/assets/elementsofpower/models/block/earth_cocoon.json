@@ -1,9 +1,23 @@
 {
-  "parent": "block/block",
-  "loader": "forge:obj",
-  "model": "elementsofpower:models/block/cocoon.obj",
+  "parent": "elementsofpower:block/base_cocoon",
+  "loader": "forge:multi-layer",
   "textures": {
-    "default": "elementsofpower:misc/orb_earth",
-    "particle": "#default"
+    "particle": "elementsofpower:block/earth_cocoon"
+  },
+  "layers": {
+    "solid": {
+      "loader": "forge:obj",
+      "model": "elementsofpower:models/block/cocoon_base.obj",
+      "textures": {
+        "default": "elementsofpower:block/earth_cocoon"
+      }
+    },
+    "translucent": {
+      "loader": "forge:obj",
+      "model": "elementsofpower:models/block/cocoon_overlay.obj",
+      "textures": {
+        "overlay": "elementsofpower:block/cocoon_overlay"
+      }
+    }
   }
 }
