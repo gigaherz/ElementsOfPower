@@ -1,6 +1,7 @@
 package gigaherz.elementsofpower.database;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import gigaherz.elementsofpower.gemstones.Gemstone;
 import gigaherz.elementsofpower.magic.MagicAmounts;
 import gigaherz.elementsofpower.spells.Element;
@@ -9,23 +10,40 @@ import net.minecraft.item.DyeColor;
 import net.minecraft.item.DyeItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.tags.ITag;
 import net.minecraft.util.IItemProvider;
+import net.minecraft.util.ResourceLocation;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import javax.annotation.Nullable;
+import java.util.*;
+import java.util.function.Function;
 
 public class StockConversions
 {
-    private static final List<ItemEssenceConversion> CONVERSIONS = Lists.newArrayList();
+    private static final Map<Item, ItemEssenceConversion> CONVERSIONS = Maps.newHashMap();
 
-    public static void addStockConversions()
+    public static void addStockConversions(MinecraftServer server)
     {
         CONVERSIONS.clear();
 
-        for (Element e : Element.values())
+        for (Element e : Element.values)
         {
-            essences(e.getItem()).element(e, 8);
+            essences(e.getOrb()).element(e, 8);
+            essences(e.getItem()).element(e, 8).life(2);
+        }
+
+        for (Gemstone e : Gemstone.values)
+        {
+            ItemEssenceEntry a = essences(e.getOre()).earth(8);
+            ItemEssenceEntry b = essences(e.getItem()).earth(1);
+            ItemEssenceEntry c = essences(e.getBlock()).earth(19);
+            if (e.getElement() != null)
+            {
+                a.element(e.getElement(), 1);
+                b.element(e.getElement(), 1 / 8.0f);
+                c.element(e.getElement(), 1);
+            }
         }
 
         essences(Blocks.CACTUS).life(3);
@@ -57,14 +75,9 @@ public class StockConversions
         essences(Blocks.NETHERRACK).earth(1).fire(1);
 
         essences(Blocks.COBBLESTONE).earth(5);
-        essences(Blocks.STONE).earth(10);
-        essences(Blocks.SMOOTH_STONE).earth(10);
-        essences(Blocks.DIORITE).earth(10);
-        essences(Blocks.POLISHED_DIORITE).earth(10);
-        essences(Blocks.ANDESITE).earth(10);
-        essences(Blocks.POLISHED_ANDESITE).earth(10);
-        essences(Blocks.GRANITE).earth(10);
-        essences(Blocks.POLISHED_GRANITE).earth(10);
+        fromTag(server, "minecraft:stone_crafting_materials", items ->
+                essences(items).earth(10)
+        );
 
         essences(Blocks.WHITE_TERRACOTTA,
                 Blocks.ORANGE_TERRACOTTA,
@@ -88,70 +101,27 @@ public class StockConversions
         essences(Blocks.GRASS_BLOCK).earth(3).life(2);
         essences(Blocks.PODZOL).earth(3).life(1).death(1);
 
-        essences(
-                Blocks.DANDELION,
-                Blocks.POPPY,
-                Blocks.BLUE_ORCHID,
-                Blocks.ALLIUM,
-                Blocks.AZURE_BLUET,
-                Blocks.RED_TULIP,
-                Blocks.ORANGE_TULIP,
-                Blocks.WHITE_TULIP,
-                Blocks.PINK_TULIP,
-                Blocks.OXEYE_DAISY,
-                Blocks.CORNFLOWER,
-                Blocks.LILY_OF_THE_VALLEY
-        ).life(1);
+        fromTag(server, "minecraft:small_flowers", items ->
+                essences(items).life(1)
+        );
+        // Overwrite WITHER_ROSE if it's in the tag.
         essences(Blocks.WITHER_ROSE).life(1).death(2);
 
-        essences(
-                Blocks.OAK_SAPLING,
-                Blocks.BIRCH_SAPLING,
-                Blocks.JUNGLE_SAPLING,
-                Blocks.SPRUCE_SAPLING,
-                Blocks.DARK_OAK_SAPLING,
-                Blocks.ACACIA_SAPLING
-        ).life(4);
-        essences(
-                Blocks.OAK_LOG,
-                Blocks.BIRCH_LOG,
-                Blocks.JUNGLE_LOG,
-                Blocks.SPRUCE_LOG,
-                Blocks.DARK_OAK_LOG,
-                Blocks.ACACIA_LOG
-        ).life(16);
-        essences(
-                Blocks.OAK_WOOD,
-                Blocks.BIRCH_WOOD,
-                Blocks.JUNGLE_WOOD,
-                Blocks.SPRUCE_WOOD,
-                Blocks.DARK_OAK_WOOD,
-                Blocks.ACACIA_WOOD
-        ).life(16);
-        essences(
-                Blocks.STRIPPED_OAK_LOG,
-                Blocks.STRIPPED_BIRCH_LOG,
-                Blocks.STRIPPED_JUNGLE_LOG,
-                Blocks.STRIPPED_SPRUCE_LOG,
-                Blocks.STRIPPED_DARK_OAK_LOG,
-                Blocks.STRIPPED_ACACIA_LOG
-        ).life(16);
-        essences(
-                Blocks.STRIPPED_OAK_WOOD,
-                Blocks.STRIPPED_BIRCH_WOOD,
-                Blocks.STRIPPED_JUNGLE_WOOD,
-                Blocks.STRIPPED_SPRUCE_WOOD,
-                Blocks.STRIPPED_DARK_OAK_WOOD,
-                Blocks.STRIPPED_ACACIA_WOOD
-        ).life(16);
-        essences(
-                Blocks.OAK_STAIRS,
-                Blocks.BIRCH_STAIRS,
-                Blocks.JUNGLE_STAIRS,
-                Blocks.ACACIA_STAIRS,
-                Blocks.DARK_OAK_STAIRS,
-                Blocks.SPRUCE_STAIRS
-        ).life(6);
+        fromTag(server, "minecraft:tall_flowers", items ->
+                essences(items).life(2)
+        );
+
+        fromTag(server, "minecraft:saplings", items ->
+                essences(items).life(4)
+        );
+
+        fromTag(server, "minecraft:logs", items ->
+                essences(items).life(16)
+        );
+
+        fromTag(server, "minecraft:leaves", items ->
+                essences(items).life(4)
+        );
 
         essences(Items.STICK).life(1);
 
@@ -243,7 +213,7 @@ public class StockConversions
         //essences(Items.GLOWSTONE_DUST,0);
 
 
-        CONVERSIONS.forEach(ItemEssenceConversion::apply);
+        CONVERSIONS.values().forEach(ItemEssenceConversion::apply);
     }
 
     private static ItemEssenceCollection collection(ItemEssenceConversion... entries)
@@ -255,6 +225,16 @@ public class StockConversions
         return collection;
     }
 
+    @Nullable
+    private static ItemEssenceCollection fromTag(MinecraftServer server, String id, Function<List<Item>, ItemEssenceCollection> conversion)
+    {
+        ITag<Item> tag = server.func_244266_aF().getItemTags().get(new ResourceLocation(id));
+
+        if (tag == null) return essences();
+
+        return conversion.apply(tag.getAllElements());
+    }
+
     private static ItemEssenceCollection essences(IItemProvider... items)
     {
         ItemEssenceCollection collection = new ItemEssenceCollection();
@@ -263,40 +243,54 @@ public class StockConversions
         {
             ItemEssenceEntry ee = new ItemEssenceEntry(item, MagicAmounts.EMPTY);
             collection.add(ee);
-            CONVERSIONS.add(ee);
+            CONVERSIONS.put(item.asItem(), ee);
         }
 
         return collection;
     }
 
-    private static ItemEssenceEntry essences(IItemProvider itemProvider)
+    private static ItemEssenceCollection essences(Iterable<? extends IItemProvider> items)
     {
-        ItemEssenceEntry ee = new ItemEssenceEntry(itemProvider, MagicAmounts.EMPTY);
-        CONVERSIONS.add(ee);
+        ItemEssenceCollection collection = new ItemEssenceCollection();
+
+        for (IItemProvider item : items)
+        {
+            ItemEssenceEntry ee = new ItemEssenceEntry(item, MagicAmounts.EMPTY);
+            collection.add(ee);
+            CONVERSIONS.put(item.asItem(), ee);
+        }
+
+        return collection;
+    }
+
+    private static ItemEssenceEntry essences(IItemProvider item)
+    {
+        ItemEssenceEntry ee = new ItemEssenceEntry(item, MagicAmounts.EMPTY);
+        CONVERSIONS.put(item.asItem(), ee);
         return ee;
     }
 
     public interface ItemEssenceConversion
     {
-        ItemEssenceConversion all(int amount);
+        ItemEssenceConversion all(float amount);
 
-        ItemEssenceConversion fire(int amount);
+        ItemEssenceConversion fire(float amount);
 
-        ItemEssenceConversion water(int amount);
+        ItemEssenceConversion water(float amount);
 
-        ItemEssenceConversion air(int amount);
+        ItemEssenceConversion air(float amount);
 
-        ItemEssenceConversion earth(int amount);
+        ItemEssenceConversion earth(float amount);
 
-        ItemEssenceConversion light(int amount);
+        ItemEssenceConversion light(float amount);
 
-        ItemEssenceConversion darkness(int amount);
+        ItemEssenceConversion darkness(float amount);
 
-        ItemEssenceConversion life(int amount);
+        ItemEssenceConversion life(float amount);
 
-        ItemEssenceConversion death(int amount);
+        ItemEssenceConversion death(float amount);
 
-        ItemEssenceConversion element(Element l, int amount);
+        ItemEssenceConversion element(Element l, float amount);
 
         void apply();
     }
@@ -319,70 +313,70 @@ public class StockConversions
         }
 
         @Override
-        public ItemEssenceEntry all(int amount)
+        public ItemEssenceEntry all(float amount)
         {
             amounts = amounts.all(amount);
             return this;
         }
 
         @Override
-        public ItemEssenceEntry fire(int amount)
+        public ItemEssenceEntry fire(float amount)
         {
             amounts = amounts.fire(amount);
             return this;
         }
 
         @Override
-        public ItemEssenceEntry water(int amount)
+        public ItemEssenceEntry water(float amount)
         {
             amounts = amounts.water(amount);
             return this;
         }
 
         @Override
-        public ItemEssenceEntry air(int amount)
+        public ItemEssenceEntry air(float amount)
         {
             amounts = amounts.air(amount);
             return this;
         }
 
         @Override
-        public ItemEssenceEntry earth(int amount)
+        public ItemEssenceEntry earth(float amount)
         {
             amounts = amounts.earth(amount);
             return this;
         }
 
         @Override
-        public ItemEssenceEntry light(int amount)
+        public ItemEssenceEntry light(float amount)
         {
             amounts = amounts.light(amount);
             return this;
         }
 
         @Override
-        public ItemEssenceEntry darkness(int amount)
+        public ItemEssenceEntry darkness(float amount)
         {
             amounts = amounts.darkness(amount);
             return this;
         }
 
         @Override
-        public ItemEssenceEntry life(int amount)
+        public ItemEssenceEntry life(float amount)
         {
             amounts = amounts.life(amount);
             return this;
         }
 
         @Override
-        public ItemEssenceEntry death(int amount)
+        public ItemEssenceEntry death(float amount)
         {
             amounts = amounts.death(amount);
             return this;
         }
 
         @Override
-        public ItemEssenceEntry element(Element l, int amount)
+        public ItemEssenceEntry element(Element l, float amount)
         {
             amounts = amounts.add(l, amount);
             return this;
@@ -398,7 +392,7 @@ public class StockConversions
         }
 
         @Override
-        public ItemEssenceCollection all(int amount)
+        public ItemEssenceCollection all(float amount)
         {
             for (ItemEssenceConversion e : this)
             {
@@ -408,7 +402,7 @@ public class StockConversions
         }
 
         @Override
-        public ItemEssenceCollection fire(int amount)
+        public ItemEssenceCollection fire(float amount)
         {
             for (ItemEssenceConversion e : this)
             {
@@ -418,7 +412,7 @@ public class StockConversions
         }
 
         @Override
-        public ItemEssenceCollection water(int amount)
+        public ItemEssenceCollection water(float amount)
         {
             for (ItemEssenceConversion e : this)
             {
@@ -428,7 +422,7 @@ public class StockConversions
         }
 
         @Override
-        public ItemEssenceCollection air(int amount)
+        public ItemEssenceCollection air(float amount)
         {
             for (ItemEssenceConversion e : this)
             {
@@ -438,7 +432,7 @@ public class StockConversions
         }
 
         @Override
-        public ItemEssenceCollection earth(int amount)
+        public ItemEssenceCollection earth(float amount)
         {
             for (ItemEssenceConversion e : this)
             {
@@ -448,7 +442,7 @@ public class StockConversions
         }
 
         @Override
-        public ItemEssenceCollection light(int amount)
+        public ItemEssenceCollection light(float amount)
         {
             for (ItemEssenceConversion e : this)
             {
@@ -458,7 +452,7 @@ public class StockConversions
         }
 
         @Override
-        public ItemEssenceCollection darkness(int amount)
+        public ItemEssenceCollection darkness(float amount)
         {
             for (ItemEssenceConversion e : this)
             {
@@ -468,7 +462,7 @@ public class StockConversions
         }
 
         @Override
-        public ItemEssenceCollection life(int amount)
+        public ItemEssenceCollection life(float amount)
         {
             for (ItemEssenceConversion e : this)
             {
@@ -478,7 +472,7 @@ public class StockConversions
         }
 
         @Override
-        public ItemEssenceCollection death(int amount)
+        public ItemEssenceCollection death(float amount)
         {
             for (ItemEssenceConversion e : this)
             {
@@ -489,7 +483,7 @@ public class StockConversions
 
 
         @Override
-        public ItemEssenceCollection element(Element l, int amount)
+        public ItemEssenceCollection element(Element l, float amount)
         {
             for (ItemEssenceConversion e : this)
             {

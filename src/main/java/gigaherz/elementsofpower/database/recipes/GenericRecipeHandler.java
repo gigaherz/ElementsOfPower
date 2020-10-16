@@ -11,6 +11,7 @@ import net.minecraft.util.math.MathHelper;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class GenericRecipeHandler implements IRecipeHandler
@@ -18,7 +19,10 @@ public class GenericRecipeHandler implements IRecipeHandler
     @Override
     public boolean accepts(@Nonnull IRecipe<?> recipe)
     {
-        return !recipe.isDynamic() && recipe.getIngredients().stream().allMatch(i -> i.getMatchingStacks().length > 0);
+        return !recipe.isDynamic()
+                && recipe.getRecipeOutput().getCount() > 0
+                && recipe.getIngredients().stream().anyMatch(i -> i.getMatchingStacks().length > 0)
+                && recipe.getIngredients().stream().anyMatch(i -> Arrays.stream(i.getMatchingStacks()).anyMatch(stack -> stack.getCount() > 0));
     }
 
     @Override
@@ -48,11 +52,22 @@ public class GenericRecipeHandler implements IRecipeHandler
                 if (stacks.length == 0)
                     continue;
 
-                ItemStack actualInput = stacks[0];
+                ItemStack actualInput = ItemStack.EMPTY;
 
-                ItemStack stack = actualInput.copy();
-                stack.setCount(1);
-                inputs.add(stack);
+                for(ItemStack stack : stacks)
+                {
+                    if (stack.getCount() > 0)
+                    {
+                        actualInput = stack;
+                    }
+                }
+
+                if(actualInput.getCount() > 0)
+                {
+                    ItemStack stack = actualInput.copy();
+                    stack.setCount(1);
+                    inputs.add(stack);
+                }
             }
         }
 

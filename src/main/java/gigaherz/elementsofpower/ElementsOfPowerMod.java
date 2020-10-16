@@ -64,7 +64,10 @@ import net.minecraft.state.IntegerProperty;
 import net.minecraft.tags.ITag;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.OreFeatureConfig;
@@ -77,6 +80,7 @@ import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
+import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.ToolType;
@@ -396,17 +400,15 @@ public class ElementsOfPowerMod
         GlobalEntityTypeAttributes.put(EssenceEntity.TYPE, EssenceEntity.prepareAttributes().create());
 
         CocoonEventHandling.enable();
-
-        BiomeLabels.loadBiomeConfig();
     }
 
     private void addStuffToBiomes(BiomeLoadingEvent event)
     {
-        ResourceLocation biome = event.getName();
-        if (!BiomeLabels.hasType(biome, "void"))
+        RegistryKey<Biome> biome = RegistryKey.getOrCreateKey(Registry.BIOME_KEY, event.getName());
+        if (!BiomeDictionary.hasType(biome, BiomeDictionary.Type.VOID))
         {
-            boolean isEndBiome = BiomeLabels.hasType(biome, "end");
-            boolean isNetherBiome = BiomeLabels.hasType(biome, "nether");
+            boolean isEndBiome = BiomeDictionary.hasType(biome, BiomeDictionary.Type.END);
+            boolean isNetherBiome = BiomeDictionary.hasType(biome, BiomeDictionary.Type.NETHER);
             if (!isEndBiome && !isNetherBiome)
             {
                 for (Gemstone g : Gemstone.values)
@@ -434,34 +436,34 @@ public class ElementsOfPowerMod
         }
     }
 
-    private int getBiomeBonus(@Nullable Element e, ResourceLocation biome)
+    private int getBiomeBonus(@Nullable Element e, RegistryKey<Biome> biome)
     {
         if (e == null)
             return 1;
         switch (e)
         {
             case FIRE:
-                if (BiomeLabels.hasType(biome, "hot"))
+                if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.HOT))
                     return 2;
-                if (BiomeLabels.hasType(biome, "cold"))
+                if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.COLD))
                     return 0;
                 return 1;
             case WATER:
-                if (BiomeLabels.hasType(biome, "wet"))
+                if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.WET))
                     return 2;
-                if (BiomeLabels.hasType(biome, "dry"))
+                if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.DRY))
                     return 0;
                 return 1;
             case LIFE:
-                if (BiomeLabels.hasType(biome, "dense"))
+                if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.DENSE))
                     return 2;
-                if (BiomeLabels.hasType(biome, "sparse"))
+                if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.SPARSE))
                     return 0;
                 return 1;
             case DEATH:
-                if (BiomeLabels.hasType(biome, "sparse"))
+                if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.SPARSE))
                     return 2;
-                if (BiomeLabels.hasType(biome, "dense"))
+                if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.DENSE))
                     return 0;
                 return 1;
         }

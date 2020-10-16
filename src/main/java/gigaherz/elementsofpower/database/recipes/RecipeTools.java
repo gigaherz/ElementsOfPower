@@ -7,12 +7,16 @@ import gigaherz.elementsofpower.database.EssenceConversions;
 import gigaherz.elementsofpower.database.Utils;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import java.util.*;
 
 public class RecipeTools
 {
+    private static final Logger LOGGER = LogManager.getLogger();
+
     public static List<RecipeEnumerator> recipeEnumerators = Lists.newArrayList();
 
     static
@@ -32,12 +36,14 @@ public class RecipeTools
 
     public static class ItemSource
     {
+        public final Item item;
         public int numProduced;
         public final Set<Item> allIntermediates = new HashSet<>();
         public final List<ItemStack> sources = new ArrayList<>();
 
-        public ItemSource(int count, Set<Item> allIntermediates)
+        public ItemSource(Item item, int count, Set<Item> allIntermediates)
         {
+            this.item = item;
             this.numProduced = count;
             this.allIntermediates.addAll(allIntermediates);
         }
@@ -69,6 +75,12 @@ public class RecipeTools
             {
                 sources.add(input.copy());
             }
+        }
+
+        @Override
+        public String toString()
+        {
+            return String.format("{ItemSource: %s}", item);
         }
     }
 
@@ -112,7 +124,7 @@ public class RecipeTools
             }
 
             ItemSource source1 = reduceItemsList(item, recipe.getRecipeInputs(), output.getCount());
-            ItemSource source2 = applyExistingRecipes(source1);
+            ItemSource source2 = applyExistingRecipes(item, source1);
 
             replaceExistingSources(item, source2);
 
@@ -120,9 +132,9 @@ public class RecipeTools
         }
 
         @Nonnull
-        public ItemSource applyExistingRecipes(@Nonnull ItemSource source)
+        public ItemSource applyExistingRecipes(Item item, @Nonnull ItemSource source)
         {
-            return replaceSources(source, itemSources);
+            return replaceSources(item, source, itemSources);
         }
 
         private void replaceExistingSources(Item item, @Nonnull ItemSource source)
@@ -134,7 +146,7 @@ public class RecipeTools
             {
                 Item result = entry.getKey();
                 ItemSource oldSource = entry.getValue();
-                ItemSource newSource = replaceSources(oldSource, singletonMap);
+                ItemSource newSource = replaceSources(item, oldSource, singletonMap);
                 if (newSource != oldSource)
                 {
                     itemsToReplace.put(result, newSource);
@@ -145,9 +157,9 @@ public class RecipeTools
         }
 
         @Nonnull
-        public ItemSource replaceSources(@Nonnull ItemSource source, Map<Item, ItemSource> sources)
+        public ItemSource replaceSources(Item item0, @Nonnull ItemSource source, Map<Item, ItemSource> sources)
         {
-            ItemSource result = new ItemSource(source.numProduced, source.allIntermediates);
+            ItemSource result = new ItemSource(item0, source.numProduced, source.allIntermediates);
 
             int totalMult = 1;
             boolean anythingChanged = false;
@@ -178,6 +190,12 @@ public class RecipeTools
                             good = false;
                             break;
                         }
+                    }
+
+                    if(numProduced == 0)
+                    {
+                        LOGGER.error("Source has numProduced=0!!! {}", source);
+                        good=false;
                     }
 
                     if (good)
@@ -237,7 +255,7 @@ public class RecipeTools
         @Nonnull
         public ItemSource reduceItemsList(Item item, @Nonnull List<ItemStack> items, int count)
         {
-            ItemSource source = new ItemSource(count, Collections.singleton(item));
+            ItemSource source = new ItemSource(item, count, Collections.singleton(item));
 
             for (ItemStack is : items)
             {
