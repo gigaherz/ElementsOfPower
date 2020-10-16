@@ -1,0 +1,16 @@
+{
+  "mode": "ADDITIVE",
+  "target": {
+    "type": "aequivaleo:item",
+    "data": {
+      "count": 1.0,
+      "item": "minecraft:spruce_wood"
+    }
+  },
+  "compounds": [
+    {
+      "amount": 16.0,
+      "type": "elementsofpower:life"
+    }
+  ]
+}

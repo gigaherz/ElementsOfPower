@@ -10,15 +10,15 @@
   "compounds": [
     {
       "amount": 4.0,
-      "type": "elementsofpower:water"
-    },
-    {
-      "amount": 4.0,
       "type": "elementsofpower:life"
     },
     {
       "amount": 2.0,
       "type": "elementsofpower:earth"
+    },
+    {
+      "amount": 4.0,
+      "type": "elementsofpower:water"
     }
   ]
 }

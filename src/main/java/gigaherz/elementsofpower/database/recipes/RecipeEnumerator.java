@@ -5,6 +5,7 @@ import com.google.common.collect.Sets;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeSerializer;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import javax.annotation.Nonnull;
@@ -20,16 +21,16 @@ public abstract class RecipeEnumerator
         craftingRecipeHandlers.add(new GenericRecipeHandler());
     }
 
-    abstract void enumerate(@Nonnull IRecipeInfoConsumer consumer);
+    abstract void enumerate(MinecraftServer server, @Nonnull IRecipeInfoConsumer consumer);
 
     public static class Crafting extends RecipeEnumerator
     {
         @Override
-        void enumerate(@Nonnull IRecipeInfoConsumer consumer)
+        void enumerate(MinecraftServer server, @Nonnull IRecipeInfoConsumer consumer)
         {
             Set<IRecipeSerializer<?>> seenClasses = Sets.newHashSet();
 
-            for (IRecipe<?> recipe : ServerLifecycleHooks.getCurrentServer().getRecipeManager().getRecipes())
+            for (IRecipe<?> recipe : server.getRecipeManager().getRecipes())
             {
                 IRecipeInfoProvider provider = null;
 

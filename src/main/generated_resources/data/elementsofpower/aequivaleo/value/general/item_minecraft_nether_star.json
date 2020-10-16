@@ -10,6 +10,22 @@
   "compounds": [
     {
       "amount": 64.0,
+      "type": "elementsofpower:life"
+    },
+    {
+      "amount": 64.0,
+      "type": "elementsofpower:darkness"
+    },
+    {
+      "amount": 64.0,
+      "type": "elementsofpower:air"
+    },
+    {
+      "amount": 64.0,
+      "type": "elementsofpower:water"
+    },
+    {
+      "amount": 64.0,
       "type": "elementsofpower:earth"
     },
     {
@@ -18,23 +34,7 @@
     },
     {
       "amount": 64.0,
-      "type": "elementsofpower:water"
-    },
-    {
-      "amount": 64.0,
-      "type": "elementsofpower:darkness"
-    },
-    {
-      "amount": 64.0,
-      "type": "elementsofpower:life"
-    },
-    {
-      "amount": 64.0,
       "type": "elementsofpower:death"
-    },
-    {
-      "amount": 64.0,
-      "type": "elementsofpower:air"
     },
     {
       "amount": 64.0,

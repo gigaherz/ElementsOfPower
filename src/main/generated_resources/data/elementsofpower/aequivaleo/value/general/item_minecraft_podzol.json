@@ -9,16 +9,16 @@
   },
   "compounds": [
     {
-      "amount": 3.0,
-      "type": "elementsofpower:earth"
-    },
-    {
       "amount": 1.0,
       "type": "elementsofpower:life"
     },
     {
       "amount": 1.0,
       "type": "elementsofpower:death"
+    },
+    {
+      "amount": 3.0,
+      "type": "elementsofpower:earth"
     }
   ]
 }

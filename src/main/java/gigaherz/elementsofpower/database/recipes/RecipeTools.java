@@ -4,9 +4,11 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.database.ConversionCache;
+import gigaherz.elementsofpower.database.InternalConversionProcess;
 import gigaherz.elementsofpower.database.Utils;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.server.ServerWorld;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,14 +27,14 @@ public class RecipeTools
         recipeEnumerators.add(new RecipeEnumerator.Crafting());
     }
 
-    public static Map<Item, ItemSource> gatherRecipes(ServerWorld world)
+    public static List<IRecipeInfoProvider> getAllRecipes(MinecraftServer server)
     {
-        Processor p = new Processor(world);
+        List<IRecipeInfoProvider> list = Lists.newArrayList();
         for (RecipeEnumerator re : recipeEnumerators)
         {
-            re.enumerate(p::processRecipe);
+            re.enumerate(server, list::add);
         }
-        return p.itemSources;
+        return list;
     }
 
     public static class ItemSource
@@ -85,17 +87,15 @@ public class RecipeTools
         }
     }
 
-    private static class Processor
+    public static class Processor
     {
-        public final ServerWorld world;
         public Map<Item, ItemSource> itemSources = Maps.newHashMap();
 
-        private Processor(ServerWorld world)
+        public Processor()
         {
-            this.world = world;
         }
 
-        private void processRecipe(@Nonnull IRecipeInfoProvider recipe)
+        public void processRecipe(@Nonnull IRecipeInfoProvider recipe)
         {
             ItemStack output = recipe.getRecipeOutput();
 
@@ -111,7 +111,7 @@ public class RecipeTools
                 return;
             }
 
-            if (ConversionCache.get(world).hasEssences(item))
+            if (InternalConversionProcess.SERVER.hasEssences(item))
             {
                 ElementsOfPowerMod.LOGGER.debug("Recipe with output '" + output + "' results in item with explicitly-set values. This recipe will be ignored.");
                 return;

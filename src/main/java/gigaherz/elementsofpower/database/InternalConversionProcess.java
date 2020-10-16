@@ -8,6 +8,7 @@ import com.google.gson.reflect.TypeToken;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.datafixers.util.Either;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
+import gigaherz.elementsofpower.database.recipes.IRecipeInfoProvider;
 import gigaherz.elementsofpower.database.recipes.RecipeTools;
 import gigaherz.elementsofpower.magic.MagicAmounts;
 import gigaherz.elementsofpower.network.SyncEssenceConversions;
@@ -19,7 +20,6 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.item.SpawnEggItem;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IFutureReloadListener;
 import net.minecraft.resources.IResourceManager;
@@ -47,7 +47,9 @@ import java.io.*;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -94,54 +96,72 @@ public class InternalConversionProcess
     {
         if (!SERVER.isReady())
         {
-            recalculateConversions(event.getServer());
+            recalculateConversions(event.getServer(), (ok,msg)->{});
         }
     }
 
-    private static void registerEssencesForRecipes(ServerWorld world)
+    private static void registerEssencesForRecipes(MinecraftServer server, Consumer<Throwable> doneCallback)
     {
-        Map<Item, RecipeTools.ItemSource> itemSources = RecipeTools.gatherRecipes(world);
-
-        for (Map.Entry<Item, RecipeTools.ItemSource> it : itemSources.entrySet())
-        {
-            Item output = it.getKey();
-            RecipeTools.ItemSource inputs = it.getValue();
-
-            float count = inputs.numProduced;
-            if (count < 1)
+        List<IRecipeInfoProvider> recipes = RecipeTools.getAllRecipes(server);
+        (new Thread(() -> {
+            try
             {
-                ElementsOfPowerMod.LOGGER.warn("StackSize is invalid! " + output.toString());
-                continue;
-            }
+                RecipeTools.Processor p = new RecipeTools.Processor();
 
-            if (SERVER.hasEssences(new ItemStack(output)))
-                continue;
-
-            boolean allFound = true;
-            MagicAmounts am = MagicAmounts.EMPTY;
-            for (ItemStack b : inputs.sources)
-            {
-                MagicAmounts m = SERVER.getEssences(b, true);
-
-                if (m.isEmpty())
+                for(IRecipeInfoProvider recipe : recipes)
                 {
-                    allFound = false;
-                    break;
+                    p.processRecipe(recipe);
                 }
 
-                am = am.add(m);
+                server.execute(() -> {
+                    for (Map.Entry<Item, RecipeTools.ItemSource> it : p.itemSources.entrySet())
+                    {
+                        Item output = it.getKey();
+                        RecipeTools.ItemSource inputs = it.getValue();
+
+                        float count = inputs.numProduced;
+                        if (count < 1)
+                        {
+                            ElementsOfPowerMod.LOGGER.warn("StackSize is invalid! " + output.toString());
+                            continue;
+                        }
+
+                        if (SERVER.hasEssences(new ItemStack(output)))
+                            continue;
+
+                        boolean allFound = true;
+                        MagicAmounts am = MagicAmounts.EMPTY;
+                        for (ItemStack b : inputs.sources)
+                        {
+                            MagicAmounts m = SERVER.getEssences(b, true);
+
+                            if (m.isEmpty())
+                            {
+                                allFound = false;
+                                break;
+                            }
+
+                            am = am.add(m);
+                        }
+
+                        if (!allFound)
+                            continue;
+
+                        if (count > 1)
+                        {
+                            am = am.multiply(1.0f / count);
+                        }
+
+                        SERVER.addConversion(output.getItem(), am);
+                    }
+                    doneCallback.accept(null);
+                });
             }
-
-            if (!allFound)
-                continue;
-
-            if (count > 1)
+            catch(Exception e)
             {
-                am = am.multiply(1.0f / count);
+                server.execute(() -> doneCallback.accept(e));
             }
-
-            SERVER.addConversion(output.getItem(), am);
-        }
+        })).start();
     }
 
     private static void loadOverrides()
@@ -212,7 +232,7 @@ public class InternalConversionProcess
         }
     }
 
-    private static void recalculateConversions(MinecraftServer server)
+    private static void recalculateConversions(MinecraftServer server, BiConsumer<Boolean, String> onDone)
     {
         ServerWorld world = server.getWorlds().iterator().next();
         try
@@ -225,12 +245,22 @@ public class InternalConversionProcess
                 return tag == null ? items : tag.getAllElements();
             }, SERVER::addConversion);
             loadOverrides();
-            registerEssencesForRecipes(world);
-            saveConversions(CACHE_PATH.get(), SERVER.getAllConversions());
-            sw.stop();
-            ElementsOfPowerMod.LOGGER.info("Done. Time elapsed: {}", sw);
-            if (ServerLifecycleHooks.getCurrentServer() != null)
-                ElementsOfPowerMod.CHANNEL.send(PacketDistributor.ALL.noArg(), new SyncEssenceConversions());
+            registerEssencesForRecipes(server, throwable -> {
+                if (throwable != null)
+                {
+                    throwable.printStackTrace();
+                    onDone.accept(false, throwable.getMessage());
+                }
+                else
+                {
+                    saveConversions(CACHE_PATH.get(), SERVER.getAllConversions());
+                    sw.stop();
+                    ElementsOfPowerMod.LOGGER.info("Done. Time elapsed: {}", sw);
+                    if (ServerLifecycleHooks.getCurrentServer() != null)
+                        ElementsOfPowerMod.CHANNEL.send(PacketDistributor.ALL.noArg(), new SyncEssenceConversions());
+                    onDone.accept(true, String.format("Done. Time elapsed: %s", sw));
+                }
+            });
         }
         catch (Exception e)
         {
@@ -270,8 +300,12 @@ public class InternalConversionProcess
                         .then(Commands.literal("recalculate")
                                 .requires(cs -> cs.hasPermissionLevel(4)) //permission
                                 .executes(ctx -> {
-                                            recalculateConversions(ctx.getSource().getServer());
-                                            ctx.getSource().sendFeedback(new StringTextComponent("Conversions recalculated."), true);
+                                            recalculateConversions(ctx.getSource().getServer(), (ok, msg) -> {
+                                                if (ok)
+                                                    ctx.getSource().sendFeedback(new StringTextComponent("Finished: " + msg), true);
+                                                else
+                                                    ctx.getSource().sendFeedback(new StringTextComponent("Error calculating: " + msg), true);
+                                            });
                                             return 0;
                                         }
                                 )
@@ -313,7 +347,7 @@ public class InternalConversionProcess
                         }).ifRight(unit -> {
                             if (ServerLifecycleHooks.getCurrentServer() != null)
                             {
-                                recalculateConversions(ServerLifecycleHooks.getCurrentServer());
+                                recalculateConversions(ServerLifecycleHooks.getCurrentServer(), (ok,msg)->{});
                                 SERVER.markReady();
                             }
                         });

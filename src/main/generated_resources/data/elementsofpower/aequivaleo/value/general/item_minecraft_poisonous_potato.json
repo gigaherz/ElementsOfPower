@@ -10,11 +10,11 @@
   "compounds": [
     {
       "amount": 2.0,
-      "type": "elementsofpower:death"
+      "type": "elementsofpower:earth"
     },
     {
       "amount": 2.0,
-      "type": "elementsofpower:earth"
+      "type": "elementsofpower:death"
     }
   ]
 }

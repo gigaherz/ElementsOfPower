@@ -14,11 +14,11 @@
     },
     {
       "amount": 2.0,
-      "type": "elementsofpower:earth"
+      "type": "elementsofpower:death"
     },
     {
       "amount": 2.0,
-      "type": "elementsofpower:death"
+      "type": "elementsofpower:earth"
     }
   ]
 }

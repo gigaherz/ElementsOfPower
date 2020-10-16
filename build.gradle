@@ -40,7 +40,7 @@ repositories {
     mavenLocal()
 }
 
-version = "0.10.15-alpha"
+version = "0.10.16-alpha"
 group = "gigaherz.elementsofpower" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "ElementsOfPower-UNKNOWN"
 

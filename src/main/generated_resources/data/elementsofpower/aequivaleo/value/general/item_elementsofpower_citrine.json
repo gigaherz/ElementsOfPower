@@ -9,12 +9,12 @@
   },
   "compounds": [
     {
-      "amount": 50.0,
-      "type": "elementsofpower:air"
-    },
-    {
       "amount": 100.0,
       "type": "elementsofpower:earth"
+    },
+    {
+      "amount": 50.0,
+      "type": "elementsofpower:air"
     }
   ]
 }
