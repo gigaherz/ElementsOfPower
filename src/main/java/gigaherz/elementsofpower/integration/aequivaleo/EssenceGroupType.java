@@ -28,7 +28,7 @@ public class EssenceGroupType extends ForgeRegistryEntry<ICompoundTypeGroup> imp
     @Override
     public boolean shouldIncompleteRecipeBeProcessed(IEquivalencyRecipe iEquivalencyRecipe)
     {
-        return false;
+        return true;
     }
 
     @Override

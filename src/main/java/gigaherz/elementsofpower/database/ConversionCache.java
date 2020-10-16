@@ -32,7 +32,6 @@ public class ConversionCache implements IConversionCache
     public static void dumpItemsWithoutEssences(World world)
     {
         IConversionCache cache = get(world);
-        MagicAmounts am = cache.getEssences(Items.STRIPPED_CRIMSON_HYPHAE);
         ForgeRegistries.ITEMS.getValues().stream().sorted((a, b) ->
                 String.CASE_INSENSITIVE_ORDER.compare(a.getRegistryName().toString(), b.getRegistryName().toString()))
                 .forEach(item -> {
