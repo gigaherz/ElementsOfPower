@@ -24,10 +24,12 @@ import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IFutureReloadListener;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.tags.ITag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Unit;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -45,12 +47,11 @@ import java.io.*;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class EssenceConversions
+public class InternalConversionProcess
 {
     public static final Logger LOGGER = LogManager.getLogger();
 
@@ -61,27 +62,20 @@ public class EssenceConversions
             .registerTypeAdapter(MagicAmounts.class, new MagicAmounts.Serializer())
             .create();
 
-    public static final EssenceConversions CLIENT = new EssenceConversions();
-    public static final EssenceConversions SERVER = new EssenceConversions();
+    public static final InternalConversionCache CLIENT = new InternalConversionCache();
+    public static final InternalConversionCache SERVER = new InternalConversionCache();
 
-    public static EssenceConversions get(@Nullable World world)
+    public static IConversionCache get(@Nullable World world)
     {
         return (world != null && world.isRemote) ? CLIENT : SERVER;
     }
 
-    private final Map<Item, MagicAmounts> essenceMappings = Maps.newHashMap();
-    private boolean isReady = false;
-
-    public boolean isReady()
-    {
-        return isReady;
-    }
-
     public static void init()
     {
-        MinecraftForge.EVENT_BUS.addListener(EssenceConversions::playerLoggedIn);
-        MinecraftForge.EVENT_BUS.addListener(EssenceConversions::addReloadListeners);
-        MinecraftForge.EVENT_BUS.addListener(EssenceConversions::serverStarted);
+        MinecraftForge.EVENT_BUS.addListener(InternalConversionProcess::playerLoggedIn);
+        MinecraftForge.EVENT_BUS.addListener(InternalConversionProcess::addReloadListeners);
+        MinecraftForge.EVENT_BUS.addListener(InternalConversionProcess::serverStarted);
+        ConversionCache.conversionGetter = InternalConversionProcess::get;
     }
 
     private static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event)
@@ -104,77 +98,9 @@ public class EssenceConversions
         }
     }
 
-    public boolean itemHasEssence(Item item)
+    private static void registerEssencesForRecipes(ServerWorld world)
     {
-        return essenceMappings.containsKey(item);
-    }
-
-    public MagicAmounts getEssences(ItemStack stack, boolean wholeStack)
-    {
-        int count = stack.getCount();
-        if (count > 1)
-        {
-            stack = stack.copy();
-            stack.setCount(1);
-        }
-
-        MagicAmounts m = getEssences(stack.getItem());
-
-        if (count > 1 && wholeStack)
-        {
-            m = m.multiply(count);
-        }
-
-        return m;
-    }
-
-    public MagicAmounts getEssences(Item stack)
-    {
-        return essenceMappings.getOrDefault(stack, MagicAmounts.EMPTY);
-    }
-
-    public void addConversion(Item item, MagicAmounts amounts)
-    {
-        if (item == Items.AIR)
-        {
-            ElementsOfPowerMod.LOGGER.error("Attempted to insert amounts for AIR!");
-            return;
-        }
-
-        if (essenceMappings.containsKey(item))
-        {
-            ElementsOfPowerMod.LOGGER.error("Stack already inserted! " + item.toString());
-            return;
-        }
-
-        essenceMappings.put(item, amounts);
-    }
-
-    public Map<Item, MagicAmounts> getAllConversions()
-    {
-        return Collections.unmodifiableMap(essenceMappings);
-    }
-
-    public void clear()
-    {
-        essenceMappings.clear();
-        isReady = false;
-    }
-
-    private void markReady()
-    {
-        isReady = true;
-    }
-
-    public void receiveFromServer(Map<Item, MagicAmounts> data)
-    {
-        essenceMappings.clear();
-        essenceMappings.putAll(data);
-    }
-
-    private static void registerEssencesForRecipes()
-    {
-        Map<Item, RecipeTools.ItemSource> itemSources = RecipeTools.gatherRecipes();
+        Map<Item, RecipeTools.ItemSource> itemSources = RecipeTools.gatherRecipes(world);
 
         for (Map.Entry<Item, RecipeTools.ItemSource> it : itemSources.entrySet())
         {
@@ -188,7 +114,7 @@ public class EssenceConversions
                 continue;
             }
 
-            if (SERVER.itemHasEssence(output))
+            if (SERVER.hasEssences(new ItemStack(output)))
                 continue;
 
             boolean allFound = true;
@@ -261,7 +187,7 @@ public class EssenceConversions
             if (item != null && item != Items.AIR)
             {
                 MagicAmounts m = e.getValue();
-                EssenceConversions.SERVER.addConversion(item, m);
+                SERVER.addConversion(item, m);
             }
         }
     }
@@ -288,39 +214,28 @@ public class EssenceConversions
 
     private static void recalculateConversions(MinecraftServer server)
     {
+        ServerWorld world = server.getWorlds().iterator().next();
         try
         {
             ElementsOfPowerMod.LOGGER.info("Recalculating essence conversion table...");
             Stopwatch sw = Stopwatch.createStarted();
-            EssenceConversions.SERVER.clear();
-            StockConversions.addStockConversions(server);
-            EssenceConversions.loadOverrides();
-            EssenceConversions.registerEssencesForRecipes();
-            EssenceConversions.saveConversions(CACHE_PATH.get(), EssenceConversions.SERVER.getAllConversions());
-            if ("TRUE".equals(System.getProperty("elementsofpower.dumpItemsWithoutEssences")))
-                dumpItemsWithoutEssences();
+            SERVER.clear();
+            StockConversions.addStockConversions((rl, items) -> {
+                ITag<Item> tag = server.func_244266_aF().getItemTags().get(rl);
+                return tag == null ? items : tag.getAllElements();
+            }, SERVER::addConversion);
+            loadOverrides();
+            registerEssencesForRecipes(world);
+            saveConversions(CACHE_PATH.get(), SERVER.getAllConversions());
             sw.stop();
             ElementsOfPowerMod.LOGGER.info("Done. Time elapsed: {}", sw);
             if (ServerLifecycleHooks.getCurrentServer() != null)
                 ElementsOfPowerMod.CHANNEL.send(PacketDistributor.ALL.noArg(), new SyncEssenceConversions());
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             ElementsOfPowerMod.LOGGER.error("Error. Essence conversion calculations failed", e);
         }
-    }
-
-    private static void dumpItemsWithoutEssences()
-    {
-        ForgeRegistries.ITEMS.getValues().stream().sorted((a,b) ->
-                    String.CASE_INSENSITIVE_ORDER.compare(a.getRegistryName().toString(), b.getRegistryName().toString()))
-                .forEach(item -> {
-            if (!SERVER.itemHasEssence(item))
-            {
-                if (!(item instanceof SpawnEggItem))
-                    LOGGER.warn("Item is not assigned any essences: {}", item.getRegistryName());
-            }
-        });
     }
 
     private static void invalidateCache()
@@ -339,25 +254,27 @@ public class EssenceConversions
         }
     }
 
-    public static void registerSubcommands(LiteralArgumentBuilder<CommandSource> argumentBuilder)
+    public static LiteralArgumentBuilder<CommandSource> registerSubcommands(LiteralArgumentBuilder<CommandSource> argumentBuilder)
     {
-        argumentBuilder
-                .then(Commands.literal("invalidate")
-                        .requires(cs -> cs.hasPermissionLevel(4)) //permission
-                        .executes(ctx -> {
-                                    invalidateCache();
-                                    ctx.getSource().sendFeedback(new StringTextComponent("Cache invalidated. Will recalculate conversions on next restart"), true);
-                                    return 0;
-                                }
+        return argumentBuilder
+                .then(Commands.literal("cache")
+                        .then(Commands.literal("invalidate")
+                                .requires(cs -> cs.hasPermissionLevel(4)) //permission
+                                .executes(ctx -> {
+                                            invalidateCache();
+                                            ctx.getSource().sendFeedback(new StringTextComponent("Cache invalidated. Will recalculate conversions on next restart"), true);
+                                            return 0;
+                                        }
+                                )
                         )
-                )
-                .then(Commands.literal("recalculate")
-                        .requires(cs -> cs.hasPermissionLevel(4)) //permission
-                        .executes(ctx -> {
-                                    recalculateConversions(ctx.getSource().getServer());
-                                    ctx.getSource().sendFeedback(new StringTextComponent("Conversions recalculated."), true);
-                                    return 0;
-                                }
+                        .then(Commands.literal("recalculate")
+                                .requires(cs -> cs.hasPermissionLevel(4)) //permission
+                                .executes(ctx -> {
+                                            recalculateConversions(ctx.getSource().getServer());
+                                            ctx.getSource().sendFeedback(new StringTextComponent("Conversions recalculated."), true);
+                                            return 0;
+                                        }
+                                )
                         )
                 );
     }
@@ -407,5 +324,34 @@ public class EssenceConversions
                     }
                 }
         );
+    }
+
+    public static class InternalConversionCache extends ConversionCache
+    {
+        private boolean isReady = false;
+
+        public boolean isReady()
+        {
+            return isReady;
+        }
+
+        @Override
+        public void clear()
+        {
+            super.clear();
+            isReady = false;
+        }
+
+        public void markReady()
+        {
+            isReady = true;
+        }
+
+        public void receiveFromServer(Map<Item, MagicAmounts> data)
+        {
+            clear();
+            putAll(data);
+            markReady();
+        }
     }
 }

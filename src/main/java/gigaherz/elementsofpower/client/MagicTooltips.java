@@ -2,8 +2,9 @@ package gigaherz.elementsofpower.client;
 
 import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.capabilities.MagicContainerCapability;
-import gigaherz.elementsofpower.database.EssenceConversions;
+import gigaherz.elementsofpower.database.ConversionCache;
 import gigaherz.elementsofpower.magic.MagicAmounts;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -12,6 +13,7 @@ import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -46,7 +48,8 @@ public class MagicTooltips
             toolTip.add(1, new TranslationTextComponent("text.elementsofpower.gemstone.use").mergeStyle(TextFormatting.DARK_GRAY, TextFormatting.ITALIC));
         }
 
-        MagicAmounts amounts = EssenceConversions.CLIENT.getEssences(stack, false);
+        World world = Minecraft.getInstance().world;
+        MagicAmounts amounts = world == null ? MagicAmounts.EMPTY : ConversionCache.get(world).getEssences(stack, false);
         if (amounts.isEmpty())
             return;
 

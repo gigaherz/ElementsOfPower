@@ -2,7 +2,7 @@ package gigaherz.elementsofpower.essentializer;
 
 import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.capabilities.MagicContainerCapability;
-import gigaherz.elementsofpower.database.EssenceConversions;
+import gigaherz.elementsofpower.database.ConversionCache;
 import gigaherz.elementsofpower.magic.MagicAmounts;
 import gigaherz.elementsofpower.essentializer.gui.IMagicAmountHolder;
 import gigaherz.elementsofpower.network.UpdateEssentializerTileEntity;
@@ -61,9 +61,8 @@ public class EssentializerTileEntity
             switch (index)
             {
                 case 0:
-                    return EssenceConversions.get(world).itemHasEssence(stack.getItem());
+                    return ConversionCache.get(world).hasEssences(stack);
                 case 1:
-                    return MagicContainerCapability.hasContainer(stack);
                 case 2:
                     return MagicContainerCapability.hasContainer(stack);
             }
@@ -258,7 +257,7 @@ public class EssentializerTileEntity
             return false;
         }
 
-        MagicAmounts contained = EssenceConversions.get(world).getEssences(input, false);
+        MagicAmounts contained = ConversionCache.get(world).getEssences(input, false);
 
         if (contained.isEmpty())
             return false;

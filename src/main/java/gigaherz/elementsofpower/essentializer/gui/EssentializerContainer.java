@@ -2,7 +2,7 @@ package gigaherz.elementsofpower.essentializer.gui;
 
 import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.capabilities.MagicContainerCapability;
-import gigaherz.elementsofpower.database.EssenceConversions;
+import gigaherz.elementsofpower.database.ConversionCache;
 import gigaherz.elementsofpower.magic.MagicAmounts;
 import gigaherz.elementsofpower.essentializer.EssentializerTileEntity;
 import gigaherz.elementsofpower.network.UpdateEssentializerAmounts;
@@ -14,6 +14,7 @@ import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.inventory.container.IContainerListener;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
@@ -27,6 +28,7 @@ public class EssentializerContainer
     @ObjectHolder("elementsofpower:essentializer")
     public static ContainerType<EssentializerContainer> TYPE;
 
+    protected final World world;
     protected IMagicAmountHolder magicHolder;
     private MagicAmounts prevContained = MagicAmounts.EMPTY;
     private MagicAmounts prevRemaining = MagicAmounts.EMPTY;
@@ -73,9 +75,10 @@ public class EssentializerContainer
     {
         super(TYPE, id);
 
+        this.world = playerInventory.player.world;
         this.magicHolder = magicHolder;
 
-        addSlot(new MagicSourceSlot(EssenceConversions.get(playerInventory.player.world), inv, 0, 80, 44));
+        addSlot(new MagicSourceSlot(ConversionCache.get(playerInventory.player.world), inv, 0, 80, 44));
         addSlot(new MagicContainerInputSlot(inv, 1, 8, 56));
         addSlot(new MagicContainerOutputSlot(inv, 2, 152, 56));
 
@@ -162,7 +165,7 @@ public class EssentializerContainer
         if (slotIndex >= 3)
         {
             boolean itemIsContainer = MagicContainerCapability.hasContainer(stack);
-            boolean itemHasEssence = EssenceConversions.get(player.world).itemHasEssence(stack.getItem());
+            boolean itemHasEssence = ConversionCache.get(player.world).hasEssences(stack);
 
             if (itemIsContainer)
             {

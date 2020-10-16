@@ -3,10 +3,11 @@ package gigaherz.elementsofpower.database.recipes;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
-import gigaherz.elementsofpower.database.EssenceConversions;
+import gigaherz.elementsofpower.database.ConversionCache;
 import gigaherz.elementsofpower.database.Utils;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.server.ServerWorld;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -24,9 +25,9 @@ public class RecipeTools
         recipeEnumerators.add(new RecipeEnumerator.Crafting());
     }
 
-    public static Map<Item, ItemSource> gatherRecipes()
+    public static Map<Item, ItemSource> gatherRecipes(ServerWorld world)
     {
-        Processor p = new Processor();
+        Processor p = new Processor(world);
         for (RecipeEnumerator re : recipeEnumerators)
         {
             re.enumerate(p::processRecipe);
@@ -86,8 +87,13 @@ public class RecipeTools
 
     private static class Processor
     {
-
+        public final ServerWorld world;
         public Map<Item, ItemSource> itemSources = Maps.newHashMap();
+
+        private Processor(ServerWorld world)
+        {
+            this.world = world;
+        }
 
         private void processRecipe(@Nonnull IRecipeInfoProvider recipe)
         {
@@ -105,7 +111,7 @@ public class RecipeTools
                 return;
             }
 
-            if (EssenceConversions.SERVER.itemHasEssence(item))
+            if (ConversionCache.get(world).hasEssences(item))
             {
                 ElementsOfPowerMod.LOGGER.debug("Recipe with output '" + output + "' results in item with explicitly-set values. This recipe will be ignored.");
                 return;

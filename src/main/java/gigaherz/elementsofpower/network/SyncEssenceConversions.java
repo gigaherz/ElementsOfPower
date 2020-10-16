@@ -1,7 +1,7 @@
 package gigaherz.elementsofpower.network;
 
 import com.google.common.collect.Maps;
-import gigaherz.elementsofpower.database.EssenceConversions;
+import gigaherz.elementsofpower.database.InternalConversionProcess;
 import gigaherz.elementsofpower.magic.MagicAmounts;
 import net.minecraft.item.Item;
 import net.minecraft.network.PacketBuffer;
@@ -17,7 +17,7 @@ public class SyncEssenceConversions
 
     public SyncEssenceConversions()
     {
-        data.putAll(EssenceConversions.SERVER.getAllConversions());
+        data.putAll(InternalConversionProcess.SERVER.getAllConversions());
     }
 
     public SyncEssenceConversions(PacketBuffer buffer)
@@ -44,7 +44,7 @@ public class SyncEssenceConversions
     public boolean handle(Supplier<NetworkEvent.Context> ctx)
     {
         ctx.get().enqueueWork(() -> {
-            EssenceConversions.CLIENT.receiveFromServer(this.data);
+            InternalConversionProcess.CLIENT.receiveFromServer(this.data);
         });
         return true;
     }

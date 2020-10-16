@@ -1,15 +1,15 @@
 package gigaherz.elementsofpower.essentializer.gui;
 
-import gigaherz.elementsofpower.database.EssenceConversions;
+import gigaherz.elementsofpower.database.IConversionCache;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
 public class MagicSourceSlot extends SlotItemHandler
 {
-    private final EssenceConversions magicDatabase;
+    private final IConversionCache magicDatabase;
 
-    public MagicSourceSlot(EssenceConversions magicDatabase, IItemHandler inventory, int par2, int par3, int par4)
+    public MagicSourceSlot(IConversionCache magicDatabase, IItemHandler inventory, int par2, int par3, int par4)
     {
         super(inventory, par2, par3, par4);
         this.magicDatabase = magicDatabase;
@@ -18,7 +18,7 @@ public class MagicSourceSlot extends SlotItemHandler
     @Override
     public boolean isItemValid(ItemStack stack)
     {
-        return stack == null || magicDatabase.itemHasEssence(stack.getItem());
+        return stack == null || magicDatabase.hasEssences(stack);
     }
 
     @Override

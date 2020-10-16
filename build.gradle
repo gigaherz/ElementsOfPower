@@ -105,6 +105,13 @@ minecraft {
     }
 }
 
+repositories {
+    maven {
+        name 'LDTTeam for Aequivaleo'
+        url 'https://ldtteam.jfrog.io/ldtteam/modding'
+    }
+}
+
 dependencies {
     minecraft 'net.minecraftforge:forge:1.16.3-34.1.22'
 
@@ -113,6 +120,11 @@ dependencies {
 
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.16.2-4.0.0.1")
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.16.2-4.0.0.1:api")
+
+    compileOnly fg.deobf("com.ldtteam:aequivaleo:0.0.106-ALPHA:api")
+    compileOnly fg.deobf("com.ldtteam:aequivaleo:0.0.106-ALPHA:vanilla-api")
+    runtimeOnly fg.deobf("com.ldtteam:aequivaleo:0.0.106-ALPHA:universal")
+
 }
 
 jar {
