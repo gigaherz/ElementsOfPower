@@ -32,13 +32,13 @@ public class EssenceGroupType extends ForgeRegistryEntry<ICompoundTypeGroup> imp
     }
 
     @Override
-    public boolean canContributeToRecipeAsInput(CompoundInstance compoundInstance, IEquivalencyRecipe iEquivalencyRecipe)
+    public boolean canContributeToRecipeAsInput(IEquivalencyRecipe iEquivalencyRecipe, CompoundInstance compoundInstance)
     {
         return true;
     }
 
     @Override
-    public boolean canContributeToRecipeAsOutput(ICompoundContainer<?> iCompoundContainer, IEquivalencyRecipe iEquivalencyRecipe, CompoundInstance compoundInstance)
+    public boolean canContributeToRecipeAsOutput(IEquivalencyRecipe iEquivalencyRecipe, CompoundInstance compoundInstance)
     {
         return true;
     }

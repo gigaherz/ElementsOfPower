@@ -2,13 +2,11 @@ package gigaherz.elementsofpower.database;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.datafixers.util.Either;
-import com.mojang.datafixers.util.Pair;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.database.graph.ItemGraph;
 import gigaherz.elementsofpower.database.recipes.IRecipeInfoProvider;
@@ -32,7 +30,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Unit;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -52,7 +49,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -124,7 +120,7 @@ public class InternalConversionProcess
                         providers.compute(t.getItem(), (i,v) -> (v != null ? v : 0)+t.getCount());
                     }
 
-                    graph.addEdgeBundle(consumer, scale, providers.entrySet());
+                    graph.addEdgeBundle(consumer, scale, providers.entrySet(), p);
                 }
 
                 Map<Item, MagicAmounts> existing = SERVER.getAllConversions();
@@ -135,7 +131,7 @@ public class InternalConversionProcess
                         return old.getTotalMagic() > cur.getTotalMagic();
                     });
                 }
-                List<ItemGraph.Neuron<MagicAmounts>> l = graph.getValues().filter(v -> v.fillData != null).collect(Collectors.toList());
+                //List<ItemGraph.Node<MagicAmounts>> l = graph.getValues().filter(v -> v.fillData != null).collect(Collectors.toList());
                 graph.finishFill(SERVER::addConversion);
 
                 doneCallback.accept(null);
@@ -392,7 +388,7 @@ public class InternalConversionProcess
                                         }
                                 )
                         )
-                        .then(Commands.literal("recalculate_new")
+                        /*.then(Commands.literal("recalculate_new")
                                 .requires(cs -> cs.hasPermissionLevel(4)) //permission
                                 .executes(ctx -> {
                                             recalculateConversionsNew(ctx.getSource().getServer(), (ok, msg) -> {
@@ -404,7 +400,7 @@ public class InternalConversionProcess
                                             return 0;
                                         }
                                 )
-                        )
+                        )*/
                 );
     }
 

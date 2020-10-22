@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower.database.graph;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import net.minecraft.item.Item;
@@ -8,46 +9,60 @@ import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ItemGraph<T>
 {
-    private final Map<Item, Neuron<T>> nodes = Maps.newHashMap();
+    private final Map<Item, ItemNode<T>> itemNodes = Maps.newHashMap();
+    private final List<RecipeNode<T>> recipeNodes = Lists.newArrayList();
 
-    public Stream<Map.Entry<Item, Neuron<T>>> getEntries()
+    public Stream<ItemNode<T>> getItemNodes()
     {
-        return nodes.entrySet().stream();
+        return itemNodes.values().stream();
     }
 
-    public Stream<Item> getKeys()
+    public Stream<RecipeNode<T>> getRecipeNodes()
     {
-        return nodes.keySet().stream();
+        return recipeNodes.stream();
     }
 
-    public Stream<Neuron<T>> getValues()
+    public void addEdgeBundle(Item consumer, double scale, Iterable<Map.Entry<Item, Double>> to, Object recipe)
     {
-        return nodes.values().stream();
-    }
-
-    public void addEdgeBundle(Item consumer, double scale, Iterable<Map.Entry<Item, Double>> to)
-    {
-        Neuron<T> consumerNode = getOrCreateNode(consumer);
-        Axon<T> consumerEdge = new Axon<>(consumerNode);
-        consumerNode.providers.add(consumerEdge);
+        ItemNode<T> consumerNode = getOrCreateItemNode(consumer);
+        RecipeNode<T> recipeNode = getOrCreateRecipeNode(recipe);
+        attachConsumer(consumerNode, recipeNode);
         for(Map.Entry<Item, Double> cs : to)
         {
-            Neuron<T> providerNode = getOrCreateNode(cs.getKey());
+            ItemNode<T> providerNode = getOrCreateItemNode(cs.getKey());
             double edgeWeight = cs.getValue()/scale;
-            Terminal<T> target = new Terminal<>(consumerEdge, providerNode, edgeWeight);
-            consumerEdge.providers.add(target);
-            providerNode.consumers.add(target);
+            attachProvider(providerNode, recipeNode, edgeWeight);
         }
     }
 
-    private Neuron<T> getOrCreateNode(Item from)
+    private void attachConsumer(ItemNode<T> consumerNode, RecipeNode<T> recipeNode)
     {
-        return nodes.computeIfAbsent(from, Neuron::new);
+        ConsumerEdge<T> consumerEdge = new ConsumerEdge<>(consumerNode, recipeNode);
+        consumerNode.providers.add(consumerEdge);
+        recipeNode.consumers.add(consumerEdge);
+    }
+
+    private void attachProvider(ItemNode<T> providerNode, RecipeNode<T> recipeNode, double edgeWeight)
+    {
+        ProviderEdge<T> consumerEdge = new ProviderEdge<>(recipeNode, providerNode, edgeWeight);
+        recipeNode.providers.add(consumerEdge);
+        providerNode.consumers.add(consumerEdge);
+    }
+
+    private ItemNode<T> getOrCreateItemNode(Item from)
+    {
+        return itemNodes.computeIfAbsent(from, ItemNode::new);
+    }
+
+    private RecipeNode<T> getOrCreateRecipeNode(Object from)
+    {
+        RecipeNode<T> node = new RecipeNode<>(from);
+        recipeNodes.add(node);
+        return node;
     }
 
     public interface ScaleFunction<T>
@@ -57,131 +72,57 @@ public class ItemGraph<T>
 
     public void floodFill(Item key, T fillWith, ScaleFunction<T> multiply, BiFunction<T, T, T> adder, BiPredicate<T, T> replace)
     {
-        Neuron<T> start = nodes.get(key);
+        ItemNode<T> start = itemNodes.get(key);
         if (start == null)
             return;
 
-        Queue<Neuron<T>> dirty = new ArrayDeque<>();
+        Queue<ItemNode<T>> dirtyItems = new ArrayDeque<>();
+        Queue<RecipeNode<T>> dirtyRecipes = new ArrayDeque<>();
 
-        start.providedData = new Signal<>(start, fillWith);
-        dirty.add(start);
+        start.providedValue = new ItemValue<>(start, fillWith);
+        dirtyItems.add(start);
 
-        while(dirty.size() > 0)
+        while(dirtyItems.size() > 0 || dirtyRecipes.size() > 0)
         {
-            Neuron<T> current = dirty.remove();
-
-            boolean isDirty = false;
-
-            if (current.providedData != null && (current.fillData == null || replace.test(current.fillData.value, current.providedData.value)))
+            while(dirtyRecipes.size() > 0)
             {
-                current.fillData = current.providedData;
-                dirty.add(current);
-                isDirty = true;
+                RecipeNode<T> current = dirtyRecipes.remove();
+                // if recipe is satisfied:
+                //     mark item nodes as dirty
             }
 
-            // FIXME: This isn't enough. Paths will need to get calculated after the fact, bottom-up, once all data has been flood-filled.
-            for(Axon<T> axon : current.providers)
+            while(dirtyItems.size() > 0)
             {
-                if (axon.computedFillData == null)
-                {
-                    T accV = null;
-                    boolean allFound = true;
-                    for(Terminal<T> provider : axon.providers)
-                    {
-                        if (axon.fillData == null)
-                        {
-                            allFound = false;
-                            break;
-                        }
+                ItemNode<T> current = dirtyItems.remove();
 
-                        Signal<T> fillData1 = axon.fillData.get(provider.provider);
-                        if (fillData1 == null || fillData1.containsInParents(current))
-                        {
-                            allFound = false;
-                            break;
-                        }
-
-                        if (accV != null)
-                            accV = adder.apply(accV, multiply.scale(fillData1.value, provider.edgeWeight));
-                        else
-                            accV = fillData1.value;
-                    }
-
-                    if(allFound && accV != null && (axon.computedFillData == null || replace.test(axon.computedFillData.value, accV)))
-                    {
-                        axon.computedFillData = new Signal<>(current, accV, axon.fillData.values());
-                        if (!isDirty) dirty.add(current);
-                        isDirty = true;
-                    }
-                }
-
-                if (axon.computedFillData != null)
-                {
-                    Signal<T> axonFillData = axon.computedFillData;
-
-                    if (current.fillData == null || replace.test(current.fillData.value, axonFillData.value))
-                    {
-                        current.fillData = new Signal<>(current, axonFillData.value, axonFillData);
-                        if (!isDirty) dirty.add(current);
-                        isDirty = true;
-                    }
-                }
-            }
-
-            if (current.fillData != null && isDirty)
-            {
-                for (Terminal<T> terminal : current.consumers)
-                {
-                    Axon<T> axon = terminal.owner;
-                    Neuron<T> consumer = axon.owner;
-                    Signal<T> fillData2 = consumer.fillData;
-
-                    if (fillData2 != null && fillData2.contains(current))
-                        continue;
-
-                    T value = multiply.scale(current.fillData.value, terminal.edgeWeight);
-
-                    Signal<T> fillDataSource = axon.fillData == null ? null : axon.fillData.get(current);
-                    if (fillDataSource == null || replace.test(fillDataSource.value, value))
-                    {
-                        if (axon.fillData == null)
-                            axon.fillData = Maps.newHashMap();
-                        axon.fillData.put(current, new Signal<>(consumer, value, current.fillData));
-                        axon.computedFillData = null;
-                        dirty.add(consumer);
-                    }
-                }
             }
         }
     }
 
     public void finishFill(BiConsumer<Item, T> consumer)
     {
-        nodes.values().forEach(value -> {
-            if (value.fillData != null)
+        itemNodes.values().forEach(value -> {
+            // todo: return calculated values
+            if (value.providedValue != null)
             {
-                consumer.accept(value.owner, value.fillData.value);
+                consumer.accept(value.owner, value.providedValue.value);
             }
-            value.providedData = null;
-            value.fillData = null;
-            for(Axon<T> axon : value.providers)
-            {
-                axon.fillData = null;
-                axon.computedFillData = null;
-            }
+            value.providedValue = null;
+        });
+        recipeNodes.forEach(value -> {
+            value.providedValue = null;
         });
     }
 
-    public static class Neuron<T>
+    public static class ItemNode<T>
     {
         public final Item owner;
-        public final Set<Axon<T>> providers = Sets.newHashSet();
-        public final Set<Terminal<T>> consumers = Sets.newHashSet();
+        public final Set<ConsumerEdge<T>> providers = Sets.newHashSet();
+        public final Set<ProviderEdge<T>> consumers = Sets.newHashSet();
 
-        public Signal<T> providedData;
-        public Signal<T> fillData;
+        public ItemValue<T> providedValue;
 
-        private Neuron(Item owner)
+        public ItemNode(Item owner)
         {
             this.owner = owner;
         }
@@ -189,19 +130,19 @@ public class ItemGraph<T>
         @Override
         public String toString()
         {
-            return String.format("{%s}", owner);
+            return String.format("{Item: %s}", owner);
         }
     }
 
-    public static class Axon<T>
+    public static class RecipeNode<T>
     {
-        public final Neuron<T> owner;
-        public final Set<Terminal<T>> providers = Sets.newHashSet();
+        public final Object owner;
+        public final Set<ConsumerEdge<T>> consumers = Sets.newHashSet();
+        public final Set<ProviderEdge<T>> providers = Sets.newHashSet();
 
-        public Map<Neuron<T>,Signal<T>> fillData;
-        public Signal<T> computedFillData = null;
+        public RecipeValue<T> providedValue;
 
-        private Axon(Neuron<T> owner)
+        public RecipeNode(Object owner)
         {
             this.owner = owner;
         }
@@ -209,19 +150,37 @@ public class ItemGraph<T>
         @Override
         public String toString()
         {
-            return String.format("{Edge: %s -> %s}", owner, providers.stream().map(t -> t.provider.toString()).collect(Collectors.joining(",")));
+            return String.format("{Recipe: %s}", owner);
         }
     }
 
-    public static class Terminal<T>
+    public static class ConsumerEdge<T>
     {
-        public final Axon<T> owner;
-        public final Neuron<T> provider;
+        public final ItemNode<T> consumer;
+        public final RecipeNode<T> provider;
+
+        public ConsumerEdge(ItemNode<T> consumer, RecipeNode<T> provider)
+        {
+            this.consumer = consumer;
+            this.provider = provider;
+        }
+
+        @Override
+        public String toString()
+        {
+            return String.format("{Edge: %s <- %s}", consumer, provider);
+        }
+    }
+
+    public static class ProviderEdge<T>
+    {
+        public final RecipeNode<T> consumer;
+        public final ItemNode<T> provider;
         public final double edgeWeight;
 
-        private Terminal(Axon<T> owner, Neuron<T> provider, double edgeWeight)
+        public ProviderEdge(RecipeNode<T> consumer, ItemNode<T> provider, double edgeWeight)
         {
-            this.owner = owner;
+            this.consumer = consumer;
             this.provider = provider;
             this.edgeWeight = edgeWeight;
         }
@@ -229,50 +188,27 @@ public class ItemGraph<T>
         @Override
         public String toString()
         {
-            return String.format("{Edge: to %s weight %s from %s}", edgeWeight, provider, owner);
+            return String.format("{Edge: %s <- %s}", consumer, provider);
         }
     }
 
-    public static class Signal<T>
+    public static class ItemValue<T>
     {
-        public final Neuron<T> owner;
-        public final Set<Signal<T>> via = Sets.newHashSet();
+        public final ItemNode<T> owner;
+        public final Set<RecipeValue<T>> via = Sets.newHashSet();
         public T value;
 
-        public Signal(Neuron<T> owner, T value)
+        public ItemValue(ItemNode<T> owner, T value)
         {
             this.owner = owner;
             this.value = value;
         }
 
-        public Signal(Neuron<T> owner, T value, Signal<T> via)
-        {
-            this(owner,value);
-            this.via.add(Objects.requireNonNull(via));
-        }
-
-        public Signal(Neuron<T> owner, T value, Collection<Signal<T>> signals)
-        {
-            this(owner,value);
-            signals.forEach(Objects::requireNonNull);
-            this.via.addAll(signals);
-        }
-
-        public boolean contains(Neuron<T> node)
+        public boolean contains(ItemNode<T> node)
         {
             if (owner == node)
                 return true;
-            for(Signal<T> v : via)
-            {
-                if (v.contains(node))
-                    return true;
-            }
-            return false;
-        }
-
-        public boolean containsInParents(Neuron<T> node)
-        {
-            for(Signal<T> v : via)
+            for(RecipeValue<T> v : via)
             {
                 if (v.contains(node))
                     return true;
@@ -283,7 +219,36 @@ public class ItemGraph<T>
         @Override
         public String toString()
         {
-            return String.format("{Fill: %s as %s via %s}", owner, value, via);
+            return String.format("{Value: %s = %s via %s}", owner, value, via);
+        }
+    }
+
+    public static class RecipeValue<T>
+    {
+        public final RecipeNode<T> owner;
+        public final Set<ItemValue<T>> via = Sets.newHashSet();
+        public T value;
+
+        public RecipeValue(RecipeNode<T> owner, T value)
+        {
+            this.owner = owner;
+            this.value = value;
+        }
+
+        public boolean contains(ItemNode<T> node)
+        {
+            for(ItemValue<T> v : via)
+            {
+                if (v.contains(node))
+                    return true;
+            }
+            return false;
+        }
+
+        @Override
+        public String toString()
+        {
+            return String.format("{Value: %s = %s via %s}", owner, value, via);
         }
     }
 }
