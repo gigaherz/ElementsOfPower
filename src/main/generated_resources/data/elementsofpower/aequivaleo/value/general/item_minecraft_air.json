@@ -1,12 +1,14 @@
 {
   "mode": "ADDITIVE",
-  "target": {
-    "type": "aequivaleo:item",
-    "data": {
-      "count": 1.0,
-      "item": "minecraft:air"
+  "targets": [
+    {
+      "type": "aequivaleo:item",
+      "data": {
+        "count": 1.0,
+        "item": "minecraft:air"
+      }
     }
-  },
+  ],
   "compounds": [
     {
       "amount": 19.0,

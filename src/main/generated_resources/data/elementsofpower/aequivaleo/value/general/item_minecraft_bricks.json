@@ -1,20 +1,22 @@
 {
   "mode": "ADDITIVE",
-  "target": {
-    "type": "aequivaleo:item",
-    "data": {
-      "count": 1.0,
-      "item": "minecraft:bricks"
+  "targets": [
+    {
+      "type": "aequivaleo:item",
+      "data": {
+        "count": 1.0,
+        "item": "minecraft:bricks"
+      }
     }
-  },
+  ],
   "compounds": [
     {
       "amount": 4.0,
-      "type": "elementsofpower:fire"
+      "type": "elementsofpower:earth"
     },
     {
       "amount": 4.0,
-      "type": "elementsofpower:earth"
+      "type": "elementsofpower:fire"
     }
   ]
 }

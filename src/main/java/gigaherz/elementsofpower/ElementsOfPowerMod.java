@@ -1,6 +1,7 @@
 package gigaherz.elementsofpower;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.tree.LiteralCommandNode;
 import gigaherz.elementsofpower.analyzer.AnalyzerItem;
 import gigaherz.elementsofpower.analyzer.gui.AnalyzerContainer;
 import gigaherz.elementsofpower.analyzer.gui.AnalyzerScreen;
@@ -464,7 +465,7 @@ public class ElementsOfPowerMod
 
     public void registerCommands(RegisterCommandsEvent event)
     {
-        LiteralArgumentBuilder<CommandSource> s = LiteralArgumentBuilder.<CommandSource>literal("elementsofpower")
+        LiteralArgumentBuilder<CommandSource> cmd = Commands.literal("elementsofpower")
                 .then(Commands.literal("dumpMissingItems")
                         .requires(cs -> cs.hasPermissionLevel(4)) //permission
                         .executes(ctx -> {
@@ -473,12 +474,21 @@ public class ElementsOfPowerMod
                                     return 0;
                                 }
                         )
+                )
+                .then(Commands.literal("dumpEssences")
+                        .requires(cs -> cs.hasPermissionLevel(4)) //permission
+                        .executes(ctx -> {
+                                    ConversionCache.dumpEssences(ctx.getSource().getWorld());
+                                    ctx.getSource().sendFeedback(new StringTextComponent("Missing essences list dumped to disk."), true);
+                                    return 0;
+                                }
+                        )
                 );
         if (isInternalRecipeScannerEnabled())
         {
-            s = InternalConversionProcess.registerSubcommands(s);
+            cmd = InternalConversionProcess.registerSubcommands(cmd);
         }
-        event.getDispatcher().register(s);
+        event.getDispatcher().register(cmd);
     }
 
     private boolean isInternalRecipeScannerEnabled()

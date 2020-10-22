@@ -2,12 +2,15 @@ package gigaherz.elementsofpower.database;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.datafixers.util.Either;
+import com.mojang.datafixers.util.Pair;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
+import gigaherz.elementsofpower.database.graph.ItemGraph;
 import gigaherz.elementsofpower.database.recipes.IRecipeInfoProvider;
 import gigaherz.elementsofpower.database.recipes.RecipeTools;
 import gigaherz.elementsofpower.magic.MagicAmounts;
@@ -49,9 +52,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class InternalConversionProcess
 {
@@ -100,9 +105,52 @@ public class InternalConversionProcess
         }
     }
 
+    private static void registerEssencesForRecipesNew(MinecraftServer server, Consumer<Throwable> doneCallback)
+    {
+        List<IRecipeInfoProvider> recipes = RecipeTools.getAllRecipes(server);
+        (new Thread(() -> {
+            try
+            {
+                ItemGraph<MagicAmounts> graph = new ItemGraph<>();
+                for (IRecipeInfoProvider p : recipes)
+                {
+                    ItemStack recipeOutput = p.getRecipeOutput();
+                    Item consumer = recipeOutput.getItem();
+                    double scale = recipeOutput.getCount();
+
+                    Map<Item, Double> providers = Maps.newHashMap();
+                    for (ItemStack t : p.getRecipeInputs())
+                    {
+                        providers.compute(t.getItem(), (i,v) -> (v != null ? v : 0)+t.getCount());
+                    }
+
+                    graph.addEdgeBundle(consumer, scale, providers.entrySet());
+                }
+
+                Map<Item, MagicAmounts> existing = SERVER.getAllConversions();
+
+                for(Map.Entry<Item, MagicAmounts> entry : existing.entrySet())
+                {
+                    graph.floodFill(entry.getKey(), entry.getValue(), MagicAmounts::multiply, MagicAmounts::add, (old, cur) -> {
+                        return old.getTotalMagic() > cur.getTotalMagic();
+                    });
+                }
+                List<ItemGraph.Neuron<MagicAmounts>> l = graph.getValues().filter(v -> v.fillData != null).collect(Collectors.toList());
+                graph.finishFill(SERVER::addConversion);
+
+                doneCallback.accept(null);
+            }
+            catch(Exception e)
+            {
+                server.execute(() -> doneCallback.accept(e));
+            }
+        })).start();
+    }
+
     private static void registerEssencesForRecipes(MinecraftServer server, Consumer<Throwable> doneCallback)
     {
         List<IRecipeInfoProvider> recipes = RecipeTools.getAllRecipes(server);
+
         (new Thread(() -> {
             try
             {
@@ -232,9 +280,43 @@ public class InternalConversionProcess
         }
     }
 
+    private static void recalculateConversionsNew(MinecraftServer server, BiConsumer<Boolean, String> onDone)
+    {
+        try
+        {
+            ElementsOfPowerMod.LOGGER.info("Recalculating essence conversion table...");
+            Stopwatch sw = Stopwatch.createStarted();
+            SERVER.clear();
+            StockConversions.addStockConversions((rl, items) -> {
+                ITag<Item> tag = server.func_244266_aF().getItemTags().get(rl);
+                return tag == null ? items : tag.getAllElements();
+            }, SERVER::addConversion);
+            loadOverrides();
+            registerEssencesForRecipesNew(server, throwable -> {
+                if (throwable != null)
+                {
+                    throwable.printStackTrace();
+                    onDone.accept(false, throwable.getMessage());
+                }
+                else
+                {
+                    //saveConversions(CACHE_PATH.get(), SERVER.getAllConversions());
+                    sw.stop();
+                    ElementsOfPowerMod.LOGGER.info("Done. Time elapsed: {}", sw);
+                    if (ServerLifecycleHooks.getCurrentServer() != null)
+                        ElementsOfPowerMod.CHANNEL.send(PacketDistributor.ALL.noArg(), new SyncEssenceConversions());
+                    onDone.accept(true, String.format("Done. Time elapsed: %s", sw));
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            ElementsOfPowerMod.LOGGER.error("Error. Essence conversion calculations failed", e);
+        }
+    }
+
     private static void recalculateConversions(MinecraftServer server, BiConsumer<Boolean, String> onDone)
     {
-        ServerWorld world = server.getWorlds().iterator().next();
         try
         {
             ElementsOfPowerMod.LOGGER.info("Recalculating essence conversion table...");
@@ -301,6 +383,19 @@ public class InternalConversionProcess
                                 .requires(cs -> cs.hasPermissionLevel(4)) //permission
                                 .executes(ctx -> {
                                             recalculateConversions(ctx.getSource().getServer(), (ok, msg) -> {
+                                                if (ok)
+                                                    ctx.getSource().sendFeedback(new StringTextComponent("Finished: " + msg), true);
+                                                else
+                                                    ctx.getSource().sendFeedback(new StringTextComponent("Error calculating: " + msg), true);
+                                            });
+                                            return 0;
+                                        }
+                                )
+                        )
+                        .then(Commands.literal("recalculate_new")
+                                .requires(cs -> cs.hasPermissionLevel(4)) //permission
+                                .executes(ctx -> {
+                                            recalculateConversionsNew(ctx.getSource().getServer(), (ok, msg) -> {
                                                 if (ok)
                                                     ctx.getSource().sendFeedback(new StringTextComponent("Finished: " + msg), true);
                                                 else

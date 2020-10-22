@@ -316,6 +316,17 @@ public class MagicAmounts implements INBTSerializable<CompoundNBT>
     }
 
     @CheckReturnValue
+    public MagicAmounts multiply(double scale)
+    {
+        MagicAmounts n = copy();
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+        {
+            n.amounts[i] *= scale;
+        }
+        return n;
+    }
+
+    @CheckReturnValue
     public static MagicAmounts infinite()
     {
         MagicAmounts n = new MagicAmounts();

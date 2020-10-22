@@ -94,8 +94,9 @@ public class AequivaleoPlugin implements IAequivaleoPlugin
         SERVER.clear();
     }
 
+
     @Override
-    public void onDataSynced()
+    public void onDataSynced(RegistryKey<World> worldRegistryKey)
     {
         CLIENT.clear();
     }

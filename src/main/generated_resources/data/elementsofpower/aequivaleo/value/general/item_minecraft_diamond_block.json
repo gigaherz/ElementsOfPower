@@ -1,12 +1,14 @@
 {
   "mode": "ADDITIVE",
-  "target": {
-    "type": "aequivaleo:item",
-    "data": {
-      "count": 1.0,
-      "item": "minecraft:diamond_block"
+  "targets": [
+    {
+      "type": "aequivaleo:item",
+      "data": {
+        "count": 1.0,
+        "item": "minecraft:diamond_block"
+      }
     }
-  },
+  ],
   "compounds": [
     {
       "amount": 19.0,

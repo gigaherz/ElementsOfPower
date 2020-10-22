@@ -1,20 +1,22 @@
 {
   "mode": "ADDITIVE",
-  "target": {
-    "type": "aequivaleo:item",
-    "data": {
-      "count": 1.0,
-      "item": "elementsofpower:fire_cocoon"
-    }
-  },
-  "compounds": [
+  "targets": [
     {
-      "amount": 8.0,
-      "type": "elementsofpower:fire"
-    },
+      "type": "aequivaleo:item",
+      "data": {
+        "count": 1.0,
+        "item": "elementsofpower:fire_cocoon"
+      }
+    }
+  ],
+  "compounds": [
     {
       "amount": 2.0,
       "type": "elementsofpower:life"
+    },
+    {
+      "amount": 8.0,
+      "type": "elementsofpower:fire"
     }
   ]
 }

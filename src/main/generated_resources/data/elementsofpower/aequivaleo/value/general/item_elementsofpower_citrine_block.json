@@ -1,20 +1,22 @@
 {
   "mode": "ADDITIVE",
-  "target": {
-    "type": "aequivaleo:item",
-    "data": {
-      "count": 1.0,
-      "item": "elementsofpower:citrine_block"
-    }
-  },
-  "compounds": [
+  "targets": [
     {
-      "amount": 1.0,
-      "type": "elementsofpower:air"
-    },
+      "type": "aequivaleo:item",
+      "data": {
+        "count": 1.0,
+        "item": "elementsofpower:citrine_block"
+      }
+    }
+  ],
+  "compounds": [
     {
       "amount": 19.0,
       "type": "elementsofpower:earth"
+    },
+    {
+      "amount": 1.0,
+      "type": "elementsofpower:air"
     }
   ]
 }

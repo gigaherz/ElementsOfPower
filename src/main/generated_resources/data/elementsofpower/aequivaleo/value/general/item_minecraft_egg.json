@@ -1,16 +1,18 @@
 {
   "mode": "ADDITIVE",
-  "target": {
-    "type": "aequivaleo:item",
-    "data": {
-      "count": 1.0,
-      "item": "minecraft:egg"
+  "targets": [
+    {
+      "type": "aequivaleo:item",
+      "data": {
+        "count": 1.0,
+        "item": "minecraft:egg"
+      }
     }
-  },
+  ],
   "compounds": [
     {
       "amount": 2.0,
-      "type": "elementsofpower:air"
+      "type": "elementsofpower:light"
     },
     {
       "amount": 2.0,
@@ -18,7 +20,7 @@
     },
     {
       "amount": 2.0,
-      "type": "elementsofpower:light"
+      "type": "elementsofpower:air"
     }
   ]
 }

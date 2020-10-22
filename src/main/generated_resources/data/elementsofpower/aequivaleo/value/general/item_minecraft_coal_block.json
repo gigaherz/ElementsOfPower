@@ -1,20 +1,22 @@
 {
   "mode": "ADDITIVE",
-  "target": {
-    "type": "aequivaleo:item",
-    "data": {
-      "count": 1.0,
-      "item": "minecraft:coal_block"
-    }
-  },
-  "compounds": [
+  "targets": [
     {
-      "amount": 72.0,
-      "type": "elementsofpower:fire"
-    },
+      "type": "aequivaleo:item",
+      "data": {
+        "count": 1.0,
+        "item": "minecraft:coal_block"
+      }
+    }
+  ],
+  "compounds": [
     {
       "amount": 8.0,
       "type": "elementsofpower:earth"
+    },
+    {
+      "amount": 72.0,
+      "type": "elementsofpower:fire"
     }
   ]
 }

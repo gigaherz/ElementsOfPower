@@ -1,20 +1,22 @@
 {
   "mode": "ADDITIVE",
-  "target": {
-    "type": "aequivaleo:item",
-    "data": {
-      "count": 1.0,
-      "item": "elementsofpower:amethyst"
-    }
-  },
-  "compounds": [
+  "targets": [
     {
-      "amount": 50.0,
-      "type": "elementsofpower:death"
-    },
+      "type": "aequivaleo:item",
+      "data": {
+        "count": 1.0,
+        "item": "elementsofpower:amethyst"
+      }
+    }
+  ],
+  "compounds": [
     {
       "amount": 100.0,
       "type": "elementsofpower:earth"
+    },
+    {
+      "amount": 50.0,
+      "type": "elementsofpower:death"
     }
   ]
 }

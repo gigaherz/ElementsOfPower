@@ -1,12 +1,14 @@
 {
   "mode": "ADDITIVE",
-  "target": {
-    "type": "aequivaleo:item",
-    "data": {
-      "count": 1.0,
-      "item": "minecraft:brown_mushroom"
+  "targets": [
+    {
+      "type": "aequivaleo:item",
+      "data": {
+        "count": 1.0,
+        "item": "minecraft:brown_mushroom"
+      }
     }
-  },
+  ],
   "compounds": [
     {
       "amount": 2.0,

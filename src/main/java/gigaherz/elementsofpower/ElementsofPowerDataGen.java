@@ -4,8 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.ldtteam.aequivaleo.api.compound.CompoundInstance;
-import com.ldtteam.aequivaleo.api.compound.information.locked.LockedInformationProvider;
-import com.ldtteam.aequivaleo.api.compound.information.locked.ValueInformationProvider;
+import com.ldtteam.aequivaleo.api.compound.information.datagen.ValueInformationProvider;
 import com.mojang.datafixers.util.Pair;
 import gigaherz.elementsofpower.cocoons.ApplyOrbSizeFunction;
 import gigaherz.elementsofpower.cocoons.CocoonFeature;
@@ -14,7 +13,6 @@ import gigaherz.elementsofpower.database.StockConversions;
 import gigaherz.elementsofpower.gemstones.AnalyzedFilteringIngredient;
 import gigaherz.elementsofpower.gemstones.Gemstone;
 import gigaherz.elementsofpower.integration.aequivaleo.AequivaleoPlugin;
-import gigaherz.elementsofpower.integration.aequivaleo.EssenceType;
 import gigaherz.elementsofpower.recipes.ContainerChargeRecipe;
 import gigaherz.elementsofpower.recipes.GemstoneChangeRecipe;
 import gigaherz.elementsofpower.spells.Element;
@@ -71,66 +69,11 @@ class ElementsofPowerDataGen
             if ("true".equals(System.getProperty("elementsofpower.doAequivaleoDatagen", "true")))
             {
                 gen.addProvider(new AequivaleoGens(gen, itemTags));
-                gen.addProvider(new AequivaleoLockedGens(gen, itemTags));
             }
         }
         if (event.includeClient())
         {
             gen.addProvider(new BlockStates(gen, existingFileHelper));
-        }
-    }
-
-    private static class AequivaleoLockedGens extends LockedInformationProvider
-    {
-        private final ItemTagGens itemTags;
-
-        protected AequivaleoLockedGens(DataGenerator dataGenerator, ItemTagGens itemTags)
-        {
-            super(ElementsOfPowerMod.MODID, dataGenerator);
-            this.itemTags = itemTags;
-        }
-
-        @Override
-        public void calculateDataToSave()
-        {
-            StockConversions.addStockConversions(this::getItemsFromTag, (item, amounts) -> {
-                Set<CompoundInstance> values = Sets.newHashSet();
-                for(Element e : Element.values)
-                {
-                    double value = amounts.get(e);
-                    if (value > 0)
-                    {
-                        values.add(
-                                new CompoundInstance(AequivaleoPlugin.BY_ELEMENT.get(e).get(), value)
-                        );
-                    }
-                }
-                saveData(item, values);
-            });
-        }
-
-        private List<Item> getItemsFromTag(ResourceLocation rl, List<Item> fallback)
-        {
-            ITag.Builder tag = itemTags.getTagByName(rl);
-            if (tag == null)
-                return fallback;
-            return tag.getProxyStream().flatMap(this::getItemsFromTag).collect(Collectors.toList());
-        }
-
-        private Stream<Item> getItemsFromTag(ITag.Proxy proxy)
-        {
-            ITag.ITagEntry entry = proxy.getEntry();
-            if (entry instanceof ITag.ItemEntry)
-            {
-                ResourceLocation itemId = new ResourceLocation(((ITag.ItemEntry)entry).toString());
-                return Stream.of(ForgeRegistries.ITEMS.getValue(itemId));
-            }
-            if (entry instanceof ITag.TagEntry)
-            {
-                ResourceLocation tagId = ((ITag.TagEntry)entry).getId();
-                return getItemsFromTag(tagId, Collections.emptyList()).stream();
-            }
-            return Stream.empty();
         }
     }
 

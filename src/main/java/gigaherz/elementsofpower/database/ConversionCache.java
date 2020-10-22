@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower.database;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.magic.MagicAmounts;
@@ -8,12 +9,19 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.SpawnEggItem;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -32,18 +40,69 @@ public class ConversionCache implements IConversionCache
     public static void dumpItemsWithoutEssences(World world)
     {
         IConversionCache cache = get(world);
+        List<String> lines = Lists.newArrayList();
         ForgeRegistries.ITEMS.getValues().stream().sorted((a, b) ->
                 String.CASE_INSENSITIVE_ORDER.compare(a.getRegistryName().toString(), b.getRegistryName().toString()))
                 .forEach(item -> {
                     if (!cache.hasEssences(item))
                     {
                         if (!(item instanceof SpawnEggItem))
-                            ConversionCache.LOGGER.warn("Item is not assigned any essences: {}", item.getRegistryName());
+                            lines.add(item.getRegistryName().toString());
                     }
                 });
+        try
+        {
+            Path folder = FMLPaths.GAMEDIR.get().resolve("logs/elementsofpower");
+            folder.toFile().mkdirs();
+            Files.write(folder.resolve(new SimpleDateFormat("yyyyMMddHHmmss'.log'").format(new Date())), lines);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public static void dumpEssences(World world)
+    {
+        IConversionCache cache = get(world);
+        List<String> found = Lists.newArrayList();
+        List<String> missing = Lists.newArrayList();
+        ForgeRegistries.ITEMS.getValues().stream().sorted((a, b) ->
+                String.CASE_INSENSITIVE_ORDER.compare(a.getRegistryName().toString(), b.getRegistryName().toString()))
+                .forEach(item -> {
+                    if (cache.hasEssences(item))
+                    {
+                        MagicAmounts ma = cache.getEssences(item);
+                        found.add("\t" + item.getRegistryName().toString() + " = " + ma);
+                    }
+                    else
+                    {
+                        missing.add("\t" + item.getRegistryName().toString());
+                    }
+                });
+        List<String> lines = Lists.newArrayList();
+        lines.add("Found:");
+        lines.addAll(found);
+        lines.add("Missing:");
+        lines.addAll(missing);
+        try
+        {
+            Path folder = FMLPaths.GAMEDIR.get().resolve("logs/elementsofpower");
+            folder.toFile().mkdirs();
+            Files.write(folder.resolve(new SimpleDateFormat("yyyyMMddHHmmss'.log'").format(new Date())), lines);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     private final Map<Item, MagicAmounts> essenceMappings = Maps.newHashMap();
+
+    public Map<Item, MagicAmounts> getEssenceMappings()
+    {
+        return essenceMappings;
+    }
 
     @Override
     public boolean hasEssences(ItemStack stack)
@@ -89,11 +148,11 @@ public class ConversionCache implements IConversionCache
             return;
         }
 
-        if (essenceMappings.containsKey(item))
+        /*if (essenceMappings.containsKey(item))
         {
             ElementsOfPowerMod.LOGGER.error("Stack already inserted! " + item.toString());
             return;
-        }
+        }*/
 
         essenceMappings.put(item, amounts);
     }

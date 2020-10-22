@@ -1,20 +1,22 @@
 {
   "mode": "ADDITIVE",
-  "target": {
-    "type": "aequivaleo:item",
-    "data": {
-      "count": 1.0,
-      "item": "minecraft:feather"
+  "targets": [
+    {
+      "type": "aequivaleo:item",
+      "data": {
+        "count": 1.0,
+        "item": "minecraft:feather"
+      }
     }
-  },
+  ],
   "compounds": [
     {
       "amount": 4.0,
-      "type": "elementsofpower:air"
+      "type": "elementsofpower:life"
     },
     {
       "amount": 4.0,
-      "type": "elementsofpower:life"
+      "type": "elementsofpower:air"
     }
   ]
 }

@@ -1,12 +1,14 @@
 {
   "mode": "ADDITIVE",
-  "target": {
-    "type": "aequivaleo:item",
-    "data": {
-      "count": 1.0,
-      "item": "minecraft:pink_terracotta"
+  "targets": [
+    {
+      "type": "aequivaleo:item",
+      "data": {
+        "count": 1.0,
+        "item": "minecraft:pink_terracotta"
+      }
     }
-  },
+  ],
   "compounds": [
     {
       "amount": 1.0,

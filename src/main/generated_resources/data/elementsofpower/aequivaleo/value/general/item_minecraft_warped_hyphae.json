@@ -1,12 +1,14 @@
 {
   "mode": "ADDITIVE",
-  "target": {
-    "type": "aequivaleo:item",
-    "data": {
-      "count": 1.0,
-      "item": "minecraft:warped_hyphae"
+  "targets": [
+    {
+      "type": "aequivaleo:item",
+      "data": {
+        "count": 1.0,
+        "item": "minecraft:warped_hyphae"
+      }
     }
-  },
+  ],
   "compounds": [
     {
       "amount": 16.0,

@@ -1,20 +1,22 @@
 {
   "mode": "ADDITIVE",
-  "target": {
-    "type": "aequivaleo:item",
-    "data": {
-      "count": 1.0,
-      "item": "minecraft:blaze_rod"
-    }
-  },
-  "compounds": [
+  "targets": [
     {
-      "amount": 8.0,
-      "type": "elementsofpower:life"
-    },
+      "type": "aequivaleo:item",
+      "data": {
+        "count": 1.0,
+        "item": "minecraft:blaze_rod"
+      }
+    }
+  ],
+  "compounds": [
     {
       "amount": 12.0,
       "type": "elementsofpower:fire"
+    },
+    {
+      "amount": 8.0,
+      "type": "elementsofpower:life"
     }
   ]
 }

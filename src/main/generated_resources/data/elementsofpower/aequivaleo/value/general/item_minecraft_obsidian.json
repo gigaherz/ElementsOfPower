@@ -1,20 +1,22 @@
 {
   "mode": "ADDITIVE",
-  "target": {
-    "type": "aequivaleo:item",
-    "data": {
-      "count": 1.0,
-      "item": "minecraft:obsidian"
+  "targets": [
+    {
+      "type": "aequivaleo:item",
+      "data": {
+        "count": 1.0,
+        "item": "minecraft:obsidian"
+      }
     }
-  },
+  ],
   "compounds": [
     {
       "amount": 10.0,
-      "type": "elementsofpower:darkness"
+      "type": "elementsofpower:earth"
     },
     {
       "amount": 10.0,
-      "type": "elementsofpower:earth"
+      "type": "elementsofpower:darkness"
     }
   ]
 }

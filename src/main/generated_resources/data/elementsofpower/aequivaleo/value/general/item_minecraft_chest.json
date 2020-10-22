@@ -1,20 +1,22 @@
 {
   "mode": "ADDITIVE",
-  "target": {
-    "type": "aequivaleo:item",
-    "data": {
-      "count": 1.0,
-      "item": "minecraft:chest"
-    }
-  },
-  "compounds": [
+  "targets": [
     {
-      "amount": 1.0,
-      "type": "elementsofpower:light"
-    },
+      "type": "aequivaleo:item",
+      "data": {
+        "count": 1.0,
+        "item": "minecraft:chest"
+      }
+    }
+  ],
+  "compounds": [
     {
       "amount": 2.0,
       "type": "elementsofpower:earth"
+    },
+    {
+      "amount": 1.0,
+      "type": "elementsofpower:light"
     }
   ]
 }

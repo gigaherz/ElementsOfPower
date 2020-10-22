@@ -7,7 +7,7 @@ public class ConfigManager
     public static boolean EnableGemstoneOregen = true;
     public static boolean EnableCocoonGeneration = true;
 
-    public static boolean DisableAequivaleoSupport = false;
+    public static boolean DisableAequivaleoSupport = true;
 
     public static void init(File configurationFile)
     {

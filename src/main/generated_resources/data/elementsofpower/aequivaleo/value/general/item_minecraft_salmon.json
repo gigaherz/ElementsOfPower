@@ -1,20 +1,22 @@
 {
   "mode": "ADDITIVE",
-  "target": {
-    "type": "aequivaleo:item",
-    "data": {
-      "count": 1.0,
-      "item": "minecraft:salmon"
-    }
-  },
-  "compounds": [
+  "targets": [
     {
-      "amount": 2.0,
-      "type": "elementsofpower:water"
-    },
+      "type": "aequivaleo:item",
+      "data": {
+        "count": 1.0,
+        "item": "minecraft:salmon"
+      }
+    }
+  ],
+  "compounds": [
     {
       "amount": 4.0,
       "type": "elementsofpower:life"
+    },
+    {
+      "amount": 2.0,
+      "type": "elementsofpower:water"
     }
   ]
 }

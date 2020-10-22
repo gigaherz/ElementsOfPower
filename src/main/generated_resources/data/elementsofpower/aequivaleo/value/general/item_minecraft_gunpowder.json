@@ -1,17 +1,15 @@
 {
   "mode": "ADDITIVE",
-  "target": {
-    "type": "aequivaleo:item",
-    "data": {
-      "count": 1.0,
-      "item": "minecraft:gunpowder"
-    }
-  },
-  "compounds": [
+  "targets": [
     {
-      "amount": 2.0,
-      "type": "elementsofpower:fire"
-    },
+      "type": "aequivaleo:item",
+      "data": {
+        "count": 1.0,
+        "item": "minecraft:gunpowder"
+      }
+    }
+  ],
+  "compounds": [
     {
       "amount": 2.0,
       "type": "elementsofpower:death"
@@ -19,6 +17,10 @@
     {
       "amount": 2.0,
       "type": "elementsofpower:earth"
+    },
+    {
+      "amount": 2.0,
+      "type": "elementsofpower:fire"
     }
   ]
 }
