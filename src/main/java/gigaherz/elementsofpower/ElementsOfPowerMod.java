@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower;
 
+import com.google.common.collect.Lists;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import gigaherz.elementsofpower.analyzer.AnalyzerItem;
@@ -60,6 +61,8 @@ import net.minecraft.particles.ParticleType;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.biome.Biome;
@@ -82,9 +85,11 @@ import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
@@ -98,6 +103,7 @@ import top.theillusivec4.curios.api.SlotTypeMessage;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 @Mod(ElementsOfPowerMod.MODID)
@@ -173,6 +179,9 @@ public class ElementsOfPowerMod
 
         MinecraftForge.EVENT_BUS.addListener(this::registerCommands);
         MinecraftForge.EVENT_BUS.addListener(this::addStuffToBiomes);
+
+        ModLoadingContext modLoadingContext = ModLoadingContext.get();
+        modLoadingContext.registerConfig(ModConfig.Type.COMMON, ConfigManager.COMMON_SPEC);
     }
 
     public void registerBlocks(RegistryEvent.Register<Block> event)
@@ -375,13 +384,9 @@ public class ElementsOfPowerMod
         PlayerCombinedMagicContainers.register();
         SpellcastEntityData.register();
         //DiscoveryHandler.init();
+        InternalConversionProcess.init();
 
         CraftingHelper.register(AnalyzedFilteringIngredient.ID, AnalyzedFilteringIngredient.Serializer.INSTANCE);
-
-        if (isInternalRecipeScannerEnabled())
-        {
-            InternalConversionProcess.init();
-        }
 
         GlobalEntityTypeAttributes.put(EssenceEntity.TYPE, EssenceEntity.prepareAttributes().create());
 
@@ -401,10 +406,10 @@ public class ElementsOfPowerMod
                 {
                     if (g.generateCustomOre())
                     {
-                        int numPerChunk = 3 + getBiomeBonus(g.getElement(), biome);
+                        int numPerVein = 3 + getBiomeBonus(g.getElement(), biome);
                         event.getGeneration().withFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Feature.ORE
-                                .withConfiguration(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.field_241882_a, g.getOre().getDefaultState(), numPerChunk))
-                                .func_242733_d(16).func_242728_a());
+                                .withConfiguration(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.BASE_STONE_OVERWORLD, g.getOre().getDefaultState(), numPerVein))
+                                .range(16).square());
                     }
                 }
             }
@@ -484,16 +489,13 @@ public class ElementsOfPowerMod
                                 }
                         )
                 );
-        if (isInternalRecipeScannerEnabled())
-        {
-            cmd = InternalConversionProcess.registerSubcommands(cmd);
-        }
+        cmd = InternalConversionProcess.registerSubcommands(cmd);
         event.getDispatcher().register(cmd);
     }
 
-    private boolean isInternalRecipeScannerEnabled()
+    public static boolean isInternalRecipeScannerEnabled()
     {
-        return ConfigManager.DisableAequivaleoSupport || !ModList.get().isLoaded("aequivaleo");
+        return ConfigManager.COMMON.disableAequivaleoSupport.get() || !ModList.get().isLoaded("aequivaleo");
     }
 
     public void gatherData(GatherDataEvent event)

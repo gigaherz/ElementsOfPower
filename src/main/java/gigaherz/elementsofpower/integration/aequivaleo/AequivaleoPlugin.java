@@ -81,10 +81,10 @@ public class AequivaleoPlugin implements IAequivaleoPlugin
             TYPE_GROUPS.register(((FMLModContainer) mod).getEventBus());
         });
 
-        if (!ConfigManager.DisableAequivaleoSupport)
+        if (!ConfigManager.COMMON.disableAequivaleoSupport.get())
         {
             LOGGER.info("Aequivaleo has been enabled. Aequivaleo-calculated magic conversions will be used instead of the internal system...");
-            ConversionCache.conversionGetter = EssenceConversionCache::new;
+            ConversionCache.aequivaleoGetter = EssenceConversionCache::new;
         }
     }
 

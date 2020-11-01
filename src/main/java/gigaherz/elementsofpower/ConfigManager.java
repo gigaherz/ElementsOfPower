@@ -1,24 +1,30 @@
 package gigaherz.elementsofpower;
 
-import java.io.File;
+import net.minecraftforge.common.ForgeConfigSpec;
+import org.apache.commons.lang3.tuple.Pair;
 
 public class ConfigManager
 {
-    public static boolean EnableGemstoneOregen = true;
-    public static boolean EnableCocoonGeneration = true;
+    public static final CommonConfig COMMON;
+    public static final ForgeConfigSpec COMMON_SPEC;
 
-    public static boolean DisableAequivaleoSupport = false;
-
-    public static void init(File configurationFile)
+    static
     {
-        /*Configuration config = new Configuration(configurationFile);
-        config.load();
-
-        config.setCategoryComment("OreGen", "Settings related to Ore generation");
-
-        EnableGemstoneOregen = config.get("OreGen", "EnableGemstoneOreGeneration", true).getBoolean();
-        EnableCocoonGeneration = config.get("OreGen", "EnableCocoonGeneration", true).getBoolean();
-
-        config.save();*/
+        final Pair<CommonConfig, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(CommonConfig::new);
+        COMMON_SPEC = specPair.getRight();
+        COMMON = specPair.getLeft();
     }
+
+    public static class CommonConfig
+    {
+        public final ForgeConfigSpec.BooleanValue disableAequivaleoSupport;
+
+        CommonConfig(ForgeConfigSpec.Builder builder)
+        {
+            builder.push("integration");
+            disableAequivaleoSupport = builder.define("disableAequivaleoSupport", false);
+            builder.pop();
+        }
+    }
+
 }

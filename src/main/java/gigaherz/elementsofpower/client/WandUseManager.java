@@ -37,6 +37,8 @@ public class WandUseManager
     public static WandUseManager instance;
 
     public final KeyBinding[] spellKeys = new KeyBinding[8];
+    public final boolean[] lastKeyState = new boolean[8];
+
     public final List<Element> sequence = new ArrayList<>();
     public Hand handInUse = null;
     public ItemStack activeStack = null;
@@ -199,11 +201,19 @@ public class WandUseManager
         boolean anyChanged = false;
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            while (spellKeys[i].isPressed())
+            boolean isPressedNow = false;
+            if (spellKeys[i].isKeyDown())
+            {
+                isPressedNow = true;
+            }
+
+            if (!isPressedNow && lastKeyState[i])
             {
                 sequence.add(Element.values[i]);
                 anyChanged = true;
             }
+
+            lastKeyState[i] = isPressedNow;
         }
 
         if (anyChanged)

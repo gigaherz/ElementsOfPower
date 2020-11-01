@@ -37,7 +37,7 @@ public class CocoonFeature extends Feature<CocoonFeatureConfig>
     }
 
     @Override
-    public boolean func_241855_a(ISeedReader worldIn, ChunkGenerator gen, Random rand, BlockPos pos, CocoonFeatureConfig config)
+    public boolean generate(ISeedReader worldIn, ChunkGenerator gen, Random rand, BlockPos pos, CocoonFeatureConfig config)
     {
         int top = worldIn.getHeight(Heightmap.Type.MOTION_BLOCKING, pos.getX(), pos.getZ());
         if (pos.getY() < top && (worldIn.isAirBlock(pos) || worldIn.getBlockState(pos).getBlock() == Blocks.WATER))

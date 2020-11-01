@@ -358,6 +358,11 @@ public class MagicAmounts implements INBTSerializable<CompoundNBT>
         return n;
     }
 
+    public static int compare(MagicAmounts a, MagicAmounts b)
+    {
+        return Float.compare(a.getTotalMagic(), b.getTotalMagic());
+    }
+
     @CheckReturnValue
     private MagicAmounts copy()
     {

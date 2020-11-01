@@ -17,7 +17,7 @@ import java.util.stream.Stream;
 
 public class CocoonPlacement extends Placement<NoPlacementConfig>
 {
-    public static final CocoonPlacement INSTANCE = new CocoonPlacement(NoPlacementConfig.field_236555_a_);
+    public static final CocoonPlacement INSTANCE = new CocoonPlacement(NoPlacementConfig.CODEC);
 
     public CocoonPlacement(Codec<NoPlacementConfig> configFactoryIn)
     {
@@ -25,7 +25,7 @@ public class CocoonPlacement extends Placement<NoPlacementConfig>
     }
 
     @Override
-    public Stream<BlockPos> func_241857_a(WorldDecoratingHelper helper, Random random, NoPlacementConfig config, BlockPos pos)
+    public Stream<BlockPos> getPositions(WorldDecoratingHelper helper, Random random, NoPlacementConfig config, BlockPos pos)
     {
         List<BlockPos> positions = new ArrayList<>();
 

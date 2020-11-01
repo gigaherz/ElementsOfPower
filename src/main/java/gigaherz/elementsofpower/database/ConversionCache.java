@@ -2,6 +2,7 @@ package gigaherz.elementsofpower.database;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import gigaherz.elementsofpower.ConfigManager;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.magic.MagicAmounts;
 import net.minecraft.item.Item;
@@ -19,10 +20,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 public class ConversionCache implements IConversionCache
@@ -31,11 +29,13 @@ public class ConversionCache implements IConversionCache
 
     public static IConversionCache get(@Nullable World world)
     {
-        return conversionGetter.apply(world);
+        if (aequivaleoGetter != null && !ConfigManager.COMMON.disableAequivaleoSupport.get())
+            return aequivaleoGetter.apply(world);
+        return InternalConversionProcess.get(world);
     }
 
     private static ConversionCache DUMMY = new ConversionCache();
-    public static Function<World, IConversionCache> conversionGetter = w -> DUMMY;
+    public static Function<World, IConversionCache> aequivaleoGetter = null;
 
     public static void dumpItemsWithoutEssences(World world)
     {

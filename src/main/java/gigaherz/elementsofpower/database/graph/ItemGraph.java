@@ -7,14 +7,39 @@ import net.minecraft.item.Item;
 
 import java.util.*;
 import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
 public class ItemGraph<T>
 {
+    public interface ScaleFunction<T>
+    {
+        T scale(T original, double scale);
+    }
+
+    public interface AddFunction<T>
+    {
+        T add(T original, T scale);
+    }
+
+    public interface MinFunction<T>
+    {
+        T min(T original, T scale);
+    }
+
     private final Map<Item, ItemNode<T>> itemNodes = Maps.newHashMap();
     private final List<RecipeNode<T>> recipeNodes = Lists.newArrayList();
+    private final ScaleFunction<T> scaler;
+    private final AddFunction<T> adder;
+    private final Comparator<T> comparator;
+    private final MinFunction<T> lesser;
+
+    public ItemGraph(ScaleFunction<T> scaler, AddFunction<T> adder, Comparator<T> comparator, MinFunction<T> lesser)
+    {
+        this.scaler = scaler;
+        this.adder = adder;
+        this.comparator = comparator;
+        this.lesser = lesser;
+    }
 
     public Stream<ItemNode<T>> getItemNodes()
     {
@@ -26,7 +51,7 @@ public class ItemGraph<T>
         return recipeNodes.stream();
     }
 
-    public void addEdgeBundle(Item consumer, double scale, Iterable<Map.Entry<Item, Double>> to, Object recipe)
+    public void addRecipe(Item consumer, double scale, Iterable<Map.Entry<Item, Double>> to, Object recipe)
     {
         ItemNode<T> consumerNode = getOrCreateItemNode(consumer);
         RecipeNode<T> recipeNode = getOrCreateRecipeNode(recipe);
@@ -65,60 +90,153 @@ public class ItemGraph<T>
         return node;
     }
 
-    public interface ScaleFunction<T>
+    public void addData(Item key, T fillWith)
     {
-        T scale(T original, double scale);
-    }
-
-    public void floodFill(Item key, T fillWith, ScaleFunction<T> multiply, BiFunction<T, T, T> adder, BiPredicate<T, T> replace)
-    {
-        ItemNode<T> start = itemNodes.get(key);
-        if (start == null)
+        ItemNode<T> node = itemNodes.get(key);
+        if (node == null)
             return;
 
+        node.providedValue = new ItemValue<>(node, fillWith);
+    }
+
+    public void spread()
+    {
         Queue<ItemNode<T>> dirtyItems = new ArrayDeque<>();
-        Queue<RecipeNode<T>> dirtyRecipes = new ArrayDeque<>();
+        Queue<RecipeNode<T>> dirtyRecipes = new ArrayDeque<>(recipeNodes);
 
-        start.providedValue = new ItemValue<>(start, fillWith);
-        dirtyItems.add(start);
-
+        //noinspection ConstantConditions
         while(dirtyItems.size() > 0 || dirtyRecipes.size() > 0)
         {
             while(dirtyRecipes.size() > 0)
             {
                 RecipeNode<T> current = dirtyRecipes.remove();
-                // if recipe is satisfied:
-                //     mark item nodes as dirty
+                if (current.providedValue == null && current.providers.stream().allMatch(provider -> provider.provider.providedValue != null))
+                {
+                    T acc = null;
+                    for(ProviderEdge<T> provider : current.providers)
+                    {
+                        T value = scaler.scale(provider.provider.providedValue.value, provider.edgeWeight);
+                        acc = acc == null ? value : adder.add(acc, provider.provider.providedValue.value);
+                    }
+                    current.providedValue = new RecipeValue<>(current, acc);
+                    current.consumers.forEach(consumer -> dirtyItems.add(consumer.consumer));
+                }
             }
 
             while(dirtyItems.size() > 0)
             {
                 ItemNode<T> current = dirtyItems.remove();
-
+                if (current.providedValue == null && current.providers.size() == 1 && current.providers.stream().anyMatch(provider -> provider.provider.providedValue != null))
+                {
+                    Optional<T> min = current.providers.stream()
+                            .filter(provider -> provider.provider.providedValue != null)
+                            .map(provider -> provider.provider.providedValue.value)
+                            .min(comparator);
+                    min.ifPresent(value -> {
+                        current.providedValue = new ItemValue<>(current, value);
+                        current.consumers.forEach(consumer -> dirtyRecipes.add(consumer.consumer));
+                    });
+                }
             }
         }
     }
 
     public void finishFill(BiConsumer<Item, T> consumer)
     {
-        itemNodes.values().forEach(value -> {
-            // todo: return calculated values
-            if (value.providedValue != null)
+        itemNodes.values().forEach(node -> {
+            T value = calculateValue(node);
+            if (value != null)
             {
-                consumer.accept(value.owner, value.providedValue.value);
+                consumer.accept(node.owner, value);
             }
-            value.providedValue = null;
+            node.providedValue = null;
         });
         recipeNodes.forEach(value -> {
             value.providedValue = null;
         });
     }
 
+    private T calculateValue(ItemNode<T> node)
+    {
+        if (node.providedValue != null)
+            return node.providedValue.value;
+
+        Stack<Object> visitedNodes = new Stack<>();
+        return calculateRecursive(node, visitedNodes);
+    }
+
+    private int maxDepth = 0;
+    private T calculateRecursive(ItemNode<T> node, Stack<Object> visitedNodes)
+    {
+        if (visitedNodes.contains(node))
+            return null;
+        visitedNodes.push(node);
+        maxDepth = Math.max(maxDepth, visitedNodes.size());
+        try
+        {
+            T value = node.providedValue != null ? node.providedValue.value : null;
+            if (value == null)
+            {
+                for(ConsumerEdge<T> provider : node.providers)
+                {
+                    T recipeValue = calculateRecursive(provider.provider, visitedNodes);
+                    if (recipeValue != null)
+                    {
+                        value = value != null ? lesser.min(value, recipeValue) : recipeValue;
+                    }
+                }
+            }
+            return value;
+        }
+        finally
+        {
+            visitedNodes.pop();
+        }
+    }
+    private T calculateRecursive(RecipeNode<T> node, Stack<Object> visitedNodes)
+    {
+        if (visitedNodes.contains(node))
+            return null;
+        visitedNodes.push(node);
+        maxDepth = Math.max(maxDepth, visitedNodes.size());
+        try
+        {
+            T value = node.providedValue != null ? node.providedValue.value : null;
+            if (value == null)
+            {
+                boolean anyMissing = false;
+                for(ProviderEdge<T> provider : node.providers)
+                {
+                    T recipeValue = calculateRecursive(provider.provider, visitedNodes);
+                    if (recipeValue != null)
+                    {
+                        recipeValue = scaler.scale(recipeValue, provider.edgeWeight);
+                        value = value != null ? adder.add(value, recipeValue) : recipeValue;
+                    }
+                    else
+                    {
+                        anyMissing = true;
+                        break;
+                    }
+                }
+                if (anyMissing)
+                {
+                    return null;
+                }
+            }
+            return value;
+        }
+        finally
+        {
+            visitedNodes.pop();
+        }
+    }
+
     public static class ItemNode<T>
     {
         public final Item owner;
-        public final Set<ConsumerEdge<T>> providers = Sets.newHashSet();
-        public final Set<ProviderEdge<T>> consumers = Sets.newHashSet();
+        public final LinkedHashSet<ConsumerEdge<T>> providers = Sets.newLinkedHashSet();
+        public final LinkedHashSet<ProviderEdge<T>> consumers = Sets.newLinkedHashSet();
 
         public ItemValue<T> providedValue;
 
@@ -137,8 +255,8 @@ public class ItemGraph<T>
     public static class RecipeNode<T>
     {
         public final Object owner;
-        public final Set<ConsumerEdge<T>> consumers = Sets.newHashSet();
-        public final Set<ProviderEdge<T>> providers = Sets.newHashSet();
+        public final LinkedHashSet<ConsumerEdge<T>> consumers = Sets.newLinkedHashSet();
+        public final LinkedHashSet<ProviderEdge<T>> providers = Sets.newLinkedHashSet();
 
         public RecipeValue<T> providedValue;
 
@@ -195,7 +313,6 @@ public class ItemGraph<T>
     public static class ItemValue<T>
     {
         public final ItemNode<T> owner;
-        public final Set<RecipeValue<T>> via = Sets.newHashSet();
         public T value;
 
         public ItemValue(ItemNode<T> owner, T value)
@@ -204,29 +321,16 @@ public class ItemGraph<T>
             this.value = value;
         }
 
-        public boolean contains(ItemNode<T> node)
-        {
-            if (owner == node)
-                return true;
-            for(RecipeValue<T> v : via)
-            {
-                if (v.contains(node))
-                    return true;
-            }
-            return false;
-        }
-
         @Override
         public String toString()
         {
-            return String.format("{Value: %s = %s via %s}", owner, value, via);
+            return String.format("{Value: %s = %s}", owner, value);
         }
     }
 
     public static class RecipeValue<T>
     {
         public final RecipeNode<T> owner;
-        public final Set<ItemValue<T>> via = Sets.newHashSet();
         public T value;
 
         public RecipeValue(RecipeNode<T> owner, T value)
@@ -235,20 +339,10 @@ public class ItemGraph<T>
             this.value = value;
         }
 
-        public boolean contains(ItemNode<T> node)
-        {
-            for(ItemValue<T> v : via)
-            {
-                if (v.contains(node))
-                    return true;
-            }
-            return false;
-        }
-
         @Override
         public String toString()
         {
-            return String.format("{Value: %s = %s via %s}", owner, value, via);
+            return String.format("{Value: %s = %s}", owner, value);
         }
     }
 }
