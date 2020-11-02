@@ -1,18 +1,14 @@
 {
   "replace": false,
   "values": [
-    "elementsofpower:ruby",
-    "elementsofpower:sapphire",
-    "elementsofpower:citrine",
-    "elementsofpower:agate",
-    "elementsofpower:quartz",
-    "minecraft:quartz",
-    "elementsofpower:serendibite",
-    "elementsofpower:emerald",
-    "minecraft:emerald",
-    "elementsofpower:amethyst",
-    "elementsofpower:diamond",
-    "minecraft:diamond",
-    "elementsofpower:creativite"
+    "#elementsofpower:gems/ruby",
+    "#elementsofpower:gems/sapphire",
+    "#elementsofpower:gems/citrine",
+    "#elementsofpower:gems/agate",
+    "#elementsofpower:gems/quartz",
+    "#elementsofpower:gems/serendibite",
+    "#elementsofpower:gems/emerald",
+    "#elementsofpower:gems/amethyst",
+    "#elementsofpower:gems/diamond"
   ]
 }

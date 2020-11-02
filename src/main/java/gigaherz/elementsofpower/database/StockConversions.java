@@ -11,6 +11,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -20,6 +22,8 @@ import java.util.function.Function;
 
 public class StockConversions
 {
+    private static final Logger LOGGER = LogManager.getLogger();
+
     public static final Map<Item, ItemEssenceConversion> CONVERSIONS = Maps.newHashMap();
 
     public static void addStockConversions(BiFunction<ResourceLocation, List<Item>, List<Item>> tagGetter, BiConsumer<Item, MagicAmounts> consumer)
@@ -34,14 +38,22 @@ public class StockConversions
 
         for (Gemstone e : Gemstone.values)
         {
-            ItemEssenceEntry a = essences(e.getOre()).earth(8);
-            ItemEssenceEntry b = essences(e.getItem()).earth(1);
-            ItemEssenceEntry c = essences(e.getBlock()).earth(19);
+            ItemEssenceCollection gem = essences(e.getTagItems()).earth(1);
             if (e.getElement() != null)
+                gem.element(e.getElement(), 1 / 8.0f);
+
+            if (e.generateCustomOre())
             {
-                a.element(e.getElement(), 1);
-                b.element(e.getElement(), 1 / 8.0f);
-                c.element(e.getElement(), 1);
+                ItemEssenceEntry ore = essences(e.getOre()).earth(8);
+                if (e.getElement() != null)
+                    ore.element(e.getElement(), 1);
+            }
+
+            if (e.generateCustomBlock())
+            {
+                ItemEssenceEntry block = essences(e.getBlock()).earth(19);
+                if (e.getElement() != null)
+                    block.element(e.getElement(), 1);
             }
         }
 
@@ -73,15 +85,6 @@ public class StockConversions
         essences(Blocks.OBSIDIAN).earth(10).darkness(10);
         essences(Blocks.NETHERRACK).earth(1).fire(1);
 
-        essences(
-                Items.INFESTED_STONE,
-                Items.INFESTED_COBBLESTONE,
-                Items.INFESTED_STONE_BRICKS,
-                Items.INFESTED_MOSSY_STONE_BRICKS,
-                Items.INFESTED_CRACKED_STONE_BRICKS,
-                Items.INFESTED_CHISELED_STONE_BRICKS
-        ).earth(5).life(5);
-
         essences(Blocks.COBBLESTONE).earth(5);
         essences(Blocks.BLACKSTONE).earth(5).darkness(5);
         fromTag(tagGetter, "forge:stone",
@@ -97,6 +100,15 @@ public class StockConversions
                 ),
                 items -> essences(items).earth(10)
         );
+
+        essences(
+                Items.INFESTED_STONE,
+                Items.INFESTED_COBBLESTONE,
+                Items.INFESTED_STONE_BRICKS,
+                Items.INFESTED_MOSSY_STONE_BRICKS,
+                Items.INFESTED_CRACKED_STONE_BRICKS,
+                Items.INFESTED_CHISELED_STONE_BRICKS
+        ).earth(5).life(5);
 
         essences(Blocks.WHITE_TERRACOTTA,
                 Blocks.ORANGE_TERRACOTTA,
@@ -243,20 +255,6 @@ public class StockConversions
                 Items.PUFFERFISH
         ).life(4).water(2);
 
-        essences(Items.DIAMOND).earth(128);
-        essences(Items.EMERALD).earth(100).life(50);
-        essences(Items.QUARTZ).earth(100).light(50);
-
-        essences(Gemstone.RUBY.getItem()).earth(100).fire(50);
-        essences(Gemstone.SAPPHIRE.getItem()).earth(100).water(50);
-        essences(Gemstone.CITRINE.getItem()).earth(100).air(50);
-        essences(Gemstone.AGATE.getItem()).earth(100).earth(50);
-        essences(Gemstone.QUARTZ.getItem()).earth(100).light(50);
-        essences(Gemstone.SERENDIBITE.getItem()).earth(100).darkness(50);
-        essences(Gemstone.EMERALD.getItem()).earth(100).life(50);
-        essences(Gemstone.AMETHYST.getItem()).earth(100).death(50);
-        essences(Gemstone.DIAMOND.getItem()).earth(128);
-
         essences(Items.CLAY_BALL).earth(8).water(2);
 
         essences(Items.FEATHER).air(4).life(4);
@@ -333,6 +331,8 @@ public class StockConversions
         {
             ItemEssenceEntry ee = new ItemEssenceEntry(item, MagicAmounts.EMPTY);
             collection.add(ee);
+            if (CONVERSIONS.containsKey(item.asItem()))
+                LOGGER.info("Item already added! " + item);
             CONVERSIONS.put(item.asItem(), ee);
         }
 
@@ -347,6 +347,8 @@ public class StockConversions
         {
             ItemEssenceEntry ee = new ItemEssenceEntry(item, MagicAmounts.EMPTY);
             collection.add(ee);
+            if (CONVERSIONS.containsKey(item.asItem()))
+                LOGGER.info("Item already added! " + item);
             CONVERSIONS.put(item.asItem(), ee);
         }
 
@@ -356,6 +358,8 @@ public class StockConversions
     private static ItemEssenceEntry essences(IItemProvider item)
     {
         ItemEssenceEntry ee = new ItemEssenceEntry(item, MagicAmounts.EMPTY);
+        if (CONVERSIONS.containsKey(item.asItem()))
+            LOGGER.info("Item already added! " + item);
         CONVERSIONS.put(item.asItem(), ee);
         return ee;
     }

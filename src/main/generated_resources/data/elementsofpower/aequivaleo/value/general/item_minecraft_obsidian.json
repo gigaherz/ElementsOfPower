@@ -12,11 +12,11 @@
   "compounds": [
     {
       "amount": 10.0,
-      "type": "elementsofpower:earth"
+      "type": "elementsofpower:darkness"
     },
     {
       "amount": 10.0,
-      "type": "elementsofpower:darkness"
+      "type": "elementsofpower:earth"
     }
   ]
 }

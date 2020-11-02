@@ -1,0 +1,26 @@
+{
+  "mode": "ADDITIVE",
+  "targets": [
+    {
+      "type": "aequivaleo:item",
+      "data": {
+        "count": 1.0,
+        "item": "minecraft:apple"
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "amount": 1.0,
+      "type": "elementsofpower:air"
+    },
+    {
+      "amount": 1.0,
+      "type": "elementsofpower:earth"
+    },
+    {
+      "amount": 2.0,
+      "type": "elementsofpower:life"
+    }
+  ]
+}

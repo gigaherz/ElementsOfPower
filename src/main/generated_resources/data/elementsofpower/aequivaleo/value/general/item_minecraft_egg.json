@@ -12,7 +12,7 @@
   "compounds": [
     {
       "amount": 2.0,
-      "type": "elementsofpower:light"
+      "type": "elementsofpower:air"
     },
     {
       "amount": 2.0,
@@ -20,7 +20,7 @@
     },
     {
       "amount": 2.0,
-      "type": "elementsofpower:air"
+      "type": "elementsofpower:light"
     }
   ]
 }

@@ -150,7 +150,7 @@ public class ConversionCache implements IConversionCache
 
         /*if (essenceMappings.containsKey(item))
         {
-            ElementsOfPowerMod.LOGGER.error("Stack already inserted! " + item.toString());
+            ElementsOfPowerMod.LOGGER.error("Stack already inserted! "t + item.toString());
             return;
         }*/
 

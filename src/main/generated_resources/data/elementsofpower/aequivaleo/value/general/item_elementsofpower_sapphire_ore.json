@@ -11,12 +11,12 @@
   ],
   "compounds": [
     {
-      "amount": 8.0,
-      "type": "elementsofpower:earth"
-    },
-    {
       "amount": 1.0,
       "type": "elementsofpower:water"
+    },
+    {
+      "amount": 8.0,
+      "type": "elementsofpower:earth"
     }
   ]
 }

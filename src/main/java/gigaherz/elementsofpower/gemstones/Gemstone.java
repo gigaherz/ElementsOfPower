@@ -52,6 +52,7 @@ public enum Gemstone implements IStringSerializable, IItemProvider
     private final Element element;
     private final String name;
     private final int tintColor;
+
     private final boolean isVanilla;
     private final Supplier<GemstoneItem> itemSupplier;
     @Nullable
@@ -120,6 +121,11 @@ public enum Gemstone implements IStringSerializable, IItemProvider
         return spelldustItemSupplier != null;
     }
 
+    public boolean isVanilla()
+    {
+        return isVanilla;
+    }
+
     @Override
     public Item asItem()
     {
@@ -139,6 +145,12 @@ public enum Gemstone implements IStringSerializable, IItemProvider
     public GemstoneItem getItem()
     {
         return itemSupplier.get();
+    }
+
+    @Nullable
+    public Item getVanillaItem()
+    {
+        return vanillaGemstoneSupplier != null ? vanillaGemstoneSupplier.get() : null;
     }
 
     public Item getSpelldust()

@@ -5,12 +5,17 @@ import com.ldtteam.aequivaleo.api.IAequivaleoAPI;
 import com.ldtteam.aequivaleo.api.compound.CompoundInstance;
 import com.ldtteam.aequivaleo.api.compound.type.ICompoundType;
 import com.ldtteam.aequivaleo.api.compound.type.group.ICompoundTypeGroup;
+import com.ldtteam.aequivaleo.api.instanced.IInstancedEquivalencyHandlerRegistry;
 import com.ldtteam.aequivaleo.api.plugin.IAequivaleoPlugin;
 import com.ldtteam.aequivaleo.api.results.IResultsInformationCache;
 import gigaherz.elementsofpower.ConfigManager;
+import gigaherz.elementsofpower.ElementsOfPowerItems;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.database.ConversionCache;
 import gigaherz.elementsofpower.database.IConversionCache;
+import gigaherz.elementsofpower.gemstones.Gemstone;
+import gigaherz.elementsofpower.gemstones.GemstoneItem;
+import gigaherz.elementsofpower.gemstones.Quality;
 import gigaherz.elementsofpower.magic.MagicAmounts;
 import gigaherz.elementsofpower.spells.Element;
 import net.minecraft.item.ItemStack;
@@ -85,6 +90,26 @@ public class AequivaleoPlugin implements IAequivaleoPlugin
         {
             LOGGER.info("Aequivaleo has been enabled. Aequivaleo-calculated magic conversions will be used instead of the internal system...");
             ConversionCache.aequivaleoGetter = EssenceConversionCache::new;
+        }
+    }
+
+    @Override
+    public void onCommonSetup()
+    {
+        IInstancedEquivalencyHandlerRegistry equivalencyHandlerRegistry = IInstancedEquivalencyHandlerRegistry.getInstance();
+        for(Gemstone g : Gemstone.values)
+        {
+            GemstoneItem gemstoneItem = g.getItem();
+            equivalencyHandlerRegistry.registerHandler(gemstoneItem, (equivalences) ->{
+                if (g.isVanilla())
+                {
+                    equivalences.accept(g.getVanillaItem());
+                }
+                for(Quality q : Quality.values)
+                {
+                    equivalences.accept(gemstoneItem.setQuality(new ItemStack(gemstoneItem), q));
+                }
+            }) ;
         }
     }
 

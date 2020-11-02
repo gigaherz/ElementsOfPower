@@ -12,11 +12,11 @@
   "compounds": [
     {
       "amount": 2.0,
-      "type": "elementsofpower:darkness"
+      "type": "elementsofpower:water"
     },
     {
       "amount": 2.0,
-      "type": "elementsofpower:water"
+      "type": "elementsofpower:darkness"
     }
   ]
 }

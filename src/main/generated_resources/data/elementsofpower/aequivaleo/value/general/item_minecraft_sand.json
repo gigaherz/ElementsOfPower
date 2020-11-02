@@ -12,11 +12,11 @@
   "compounds": [
     {
       "amount": 2.0,
-      "type": "elementsofpower:earth"
+      "type": "elementsofpower:air"
     },
     {
       "amount": 2.0,
-      "type": "elementsofpower:air"
+      "type": "elementsofpower:earth"
     }
   ]
 }

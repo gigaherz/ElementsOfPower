@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.ldtteam.aequivaleo.api.compound.CompoundInstance;
+import com.ldtteam.aequivaleo.api.compound.information.datagen.LockedInformationProvider;
 import com.ldtteam.aequivaleo.api.compound.information.datagen.ValueInformationProvider;
 import com.mojang.datafixers.util.Pair;
 import gigaherz.elementsofpower.cocoons.ApplyOrbSizeFunction;
@@ -69,6 +70,7 @@ class ElementsofPowerDataGen
             if ("true".equals(System.getProperty("elementsofpower.doAequivaleoDatagen", "true")))
             {
                 gen.addProvider(new AequivaleoGens(gen, itemTags));
+                gen.addProvider(new AequivaleoGensLocked(gen, itemTags));
             }
         }
         if (event.includeClient())
@@ -82,6 +84,60 @@ class ElementsofPowerDataGen
         private final ItemTagGens itemTags;
 
         protected AequivaleoGens(DataGenerator dataGenerator, ItemTagGens itemTags)
+        {
+            super(ElementsOfPowerMod.MODID, dataGenerator);
+            this.itemTags = itemTags;
+        }
+
+        @Override
+        public void calculateDataToSave()
+        {
+            StockConversions.addStockConversions(this::getItemsFromTag, (item, amounts) -> {
+                Set<CompoundInstance> values = Sets.newHashSet();
+                for(Element e : Element.values)
+                {
+                    double value = amounts.get(e);
+                    if (value > 0)
+                    {
+                        values.add(
+                                new CompoundInstance(AequivaleoPlugin.BY_ELEMENT.get(e).get(), value)
+                        );
+                    }
+                }
+                saveData(item, values);
+            });
+        }
+
+        private List<Item> getItemsFromTag(ResourceLocation rl, List<Item> fallback)
+        {
+            ITag.Builder tag = itemTags.getTagByName(rl);
+            if (tag == null)
+                return fallback;
+            return tag.getProxyStream().flatMap(this::getItemsFromTag).collect(Collectors.toList());
+        }
+
+        private Stream<Item> getItemsFromTag(ITag.Proxy proxy)
+        {
+            ITag.ITagEntry entry = proxy.getEntry();
+            if (entry instanceof ITag.ItemEntry)
+            {
+                ResourceLocation itemId = new ResourceLocation(((ITag.ItemEntry)entry).toString());
+                return Stream.of(ForgeRegistries.ITEMS.getValue(itemId));
+            }
+            if (entry instanceof ITag.TagEntry)
+            {
+                ResourceLocation tagId = ((ITag.TagEntry)entry).getId();
+                return getItemsFromTag(tagId, Collections.emptyList()).stream();
+            }
+            return Stream.empty();
+        }
+    }
+
+    private static class AequivaleoGensLocked extends LockedInformationProvider
+    {
+        private final ItemTagGens itemTags;
+
+        protected AequivaleoGensLocked(DataGenerator dataGenerator, ItemTagGens itemTags)
         {
             super(ElementsOfPowerMod.MODID, dataGenerator);
             this.itemTags = itemTags;
@@ -148,31 +204,38 @@ class ElementsofPowerDataGen
         protected void registerTags()
         {
             GemstoneExaminer.GEMS.forEach((gem, tag) -> {
-                this.getOrCreateBuilder(tag).add(gem.getTagItems());
             });
+
+            Builder<Item> gemsTag = this.getOrCreateBuilder(Tags.Items.GEMS);
+            Builder<Item> oresTag = this.getOrCreateBuilder(Tags.Items.ORES);
+            Builder<Item> blocksTag = this.getOrCreateBuilder(Tags.Items.STORAGE_BLOCKS);
+            Builder<Item> examinerTag = this.getOrCreateBuilder(GemstoneExaminer.GEMSTONES);
             Gemstone.values.forEach(gem -> {
                 if (gem != Gemstone.CREATIVITE)
                 {
                     ITag.INamedTag<Item> tag = ItemTags.makeWrapperTag(new ResourceLocation("forge", "gems/" + gem.getString()).toString());
                     this.getOrCreateBuilder(tag).add(gem.getTagItems());
+                    gemsTag.addTag(tag);
+
+                    ITag.INamedTag<Item> eTag = GemstoneExaminer.GEMS.get(gem);
+                    this.getOrCreateBuilder(eTag).add(gem.getTagItems());
+                    examinerTag.addTag(eTag);
                 }
                 if (gem.generateCustomOre())
                 {
                     Block ore = gem.getOre();
                     ITag.INamedTag<Item> tag = ItemTags.makeWrapperTag(new ResourceLocation("forge", "ores/" + gem.getString()).toString());
                     this.getOrCreateBuilder(tag).add(ore.asItem());
+                    oresTag.addTag(tag);
                 }
                 if (gem.generateCustomBlock())
                 {
                     Block block = gem.getBlock();
-                    ITag.INamedTag<Item> tag = ItemTags.makeWrapperTag(new ResourceLocation("forge", "blocks/" + gem.getString()).toString());
+                    ITag.INamedTag<Item> tag = ItemTags.makeWrapperTag(new ResourceLocation("forge", "storage_blocks/" + gem.getString()).toString());
                     this.getOrCreateBuilder(tag).add(block.asItem());
+                    blocksTag.addTag(tag);
                 }
             });
-
-            this.getOrCreateBuilder(GemstoneExaminer.GEMSTONES).add(
-                    Arrays.stream(Gemstone.values()).flatMap(g -> Arrays.stream(g.getTagItems())).toArray(Item[]::new)
-            );
         }
     }
 
