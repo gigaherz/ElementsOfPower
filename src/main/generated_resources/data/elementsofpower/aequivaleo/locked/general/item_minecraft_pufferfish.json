@@ -7,16 +7,23 @@
         "count": 1.0,
         "item": "minecraft:pufferfish"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:pufferfish\",Count:1b}"
+      }
     }
   ],
   "compounds": [
     {
-      "amount": 2.0,
-      "type": "elementsofpower:water"
-    },
-    {
       "amount": 4.0,
       "type": "elementsofpower:life"
+    },
+    {
+      "amount": 2.0,
+      "type": "elementsofpower:water"
     }
   ]
 }

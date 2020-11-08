@@ -7,20 +7,19 @@
         "count": 1.0,
         "item": "minecraft:nether_star"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:nether_star\",Count:1b}"
+      }
     }
   ],
   "compounds": [
     {
       "amount": 64.0,
-      "type": "elementsofpower:earth"
-    },
-    {
-      "amount": 64.0,
-      "type": "elementsofpower:darkness"
-    },
-    {
-      "amount": 64.0,
-      "type": "elementsofpower:water"
+      "type": "elementsofpower:life"
     },
     {
       "amount": 64.0,
@@ -28,7 +27,7 @@
     },
     {
       "amount": 64.0,
-      "type": "elementsofpower:light"
+      "type": "elementsofpower:water"
     },
     {
       "amount": 64.0,
@@ -36,11 +35,19 @@
     },
     {
       "amount": 64.0,
+      "type": "elementsofpower:light"
+    },
+    {
+      "amount": 64.0,
+      "type": "elementsofpower:darkness"
+    },
+    {
+      "amount": 64.0,
       "type": "elementsofpower:air"
     },
     {
       "amount": 64.0,
-      "type": "elementsofpower:life"
+      "type": "elementsofpower:earth"
     }
   ]
 }

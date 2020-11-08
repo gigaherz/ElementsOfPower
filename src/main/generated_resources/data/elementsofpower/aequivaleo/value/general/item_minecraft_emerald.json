@@ -7,16 +7,23 @@
         "count": 1.0,
         "item": "minecraft:emerald"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:emerald\",Count:1b}"
+      }
     }
   ],
   "compounds": [
     {
-      "amount": 1.0,
-      "type": "elementsofpower:earth"
-    },
-    {
       "amount": 0.125,
       "type": "elementsofpower:life"
+    },
+    {
+      "amount": 1.0,
+      "type": "elementsofpower:earth"
     }
   ]
 }

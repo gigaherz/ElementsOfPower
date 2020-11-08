@@ -7,6 +7,13 @@
         "count": 1.0,
         "item": "minecraft:stripped_crimson_stem"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:stripped_crimson_stem\",Count:1b}"
+      }
     }
   ],
   "compounds": [

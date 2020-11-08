@@ -7,6 +7,13 @@
         "count": 1.0,
         "item": "minecraft:blaze_rod"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:blaze_rod\",Count:1b}"
+      }
     }
   ],
   "compounds": [

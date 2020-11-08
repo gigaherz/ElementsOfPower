@@ -7,6 +7,13 @@
         "count": 1.0,
         "item": "elementsofpower:water_cocoon"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"elementsofpower:water_cocoon\",Count:1b}"
+      }
     }
   ],
   "compounds": [

@@ -7,6 +7,13 @@
         "count": 1.0,
         "item": "elementsofpower:sapphire_ore"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"elementsofpower:sapphire_ore\",Count:1b}"
+      }
     }
   ],
   "compounds": [

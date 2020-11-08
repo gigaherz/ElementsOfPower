@@ -3,10 +3,10 @@ package gigaherz.elementsofpower.database.recipes;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
+import gigaherz.elementsofpower.database.recipes.handlers.GenericRecipeHandler;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import javax.annotation.Nonnull;
 import java.util.List;

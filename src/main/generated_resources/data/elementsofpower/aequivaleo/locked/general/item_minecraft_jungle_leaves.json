@@ -7,6 +7,13 @@
         "count": 1.0,
         "item": "minecraft:jungle_leaves"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:jungle_leaves\",Count:1b}"
+      }
     }
   ],
   "compounds": [

@@ -54,7 +54,7 @@ public class ConversionCache implements IConversionCache
         {
             Path folder = FMLPaths.GAMEDIR.get().resolve("logs/elementsofpower");
             folder.toFile().mkdirs();
-            Files.write(folder.resolve(new SimpleDateFormat("yyyyMMddHHmmss'.log'").format(new Date())), lines);
+            Files.write(folder.resolve((ElementsOfPowerMod.isInternalRecipeScannerEnabled() ? "internal_" : "aequivaleo_") +new SimpleDateFormat("yyyyMMdd_HHmmss'.log'").format(new Date())), lines);
         }
         catch (IOException e)
         {
@@ -89,7 +89,7 @@ public class ConversionCache implements IConversionCache
         {
             Path folder = FMLPaths.GAMEDIR.get().resolve("logs/elementsofpower");
             folder.toFile().mkdirs();
-            Files.write(folder.resolve(new SimpleDateFormat("yyyyMMddHHmmss'.log'").format(new Date())), lines);
+            Files.write(folder.resolve((ElementsOfPowerMod.isInternalRecipeScannerEnabled() ? "internal_" : "aequivaleo_") +new SimpleDateFormat("yyyyMMdd_HHmmss'.log'").format(new Date())), lines);
         }
         catch (IOException e)
         {
@@ -97,11 +97,11 @@ public class ConversionCache implements IConversionCache
         }
     }
 
-    private final Map<Item, MagicAmounts> essenceMappings = Maps.newHashMap();
+    private Map<Item, MagicAmounts> essenceMappings = Maps.newHashMap();
 
-    public Map<Item, MagicAmounts> getEssenceMappings()
+    public void setEssenceMappings(Map<Item, MagicAmounts> essenceMappings)
     {
-        return essenceMappings;
+        this.essenceMappings = essenceMappings;
     }
 
     @Override

@@ -7,6 +7,13 @@
         "count": 1.0,
         "item": "minecraft:lapis_lazuli"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:lapis_lazuli\",Count:1b}"
+      }
     }
   ],
   "compounds": [

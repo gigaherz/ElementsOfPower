@@ -7,6 +7,13 @@
         "count": 1.0,
         "item": "minecraft:wheat"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:wheat\",Count:1b}"
+      }
     }
   ],
   "compounds": [

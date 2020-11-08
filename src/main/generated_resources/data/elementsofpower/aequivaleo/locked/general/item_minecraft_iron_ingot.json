@@ -7,6 +7,13 @@
         "count": 1.0,
         "item": "minecraft:iron_ingot"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:iron_ingot\",Count:1b}"
+      }
     }
   ],
   "compounds": [

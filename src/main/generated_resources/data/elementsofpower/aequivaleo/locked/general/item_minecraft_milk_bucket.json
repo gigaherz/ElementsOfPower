@@ -7,6 +7,13 @@
         "count": 1.0,
         "item": "minecraft:milk_bucket"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:milk_bucket\",Count:1b}"
+      }
     }
   ],
   "compounds": [
@@ -15,12 +22,12 @@
       "type": "elementsofpower:life"
     },
     {
-      "amount": 54.0,
-      "type": "elementsofpower:earth"
-    },
-    {
       "amount": 4.0,
       "type": "elementsofpower:water"
+    },
+    {
+      "amount": 54.0,
+      "type": "elementsofpower:earth"
     }
   ]
 }

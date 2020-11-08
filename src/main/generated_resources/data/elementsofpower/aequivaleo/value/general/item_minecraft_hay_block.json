@@ -7,16 +7,23 @@
         "count": 1.0,
         "item": "minecraft:hay_block"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:hay_block\",Count:1b}"
+      }
     }
   ],
   "compounds": [
     {
-      "amount": 9.0,
-      "type": "elementsofpower:life"
-    },
-    {
       "amount": 1.0,
       "type": "elementsofpower:earth"
+    },
+    {
+      "amount": 9.0,
+      "type": "elementsofpower:life"
     },
     {
       "amount": 1.0,

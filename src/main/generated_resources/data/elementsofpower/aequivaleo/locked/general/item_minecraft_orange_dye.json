@@ -7,16 +7,23 @@
         "count": 1.0,
         "item": "minecraft:orange_dye"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:orange_dye\",Count:1b}"
+      }
     }
   ],
   "compounds": [
     {
       "amount": 1.0,
-      "type": "elementsofpower:life"
+      "type": "elementsofpower:earth"
     },
     {
       "amount": 1.0,
-      "type": "elementsofpower:earth"
+      "type": "elementsofpower:life"
     }
   ]
 }

@@ -7,6 +7,13 @@
         "count": 1.0,
         "item": "minecraft:azure_bluet"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:azure_bluet\",Count:1b}"
+      }
     }
   ],
   "compounds": [

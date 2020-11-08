@@ -7,16 +7,23 @@
         "count": 1.0,
         "item": "elementsofpower:sapphire_ore"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"elementsofpower:sapphire_ore\",Count:1b}"
+      }
     }
   ],
   "compounds": [
     {
-      "amount": 8.0,
-      "type": "elementsofpower:earth"
-    },
-    {
       "amount": 1.0,
       "type": "elementsofpower:water"
+    },
+    {
+      "amount": 8.0,
+      "type": "elementsofpower:earth"
     }
   ]
 }

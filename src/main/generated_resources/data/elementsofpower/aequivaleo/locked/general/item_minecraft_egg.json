@@ -7,12 +7,19 @@
         "count": 1.0,
         "item": "minecraft:egg"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:egg\",Count:1b}"
+      }
     }
   ],
   "compounds": [
     {
       "amount": 2.0,
-      "type": "elementsofpower:air"
+      "type": "elementsofpower:life"
     },
     {
       "amount": 2.0,
@@ -20,7 +27,7 @@
     },
     {
       "amount": 2.0,
-      "type": "elementsofpower:life"
+      "type": "elementsofpower:air"
     }
   ]
 }

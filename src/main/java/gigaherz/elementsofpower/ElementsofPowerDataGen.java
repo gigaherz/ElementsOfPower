@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.ldtteam.aequivaleo.api.compound.CompoundInstance;
+import com.ldtteam.aequivaleo.api.compound.information.datagen.CompoundInstanceRef;
+import com.ldtteam.aequivaleo.api.compound.information.datagen.ForcedInformationProvider;
 import com.ldtteam.aequivaleo.api.compound.information.datagen.LockedInformationProvider;
 import com.ldtteam.aequivaleo.api.compound.information.datagen.ValueInformationProvider;
 import com.mojang.datafixers.util.Pair;
@@ -13,6 +15,8 @@ import gigaherz.elementsofpower.database.GemstoneExaminer;
 import gigaherz.elementsofpower.database.StockConversions;
 import gigaherz.elementsofpower.gemstones.AnalyzedFilteringIngredient;
 import gigaherz.elementsofpower.gemstones.Gemstone;
+import gigaherz.elementsofpower.gemstones.GemstoneItem;
+import gigaherz.elementsofpower.gemstones.Quality;
 import gigaherz.elementsofpower.integration.aequivaleo.AequivaleoPlugin;
 import gigaherz.elementsofpower.recipes.ContainerChargeRecipe;
 import gigaherz.elementsofpower.recipes.GemstoneChangeRecipe;
@@ -26,12 +30,15 @@ import net.minecraft.block.Blocks;
 import net.minecraft.data.*;
 import net.minecraft.data.loot.BlockLootTables;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.loot.*;
 import net.minecraft.state.IntegerProperty;
 import net.minecraft.tags.ITag;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
@@ -70,7 +77,6 @@ class ElementsofPowerDataGen
             if ("true".equals(System.getProperty("elementsofpower.doAequivaleoDatagen", "true")))
             {
                 gen.addProvider(new AequivaleoGens(gen, itemTags));
-                gen.addProvider(new AequivaleoGensLocked(gen, itemTags));
             }
         }
         if (event.includeClient())
@@ -79,7 +85,7 @@ class ElementsofPowerDataGen
         }
     }
 
-    private static class AequivaleoGens extends ValueInformationProvider
+    private static class AequivaleoGens extends ForcedInformationProvider
     {
         private final ItemTagGens itemTags;
 
@@ -93,72 +99,23 @@ class ElementsofPowerDataGen
         public void calculateDataToSave()
         {
             StockConversions.addStockConversions(this::getItemsFromTag, (item, amounts) -> {
-                Set<CompoundInstance> values = Sets.newHashSet();
+                Set<CompoundInstanceRef> values = Sets.newHashSet();
                 for(Element e : Element.values)
                 {
                     double value = amounts.get(e);
                     if (value > 0)
                     {
                         values.add(
-                                new CompoundInstance(AequivaleoPlugin.BY_ELEMENT.get(e).get(), value)
+                                new CompoundInstanceRef(AequivaleoPlugin.BY_ELEMENT.get(e).getId(), value)
                         );
                     }
                 }
-                saveData(item, values);
-            });
-        }
 
-        private List<Item> getItemsFromTag(ResourceLocation rl, List<Item> fallback)
-        {
-            ITag.Builder tag = itemTags.getTagByName(rl);
-            if (tag == null)
-                return fallback;
-            return tag.getProxyStream().flatMap(this::getItemsFromTag).collect(Collectors.toList());
-        }
-
-        private Stream<Item> getItemsFromTag(ITag.Proxy proxy)
-        {
-            ITag.ITagEntry entry = proxy.getEntry();
-            if (entry instanceof ITag.ItemEntry)
-            {
-                ResourceLocation itemId = new ResourceLocation(((ITag.ItemEntry)entry).toString());
-                return Stream.of(ForgeRegistries.ITEMS.getValue(itemId));
-            }
-            if (entry instanceof ITag.TagEntry)
-            {
-                ResourceLocation tagId = ((ITag.TagEntry)entry).getId();
-                return getItemsFromTag(tagId, Collections.emptyList()).stream();
-            }
-            return Stream.empty();
-        }
-    }
-
-    private static class AequivaleoGensLocked extends LockedInformationProvider
-    {
-        private final ItemTagGens itemTags;
-
-        protected AequivaleoGensLocked(DataGenerator dataGenerator, ItemTagGens itemTags)
-        {
-            super(ElementsOfPowerMod.MODID, dataGenerator);
-            this.itemTags = itemTags;
-        }
-
-        @Override
-        public void calculateDataToSave()
-        {
-            StockConversions.addStockConversions(this::getItemsFromTag, (item, amounts) -> {
-                Set<CompoundInstance> values = Sets.newHashSet();
-                for(Element e : Element.values)
-                {
-                    double value = amounts.get(e);
-                    if (value > 0)
-                    {
-                        values.add(
-                                new CompoundInstance(AequivaleoPlugin.BY_ELEMENT.get(e).get(), value)
-                        );
-                    }
-                }
-                saveData(item, values);
+                Set<Object> gameObjects = Sets.newHashSet(item, new ItemStack(item));
+                NonNullList<ItemStack> stacks = NonNullList.create();
+                item.fillItemGroup(ItemGroup.SEARCH, stacks);
+                gameObjects.addAll(stacks);
+                saveDataRefs(gameObjects, values);
             });
         }
 

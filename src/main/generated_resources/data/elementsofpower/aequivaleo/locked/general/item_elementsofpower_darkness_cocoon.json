@@ -7,16 +7,23 @@
         "count": 1.0,
         "item": "elementsofpower:darkness_cocoon"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"elementsofpower:darkness_cocoon\",Count:1b}"
+      }
     }
   ],
   "compounds": [
     {
-      "amount": 2.0,
-      "type": "elementsofpower:life"
-    },
-    {
       "amount": 8.0,
       "type": "elementsofpower:darkness"
+    },
+    {
+      "amount": 2.0,
+      "type": "elementsofpower:life"
     }
   ]
 }

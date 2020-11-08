@@ -7,16 +7,23 @@
         "count": 1.0,
         "item": "minecraft:light_gray_dye"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:light_gray_dye\",Count:1b}"
+      }
     }
   ],
   "compounds": [
     {
       "amount": 1.0,
-      "type": "elementsofpower:earth"
+      "type": "elementsofpower:life"
     },
     {
       "amount": 1.0,
-      "type": "elementsofpower:life"
+      "type": "elementsofpower:earth"
     }
   ]
 }

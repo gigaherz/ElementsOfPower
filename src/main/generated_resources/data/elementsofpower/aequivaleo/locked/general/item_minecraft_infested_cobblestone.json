@@ -7,6 +7,13 @@
         "count": 1.0,
         "item": "minecraft:infested_cobblestone"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:infested_cobblestone\",Count:1b}"
+      }
     }
   ],
   "compounds": [

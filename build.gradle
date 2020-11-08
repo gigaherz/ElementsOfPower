@@ -39,13 +39,16 @@ repositories {
         name 'tterrag maven'
         url "https://maven.tterrag.com/"
     }
+    maven { // Patchouli
+        url 'https://maven.blamejared.com'
+    }
     flatDir {
         dirs 'deps'
     }
     mavenLocal()
 }
 
-version = "0.10.23-alpha"
+version = "0.10.32-alpha"
 group = "gigaherz.elementsofpower" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "ElementsOfPower-UNKNOWN"
 
@@ -70,7 +73,8 @@ minecraft {
 
             property 'forge.logging.markers', ''
             property 'forge.logging.console.level', 'debug'
-            property 'elementsofpower.dumpItemsWithoutEssences', 'TRUE'
+
+            property 'mixin.env.disableRefMap', 'true'
 
             mods {
                 thismod {
@@ -79,12 +83,19 @@ minecraft {
             }
         }
 
+        client_nocache {
+            parent runs.client
+
+            property 'elementsOfPower.disableCaches', 'true'
+        }
+
         server {
             workingDirectory project.file('run')
 
             property 'forge.logging.markers', ''
             property 'forge.logging.console.level', 'debug'
-            property 'elementsofpower.dumpItemsWithoutEssences', 'TRUE'
+
+            property 'mixin.env.disableRefMap', 'true'
 
             mods {
                 thismod {
@@ -116,16 +127,19 @@ dependencies {
     compileOnly fg.deobf("mezz.jei:jei-1.16.2:7.1.3.19:api")
     runtimeOnly fg.deobf("mezz.jei:jei-1.16.2:7.1.3.19")
 
-    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.16.2-4.0.0.1")
-    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.16.2-4.0.0.1:api")
+    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.16.3-4.0.2.0")
+    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.16.3-4.0.2.0:api")
 
-    compileOnly fg.deobf("com.ldtteam:aequivaleo:0.1.13-ALPHA:api")
-    compileOnly fg.deobf("com.ldtteam:aequivaleo:0.1.13-ALPHA:vanilla-api")
-    runtimeOnly fg.deobf("com.ldtteam:aequivaleo:0.1.13-ALPHA:universal")
+    compileOnly fg.deobf("com.ldtteam:aequivaleo:0.1.15-ALPHA:api")
+    compileOnly fg.deobf("com.ldtteam:aequivaleo:0.1.15-ALPHA:vanilla-api")
+    runtimeOnly fg.deobf("com.ldtteam:aequivaleo:0.1.15-ALPHA:universal")
 
     runtimeOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:1.16-3.0.4-beta-7")
 
     implementation fg.deobf("gigaherz.guidebook:Guidebook-1.16.3:3.2.1")
+
+    //runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:1.16.2-47")
+    //runtimeOnly fg.deobf("deps:Botania-1.16.3:409")
 }
 
 jar {

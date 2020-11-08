@@ -378,6 +378,11 @@ public class MagicAmounts implements INBTSerializable<CompoundNBT>
         return IntStream.range(0, amounts.length).mapToObj(i -> amounts[i]);
     }
 
+    public static boolean isNullOrEmpty(MagicAmounts value)
+    {
+        return value == null || value.isEmpty();
+    }
+
     @Override
     public CompoundNBT serializeNBT()
     {

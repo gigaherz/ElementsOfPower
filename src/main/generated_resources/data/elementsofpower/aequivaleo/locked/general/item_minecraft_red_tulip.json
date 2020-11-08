@@ -7,6 +7,13 @@
         "count": 1.0,
         "item": "minecraft:red_tulip"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:red_tulip\",Count:1b}"
+      }
     }
   ],
   "compounds": [

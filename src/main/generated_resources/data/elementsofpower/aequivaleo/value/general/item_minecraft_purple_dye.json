@@ -7,6 +7,13 @@
         "count": 1.0,
         "item": "minecraft:purple_dye"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:purple_dye\",Count:1b}"
+      }
     }
   ],
   "compounds": [

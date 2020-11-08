@@ -31,6 +31,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -54,7 +55,7 @@ public class AequivaleoPlugin implements IAequivaleoPlugin
     public static final RegistryObject<EssenceType> LIFE = TYPES.register("life", () -> new EssenceType(Element.LIFE, ESSENCE));
     public static final RegistryObject<EssenceType> DEATH = TYPES.register("death", () -> new EssenceType(Element.DEATH, ESSENCE));
 
-    public static final Map<Element, Supplier<EssenceType>> BY_ELEMENT = ImmutableMap.<Element, Supplier<EssenceType>>builder()
+    public static final Map<Element, RegistryObject<EssenceType>> BY_ELEMENT = ImmutableMap.<Element, RegistryObject<EssenceType>>builder()
          .put(Element.FIRE, FIRE)
          .put(Element.WATER, WATER)
          .put(Element.AIR, AIR)
@@ -148,22 +149,27 @@ public class AequivaleoPlugin implements IAequivaleoPlugin
         {
             MagicAmounts amounts = conversions.computeIfAbsent(stack.getItem(), item -> {
                 IResultsInformationCache aequivaleoCache = IAequivaleoAPI.getInstance().getResultsInformationCache(worldKey);
-                Set<CompoundInstance> results = aequivaleoCache.getFor(stack);
-                if (results.isEmpty())
-                    return MagicAmounts.EMPTY;
-
-                MagicAmounts.Accumulator b = MagicAmounts.builder();
-                for(CompoundInstance i : results)
-                {
-                    ICompoundType type = i.getType();
-                    if (type instanceof EssenceType)
-                    {
-                        b.add(MagicAmounts.ofElement(((EssenceType)type).getElement(), (float)(double)i.getAmount()));
-                    }
-                }
-                return b.toAmounts();
+                Optional<MagicAmounts> am = aequivaleoCache.getCacheFor(ESSENCE.get(), item);
+                return am.orElse(MagicAmounts.EMPTY);
             });
             return wholeStack ? amounts.multiply(stack.getCount()) : amounts;
         }
+    }
+
+    public static Optional<MagicAmounts> getMagicAmounts(Set<CompoundInstance> results)
+    {
+        if (results.isEmpty())
+            return Optional.empty();
+
+        MagicAmounts.Accumulator b = MagicAmounts.builder();
+        for(CompoundInstance i : results)
+        {
+            ICompoundType type = i.getType();
+            if (type instanceof EssenceType)
+            {
+                b.add(MagicAmounts.ofElement(((EssenceType)type).getElement(), (float)(double)i.getAmount()));
+            }
+        }
+        return Optional.of(b.toAmounts());
     }
 }

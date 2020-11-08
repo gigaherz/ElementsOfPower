@@ -7,6 +7,13 @@
         "count": 1.0,
         "item": "minecraft:acacia_log"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:acacia_log\",Count:1b}"
+      }
     }
   ],
   "compounds": [

@@ -1,0 +1,29 @@
+{
+  "mode": "ADDITIVE",
+  "targets": [
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:poisonous_potato\",Count:1b}"
+      }
+    },
+    {
+      "type": "aequivaleo:item",
+      "data": {
+        "count": 1.0,
+        "item": "minecraft:poisonous_potato"
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "amount": 2.0,
+      "type": "elementsofpower:earth"
+    },
+    {
+      "amount": 2.0,
+      "type": "elementsofpower:death"
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 package gigaherz.elementsofpower.database.recipes;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.Ingredient;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -11,5 +12,5 @@ public interface IRecipeInfoProvider
     ItemStack getRecipeOutput();
 
     @Nonnull
-    List<ItemStack> getRecipeInputs();
+    List<ScaledIngredient> getRecipeInputs();
 }

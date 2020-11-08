@@ -7,6 +7,13 @@
         "count": 1.0,
         "item": "minecraft:string"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:string\",Count:1b}"
+      }
     }
   ],
   "compounds": [

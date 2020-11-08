@@ -7,6 +7,13 @@
         "count": 1.0,
         "item": "elementsofpower:sapphire_block"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"elementsofpower:sapphire_block\",Count:1b}"
+      }
     }
   ],
   "compounds": [

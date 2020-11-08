@@ -6,11 +6,11 @@ import com.ldtteam.aequivaleo.api.compound.type.group.ICompoundTypeGroup;
 import com.ldtteam.aequivaleo.api.mediation.IMediationCandidate;
 import com.ldtteam.aequivaleo.api.mediation.IMediationEngine;
 import com.ldtteam.aequivaleo.api.recipe.equivalency.IEquivalencyRecipe;
-import com.ldtteam.aequivaleo.vanilla.api.recipe.equivalency.ITagEquivalencyRecipe;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import java.util.Collections;
 import java.util.Optional;
+import java.util.Set;
 
 public class EssenceGroupType extends ForgeRegistryEntry<ICompoundTypeGroup> implements ICompoundTypeGroup
 {
@@ -18,9 +18,6 @@ public class EssenceGroupType extends ForgeRegistryEntry<ICompoundTypeGroup> imp
     public IMediationEngine getMediationEngine()
     {
         return context -> {
-            if (!context.areTargetParentsAnalyzed())
-                return Optional.of(Collections.emptySet());
-
             return context
                     .getCandidates()
                     .stream()
@@ -37,7 +34,7 @@ public class EssenceGroupType extends ForgeRegistryEntry<ICompoundTypeGroup> imp
                         if (!o1.getValues().isEmpty() && o2.getValues().isEmpty())
                             return -1;
 
-                        return (int) (o1.getValues().stream().mapToDouble(CompoundInstance::getAmount).sum() -
+                        return Double.compare(o1.getValues().stream().mapToDouble(CompoundInstance::getAmount).sum(),
                                 o2.getValues().stream().mapToDouble(CompoundInstance::getAmount).sum());
                     })
                     .map(IMediationCandidate::getValues);
@@ -47,7 +44,7 @@ public class EssenceGroupType extends ForgeRegistryEntry<ICompoundTypeGroup> imp
     @Override
     public boolean shouldIncompleteRecipeBeProcessed(IEquivalencyRecipe iEquivalencyRecipe)
     {
-        return true;
+        return false;
     }
 
     @Override
@@ -66,5 +63,11 @@ public class EssenceGroupType extends ForgeRegistryEntry<ICompoundTypeGroup> imp
     public boolean isValidFor(ICompoundContainer<?> iCompoundContainer, CompoundInstance compoundInstance)
     {
         return true;
+    }
+
+    @Override
+    public Optional<?> convertToCacheEntry(Set<CompoundInstance> instances)
+    {
+        return AequivaleoPlugin.getMagicAmounts(instances);
     }
 }

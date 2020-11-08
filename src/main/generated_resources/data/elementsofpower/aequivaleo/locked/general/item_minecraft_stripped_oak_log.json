@@ -7,6 +7,13 @@
         "count": 1.0,
         "item": "minecraft:stripped_oak_log"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:stripped_oak_log\",Count:1b}"
+      }
     }
   ],
   "compounds": [

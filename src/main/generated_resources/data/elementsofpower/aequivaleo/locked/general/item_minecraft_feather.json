@@ -7,16 +7,23 @@
         "count": 1.0,
         "item": "minecraft:feather"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:feather\",Count:1b}"
+      }
     }
   ],
   "compounds": [
     {
       "amount": 4.0,
-      "type": "elementsofpower:air"
+      "type": "elementsofpower:life"
     },
     {
       "amount": 4.0,
-      "type": "elementsofpower:life"
+      "type": "elementsofpower:air"
     }
   ]
 }

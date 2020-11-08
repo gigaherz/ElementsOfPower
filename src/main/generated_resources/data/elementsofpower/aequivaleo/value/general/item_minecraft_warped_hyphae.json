@@ -7,6 +7,13 @@
         "count": 1.0,
         "item": "minecraft:warped_hyphae"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:warped_hyphae\",Count:1b}"
+      }
     }
   ],
   "compounds": [

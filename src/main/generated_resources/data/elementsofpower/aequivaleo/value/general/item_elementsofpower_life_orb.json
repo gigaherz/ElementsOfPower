@@ -7,6 +7,13 @@
         "count": 1.0,
         "item": "elementsofpower:life_orb"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"elementsofpower:life_orb\",Count:1b}"
+      }
     }
   ],
   "compounds": [

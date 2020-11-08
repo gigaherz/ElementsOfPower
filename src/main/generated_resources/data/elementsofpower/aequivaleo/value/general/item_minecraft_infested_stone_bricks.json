@@ -7,16 +7,23 @@
         "count": 1.0,
         "item": "minecraft:infested_stone_bricks"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:infested_stone_bricks\",Count:1b}"
+      }
     }
   ],
   "compounds": [
     {
       "amount": 5.0,
-      "type": "elementsofpower:earth"
+      "type": "elementsofpower:life"
     },
     {
       "amount": 5.0,
-      "type": "elementsofpower:life"
+      "type": "elementsofpower:earth"
     }
   ]
 }

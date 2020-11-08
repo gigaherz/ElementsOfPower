@@ -7,6 +7,13 @@
         "count": 1.0,
         "item": "elementsofpower:air_orb"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"elementsofpower:air_orb\",Count:1b}"
+      }
     }
   ],
   "compounds": [

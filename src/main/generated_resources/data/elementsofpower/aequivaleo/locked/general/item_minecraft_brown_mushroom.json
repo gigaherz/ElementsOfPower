@@ -7,6 +7,13 @@
         "count": 1.0,
         "item": "minecraft:brown_mushroom"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:brown_mushroom\",Count:1b}"
+      }
     }
   ],
   "compounds": [

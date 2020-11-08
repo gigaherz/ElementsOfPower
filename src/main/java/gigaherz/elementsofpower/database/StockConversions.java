@@ -246,6 +246,16 @@ public class StockConversions
         essences(Items.GOLD_INGOT).earth(18);
         essences(Items.GOLD_NUGGET).earth(2);
 
+        essences(Items.COAL_ORE).earth(8).fire(10);
+        essences(Items.IRON_ORE).earth(11);
+        essences(Items.GOLD_ORE).earth(8).light(2);
+        essences(Items.DIAMOND_ORE).earth(7).death(3);
+        essences(Items.EMERALD_ORE).earth(7).death(3);
+        essences(Items.REDSTONE_ORE).earth(5).light(2).fire(3);
+        essences(Items.ANCIENT_DEBRIS).earth(7).death(3);
+
+        essences(Items.REDSTONE).earth(0.5f).light(0.2f).fire(0.3f);
+
         essences(Items.BLAZE_ROD).fire(12).life(8);
 
         essences(

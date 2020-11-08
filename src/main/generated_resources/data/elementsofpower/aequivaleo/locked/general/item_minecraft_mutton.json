@@ -7,6 +7,13 @@
         "count": 1.0,
         "item": "minecraft:mutton"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:mutton\",Count:1b}"
+      }
     }
   ],
   "compounds": [

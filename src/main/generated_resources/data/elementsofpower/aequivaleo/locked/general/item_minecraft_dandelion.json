@@ -7,6 +7,13 @@
         "count": 1.0,
         "item": "minecraft:dandelion"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:dandelion\",Count:1b}"
+      }
     }
   ],
   "compounds": [

@@ -1,0 +1,29 @@
+{
+  "mode": "ADDITIVE",
+  "targets": [
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:sandstone\",Count:1b}"
+      }
+    },
+    {
+      "type": "aequivaleo:item",
+      "data": {
+        "count": 1.0,
+        "item": "minecraft:sandstone"
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "amount": 8.0,
+      "type": "elementsofpower:earth"
+    },
+    {
+      "amount": 8.0,
+      "type": "elementsofpower:air"
+    }
+  ]
+}

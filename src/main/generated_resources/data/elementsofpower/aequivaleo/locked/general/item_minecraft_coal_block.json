@@ -7,16 +7,23 @@
         "count": 1.0,
         "item": "minecraft:coal_block"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:coal_block\",Count:1b}"
+      }
     }
   ],
   "compounds": [
     {
-      "amount": 72.0,
-      "type": "elementsofpower:fire"
-    },
-    {
       "amount": 8.0,
       "type": "elementsofpower:earth"
+    },
+    {
+      "amount": 72.0,
+      "type": "elementsofpower:fire"
     }
   ]
 }

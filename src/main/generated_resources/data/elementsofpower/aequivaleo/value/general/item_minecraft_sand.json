@@ -7,16 +7,23 @@
         "count": 1.0,
         "item": "minecraft:sand"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:sand\",Count:1b}"
+      }
     }
   ],
   "compounds": [
     {
       "amount": 2.0,
-      "type": "elementsofpower:air"
+      "type": "elementsofpower:earth"
     },
     {
       "amount": 2.0,
-      "type": "elementsofpower:earth"
+      "type": "elementsofpower:air"
     }
   ]
 }

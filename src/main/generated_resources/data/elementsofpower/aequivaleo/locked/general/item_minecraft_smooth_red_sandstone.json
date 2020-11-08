@@ -7,16 +7,23 @@
         "count": 1.0,
         "item": "minecraft:smooth_red_sandstone"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:smooth_red_sandstone\",Count:1b}"
+      }
     }
   ],
   "compounds": [
     {
       "amount": 8.0,
-      "type": "elementsofpower:air"
+      "type": "elementsofpower:earth"
     },
     {
       "amount": 8.0,
-      "type": "elementsofpower:earth"
+      "type": "elementsofpower:air"
     }
   ]
 }

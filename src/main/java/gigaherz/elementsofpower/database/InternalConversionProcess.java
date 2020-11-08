@@ -4,13 +4,16 @@ import com.google.common.base.Stopwatch;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.datafixers.util.Either;
+import gigaherz.elementsofpower.ConfigManager;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.database.graph.ItemGraph;
 import gigaherz.elementsofpower.database.recipes.IRecipeInfoProvider;
 import gigaherz.elementsofpower.database.recipes.RecipeTools;
+import gigaherz.elementsofpower.database.recipes.ScaledIngredient;
 import gigaherz.elementsofpower.magic.MagicAmounts;
 import gigaherz.elementsofpower.network.SyncEssenceConversions;
 import net.minecraft.client.resources.ReloadListener;
@@ -21,6 +24,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IFutureReloadListener;
 import net.minecraft.resources.IResourceManager;
@@ -50,9 +54,9 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class InternalConversionProcess
 {
@@ -84,9 +88,12 @@ public class InternalConversionProcess
     {
         if (ElementsOfPowerMod.isInternalRecipeScannerEnabled())
         {
-            PlayerEntity player = event.getPlayer();
-            if (player.isServerWorld())
-                ElementsOfPowerMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncEssenceConversions());
+            if (SERVER.isReady())
+            {
+                PlayerEntity player = event.getPlayer();
+                if (player.isServerWorld())
+                    ElementsOfPowerMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SyncEssenceConversions());
+            }
         }
     }
 
@@ -104,85 +111,51 @@ public class InternalConversionProcess
         {
             if (!SERVER.isReady())
             {
-                recalculateConversions(event.getServer(), false);
+                recalculateConversions(event.getServer());
             }
         }
     }
 
-    private static void processRecipesNew(List<IRecipeInfoProvider> recipes)
+    private static Map<Item, MagicAmounts> processRecipesNew(Map<Item, MagicAmounts> stock, List<IRecipeInfoProvider> recipes)
     {
-        ItemGraph<MagicAmounts> graph = new ItemGraph<>(MagicAmounts::multiply, MagicAmounts::add, MagicAmounts::compare, MagicAmounts::min);
+        Map<Ingredient, JsonElement> serializations = Maps.newHashMap();
+        Map<JsonElement, Ingredient> references = Maps.newHashMap();
+
+        if (ConfigManager.COMMON.verboseDebug.get())
+            LOGGER.debug("Constructing graph...");
+        ItemGraph<MagicAmounts> graph = new ItemGraph<>(MagicAmounts::multiply, MagicAmounts::add, MagicAmounts::compare, MagicAmounts::min, MagicAmounts::isNullOrEmpty, MagicAmounts.EMPTY);
         for (IRecipeInfoProvider p : recipes)
         {
             ItemStack recipeOutput = p.getRecipeOutput();
-            Item consumer = recipeOutput.getItem();
-            double scale = recipeOutput.getCount();
 
-            Map<Item, Double> providers = Maps.newHashMap();
-            for (ItemStack t : p.getRecipeInputs())
+            Map<Ingredient, Double> providers = Maps.newHashMap();
+            for (ScaledIngredient t : p.getRecipeInputs())
             {
-                providers.compute(t.getItem(), (i,v) -> (v != null ? v : 0)+t.getCount());
+                JsonElement serialization = serializations.computeIfAbsent(t.ingredient, Ingredient::serialize);
+                Ingredient deduplicated = references.computeIfAbsent(serialization, json -> t.ingredient);
+                providers.compute(deduplicated, (i,v) -> v != null ? v+t.scale : t.scale);
             }
 
-            graph.addRecipe(consumer, scale, providers.entrySet(), p);
+            graph.addRecipe(recipeOutput, providers.entrySet().stream().map(e -> new ScaledIngredient(e.getKey(), e.getValue())).collect(Collectors.toList()), p);
         }
-        for(Map.Entry<Item, MagicAmounts> entry : SERVER.getAllConversions().entrySet())
-        {
-            graph.addData(entry.getKey(), entry.getValue());
-        }
+
+        if (ConfigManager.COMMON.verboseDebug.get())
+            LOGGER.debug("Adding recipe information to graph...");
+        stock.forEach(graph::addData);
+
+        if (ConfigManager.COMMON.verboseDebug.get())
+            LOGGER.debug("Spreading unambiguous information...");
         graph.spread();
-        graph.finishFill(SERVER::addConversion);
-    }
 
-    private static void processRecipesOld(List<IRecipeInfoProvider> recipes)
-    {
-        RecipeTools.Processor p = new RecipeTools.Processor();
+        if (ConfigManager.COMMON.verboseDebug.get())
+            LOGGER.debug("Calculating final values...");
 
-        for(IRecipeInfoProvider recipe : recipes)
-        {
-            p.processRecipe(recipe);
-        }
+        graph.computeFinalValues(stock::put);
 
-        for (Map.Entry<Item, RecipeTools.ItemSource> it : p.itemSources.entrySet())
-        {
-            Item output = it.getKey();
-            RecipeTools.ItemSource inputs = it.getValue();
+        if (ConfigManager.COMMON.verboseDebug.get())
+            LOGGER.debug("Done.");
 
-            float count = inputs.numProduced;
-            if (count < 1)
-            {
-                ElementsOfPowerMod.LOGGER.warn("StackSize is invalid! " + output.toString());
-                continue;
-            }
-
-            if (SERVER.hasEssences(new ItemStack(output)))
-                continue;
-
-            boolean allFound = true;
-            MagicAmounts am = MagicAmounts.EMPTY;
-            for (ItemStack b : inputs.sources)
-            {
-                MagicAmounts m = SERVER.getEssences(b, true);
-
-                if (m.isEmpty())
-                {
-                    allFound = false;
-                    break;
-                }
-
-                am = am.add(m);
-            }
-
-            if (!allFound)
-                continue;
-
-            if (count > 1)
-            {
-                am = am.multiply(1.0f / count);
-            }
-
-            SERVER.addConversion(output.getItem(), am);
-        }
+        return stock;
     }
 
     private static void loadOverrides()
@@ -231,6 +204,7 @@ public class InternalConversionProcess
                 SERVER.addConversion(item, m);
             }
         }
+        SERVER.markReady();
     }
 
     private static void saveConversions(Path path, Map<Item, MagicAmounts> map)
@@ -253,24 +227,23 @@ public class InternalConversionProcess
         }
     }
 
-    private static CompletableFuture<String> recalculateConversions(MinecraftServer server, boolean useOldMethod)
+    private static CompletableFuture<String> recalculateConversions(MinecraftServer server)
     {
         ElementsOfPowerMod.LOGGER.info("Recalculating essence conversion table...");
         Stopwatch sw = Stopwatch.createStarted();
         SERVER.clear();
+
+        Map<Item, MagicAmounts> stock = Maps.newHashMap();
         StockConversions.addStockConversions((rl, items) -> {
             ITag<Item> tag = server.func_244266_aF().getItemTags().get(rl);
             return tag == null ? items : tag.getAllElements();
-        }, SERVER::addConversion);
+        }, stock::put);
+
         loadOverrides();
         List<IRecipeInfoProvider> recipes = RecipeTools.getAllRecipes(server);
-        return CompletableFuture.runAsync(() -> {
-            if (useOldMethod)
-                InternalConversionProcess.processRecipesOld(recipes);
-            else
-                InternalConversionProcess.processRecipesNew(recipes);
-        })
+        return CompletableFuture.supplyAsync(() -> InternalConversionProcess.processRecipesNew(stock, recipes))
         .thenApply(value -> {
+            SERVER.setEssenceMappings(value);
             saveConversions(CACHE_PATH.get(), SERVER.getAllConversions());
             sw.stop();
             ElementsOfPowerMod.LOGGER.info("Done. Time elapsed: {}", sw);
@@ -281,6 +254,7 @@ public class InternalConversionProcess
             if (throwable != null) {
                 ElementsOfPowerMod.LOGGER.error("Error. Essence conversion calculations failed", throwable);
             }
+            SERVER.markReady();
         });
     }
 
@@ -317,17 +291,7 @@ public class InternalConversionProcess
                         .then(Commands.literal("recalculate")
                                 .requires(cs -> cs.hasPermissionLevel(4)) //permission
                                 .executes(ctx -> {
-                                            recalculateConversions(ctx.getSource().getServer(), false)
-                                            .whenComplete((msg, err) -> ctx.getSource()
-                                                    .sendFeedback(new StringTextComponent((msg != null ? "Finished: " + msg :"Error calculating: " + err)), true));
-                                            return 0;
-                                        }
-                                )
-                        )
-                        .then(Commands.literal("recalculate_old")
-                                .requires(cs -> cs.hasPermissionLevel(4)) //permission
-                                .executes(ctx -> {
-                                    recalculateConversions(ctx.getSource().getServer(), true)
+                                            recalculateConversions(ctx.getSource().getServer())
                                             .whenComplete((msg, err) -> ctx.getSource()
                                                     .sendFeedback(new StringTextComponent((msg != null ? "Finished: " + msg :"Error calculating: " + err)), true));
                                             return 0;
@@ -345,16 +309,19 @@ public class InternalConversionProcess
                     @Override
                     protected Either<Map<String, MagicAmounts>, Unit> prepare(IResourceManager resourceManagerIn, IProfiler profilerIn)
                     {
-                        Path path = CACHE_PATH.get();
-                        if (Files.exists(path))
+                        if (!"true".equals(System.getProperty("elementsOfPower.disableCaches", "false")))
                         {
-                            try
+                            Path path = CACHE_PATH.get();
+                            if (Files.exists(path))
                             {
-                                return Either.left(loadConfig(path));
-                            }
-                            catch (Exception e)
-                            {
-                                ElementsOfPowerMod.LOGGER.warn("Error loading conversion cache. Recalculation required", e);
+                                try
+                                {
+                                    return Either.left(loadConfig(path));
+                                }
+                                catch (Exception e)
+                                {
+                                    ElementsOfPowerMod.LOGGER.warn("Error loading conversion cache. Recalculation required", e);
+                                }
                             }
                         }
                         return Either.right(Unit.INSTANCE);
@@ -367,12 +334,10 @@ public class InternalConversionProcess
                         data.ifLeft(conversions -> {
                             ElementsOfPowerMod.LOGGER.info("Cache found and loaded. Applying...");
                             applyConversions(conversions);
-                            SERVER.markReady();
                         }).ifRight(unit -> {
                             if (ServerLifecycleHooks.getCurrentServer() != null)
                             {
-                                recalculateConversions(ServerLifecycleHooks.getCurrentServer(), false);
-                                SERVER.markReady();
+                                recalculateConversions(ServerLifecycleHooks.getCurrentServer());
                             }
                         });
                         if (ServerLifecycleHooks.getCurrentServer() != null)

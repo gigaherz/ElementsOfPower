@@ -7,6 +7,13 @@
         "count": 1.0,
         "item": "minecraft:poppy"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:poppy\",Count:1b}"
+      }
     }
   ],
   "compounds": [

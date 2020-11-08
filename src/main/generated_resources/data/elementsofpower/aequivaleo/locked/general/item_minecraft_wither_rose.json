@@ -7,6 +7,13 @@
         "count": 1.0,
         "item": "minecraft:wither_rose"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:wither_rose\",Count:1b}"
+      }
     }
   ],
   "compounds": [

@@ -7,6 +7,13 @@
         "count": 1.0,
         "item": "minecraft:melon"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:melon\",Count:1b}"
+      }
     }
   ],
   "compounds": [

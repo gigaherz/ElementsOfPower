@@ -7,6 +7,13 @@
         "count": 1.0,
         "item": "minecraft:coal_block"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:coal_block\",Count:1b}"
+      }
     }
   ],
   "compounds": [

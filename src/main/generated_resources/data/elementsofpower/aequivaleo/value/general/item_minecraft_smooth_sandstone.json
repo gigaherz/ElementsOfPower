@@ -7,6 +7,13 @@
         "count": 1.0,
         "item": "minecraft:smooth_sandstone"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:smooth_sandstone\",Count:1b}"
+      }
     }
   ],
   "compounds": [

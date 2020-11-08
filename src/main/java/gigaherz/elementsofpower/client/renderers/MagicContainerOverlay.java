@@ -32,6 +32,11 @@ import java.util.List;
 
 public class MagicContainerOverlay extends AbstractGui
 {
+    public static final int ELEMENTS = 8;
+    public static final int SPACING = 28;
+    public static final int TOP_MARGIN = 4;
+    public static final int SPELL_SPACING = 6;
+
     @SubscribeEvent
     public void onRenderGameOverlay(RenderGameOverlayEvent.Post event)
     {
@@ -79,36 +84,41 @@ public class MagicContainerOverlay extends AbstractGui
             ItemModelMesher mesher = mc.getItemRenderer().getItemModelMesher();
             TextureManager renderEngine = mc.textureManager;
 
-            int yTop = 13;
+            final int middle = rescaledWidth/2;
+            final int xMargin = middle - (ELEMENTS - 1) * SPACING / 2;
+
+            final int lineSpacing = font.FONT_HEIGHT + 3;
+
+            int yTop = TOP_MARGIN;
 
             for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
             {
-                int xPos = (rescaledWidth - 7 * 28 - 8) / 2 + 28 * i + 1;
+                int xPos = xMargin + SPACING * i;
                 int alpha = (amounts.get(i) < 0.001) ? 0x3FFFFFFF : 0xFFFFFFFF;
 
                 ItemStack stack = new ItemStack(Element.values[i].getOrb());
 
-                StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yTop - 11, stack, alpha);
+                StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos-16, yTop+8, stack, alpha);
 
                 float e = contained.get(i);
                 String formatted = Float.isInfinite(e) ? "\u221E" : EssentializerScreen.formatQuantityWithSuffix(e);
-                drawCenteredString(matrixStack, font, formatted, xPos, yTop, 0xFFC0C0C0);
+                drawCenteredString(matrixStack, font, formatted, xPos, yTop + 16 + 2, 0xFFC0C0C0);
             }
 
-            yTop += 12;
+            yTop += 16 + 2 + lineSpacing;
 
             if (!reservoir.isEmpty())
             {
                 for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
                 {
-                    int xPos = (rescaledWidth - 7 * 28 - 8) / 2 + 28 * i + 1;
+                    int xPos = xMargin + SPACING * i;
 
                     float e = reservoir.get(i);
                     String formatted = String.format("(%s)", Float.isInfinite(e) ? "\u221E" : EssentializerScreen.formatQuantityWithSuffix(e));
                     drawCenteredString(matrixStack, font, formatted, xPos, yTop, 0xFFC0C0C0);
                 }
 
-                yTop += 12;
+                yTop += lineSpacing;
             }
 
             CompoundNBT nbt = heldItem.getTag();
@@ -119,15 +129,19 @@ public class MagicContainerOverlay extends AbstractGui
 
                 if (savedSequence.size() > 0)
                 {
+                    int intervals = savedSequence.size() - 1;
+                    int xM = middle - intervals * SPELL_SPACING / 2;
+
+                    int yPos = rescaledHeight / 2 - 32;
+
                     // Saved spell sequence
-                    for (int i = 0; i < savedSequence.size(); i++)
+                    for (int i = savedSequence.size()-1; i >= 0; i--)
                     {
-                        int xPos = (rescaledWidth - 6 * (savedSequence.size() - 1) - 14) / 2 + 6 * i;
-                        int yPos = rescaledHeight / 2 - 16 - 16;
+                        int xPos = xM + SPELL_SPACING * i;
                         Element e = savedSequence.get(i);
                         ItemStack stack = new ItemStack(e.getOrb());
 
-                        StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yPos, stack, 0xFFFFFFFF);
+                        StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos-16, yPos, stack, 0xFFFFFFFF);
                     }
 
                     Spellcast temp = SpellManager.makeSpell(savedSequence);
@@ -139,31 +153,34 @@ public class MagicContainerOverlay extends AbstractGui
                             if (MathHelper.epsilonEquals(cost.get(i), 0))
                                 continue;
 
-                            int xPos = (rescaledWidth - 7 * 28 - 8) / 2 + 28 * i + 1;
+                            int xPos = xMargin + SPACING * i;
 
                             float e = -cost.get(i);
                             String formatted = Float.isInfinite(e) ? "\u221E" : EssentializerScreen.formatQuantityWithSuffix(e);
                             drawCenteredString(matrixStack, font, formatted, xPos, yTop, 0xFFC0C0C0);
                         }
 
-                        yTop += 12;
+                        yTop += lineSpacing;
                     }
                 }
             }
 
             List<Element> sequence = WandUseManager.instance.sequence;
-            int spellLength = sequence.size();
-            if (spellLength > 0)
+            if (sequence.size() > 0)
             {
+                int intervals = sequence.size() - 1;
+                int xM = middle - intervals * SPELL_SPACING / 2;
+
+                int yPos = rescaledHeight / 2 + 16;
+
                 // New spell sequence
-                for (int i = 0; i < sequence.size(); i++)
+                for (int i = sequence.size()-1; i >= 0; i--)
                 {
-                    int xPos = (rescaledWidth - 6 * (spellLength - 1) - 14) / 2 + 6 * i;
-                    int yPos = rescaledHeight / 2 + 16;
+                    int xPos = xM + SPELL_SPACING * i;
                     Element e = sequence.get(i);
                     ItemStack stack = new ItemStack(e.getOrb());
 
-                    StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos, yPos, stack, 0xFFFFFFFF);
+                    StackRenderingHelper.renderItemStack(mesher, renderEngine, xPos-16, yPos, stack, 0xFFFFFFFF);
                 }
 
                 Spellcast temp = SpellManager.makeSpell(sequence);
@@ -175,20 +192,20 @@ public class MagicContainerOverlay extends AbstractGui
                         if (MathHelper.epsilonEquals(cost.get(i), 0))
                             continue;
 
-                        int xPos = (rescaledWidth - 7 * 28 - 8) / 2 + 28 * i + 1;
+                        int xPos = xMargin + SPACING * i;
 
                         float e = -cost.get(i);
                         String formatted = Float.isInfinite(e) ? "\u221E" : MagicTooltips.PRETTY_NUMBER_FORMATTER.format(e);
                         drawCenteredString(matrixStack, font, formatted, xPos, yTop, 0xFFC0C0C0);
                     }
 
-                    yTop += 12;
+                    yTop += lineSpacing;
                 }
             }
 
             for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
             {
-                int xPos = (rescaledWidth - 7 * 28 - 8) / 2 + 28 * i + 1;
+                int xPos = xMargin + SPACING * i;
 
                 if (WandUseManager.instance.handInUse != null)
                 {

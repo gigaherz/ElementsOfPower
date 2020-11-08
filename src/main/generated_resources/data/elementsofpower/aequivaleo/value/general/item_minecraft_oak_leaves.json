@@ -7,6 +7,13 @@
         "count": 1.0,
         "item": "minecraft:oak_leaves"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:oak_leaves\",Count:1b}"
+      }
     }
   ],
   "compounds": [

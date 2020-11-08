@@ -7,16 +7,23 @@
         "count": 1.0,
         "item": "minecraft:pumpkin"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:pumpkin\",Count:1b}"
+      }
     }
   ],
   "compounds": [
     {
-      "amount": 3.0,
-      "type": "elementsofpower:life"
-    },
-    {
       "amount": 1.0,
       "type": "elementsofpower:earth"
+    },
+    {
+      "amount": 3.0,
+      "type": "elementsofpower:life"
     }
   ]
 }

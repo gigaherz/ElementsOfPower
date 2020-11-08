@@ -7,6 +7,13 @@
         "count": 1.0,
         "item": "minecraft:rabbit"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:rabbit\",Count:1b}"
+      }
     }
   ],
   "compounds": [

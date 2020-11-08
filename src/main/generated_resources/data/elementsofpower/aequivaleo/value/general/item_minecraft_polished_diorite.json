@@ -7,6 +7,13 @@
         "count": 1.0,
         "item": "minecraft:polished_diorite"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:polished_diorite\",Count:1b}"
+      }
     }
   ],
   "compounds": [

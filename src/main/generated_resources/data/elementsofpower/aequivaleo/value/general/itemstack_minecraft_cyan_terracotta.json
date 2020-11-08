@@ -1,0 +1,29 @@
+{
+  "mode": "ADDITIVE",
+  "targets": [
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:cyan_terracotta\",Count:1b}"
+      }
+    },
+    {
+      "type": "aequivaleo:item",
+      "data": {
+        "count": 1.0,
+        "item": "minecraft:cyan_terracotta"
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "amount": 1.0,
+      "type": "elementsofpower:fire"
+    },
+    {
+      "amount": 5.0,
+      "type": "elementsofpower:earth"
+    }
+  ]
+}
