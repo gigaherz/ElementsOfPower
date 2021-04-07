@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.model.*;
+import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -63,7 +64,7 @@ public class ModelHandle
 
         protected FakeSprite()
         {
-            super(null,
+            super(new AtlasTexture(LOCATION),
                     new Info(LOCATION, 1, 1, AnimationMetadataSection.EMPTY),
                     0, 1, 1,
                     0, 0, new NativeImage(1, 1, false));

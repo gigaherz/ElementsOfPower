@@ -49,7 +49,7 @@ public class EssentializerTileEntity
         protected void onContentsChanged(int slot)
         {
             super.onContentsChanged(slot);
-            markDirty();
+            EssentializerTileEntity.this.markDirty();
             if (world == null)
                 return;
             BlockState state = world.getBlockState(pos);
@@ -125,7 +125,10 @@ public class EssentializerTileEntity
     {
         super.read(state, compound);
 
-        readInventoryFromNBT(compound);
+        if (compound.contains("Slots", Constants.NBT.TAG_LIST))
+        {
+            CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.readNBT(inventory, null, compound.getList("Slots", Constants.NBT.TAG_COMPOUND));
+        }
         containedMagic = readAmountsFromNBT(compound, "Contained");
         remainingToConvert = readAmountsFromNBT(compound, "Remaining");
     }
@@ -134,7 +137,7 @@ public class EssentializerTileEntity
     public CompoundNBT write(CompoundNBT tagCompound)
     {
         tagCompound = super.write(tagCompound);
-        writeInventoryToNBT(tagCompound);
+        tagCompound.put("Slots", Objects.requireNonNull(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.writeNBT(inventory, null)));
         writeAmountsToNBT(tagCompound, "Contained", containedMagic);
         writeAmountsToNBT(tagCompound, "Remaining", remainingToConvert);
         return tagCompound;
@@ -155,19 +158,6 @@ public class EssentializerTileEntity
     private void writeAmountsToNBT(CompoundNBT tagCompound, String key, MagicAmounts amounts)
     {
         tagCompound.put(key, amounts.serializeNBT());
-    }
-
-    private void readInventoryFromNBT(CompoundNBT tagCompound)
-    {
-        if (tagCompound.contains("Slots", Constants.NBT.TAG_LIST))
-        {
-            CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.readNBT(inventory, null, tagCompound.getList("Slots", Constants.NBT.TAG_COMPOUND));
-        }
-    }
-
-    private void writeInventoryToNBT(CompoundNBT tagCompound)
-    {
-        tagCompound.put("Slots", Objects.requireNonNull(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.writeNBT(inventory, null)));
     }
 
     @Override

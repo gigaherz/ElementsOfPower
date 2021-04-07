@@ -34,7 +34,6 @@ public class ConversionCache implements IConversionCache
         return InternalConversionProcess.get(world);
     }
 
-    private static ConversionCache DUMMY = new ConversionCache();
     public static Function<World, IConversionCache> aequivaleoGetter = null;
 
     public static void dumpItemsWithoutEssences(World world)
