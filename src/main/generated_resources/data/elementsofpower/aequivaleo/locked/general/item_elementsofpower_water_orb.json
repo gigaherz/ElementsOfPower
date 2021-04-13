@@ -16,10 +16,8 @@
       }
     }
   ],
-  "compounds": [
-    {
-      "amount": 8.0,
-      "type": "elementsofpower:water"
-    }
-  ]
+  "compounds": {
+    "amount": 8.0,
+    "type": "elementsofpower:water"
+  }
 }

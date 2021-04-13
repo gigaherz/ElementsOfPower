@@ -19,7 +19,7 @@
   "compounds": [
     {
       "amount": 2.0,
-      "type": "elementsofpower:life"
+      "type": "elementsofpower:air"
     },
     {
       "amount": 2.0,
@@ -27,7 +27,7 @@
     },
     {
       "amount": 2.0,
-      "type": "elementsofpower:air"
+      "type": "elementsofpower:life"
     }
   ]
 }

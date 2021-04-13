@@ -22,12 +22,12 @@
       "type": "elementsofpower:earth"
     },
     {
-      "amount": 9.0,
-      "type": "elementsofpower:life"
-    },
-    {
       "amount": 1.0,
       "type": "elementsofpower:air"
+    },
+    {
+      "amount": 9.0,
+      "type": "elementsofpower:life"
     }
   ]
 }

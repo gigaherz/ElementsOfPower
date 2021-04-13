@@ -16,10 +16,8 @@
       }
     }
   ],
-  "compounds": [
-    {
-      "amount": 8.0,
-      "type": "elementsofpower:light"
-    }
-  ]
+  "compounds": {
+    "amount": 8.0,
+    "type": "elementsofpower:light"
+  }
 }

@@ -16,10 +16,8 @@
       }
     }
   ],
-  "compounds": [
-    {
-      "amount": 8.0,
-      "type": "elementsofpower:air"
-    }
-  ]
+  "compounds": {
+    "amount": 8.0,
+    "type": "elementsofpower:air"
+  }
 }

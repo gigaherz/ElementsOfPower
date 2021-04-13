@@ -22,12 +22,12 @@
       "type": "elementsofpower:life"
     },
     {
-      "amount": 4.0,
-      "type": "elementsofpower:water"
-    },
-    {
       "amount": 54.0,
       "type": "elementsofpower:earth"
+    },
+    {
+      "amount": 4.0,
+      "type": "elementsofpower:water"
     }
   ]
 }

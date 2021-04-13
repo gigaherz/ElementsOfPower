@@ -5,21 +5,19 @@
       "type": "aequivaleo:item",
       "data": {
         "count": 1.0,
-        "item": "minecraft:birch_wood"
+        "item": "elementsofpower:fire_orb"
       }
     },
     {
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{id:\"minecraft:birch_wood\",Count:1b}"
+        "stack": "{id:\"elementsofpower:fire_orb\",Count:1b}"
       }
     }
   ],
-  "compounds": [
-    {
-      "amount": 16.0,
-      "type": "elementsofpower:life"
-    }
-  ]
+  "compounds": {
+    "amount": 8.0,
+    "type": "elementsofpower:fire"
+  }
 }

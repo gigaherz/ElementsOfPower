@@ -33,14 +33,14 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{id:\"elementsofpower:emerald\",Count:1b}"
+        "stack": "{id:\"elementsofpower:emerald\",Count:1b,tag:{quality:4}}"
       }
     },
     {
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{id:\"elementsofpower:emerald\",Count:1b,tag:{quality:4}}"
+        "stack": "{id:\"elementsofpower:emerald\",Count:1b}"
       }
     },
     {

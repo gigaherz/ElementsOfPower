@@ -33,14 +33,14 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{id:\"elementsofpower:agate\",Count:1b}"
+        "stack": "{id:\"elementsofpower:agate\",Count:1b,tag:{quality:4}}"
       }
     },
     {
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{id:\"elementsofpower:agate\",Count:1b,tag:{quality:4}}"
+        "stack": "{id:\"elementsofpower:agate\",Count:1b}"
       }
     },
     {
@@ -51,10 +51,8 @@
       }
     }
   ],
-  "compounds": [
-    {
-      "amount": 1.125,
-      "type": "elementsofpower:earth"
-    }
-  ]
+  "compounds": {
+    "amount": 1.125,
+    "type": "elementsofpower:earth"
+  }
 }

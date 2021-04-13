@@ -5,21 +5,19 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{id:\"minecraft:lily_of_the_valley\",Count:1b}"
+        "stack": "{id:\"minecraft:oak_leaves\",Count:1b}"
       }
     },
     {
       "type": "aequivaleo:item",
       "data": {
         "count": 1.0,
-        "item": "minecraft:lily_of_the_valley"
+        "item": "minecraft:oak_leaves"
       }
     }
   ],
-  "compounds": [
-    {
-      "amount": 1.0,
-      "type": "elementsofpower:life"
-    }
-  ]
+  "compounds": {
+    "amount": 4.0,
+    "type": "elementsofpower:life"
+  }
 }

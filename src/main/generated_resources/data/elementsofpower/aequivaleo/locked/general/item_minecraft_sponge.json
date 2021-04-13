@@ -18,12 +18,12 @@
   ],
   "compounds": [
     {
-      "amount": 1.0,
-      "type": "elementsofpower:water"
-    },
-    {
       "amount": 2.0,
       "type": "elementsofpower:life"
+    },
+    {
+      "amount": 1.0,
+      "type": "elementsofpower:water"
     }
   ]
 }

@@ -16,10 +16,8 @@
       }
     }
   ],
-  "compounds": [
-    {
-      "amount": 3.0,
-      "type": "elementsofpower:life"
-    }
-  ]
+  "compounds": {
+    "amount": 3.0,
+    "type": "elementsofpower:life"
+  }
 }

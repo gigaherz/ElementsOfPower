@@ -16,10 +16,8 @@
       }
     }
   ],
-  "compounds": [
-    {
-      "amount": 4.0,
-      "type": "elementsofpower:death"
-    }
-  ]
+  "compounds": {
+    "amount": 4.0,
+    "type": "elementsofpower:death"
+  }
 }

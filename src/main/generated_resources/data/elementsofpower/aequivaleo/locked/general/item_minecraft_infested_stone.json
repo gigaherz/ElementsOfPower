@@ -5,20 +5,24 @@
       "type": "aequivaleo:item",
       "data": {
         "count": 1.0,
-        "item": "minecraft:oak_leaves"
+        "item": "minecraft:infested_stone"
       }
     },
     {
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{id:\"minecraft:oak_leaves\",Count:1b}"
+        "stack": "{id:\"minecraft:infested_stone\",Count:1b}"
       }
     }
   ],
   "compounds": [
     {
-      "amount": 4.0,
+      "amount": 5.0,
+      "type": "elementsofpower:earth"
+    },
+    {
+      "amount": 5.0,
       "type": "elementsofpower:life"
     }
   ]

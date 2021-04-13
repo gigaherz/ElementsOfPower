@@ -5,21 +5,25 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{id:\"elementsofpower:fire_orb\",Count:1b}"
+        "stack": "{id:\"minecraft:light_gray_dye\",Count:1b}"
       }
     },
     {
       "type": "aequivaleo:item",
       "data": {
         "count": 1.0,
-        "item": "elementsofpower:fire_orb"
+        "item": "minecraft:light_gray_dye"
       }
     }
   ],
   "compounds": [
     {
-      "amount": 8.0,
-      "type": "elementsofpower:fire"
+      "amount": 1.0,
+      "type": "elementsofpower:life"
+    },
+    {
+      "amount": 1.0,
+      "type": "elementsofpower:earth"
     }
   ]
 }

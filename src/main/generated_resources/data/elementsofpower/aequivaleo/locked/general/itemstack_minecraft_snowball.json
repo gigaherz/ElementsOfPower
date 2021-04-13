@@ -19,11 +19,11 @@
   "compounds": [
     {
       "amount": 1.0,
-      "type": "elementsofpower:air"
+      "type": "elementsofpower:water"
     },
     {
       "amount": 1.0,
-      "type": "elementsofpower:water"
+      "type": "elementsofpower:air"
     }
   ]
 }

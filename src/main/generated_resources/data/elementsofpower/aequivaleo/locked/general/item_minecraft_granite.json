@@ -16,10 +16,8 @@
       }
     }
   ],
-  "compounds": [
-    {
-      "amount": 10.0,
-      "type": "elementsofpower:earth"
-    }
-  ]
+  "compounds": {
+    "amount": 10.0,
+    "type": "elementsofpower:earth"
+  }
 }

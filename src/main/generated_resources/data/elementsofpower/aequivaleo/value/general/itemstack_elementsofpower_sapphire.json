@@ -37,17 +37,17 @@
       }
     },
     {
-      "type": "aequivaleo:item",
-      "data": {
-        "count": 1.0,
-        "item": "elementsofpower:sapphire"
-      }
-    },
-    {
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
         "stack": "{id:\"elementsofpower:sapphire\",Count:1b,tag:{quality:4}}"
+      }
+    },
+    {
+      "type": "aequivaleo:item",
+      "data": {
+        "count": 1.0,
+        "item": "elementsofpower:sapphire"
       }
     }
   ],

@@ -23,11 +23,11 @@
     },
     {
       "amount": 2.0,
-      "type": "elementsofpower:fire"
+      "type": "elementsofpower:death"
     },
     {
       "amount": 2.0,
-      "type": "elementsofpower:death"
+      "type": "elementsofpower:fire"
     }
   ]
 }

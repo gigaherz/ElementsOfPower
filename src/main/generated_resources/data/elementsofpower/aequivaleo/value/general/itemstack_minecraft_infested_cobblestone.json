@@ -5,25 +5,25 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{id:\"minecraft:salmon\",Count:1b}"
+        "stack": "{id:\"minecraft:infested_cobblestone\",Count:1b}"
       }
     },
     {
       "type": "aequivaleo:item",
       "data": {
         "count": 1.0,
-        "item": "minecraft:salmon"
+        "item": "minecraft:infested_cobblestone"
       }
     }
   ],
   "compounds": [
     {
-      "amount": 2.0,
-      "type": "elementsofpower:water"
+      "amount": 5.0,
+      "type": "elementsofpower:life"
     },
     {
-      "amount": 4.0,
-      "type": "elementsofpower:life"
+      "amount": 5.0,
+      "type": "elementsofpower:earth"
     }
   ]
 }
