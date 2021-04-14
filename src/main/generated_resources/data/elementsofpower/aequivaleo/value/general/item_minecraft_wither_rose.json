@@ -18,12 +18,12 @@
   ],
   "compounds": [
     {
-      "amount": 1.0,
-      "type": "elementsofpower:life"
-    },
-    {
       "amount": 2.0,
       "type": "elementsofpower:death"
+    },
+    {
+      "amount": 1.0,
+      "type": "elementsofpower:life"
     }
   ]
 }

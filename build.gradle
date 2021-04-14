@@ -1,3 +1,5 @@
+println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
+
 buildscript {
     repositories {
         maven { url = 'https://files.minecraftforge.net/maven' }
@@ -122,7 +124,7 @@ minecraft {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.16.5-36.1.2'
+    minecraft 'net.minecraftforge:forge:1.16.5-36.1.4'
 
     compileOnly fg.deobf("mezz.jei:jei-1.16.5:7.6.1.75:api")
     runtimeOnly fg.deobf("mezz.jei:jei-1.16.5:7.6.1.75")
@@ -136,9 +138,9 @@ dependencies {
     runtimeOnly "org.jgrapht:jgrapht-io:1.4.0"
      */
 
-    compileOnly fg.deobf("com.ldtteam:aequivaleo:0.1.25-ALPHA:api")
-    compileOnly fg.deobf("com.ldtteam:aequivaleo:0.1.25-ALPHA:vanilla-api")
-    runtimeOnly fg.deobf("com.ldtteam:aequivaleo:0.1.25-ALPHA:universal")
+    compileOnly fg.deobf("com.ldtteam:aequivaleo:0.1.30-ALPHA:api")
+    compileOnly fg.deobf("com.ldtteam:aequivaleo:0.1.30-ALPHA:vanilla-api")
+    runtimeOnly fg.deobf("com.ldtteam:aequivaleo:0.1.30-ALPHA:universal")
 
     runtimeOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:1.16-3.0.7-13")
 

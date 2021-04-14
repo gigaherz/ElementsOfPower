@@ -26,13 +26,6 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{id:\"elementsofpower:sapphire\",Count:1b}"
-      }
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
         "stack": "{id:\"elementsofpower:sapphire\",Count:1b,tag:{quality:2}}"
       }
     },
@@ -40,7 +33,7 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{id:\"elementsofpower:sapphire\",Count:1b,tag:{quality:4}}"
+        "stack": "{id:\"elementsofpower:sapphire\",Count:1b}"
       }
     },
     {
@@ -48,6 +41,13 @@
       "data": {
         "count": 1.0,
         "item": "elementsofpower:sapphire"
+      }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"elementsofpower:sapphire\",Count:1b,tag:{quality:4}}"
       }
     }
   ],

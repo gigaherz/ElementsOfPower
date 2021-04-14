@@ -18,12 +18,12 @@
   ],
   "compounds": [
     {
-      "amount": 3.0,
-      "type": "elementsofpower:fire"
-    },
-    {
       "amount": 2.0,
       "type": "elementsofpower:light"
+    },
+    {
+      "amount": 3.0,
+      "type": "elementsofpower:fire"
     },
     {
       "amount": 5.0,

@@ -12,7 +12,9 @@ import net.minecraft.util.IItemProvider;
 import net.minecraft.util.IStringSerializable;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 public enum Gemstone implements IStringSerializable, IItemProvider
 {
@@ -104,8 +106,6 @@ public enum Gemstone implements IStringSerializable, IItemProvider
         return tintColor;
     }
 
-    public static final ImmutableList<Gemstone> values = ImmutableList.copyOf(values());
-
     public boolean generateCustomBlock()
     {
         return !isVanilla && blockSupplier != null;
@@ -175,5 +175,12 @@ public enum Gemstone implements IStringSerializable, IItemProvider
             return new Item[]{getItem(), vanillaGemstoneSupplier.get()};
         else
             return new Item[]{getItem()};
+    }
+
+    public static final ImmutableList<Gemstone> values = ImmutableList.copyOf(values());
+
+    public static Stream<Gemstone> stream()
+    {
+        return values.stream();
     }
 }

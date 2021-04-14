@@ -1,5 +1,6 @@
 package gigaherz.elementsofpower.spells;
 
+import com.mojang.datafixers.util.Either;
 import gigaherz.elementsofpower.ElementsOfPowerBlocks;
 import gigaherz.elementsofpower.ElementsOfPowerItems;
 import gigaherz.elementsofpower.cocoons.CocoonBlock;
@@ -7,7 +8,9 @@ import gigaherz.elementsofpower.items.MagicOrbItem;
 import net.minecraft.item.Item;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 public enum Element
 {
@@ -65,8 +68,6 @@ public enum Element
         return shape;
     }
 
-    public static final Element[] values = values();
-
     public CocoonBlock getCocoon()
     {
         return blockSupplier.get();
@@ -86,4 +87,12 @@ public enum Element
     {
         return color;
     }
+
+    public static final Element[] values = values();
+
+    public static Stream<Element> stream()
+    {
+        return Arrays.stream(values);
+    }
+
 }

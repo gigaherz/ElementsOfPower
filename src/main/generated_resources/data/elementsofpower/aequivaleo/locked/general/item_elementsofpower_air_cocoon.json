@@ -5,25 +5,25 @@
       "type": "aequivaleo:item",
       "data": {
         "count": 1.0,
-        "item": "minecraft:emerald"
+        "item": "elementsofpower:air_cocoon"
       }
     },
     {
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{id:\"minecraft:emerald\",Count:1b}"
+        "stack": "{id:\"elementsofpower:air_cocoon\",Count:1b}"
       }
     }
   ],
   "compounds": [
     {
-      "amount": 0.125,
+      "amount": 2.0,
       "type": "elementsofpower:life"
     },
     {
-      "amount": 1.0,
-      "type": "elementsofpower:earth"
+      "amount": 8.0,
+      "type": "elementsofpower:air"
     }
   ]
 }

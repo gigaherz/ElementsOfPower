@@ -19,15 +19,15 @@
   "compounds": [
     {
       "amount": 1.0,
-      "type": "elementsofpower:earth"
-    },
-    {
-      "amount": 1.0,
       "type": "elementsofpower:air"
     },
     {
       "amount": 2.0,
       "type": "elementsofpower:life"
+    },
+    {
+      "amount": 1.0,
+      "type": "elementsofpower:earth"
     }
   ]
 }

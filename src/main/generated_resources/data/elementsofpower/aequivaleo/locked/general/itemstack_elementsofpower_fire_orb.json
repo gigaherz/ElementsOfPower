@@ -2,17 +2,17 @@
   "mode": "ADDITIVE",
   "targets": [
     {
-      "type": "aequivaleo:item",
-      "data": {
-        "count": 1.0,
-        "item": "elementsofpower:fire_orb"
-      }
-    },
-    {
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
         "stack": "{id:\"elementsofpower:fire_orb\",Count:1b}"
+      }
+    },
+    {
+      "type": "aequivaleo:item",
+      "data": {
+        "count": 1.0,
+        "item": "elementsofpower:fire_orb"
       }
     }
   ],

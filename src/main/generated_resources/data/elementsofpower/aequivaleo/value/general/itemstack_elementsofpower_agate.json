@@ -33,14 +33,14 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{id:\"elementsofpower:agate\",Count:1b,tag:{quality:4}}"
+        "stack": "{id:\"elementsofpower:agate\",Count:1b}"
       }
     },
     {
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{id:\"elementsofpower:agate\",Count:1b}"
+        "stack": "{id:\"elementsofpower:agate\",Count:1b,tag:{quality:4}}"
       }
     },
     {

@@ -10,7 +10,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -18,7 +17,6 @@ import net.minecraftforge.common.util.INBTSerializable;
 import javax.annotation.CheckReturnValue;
 import java.lang.reflect.Type;
 import java.util.Arrays;
-import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 

@@ -4,10 +4,10 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.ldtteam.aequivaleo.api.compound.CompoundInstance;
-import com.ldtteam.aequivaleo.api.compound.information.datagen.CompoundInstanceRef;
 import com.ldtteam.aequivaleo.api.compound.information.datagen.ForcedInformationProvider;
 import com.ldtteam.aequivaleo.api.compound.information.datagen.LockedInformationProvider;
 import com.ldtteam.aequivaleo.api.compound.information.datagen.ValueInformationProvider;
+import com.ldtteam.aequivaleo.api.compound.information.datagen.data.CompoundInstanceRef;
 import com.mojang.datafixers.util.Pair;
 import gigaherz.elementsofpower.cocoons.ApplyOrbSizeFunction;
 import gigaherz.elementsofpower.cocoons.CocoonFeature;
@@ -99,23 +99,17 @@ class ElementsofPowerDataGen
         public void calculateDataToSave()
         {
             StockConversions.addStockConversions(this::getItemsFromTag, (item, amounts) -> {
-                Set<CompoundInstanceRef> values = Sets.newHashSet();
-                for(Element e : Element.values)
-                {
-                    double value = amounts.get(e);
-                    if (value > 0)
-                    {
-                        values.add(
-                                new CompoundInstanceRef(AequivaleoPlugin.BY_ELEMENT.get(e).getId(), value)
-                        );
-                    }
-                }
+                List<CompoundInstance> compoundRefs = Element.stream()
+                        .map(e -> Pair.of(e, amounts.get(e)))
+                        .filter(p -> p.getSecond() > 0)
+                        .map(p -> new CompoundInstance(AequivaleoPlugin.BY_ELEMENT.get(p.getFirst()).get(), (double) p.getSecond()))
+                        .collect(Collectors.toList());
 
-                Set<Object> gameObjects = Sets.newHashSet(item, new ItemStack(item));
+                Set<Object> gameObjects = Sets.newHashSet(item);
                 NonNullList<ItemStack> stacks = NonNullList.create();
                 item.fillItemGroup(ItemGroup.SEARCH, stacks);
                 gameObjects.addAll(stacks);
-                saveDataRefs(gameObjects, values);
+                save(specFor(gameObjects).withCompounds(compoundRefs));
             });
         }
 
@@ -247,18 +241,14 @@ class ElementsofPowerDataGen
             {
                 this.registerDropSelfLootTable(ElementsOfPowerBlocks.ESSENTIALIZER);
 
-                for (Element e : Element.values)
-                {
-                    this.registerLootTable(e.getCocoon(), LootTables.BlockTables::dropWithOrbs);
-                }
+                Element.stream().forEach(e -> this.registerLootTable(e.getCocoon(), BlockTables::dropWithOrbs));
 
-                for (Gemstone g : Gemstone.values)
-                {
+                Gemstone.stream().forEach(g -> {
                     if (g.generateCustomBlock())
                         this.registerDropSelfLootTable(g.getBlock());
                     if (g.generateCustomOre())
                         this.registerLootTable(g.getOre(), (block) -> droppingItemWithFortune(block, g.getItem()));
-                }
+                });
             }
 
             protected static LootTable.Builder dropWithOrbs(Block block)

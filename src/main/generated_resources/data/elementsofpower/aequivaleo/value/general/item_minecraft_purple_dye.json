@@ -19,11 +19,11 @@
   "compounds": [
     {
       "amount": 1.0,
-      "type": "elementsofpower:earth"
+      "type": "elementsofpower:life"
     },
     {
       "amount": 1.0,
-      "type": "elementsofpower:life"
+      "type": "elementsofpower:earth"
     }
   ]
 }

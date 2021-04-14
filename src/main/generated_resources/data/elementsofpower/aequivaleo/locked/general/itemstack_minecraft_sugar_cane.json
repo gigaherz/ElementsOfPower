@@ -19,7 +19,7 @@
   "compounds": [
     {
       "amount": 4.0,
-      "type": "elementsofpower:life"
+      "type": "elementsofpower:water"
     },
     {
       "amount": 2.0,
@@ -27,7 +27,7 @@
     },
     {
       "amount": 4.0,
-      "type": "elementsofpower:water"
+      "type": "elementsofpower:life"
     }
   ]
 }

@@ -5,25 +5,25 @@
       "type": "aequivaleo:item",
       "data": {
         "count": 1.0,
-        "item": "minecraft:feather"
+        "item": "minecraft:light_gray_dye"
       }
     },
     {
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{id:\"minecraft:feather\",Count:1b}"
+        "stack": "{id:\"minecraft:light_gray_dye\",Count:1b}"
       }
     }
   ],
   "compounds": [
     {
-      "amount": 4.0,
-      "type": "elementsofpower:air"
+      "amount": 1.0,
+      "type": "elementsofpower:life"
     },
     {
-      "amount": 4.0,
-      "type": "elementsofpower:life"
+      "amount": 1.0,
+      "type": "elementsofpower:earth"
     }
   ]
 }
