@@ -49,7 +49,7 @@ public class MagicTooltips
         }
 
         World world = Minecraft.getInstance().world;
-        MagicAmounts amounts = world == null ? MagicAmounts.EMPTY : AequivaleoPlugin.getEssences(world, stack, false).orElse(MagicAmounts.EMPTY);
+        MagicAmounts amounts = AequivaleoPlugin.getEssences(world, stack, false).orElse(MagicAmounts.EMPTY);
         if (amounts.isEmpty())
             return;
 

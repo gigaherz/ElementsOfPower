@@ -25,6 +25,8 @@ import net.minecraftforge.registries.DeferredRegister;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -60,17 +62,18 @@ public class AequivaleoPlugin implements IAequivaleoPlugin
          .put(Element.LIFE, LIFE)
          .put(Element.DEATH, DEATH).build();
 
-    public static IEquivalencyResults get(World world)
+    public static IEquivalencyResults get(@Nonnull World world)
     {
         return IAequivaleoAPI.getInstance().getEquivalencyResults(world.getDimensionKey());
     }
 
-    public static Optional<MagicAmounts> getEssences(World world, ItemStack stack, boolean wholeStack)
+    public static Optional<MagicAmounts> getEssences(@Nullable World world, ItemStack stack, boolean wholeStack)
     {
+        if (world == null) return Optional.empty();
         return getEssences(get(world), stack, wholeStack);
     }
 
-    public static Optional<MagicAmounts> getEssences(IEquivalencyResults cache, ItemStack stack, boolean wholeStack)
+    public static Optional<MagicAmounts> getEssences(@Nonnull IEquivalencyResults cache, ItemStack stack, boolean wholeStack)
     {
         Optional<MagicAmounts> am = cache.mappedDataFor(ESSENCE.get(), stack);
         if (wholeStack) am=am.map(amounts -> amounts.multiply(stack.getCount()));
