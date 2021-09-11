@@ -25,12 +25,12 @@ A magic mod about the raw power elemental essences
 [[dependencies.elementsofpower]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16.3,1.17)"
+    versionRange="[1.16.5,1.17)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.elementsofpower]]
     modId="aequivaleo"
-    mandatory=false
-    versionRange="[0.1.13-ALPHA,)"
+    mandatory=true
+    versionRange="[0.1.57-ALPHA,)"
     ordering="NONE"
     side="BOTH"

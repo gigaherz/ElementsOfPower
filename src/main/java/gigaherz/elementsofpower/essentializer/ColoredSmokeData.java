@@ -71,6 +71,7 @@ public class ColoredSmokeData implements IParticleData
         return String.format(Locale.ROOT, "%s %.2f %.2f %.2f", this.getType().getRegistryName(), this.red, this.green, this.blue);
     }
 
+    @Deprecated
     public static final IDeserializer<ColoredSmokeData> DESERIALIZER = new IDeserializer<ColoredSmokeData>()
     {
         @Override

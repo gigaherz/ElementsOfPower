@@ -175,6 +175,11 @@ public class MagicAmounts implements INBTSerializable<CompoundNBT>
         return true;
     }
 
+    public boolean isNotEmpty()
+    {
+        return !isEmpty();
+    }
+
     public float getTotalMagic()
     {
         float acc = 0;

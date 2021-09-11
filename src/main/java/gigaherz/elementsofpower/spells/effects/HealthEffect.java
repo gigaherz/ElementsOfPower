@@ -113,7 +113,7 @@ public class HealthEffect extends SpellEffect
         }
         else if (block == Blocks.DIRT)
         {
-            cast.world.setBlockState(blockPos, Blocks.GRASS.getDefaultState());
+            cast.world.setBlockState(blockPos, Blocks.GRASS_BLOCK.getDefaultState());
         }
     }
 }

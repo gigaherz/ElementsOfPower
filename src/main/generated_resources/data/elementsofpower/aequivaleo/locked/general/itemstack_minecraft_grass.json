@@ -2,28 +2,28 @@
   "mode": "ADDITIVE",
   "targets": [
     {
-      "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{id:\"minecraft:grass\",Count:1b}"
-      }
-    },
-    {
       "type": "aequivaleo:item",
       "data": {
         "count": 1.0,
         "item": "minecraft:grass"
+      }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:grass\",Count:1b}"
       }
     }
   ],
   "compounds": [
     {
       "amount": 2.0,
-      "type": "elementsofpower:life"
+      "type": "elementsofpower:earth"
     },
     {
       "amount": 2.0,
-      "type": "elementsofpower:earth"
+      "type": "elementsofpower:life"
     }
   ]
 }

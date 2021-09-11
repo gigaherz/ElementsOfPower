@@ -30,6 +30,7 @@ public class MistBlock extends Block
         setDefaultState(this.getStateContainer().getBaseState().with(DENSITY, 16));
     }
 
+    @Deprecated
     @Override
     public int getOpacity(BlockState state, IBlockReader worldIn, BlockPos pos)
     {
@@ -44,6 +45,7 @@ public class MistBlock extends Block
         builder.add(DENSITY);
     }
 
+    @Deprecated
     @Override
     public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random rand)
     {

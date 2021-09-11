@@ -166,7 +166,7 @@ public class WindEffect extends SpellEffect
         }
         else if (block == Blocks.WATER)
         {
-            if (!currentState.getFluidState().isSource())
+            if (!cast.world.getFluidState(blockPos).isSource())
             {
                 cast.world.setBlockState(blockPos, Blocks.AIR.getDefaultState());
             }

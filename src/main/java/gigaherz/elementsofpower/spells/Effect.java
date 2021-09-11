@@ -8,6 +8,7 @@ public enum Effect
     DUST,
     MIST,
     LIGHT,
+    FROST,
     MINING,
     HEALING,
     BREAKING,

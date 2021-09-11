@@ -2,25 +2,21 @@
   "mode": "ADDITIVE",
   "targets": [
     {
-      "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{id:\"minecraft:podzol\",Count:1b}"
-      }
-    },
-    {
       "type": "aequivaleo:item",
       "data": {
         "count": 1.0,
         "item": "minecraft:podzol"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:podzol\",Count:1b}"
+      }
     }
   ],
   "compounds": [
-    {
-      "amount": 1.0,
-      "type": "elementsofpower:life"
-    },
     {
       "amount": 1.0,
       "type": "elementsofpower:death"
@@ -28,6 +24,10 @@
     {
       "amount": 3.0,
       "type": "elementsofpower:earth"
+    },
+    {
+      "amount": 1.0,
+      "type": "elementsofpower:life"
     }
   ]
 }

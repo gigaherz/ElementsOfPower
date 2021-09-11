@@ -2,17 +2,17 @@
   "mode": "ADDITIVE",
   "targets": [
     {
-      "type": "aequivaleo:itemstack",
+      "type": "aequivaleo:item",
       "data": {
         "count": 1.0,
-        "stack": "{id:\"elementsofpower:emerald\",Count:1b,tag:{quality:0}}"
+        "item": "elementsofpower:emerald"
       }
     },
     {
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{id:\"elementsofpower:emerald\",Count:1b,tag:{quality:1}}"
+        "stack": "{id:\"elementsofpower:emerald\",Count:1b,tag:{quality:0}}"
       }
     },
     {
@@ -26,7 +26,14 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{id:\"elementsofpower:emerald\",Count:1b,tag:{quality:3}}"
+        "stack": "{id:\"elementsofpower:emerald\",Count:1b,tag:{quality:4}}"
+      }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"elementsofpower:emerald\",Count:1b,tag:{quality:1}}"
       }
     },
     {
@@ -40,14 +47,7 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{id:\"elementsofpower:emerald\",Count:1b,tag:{quality:4}}"
-      }
-    },
-    {
-      "type": "aequivaleo:item",
-      "data": {
-        "count": 1.0,
-        "item": "elementsofpower:emerald"
+        "stack": "{id:\"elementsofpower:emerald\",Count:1b,tag:{quality:3}}"
       }
     }
   ],

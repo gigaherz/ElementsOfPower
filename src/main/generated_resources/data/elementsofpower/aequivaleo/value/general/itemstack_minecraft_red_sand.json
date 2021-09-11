@@ -2,17 +2,17 @@
   "mode": "ADDITIVE",
   "targets": [
     {
-      "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{id:\"minecraft:red_sand\",Count:1b}"
-      }
-    },
-    {
       "type": "aequivaleo:item",
       "data": {
         "count": 1.0,
         "item": "minecraft:red_sand"
+      }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:red_sand\",Count:1b}"
       }
     }
   ],

@@ -29,9 +29,13 @@ public class SpellManager
     public static final SpellShape BEAM = new LaserShape(); // FIXME: new BeamShape();
     public static final SpellShape CONE = new ConeShape();
     public static final SpellShape SELF = new SelfShape();
+    //public static final SpellShape SPIKE = new SpikeShape();
+    //public static final SpellShape WALL = new WallShape();
+    //public static final SpellShape SHIELD = new ShieldShape();
     public static final SpellShape SINGLE = new SingleShape();
 
     public static final SpellEffect FLAME = new FlameEffect();
+    public static final SpellEffect FROST = new FrostEffect();
     public static final SpellEffect WATER = new WaterEffect(false);
     public static final SpellEffect WIND = new WindEffect();
     public static final SpellEffect DUST = new DustEffect();
@@ -262,6 +266,15 @@ public class SpellManager
                             return Effect.WIND;
                     }
                     break;
+                case DARKNESS:
+                    switch (base)
+                    {
+                        case FLAME:
+                            return Effect.FROST;
+                        case WIND:
+                            return Effect.WIND;
+                    }
+                    break;
             }
             return null;
         }
@@ -346,6 +359,7 @@ public class SpellManager
             shapes.put(Shape.SINGLE, SINGLE);
 
             effects.put(Effect.FLAME, FLAME);
+            effects.put(Effect.FROST, FROST);
             effects.put(Effect.WATER, WATER);
             effects.put(Effect.WIND, WIND);
             effects.put(Effect.DUST, DUST);

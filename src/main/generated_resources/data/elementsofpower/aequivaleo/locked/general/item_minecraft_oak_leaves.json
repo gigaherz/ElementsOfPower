@@ -1,0 +1,23 @@
+{
+  "mode": "ADDITIVE",
+  "targets": [
+    {
+      "type": "aequivaleo:item",
+      "data": {
+        "count": 1.0,
+        "item": "minecraft:oak_leaves"
+      }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:oak_leaves\",Count:1b}"
+      }
+    }
+  ],
+  "compounds": {
+    "amount": 4.0,
+    "type": "elementsofpower:life"
+  }
+}

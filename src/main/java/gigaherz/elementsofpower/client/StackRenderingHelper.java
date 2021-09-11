@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.item.ItemStack;
 import org.lwjgl.opengl.GL11;
 
@@ -31,8 +32,8 @@ public class StackRenderingHelper
         RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
-        renderEngine.bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
-        renderEngine.getTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
+        renderEngine.bindTexture(PlayerContainer.LOCATION_BLOCKS_TEXTURE);
+        renderEngine.getTexture(PlayerContainer.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
 
         RenderSystem.pushMatrix();
 
@@ -49,8 +50,8 @@ public class StackRenderingHelper
 
         RenderSystem.popMatrix();
 
-        renderEngine.bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
-        renderEngine.getTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
+        renderEngine.bindTexture(PlayerContainer.LOCATION_BLOCKS_TEXTURE);
+        renderEngine.getTexture(PlayerContainer.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
 
         RenderHelper.disableStandardItemLighting();
     }

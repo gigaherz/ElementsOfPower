@@ -13,6 +13,7 @@ public class CushionBlock extends DustBlock
         super(properties);
     }
 
+    @Deprecated
     @Override
     public void onEntityCollision(BlockState state, World worldIn, BlockPos pos, Entity entityIn)
     {

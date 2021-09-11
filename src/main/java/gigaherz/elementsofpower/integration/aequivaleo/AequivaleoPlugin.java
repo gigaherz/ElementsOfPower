@@ -7,12 +7,8 @@ import com.ldtteam.aequivaleo.api.compound.type.ICompoundType;
 import com.ldtteam.aequivaleo.api.compound.type.group.ICompoundTypeGroup;
 import com.ldtteam.aequivaleo.api.instanced.IInstancedEquivalencyHandlerRegistry;
 import com.ldtteam.aequivaleo.api.plugin.IAequivaleoPlugin;
-import com.ldtteam.aequivaleo.api.results.IResultsInformationCache;
-import gigaherz.elementsofpower.ConfigManager;
-import gigaherz.elementsofpower.ElementsOfPowerItems;
+import com.ldtteam.aequivaleo.api.results.IEquivalencyResults;
 import gigaherz.elementsofpower.ElementsOfPowerMod;
-import gigaherz.elementsofpower.database.ConversionCache;
-import gigaherz.elementsofpower.database.IConversionCache;
 import gigaherz.elementsofpower.gemstones.Gemstone;
 import gigaherz.elementsofpower.gemstones.GemstoneItem;
 import gigaherz.elementsofpower.gemstones.Quality;
@@ -29,11 +25,10 @@ import net.minecraftforge.registries.DeferredRegister;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Supplier;
+import java.util.function.Predicate;
 
 @com.ldtteam.aequivaleo.api.plugin.AequivaleoPlugin
 public class AequivaleoPlugin implements IAequivaleoPlugin
@@ -65,12 +60,21 @@ public class AequivaleoPlugin implements IAequivaleoPlugin
          .put(Element.LIFE, LIFE)
          .put(Element.DEATH, DEATH).build();
 
-    public static final ConversionCache CLIENT = new ConversionCache();
-    public static final ConversionCache SERVER = new ConversionCache();
-
-    public static ConversionCache get(@Nullable World world)
+    public static IEquivalencyResults get(World world)
     {
-        return (world != null && world.isRemote) ? CLIENT : SERVER;
+        return IAequivaleoAPI.getInstance().getEquivalencyResults(world.getDimensionKey());
+    }
+
+    public static Optional<MagicAmounts> getEssences(World world, ItemStack stack, boolean wholeStack)
+    {
+        return getEssences(get(world), stack, wholeStack);
+    }
+
+    public static Optional<MagicAmounts> getEssences(IEquivalencyResults cache, ItemStack stack, boolean wholeStack)
+    {
+        Optional<MagicAmounts> am = cache.mappedDataFor(ESSENCE.get(), stack);
+        if (wholeStack) am=am.map(amounts -> amounts.multiply(stack.getCount()));
+        return am.filter(MagicAmounts::isNotEmpty);
     }
 
     @Override
@@ -86,12 +90,6 @@ public class AequivaleoPlugin implements IAequivaleoPlugin
             TYPES.register(((FMLModContainer) mod).getEventBus());
             TYPE_GROUPS.register(((FMLModContainer) mod).getEventBus());
         });
-
-        if (!ConfigManager.COMMON.disableAequivaleoSupport.get())
-        {
-            LOGGER.info("Aequivaleo has been enabled. Aequivaleo-calculated magic conversions will be used instead of the internal system...");
-            ConversionCache.aequivaleoGetter = EssenceConversionCache::new;
-        }
     }
 
     @Override
@@ -111,48 +109,6 @@ public class AequivaleoPlugin implements IAequivaleoPlugin
                     equivalences.accept(gemstoneItem.setQuality(new ItemStack(gemstoneItem), q));
                 }
             }) ;
-        }
-    }
-
-    @Override
-    public void onReloadStartedFor(ServerWorld world)
-    {
-        SERVER.clear();
-    }
-
-
-    @Override
-    public void onDataSynced(RegistryKey<World> worldRegistryKey)
-    {
-        CLIENT.clear();
-    }
-
-    private static class EssenceConversionCache implements IConversionCache
-    {
-        private final ConversionCache conversions;
-        private final RegistryKey<World> worldKey;
-
-        private EssenceConversionCache(World world)
-        {
-            this.worldKey = world.getDimensionKey();
-            this.conversions = get(world);
-        }
-
-        @Override
-        public boolean hasEssences(ItemStack stack)
-        {
-            return !getEssences(stack, false).isEmpty();
-        }
-
-        @Override
-        public MagicAmounts getEssences(ItemStack stack, boolean wholeStack)
-        {
-            MagicAmounts amounts = conversions.computeIfAbsent(stack.getItem(), item -> {
-                IResultsInformationCache aequivaleoCache = IAequivaleoAPI.getInstance().getResultsInformationCache(worldKey);
-                Optional<MagicAmounts> am = aequivaleoCache.getCacheFor(ESSENCE.get(), item);
-                return am.orElse(MagicAmounts.EMPTY);
-            });
-            return wholeStack ? amounts.multiply(stack.getCount()) : amounts;
         }
     }
 

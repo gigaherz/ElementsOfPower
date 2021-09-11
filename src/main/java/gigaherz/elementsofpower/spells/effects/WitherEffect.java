@@ -101,7 +101,7 @@ public class WitherEffect extends SpellEffect
     {
         Block block = currentState.getBlock();
 
-        if (block == Blocks.GRASS)
+        if (block == Blocks.GRASS_BLOCK)
         {
             cast.world.setBlockState(blockPos, Blocks.DIRT.getDefaultState());
         }

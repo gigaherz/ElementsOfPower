@@ -18,12 +18,12 @@
   ],
   "compounds": [
     {
-      "amount": 10.0,
-      "type": "elementsofpower:fire"
-    },
-    {
       "amount": 8.0,
       "type": "elementsofpower:earth"
+    },
+    {
+      "amount": 10.0,
+      "type": "elementsofpower:fire"
     }
   ]
 }

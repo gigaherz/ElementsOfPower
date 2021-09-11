@@ -90,6 +90,7 @@ public class NbtToModel implements IModelGeometry<NbtToModel>
             };
         }
 
+        @Deprecated
         @Override
         public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand)
         {
@@ -120,6 +121,7 @@ public class NbtToModel implements IModelGeometry<NbtToModel>
             return false;
         }
 
+        @Deprecated
         @Override
         public TextureAtlasSprite getParticleTexture()
         {

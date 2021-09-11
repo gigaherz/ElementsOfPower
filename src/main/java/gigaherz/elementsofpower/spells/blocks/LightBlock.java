@@ -33,6 +33,7 @@ public class LightBlock extends Block
         setDefaultState(this.getStateContainer().getBaseState().with(DENSITY, 16));
     }
 
+    @Deprecated
     @Override
     public int getOpacity(BlockState state, IBlockReader worldIn, BlockPos pos)
     {
@@ -50,6 +51,7 @@ public class LightBlock extends Block
         return 200;
     }
 
+    @Deprecated
     @Override
     public void onBlockAdded(BlockState state, World worldIn, BlockPos pos, BlockState oldState, boolean isMoving)
     {
@@ -64,6 +66,7 @@ public class LightBlock extends Block
         worldIn.setBlockState(pos, state.with(DENSITY, density));
     }
 
+    @Deprecated
     @Override
     public void tick(BlockState state, ServerWorld worldIn, BlockPos pos, Random rand)
     {

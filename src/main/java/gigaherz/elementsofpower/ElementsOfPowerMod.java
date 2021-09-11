@@ -1,6 +1,8 @@
 package gigaherz.elementsofpower;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.JsonOps;
 import gigaherz.elementsofpower.analyzer.AnalyzerItem;
 import gigaherz.elementsofpower.analyzer.gui.AnalyzerContainer;
 import gigaherz.elementsofpower.analyzer.gui.AnalyzerScreen;
@@ -13,8 +15,6 @@ import gigaherz.elementsofpower.client.renderers.EssenceEntityRenderer;
 import gigaherz.elementsofpower.client.renderers.EssentializerTileEntityRender;
 import gigaherz.elementsofpower.client.renderers.MagicContainerOverlay;
 import gigaherz.elementsofpower.cocoons.*;
-import gigaherz.elementsofpower.database.ConversionCache;
-import gigaherz.elementsofpower.database.InternalConversionProcess;
 import gigaherz.elementsofpower.entities.BallEntity;
 import gigaherz.elementsofpower.entities.EssenceEntity;
 import gigaherz.elementsofpower.essentializer.ColoredSmokeData;
@@ -50,13 +50,17 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.*;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.SpecialRecipeSerializer;
 import net.minecraft.loot.LootFunctionType;
 import net.minecraft.loot.functions.LootFunctionManager;
+import net.minecraft.nbt.NBTDynamicOps;
 import net.minecraft.particles.ParticleType;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.RegistryKey;
@@ -67,10 +71,12 @@ import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.WorldGenRegistries;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.GenerationStage;
+import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.OreFeatureConfig;
 import net.minecraft.world.gen.placement.NoPlacementConfig;
@@ -85,6 +91,7 @@ import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.common.util.NonNullLazy;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.InterModComms;
@@ -184,12 +191,9 @@ public class ElementsOfPowerMod
         modEventBus.addListener(this::imcEnqueue);
         modEventBus.addListener(this::gatherData);
         modEventBus.addListener(this::modelRegistry);
+        modEventBus.addListener(this::entityAttributes);
 
-        MinecraftForge.EVENT_BUS.addListener(this::registerCommands);
         MinecraftForge.EVENT_BUS.addListener(this::addStuffToBiomes);
-
-        ModLoadingContext modLoadingContext = ModLoadingContext.get();
-        modLoadingContext.registerConfig(ModConfig.Type.COMMON, ConfigManager.COMMON_SPEC);
     }
 
     public void registerBlocks(RegistryEvent.Register<Block> event)
@@ -348,6 +352,11 @@ public class ElementsOfPowerMod
         Minecraft.getInstance().particles.registerFactory(ColoredSmokeData.TYPE, ColoredSmokeData.Factory::new);
     }
 
+    private void entityAttributes(EntityAttributeCreationEvent event)
+    {
+        event.put(EssenceEntity.TYPE, EssenceEntity.prepareAttributes().create());
+    }
+
     public void modelRegistry(ModelRegistryEvent event)
     {
         ModelLoaderRegistry.registerLoader(location("nbt_to_model"), NbtToModel.Loader.INSTANCE);
@@ -385,18 +394,14 @@ public class ElementsOfPowerMod
         CHANNEL.messageBuilder(UpdateEssentializerAmounts.class, messageNumber++, NetworkDirection.PLAY_TO_CLIENT).encoder(UpdateEssentializerAmounts::encode).decoder(UpdateEssentializerAmounts::new).consumer(UpdateEssentializerAmounts::handle).add();
         CHANNEL.messageBuilder(UpdateEssentializerTileEntity.class, messageNumber++, NetworkDirection.PLAY_TO_CLIENT).encoder(UpdateEssentializerTileEntity::encode).decoder(UpdateEssentializerTileEntity::new).consumer(UpdateEssentializerTileEntity::handle).add();
         CHANNEL.messageBuilder(AddVelocityToPlayer.class, messageNumber++, NetworkDirection.PLAY_TO_CLIENT).encoder(AddVelocityToPlayer::encode).decoder(AddVelocityToPlayer::new).consumer(AddVelocityToPlayer::handle).add();
-        CHANNEL.messageBuilder(SyncEssenceConversions.class, messageNumber++, NetworkDirection.PLAY_TO_CLIENT).encoder(SyncEssenceConversions::encode).decoder(SyncEssenceConversions::new).consumer(SyncEssenceConversions::handle).add();
         LOGGER.debug("Final message number: " + messageNumber);
 
         MagicContainerCapability.register();
         PlayerCombinedMagicContainers.register();
         SpellcastEntityData.register();
         //DiscoveryHandler.init();
-        InternalConversionProcess.init();
 
         CraftingHelper.register(AnalyzedFilteringIngredient.ID, AnalyzedFilteringIngredient.Serializer.INSTANCE);
-
-        GlobalEntityTypeAttributes.put(EssenceEntity.TYPE, EssenceEntity.prepareAttributes().create());
 
         CocoonEventHandling.enable();
     }
@@ -474,37 +479,6 @@ public class ElementsOfPowerMod
         InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> new SlotTypeMessage.Builder("headband").icon(location("gui/headband_slot_background")).size(1).build());
         InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> new SlotTypeMessage.Builder("necklace").icon(location("gui/necklace_slot_background")).size(1).build());
         InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> new SlotTypeMessage.Builder("ring").size(2).build());
-    }
-
-    public void registerCommands(RegisterCommandsEvent event)
-    {
-        LiteralArgumentBuilder<CommandSource> cmd = Commands.literal("elementsofpower")
-                .then(Commands.literal("dumpMissingItems")
-                        .requires(cs -> cs.hasPermissionLevel(4)) //permission
-                        .executes(ctx -> {
-                                    ConversionCache.dumpItemsWithoutEssences(ctx.getSource().getWorld());
-                                    ctx.getSource().sendFeedback(new StringTextComponent("Missing essences list dumped to disk."), true);
-                                    return 0;
-                                }
-                        )
-                )
-                .then(Commands.literal("dumpEssences")
-                        .requires(cs -> cs.hasPermissionLevel(4)) //permission
-                        .executes(ctx -> {
-                                    ConversionCache.dumpEssences(ctx.getSource().getWorld());
-                                    ctx.getSource().sendFeedback(new StringTextComponent("Missing essences list dumped to disk."), true);
-                                    return 0;
-                                }
-                        )
-                );
-        cmd = InternalConversionProcess.registerSubcommands(cmd);
-        event.getDispatcher().register(cmd);
-    }
-
-    public static boolean isInternalRecipeScannerEnabled()
-    {
-        // FIXME: Make it work not slow.
-        return false; // ConfigManager.COMMON.disableAequivaleoSupport.get() || !ModList.get().isLoaded("aequivaleo");
     }
 
     public void gatherData(GatherDataEvent event)

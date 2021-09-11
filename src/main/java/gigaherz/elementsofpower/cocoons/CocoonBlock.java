@@ -66,12 +66,14 @@ public class CocoonBlock extends Block implements IWaterLoggable
         builder.add(FACING, WATERLOGGED);
     }
 
+    @Deprecated
     @Override
     public FluidState getFluidState(BlockState state)
     {
         return state.get(WATERLOGGED) ? Fluids.WATER.getDefaultState() : Fluids.EMPTY.getDefaultState();
     }
 
+    @Deprecated
     @Override
     public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context)
     {
@@ -101,6 +103,7 @@ public class CocoonBlock extends Block implements IWaterLoggable
         return getDefaultState().with(FACING, context.getFace().getOpposite()).with(WATERLOGGED, fluid.getFluid() == Fluids.WATER);
     }
 
+    @Deprecated
     @Override
     public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult rayTraceResult)
     {
@@ -124,6 +127,7 @@ public class CocoonBlock extends Block implements IWaterLoggable
         return super.onBlockActivated(state, worldIn, pos, player, hand, rayTraceResult);
     }
 
+    @Deprecated
     @Override
     public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving)
     {

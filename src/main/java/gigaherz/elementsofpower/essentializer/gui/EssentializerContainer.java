@@ -2,7 +2,7 @@ package gigaherz.elementsofpower.essentializer.gui;
 
 import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.capabilities.MagicContainerCapability;
-import gigaherz.elementsofpower.database.ConversionCache;
+import gigaherz.elementsofpower.integration.aequivaleo.AequivaleoPlugin;
 import gigaherz.elementsofpower.magic.MagicAmounts;
 import gigaherz.elementsofpower.essentializer.EssentializerTileEntity;
 import gigaherz.elementsofpower.network.UpdateEssentializerAmounts;
@@ -78,7 +78,7 @@ public class EssentializerContainer
         this.world = playerInventory.player.world;
         this.magicHolder = magicHolder;
 
-        addSlot(new MagicSourceSlot(ConversionCache.get(playerInventory.player.world), inv, 0, 80, 44));
+        addSlot(new MagicSourceSlot(AequivaleoPlugin.get(playerInventory.player.world), inv, 0, 80, 44));
         addSlot(new MagicContainerInputSlot(inv, 1, 8, 56));
         addSlot(new MagicContainerOutputSlot(inv, 2, 152, 56));
 
@@ -141,9 +141,6 @@ public class EssentializerContainer
     {
         magicHolder.setContainedMagic(contained);
         magicHolder.setRemainingToConvert(remaining);
-
-        Pattern p = Pattern.compile("");
-        p.matcher("");
     }
 
     @Override
@@ -165,7 +162,7 @@ public class EssentializerContainer
         if (slotIndex >= 3)
         {
             boolean itemIsContainer = MagicContainerCapability.hasContainer(stack);
-            boolean itemHasEssence = ConversionCache.get(player.world).hasEssences(stack);
+            boolean itemHasEssence = AequivaleoPlugin.getEssences(player.world, stack, false).isPresent();
 
             if (itemIsContainer)
             {

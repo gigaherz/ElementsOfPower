@@ -24,6 +24,7 @@ public class DustBlock extends Block
         setDefaultState(this.getStateContainer().getBaseState().with(DENSITY, 16));
     }
 
+    @Deprecated
     @Override
     public int getOpacity(BlockState state, IBlockReader worldIn, BlockPos pos)
     {
@@ -32,6 +33,7 @@ public class DustBlock extends Block
         return state.get(DENSITY);
     }
 
+    @Deprecated
     @Override
     public void onBlockAdded(BlockState state, World worldIn, BlockPos pos, BlockState oldState, boolean isMoving)
     {
@@ -45,12 +47,14 @@ public class DustBlock extends Block
         worldIn.getPendingBlockTicks().scheduleTick(pos, this, 12 + rand.nextInt(12));
     }
 
+    @Deprecated
     @Override
     public void randomTick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random)
     {
         // explicitly don't call super
     }
 
+    @Deprecated
     @Override
     public void tick(BlockState state, ServerWorld worldIn, BlockPos pos, Random rand)
     {

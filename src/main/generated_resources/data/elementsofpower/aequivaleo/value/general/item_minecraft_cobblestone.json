@@ -1,0 +1,23 @@
+{
+  "mode": "ADDITIVE",
+  "targets": [
+    {
+      "type": "aequivaleo:item",
+      "data": {
+        "count": 1.0,
+        "item": "minecraft:cobblestone"
+      }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{id:\"minecraft:cobblestone\",Count:1b}"
+      }
+    }
+  ],
+  "compounds": {
+    "amount": 5.0,
+    "type": "elementsofpower:earth"
+  }
+}

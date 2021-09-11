@@ -2,7 +2,7 @@ package gigaherz.elementsofpower.client;
 
 import gigaherz.elementsofpower.ElementsOfPowerMod;
 import gigaherz.elementsofpower.capabilities.MagicContainerCapability;
-import gigaherz.elementsofpower.database.ConversionCache;
+import gigaherz.elementsofpower.integration.aequivaleo.AequivaleoPlugin;
 import gigaherz.elementsofpower.magic.MagicAmounts;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
@@ -49,7 +49,7 @@ public class MagicTooltips
         }
 
         World world = Minecraft.getInstance().world;
-        MagicAmounts amounts = world == null ? MagicAmounts.EMPTY : ConversionCache.get(world).getEssences(stack, false);
+        MagicAmounts amounts = world == null ? MagicAmounts.EMPTY : AequivaleoPlugin.getEssences(world, stack, false).orElse(MagicAmounts.EMPTY);
         if (amounts.isEmpty())
             return;
 

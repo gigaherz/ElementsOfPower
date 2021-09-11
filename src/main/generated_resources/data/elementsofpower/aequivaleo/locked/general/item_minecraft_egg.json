@@ -23,11 +23,11 @@
     },
     {
       "amount": 2.0,
-      "type": "elementsofpower:light"
+      "type": "elementsofpower:life"
     },
     {
       "amount": 2.0,
-      "type": "elementsofpower:life"
+      "type": "elementsofpower:light"
     }
   ]
 }

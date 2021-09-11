@@ -66,7 +66,7 @@ public class EssenceGroupType extends ForgeRegistryEntry<ICompoundTypeGroup> imp
     }
 
     @Override
-    public Optional<?> convertToCacheEntry(Set<CompoundInstance> instances)
+    public Optional<?> mapEntry(Set<CompoundInstance> instances)
     {
         return AequivaleoPlugin.getMagicAmounts(instances);
     }
