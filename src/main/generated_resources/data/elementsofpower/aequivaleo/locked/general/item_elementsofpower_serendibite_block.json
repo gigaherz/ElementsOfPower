@@ -12,7 +12,7 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{id:\"elementsofpower:serendibite_block\",Count:1b}"
+        "stack": "{Count:1b,id:\"elementsofpower:serendibite_block\"}"
       }
     }
   ],

@@ -7,20 +7,17 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
     }
 }
 
 apply plugin: 'net.minecraftforge.gradle'
-// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
-apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
 repositories {
     maven {
         url "$projectDir/../CommonMaven"
     }
-    maven { url 'https://maven.minecraftforge.net/' }
     maven {
         url "https://dvs1.progwml6.com/files/maven/"
     }
@@ -29,7 +26,7 @@ repositories {
     }
     maven {
         name = "thiakil"
-        url = "http://maven.thiakil.com/"
+        url = "https://maven.thiakil.com/"
     }
     maven {
         url = "https://maven.theillusivec4.top/"
@@ -53,20 +50,16 @@ repositories {
 
 version = "0.10.40-alpha"
 group = "gigaherz.elementsofpower" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "ElementsOfPower-UNKNOWN"
+archivesBaseName = "ElementsOfPower-1.17.1"
 
-project.afterEvaluate {
-    archivesBaseName = "ElementsOfPower-${project.MC_VERSION}"
-}
-
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = JavaVersion.VERSION_1_8
+java.toolchain.languageVersion = JavaLanguageVersion.of(16)
 
 sourceSets {
     main.resources.srcDirs += 'src/main/generated_resources'
 }
 
 minecraft {
-    mappings channel: 'snapshot', version: '20201028-1.16.3'
+    mappings channel: 'official', version: '1.17.1'
 
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
@@ -125,21 +118,21 @@ minecraft {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.16.5-36.2.4'
+    minecraft 'net.minecraftforge:forge:1.17.1-37.0.59'
 
-    compileOnly fg.deobf("mezz.jei:jei-1.16.5:7.7.1.121:api")
-    runtimeOnly fg.deobf("mezz.jei:jei-1.16.5:7.7.1.121")
+    compileOnly fg.deobf("mezz.jei:jei-1.17.1:8.0.0.16:api")
+    runtimeOnly fg.deobf("mezz.jei:jei-1.17.1:8.0.0.16")
 
-    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.16.5-4.0.5.2")
-    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.16.5-4.0.5.2:api")
+    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.17.1-5.0.1.0")
+    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.17.1-5.0.1.0:api")
 
-    compileOnly fg.deobf("com.ldtteam:aequivaleo:0.1.57-ALPHA:api")
-    compileOnly fg.deobf("com.ldtteam:aequivaleo:0.1.57-ALPHA:vanilla-api")
-    runtimeOnly fg.deobf("com.ldtteam:aequivaleo:0.1.57-ALPHA:universal")
+    compileOnly fg.deobf("com.ldtteam:aequivaleo:1.17.1-0.1.56-ALPHA:api")
+    //compileOnly fg.deobf("com.ldtteam:aequivaleo:1.17.1-0.1.56-ALPHA:vanilla-api")
+    runtimeOnly fg.deobf("com.ldtteam:aequivaleo:1.17.1-0.1.56-ALPHA:universal")
 
-    runtimeOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:1.16-3.1.4-22")
+    //runtimeOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:1.16-3.1.4-22")
 
-    implementation fg.deobf("gigaherz.guidebook:Guidebook-1.16.3:3.2.1")
+    implementation fg.deobf("dev.gigaherz.guidebook:Guidebook-1.17.1:3.3.2")
 
     //runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:1.16.2-47")
     //runtimeOnly fg.deobf("deps:Botania-1.16.3:409")

@@ -12,7 +12,7 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{id:\"minecraft:birch_sapling\",Count:1b}"
+        "stack": "{Count:1b,id:\"minecraft:birch_sapling\"}"
       }
     }
   ],

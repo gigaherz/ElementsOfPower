@@ -12,7 +12,7 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{id:\"minecraft:oak_log\",Count:1b}"
+        "stack": "{Count:1b,id:\"minecraft:oak_log\"}"
       }
     }
   ],

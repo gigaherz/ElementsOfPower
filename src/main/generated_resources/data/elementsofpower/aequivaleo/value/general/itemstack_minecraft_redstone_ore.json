@@ -1,0 +1,33 @@
+{
+  "mode": "ADDITIVE",
+  "targets": [
+    {
+      "type": "aequivaleo:item",
+      "data": {
+        "count": 1.0,
+        "item": "minecraft:redstone_ore"
+      }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{Count:1b,id:\"minecraft:redstone_ore\"}"
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "amount": 5.0,
+      "type": "elementsofpower:earth"
+    },
+    {
+      "amount": 3.0,
+      "type": "elementsofpower:fire"
+    },
+    {
+      "amount": 2.0,
+      "type": "elementsofpower:light"
+    }
+  ]
+}

@@ -12,42 +12,42 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{id:\"elementsofpower:sapphire\",Count:1b}"
+        "stack": "{Count:1b,id:\"elementsofpower:sapphire\",tag:{quality:4}}"
       }
     },
     {
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{id:\"elementsofpower:sapphire\",Count:1b,tag:{quality:4}}"
+        "stack": "{Count:1b,id:\"elementsofpower:sapphire\",tag:{quality:1}}"
       }
     },
     {
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{id:\"elementsofpower:sapphire\",Count:1b,tag:{quality:1}}"
+        "stack": "{Count:1b,id:\"elementsofpower:sapphire\"}"
       }
     },
     {
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{id:\"elementsofpower:sapphire\",Count:1b,tag:{quality:2}}"
+        "stack": "{Count:1b,id:\"elementsofpower:sapphire\",tag:{quality:0}}"
       }
     },
     {
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{id:\"elementsofpower:sapphire\",Count:1b,tag:{quality:0}}"
+        "stack": "{Count:1b,id:\"elementsofpower:sapphire\",tag:{quality:3}}"
       }
     },
     {
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{id:\"elementsofpower:sapphire\",Count:1b,tag:{quality:3}}"
+        "stack": "{Count:1b,id:\"elementsofpower:sapphire\",tag:{quality:2}}"
       }
     }
   ],

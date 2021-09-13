@@ -12,7 +12,7 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{id:\"minecraft:dark_oak_wood\",Count:1b}"
+        "stack": "{Count:1b,id:\"minecraft:dark_oak_wood\"}"
       }
     }
   ],

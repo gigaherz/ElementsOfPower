@@ -11,7 +11,9 @@
       "conditions": {
         "items": [
           {
-            "item": "elementsofpower:serendibite_ore"
+            "items": [
+              "elementsofpower:serendibite_ore"
+            ]
           }
         ]
       }

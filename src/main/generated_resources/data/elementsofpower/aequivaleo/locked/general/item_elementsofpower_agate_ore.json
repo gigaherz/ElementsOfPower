@@ -12,7 +12,7 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{id:\"elementsofpower:agate_ore\",Count:1b}"
+        "stack": "{Count:1b,id:\"elementsofpower:agate_ore\"}"
       }
     }
   ],

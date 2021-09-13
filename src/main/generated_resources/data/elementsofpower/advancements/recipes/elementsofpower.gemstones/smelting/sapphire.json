@@ -11,7 +11,9 @@
       "conditions": {
         "items": [
           {
-            "item": "elementsofpower:sapphire_ore"
+            "items": [
+              "elementsofpower:sapphire_ore"
+            ]
           }
         ]
       }

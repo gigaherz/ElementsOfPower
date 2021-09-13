@@ -1,0 +1,29 @@
+{
+  "mode": "ADDITIVE",
+  "targets": [
+    {
+      "type": "aequivaleo:item",
+      "data": {
+        "count": 1.0,
+        "item": "elementsofpower:sapphire_ore"
+      }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{Count:1b,id:\"elementsofpower:sapphire_ore\"}"
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "amount": 8.0,
+      "type": "elementsofpower:earth"
+    },
+    {
+      "amount": 1.0,
+      "type": "elementsofpower:water"
+    }
+  ]
+}

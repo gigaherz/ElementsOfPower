@@ -12,7 +12,7 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{id:\"minecraft:infested_stone\",Count:1b}"
+        "stack": "{Count:1b,id:\"minecraft:infested_stone\"}"
       }
     }
   ],

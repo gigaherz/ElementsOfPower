@@ -11,7 +11,9 @@
       "conditions": {
         "items": [
           {
-            "item": "elementsofpower:wand"
+            "items": [
+              "elementsofpower:wand"
+            ]
           }
         ]
       }

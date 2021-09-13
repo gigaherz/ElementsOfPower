@@ -1,0 +1,23 @@
+{
+  "mode": "ADDITIVE",
+  "targets": [
+    {
+      "type": "aequivaleo:item",
+      "data": {
+        "count": 1.0,
+        "item": "minecraft:bone"
+      }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{Count:1b,id:\"minecraft:bone\"}"
+      }
+    }
+  ],
+  "compounds": {
+    "amount": 4.0,
+    "type": "elementsofpower:death"
+  }
+}
