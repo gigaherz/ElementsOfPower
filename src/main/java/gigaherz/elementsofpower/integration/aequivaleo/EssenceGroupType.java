@@ -17,28 +17,27 @@ public class EssenceGroupType extends ForgeRegistryEntry<ICompoundTypeGroup> imp
     @Override
     public IMediationEngine getMediationEngine()
     {
-        return context -> {
-            return context
-                    .getCandidates()
-                    .stream()
-                    .min((o1, o2) -> {
-                        if (o1.isSourceIncomplete() && !o2.isSourceIncomplete())
-                            return 1;
+        return context -> context
+                .getCandidates()
+                .stream()
+                .min((o1, o2) -> {
+                    if (o1.isSourceIncomplete() && !o2.isSourceIncomplete())
+                        return 1;
 
-                        if (!o1.isSourceIncomplete() && o2.isSourceIncomplete())
-                            return -1;
+                    if (!o1.isSourceIncomplete() && o2.isSourceIncomplete())
+                        return -1;
 
-                        if (o1.getValues().isEmpty() && !o2.getValues().isEmpty())
-                            return 1;
+                    if (o1.getValues().isEmpty() && !o2.getValues().isEmpty())
+                        return 1;
 
-                        if (!o1.getValues().isEmpty() && o2.getValues().isEmpty())
-                            return -1;
+                    if (!o1.getValues().isEmpty() && o2.getValues().isEmpty())
+                        return -1;
 
-                        return Double.compare(o1.getValues().stream().mapToDouble(CompoundInstance::getAmount).sum(),
-                                o2.getValues().stream().mapToDouble(CompoundInstance::getAmount).sum());
-                    })
-                    .map(IMediationCandidate::getValues);
-        };
+                    return Double.compare(
+                            o1.getValues().stream().mapToDouble(CompoundInstance::getAmount).sum(),
+                            o2.getValues().stream().mapToDouble(CompoundInstance::getAmount).sum());
+                })
+                .map(IMediationCandidate::getValues);
     }
 
     @Override
@@ -63,6 +62,12 @@ public class EssenceGroupType extends ForgeRegistryEntry<ICompoundTypeGroup> imp
     public boolean isValidFor(ICompoundContainer<?> iCompoundContainer, CompoundInstance compoundInstance)
     {
         return true;
+    }
+
+    @Override
+    public Optional<?> mapEntry(ICompoundContainer<?> container, Set<CompoundInstance> instances)
+    {
+        return mapEntry(instances);
     }
 
     @Override

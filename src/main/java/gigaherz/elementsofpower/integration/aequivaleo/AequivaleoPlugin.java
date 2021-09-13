@@ -15,9 +15,7 @@ import gigaherz.elementsofpower.gemstones.Quality;
 import gigaherz.elementsofpower.magic.MagicAmounts;
 import gigaherz.elementsofpower.spells.Element;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.RegistryKey;
 import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.javafmlmod.FMLModContainer;
@@ -30,7 +28,6 @@ import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Predicate;
 
 @com.ldtteam.aequivaleo.api.plugin.AequivaleoPlugin
 public class AequivaleoPlugin implements IAequivaleoPlugin
