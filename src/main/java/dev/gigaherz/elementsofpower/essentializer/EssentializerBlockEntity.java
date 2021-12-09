@@ -149,13 +149,12 @@ public class EssentializerBlockEntity
     }
 
     @Override
-    public CompoundTag save(CompoundTag tagCompound)
+    protected void saveAdditional(CompoundTag tag)
     {
-        tagCompound = super.save(tagCompound);
-        tagCompound.put("Slots", inventory.serializeNBT());
-        writeAmountsToNBT(tagCompound, "Contained", containedMagic);
-        writeAmountsToNBT(tagCompound, "Remaining", remainingToConvert);
-        return tagCompound;
+        super.saveAdditional(tag);
+        tag.put("Slots", inventory.serializeNBT());
+        writeAmountsToNBT(tag, "Contained", containedMagic);
+        writeAmountsToNBT(tag, "Remaining", remainingToConvert);
     }
 
     private MagicAmounts readAmountsFromNBT(CompoundTag tagCompound, String key)
@@ -178,7 +177,7 @@ public class EssentializerBlockEntity
     @Override
     public CompoundTag getUpdateTag()
     {
-        return save(new CompoundTag());
+        return saveWithoutMetadata();
     }
 
     @Override

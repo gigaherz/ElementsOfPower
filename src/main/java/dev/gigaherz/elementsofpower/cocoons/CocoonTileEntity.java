@@ -41,13 +41,11 @@ public class CocoonTileEntity extends BlockEntity implements IMagicAmountContain
     }
 
     @Override
-    public CompoundTag save(CompoundTag compound)
+    protected void saveAdditional(CompoundTag compound)
     {
-        compound = super.save(compound);
+        super.saveAdditional(compound);
 
         compound.put("Magic", essenceContained.serializeNBT());
-
-        return compound;
     }
 
     public void transferToPlayer(Random random, PlayerCombinedMagicContainers cap)
@@ -75,7 +73,7 @@ public class CocoonTileEntity extends BlockEntity implements IMagicAmountContain
     @Override
     public CompoundTag getUpdateTag()
     {
-        return save(new CompoundTag());
+        return saveWithoutMetadata();
     }
 
     @Override
