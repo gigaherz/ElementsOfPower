@@ -14,7 +14,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.util.Constants;
+import net.minecraft.nbt.Tag;
 
 public class ClientPacketHandlers
 {
@@ -25,7 +25,7 @@ public class ClientPacketHandlers
         {
             Level world = mc.level;
             Player player = (Player) world.getEntity(message.casterID);
-            ListTag seq = message.spellcast.getList("sequence", Constants.NBT.TAG_STRING);
+            ListTag seq = message.spellcast.getList("sequence", Tag.TAG_STRING);
             Spellcast ccast = SpellManager.makeSpell(seq);
             if (ccast != null)
             {

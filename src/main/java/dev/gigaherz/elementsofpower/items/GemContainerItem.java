@@ -12,7 +12,7 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.UseAnim;
-import net.minecraftforge.common.util.Constants;
+import net.minecraft.nbt.Tag;
 
 import javax.annotation.Nullable;
 
@@ -83,7 +83,7 @@ public abstract class GemContainerItem extends MagicContainerItem
         if (tag == null)
             return null;
 
-        if (tag.contains("gemstone", Constants.NBT.TAG_INT))
+        if (tag.contains("gemstone", Tag.TAG_INT))
         {
             int g = tag.getInt("gemstone");
             if (g < 0 || g > Gemstone.values.size())
@@ -97,7 +97,7 @@ public abstract class GemContainerItem extends MagicContainerItem
             return gem;
         }
 
-        if (tag.contains("gemstone", Constants.NBT.TAG_STRING))
+        if (tag.contains("gemstone", Tag.TAG_STRING))
         {
             String g = tag.getString("gemstone");
             return Gemstone.byName(g);
@@ -136,7 +136,7 @@ public abstract class GemContainerItem extends MagicContainerItem
         if (tag == null)
             return null;
 
-        if (!tag.contains("quality", Constants.NBT.TAG_INT))
+        if (!tag.contains("quality", Tag.TAG_INT))
             return null;
 
         int q = tag.getInt("quality");

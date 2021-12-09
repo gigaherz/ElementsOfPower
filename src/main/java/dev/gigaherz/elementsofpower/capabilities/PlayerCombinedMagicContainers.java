@@ -6,10 +6,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
+import net.minecraftforge.common.capabilities.*;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -19,8 +16,7 @@ import javax.annotation.Nullable;
 
 public class PlayerCombinedMagicContainers implements IMagicContainer
 {
-    @CapabilityInject(PlayerCombinedMagicContainers.class)
-    public static Capability<PlayerCombinedMagicContainers> CAPABILITY = null;
+    public static Capability<PlayerCombinedMagicContainers> CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {});
 
     private Player player;
 

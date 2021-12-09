@@ -4,7 +4,7 @@ import dev.gigaherz.elementsofpower.client.ClientPacketHandlers;
 import dev.gigaherz.elementsofpower.essentializer.menu.IMagicAmountHolder;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.fmllegacy.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 

@@ -4,7 +4,8 @@ import dev.gigaherz.elementsofpower.gemstones.Gemstone;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.util.LazyOptional;
 
@@ -12,8 +13,7 @@ import javax.annotation.Nullable;
 
 public class GemstoneContainerCapability
 {
-    @CapabilityInject(IGemstoneContainer.class)
-    public static Capability<IGemstoneContainer> INSTANCE;
+    public static Capability<IGemstoneContainer> INSTANCE = CapabilityManager.get(new CapabilityToken<>() {});
 
     public static void register(RegisterCapabilitiesEvent event)
     {

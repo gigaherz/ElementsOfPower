@@ -19,9 +19,9 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.Constants;
+import net.minecraft.nbt.Tag;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fmllegacy.network.PacketDistributor;
+import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -126,9 +126,9 @@ public class EssentializerBlockEntity
     {
         super.load(compound);
 
-        if (compound.contains("Slots", Constants.NBT.TAG_LIST))
+        if (compound.contains("Slots", Tag.TAG_LIST))
         {
-            ListTag tagList = compound.getList("Slots", Constants.NBT.TAG_COMPOUND);
+            ListTag tagList = compound.getList("Slots", Tag.TAG_COMPOUND);
             for (int i = 0; i < tagList.size(); i++)
             {
                 CompoundTag itemTags = tagList.getCompound(i);
@@ -140,7 +140,7 @@ public class EssentializerBlockEntity
                 }
             }
         }
-        else if (compound.contains("Inventory", Constants.NBT.TAG_COMPOUND))
+        else if (compound.contains("Inventory", Tag.TAG_COMPOUND))
         {
             inventory.deserializeNBT(compound.getCompound("Inventory"));
         }
@@ -161,7 +161,7 @@ public class EssentializerBlockEntity
     private MagicAmounts readAmountsFromNBT(CompoundTag tagCompound, String key)
     {
         MagicAmounts amounts = MagicAmounts.EMPTY;
-        if (tagCompound.contains(key, Constants.NBT.TAG_COMPOUND))
+        if (tagCompound.contains(key, Tag.TAG_COMPOUND))
         {
             CompoundTag tag = tagCompound.getCompound(key);
 
@@ -190,7 +190,7 @@ public class EssentializerBlockEntity
     @Override
     public ClientboundBlockEntityDataPacket getUpdatePacket()
     {
-        return new ClientboundBlockEntityDataPacket(this.worldPosition, 0, getUpdateTag());
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Override

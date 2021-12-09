@@ -16,10 +16,7 @@ import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
+import net.minecraftforge.common.capabilities.*;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
@@ -101,8 +98,7 @@ public class CocoonEventHandling
         });
     }
 
-    @CapabilityInject(PendingTracker.class)
-    public static Capability<PendingTracker> PENDING_TRACKER = null;
+    public static Capability<PendingTracker> PENDING_TRACKER = CapabilityManager.get(new CapabilityToken<>() {});
 
     public static class PendingTracker
     {
@@ -185,8 +181,7 @@ public class CocoonEventHandling
         }
     }
 
-    @CapabilityInject(CocoonTracker.class)
-    public static Capability<CocoonTracker> COCOON_TRACKER = null;
+    public static Capability<CocoonTracker> COCOON_TRACKER = CapabilityManager.get(new CapabilityToken<>() {});
 
     public static class CocoonTracker
     {

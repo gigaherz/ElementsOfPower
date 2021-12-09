@@ -18,8 +18,8 @@ import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RenderLevelLastEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -38,7 +38,7 @@ public class SpellRenderingHandler
     }
 
     @SubscribeEvent
-    public static void renderFirstPerson(RenderWorldLastEvent event)
+    public static void renderFirstPerson(RenderLevelLastEvent event)
     {
         Player player = Minecraft.getInstance().player;
         if (player == null)
@@ -58,7 +58,7 @@ public class SpellRenderingHandler
                 Vec3 off = player.getUpVector(partialTicks).scale(-0.15);
 
                 MultiBufferSource.BufferSource buffers = Minecraft.getInstance().renderBuffers().bufferSource();
-                PoseStack stack = event.getMatrixStack();
+                PoseStack stack = event.getPoseStack();
 
                 stack.pushPose();
                 renderer.render(cast, player, renderManager, partialTicks, stack, buffers, 0x00F000F0, off);
@@ -87,7 +87,7 @@ public class SpellRenderingHandler
                 boolean isSelf = player.getId() == mc.player.getId();
                 EntityRenderDispatcher renderManager = mc.getEntityRenderDispatcher();
 
-                float partialTicks = event.getPartialRenderTick();
+                float partialTicks = event.getPartialTick();
 
                 Vec3 upVector = player.getUpVector(partialTicks);
 
@@ -105,10 +105,10 @@ public class SpellRenderingHandler
                 }
                 off = off.add(0, player.getEyeHeight(), 0);
 
-                PoseStack stack = event.getMatrixStack();
+                PoseStack stack = event.getPoseStack();
 
                 stack.pushPose();
-                renderer.render(cast, player, renderManager, partialTicks, stack, event.getBuffers(), event.getLight(), off);
+                renderer.render(cast, player, renderManager, partialTicks, stack, event.getMultiBufferSource(), event.getPackedLight(), off);
                 stack.popPose();
             }
         });

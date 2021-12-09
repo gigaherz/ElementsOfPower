@@ -44,7 +44,7 @@ public class DustBlock extends Block
 
     private void rescheduleUpdate(Level worldIn, BlockPos pos, Random rand)
     {
-        worldIn.getBlockTicks().scheduleTick(pos, this, 12 + rand.nextInt(12));
+        worldIn.scheduleTick(pos, this, 12 + rand.nextInt(12));
     }
 
     @Deprecated

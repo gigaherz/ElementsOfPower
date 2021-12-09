@@ -93,7 +93,7 @@ public class MiningEffect extends SpellEffect
                     else
                     {
                         block.playerWillDestroy(world, blockPos, currentState, player);
-                        boolean flag = block.removedByPlayer(state, world, blockPos, player, true, world.getFluidState(blockPos));
+                        boolean flag = block.onDestroyedByPlayer(state, world, blockPos, player, true, world.getFluidState(blockPos));
 
                         if (flag)
                         {

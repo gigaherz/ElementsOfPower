@@ -27,7 +27,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.gui.ForgeIngameGui;
 import net.minecraftforge.client.gui.IIngameOverlay;
 import net.minecraftforge.client.gui.OverlayRegistry;
-import net.minecraftforge.common.util.Constants;
+import net.minecraft.nbt.Tag;
 
 import java.util.List;
 
@@ -127,7 +127,7 @@ public class MagicContainerOverlay extends GuiComponent implements IIngameOverla
             CompoundTag nbt = heldItem.getTag();
             if (nbt != null)
             {
-                ListTag seq = nbt.getList(WandItem.SPELL_SEQUENCE_TAG, Constants.NBT.TAG_STRING);
+                ListTag seq = nbt.getList(WandItem.SPELL_SEQUENCE_TAG, Tag.TAG_STRING);
                 List<Element> savedSequence = SpellManager.sequenceFromList(seq);
 
                 if (savedSequence.size() > 0)

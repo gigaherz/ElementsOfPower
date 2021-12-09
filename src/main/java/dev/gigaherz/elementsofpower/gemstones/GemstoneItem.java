@@ -15,7 +15,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.util.Constants;
+import net.minecraft.nbt.Tag;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -122,7 +122,7 @@ public class GemstoneItem extends MagicContainerItem
         if (tag == null)
             return null;
 
-        if (!tag.contains("quality", Constants.NBT.TAG_INT))
+        if (!tag.contains("quality", Tag.TAG_INT))
             return null;
 
         int q = tag.getInt("quality");

@@ -53,7 +53,7 @@ public class LightBlock extends Block
     {
         super.onPlace(state, worldIn, pos, oldState, isMoving);
 
-        worldIn.getBlockTicks().scheduleTick(pos, this, this.tickRate(worldIn));
+        worldIn.scheduleTick(pos, this, this.tickRate(worldIn));
     }
 
     public void resetCooldown(Level worldIn, BlockPos pos, BlockState state, int density)

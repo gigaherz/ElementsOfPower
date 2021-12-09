@@ -21,7 +21,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.util.Constants;
+import net.minecraft.nbt.Tag;
 import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nullable;
@@ -203,7 +203,7 @@ public class BaubleItem extends GemContainerItem
             return TransferMode.PASSIVE;
 
         CompoundTag tag = stack.getTag();
-        if (tag != null && tag.contains("Active", Constants.NBT.TAG_BYTE))
+        if (tag != null && tag.contains("Active", Tag.TAG_BYTE))
             return TransferMode.values[tag.getByte("Active") % TransferMode.values.length];
         return TransferMode.PASSIVE;
     }

@@ -16,9 +16,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fmllegacy.common.registry.IEntityAdditionalSpawnData;
-import net.minecraftforge.fmllegacy.network.NetworkHooks;
+import net.minecraft.nbt.Tag;
+import net.minecraftforge.entity.IEntityAdditionalSpawnData;
+import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nullable;
@@ -96,12 +96,12 @@ public class BallEntity extends ThrowableProjectile implements IEntityAdditional
         if (spellcast == null)
         {
             CompoundTag tag = getEntityData().get(SEQ);
-            if (tag.contains("sequence", Constants.NBT.TAG_LIST) && tag.contains("caster", Constants.NBT.TAG_INT))
+            if (tag.contains("sequence", Tag.TAG_LIST) && tag.contains("caster", Tag.TAG_INT))
             {
                 Player e = (Player) this.level.getEntity(tag.getInt("caster"));
                 if (e != null)
                 {
-                    ListTag sequence = tag.getList("sequence", Constants.NBT.TAG_STRING);
+                    ListTag sequence = tag.getList("sequence", Tag.TAG_STRING);
                     Spellcast ccast = SpellManager.makeSpell(sequence);
                     if (ccast != null)
                     {

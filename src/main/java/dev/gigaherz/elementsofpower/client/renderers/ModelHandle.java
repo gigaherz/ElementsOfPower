@@ -14,7 +14,7 @@ import net.minecraft.client.resources.metadata.animation.AnimationMetadataSectio
 import net.minecraft.client.resources.model.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.IModelConfiguration;
-import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.ForgeModelBakery;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.client.model.obj.OBJModel;
@@ -36,7 +36,7 @@ public class ModelHandle
     public ModelHandle(ResourceLocation modelLocation)
     {
         OBJModel model = OBJLoader.INSTANCE.loadModel(new OBJModel.ModelSettings(modelLocation, false, true, true, true, null));
-        this.model = model.bake(new FakeModelConfiguration(modelLocation), ModelLoader.instance(), FakeSprite.GETTER, BlockModelRotation.X0_Y0, null, modelLocation);
+        this.model = model.bake(new FakeModelConfiguration(modelLocation), ForgeModelBakery.instance(), FakeSprite.GETTER, BlockModelRotation.X0_Y0, null, modelLocation);
     }
 
     public void render(MultiBufferSource bufferIn, RenderType rt, PoseStack matrixStackIn, int packedLightIn, int color)

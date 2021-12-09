@@ -1,29 +1,35 @@
 package dev.gigaherz.elementsofpower.cocoons;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.level.levelgen.feature.configurations.NoneDecoratorConfiguration;
-import net.minecraft.world.level.levelgen.placement.DecorationContext;
-import net.minecraft.world.level.levelgen.placement.FeatureDecorator;
+import net.minecraft.world.level.levelgen.placement.PlacementContext;
+import net.minecraft.world.level.levelgen.placement.PlacementModifier;
+import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Stream;
 
-public class CocoonPlacement extends FeatureDecorator<NoneDecoratorConfiguration>
+public class CocoonPlacement extends PlacementModifier
 {
-    public static final CocoonPlacement INSTANCE = new CocoonPlacement(NoneDecoratorConfiguration.CODEC);
+    public static final int CONFIG_VERSION=1;
+    public static final CocoonPlacement INSTANCE = new CocoonPlacement();
+    public static final Codec<CocoonPlacement> CODEC = Codec.INT.comapFlatMap(
+            i -> i == CONFIG_VERSION ? DataResult.success(INSTANCE) : DataResult.error("Uknown CocoonPlacement version " + i),
+            c -> CONFIG_VERSION);
+    public static final PlacementModifierType<CocoonPlacement> TYPE = register("elementsofpower:cocoon_placement", CODEC);
 
-    public CocoonPlacement(Codec<NoneDecoratorConfiguration> configFactoryIn)
-    {
-        super(configFactoryIn);
+    private static <P extends PlacementModifier> PlacementModifierType<P> register(String name, Codec<P> codec) {
+        return Registry.register(Registry.PLACEMENT_MODIFIERS, name, () -> codec);
     }
 
     @Override
-    public Stream<BlockPos> getPositions(DecorationContext helper, Random random, NoneDecoratorConfiguration config, BlockPos pos)
+    public Stream<BlockPos> getPositions(PlacementContext context, Random random, BlockPos pos)
     {
         List<BlockPos> positions = new ArrayList<>();
 
@@ -32,7 +38,7 @@ public class CocoonPlacement extends FeatureDecorator<NoneDecoratorConfiguration
         {
             for (int z = 0; z < 16; z++)
             {
-                top = Math.max(top, helper.getHeight(Heightmap.Types.MOTION_BLOCKING, x + pos.getX(), z + pos.getZ()));
+                top = Math.max(top, context.getHeight(Heightmap.Types.MOTION_BLOCKING, x + pos.getX(), z + pos.getZ()));
             }
         }
 
@@ -50,5 +56,11 @@ public class CocoonPlacement extends FeatureDecorator<NoneDecoratorConfiguration
         }
 
         return positions.stream();
+    }
+
+    @Override
+    public PlacementModifierType<?> type()
+    {
+        return TYPE;
     }
 }

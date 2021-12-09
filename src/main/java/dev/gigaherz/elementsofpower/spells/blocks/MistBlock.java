@@ -101,7 +101,7 @@ public class MistBlock extends Block
             world.setBlockAndUpdate(pos, state.setValue(DENSITY, density));
         }
 
-        world.getBlockTicks().scheduleTick(pos, this, rand.nextInt(10));
+        world.scheduleTick(pos, this, rand.nextInt(10));
     }
 
     @Deprecated

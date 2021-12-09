@@ -25,7 +25,7 @@ public class WaterEffect extends SpellEffect
     @Override
     public int getColor(InitializedSpellcast cast)
     {
-        return 0xFF0000;
+        return 0x00006F;
     }
 
     @Override

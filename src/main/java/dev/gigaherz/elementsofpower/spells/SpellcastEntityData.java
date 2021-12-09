@@ -11,18 +11,15 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.common.capabilities.ICapabilitySerializable;
-import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
-import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.capabilities.*;
+import net.minecraft.nbt.Tag;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fmllegacy.network.PacketDistributor;
+import net.minecraftforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 
@@ -63,12 +60,12 @@ public class SpellcastEntityData implements INBTSerializable<CompoundTag>
 
     public void deserializeNBT(CompoundTag compound)
     {
-        if (compound.contains("currentSpell", Constants.NBT.TAG_COMPOUND))
+        if (compound.contains("currentSpell", Tag.TAG_COMPOUND))
         {
             CompoundTag cast = compound.getCompound("currentSpell");
-            if (cast.contains("sequence", Constants.NBT.TAG_LIST))
+            if (cast.contains("sequence", Tag.TAG_LIST))
             {
-                ListTag seq = cast.getList("sequence", Constants.NBT.TAG_STRING);
+                ListTag seq = cast.getList("sequence", Tag.TAG_STRING);
                 Spellcast ccast = SpellManager.makeSpell(seq);
                 if (ccast != null)
                 {
@@ -186,8 +183,7 @@ public class SpellcastEntityData implements INBTSerializable<CompoundTag>
 
     public static class Handler
     {
-        @CapabilityInject(SpellcastEntityData.class)
-        public static Capability<SpellcastEntityData> SPELLCAST;
+        public static Capability<SpellcastEntityData> SPELLCAST = CapabilityManager.get(new CapabilityToken<>() {});
 
         // FIXME
         public void registerCapability(RegisterCapabilitiesEvent event)

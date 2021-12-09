@@ -16,7 +16,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.util.Constants;
+import net.minecraft.nbt.Tag;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -73,7 +73,7 @@ public class WandItem extends GemContainerItem
             CompoundTag tag = stack.getTag();
             if (tag != null)
             {
-                ListTag seq = tag.getList(WandItem.SPELL_SEQUENCE_TAG, Constants.NBT.TAG_STRING);
+                ListTag seq = tag.getList(WandItem.SPELL_SEQUENCE_TAG, Tag.TAG_STRING);
                 sequence = SpellManager.sequenceFromList(seq);
             }
         }
