@@ -1,4 +1,4 @@
-package dev.gigaherz.partycool;
+package dev.gigaherz.purrticles;
 
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;

@@ -1,7 +1,7 @@
-package dev.gigaherz.partycool.features;
+package dev.gigaherz.purrticles.features;
 
-import dev.gigaherz.partycool.ParticleModule;
-import dev.gigaherz.partycool.ParticleSystem;
+import dev.gigaherz.purrticles.ParticleModule;
+import dev.gigaherz.purrticles.ParticleSystem;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 
 import java.util.function.Function;

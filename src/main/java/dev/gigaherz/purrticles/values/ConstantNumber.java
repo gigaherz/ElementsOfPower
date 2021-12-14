@@ -1,4 +1,4 @@
-package dev.gigaherz.partycool.values;
+package dev.gigaherz.purrticles.values;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

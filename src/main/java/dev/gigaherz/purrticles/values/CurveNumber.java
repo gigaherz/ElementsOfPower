@@ -1,4 +1,4 @@
-package dev.gigaherz.partycool.values;
+package dev.gigaherz.purrticles.values;
 
 import com.google.common.collect.Lists;
 import com.mojang.serialization.Codec;

@@ -1,6 +1,6 @@
-package dev.gigaherz.partycool.features;
+package dev.gigaherz.purrticles.features;
 
-import dev.gigaherz.partycool.values.VaryingNumber;
+import dev.gigaherz.purrticles.values.VaryingNumber;
 
 /**
  * Defines the position of the particle as a 3-component vector

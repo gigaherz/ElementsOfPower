@@ -1,8 +1,8 @@
-package dev.gigaherz.partycool.features;
+package dev.gigaherz.purrticles.features;
 
-import dev.gigaherz.partycool.ParticleModule;
-import dev.gigaherz.partycool.ParticleSystem;
-import dev.gigaherz.partycool.values.VaryingNumber;
+import dev.gigaherz.purrticles.ParticleModule;
+import dev.gigaherz.purrticles.ParticleSystem;
+import dev.gigaherz.purrticles.values.VaryingNumber;
 
 import java.util.function.Function;
 import java.util.function.Supplier;

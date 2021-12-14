@@ -1,6 +1,6 @@
-package dev.gigaherz.partycool.values;
+package dev.gigaherz.purrticles.values;
 
-import dev.gigaherz.partycool.ICodecSerializable;
+import dev.gigaherz.purrticles.ICodecSerializable;
 
 public abstract class VaryingNumber implements ICodecSerializable<VaryingNumber>
 {
