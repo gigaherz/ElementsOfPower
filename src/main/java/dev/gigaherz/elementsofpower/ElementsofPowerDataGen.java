@@ -217,11 +217,15 @@ class ElementsofPowerDataGen
                 {
                     this.tag(BlockTags.MINEABLE_WITH_PICKAXE)
                             .add(type.getBlock());
+                    this.tag(BlockTags.NEEDS_IRON_TOOL)
+                            .add(type.getBlock());
                 }
                 if (type.generateCustomOre())
                 {
                     this.tag(BlockTags.MINEABLE_WITH_PICKAXE)
-                            .add(type.getBlock());
+                            .add(type.getOre());
+                    this.tag(BlockTags.NEEDS_IRON_TOOL)
+                            .add(type.getOre());
                 }
             }
         }

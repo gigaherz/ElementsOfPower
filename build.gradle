@@ -50,7 +50,7 @@ repositories {
     mavenLocal()
 }
 
-version = "0.12.0-alpha"
+version = "0.13.1-alpha"
 group = "gigaherz.elementsofpower" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "ElementsOfPower-UNKNOWN"
 
@@ -125,17 +125,17 @@ minecraft {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.18.1-39.0.0'
+    minecraft 'net.minecraftforge:forge:1.18.1-39.0.59'
 
-    compileOnly fg.deobf("mezz.jei:jei-1.18:9.0.0.40:api")
-    runtimeOnly fg.deobf("mezz.jei:jei-1.18:9.0.0.40")
+    compileOnly fg.deobf("mezz.jei:jei-1.18.1:9.2.3.78:api")
+    runtimeOnly fg.deobf("mezz.jei:jei-1.18.1:9.2.3.78")
 
-    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.18-5.0.2.4")
-    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.18-5.0.2.4:api")
+    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.18.1-5.0.6.0")
+    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.18.1-5.0.6.0:api")
 
-    compileOnly fg.deobf("com.ldtteam:aequivaleo:1.18-0.1.77-ALPHA:api")
-    //compileOnly fg.deobf("com.ldtteam:aequivaleo:1.18-0.1.77-ALPHA:vanilla-api")
-    runtimeOnly fg.deobf("com.ldtteam:aequivaleo:1.18-0.1.77-ALPHA:universal")
+    compileOnly fg.deobf("com.ldtteam:aequivaleo:1.18-0.1.89-ALPHA:api")
+    //compileOnly fg.deobf("com.ldtteam:aequivaleo:1.18-0.1.89-ALPHA:vanilla-api")
+    runtimeOnly fg.deobf("com.ldtteam:aequivaleo:1.18-0.1.89-ALPHA:universal")
 
     //runtimeOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:1.16-3.1.4-22")
 

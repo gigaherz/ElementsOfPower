@@ -48,28 +48,6 @@ public class CocoonTileEntity extends BlockEntity implements IMagicAmountContain
         compound.put("Magic", essenceContained.serializeNBT());
     }
 
-    public void transferToPlayer(Random random, PlayerCombinedMagicContainers cap)
-    {
-        MagicAmounts am = essenceContained;
-        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-        {
-            am = am.with(i, (float) Math.floor(essenceContained.get(i) * random.nextFloat() * 2) / 10.0f);
-        }
-
-        if (!am.isEmpty())
-        {
-            cap.addMagic(am);
-        }
-    }
-
-    public void addEssences(ItemStack stack)
-    {
-        essenceContained = essenceContained.add(((MagicOrbItem) stack.getItem()).getElement(), 1);
-
-        BlockState state = level.getBlockState(worldPosition);
-        level.sendBlockUpdated(worldPosition, state, state, 3);
-    }
-
     @Override
     public CompoundTag getUpdateTag()
     {
@@ -93,6 +71,28 @@ public class CocoonTileEntity extends BlockEntity implements IMagicAmountContain
     {
         super.onDataPacket(net, packet);
         handleUpdateTag(packet.getTag());
+    }
+
+    public void transferToPlayer(Random random, PlayerCombinedMagicContainers cap)
+    {
+        MagicAmounts am = essenceContained;
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+        {
+            am = am.with(i, (float) Math.floor(essenceContained.get(i) * random.nextFloat() * 2) / 10.0f);
+        }
+
+        if (!am.isEmpty())
+        {
+            cap.addMagic(am);
+        }
+    }
+
+    public void addEssences(ItemStack stack)
+    {
+        essenceContained = essenceContained.add(((MagicOrbItem) stack.getItem()).getElement(), 1);
+
+        BlockState state = level.getBlockState(worldPosition);
+        level.sendBlockUpdated(worldPosition, state, state, 3);
     }
 
     @Override

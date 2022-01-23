@@ -41,6 +41,7 @@ import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleType;
+import net.minecraft.data.worldgen.features.FeatureUtils;
 import net.minecraft.data.worldgen.features.OreFeatures;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.resources.ResourceKey;
@@ -57,10 +58,11 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.levelgen.GenerationStep;
+import net.minecraft.world.level.levelgen.VerticalAnchor;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
-import net.minecraft.world.level.levelgen.placement.CountPlacement;
-import net.minecraft.world.level.levelgen.placement.PlacedFeature;
+import net.minecraft.world.level.levelgen.placement.*;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctions;
@@ -208,6 +210,7 @@ public class ElementsOfPowerMod
                         new GemstoneBlock(type, Block.Properties.of(Material.METAL)
                                 .strength(5F, 6F)
                                 .sound(SoundType.METAL)
+                                .requiresCorrectToolForDrops()
                         ).setRegistryName(type.getSerializedName() + "_block")
                 );
             }
@@ -218,6 +221,7 @@ public class ElementsOfPowerMod
             {
                 event.getRegistry().registerAll(
                         new GemstoneOreBlock(type, Block.Properties.of(Material.STONE)
+                                .requiresCorrectToolForDrops()
                                 .strength(3.0F, 3.0F)
                         ).setRegistryName(type.getSerializedName() + "_ore")
                 );
@@ -526,7 +530,7 @@ public class ElementsOfPowerMod
             {
                 for(var life : BiomeValue.values())
                 {
-                    var name = "cocoon_" + heat.getSerializedName() + "_" + humidity.getSerializedName() + "_" + life.getSerializedName();
+                    var name = "ore_" + heat.getSerializedName() + "_" + humidity.getSerializedName() + "_" + life.getSerializedName();
                     var values = new BiomeValues(heat, humidity, life);
                     var list = new ArrayList<PlacedFeature>();
                     for (Gemstone g : Gemstone.values)
@@ -535,9 +539,14 @@ public class ElementsOfPowerMod
                         {
                             int numPerVein = 3 + values.getBiomeBonus(g.getElement());
                             var name2 = g.getSerializedName() + "_" + name;
-                            list.add(PlacementUtils.register(name2, Feature.ORE
-                                    .configured(new OreConfiguration(OreFeatures.NATURAL_STONE, g.getOre().defaultBlockState(), numPerVein))
-                                    .placed(List.of(CountPlacement.of(16), PlacementUtils.RANGE_BOTTOM_TO_MAX_TERRAIN_HEIGHT))));
+                            var configured = FeatureUtils.register(name2, Feature.ORE
+                                    .configured(new OreConfiguration(OreFeatures.NATURAL_STONE, g.getOre().defaultBlockState(), numPerVein)));
+                            list.add(PlacementUtils.register(name2, configured
+                                    .placed(List.of(
+                                            CountPlacement.of(16),
+                                            InSquarePlacement.spread(),
+                                            HeightRangePlacement.triangle(VerticalAnchor.aboveBottom(-80), VerticalAnchor.aboveBottom(80)),
+                                            BiomeFilter.biome()))));
                         }
                     }
                     map.put(values, list);
