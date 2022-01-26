@@ -24,6 +24,7 @@ repositories {
         url "https://dvs1.progwml6.com/files/maven/"
     }
     maven {
+        name "gigaherz's things"
         url 'https://dogforce-games.com/maven'
     }
     maven {
@@ -51,7 +52,7 @@ repositories {
 }
 
 version = "0.13.1-alpha"
-group = "gigaherz.elementsofpower" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group = "dev.gigaherz.elementsofpower" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "ElementsOfPower-UNKNOWN"
 
 project.afterEvaluate {
@@ -163,21 +164,34 @@ jar {
     }
 }
 
-tasks.publish.dependsOn build
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifactId project.archivesBaseName
-            from components.java
+tasks.withType(GenerateModuleMetadata) {
+    enabled = false
+}
 
-            //artifact sourceJar
+project.afterEvaluate {
+    publish.dependsOn('reobfJar')
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                artifactId project.archivesBaseName
+                from components.java
+
+                //artifact sourceJar
+
+                pom.withXml {
+                    asNode().dependencies.dependency.each { dep ->
+                        if (dep.groupId.last().value().last() in ["net.minecraftforge", "mezz.jei"]) {
+                            assert dep.parent().remove(dep)
+                        }
+                    }
+                }
+            }
         }
-    }
 
-    repositories {
-        maven {
-            url "$projectDir/../CommonMaven"
+        repositories {
+            maven {
+                url "$projectDir/../CommonMaven"
+            }
         }
     }
 }
-
