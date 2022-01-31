@@ -1,0 +1,6 @@
+{
+  "parent": "elementsofpower:block/two_layer_cube_all",
+  "textures": {
+    "all0": "minecraft:block/stone"
+  }
+}

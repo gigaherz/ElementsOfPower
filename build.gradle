@@ -114,6 +114,8 @@ minecraft {
             property 'forge.logging.markers', ''
             property 'forge.logging.console.level', 'debug'
 
+            forceExit false
+
             args '--mod', 'elementsofpower', '--all', '--output', file('src/main/generated_resources/'), '--existing', file('src/main/resources/')
 
             mods {

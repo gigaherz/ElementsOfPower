@@ -107,7 +107,7 @@ class ElementsofPowerDataGen
         public void calculateDataToSave()
         {
             StockConversions.addStockConversions(this::getItemsFromTag, (item, amounts) -> {
-                List<CompoundInstance> compoundRefs = Element.stream()
+                List<CompoundInstance> compoundRefs = Element.stream_without_balance()
                         .map(e -> Pair.of(e, amounts.get(e)))
                         .filter(p -> p.getSecond() > 0)
                         .map(p -> new CompoundInstance(AequivaleoPlugin.BY_ELEMENT.get(p.getFirst()).get(), (double) p.getSecond()))
@@ -182,10 +182,14 @@ class ElementsofPowerDataGen
                 }
                 if (gem.generateCustomOre())
                 {
-                    Block ore = gem.getOre();
+                    Item[] oreItems = gem.getOres().stream().map(Block::asItem).toArray(Item[]::new);
+
                     Tag.Named<Item> tag = ItemTags.bind(new ResourceLocation("forge", "ores/" + gem.getSerializedName()).toString());
-                    this.tag(tag).add(ore.asItem());
+                    this.tag(tag).add(oreItems);
                     oresTag.addTag(tag);
+
+                    this.tag(ItemTags.bind(new ResourceLocation("elementsofpower", gem.getSerializedName() + "_ores").toString()))
+                            .add(oreItems);
                 }
                 if (gem.generateCustomBlock())
                 {
@@ -223,11 +227,29 @@ class ElementsofPowerDataGen
                 if (type.generateCustomOre())
                 {
                     this.tag(BlockTags.MINEABLE_WITH_PICKAXE)
-                            .add(type.getOre());
+                            .add(type.getOres().toArray(Block[]::new));
                     this.tag(BlockTags.NEEDS_IRON_TOOL)
-                            .add(type.getOre());
+                            .add(type.getOres().toArray(Block[]::new));
                 }
             }
+
+            TagAppender<Block> oresTag = this.tag(Tags.Blocks.ORES);
+            TagAppender<Block> blocksTag = this.tag(Tags.Blocks.STORAGE_BLOCKS);
+            Gemstone.values.forEach(gem -> {
+                if (gem.generateCustomOre())
+                {
+                    Tag.Named<Block> tag = BlockTags.bind(new ResourceLocation("forge", "ores/" + gem.getSerializedName()).toString());
+                    this.tag(tag).add(gem.getOres().toArray(Block[]::new));
+                    oresTag.addTag(tag);
+                }
+                if (gem.generateCustomBlock())
+                {
+                    Block block = gem.getBlock();
+                    Tag.Named<Block> tag = BlockTags.bind(new ResourceLocation("forge", "storage_blocks/" + gem.getSerializedName()).toString());
+                    this.tag(tag).add(block);
+                    blocksTag.addTag(tag);
+                }
+            });
         }
     }
 
@@ -267,26 +289,37 @@ class ElementsofPowerDataGen
             {
                 this.dropSelf(ElementsOfPowerBlocks.ESSENTIALIZER);
 
-                Element.stream().forEach(e -> this.add(e.getCocoon(), BlockTables::dropWithOrbs));
+                Element.stream_without_balance().forEach(e -> {
+                    if (e != Element.BALANCE && e.getCocoon() != null)
+                        this.add(e.getCocoon(), BlockTables::dropWithOrbs);
+                });
 
                 Gemstone.stream().forEach(g -> {
                     if (g.generateCustomBlock())
                         this.dropSelf(g.getBlock());
                     if (g.generateCustomOre())
-                        this.add(g.getOre(), (block) -> createOreDrop(block, g.getItem()));
+                    {
+                        for(var ore : g.getOres())
+                        {
+                            this.add(ore, (block) -> createOreDrop(block, g.getItem()));
+                        }
+                    }
                 });
             }
 
             protected static LootTable.Builder dropWithOrbs(Block block)
             {
                 LootTable.Builder builder = LootTable.lootTable();
-                for (Element e : Element.values)
+                for (Element e : Element.values_without_balance)
                 {
-                    LootPool.Builder pool = LootPool.lootPool()
-                            .setRolls(ConstantValue.exactly(1))
-                            .add(LootItem.lootTableItem(e.getOrb())
-                                    .apply(ApplyOrbSizeFunction.builder().with(e)));
-                    builder = builder.withPool(applyExplosionCondition(block, pool));
+                    if (e.getOrb() != null)
+                    {
+                        LootPool.Builder pool = LootPool.lootPool()
+                                .setRolls(ConstantValue.exactly(1))
+                                .add(LootItem.lootTableItem(e.getOrb())
+                                        .apply(ApplyOrbSizeFunction.builder().with(e)));
+                        builder = builder.withPool(applyExplosionCondition(block, pool));
+                    }
                 }
                 return builder;
             }
@@ -416,28 +449,30 @@ class ElementsofPowerDataGen
             SpecialRecipeBuilder.special(GemstoneChangeRecipe.SERIALIZER).save(consumer, ElementsOfPowerMod.location("gemstone_change").toString());
             SpecialRecipeBuilder.special(ContainerChargeRecipe.SERIALIZER).save(consumer, ElementsOfPowerMod.location("container_charge").toString());
 
-            for (Gemstone gemstone : Gemstone.values())
+            for (Gemstone gem : Gemstone.values())
             {
-                if (gemstone.generateCustomOre())
+                if (gem.generateCustomOre())
                 {
-                    SimpleCookingRecipeBuilder.smelting(Ingredient.of(gemstone.getOre()), gemstone, 1.0F, 200)
-                            .unlockedBy("has_ore", has(gemstone.getOre()))
-                            .save(consumer, ElementsOfPowerMod.location("smelting/" + gemstone.getSerializedName()));
+                    Tag.Named<Item> tag = ItemTags.bind(new ResourceLocation("elementsofpower", gem.getSerializedName() + "_ores").toString());
+                    Item[] oreItems = gem.getOres().stream().map(Block::asItem).toArray(Item[]::new);
+                    SimpleCookingRecipeBuilder.smelting(Ingredient.of(oreItems), gem, 1.0F, 200)
+                            .unlockedBy("has_ore", has(tag))
+                            .save(consumer, ElementsOfPowerMod.location("smelting/" + gem.getSerializedName()));
                 }
-                if (gemstone.generateCustomBlock())
+                if (gem.generateCustomBlock())
                 {
-                    ShapedRecipeBuilder.shaped(gemstone.getBlock())
+                    ShapedRecipeBuilder.shaped(gem.getBlock())
                             .pattern("ggg")
                             .pattern("ggg")
                             .pattern("ggg")
-                            .define('g', AnalyzedFilteringIngredient.wrap(Ingredient.of(gemstone.getItem())))
-                            .unlockedBy("has_item", has(gemstone.getItem()))
+                            .define('g', AnalyzedFilteringIngredient.wrap(Ingredient.of(gem.getItem())))
+                            .unlockedBy("has_item", has(gem.getItem()))
                             .save(consumer);
 
-                    ShapelessRecipeBuilder.shapeless(gemstone.getItem(), 9)
-                            .requires(Ingredient.of(gemstone.getBlock()))
-                            .unlockedBy("has_item", has(gemstone.getItem()))
-                            .save(consumer, ElementsOfPowerMod.location(gemstone.getSerializedName() + "_from_block"));
+                    ShapelessRecipeBuilder.shapeless(gem.getItem(), 9)
+                            .requires(Ingredient.of(gem.getBlock()))
+                            .unlockedBy("has_item", has(gem.getItem()))
+                            .save(consumer, ElementsOfPowerMod.location(gem.getSerializedName() + "_from_block"));
                 }
             }
         }

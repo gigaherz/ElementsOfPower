@@ -1,4 +1,4 @@
 {
-  "parent": "minecraft:block/cube_all",
-  "textures": { "all": "elementsofpower:block/ore_agate" }
+  "parent": "elementsofpower:block/ore_base_stone",
+  "textures": { "all1": "elementsofpower:block/ore_agate" }
 }

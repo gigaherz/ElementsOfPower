@@ -11,9 +11,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "elementsofpower:serendibite_ore"
-            ]
+            "tag": "elementsofpower:serendibite_ores"
           }
         ]
       }

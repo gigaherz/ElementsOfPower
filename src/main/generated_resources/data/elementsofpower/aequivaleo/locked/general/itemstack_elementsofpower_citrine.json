@@ -12,13 +12,6 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:citrine\",tag:{quality:1}}"
-      }
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
         "stack": "{Count:1b,id:\"elementsofpower:citrine\"}"
       }
     },
@@ -33,7 +26,7 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:citrine\",tag:{quality:2}}"
+        "stack": "{Count:1b,id:\"elementsofpower:citrine\",tag:{quality:1}}"
       }
     },
     {
@@ -48,6 +41,13 @@
       "data": {
         "count": 1.0,
         "stack": "{Count:1b,id:\"elementsofpower:citrine\",tag:{quality:4}}"
+      }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{Count:1b,id:\"elementsofpower:citrine\",tag:{quality:2}}"
       }
     }
   ],

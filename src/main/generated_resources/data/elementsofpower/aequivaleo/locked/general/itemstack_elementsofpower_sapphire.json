@@ -5,54 +5,60 @@
       "type": "aequivaleo:item",
       "data": {
         "count": 1.0,
-        "item": "elementsofpower:creativite"
+        "item": "elementsofpower:sapphire"
       }
     },
     {
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:creativite\",tag:{quality:4}}"
+        "stack": "{Count:1b,id:\"elementsofpower:sapphire\",tag:{quality:2}}"
       }
     },
     {
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:creativite\"}"
+        "stack": "{Count:1b,id:\"elementsofpower:sapphire\",tag:{quality:1}}"
       }
     },
     {
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:creativite\",tag:{quality:3}}"
+        "stack": "{Count:1b,id:\"elementsofpower:sapphire\"}"
       }
     },
     {
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:creativite\",tag:{quality:1}}"
+        "stack": "{Count:1b,id:\"elementsofpower:sapphire\",tag:{quality:3}}"
       }
     },
     {
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:creativite\",tag:{quality:2}}"
+        "stack": "{Count:1b,id:\"elementsofpower:sapphire\",tag:{quality:4}}"
       }
     },
     {
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:creativite\",tag:{quality:0}}"
+        "stack": "{Count:1b,id:\"elementsofpower:sapphire\",tag:{quality:0}}"
       }
     }
   ],
-  "compounds": {
-    "amount": 1.0,
-    "type": "elementsofpower:earth"
-  }
+  "compounds": [
+    {
+      "amount": 1.0,
+      "type": "elementsofpower:earth"
+    },
+    {
+      "amount": 0.125,
+      "type": "elementsofpower:water"
+    }
+  ]
 }

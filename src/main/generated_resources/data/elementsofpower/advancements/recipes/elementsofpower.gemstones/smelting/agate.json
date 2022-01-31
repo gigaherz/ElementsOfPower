@@ -11,9 +11,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "elementsofpower:agate_ore"
-            ]
+            "tag": "elementsofpower:agate_ores"
           }
         ]
       }

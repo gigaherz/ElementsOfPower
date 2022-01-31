@@ -48,18 +48,29 @@ public class ElementsOfPowerItems
     public static final GemstoneItem QUARTZ = toBeInitialized();
     public static final GemstoneItem SERENDIBITE = toBeInitialized();
     public static final GemstoneItem EMERALD = toBeInitialized();
+    @Deprecated
     public static final GemstoneItem AMETHYST = toBeInitialized();
+    public static final GemstoneItem ELBAITE = toBeInitialized();
     public static final GemstoneItem DIAMOND = toBeInitialized();
     public static final GemstoneItem CREATIVITE = toBeInitialized();
 
+    @Deprecated
     public static final SpelldustItem RUBY_SPELLDUST = toBeInitialized();
+    @Deprecated
     public static final SpelldustItem SAPPHIRE_SPELLDUST = toBeInitialized();
+    @Deprecated
     public static final SpelldustItem CITRINE_SPELLDUST = toBeInitialized();
+    @Deprecated
     public static final SpelldustItem AGATE_SPELLDUST = toBeInitialized();
+    @Deprecated
     public static final SpelldustItem QUARTZ_SPELLDUST = toBeInitialized();
+    @Deprecated
     public static final SpelldustItem SERENDIBITE_SPELLDUST = toBeInitialized();
+    @Deprecated
     public static final SpelldustItem EMERALD_SPELLDUST = toBeInitialized();
+    @Deprecated
     public static final SpelldustItem AMETHYST_SPELLDUST = toBeInitialized();
+    @Deprecated
     public static final SpelldustItem DIAMOND_SPELLDUST = toBeInitialized();
 
     public static final BlockItem FIRE_COCOON = toBeInitialized();

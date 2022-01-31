@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "elementsofpower:elbaite_block"
+    }
+  ],
+  "result": {
+    "item": "elementsofpower:elbaite",
+    "count": 9
+  }
+}

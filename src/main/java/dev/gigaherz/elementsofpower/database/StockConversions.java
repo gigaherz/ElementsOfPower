@@ -30,7 +30,7 @@ public class StockConversions
     {
         CONVERSIONS.clear();
 
-        for (Element e : Element.values)
+        for (Element e : Element.values_without_balance)
         {
             essences(e.getOrb()).element(e, 8);
             essences(e.getItem()).element(e, 8).life(2);
@@ -44,9 +44,12 @@ public class StockConversions
 
             if (e.generateCustomOre())
             {
-                ItemEssenceEntry ore = essences(e.getOre()).earth(8);
-                if (e.getElement() != null)
-                    ore.element(e.getElement(), 1);
+                for(var oreBlock : e.getOres())
+                {
+                    ItemEssenceEntry ore = essences(oreBlock).earth(8);
+                    if (e.getElement() != null)
+                        ore.element(e.getElement(), 1);
+                }
             }
 
             if (e.generateCustomBlock())

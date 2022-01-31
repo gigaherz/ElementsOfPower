@@ -45,14 +45,25 @@ public class ElementsOfPowerBlocks
     public static final GemstoneOreBlock CITRINE_ORE = toBeInitialized();
     public static final GemstoneOreBlock AGATE_ORE = toBeInitialized();
     public static final GemstoneOreBlock SERENDIBITE_ORE = toBeInitialized();
+    @Deprecated
     public static final GemstoneOreBlock AMETHYST_ORE = toBeInitialized();
+    public static final GemstoneOreBlock ELBAITE_ORE = toBeInitialized();
+
+    public static final GemstoneOreBlock DEEPSLATE_RUBY_ORE = toBeInitialized();
+    public static final GemstoneOreBlock DEEPSLATE_SAPPHIRE_ORE = toBeInitialized();
+    public static final GemstoneOreBlock DEEPSLATE_CITRINE_ORE = toBeInitialized();
+    public static final GemstoneOreBlock DEEPSLATE_AGATE_ORE = toBeInitialized();
+    public static final GemstoneOreBlock DEEPSLATE_SERENDIBITE_ORE = toBeInitialized();
+    public static final GemstoneOreBlock DEEPSLATE_ELBAITE_ORE = toBeInitialized();
 
     public static final GemstoneBlock RUBY_BLOCK = toBeInitialized();
     public static final GemstoneBlock SAPPHIRE_BLOCK = toBeInitialized();
     public static final GemstoneBlock CITRINE_BLOCK = toBeInitialized();
     public static final GemstoneBlock AGATE_BLOCK = toBeInitialized();
     public static final GemstoneBlock SERENDIBITE_BLOCK = toBeInitialized();
+    @Deprecated
     public static final GemstoneBlock AMETHYST_BLOCK = toBeInitialized();
+    public static final GemstoneBlock ELBAITE_BLOCK = toBeInitialized();
 
     public static class BlockMaterials
     {

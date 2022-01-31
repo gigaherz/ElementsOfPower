@@ -11,9 +11,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "elementsofpower:citrine_ore"
-            ]
+            "tag": "elementsofpower:citrine_ores"
           }
         ]
       }

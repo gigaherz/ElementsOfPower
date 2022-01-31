@@ -227,7 +227,19 @@ public class ElementsOfPowerMod
                 );
             }
         }
-        for (Element type : Element.values())
+        for (Gemstone type : Gemstone.values())
+        {
+            if (type.generateCustomOre() && type != Gemstone.AMETHYST)
+            {
+                event.getRegistry().registerAll(
+                        new GemstoneOreBlock(type, Block.Properties.of(Material.STONE)
+                                .requiresCorrectToolForDrops()
+                                .strength(4.5F, 3.0F)
+                        ).setRegistryName("deepslate_" + type.getSerializedName() + "_ore")
+                );
+            }
+        }
+        for (Element type : Element.values_without_balance)
         {
             event.getRegistry().registerAll(
                     new CocoonBlock(type, Block.Properties.of(Material.STONE).strength(1F)
@@ -262,24 +274,34 @@ public class ElementsOfPowerMod
         for (Gemstone type : Gemstone.values())
         {
             if (type.generateCustomOre())
-                event.getRegistry().register(new BlockItem(type.getOre(), new Item.Properties().tab(tabMagic)).setRegistryName(type.getSerializedName() + "_ore"));
+            {
+                for(var ore : type.getOres())
+                {
+                    event.getRegistry().register(new BlockItem(ore, new Item.Properties().tab(tabMagic)).setRegistryName(ore.getRegistryName()));
+                }
+            }
         }
-        for (Gemstone type : Gemstone.values())
-        {
-            if (type.generateSpelldust())
-                event.getRegistry().register(new SpelldustItem(type, new Item.Properties().tab(tabMagic)).setRegistryName(type.getSerializedName() + "_spelldust"));
-        }
-        for (Element type : Element.values())
+        for (Element type : Element.values_without_balance)
         {
             event.getRegistry().register(
                     new MagicOrbItem(type, new Item.Properties().tab(tabMagic)).setRegistryName(type.getName() + "_orb")
             );
         }
-        for (Element type : Element.values())
+        for (Element type : Element.values_without_balance)
         {
-            event.getRegistry().register(
-                    new BlockItem(type.getCocoon(), new Item.Properties().tab(tabMagic)).setRegistryName(type.getName() + "_cocoon")
-            );
+            if (type.getCocoon() != null)
+            {
+                event.getRegistry().register(
+                        new BlockItem(type.getCocoon(), new Item.Properties().tab(tabMagic)).setRegistryName(type.getName() + "_cocoon")
+                );
+            }
+        }
+
+        // TODO: Delete in 1.19
+        for (Gemstone type : Gemstone.values())
+        {
+            if (type.generateSpelldust())
+                event.getRegistry().register(new SpelldustItem(type, new Item.Properties().tab(tabMagic)).setRegistryName(type.getSerializedName() + "_spelldust"));
         }
     }
 
@@ -296,7 +318,7 @@ public class ElementsOfPowerMod
         event.getRegistry().registerAll(
                 BlockEntityType.Builder.of(EssentializerBlockEntity::new, ElementsOfPowerBlocks.ESSENTIALIZER).build(null).setRegistryName("essentializer"),
                 BlockEntityType.Builder.of(CocoonTileEntity::new,
-                        Arrays.stream(Element.values()).map(Element::getCocoon).toArray(Block[]::new)
+                        Element.stream_without_balance().map(Element::getCocoon).filter(Objects::nonNull).toArray(Block[]::new)
                 ).build(null).setRegistryName("cocoon")
         );
     }
@@ -375,9 +397,12 @@ public class ElementsOfPowerMod
             ItemBlockRenderTypes.setRenderLayer(ElementsOfPowerBlocks.MIST, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ElementsOfPowerBlocks.CUSHION, RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ElementsOfPowerBlocks.LIGHT, RenderType.translucent());
-            Arrays.stream(Element.values).forEach(e ->
-                    ItemBlockRenderTypes.setRenderLayer(e.getCocoon(), layer -> layer == RenderType.translucent() || layer == RenderType.solid())
-            );
+            Element.stream_without_balance().forEach(e -> {
+                if (e.getCocoon() != null)
+                {
+                    ItemBlockRenderTypes.setRenderLayer(e.getCocoon(), layer -> layer == RenderType.translucent() || layer == RenderType.solid());
+                }
+            });
 
             MinecraftForge.EVENT_BUS.register(new WandUseManager());
 
@@ -530,23 +555,35 @@ public class ElementsOfPowerMod
             {
                 for(var life : BiomeValue.values())
                 {
-                    var name = "ore_" + heat.getSerializedName() + "_" + humidity.getSerializedName() + "_" + life.getSerializedName();
+                    var name = heat.getSerializedName() + "_" + humidity.getSerializedName() + "_" + life.getSerializedName();
                     var values = new BiomeValues(heat, humidity, life);
                     var list = new ArrayList<PlacedFeature>();
                     for (Gemstone g : Gemstone.values)
                     {
-                        if (g.generateCustomOre())
+                        if (g.generateInWorld())
                         {
+                            var ores = g.getOres();
+                            var stone_ore = ores.get(0);
+                            var deepslate_ore = ores.size() >= 2 ? ores.get(1) : null;
+
+                            List<OreConfiguration.TargetBlockState> targets = new ArrayList<>();
+
+                            targets.add(OreConfiguration.target(OreFeatures.STONE_ORE_REPLACEABLES, stone_ore.defaultBlockState()));
+
+                            if (deepslate_ore != null)
+                                targets.add(OreConfiguration.target(OreFeatures.DEEPSLATE_ORE_REPLACEABLES, deepslate_ore.defaultBlockState()));
+
                             int numPerVein = 3 + values.getBiomeBonus(g.getElement());
-                            var name2 = g.getSerializedName() + "_" + name;
+                            var name2 = g.getSerializedName() + "_ore_" + name;
                             var configured = FeatureUtils.register(name2, Feature.ORE
-                                    .configured(new OreConfiguration(OreFeatures.NATURAL_STONE, g.getOre().defaultBlockState(), numPerVein)));
+                                    .configured(new OreConfiguration(targets, numPerVein, 0.0f)));
                             list.add(PlacementUtils.register(name2, configured
                                     .placed(List.of(
                                             CountPlacement.of(16),
                                             InSquarePlacement.spread(),
                                             HeightRangePlacement.triangle(VerticalAnchor.aboveBottom(-80), VerticalAnchor.aboveBottom(80)),
                                             BiomeFilter.biome()))));
+
                         }
                     }
                     map.put(values, list);

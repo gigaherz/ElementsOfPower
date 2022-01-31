@@ -1,0 +1,4 @@
+{
+  "parent": "elementsofpower:block/ore_base_deepslate",
+  "textures": { "all1": "elementsofpower:block/ore_amethyst" }
+}

@@ -5,6 +5,7 @@ import dev.gigaherz.elementsofpower.ElementsOfPowerItems;
 import dev.gigaherz.elementsofpower.cocoons.CocoonBlock;
 import dev.gigaherz.elementsofpower.items.MagicOrbItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Blocks;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -20,13 +21,17 @@ public enum Element
     LIGHT("light", 5, Shape.BEAM, () -> ElementsOfPowerBlocks.LIGHT_COCOON, () -> ElementsOfPowerItems.LIGHT_COCOON, () -> ElementsOfPowerItems.LIGHT_ORB, 0xFFffffff),
     DARKNESS("darkness", 4, Shape.BEAM, () -> ElementsOfPowerBlocks.DARKNESS_COCOON, () -> ElementsOfPowerItems.DARKNESS_COCOON, () -> ElementsOfPowerItems.DARKNESS_ORB, 0xFF242424),
     LIFE("life", 7, Shape.SELF, () -> ElementsOfPowerBlocks.LIFE_COCOON, () -> ElementsOfPowerItems.LIFE_COCOON, () -> ElementsOfPowerItems.LIFE_ORB, 0xFF1acd7f),
-    DEATH("death", 6, Shape.SINGLE, () -> ElementsOfPowerBlocks.DEATH_COCOON, () -> ElementsOfPowerItems.DEATH_COCOON, () -> ElementsOfPowerItems.DEATH_ORB, 0xFF8c1acd);
+    DEATH("death", 6, Shape.SINGLE, () -> ElementsOfPowerBlocks.DEATH_COCOON, () -> ElementsOfPowerItems.DEATH_COCOON, () -> ElementsOfPowerItems.DEATH_ORB, 0xFF8c1acd),
+    BALANCE("balance", 8, Shape.NONE, null, null, null, 0xFF7F7F7F);
 
     private final int opposite;
     private final Shape shape;
     private final String name;
+    @Nullable
     private final Supplier<CocoonBlock> blockSupplier;
+    @Nullable
     private final Supplier<Item> itemSupplier;
+    @Nullable
     private final Supplier<MagicOrbItem> orbSupplier;
     private final int color;
 
@@ -51,7 +56,7 @@ public enum Element
         return name;
     }
 
-    Element(String name, int opposite, Shape shape, Supplier<CocoonBlock> blockSupplier, Supplier<Item> itemSupplier, Supplier<MagicOrbItem> orbSupplier, int color)
+    Element(String name, int opposite, Shape shape, @Nullable Supplier<CocoonBlock> blockSupplier, @Nullable Supplier<Item> itemSupplier, @Nullable Supplier<MagicOrbItem> orbSupplier, int color)
     {
         this.opposite = opposite;
         this.shape = shape;
@@ -67,19 +72,22 @@ public enum Element
         return shape;
     }
 
+    @Nullable
     public CocoonBlock getCocoon()
     {
-        return blockSupplier.get();
+        return blockSupplier != null ? blockSupplier.get() : null;
     }
 
+    @Nullable
     public Item getItem()
     {
-        return itemSupplier.get();
+        return itemSupplier != null ? itemSupplier.get() : null;
     }
 
+    @Nullable
     public MagicOrbItem getOrb()
     {
-        return orbSupplier.get();
+        return orbSupplier != null ? orbSupplier.get() : null;
     }
 
     public int getColor()
@@ -88,9 +96,15 @@ public enum Element
     }
 
     public static final Element[] values = values();
+    public static final Element[] values_without_balance = stream().filter(e -> e != BALANCE).toArray(Element[]::new);
 
     public static Stream<Element> stream()
     {
         return Arrays.stream(values);
+    }
+
+    public static Stream<Element> stream_without_balance()
+    {
+        return Arrays.stream(values_without_balance);
     }
 }

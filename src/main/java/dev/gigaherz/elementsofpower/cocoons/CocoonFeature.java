@@ -200,7 +200,7 @@ public class CocoonFeature extends Feature<CocoonFeatureConfig>
         if (!am.isEmpty())
         {
             FluidState fluidState = world.getFluidState(pos);
-            world.setBlock(pos, am.getDominantElement().getCocoon().defaultBlockState().setValue(CocoonBlock.FACING, f).setValue(CocoonBlock.WATERLOGGED, fluidState.getType() == Fluids.WATER), 2);
+            world.setBlock(pos, Objects.requireNonNull(am.getDominantElement().getCocoon()).defaultBlockState().setValue(CocoonBlock.FACING, f).setValue(CocoonBlock.WATERLOGGED, fluidState.getType() == Fluids.WATER), 2);
             CocoonTileEntity te = Objects.requireNonNull((CocoonTileEntity) world.getBlockEntity(pos));
             te.essenceContained = te.essenceContained.add(am);
 

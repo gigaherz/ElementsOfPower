@@ -11,9 +11,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "elementsofpower:amethyst_ore"
-            ]
+            "tag": "elementsofpower:amethyst_ores"
           }
         ]
       }

@@ -23,7 +23,9 @@ public class GemstoneExaminer
     public static final Tag.Named<Item> GEM_QUARTZ = ItemTags.bind(ElementsOfPowerMod.location("gems/quartz").toString());
     public static final Tag.Named<Item> GEM_SERENDIBITE = ItemTags.bind(ElementsOfPowerMod.location("gems/serendibite").toString());
     public static final Tag.Named<Item> GEM_EMERALD = ItemTags.bind(ElementsOfPowerMod.location("gems/emerald").toString());
+    @Deprecated(forRemoval = true)
     public static final Tag.Named<Item> GEM_AMETHYST = ItemTags.bind(ElementsOfPowerMod.location("gems/amethyst").toString());
+    public static final Tag.Named<Item> GEM_ELBAITE = ItemTags.bind(ElementsOfPowerMod.location("gems/elbaite").toString());
     public static final Tag.Named<Item> GEM_DIAMOND = ItemTags.bind(ElementsOfPowerMod.location("gems/diamond").toString());
 
     public static final Map<Gemstone, Tag.Named<Item>> GEMS = ImmutableMap.<Gemstone, Tag.Named<Item>>builder()
@@ -34,7 +36,8 @@ public class GemstoneExaminer
             .put(Gemstone.QUARTZ, GEM_QUARTZ)
             .put(Gemstone.SERENDIBITE, GEM_SERENDIBITE)
             .put(Gemstone.EMERALD, GEM_EMERALD)
-            .put(Gemstone.AMETHYST, GEM_AMETHYST)
+            .put(Gemstone.AMETHYST, GEM_AMETHYST) // TODO: Remove
+            .put(Gemstone.ELBAITE, GEM_ELBAITE)
             .put(Gemstone.DIAMOND, GEM_DIAMOND)
             .build();
 

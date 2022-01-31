@@ -11,9 +11,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "elementsofpower:ruby_ore"
-            ]
+            "tag": "elementsofpower:ruby_ores"
           }
         ]
       }

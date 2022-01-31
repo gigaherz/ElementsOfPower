@@ -25,7 +25,7 @@
                   }
                 }
               ],
-              "name": "elementsofpower:sapphire_ore"
+              "name": "minecraft:air"
             },
             {
               "type": "minecraft:item",
