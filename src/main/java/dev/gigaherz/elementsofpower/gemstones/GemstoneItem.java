@@ -23,11 +23,11 @@ import java.util.List;
 public class GemstoneItem extends MagicContainerItem
 {
     public static final MagicAmounts[] capacities = {
-            MagicAmounts.EMPTY.all(10),
-            MagicAmounts.EMPTY.all(50),
-            MagicAmounts.EMPTY.all(100),
+            MagicAmounts.EMPTY.all(30),
             MagicAmounts.EMPTY.all(250),
-            MagicAmounts.EMPTY.all(500),
+            MagicAmounts.EMPTY.all(1000),
+            MagicAmounts.EMPTY.all(2500),
+            MagicAmounts.EMPTY.all(10000),
             MagicAmounts.INFINITE,
     };
 

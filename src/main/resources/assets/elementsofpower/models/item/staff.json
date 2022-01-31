@@ -12,6 +12,7 @@
     "serendibite":  { "parent":"elementsofpower:item/staff_base", "textures": { "gem": "elementsofpower:block/block_serendibite" } },
     "emerald":  { "parent":"elementsofpower:item/staff_base", "textures": { "gem": "minecraft:block/emerald_block" } },
     "amethyst": { "parent":"elementsofpower:item/staff_base", "textures": { "gem": "elementsofpower:block/block_amethyst" } },
+    "elbaite": { "parent":"elementsofpower:item/staff_base", "textures": { "gem": "elementsofpower:block/block_amethyst" } },
     "diamond": { "parent":"elementsofpower:item/staff_base", "textures": { "gem": "minecraft:block/diamond_block" } },
     "creativite": { "parent":"elementsofpower:item/staff_base", "textures": { "gem": "minecraft:block/bedrock" } }
   }
