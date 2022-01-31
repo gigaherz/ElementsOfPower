@@ -1,8 +1,13 @@
 {
   "type": "minecraft:smelting",
-  "ingredient": {
-    "item": "elementsofpower:sapphire_ore"
-  },
+  "ingredient": [
+    {
+      "item": "elementsofpower:sapphire_ore"
+    },
+    {
+      "item": "elementsofpower:deepslate_sapphire_ore"
+    }
+  ],
   "result": "elementsofpower:sapphire",
   "experience": 1.0,
   "cookingtime": 200

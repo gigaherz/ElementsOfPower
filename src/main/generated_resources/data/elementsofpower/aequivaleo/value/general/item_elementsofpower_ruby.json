@@ -19,7 +19,7 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:ruby\",tag:{quality:3}}"
+        "stack": "{Count:1b,id:\"elementsofpower:ruby\",tag:{quality:4}}"
       }
     },
     {
@@ -27,6 +27,13 @@
       "data": {
         "count": 1.0,
         "stack": "{Count:1b,id:\"elementsofpower:ruby\",tag:{quality:1}}"
+      }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{Count:1b,id:\"elementsofpower:ruby\",tag:{quality:3}}"
       }
     },
     {
@@ -41,13 +48,6 @@
       "data": {
         "count": 1.0,
         "stack": "{Count:1b,id:\"elementsofpower:ruby\"}"
-      }
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:ruby\",tag:{quality:4}}"
       }
     }
   ],

@@ -1,8 +1,13 @@
 {
   "type": "minecraft:smelting",
-  "ingredient": {
-    "item": "elementsofpower:ruby_ore"
-  },
+  "ingredient": [
+    {
+      "item": "elementsofpower:ruby_ore"
+    },
+    {
+      "item": "elementsofpower:deepslate_ruby_ore"
+    }
+  ],
   "result": "elementsofpower:ruby",
   "experience": 1.0,
   "cookingtime": 200

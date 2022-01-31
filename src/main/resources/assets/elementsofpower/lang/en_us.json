@@ -31,6 +31,7 @@
     "item.elementsofpower.serendibite": "Serendibite",
     "item.elementsofpower.emerald": "Emerald",
     "item.elementsofpower.amethyst": "Amethyst",
+    "item.elementsofpower.elbaite": "Elbaite",
     "item.elementsofpower.diamond": "Diamond",
     "item.elementsofpower.creativite": "Creativite",
 
@@ -40,6 +41,15 @@
     "block.elementsofpower.agate_ore": "Agate Ore",
     "block.elementsofpower.serendibite_ore": "Serendibite Ore",
     "block.elementsofpower.amethyst_ore": "Amethyst Ore",
+    "block.elementsofpower.elbaite_ore": "Elbaite Ore",
+
+    "block.elementsofpower.deepslate_ruby_ore": "Deepslate Ruby Ore",
+    "block.elementsofpower.deepslate_sapphire_ore": "Deepslate Sapphire Ore",
+    "block.elementsofpower.deepslate_citrine_ore": "Deepslate Citrine Ore",
+    "block.elementsofpower.deepslate_agate_ore": "Deepslate Agate Ore",
+    "block.elementsofpower.deepslate_serendibite_ore": "Deepslate Serendibite Ore",
+    "block.elementsofpower.deepslate_amethyst_ore": "Deepslate Amethyst Ore",
+    "block.elementsofpower.deepslate_elbaite_ore": "Deepslate Elbaite Ore",
 
     "block.elementsofpower.ruby_block": "Block of Ruby",
     "block.elementsofpower.sapphire_block": "Block of Sapphire",
@@ -47,6 +57,7 @@
     "block.elementsofpower.agate_block": "Block of Agate",
     "block.elementsofpower.serendibite_block": "Block of Serendibite",
     "block.elementsofpower.amethyst_block": "Block of Amethyst",
+    "block.elementsofpower.elbaite_block": "Block of Elbaite",
 
     "itemGroup.elementsofpower.magic": "Elements Of Power Gear & Elements",
     "itemGroup.elementsofpower.gemstones": "Elements Of Power Gemstones",
@@ -68,6 +79,7 @@
     "elementsofpower.gem_container.agate": "Agate %s",
     "elementsofpower.gem_container.serendibite": "Serendibite %s",
     "elementsofpower.gem_container.amethyst": "Amethyst %s",
+    "elementsofpower.gem_container.elbaite": "Elbaite %s",
     "elementsofpower.gem_container.emerald": "Emerald %s",
     "elementsofpower.gem_container.quartz": "Quartz %s",
     "elementsofpower.gem_container.diamond": "Diamond %s",

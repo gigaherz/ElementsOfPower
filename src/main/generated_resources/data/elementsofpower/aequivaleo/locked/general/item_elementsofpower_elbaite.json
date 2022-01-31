@@ -5,54 +5,60 @@
       "type": "aequivaleo:item",
       "data": {
         "count": 1.0,
-        "item": "elementsofpower:diamond"
+        "item": "elementsofpower:elbaite"
       }
     },
     {
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:diamond\",tag:{quality:0}}"
+        "stack": "{Count:1b,id:\"elementsofpower:elbaite\",tag:{quality:4}}"
       }
     },
     {
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:diamond\",tag:{quality:3}}"
+        "stack": "{Count:1b,id:\"elementsofpower:elbaite\",tag:{quality:2}}"
       }
     },
     {
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:diamond\",tag:{quality:4}}"
+        "stack": "{Count:1b,id:\"elementsofpower:elbaite\",tag:{quality:0}}"
       }
     },
     {
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:diamond\",tag:{quality:1}}"
+        "stack": "{Count:1b,id:\"elementsofpower:elbaite\"}"
       }
     },
     {
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:diamond\"}"
+        "stack": "{Count:1b,id:\"elementsofpower:elbaite\",tag:{quality:3}}"
       }
     },
     {
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:diamond\",tag:{quality:2}}"
+        "stack": "{Count:1b,id:\"elementsofpower:elbaite\",tag:{quality:1}}"
       }
     }
   ],
-  "compounds": {
-    "amount": 1.0,
-    "type": "elementsofpower:earth"
-  }
+  "compounds": [
+    {
+      "amount": 0.125,
+      "type": "elementsofpower:death"
+    },
+    {
+      "amount": 1.0,
+      "type": "elementsofpower:earth"
+    }
+  ]
 }

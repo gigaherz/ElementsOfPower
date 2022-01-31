@@ -1,7 +1,7 @@
 {
   "replace": false,
   "values": [
-    "minecraft:air",
-    "elementsofpower:serendibite_ore"
+    "elementsofpower:serendibite_ore",
+    "elementsofpower:deepslate_serendibite_ore"
   ]
 }

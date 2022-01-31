@@ -1,8 +1,13 @@
 {
   "type": "minecraft:smelting",
-  "ingredient": {
-    "item": "elementsofpower:agate_ore"
-  },
+  "ingredient": [
+    {
+      "item": "elementsofpower:agate_ore"
+    },
+    {
+      "item": "elementsofpower:deepslate_agate_ore"
+    }
+  ],
   "result": "elementsofpower:agate",
   "experience": 1.0,
   "cookingtime": 200

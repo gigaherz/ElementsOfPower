@@ -1,8 +1,13 @@
 {
   "type": "minecraft:smelting",
-  "ingredient": {
-    "item": "elementsofpower:citrine_ore"
-  },
+  "ingredient": [
+    {
+      "item": "elementsofpower:citrine_ore"
+    },
+    {
+      "item": "elementsofpower:deepslate_citrine_ore"
+    }
+  ],
   "result": "elementsofpower:citrine",
   "experience": 1.0,
   "cookingtime": 200

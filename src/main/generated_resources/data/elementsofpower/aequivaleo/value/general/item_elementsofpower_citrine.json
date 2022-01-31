@@ -5,56 +5,56 @@
       "type": "aequivaleo:item",
       "data": {
         "count": 1.0,
-        "item": "elementsofpower:amethyst"
+        "item": "elementsofpower:citrine"
       }
     },
     {
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:amethyst\",tag:{quality:1}}"
+        "stack": "{Count:1b,id:\"elementsofpower:citrine\"}"
       }
     },
     {
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:amethyst\",tag:{quality:3}}"
+        "stack": "{Count:1b,id:\"elementsofpower:citrine\",tag:{quality:0}}"
       }
     },
     {
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:amethyst\"}"
+        "stack": "{Count:1b,id:\"elementsofpower:citrine\",tag:{quality:2}}"
       }
     },
     {
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:amethyst\",tag:{quality:4}}"
+        "stack": "{Count:1b,id:\"elementsofpower:citrine\",tag:{quality:4}}"
       }
     },
     {
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:amethyst\",tag:{quality:2}}"
+        "stack": "{Count:1b,id:\"elementsofpower:citrine\",tag:{quality:1}}"
       }
     },
     {
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:amethyst\",tag:{quality:0}}"
+        "stack": "{Count:1b,id:\"elementsofpower:citrine\",tag:{quality:3}}"
       }
     }
   ],
   "compounds": [
     {
       "amount": 0.125,
-      "type": "elementsofpower:death"
+      "type": "elementsofpower:air"
     },
     {
       "amount": 1.0,

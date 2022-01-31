@@ -1,8 +1,13 @@
 {
   "type": "minecraft:smelting",
-  "ingredient": {
-    "item": "elementsofpower:serendibite_ore"
-  },
+  "ingredient": [
+    {
+      "item": "elementsofpower:serendibite_ore"
+    },
+    {
+      "item": "elementsofpower:deepslate_serendibite_ore"
+    }
+  ],
   "result": "elementsofpower:serendibite",
   "experience": 1.0,
   "cookingtime": 200

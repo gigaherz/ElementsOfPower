@@ -19,7 +19,7 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:creativite\",tag:{quality:0}}"
+        "stack": "{Count:1b,id:\"elementsofpower:creativite\",tag:{quality:4}}"
       }
     },
     {
@@ -33,7 +33,14 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:creativite\",tag:{quality:4}}"
+        "stack": "{Count:1b,id:\"elementsofpower:creativite\",tag:{quality:3}}"
+      }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{Count:1b,id:\"elementsofpower:creativite\",tag:{quality:0}}"
       }
     },
     {
@@ -41,13 +48,6 @@
       "data": {
         "count": 1.0,
         "stack": "{Count:1b,id:\"elementsofpower:creativite\",tag:{quality:1}}"
-      }
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:creativite\",tag:{quality:3}}"
       }
     }
   ],

@@ -1,0 +1,29 @@
+{
+  "mode": "ADDITIVE",
+  "targets": [
+    {
+      "type": "aequivaleo:item",
+      "data": {
+        "count": 1.0,
+        "item": "elementsofpower:deepslate_elbaite_ore"
+      }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{Count:1b,id:\"elementsofpower:deepslate_elbaite_ore\"}"
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "amount": 1.0,
+      "type": "elementsofpower:death"
+    },
+    {
+      "amount": 8.0,
+      "type": "elementsofpower:earth"
+    }
+  ]
+}

@@ -136,9 +136,9 @@ dependencies {
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.18.1-5.0.6.0")
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.18.1-5.0.6.0:api")
 
-    compileOnly fg.deobf("com.ldtteam:aequivaleo:1.18-0.1.89-ALPHA:api")
-    //compileOnly fg.deobf("com.ldtteam:aequivaleo:1.18-0.1.89-ALPHA:vanilla-api")
-    runtimeOnly fg.deobf("com.ldtteam:aequivaleo:1.18-0.1.89-ALPHA:universal")
+    compileOnly fg.deobf("com.ldtteam:aequivaleo:1.18-0.1.90-ALPHA:api")
+    //compileOnly fg.deobf("com.ldtteam:aequivaleo:1.18-0.1.90-ALPHA:vanilla-api")
+    runtimeOnly fg.deobf("com.ldtteam:aequivaleo:1.18-0.1.90-ALPHA:universal")
 
     //runtimeOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:1.16-3.1.4-22")
 

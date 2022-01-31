@@ -1,7 +1,7 @@
 {
   "replace": false,
   "values": [
-    "minecraft:air",
-    "elementsofpower:ruby_ore"
+    "elementsofpower:ruby_ore",
+    "elementsofpower:deepslate_ruby_ore"
   ]
 }

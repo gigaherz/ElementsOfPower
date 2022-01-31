@@ -12,7 +12,14 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:agate\",tag:{quality:0}}"
+        "stack": "{Count:1b,id:\"elementsofpower:agate\",tag:{quality:2}}"
+      }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{Count:1b,id:\"elementsofpower:agate\"}"
       }
     },
     {
@@ -33,21 +40,14 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:agate\",tag:{quality:2}}"
-      }
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:agate\"}"
-      }
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
         "stack": "{Count:1b,id:\"elementsofpower:agate\",tag:{quality:4}}"
+      }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{Count:1b,id:\"elementsofpower:agate\",tag:{quality:0}}"
       }
     }
   ],

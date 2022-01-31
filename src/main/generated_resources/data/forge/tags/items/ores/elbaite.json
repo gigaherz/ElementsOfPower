@@ -1,7 +1,7 @@
 {
   "replace": false,
   "values": [
-    "minecraft:air",
-    "elementsofpower:elbaite_ore"
+    "elementsofpower:elbaite_ore",
+    "elementsofpower:deepslate_elbaite_ore"
   ]
 }

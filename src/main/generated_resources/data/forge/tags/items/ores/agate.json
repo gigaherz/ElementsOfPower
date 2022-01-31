@@ -1,7 +1,7 @@
 {
   "replace": false,
   "values": [
-    "minecraft:air",
-    "elementsofpower:agate_ore"
+    "elementsofpower:agate_ore",
+    "elementsofpower:deepslate_agate_ore"
   ]
 }
