@@ -62,7 +62,7 @@ public class MagicTooltips
 
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            if (amounts.get(i) == 0)
+            if (Math.abs(amounts.get(i)) < 0.000001f)
             {
                 continue;
             }
@@ -111,7 +111,7 @@ public class MagicTooltips
             {
                 for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
                 {
-                    if (amounts.get(i) == 0)
+                    if (Math.abs(amounts.get(i)) < 0.000001f)
                     {
                         continue;
                     }

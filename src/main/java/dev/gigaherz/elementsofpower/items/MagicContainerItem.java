@@ -10,6 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,7 +30,7 @@ public abstract class MagicContainerItem extends Item
         return new ICapabilityProvider()
         {
             final ItemStack stack = _stack;
-            final IMagicContainer container = new IMagicContainer()
+            final LazyOptional<IMagicContainer> containerGetter = LazyOptional.of(() -> new IMagicContainer()
             {
 
                 @Override
@@ -53,26 +54,17 @@ public abstract class MagicContainerItem extends Item
                 @Override
                 public MagicAmounts getContainedMagic()
                 {
-                    if (isInfinite())
-                        return MagicAmounts.INFINITE;
-                    CompoundTag compound = stack.getTag();
-                    if (compound == null || !compound.contains("ContainedMagic"))
-                        return MagicAmounts.EMPTY;
-                    return new MagicAmounts(compound.getCompound("ContainedMagic"));
+                    return MagicContainerItem.this.getContainedMagic(stack);
                 }
 
                 @Override
                 public void setContainedMagic(MagicAmounts containedMagic)
                 {
-                    if (isInfinite())
-                        return;
-                    MagicAmounts am = MagicAmounts.min(getCapacity(), containedMagic);
-                    CompoundTag compound = stack.getOrCreateTag();
-                    compound.put("ContainedMagic", am.serializeNBT());
+                    MagicContainerItem.this.setContainedMagic(stack, containedMagic);
                 }
-            };
-            final LazyOptional<IMagicContainer> containerGetter = LazyOptional.of(() -> container);
+            });
 
+            @NotNull
             @Override
             public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing)
             {
@@ -100,32 +92,22 @@ public abstract class MagicContainerItem extends Item
         }).orElse(false);
     }
 
-    public ItemStack addContainedMagic(ItemStack stack, List<ItemStack> orbs)
+    public MagicAmounts getContainedMagic(ItemStack stack)
     {
-        if (stack.getCount() <= 0)
-            return ItemStack.EMPTY;
-        if (orbs.size() == 0)
-            return ItemStack.EMPTY;
+        if (isInfinite(stack))
+            return MagicAmounts.INFINITE;
+        CompoundTag compound = stack.getTag();
+        if (compound == null || !compound.contains("ContainedMagic"))
+            return MagicAmounts.EMPTY;
+        return new MagicAmounts(compound.getCompound("ContainedMagic"));
+    }
 
-        return MagicContainerCapability.getContainer(stack).map(magic -> {
-            if (magic.isFull() || magic.isInfinite())
-                return ItemStack.EMPTY;
-
-            MagicAmounts totalMagic = MagicAmounts.EMPTY;
-
-            for (ItemStack orb : orbs)
-            {
-                if (orb.getCount() <= 0)
-                    continue;
-
-                totalMagic = totalMagic.add(((MagicOrbItem) orb.getItem()).getElement(), 8);
-            }
-
-            if (!magic.insertMagic(totalMagic, true).isEmpty())
-                return ItemStack.EMPTY;
-
-            magic.insertMagic(totalMagic, false);
-            return stack;
-        }).orElse(ItemStack.EMPTY);
+    public void setContainedMagic(ItemStack stack, MagicAmounts containedMagic)
+    {
+        if (isInfinite(stack))
+            return;
+        MagicAmounts am = MagicAmounts.min(getCapacity(stack), containedMagic);
+        CompoundTag compound = stack.getOrCreateTag();
+        compound.put("ContainedMagic", am.serializeNBT());
     }
 }

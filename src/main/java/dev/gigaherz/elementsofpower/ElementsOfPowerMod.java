@@ -188,7 +188,9 @@ public class ElementsOfPowerMod
     public void registerBlocks(RegistryEvent.Register<Block> event)
     {
         event.getRegistry().registerAll(
-                new EssentializerBlock(Block.Properties.of(Material.METAL).strength(15.0F).sound(SoundType.METAL).lightLevel(b -> 1)).setRegistryName("essentializer"),
+                new EssentializerBlock(Block.Properties.of(Material.METAL)
+                        .requiresCorrectToolForDrops().strength(15.0F)
+                        .sound(SoundType.METAL).lightLevel(b -> 1)).setRegistryName("essentializer"),
                 new DustBlock(Block.Properties.of(ElementsOfPowerBlocks.BlockMaterials.DUST).noDrops().noCollission().noOcclusion()
                         .isSuffocating((s, w, p) -> true).isViewBlocking((s, w, p) -> false)
                         .strength(0.1F).sound(SoundType.WOOL).dynamicShape()).setRegistryName("dust"),

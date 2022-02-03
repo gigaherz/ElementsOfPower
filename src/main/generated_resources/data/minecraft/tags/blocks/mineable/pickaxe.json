@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
+    "elementsofpower:essentializer",
     "elementsofpower:ruby_block",
     "elementsofpower:ruby_ore",
     "elementsofpower:deepslate_ruby_ore",

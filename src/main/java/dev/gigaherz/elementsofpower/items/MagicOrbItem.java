@@ -1,5 +1,6 @@
 package dev.gigaherz.elementsofpower.items;
 
+import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import dev.gigaherz.elementsofpower.spells.Element;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -35,5 +36,10 @@ public class MagicOrbItem extends Item
     public Element getElement()
     {
         return element;
+    }
+
+    public MagicAmounts getMagicCharge()
+    {
+        return MagicAmounts.ofElement(element, 8);
     }
 }

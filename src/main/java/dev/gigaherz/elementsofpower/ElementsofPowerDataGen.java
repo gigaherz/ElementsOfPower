@@ -215,6 +215,9 @@ class ElementsofPowerDataGen
             this.tag(CocoonFeature.REPLACEABLE_TAG)
                     .add(Blocks.SAND, Blocks.RED_SAND, Blocks.DIRT, Blocks.NETHERRACK);
 
+            this.tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ElementsOfPowerBlocks.ESSENTIALIZER);
+            this.tag(BlockTags.NEEDS_IRON_TOOL).add(ElementsOfPowerBlocks.ESSENTIALIZER);
+
             for (Gemstone type : Gemstone.values())
             {
                 if (type.generateCustomBlock())

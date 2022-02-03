@@ -675,5 +675,5 @@ aedab5613200af2563ae967e460bba86980a922e data/forge/tags/items/storage_blocks/ci
 294f7cdcf1b73e180ca66f2bce0e51bccf7624fa data/forge/tags/items/storage_blocks/ruby.json
 625a3b1e1e2c7903b0ac655874afd1c9be3161fa data/forge/tags/items/storage_blocks/sapphire.json
 f53d207ee00eb83e0f1ce232c698d91b6c2ab291 data/forge/tags/items/storage_blocks/serendibite.json
-444cf7eb2d6e94b5f5b033d8933f86722aea47ca data/minecraft/tags/blocks/mineable/pickaxe.json
-444cf7eb2d6e94b5f5b033d8933f86722aea47ca data/minecraft/tags/blocks/needs_iron_tool.json
+6b15f1095e2e6bd09580297f9cd8774fa7a81ce0 data/minecraft/tags/blocks/mineable/pickaxe.json
+6b15f1095e2e6bd09580297f9cd8774fa7a81ce0 data/minecraft/tags/blocks/needs_iron_tool.json

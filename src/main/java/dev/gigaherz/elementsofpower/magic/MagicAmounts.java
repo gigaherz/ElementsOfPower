@@ -12,7 +12,6 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.nbt.Tag;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import javax.annotation.CheckReturnValue;
@@ -167,7 +166,7 @@ public class MagicAmounts implements INBTSerializable<CompoundTag>
     {
         for (float amount : amounts)
         {
-            if (amount > 0)
+            if (amount != 0)
             {
                 return false;
             }
@@ -176,9 +175,17 @@ public class MagicAmounts implements INBTSerializable<CompoundTag>
         return true;
     }
 
-    public boolean isNotEmpty()
+    public boolean isPositive()
     {
-        return !isEmpty();
+        for (float amount : amounts)
+        {
+            if (amount > 0)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public float getTotalMagic()
@@ -487,6 +494,17 @@ public class MagicAmounts implements INBTSerializable<CompoundTag>
         }
 
         return false;
+    }
+
+    public boolean allLessThan(MagicAmounts other)
+    {
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+        {
+            if (amounts[i] >= other.amounts[i])
+                return false;
+        }
+
+        return true;
     }
 
     public boolean equals(MagicAmounts other)

@@ -1,8 +1,8 @@
 package dev.gigaherz.elementsofpower.recipes;
 
-import com.google.common.collect.Lists;
 import dev.gigaherz.elementsofpower.items.MagicContainerItem;
 import dev.gigaherz.elementsofpower.items.MagicOrbItem;
+import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
@@ -14,8 +14,6 @@ import net.minecraft.world.item.crafting.SimpleRecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.ObjectHolder;
 
-import java.util.List;
-
 public class ContainerChargeRecipe extends CustomRecipe
 {
     public ContainerChargeRecipe(ResourceLocation idIn)
@@ -23,56 +21,34 @@ public class ContainerChargeRecipe extends CustomRecipe
         super(idIn);
     }
 
-    @Override
-    public boolean matches(CraftingContainer inv, Level worldIn)
+    private interface ProcessAction
+    {
+        ItemStack processStack(ItemStack stack, MagicContainerItem item, MagicAmounts capacity, MagicAmounts contained, MagicAmounts charge, MagicAmounts result);
+    }
+
+    private ItemStack processRecipe(CraftingContainer inv, ProcessAction modify)
     {
         ItemStack gemContainer = ItemStack.EMPTY;
-        ItemStack orb = ItemStack.EMPTY;
+        MagicAmounts charge = MagicAmounts.EMPTY;
+
+        MagicContainerItem gemContainerItem = null;
+
         for (int i = 0; i < inv.getContainerSize(); i++)
         {
             ItemStack current = inv.getItem(i);
             if (current.getCount() <= 0)
                 continue;
             Item item = current.getItem();
-            if (item instanceof MagicContainerItem)
-            {
-                if (gemContainer.getCount() > 0)
-                    return false;
-                gemContainer = current;
-            }
-            else if (item instanceof MagicOrbItem)
-            {
-                orb = current;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        return gemContainer.getCount() > 0 && orb.getCount() > 0;
-    }
-
-    @Override
-    public ItemStack assemble(CraftingContainer inv)
-    {
-        ItemStack gemContainer = ItemStack.EMPTY;
-        List<ItemStack> orbs = Lists.newArrayList();
-
-        for (int i = 0; i < inv.getContainerSize(); i++)
-        {
-            ItemStack current = inv.getItem(i);
-            if (current == ItemStack.EMPTY)
-                continue;
-            Item item = current.getItem();
-            if (item instanceof MagicContainerItem)
+            if (item instanceof MagicContainerItem item1)
             {
                 if (gemContainer.getCount() > 0)
                     return ItemStack.EMPTY;
-                gemContainer = current.copy();
+                gemContainer = current;
+                gemContainerItem = item1;
             }
-            else if (item instanceof MagicOrbItem)
+            else if (item instanceof MagicOrbItem item1)
             {
-                orbs.add(current);
+                charge = charge.add(item1.getMagicCharge());
             }
             else
             {
@@ -80,13 +56,35 @@ public class ContainerChargeRecipe extends CustomRecipe
             }
         }
 
-        if (gemContainer.getCount() <= 0)
+        if (gemContainer.getCount() > 0 && charge.isPositive() && gemContainerItem != null)
         {
-            return ItemStack.EMPTY;
+            var capacity = gemContainerItem.getCapacity(gemContainer);
+            var contained = gemContainerItem.getContainedMagic(gemContainer);
+            var newContained = contained.add(charge);
+
+            if (newContained.allLessThan(capacity))
+            {
+                return modify.processStack(gemContainer, gemContainerItem, capacity, contained, charge, newContained);
+            }
         }
 
-        gemContainer = ((MagicContainerItem) gemContainer.getItem()).addContainedMagic(gemContainer, orbs);
-        return gemContainer;
+        return ItemStack.EMPTY;
+    }
+
+    @Override
+    public boolean matches(CraftingContainer inv, Level worldIn)
+    {
+        return processRecipe(inv, (stack, item, capacity, contained, charge, newContained) -> stack).getCount() > 0;
+    }
+
+    @Override
+    public ItemStack assemble(CraftingContainer inv)
+    {
+        return processRecipe(inv, (stack, item, capacity, contained, charge, newContained) -> {
+            var output = stack.copy();
+            item.setContainedMagic(output, newContained);
+            return output;
+        });
     }
 
     @Override

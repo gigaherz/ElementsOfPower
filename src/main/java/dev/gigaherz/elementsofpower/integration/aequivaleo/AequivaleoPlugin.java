@@ -74,7 +74,7 @@ public class AequivaleoPlugin implements IAequivaleoPlugin
     {
         Optional<MagicAmounts> am = cache.mappedDataFor(ESSENCE.get(), stack);
         if (wholeStack) am = am.map(amounts -> amounts.multiply(stack.getCount()));
-        return am.filter(MagicAmounts::isNotEmpty);
+        return am.filter(MagicAmounts::isPositive);
     }
 
     @Override
