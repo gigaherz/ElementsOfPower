@@ -41,9 +41,11 @@ public class LaserShape extends SpellShape
 
         if (mop != null)
         {
-            Vec3 diff = mop.getLocation().subtract(cast.start);
+            Vec3 start = cast.getStart();
 
-            List<BlockPos> intersections = getAllBlocksInRay(cast.start, diff.normalize(), diff.length());
+            Vec3 diff = mop.getLocation().subtract(start);
+
+            List<BlockPos> intersections = getAllBlocksInRay(start, diff.normalize(), diff.length());
 
             if (mop.getType() == HitResult.Type.ENTITY)
             {

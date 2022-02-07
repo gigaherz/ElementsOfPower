@@ -59,7 +59,6 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.VerticalAnchor;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
 import net.minecraft.world.level.levelgen.placement.*;
@@ -544,7 +543,7 @@ public class ElementsOfPowerMod
                 case FIRE -> heat.value();
                 case WATER -> humidity.value();
                 case LIFE -> life.value();
-                case DEATH -> 2 - life.value();
+                case CHAOS -> 2 - life.value();
                 default -> 1;
             };
         }

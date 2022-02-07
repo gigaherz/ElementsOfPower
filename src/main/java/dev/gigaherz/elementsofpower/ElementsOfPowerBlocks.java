@@ -38,6 +38,8 @@ public class ElementsOfPowerBlocks
     public static final CocoonBlock LIGHT_COCOON = toBeInitialized();
     public static final CocoonBlock DARKNESS_COCOON = toBeInitialized();
     public static final CocoonBlock LIFE_COCOON = toBeInitialized();
+
+    // TODO: Rename
     public static final CocoonBlock DEATH_COCOON = toBeInitialized();
 
     public static final GemstoneOreBlock RUBY_ORE = toBeInitialized();

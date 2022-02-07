@@ -1,12 +1,13 @@
 package dev.gigaherz.elementsofpower.spells;
 
-public enum Shape
+public enum ShapeType
 {
     NONE,
     SPHERE,
     BALL,
-    BEAM,
     CONE,
+    PILLAR,
+    BEAM,
     SELF,
     SINGLE
 }

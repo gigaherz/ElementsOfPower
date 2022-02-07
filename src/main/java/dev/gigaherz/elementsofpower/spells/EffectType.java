@@ -1,16 +1,18 @@
 package dev.gigaherz.elementsofpower.spells;
 
-public enum Effect
+public enum EffectType
 {
+    NONE,
     FLAME,
     WATER,
-    WIND,
+    PUSH,
     DUST,
     MIST,
     LIGHT,
     FROST,
     MINING,
     HEALING,
+    SLOWNESS,
     BREAKING,
     CUSHION,
     LAVA,

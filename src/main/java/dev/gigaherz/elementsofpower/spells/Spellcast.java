@@ -10,28 +10,26 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Random;
 
 public class Spellcast
 {
-    public final List<Element> sequence;
+    private final List<Element> sequence;
 
-    // Rendering data;
-    public Vec3 start;
-    public Vec3 end;
+    private SpellShape shape;
+    private SpellEffect effect;
 
-    protected SpellShape shape;
-    protected SpellEffect effect;
+    private int power;
+    private int empowering;
+    private int radiating;
+    private MagicAmounts spellCost;
 
-    public Entity projectile;
+    @Nullable
+    private Entity projectile;
 
-    public int power;
-
-    public Random rand;
-    protected int empowering;
-    protected int radiating;
-    protected MagicAmounts spellCost;
+    private Random rand;
 
     public Spellcast(SpellShape shape, SpellEffect effect, int power, List<Element> sequence)
     {
@@ -41,11 +39,9 @@ public class Spellcast
         this.sequence = sequence;
     }
 
-    protected Spellcast(List<Element> sequence, Vec3 start, Vec3 end, SpellShape shape, SpellEffect effect, Entity projectile, int power, Random rand, int empowering, int radiating, MagicAmounts spellCost)
+    protected Spellcast(List<Element> sequence, SpellShape shape, SpellEffect effect, Entity projectile, int power, Random rand, int empowering, int radiating, MagicAmounts spellCost)
     {
         this.sequence = sequence;
-        this.start = start;
-        this.end = end;
         this.shape = shape;
         this.effect = effect;
         this.projectile = projectile;
@@ -68,7 +64,7 @@ public class Spellcast
 
     public InitializedSpellcast init(Level world, Player player)
     {
-        return new InitializedSpellcast(sequence, start, end, shape, effect, projectile, power, rand, empowering, radiating, spellCost, world, player);
+        return new InitializedSpellcast(sequence, shape, effect, projectile, power, rand, empowering, radiating, spellCost, world, player);
     }
 
     public SpellShape getShape()
@@ -119,5 +115,25 @@ public class Spellcast
             list.add(StringTag.valueOf(e.getName()));
         }
         return list;
+    }
+
+    public int getPower()
+    {
+        return power;
+    }
+
+    public Entity getProjectile()
+    {
+        return projectile;
+    }
+
+    protected Random getRandom()
+    {
+        return rand;
+    }
+
+    protected void setRandom(Random rand)
+    {
+        this.rand = rand;
     }
 }

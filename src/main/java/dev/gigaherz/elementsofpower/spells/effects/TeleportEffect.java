@@ -37,7 +37,7 @@ public class TeleportEffect extends SpellEffect
     {
         if (entity == cast.player)
             return;
-        entity.hurt(DamageSource.thrown(cast.projectile, cast.player), 0.0F);
+        entity.hurt(DamageSource.thrown(cast.getProjectile(), cast.player), 0.0F);
     }
 
     @Override

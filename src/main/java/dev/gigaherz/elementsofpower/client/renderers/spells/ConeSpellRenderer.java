@@ -20,8 +20,8 @@ public class ConeSpellRenderer extends SpellRenderer
 
         cast.getHitPosition(partialTicks);
 
-        Vec3 start = cast.start;
-        Vec3 end = cast.end;
+        Vec3 start = cast.getStart();
+        Vec3 end = cast.getEnd();
 
         start = start.add(offset);
 

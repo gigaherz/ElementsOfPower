@@ -44,7 +44,7 @@ public abstract class SpellEffect
     {
         if (potion.isInstantenous())
         {
-            potion.applyInstantenousEffect(cast.projectile, cast.player, e, amplifier, distance);
+            potion.applyInstantenousEffect(cast.getProjectile(), cast.player, e, amplifier, distance);
         }
         else
         {

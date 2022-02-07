@@ -35,7 +35,7 @@ public enum Gemstone implements StringRepresentable, ItemLike
     QUARTZ(Element.LIGHT, "quartz", 0xFFFFFFFF,
             () -> ElementsOfPowerItems.QUARTZ, true, () -> Blocks.QUARTZ_BLOCK, List.of(() -> Blocks.NETHER_QUARTZ_ORE),
             () -> QUARTZ_SPELLDUST, () -> Items.QUARTZ, false), // white
-    SERENDIBITE(Element.DARKNESS, "serendibite", 0xFF0F0F0F,
+    SERENDIBITE(Element.TIME, "serendibite", 0xFF0F0F0F,
             () -> ElementsOfPowerItems.SERENDIBITE, false, () -> SERENDIBITE_BLOCK, List.of(() -> SERENDIBITE_ORE, () -> DEEPSLATE_SERENDIBITE_ORE),
             () -> SERENDIBITE_SPELLDUST, null, true), // black
     EMERALD(Element.LIFE, "emerald", 0xFF00FF00,
@@ -43,11 +43,11 @@ public enum Gemstone implements StringRepresentable, ItemLike
             () -> EMERALD_SPELLDUST, () -> Items.EMERALD, false), // green
 
     @Deprecated(forRemoval = true)
-    AMETHYST(Element.DEATH, "amethyst", 0xFFAF00FF,
+    AMETHYST(Element.CHAOS, "amethyst", 0xFFAF00FF,
             () -> ElementsOfPowerItems.AMETHYST, false, () -> AMETHYST_BLOCK, List.of(() -> AMETHYST_ORE),
             () -> AMETHYST_SPELLDUST, null, false), // purple
 
-    ELBAITE(Element.DEATH, "elbaite", 0xFFAF00FF,
+    ELBAITE(Element.CHAOS, "elbaite", 0xFFAF00FF,
             () -> ElementsOfPowerItems.ELBAITE, false, () -> ELBAITE_BLOCK, List.of(() -> ELBAITE_ORE, () -> DEEPSLATE_ELBAITE_ORE),
             null, true), // purple
 

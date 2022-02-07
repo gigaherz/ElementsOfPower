@@ -10,6 +10,7 @@ import dev.gigaherz.elementsofpower.client.renderers.spells.SpellRenderer;
 import dev.gigaherz.elementsofpower.client.renderers.spells.SphereSpellRenderer;
 import dev.gigaherz.elementsofpower.spells.InitializedSpellcast;
 import dev.gigaherz.elementsofpower.spells.SpellManager;
+import dev.gigaherz.elementsofpower.spells.SpellShapes;
 import dev.gigaherz.elementsofpower.spells.SpellcastEntityData;
 import dev.gigaherz.elementsofpower.spells.shapes.SpellShape;
 import net.minecraft.client.Minecraft;
@@ -32,9 +33,9 @@ public class SpellRenderingHandler
 
     static
     {
-        rendererRegistry.put(SpellManager.BEAM, new BeamSpellRenderer());
-        rendererRegistry.put(SpellManager.CONE, new ConeSpellRenderer());
-        rendererRegistry.put(SpellManager.SPHERE, new SphereSpellRenderer());
+        rendererRegistry.put(SpellShapes.BEAM, new BeamSpellRenderer());
+        rendererRegistry.put(SpellShapes.CONE, new ConeSpellRenderer());
+        rendererRegistry.put(SpellShapes.SPHERE, new SphereSpellRenderer());
     }
 
     @SubscribeEvent

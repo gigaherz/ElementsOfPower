@@ -1,9 +1,6 @@
 package dev.gigaherz.elementsofpower.spells;
 
-import com.google.common.collect.HashMultiset;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multiset;
+import com.google.common.collect.*;
 import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import dev.gigaherz.elementsofpower.spells.effects.*;
@@ -23,33 +20,6 @@ public class SpellManager
 {
     public final static char[] elementChars = {'F', 'W', 'A', 'E', 'G', 'K', 'L', 'D'};
     public final static int[] elementIndices = new int['Z' - 'A' + 1];
-
-    public static final SpellShape SPHERE = new SphereShape();
-    public static final SpellShape BALL = new BallShape();
-    public static final SpellShape BEAM = new LaserShape(); // FIXME: new BeamShape();
-    public static final SpellShape CONE = new ConeShape();
-    public static final SpellShape SELF = new SelfShape();
-    //public static final SpellShape SPIKE = new SpikeShape();
-    //public static final SpellShape WALL = new WallShape();
-    //public static final SpellShape SHIELD = new ShieldShape();
-    public static final SpellShape SINGLE = new SingleShape();
-
-    public static final SpellEffect FLAME = new FlameEffect();
-    public static final SpellEffect FROST = new FrostEffect();
-    public static final SpellEffect WATER = new WaterEffect(false);
-    public static final SpellEffect WIND = new WindEffect();
-    public static final SpellEffect DUST = new DustEffect();
-    public static final SpellEffect MIST = new MistEffect();
-    public static final SpellEffect LIGHT = new LightEffect();
-    public static final SpellEffect MINING = new MiningEffect();
-    public static final SpellEffect HEALING = new HealthEffect();
-    public static final SpellEffect BREAKING = new WitherEffect();
-    public static final SpellEffect CUSHION = new CushionEffect();
-    public static final SpellEffect LAVA = new LavaEffect(false);
-    public static final SpellEffect RESURRECTION = new ResurrectionEffect();
-    public static final SpellEffect WATER_SOURCE = new WaterEffect(true);
-    public static final SpellEffect LAVA_SOURCE = new LavaEffect(true);
-    public static final SpellEffect TELEPORT = new TeleportEffect();
 
     static
     {
@@ -97,44 +67,37 @@ public class SpellManager
         private SpellState spellState = SpellState.START;
         private Element last = null;
 
-        private Element primary = null;
-        private Effect effect = null;
+        private Element previous = null;
+        private EffectType effectType = null;
         private int primaryPower = 0;
         private int empowering = 0; // can be negative!
         private int radiance = 0; // can be negative!
 
-        private List<Element> sequence = Lists.newArrayList();
+        private final List<Element> sequence = Lists.newArrayList();
+        private final EnumMap<ElementUsageType, Integer> usageTypes = new EnumMap<>(ElementUsageType.class);
 
         @Nullable
         public Spellcast build(List<Element> sequence)
         {
             for (Element c : sequence)
             {
-                if (!addElement(c))
+                if (!doTransition(c))
                     return null;
             }
 
-            switch (spellState)
-            {
-                case PRIMARY:
-                    increasePrimary();
-                    break;
-                case SECONDARY:
-                    applySecondary(last);
-                    break;
-                case AUGMENT:
-                    applyAugment(last);
-                    break;
-                default:
-                    // do nothing
-                    break;
-            }
+            finalTransition();
 
-            if (this.effect == null)
+            if (this.effectType == null)
                 return null;
 
-            SpellEffect effect = effects.get(this.effect);
+            SpellEffect effect = effects.get(this.effectType);
+            if (effect == null)
+                return null;
+
             SpellShape shape = shapes.get(last.getShape());
+            if (shape == null)
+                return null;
+
             Spellcast cast = new Spellcast(shape, effect, primaryPower, sequence);
 
             if (empowering != 0)
@@ -154,6 +117,10 @@ public class SpellManager
 
             if (sequence.size() > 0)
             {
+                var power = usageTypes.getOrDefault(ElementUsageType.EMPOWER, 0) + 1;
+                var mix = usageTypes.getOrDefault(ElementUsageType.MIX, 0);
+                var modify = usageTypes.getOrDefault(ElementUsageType.MODIFY, 0);
+
                 HashMultiset<Element> multiset = HashMultiset.create();
                 multiset.addAll(sequence);
 
@@ -168,135 +135,120 @@ public class SpellManager
             return amounts;
         }
 
-        private boolean addElement(Element e)
+        private boolean doTransition(Element e)
         {
-            return processTransition(this, e);
+            for (Pair<BiPredicate<SpellBuilder, Element>, BiPredicate<SpellBuilder, Element>> item : transitions.computeIfAbsent(spellState, state -> Lists.newArrayList(
+                    always(makeTransition(logUnimplementedState(), SpellState.INVALID))
+            )))
+            {
+                if (item.getLeft().test(this, e))
+                {
+                    return item.getRight().test(this, e);
+                }
+            }
+            ElementsOfPowerMod.LOGGER.error("Spell sequence transition was incomplete");
+            return invalid();
         }
 
-        private boolean isOpposite(Element e)
+        private void finalTransition()
         {
-            return last.getOpposite() == e;
+            switch (spellState)
+            {
+                case PRIMARY -> increasePrimary();
+                case SECONDARY -> applySecondary(last);
+                case AUGMENT -> applyAugment(last);
+                default -> {
+                    // do nothing
+                }
+            }
         }
 
-        private boolean isPrimary(Element e)
+        private boolean isRepeat(Element e)
         {
-            return primary == e;
+            return previous == e;
         }
 
-        private boolean canMutate(Element modifier)
+        private boolean canMix(Element modifier)
         {
-            return getMutationResult(effect, modifier) != null;
+            return getMixResult(effectType, modifier) != null;
         }
 
-        boolean transition(Element e, SpellState primary)
+        private void transition(Element e, SpellState primary)
         {
             // Update last
             last = e;
             // Next state
             spellState = primary;
-            return true;
         }
 
-        private void setPrimary(Element e)
+        private void addInitial(Element e)
         {
-            primary = e;
-            switch (e)
-            {
-                case FIRE:
-                    effect = Effect.FLAME;
-                    break;
-                case WATER:
-                    effect = Effect.WATER;
-                    break;
-                case AIR:
-                    effect = Effect.WIND;
-                    break;
-                case EARTH:
-                    effect = Effect.DUST;
-                    break;
-                case LIGHT:
-                    effect = Effect.LIGHT;
-                    break;
-                case DARKNESS:
-                    effect = Effect.MINING;
-                    break;
-                case LIFE:
-                    effect = Effect.HEALING;
-                    break;
-                case DEATH:
-                    effect = Effect.BREAKING;
-                    break;
-            }
+            effectType = e.getInitialEffect();
+            addToSequence(e, ElementUsageType.INITIAL);
         }
 
+        @SuppressWarnings("SwitchStatementWithTooFewBranches")
         @Nullable
-        private Effect getMutationResult(Effect base, Element modifier)
+        private EffectType getMixResult(EffectType base, Element modifier)
         {
-            switch (modifier)
-            {
-                case EARTH:
-                    switch (base)
+            return switch (base)
                     {
-                        case FLAME:
-                            return Effect.LAVA;
-                        case LAVA:
-                            return Effect.LAVA_SOURCE;
-                        default:
-                            return null;
-                    }
-                case AIR:
-                    switch (base)
-                    {
-                        case DUST:
-                            return Effect.CUSHION;
-                        case WATER:
-                            return Effect.MIST;
-                        case LAVA_SOURCE:
-                            return Effect.LAVA;
-                        case LAVA:
-                            return Effect.FLAME;
-                    }
-                    break;
-                case LIFE:
-                    switch (base)
-                    {
-                        case MINING:
-                            return Effect.TELEPORT;
-                        case WIND:
-                            return Effect.WIND;
-                    }
-                    break;
-                case DARKNESS:
-                    switch (base)
-                    {
-                        case FLAME:
-                            return Effect.FROST;
-                        case WIND:
-                            return Effect.WIND;
-                    }
-                    break;
-            }
-            return null;
+                        case FLAME -> switch(modifier)
+                                {
+                                    case EARTH -> EffectType.LAVA; //
+                                    case TIME -> EffectType.FROST;
+                                    default -> null;
+                                };
+                        case LAVA -> switch (modifier)
+                                {
+                                    case EARTH -> EffectType.LAVA_SOURCE;
+                                    case AIR -> EffectType.FLAME;
+                                    default -> null;
+                                };
+                        case LAVA_SOURCE -> switch (modifier)
+                                {
+                                    case AIR -> EffectType.FLAME;
+                                    default -> null;
+                                };
+                        case DUST -> switch (modifier)
+                                {
+                                    case AIR -> EffectType.CUSHION;
+                                    default -> null;
+                                };
+                        case WATER -> switch (modifier)
+                                {
+                                    case AIR -> EffectType.MIST;
+                                    default -> null;
+                                };
+                        case MINING -> switch (modifier)
+                                {
+                                    case LIFE -> EffectType.TELEPORT;
+                                    default -> null;
+                                };
+                        default -> null;
+                    };
+        }
+
+        private void addToSequence(Element e, ElementUsageType type)
+        {
+            previous = e;
+            sequence.add(e);
+            usageTypes.compute(type, (__, value) -> value != null ? value+1 : 1);
         }
 
         private void increasePrimary()
         {
             primaryPower++;
-            sequence.add(primary);
-        }
-
-        private void recordPrimary()
-        {
-            sequence.add(primary);
+            addToSequence(previous, ElementUsageType.EMPOWER);
         }
 
         private boolean applySecondary(Element e)
         {
-            effect = getMutationResult(effect, e);
-            if (effect == null)
+            effectType = getMixResult(effectType, e);
+            if (effectType == null)
                 return invalid();
 
-            sequence.add(e);
+            addToSequence(e, ElementUsageType.MIX);
             return true;
         }
 
@@ -320,109 +272,80 @@ public class SpellManager
                     return invalid();
             }
 
-            sequence.add(e);
+            addToSequence(e, ElementUsageType.MODIFY);
             return true;
         }
 
         private boolean invalid()
         {
             spellState = SpellState.INVALID;
-            effect = null;
+            effectType = null;
             last = null;
             primaryPower = 0;
             sequence.clear();
             return false;
         }
 
-
-        private static final Map<Character, Element> elements = Maps.newHashMap();
-        private static final EnumMap<Effect, SpellEffect> effects = Maps.newEnumMap(Effect.class);
-        private static final EnumMap<Shape, SpellShape> shapes = Maps.newEnumMap(Shape.class);
+        private static final Map<EffectType, SpellEffect> effects = Maps.immutableEnumMap(ImmutableMap.<EffectType, SpellEffect>builder()
+            .put(EffectType.FLAME, SpellEffects.FLAME)
+            .put(EffectType.FROST, SpellEffects.FROST)
+            .put(EffectType.WATER, SpellEffects.WATER)
+            .put(EffectType.PUSH, SpellEffects.WIND)
+            .put(EffectType.DUST, SpellEffects.DUST)
+            .put(EffectType.MIST, SpellEffects.MIST)
+            .put(EffectType.LIGHT, SpellEffects.LIGHT)
+            .put(EffectType.MINING, SpellEffects.MINING)
+            .put(EffectType.HEALING, SpellEffects.HEALING)
+            .put(EffectType.BREAKING, SpellEffects.BREAKING)
+            .put(EffectType.CUSHION, SpellEffects.CUSHION)
+            .put(EffectType.LAVA, SpellEffects.LAVA)
+            .put(EffectType.RESURRECTION, SpellEffects.RESURRECTION)
+            .put(EffectType.WATER_SOURCE, SpellEffects.WATER_SOURCE)
+            .put(EffectType.LAVA_SOURCE, SpellEffects.LAVA_SOURCE)
+            .put(EffectType.TELEPORT, SpellEffects.TELEPORT)
+            .build()
+        );
+        private static final Map<ShapeType, SpellShape> shapes = Maps.immutableEnumMap(Map.of(
+                ShapeType.SPHERE, SpellShapes.SPHERE,
+                ShapeType.BALL, SpellShapes.BALL,
+                ShapeType.BEAM, SpellShapes.BEAM,
+                ShapeType.CONE, SpellShapes.CONE,
+                ShapeType.SELF, SpellShapes.SELF,
+                ShapeType.SINGLE, SpellShapes.SINGLE
+        ));
         private static final EnumMap<SpellState, List<Pair<BiPredicate<SpellBuilder, Element>, BiPredicate<SpellBuilder, Element>>>> transitions = Maps.newEnumMap(SpellState.class);
 
         static
         {
-            elements.put('F', Element.FIRE);
-            elements.put('W', Element.WATER);
-            elements.put('A', Element.AIR);
-            elements.put('E', Element.EARTH);
-            elements.put('G', Element.LIGHT);
-            elements.put('K', Element.DARKNESS);
-            elements.put('L', Element.LIFE);
-            elements.put('D', Element.DEATH);
-
-            shapes.put(Shape.SPHERE, SPHERE);
-            shapes.put(Shape.BALL, BALL);
-            shapes.put(Shape.BEAM, BEAM);
-            shapes.put(Shape.CONE, CONE);
-            shapes.put(Shape.SELF, SELF);
-            shapes.put(Shape.SINGLE, SINGLE);
-
-            effects.put(Effect.FLAME, FLAME);
-            effects.put(Effect.FROST, FROST);
-            effects.put(Effect.WATER, WATER);
-            effects.put(Effect.WIND, WIND);
-            effects.put(Effect.DUST, DUST);
-            effects.put(Effect.MIST, MIST);
-            effects.put(Effect.LIGHT, LIGHT);
-            effects.put(Effect.MINING, MINING);
-            effects.put(Effect.HEALING, HEALING);
-            effects.put(Effect.BREAKING, BREAKING);
-            effects.put(Effect.CUSHION, CUSHION);
-            effects.put(Effect.LAVA, LAVA);
-            effects.put(Effect.RESURRECTION, RESURRECTION);
-            effects.put(Effect.WATER_SOURCE, WATER_SOURCE);
-            effects.put(Effect.LAVA_SOURCE, LAVA_SOURCE);
-            effects.put(Effect.TELEPORT, TELEPORT);
-
-            transitions.put(SpellState.START, Collections.singletonList(
-                    unconditional(makeTransition(SpellBuilder::setPrimary, SpellState.PRIMARY))
-            ));
-            transitions.put(SpellState.PRIMARY, Lists.newArrayList(
-                    conditional(SpellBuilder::isPrimary, makeTransition(SpellBuilder::increasePrimary, SpellState.PRIMARY)),
-                    conditional(SpellBuilder::isOpposite, makeOppositeTransition(SpellBuilder::recordPrimary, SpellState.PRIMARY_CANCEL)),
-                    conditional(SpellBuilder::canMutate, makeTransition(SpellBuilder::increasePrimary, SpellState.SECONDARY)),
-                    unconditional(makeTransition(SpellBuilder::increasePrimary, SpellState.AUGMENT))
-            ));
-            transitions.put(SpellState.PRIMARY_CANCEL, Lists.newArrayList(
-                    conditional(SpellBuilder::canMutate, makeTransition(SpellState.SECONDARY)),
-                    unconditional(makeTransition(SpellBuilder::increasePrimary, SpellState.AUGMENT))
-            ));
-            transitions.put(SpellState.SECONDARY, Lists.newArrayList(
-                    conditional(SpellBuilder::isOpposite, makeOppositeTransition(SpellState.MODIFIER_CANCEL)),
-                    conditional(SpellBuilder::canMutate, makeTransition(SpellBuilder::applySecondary, SpellState.SECONDARY)),
-                    unconditional(makeTransition(SpellBuilder::applySecondary, SpellState.AUGMENT))
-            ));
-            transitions.put(SpellState.AUGMENT, Lists.newArrayList(
-                    conditional(SpellBuilder::isOpposite, makeOppositeTransition(SpellState.MODIFIER_CANCEL)),
-                    unconditional(makeTransition(SpellBuilder::applyAugment, SpellState.AUGMENT))
-            ));
-            transitions.put(SpellState.MODIFIER_CANCEL, Lists.newArrayList(
-                    unconditional(makeTransition(SpellState.AUGMENT))
-            ));
+            from(SpellState.START,
+                    always(makeTransition(SpellBuilder::addInitial, SpellState.PRIMARY))
+            );
+            from(SpellState.PRIMARY,
+                    when(SpellBuilder::isRepeat, makeTransition(SpellBuilder::increasePrimary, SpellState.PRIMARY)),
+                    when(SpellBuilder::canMix, makeTransition(SpellBuilder::increasePrimary, SpellState.SECONDARY)),
+                    always(makeTransition(SpellBuilder::increasePrimary, SpellState.AUGMENT))
+            );
+            from(SpellState.SECONDARY,
+                    when(SpellBuilder::canMix, makeTransition(SpellBuilder::applySecondary, SpellState.SECONDARY)),
+                    always(makeTransition(SpellBuilder::applySecondary, SpellState.AUGMENT))
+            );
+            from(SpellState.AUGMENT,
+                    always(makeTransition(SpellBuilder::applyAugment, SpellState.AUGMENT))
+            );
         }
 
-        private static boolean processTransition(SpellBuilder b, Element e)
+        @SafeVarargs
+        private static void from(SpellState state, Pair<BiPredicate<SpellBuilder, Element>, BiPredicate<SpellBuilder, Element>> ... edges)
         {
-            for (Pair<BiPredicate<SpellBuilder, Element>, BiPredicate<SpellBuilder, Element>> item : transitions.computeIfAbsent(b.spellState, state -> Lists.newArrayList(
-                    unconditional(makeTransition(logUnimplementedState(), SpellState.INVALID))
-            )))
-            {
-                if (item.getLeft().test(b, e))
-                {
-                    return item.getRight().test(b, e);
-                }
-            }
-            ElementsOfPowerMod.LOGGER.error("Spell sequence transition was incomplete");
-            return b.invalid();
+            transitions.put(state, List.of(edges));
         }
 
-        private static Pair<BiPredicate<SpellBuilder, Element>, BiPredicate<SpellBuilder, Element>> conditional(BiPredicate<SpellBuilder, Element> condition, BiPredicate<SpellBuilder, Element> transition)
+        private static Pair<BiPredicate<SpellBuilder, Element>, BiPredicate<SpellBuilder, Element>> when(BiPredicate<SpellBuilder, Element> condition, BiPredicate<SpellBuilder, Element> transition)
         {
             return Pair.of(condition, transition);
         }
 
-        private static Pair<BiPredicate<SpellBuilder, Element>, BiPredicate<SpellBuilder, Element>> unconditional(BiPredicate<SpellBuilder, Element> transition)
+        private static Pair<BiPredicate<SpellBuilder, Element>, BiPredicate<SpellBuilder, Element>> always(BiPredicate<SpellBuilder, Element> transition)
         {
             return Pair.of((b, e) -> true, transition);
         }
@@ -433,7 +356,8 @@ public class SpellManager
                 if (!action.test(b, e))
                     return false;
 
-                return b.transition(e, next);
+                b.transition(e, next);
+                return true;
             };
         }
 
@@ -442,7 +366,8 @@ public class SpellManager
             return (b, e) -> {
                 action.accept(b, e);
 
-                return b.transition(e, next);
+                b.transition(e, next);
+                return true;
             };
         }
 
@@ -451,13 +376,17 @@ public class SpellManager
             return (b, e) -> {
                 action.accept(b);
 
-                return b.transition(e, next);
+                b.transition(e, next);
+                return true;
             };
         }
 
         private static BiPredicate<SpellBuilder, Element> makeTransition(SpellState next)
         {
-            return (b, e) -> b.transition(e, next);
+            return (b, e) -> {
+                b.transition(e, next);
+                return true;
+            };
         }
 
         private static BiPredicate<SpellBuilder, Element> makeOppositeTransition(Consumer<SpellBuilder> action, SpellState next)
@@ -465,13 +394,17 @@ public class SpellManager
             return (b, e) -> {
                 action.accept(b);
 
-                return b.transition(b.last, next);
+                b.transition(e, next);
+                return true;
             };
         }
 
         private static BiPredicate<SpellBuilder, Element> makeOppositeTransition(SpellState next)
         {
-            return (b, e) -> b.transition(b.last, next);
+            return (b, e) -> {
+                b.transition(e, next);
+                return true;
+            };
         }
 
         private static BiPredicate<SpellBuilder, Element> logUnimplementedState()
@@ -486,12 +419,18 @@ public class SpellManager
         {
             START,      // The initial state of the spell, before any element has been added
             PRIMARY,    // Primary chain, the first element repeated multiple times
-            PRIMARY_CANCEL,     // The last element was opposite of the previous, so we shouldn't process the previous modifier
             SECONDARY,  // Direct modifiers which mutate the spell effect
             AUGMENT,    // Augmentations: modifiers that change how the spell behaves
-            MODIFIER_CANCEL,     // The last element was opposite of the previous, so we shouldn't process the previous modifier
             END,        // Final state, the spell is complete and the last seen element dictates the shape.
             INVALID
+        }
+
+        private enum ElementUsageType
+        {
+            INITIAL,
+            EMPOWER,
+            MIX,
+            MODIFY
         }
     }
 }

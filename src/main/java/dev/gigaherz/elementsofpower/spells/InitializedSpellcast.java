@@ -25,9 +25,9 @@ public class InitializedSpellcast extends Spellcast
     public int remainingInterval;
     public int totalCastTime;
 
-    protected InitializedSpellcast(List<Element> sequence, Vec3 start, Vec3 end, SpellShape shape, SpellEffect effect, Entity projectile, int power, Random rand, int empowering, int radiating, MagicAmounts spellCost, Level world, Player player)
+    protected InitializedSpellcast(List<Element> sequence, SpellShape shape, SpellEffect effect, Entity projectile, int power, Random rand, int empowering, int radiating, MagicAmounts spellCost, Level world, Player player)
     {
-        super(sequence, start, end, shape, effect, projectile, power, rand, empowering, radiating, spellCost);
+        super(sequence, shape, effect, projectile, power, rand, empowering, radiating, spellCost);
         this.world = world;
         this.player = player;
         if (shape.isInstant())
@@ -45,25 +45,25 @@ public class InitializedSpellcast extends Spellcast
 
     public int getDamageForce()
     {
-        return Math.max(0, power - effect.getForceModifier(this));
+        return Math.max(0, getPower() - getEffect().getForceModifier(this));
     }
 
     public int getColor()
     {
-        return effect.getColor(this);
+        return getEffect().getColor(this);
     }
 
     public float getScale()
     {
-        return shape.getScale(this);
+        return getShape().getScale(this);
     }
 
     public void onImpact(HitResult mop, Random rand)
     {
-        this.rand = rand;
+        this.setRandom(rand);
         if (!world.isClientSide)
         {
-            shape.onImpact(this, mop);
+            getShape().onImpact(this, mop);
         }
     }
 
@@ -84,27 +84,27 @@ public class InitializedSpellcast extends Spellcast
 
     public void update()
     {
-        if (shape.isInstant() && remainingCastTime == totalCastTime)
+        if (getShape().isInstant() && remainingCastTime == totalCastTime)
         {
             if (!world.isClientSide)
             {
-                shape.spellTick(this);
+                getShape().spellTick(this);
             }
         }
 
         remainingCastTime--;
 
-        if (!shape.isInstant())
+        if (!getShape().isInstant())
         {
             remainingInterval--;
 
             if (remainingInterval <= 0)
             {
-                remainingInterval = effect.getInterval(this);
+                remainingInterval = getEffect().getInterval(this);
 
                 if (!world.isClientSide)
                 {
-                    shape.spellTick(this);
+                    getShape().spellTick(this);
                 }
             }
         }
@@ -122,7 +122,7 @@ public class InitializedSpellcast extends Spellcast
 
     public float getRandomForParticle()
     {
-        return (rand.nextFloat() - 0.5f) * power / 8.0f;
+        return (getRandom().nextFloat() - 0.5f) * getPower() / 8.0f;
     }
 
     public void spawnRandomParticle(ParticleOptions type, double x, double y, double z)
@@ -211,6 +211,10 @@ public class InitializedSpellcast extends Spellcast
         return mop;
     }
 
+    // Rendering data;
+    private Vec3 start;
+    private Vec3 end;
+
     // Called by the client on render, and by the server as needed
     @Nullable
     public HitResult getHitPosition()
@@ -255,5 +259,15 @@ public class InitializedSpellcast extends Spellcast
             start = player.getEyePosition(1.0f);
         }
         return start;
+    }
+
+    public Vec3 getStart()
+    {
+        return start;
+    }
+
+    public Vec3 getEnd()
+    {
+        return end;
     }
 }

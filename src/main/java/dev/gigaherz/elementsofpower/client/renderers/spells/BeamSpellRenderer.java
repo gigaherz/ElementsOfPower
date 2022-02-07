@@ -18,11 +18,10 @@ public class BeamSpellRenderer extends SpellRenderer
     {
         float scale = 0.15f * cast.getScale();
 
-
         HitResult mop = cast.getHitPosition(partialTicks);
 
-        Vec3 start = cast.start;
-        Vec3 end = cast.end;
+        Vec3 start = cast.getStart();
+        Vec3 end = cast.getEnd();
 
         Vec3 beam0 = end.subtract(start);
 

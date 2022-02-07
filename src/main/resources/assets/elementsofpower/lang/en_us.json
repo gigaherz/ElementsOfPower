@@ -106,7 +106,7 @@
     "elementsofpower.element.light": "Light",
     "elementsofpower.element.darkness": "Darkness",
     "elementsofpower.element.life": "Life",
-    "elementsofpower.element.death": "Death",
+    "elementsofpower.element.death": "Chaos",
 
     "item.elementsofpower.fire_orb": "Fire Orb",
     "item.elementsofpower.water_orb": "Water Orb",
@@ -115,7 +115,7 @@
     "item.elementsofpower.light_orb": "Light Orb",
     "item.elementsofpower.darkness_orb": "Darkness Orb",
     "item.elementsofpower.life_orb": "Life Orb",
-    "item.elementsofpower.death_orb": "Death Orb",
+    "item.elementsofpower.death_orb": "Chaos Orb",
 
     "block.elementsofpower.fire_cocoon": "Fire Cocoon",
     "block.elementsofpower.water_cocoon": "Water Cocoon",
@@ -124,7 +124,7 @@
     "block.elementsofpower.light_cocoon": "Light Cocoon",
     "block.elementsofpower.darkness_cocoon": "Darkness Cocoon",
     "block.elementsofpower.life_cocoon": "Life Cocoon",
-    "block.elementsofpower.death_cocoon": "Death Cocoon",
+    "block.elementsofpower.death_cocoon": "Chaos Cocoon",
 
     "item.elementsofpower.analyzer": "Gem Analyzer",
     "container.elementsofpower.analyzer": "Gem Analyzer",
@@ -165,7 +165,7 @@
     "key.elementsofpower.spellkey.light": "Add Light to Spell",
     "key.elementsofpower.spellkey.darkness": "Add Darkness to Spell",
     "key.elementsofpower.spellkey.life": "Add Life to Spell",
-    "key.elementsofpower.spellkey.death": "Add Death to Spell",
+    "key.elementsofpower.spellkey.death": "Add Chaos to Spell",
 
     "text.elementsofpower.spell.invalid_sequence": "The sequence does not result in a valid spell",
     "text.elementsofpower.spell.cost_too_high": "Not enough elements",
