@@ -9,7 +9,7 @@ public class SpellShapes
     public static final SpellShape BEAM = new LaserShape(); // FIXME: new BeamShape();
     public static final SpellShape CONE = new ConeShape();
     public static final SpellShape SELF = new SelfShape();
-    //public static final SpellShape SPIKE = new SpikeShape();
+    public static final SpellShape PILLAR = new PillarShape();
     //public static final SpellShape WALL = new WallShape();
     //public static final SpellShape SHIELD = new ShieldShape();
     public static final SpellShape SINGLE = new SingleShape();

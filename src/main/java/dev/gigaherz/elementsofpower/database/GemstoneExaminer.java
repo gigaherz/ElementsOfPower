@@ -5,8 +5,11 @@ import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.gemstones.Gemstone;
 import dev.gigaherz.elementsofpower.gemstones.GemstoneItem;
 import dev.gigaherz.elementsofpower.gemstones.Quality;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
@@ -15,20 +18,18 @@ import java.util.Random;
 
 public class GemstoneExaminer
 {
-    public static final Tag.Named<Item> GEMSTONES = ItemTags.bind(ElementsOfPowerMod.location("gemstones").toString());
-    public static final Tag.Named<Item> GEM_RUBY = ItemTags.bind(ElementsOfPowerMod.location("gems/ruby").toString());
-    public static final Tag.Named<Item> GEM_SAPPHIRE = ItemTags.bind(ElementsOfPowerMod.location("gems/sapphire").toString());
-    public static final Tag.Named<Item> GEM_CITRINE = ItemTags.bind(ElementsOfPowerMod.location("gems/citrine").toString());
-    public static final Tag.Named<Item> GEM_AGATE = ItemTags.bind(ElementsOfPowerMod.location("gems/agate").toString());
-    public static final Tag.Named<Item> GEM_QUARTZ = ItemTags.bind(ElementsOfPowerMod.location("gems/quartz").toString());
-    public static final Tag.Named<Item> GEM_SERENDIBITE = ItemTags.bind(ElementsOfPowerMod.location("gems/serendibite").toString());
-    public static final Tag.Named<Item> GEM_EMERALD = ItemTags.bind(ElementsOfPowerMod.location("gems/emerald").toString());
-    @Deprecated(forRemoval = true)
-    public static final Tag.Named<Item> GEM_AMETHYST = ItemTags.bind(ElementsOfPowerMod.location("gems/amethyst").toString());
-    public static final Tag.Named<Item> GEM_ELBAITE = ItemTags.bind(ElementsOfPowerMod.location("gems/elbaite").toString());
-    public static final Tag.Named<Item> GEM_DIAMOND = ItemTags.bind(ElementsOfPowerMod.location("gems/diamond").toString());
+    public static final TagKey<Item> GEMSTONES = bind(ElementsOfPowerMod.location("gemstones").toString());
+    public static final TagKey<Item> GEM_RUBY = bind(ElementsOfPowerMod.location("gems/ruby").toString());
+    public static final TagKey<Item> GEM_SAPPHIRE = bind(ElementsOfPowerMod.location("gems/sapphire").toString());
+    public static final TagKey<Item> GEM_CITRINE = bind(ElementsOfPowerMod.location("gems/citrine").toString());
+    public static final TagKey<Item> GEM_AGATE = bind(ElementsOfPowerMod.location("gems/agate").toString());
+    public static final TagKey<Item> GEM_QUARTZ = bind(ElementsOfPowerMod.location("gems/quartz").toString());
+    public static final TagKey<Item> GEM_SERENDIBITE = bind(ElementsOfPowerMod.location("gems/serendibite").toString());
+    public static final TagKey<Item> GEM_EMERALD = bind(ElementsOfPowerMod.location("gems/emerald").toString());
+    public static final TagKey<Item> GEM_ELBAITE = bind(ElementsOfPowerMod.location("gems/elbaite").toString());
+    public static final TagKey<Item> GEM_DIAMOND = bind(ElementsOfPowerMod.location("gems/diamond").toString());
 
-    public static final Map<Gemstone, Tag.Named<Item>> GEMS = ImmutableMap.<Gemstone, Tag.Named<Item>>builder()
+    public static final Map<Gemstone, TagKey<Item>> GEMS = ImmutableMap.<Gemstone, TagKey<Item>>builder()
             .put(Gemstone.RUBY, GEM_RUBY)
             .put(Gemstone.SAPPHIRE, GEM_SAPPHIRE)
             .put(Gemstone.CITRINE, GEM_CITRINE)
@@ -36,7 +37,6 @@ public class GemstoneExaminer
             .put(Gemstone.QUARTZ, GEM_QUARTZ)
             .put(Gemstone.SERENDIBITE, GEM_SERENDIBITE)
             .put(Gemstone.EMERALD, GEM_EMERALD)
-            .put(Gemstone.AMETHYST, GEM_AMETHYST) // TODO: Remove
             .put(Gemstone.ELBAITE, GEM_ELBAITE)
             .put(Gemstone.DIAMOND, GEM_DIAMOND)
             .build();
@@ -55,10 +55,13 @@ public class GemstoneExaminer
                 return stack;
         }
 
-        return GEMS.entrySet().stream()
-                .filter(kv -> kv.getValue().contains(item))
+        var rk = Registry.ITEM.getResourceKey(item);
+        var h = rk.flatMap(Registry.ITEM::getHolder);
+        return h.flatMap(holder ->
+                GEMS.entrySet().stream()
+                .filter(kv -> holder.is(kv.getValue()))
                 .findFirst()
-                .map(kv -> setRandomQualityVariant(kv.getKey()))
+                .map(kv -> setRandomQualityVariant(kv.getKey())))
                 .orElse(stack);
     }
 
@@ -76,4 +79,9 @@ public class GemstoneExaminer
 
         return target.getItem().getStack(Quality.PURE);
     }
+
+    private static TagKey<Item> bind(String p_203855_) {
+        return TagKey.create(Registry.ITEM_REGISTRY, new ResourceLocation(p_203855_));
+    }
+
 }

@@ -12,7 +12,28 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
+        "stack": "{Count:1b,id:\"elementsofpower:serendibite\",tag:{quality:0}}"
+      }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
         "stack": "{Count:1b,id:\"elementsofpower:serendibite\",tag:{quality:2}}"
+      }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{Count:1b,id:\"elementsofpower:serendibite\"}"
+      }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{Count:1b,id:\"elementsofpower:serendibite\",tag:{quality:1}}"
       }
     },
     {
@@ -27,27 +48,6 @@
       "data": {
         "count": 1.0,
         "stack": "{Count:1b,id:\"elementsofpower:serendibite\",tag:{quality:4}}"
-      }
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:serendibite\",tag:{quality:1}}"
-      }
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:serendibite\"}"
-      }
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:serendibite\",tag:{quality:0}}"
       }
     }
   ],

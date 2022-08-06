@@ -19,14 +19,21 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:citrine\",tag:{quality:0}}"
+        "stack": "{Count:1b,id:\"elementsofpower:citrine\",tag:{quality:1}}"
       }
     },
     {
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:citrine\",tag:{quality:2}}"
+        "stack": "{Count:1b,id:\"elementsofpower:citrine\",tag:{quality:3}}"
+      }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{Count:1b,id:\"elementsofpower:citrine\",tag:{quality:0}}"
       }
     },
     {
@@ -40,14 +47,7 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:citrine\",tag:{quality:1}}"
-      }
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:citrine\",tag:{quality:3}}"
+        "stack": "{Count:1b,id:\"elementsofpower:citrine\",tag:{quality:2}}"
       }
     }
   ],

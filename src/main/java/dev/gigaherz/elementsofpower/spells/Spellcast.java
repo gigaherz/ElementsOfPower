@@ -24,6 +24,7 @@ public class Spellcast
     private int power;
     private int empowering;
     private int radiating;
+    private int timing;
     private MagicAmounts spellCost;
 
     @Nullable
@@ -135,5 +136,15 @@ public class Spellcast
     protected void setRandom(Random rand)
     {
         this.rand = rand;
+    }
+
+    public int getTiming()
+    {
+        return timing;
+    }
+
+    public void setTiming(int timing)
+    {
+        this.timing = timing;
     }
 }

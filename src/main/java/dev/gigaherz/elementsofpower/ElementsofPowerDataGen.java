@@ -21,6 +21,7 @@ import dev.gigaherz.elementsofpower.spells.blocks.DustBlock;
 import dev.gigaherz.elementsofpower.spells.blocks.LightBlock;
 import dev.gigaherz.elementsofpower.spells.blocks.MistBlock;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.Registry;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.loot.BlockLoot;
@@ -32,6 +33,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -131,7 +133,7 @@ class ElementsofPowerDataGen
 
         private Stream<Item> getItemsFromTag(Tag.BuilderEntry proxy)
         {
-            Tag.Entry entry = proxy.getEntry();
+            Tag.Entry entry = proxy.entry();
             if (entry instanceof Tag.ElementEntry)
             {
                 ResourceLocation itemId = new ResourceLocation(((Tag.ElementEntry) entry).toString());
@@ -172,11 +174,11 @@ class ElementsofPowerDataGen
             Gemstone.values.forEach(gem -> {
                 if (gem != Gemstone.CREATIVITE)
                 {
-                    Tag.Named<Item> tag = ItemTags.bind(new ResourceLocation("forge", "gems/" + gem.getSerializedName()).toString());
+                    TagKey<Item> tag = itemTag(new ResourceLocation("forge", "gems/" + gem.getSerializedName()).toString());
                     this.tag(tag).add(gem.getTagItems());
                     gemsTag.addTag(tag);
 
-                    Tag.Named<Item> eTag = GemstoneExaminer.GEMS.get(gem);
+                    TagKey<Item> eTag = GemstoneExaminer.GEMS.get(gem);
                     this.tag(eTag).add(gem.getTagItems());
                     examinerTag.addTag(eTag);
                 }
@@ -184,17 +186,17 @@ class ElementsofPowerDataGen
                 {
                     Item[] oreItems = gem.getOres().stream().map(Block::asItem).toArray(Item[]::new);
 
-                    Tag.Named<Item> tag = ItemTags.bind(new ResourceLocation("forge", "ores/" + gem.getSerializedName()).toString());
+                    TagKey<Item> tag = itemTag(new ResourceLocation("forge", "ores/" + gem.getSerializedName()).toString());
                     this.tag(tag).add(oreItems);
                     oresTag.addTag(tag);
 
-                    this.tag(ItemTags.bind(new ResourceLocation("elementsofpower", gem.getSerializedName() + "_ores").toString()))
+                    this.tag(itemTag(new ResourceLocation("elementsofpower", gem.getSerializedName() + "_ores").toString()))
                             .add(oreItems);
                 }
                 if (gem.generateCustomBlock())
                 {
                     Block block = gem.getBlock();
-                    Tag.Named<Item> tag = ItemTags.bind(new ResourceLocation("forge", "storage_blocks/" + gem.getSerializedName()).toString());
+                    TagKey<Item> tag = itemTag(new ResourceLocation("forge", "storage_blocks/" + gem.getSerializedName()).toString());
                     this.tag(tag).add(block.asItem());
                     blocksTag.addTag(tag);
                 }
@@ -241,14 +243,14 @@ class ElementsofPowerDataGen
             Gemstone.values.forEach(gem -> {
                 if (gem.generateCustomOre())
                 {
-                    Tag.Named<Block> tag = BlockTags.bind(new ResourceLocation("forge", "ores/" + gem.getSerializedName()).toString());
+                    TagKey<Block> tag = blockTag(new ResourceLocation("forge", "ores/" + gem.getSerializedName()).toString());
                     this.tag(tag).add(gem.getOres().toArray(Block[]::new));
                     oresTag.addTag(tag);
                 }
                 if (gem.generateCustomBlock())
                 {
                     Block block = gem.getBlock();
-                    Tag.Named<Block> tag = BlockTags.bind(new ResourceLocation("forge", "storage_blocks/" + gem.getSerializedName()).toString());
+                    TagKey<Block> tag = blockTag(new ResourceLocation("forge", "storage_blocks/" + gem.getSerializedName()).toString());
                     this.tag(tag).add(block);
                     blocksTag.addTag(tag);
                 }
@@ -456,7 +458,7 @@ class ElementsofPowerDataGen
             {
                 if (gem.generateCustomOre())
                 {
-                    Tag.Named<Item> tag = ItemTags.bind(new ResourceLocation("elementsofpower", gem.getSerializedName() + "_ores").toString());
+                    TagKey<Item> tag = itemTag(new ResourceLocation("elementsofpower", gem.getSerializedName() + "_ores").toString());
                     Item[] oreItems = gem.getOres().stream().map(Block::asItem).toArray(Item[]::new);
                     SimpleCookingRecipeBuilder.smelting(Ingredient.of(oreItems), gem, 1.0F, 200)
                             .unlockedBy("has_ore", has(tag))
@@ -479,5 +481,13 @@ class ElementsofPowerDataGen
                 }
             }
         }
+    }
+
+    private static TagKey<Item> itemTag(String p_203855_) {
+        return TagKey.create(Registry.ITEM_REGISTRY, new ResourceLocation(p_203855_));
+    }
+
+    private static TagKey<Block> blockTag(String p_203847_) {
+        return TagKey.create(Registry.BLOCK_REGISTRY, new ResourceLocation(p_203847_));
     }
 }

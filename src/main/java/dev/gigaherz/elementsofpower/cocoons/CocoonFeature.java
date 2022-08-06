@@ -4,8 +4,11 @@ import com.mojang.serialization.Codec;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -26,7 +29,7 @@ public class CocoonFeature extends Feature<CocoonFeatureConfig>
     @ObjectHolder("elementsofpower:cocoon")
     public static CocoonFeature INSTANCE;
 
-    public static final Tag.Named<Block> REPLACEABLE_TAG = BlockTags.bind("elementsofpower:can_cocoon_replace");
+    public static final TagKey<Block> REPLACEABLE_TAG = TagKey.create(Registry.BLOCK_REGISTRY,new ResourceLocation("elementsofpower:can_cocoon_replace"));
 
     public CocoonFeature(Codec<CocoonFeatureConfig> configFactoryIn)
     {

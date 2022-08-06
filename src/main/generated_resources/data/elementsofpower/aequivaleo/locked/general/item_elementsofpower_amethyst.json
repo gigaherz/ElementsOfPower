@@ -19,21 +19,7 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:amethyst\",tag:{quality:3}}"
-      }
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:amethyst\",tag:{quality:1}}"
-      }
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:amethyst\",tag:{quality:4}}"
+        "stack": "{Count:1b,id:\"elementsofpower:amethyst\",tag:{quality:2}}"
       }
     },
     {
@@ -47,14 +33,28 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:amethyst\",tag:{quality:2}}"
+        "stack": "{Count:1b,id:\"elementsofpower:amethyst\",tag:{quality:1}}"
+      }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{Count:1b,id:\"elementsofpower:amethyst\",tag:{quality:3}}"
+      }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{Count:1b,id:\"elementsofpower:amethyst\",tag:{quality:4}}"
       }
     }
   ],
   "compounds": [
     {
       "amount": 0.125,
-      "type": "elementsofpower:death"
+      "type": "elementsofpower:chaos"
     },
     {
       "amount": 1.0,

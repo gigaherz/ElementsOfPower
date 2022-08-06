@@ -3,14 +3,17 @@ package dev.gigaherz.elementsofpower.spells;
 import com.google.common.collect.*;
 import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
-import dev.gigaherz.elementsofpower.spells.effects.*;
-import dev.gigaherz.elementsofpower.spells.shapes.*;
+import dev.gigaherz.elementsofpower.spells.effects.SpellEffect;
+import dev.gigaherz.elementsofpower.spells.shapes.SpellShape;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
@@ -287,31 +290,33 @@ public class SpellManager
         }
 
         private static final Map<EffectType, SpellEffect> effects = Maps.immutableEnumMap(ImmutableMap.<EffectType, SpellEffect>builder()
-            .put(EffectType.FLAME, SpellEffects.FLAME)
-            .put(EffectType.FROST, SpellEffects.FROST)
-            .put(EffectType.WATER, SpellEffects.WATER)
-            .put(EffectType.PUSH, SpellEffects.WIND)
-            .put(EffectType.DUST, SpellEffects.DUST)
-            .put(EffectType.MIST, SpellEffects.MIST)
-            .put(EffectType.LIGHT, SpellEffects.LIGHT)
-            .put(EffectType.MINING, SpellEffects.MINING)
-            .put(EffectType.HEALING, SpellEffects.HEALING)
-            .put(EffectType.BREAKING, SpellEffects.BREAKING)
-            .put(EffectType.CUSHION, SpellEffects.CUSHION)
-            .put(EffectType.LAVA, SpellEffects.LAVA)
-            .put(EffectType.RESURRECTION, SpellEffects.RESURRECTION)
-            .put(EffectType.WATER_SOURCE, SpellEffects.WATER_SOURCE)
-            .put(EffectType.LAVA_SOURCE, SpellEffects.LAVA_SOURCE)
-            .put(EffectType.TELEPORT, SpellEffects.TELEPORT)
-            .build()
+                .put(EffectType.BREAKING, SpellEffects.BREAKING)
+                .put(EffectType.CUSHION, SpellEffects.CUSHION)
+                .put(EffectType.DUST, SpellEffects.DUST)
+                .put(EffectType.FLAME, SpellEffects.FLAME)
+                .put(EffectType.FROST, SpellEffects.FROST)
+                .put(EffectType.HEALING, SpellEffects.HEALING)
+                .put(EffectType.LAVA, SpellEffects.LAVA)
+                .put(EffectType.LAVA_SOURCE, SpellEffects.LAVA_SOURCE)
+                .put(EffectType.LIGHT, SpellEffects.LIGHT)
+                .put(EffectType.MINING, SpellEffects.MINING)
+                .put(EffectType.MIST, SpellEffects.MIST)
+                .put(EffectType.PUSH, SpellEffects.WIND)
+                .put(EffectType.RESURRECTION, SpellEffects.RESURRECTION)
+                .put(EffectType.SLOWNESS, SpellEffects.SLOWNESS)
+                .put(EffectType.TELEPORT, SpellEffects.TELEPORT)
+                .put(EffectType.WATER, SpellEffects.WATER)
+                .put(EffectType.WATER_SOURCE, SpellEffects.WATER_SOURCE)
+                .build()
         );
         private static final Map<ShapeType, SpellShape> shapes = Maps.immutableEnumMap(Map.of(
-                ShapeType.SPHERE, SpellShapes.SPHERE,
                 ShapeType.BALL, SpellShapes.BALL,
                 ShapeType.BEAM, SpellShapes.BEAM,
                 ShapeType.CONE, SpellShapes.CONE,
+                ShapeType.PILLAR, SpellShapes.PILLAR,
                 ShapeType.SELF, SpellShapes.SELF,
-                ShapeType.SINGLE, SpellShapes.SINGLE
+                ShapeType.SINGLE, SpellShapes.SINGLE,
+                ShapeType.SPHERE, SpellShapes.SPHERE
         ));
         private static final EnumMap<SpellState, List<Pair<BiPredicate<SpellBuilder, Element>, BiPredicate<SpellBuilder, Element>>>> transitions = Maps.newEnumMap(SpellState.class);
 

@@ -66,8 +66,8 @@ sourceSets {
 }
 
 minecraft {
-    //mappings channel: 'official', version: '1.18.1'
-    mappings channel: 'parchment', version: '2021.12.13-nightly-SNAPSHOT-1.18.1'
+    mappings channel: 'official', version: '1.18.2'
+    //mappings channel: 'parchment', version: '2021.12.13-nightly-SNAPSHOT-1.18.1'
 
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
@@ -128,21 +128,21 @@ minecraft {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.18.1-39.0.59'
+    minecraft 'net.minecraftforge:forge:1.18.2-40.1.0'
 
-    compileOnly fg.deobf("mezz.jei:jei-1.18.1:9.2.3.78:api")
-    runtimeOnly fg.deobf("mezz.jei:jei-1.18.1:9.2.3.78")
+    compileOnly fg.deobf("mezz.jei:jei-1.18.2:9.7.0.193:api")
+    runtimeOnly fg.deobf("mezz.jei:jei-1.18.2:9.7.0.193")
 
-    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.18.1-5.0.6.0")
-    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.18.1-5.0.6.0:api")
+    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.18.2-5.0.7.0")
+    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.18.2-5.0.7.0")
 
-    compileOnly fg.deobf("com.ldtteam:aequivaleo:1.18-0.1.90-ALPHA:api")
-    //compileOnly fg.deobf("com.ldtteam:aequivaleo:1.18-0.1.90-ALPHA:vanilla-api")
-    runtimeOnly fg.deobf("com.ldtteam:aequivaleo:1.18-0.1.90-ALPHA:universal")
+    compileOnly fg.deobf("com.ldtteam:aequivaleo:1.18.2-0.1.93-ALPHA:api")
+    //compileOnly fg.deobf("com.ldtteam:aequivaleo:1.18.2-0.1.93-ALPHA:vanilla-api")
+    runtimeOnly fg.deobf("com.ldtteam:aequivaleo:1.18.2-0.1.93-ALPHA:universal")
 
     //runtimeOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:1.16-3.1.4-22")
 
-    implementation fg.deobf("dev.gigaherz.guidebook:Guidebook-1.18:3.4.0")
+    implementation fg.deobf("dev.gigaherz.guidebook:Guidebook-1.18.2:3.4.0")
 
     //runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:1.16.2-47")
     //runtimeOnly fg.deobf("deps:Botania-1.16.3:409")

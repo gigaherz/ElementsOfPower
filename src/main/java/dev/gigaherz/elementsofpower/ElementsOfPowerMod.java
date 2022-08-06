@@ -27,7 +27,6 @@ import dev.gigaherz.elementsofpower.items.WandItem;
 import dev.gigaherz.elementsofpower.network.*;
 import dev.gigaherz.elementsofpower.recipes.ContainerChargeRecipe;
 import dev.gigaherz.elementsofpower.recipes.GemstoneChangeRecipe;
-import dev.gigaherz.elementsofpower.spelldust.SpelldustItem;
 import dev.gigaherz.elementsofpower.spells.Element;
 import dev.gigaherz.elementsofpower.spells.SpellcastEntityData;
 import dev.gigaherz.elementsofpower.spells.blocks.CushionBlock;
@@ -39,11 +38,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.data.worldgen.features.FeatureUtils;
 import net.minecraft.data.worldgen.features.OreFeatures;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringRepresentable;
@@ -59,6 +60,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.VerticalAnchor;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
 import net.minecraft.world.level.levelgen.placement.*;
@@ -107,9 +109,12 @@ public class ElementsOfPowerMod
 
     public static LootItemFunctionType APPLY_ORB_SIZE;
 
-    public static PlacedFeature COCOON_FEATURE_OVERWORLD;
-    public static PlacedFeature COCOON_FEATURE_NETHER;
-    public static PlacedFeature COCOON_FEATURE_END;
+    public static Holder<ConfiguredFeature<CocoonFeatureConfig, ?>> COCOON_FEATURE_OVERWORLD_C;
+    public static Holder<ConfiguredFeature<CocoonFeatureConfig, ?>> COCOON_FEATURE_NETHER_C;
+    public static Holder<ConfiguredFeature<CocoonFeatureConfig, ?>> COCOON_FEATURE_END_C;
+    public static Holder<PlacedFeature> COCOON_FEATURE_OVERWORLD_P;
+    public static Holder<PlacedFeature> COCOON_FEATURE_NETHER_P;
+    public static Holder<PlacedFeature> COCOON_FEATURE_END_P;
 
     public static ResourceLocation location(String location)
     {
@@ -230,7 +235,7 @@ public class ElementsOfPowerMod
         }
         for (Gemstone type : Gemstone.values())
         {
-            if (type.generateCustomOre() && type != Gemstone.AMETHYST)
+            if (type.generateCustomOre())
             {
                 event.getRegistry().registerAll(
                         new GemstoneOreBlock(type, Block.Properties.of(Material.STONE)
@@ -296,13 +301,6 @@ public class ElementsOfPowerMod
                         new BlockItem(type.getCocoon(), new Item.Properties().tab(tabMagic)).setRegistryName(type.getName() + "_cocoon")
                 );
             }
-        }
-
-        // TODO: Delete in 1.19
-        for (Gemstone type : Gemstone.values())
-        {
-            if (type.generateSpelldust())
-                event.getRegistry().register(new SpelldustItem(type, new Item.Properties().tab(tabMagic)).setRegistryName(type.getSerializedName() + "_spelldust"));
         }
     }
 
@@ -415,9 +413,13 @@ public class ElementsOfPowerMod
     {
         event.enqueueWork(() -> {
 
-            COCOON_FEATURE_OVERWORLD = PlacementUtils.register("elementsofpower:overworld_cocoon", CocoonFeature.INSTANCE.configured(CocoonFeatureConfig.OVERWORLD).placed(CocoonPlacement.INSTANCE));
-            COCOON_FEATURE_NETHER = PlacementUtils.register("elementsofpower:nether_cocoon", CocoonFeature.INSTANCE.configured(CocoonFeatureConfig.THE_NETHER).placed(CocoonPlacement.INSTANCE));
-            COCOON_FEATURE_END = PlacementUtils.register("elementsofpower:end_cocoon", CocoonFeature.INSTANCE.configured(CocoonFeatureConfig.THE_END).placed(CocoonPlacement.INSTANCE));
+            COCOON_FEATURE_OVERWORLD_C = FeatureUtils.register("elementsofpower:overworld_cocoon", CocoonFeature.INSTANCE, CocoonFeatureConfig.OVERWORLD);
+            COCOON_FEATURE_NETHER_C = FeatureUtils.register("elementsofpower:overworld_cocoon", CocoonFeature.INSTANCE, CocoonFeatureConfig.THE_NETHER);
+            COCOON_FEATURE_END_C = FeatureUtils.register("elementsofpower:overworld_cocoon", CocoonFeature.INSTANCE, CocoonFeatureConfig.THE_END);
+
+            COCOON_FEATURE_OVERWORLD_P = PlacementUtils.register("elementsofpower:overworld_cocoon", COCOON_FEATURE_OVERWORLD_C, CocoonPlacement.INSTANCE);
+            COCOON_FEATURE_NETHER_P = PlacementUtils.register("elementsofpower:nether_cocoon", COCOON_FEATURE_OVERWORLD_C, CocoonPlacement.INSTANCE);
+            COCOON_FEATURE_END_P = PlacementUtils.register("elementsofpower:end_cocoon", COCOON_FEATURE_OVERWORLD_C, CocoonPlacement.INSTANCE);
             oreFeatures.get();
 
         });
@@ -471,13 +473,13 @@ public class ElementsOfPowerMod
                 }
             }
 
-            PlacedFeature feat;
+            Holder<PlacedFeature> feat;
             if (isNetherBiome)
-                feat = COCOON_FEATURE_NETHER;
+                feat = COCOON_FEATURE_NETHER_P;
             else if (isEndBiome)
-                feat = COCOON_FEATURE_END;
+                feat = COCOON_FEATURE_END_P;
             else
-                feat = COCOON_FEATURE_OVERWORLD;
+                feat = COCOON_FEATURE_OVERWORLD_P;
 
             event.getGeneration().addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, feat);
         }
@@ -549,7 +551,7 @@ public class ElementsOfPowerMod
         }
     }
 
-    private static Supplier<Map<BiomeValues, List<PlacedFeature>>> oreFeatures = Lazy.of(() -> Util.make(new HashMap<>(), map -> {
+    private static Supplier<Map<BiomeValues, List<Holder<PlacedFeature>>>> oreFeatures = Lazy.of(() -> Util.make(new HashMap<>(), map -> {
         for(var heat : BiomeValue.values())
         {
             for(var humidity : BiomeValue.values())
@@ -558,7 +560,7 @@ public class ElementsOfPowerMod
                 {
                     var name = heat.getSerializedName() + "_" + humidity.getSerializedName() + "_" + life.getSerializedName();
                     var values = new BiomeValues(heat, humidity, life);
-                    var list = new ArrayList<PlacedFeature>();
+                    var list = new ArrayList<Holder<PlacedFeature>>();
                     for (Gemstone g : Gemstone.values)
                     {
                         if (g.generateInWorld())
@@ -576,14 +578,13 @@ public class ElementsOfPowerMod
 
                             int numPerVein = 3 + values.getBiomeBonus(g.getElement());
                             var name2 = g.getSerializedName() + "_ore_" + name;
-                            var configured = FeatureUtils.register(name2, Feature.ORE
-                                    .configured(new OreConfiguration(targets, numPerVein, 0.0f)));
-                            list.add(PlacementUtils.register(name2, configured
-                                    .placed(List.of(
-                                            CountPlacement.of(16),
-                                            InSquarePlacement.spread(),
-                                            HeightRangePlacement.triangle(VerticalAnchor.aboveBottom(-80), VerticalAnchor.aboveBottom(80)),
-                                            BiomeFilter.biome()))));
+                            var configured = FeatureUtils.register(name2, Feature.ORE, new OreConfiguration(targets, numPerVein, 0.0f));
+                            var placed = PlacementUtils.register(name2, configured,
+                                    CountPlacement.of(16),
+                                    InSquarePlacement.spread(),
+                                    HeightRangePlacement.triangle(VerticalAnchor.aboveBottom(-80), VerticalAnchor.aboveBottom(80)),
+                                    BiomeFilter.biome());
+                            list.add(placed);
 
                         }
                     }
@@ -593,3 +594,4 @@ public class ElementsOfPowerMod
         }
     }));
 }
+

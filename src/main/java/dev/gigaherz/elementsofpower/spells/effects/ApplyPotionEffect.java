@@ -15,10 +15,12 @@ import java.util.List;
 
 public class ApplyPotionEffect extends SpellEffect
 {
+    @Nullable
     private final MobEffect instant;
+    @Nullable
     private final MobEffect overTime;
 
-    public ApplyPotionEffect(MobEffect instant, MobEffect overTime)
+    public ApplyPotionEffect(@Nullable MobEffect instant, @Nullable MobEffect overTime)
     {
         this.instant = instant;
         this.overTime = overTime;
@@ -65,10 +67,10 @@ public class ApplyPotionEffect extends SpellEffect
 
         int emp = cast.getEmpowering();
 
-        if (-emp < lv)
+        if (-emp < lv && instant != null)
             causePotionEffect(cast, e, instant, 0, (lv + emp) * 0.5, 0.0);
 
-        if (emp < lv)
+        if (emp < lv && overTime != null)
             causePotionEffect(cast, e, overTime, 0, (lv - emp), 100.0);
     }
 

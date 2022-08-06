@@ -12,21 +12,14 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:elbaite\",tag:{quality:4}}"
-      }
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:elbaite\",tag:{quality:2}}"
-      }
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
         "stack": "{Count:1b,id:\"elementsofpower:elbaite\",tag:{quality:0}}"
+      }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{Count:1b,id:\"elementsofpower:elbaite\",tag:{quality:1}}"
       }
     },
     {
@@ -40,21 +33,28 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:elbaite\",tag:{quality:3}}"
+        "stack": "{Count:1b,id:\"elementsofpower:elbaite\",tag:{quality:2}}"
       }
     },
     {
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:elbaite\",tag:{quality:1}}"
+        "stack": "{Count:1b,id:\"elementsofpower:elbaite\",tag:{quality:4}}"
+      }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{Count:1b,id:\"elementsofpower:elbaite\",tag:{quality:3}}"
       }
     }
   ],
   "compounds": [
     {
       "amount": 0.125,
-      "type": "elementsofpower:death"
+      "type": "elementsofpower:chaos"
     },
     {
       "amount": 1.0,

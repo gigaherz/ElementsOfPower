@@ -13,39 +13,34 @@ import net.minecraft.world.level.block.Blocks;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 import static dev.gigaherz.elementsofpower.ElementsOfPowerBlocks.*;
-import static dev.gigaherz.elementsofpower.ElementsOfPowerItems.*;
 
 public enum Gemstone implements StringRepresentable, ItemLike
 {
     RUBY(Element.FIRE, "ruby", 0xFFFF0000,
             () -> ElementsOfPowerItems.RUBY, false, () -> RUBY_BLOCK, List.of(() -> RUBY_ORE, () -> DEEPSLATE_RUBY_ORE),
-            () -> RUBY_SPELLDUST, null, true), // red
+            null, true), // red
     SAPPHIRE(Element.WATER, "sapphire", 0xFF0000FF,
             () -> ElementsOfPowerItems.SAPPHIRE, false, () -> SAPPHIRE_BLOCK, List.of(() -> SAPPHIRE_ORE, () -> DEEPSLATE_SAPPHIRE_ORE),
-            () -> SAPPHIRE_SPELLDUST, null, true), // blue
+            null, true), // blue
     CITRINE(Element.AIR, "citrine", 0xFFFFFF00,
             () -> ElementsOfPowerItems.CITRINE, false, () -> CITRINE_BLOCK, List.of(() -> CITRINE_ORE, () -> DEEPSLATE_CITRINE_ORE),
-            () -> CITRINE_SPELLDUST, null, true), // yellow
+            null, true), // yellow
     AGATE(Element.EARTH, "agate", 0xFF7F3F00,
             () -> ElementsOfPowerItems.AGATE, false, () -> AGATE_BLOCK, List.of(() -> AGATE_ORE, ()-> DEEPSLATE_AGATE_ORE),
-            () -> AGATE_SPELLDUST, null, true), // brown
+            null, true), // brown
     QUARTZ(Element.LIGHT, "quartz", 0xFFFFFFFF,
             () -> ElementsOfPowerItems.QUARTZ, true, () -> Blocks.QUARTZ_BLOCK, List.of(() -> Blocks.NETHER_QUARTZ_ORE),
-            () -> QUARTZ_SPELLDUST, () -> Items.QUARTZ, false), // white
+            () -> Items.QUARTZ, false), // white
     SERENDIBITE(Element.TIME, "serendibite", 0xFF0F0F0F,
             () -> ElementsOfPowerItems.SERENDIBITE, false, () -> SERENDIBITE_BLOCK, List.of(() -> SERENDIBITE_ORE, () -> DEEPSLATE_SERENDIBITE_ORE),
-            () -> SERENDIBITE_SPELLDUST, null, true), // black
+            null, true), // black
     EMERALD(Element.LIFE, "emerald", 0xFF00FF00,
             () -> ElementsOfPowerItems.EMERALD, true, () -> Blocks.EMERALD_BLOCK, List.of(() -> Blocks.EMERALD_ORE, () -> Blocks.DEEPSLATE_EMERALD_ORE),
-            () -> EMERALD_SPELLDUST, () -> Items.EMERALD, false), // green
-
-    @Deprecated(forRemoval = true)
-    AMETHYST(Element.CHAOS, "amethyst", 0xFFAF00FF,
-            () -> ElementsOfPowerItems.AMETHYST, false, () -> AMETHYST_BLOCK, List.of(() -> AMETHYST_ORE),
-            () -> AMETHYST_SPELLDUST, null, false), // purple
+            () -> Items.EMERALD, false), // green
 
     ELBAITE(Element.CHAOS, "elbaite", 0xFFAF00FF,
             () -> ElementsOfPowerItems.ELBAITE, false, () -> ELBAITE_BLOCK, List.of(() -> ELBAITE_ORE, () -> DEEPSLATE_ELBAITE_ORE),
@@ -53,7 +48,7 @@ public enum Gemstone implements StringRepresentable, ItemLike
 
     DIAMOND(null, "diamond", 0xFF7FFFCF,
             () -> ElementsOfPowerItems.DIAMOND, true, () -> Blocks.DIAMOND_BLOCK, List.of(() -> Blocks.DIAMOND_ORE, () -> Blocks.DEEPSLATE_DIAMOND_ORE),
-            () -> DIAMOND_SPELLDUST, () -> Items.DIAMOND, false), // clear
+            () -> Items.DIAMOND, false), // clear
 
     CREATIVITE(null, "creativite", 0xFF000000,
             () -> ElementsOfPowerItems.CREATIVITE, false, null, List.of(),
@@ -71,24 +66,12 @@ public enum Gemstone implements StringRepresentable, ItemLike
     @Nullable
     private final Supplier<Item> vanillaGemstoneSupplier;
 
-    @Deprecated(forRemoval = true)
-    @Nullable
-    private final Supplier<Item> spelldustItemSupplier;
-
     private final boolean generateInWorld;
 
     Gemstone(@Nullable Element element, String name, int tintColor,
              @Nullable Supplier<GemstoneItem> itemSupplier,
-             boolean isVanilla, @Nullable Supplier<Block> blockSupplier, List<Supplier<Block>> oreSuppliers, @Nullable Supplier<Item> vanillaGemstoneSupplier, boolean generateInWorld)
-    {
-        this(element, name, tintColor, itemSupplier, isVanilla, blockSupplier, oreSuppliers, null, vanillaGemstoneSupplier, generateInWorld);
-    }
-
-    @Deprecated(forRemoval = true)
-    Gemstone(@Nullable Element element, String name, int tintColor,
-             @Nullable Supplier<GemstoneItem> itemSupplier,
              boolean isVanilla, @Nullable Supplier<Block> blockSupplier, List<Supplier<Block>> oreSuppliers,
-             @Nullable Supplier<Item> spelldustItemSupplier, @Nullable Supplier<Item> vanillaGemstoneSupplier, boolean generateInWorld)
+             @Nullable Supplier<Item> vanillaGemstoneSupplier, boolean generateInWorld)
     {
         this.element = element;
         this.name = name;
@@ -97,7 +80,6 @@ public enum Gemstone implements StringRepresentable, ItemLike
         this.blockSupplier = blockSupplier;
         this.oreSuppliers = oreSuppliers;
         this.itemSupplier = itemSupplier;
-        this.spelldustItemSupplier = spelldustItemSupplier;
         this.vanillaGemstoneSupplier = vanillaGemstoneSupplier;
         this.generateInWorld = generateInWorld;
     }
@@ -139,12 +121,6 @@ public enum Gemstone implements StringRepresentable, ItemLike
         return generateCustomOre() && generateInWorld;
     }
 
-    @Deprecated(forRemoval = true)
-    public boolean generateSpelldust()
-    {
-        return spelldustItemSupplier != null;
-    }
-
     public boolean isVanilla()
     {
         return isVanilla;
@@ -177,12 +153,6 @@ public enum Gemstone implements StringRepresentable, ItemLike
         return vanillaGemstoneSupplier != null ? vanillaGemstoneSupplier.get() : null;
     }
 
-    @Deprecated(forRemoval = true)
-    public Item getSpelldust()
-    {
-        return spelldustItemSupplier != null ? spelldustItemSupplier.get() : Items.AIR;
-    }
-
     @Nullable
     public static Gemstone byName(String name)
     {
@@ -207,5 +177,10 @@ public enum Gemstone implements StringRepresentable, ItemLike
     public static Stream<Gemstone> stream()
     {
         return values.stream();
+    }
+
+    public static void forEach(Consumer<Gemstone> consumer)
+    {
+        values.forEach(consumer);
     }
 }
