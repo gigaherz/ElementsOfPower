@@ -9,7 +9,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.*;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,7 +27,7 @@ public class PlayerCombinedMagicContainers implements IMagicContainer
     @Override
     public MagicAmounts getCapacity()
     {
-        return player.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).map(items -> {
+        return player.getCapability(ForgeCapabilities.ITEM_HANDLER).map(items -> {
             MagicAmounts am = MagicAmounts.EMPTY;
             for (int i = 0; i < items.getSlots(); i++)
             {
@@ -47,7 +46,7 @@ public class PlayerCombinedMagicContainers implements IMagicContainer
     @Override
     public MagicAmounts getContainedMagic()
     {
-        return player.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).map(items -> {
+        return player.getCapability(ForgeCapabilities.ITEM_HANDLER).map(items -> {
             MagicAmounts am = MagicAmounts.EMPTY;
             for (int i = 0; i < items.getSlots(); i++)
             {
@@ -66,7 +65,7 @@ public class PlayerCombinedMagicContainers implements IMagicContainer
     public MagicAmounts addMagic(MagicAmounts magicToAdd)
     {
         final MagicAmounts[] refAmounts = new MagicAmounts[]{magicToAdd};
-        return player.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).map(items -> {
+        return player.getCapability(ForgeCapabilities.ITEM_HANDLER).map(items -> {
             for (int i = 0; i < items.getSlots(); i++)
             {
                 if (items.getStackInSlot(i).getCapability(MagicContainerCapability.INSTANCE).map(magic -> {

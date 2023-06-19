@@ -1,3 +1,4 @@
 {
-  "type": "elementsofpower:container_charge"
+  "type": "elementsofpower:container_charge",
+  "category": "misc"
 }

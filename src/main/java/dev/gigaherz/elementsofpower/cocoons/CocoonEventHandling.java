@@ -40,17 +40,17 @@ public class CocoonEventHandling
     private static void playerTick(TickEvent.PlayerTickEvent ev)
     {
         Player player = ev.player;
-        if (player.level.isClientSide || !EntitySelector.NO_SPECTATORS.test(player))
+        if (player.level().isClientSide || !EntitySelector.NO_SPECTATORS.test(player))
             return;
 
         player.getCapability(PlayerCombinedMagicContainers.CAPABILITY).ifPresent(combine -> {
-            ServerLevel sw = (ServerLevel) player.level;
+            ServerLevel sw = (ServerLevel) player.level();
 
             Vec3 p = player.position();
             Vec3 min = p.subtract(8, 8, 8);
             Vec3 max = p.add(9, 9, 9);
-            ChunkPos mn = new ChunkPos(new BlockPos(min));
-            ChunkPos mx = new ChunkPos(new BlockPos(max));
+            ChunkPos mn = new ChunkPos(BlockPos.containing(min));
+            ChunkPos mx = new ChunkPos(BlockPos.containing(max));
             int minX = mn.x;
             int minZ = mn.z;
             int maxX = mx.x;

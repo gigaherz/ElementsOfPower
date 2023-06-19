@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
     "G": {
       "item": "minecraft:gold_ingot"
@@ -12,5 +13,6 @@
   ],
   "result": {
     "item": "elementsofpower:headband"
-  }
+  },
+  "show_notification": true
 }

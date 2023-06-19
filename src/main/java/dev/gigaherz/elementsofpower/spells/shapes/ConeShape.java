@@ -28,7 +28,7 @@ public class ConeShape extends SpellShape
     @Override
     public InitializedSpellcast castSpell(ItemStack stack, Player player, Spellcast cast)
     {
-        return cast.init(player.level, player);
+        return cast.init(player.level(), player);
     }
 
     @Override
@@ -203,17 +203,6 @@ public class ConeShape extends SpellShape
                     }
                 }
             }
-        }
-    }
-
-    private static class FacePos extends BlockPos
-    {
-        public final Direction direction;
-
-        public FacePos(Vec3 vec, Direction face)
-        {
-            super(vec);
-            direction = face;
         }
     }
 }

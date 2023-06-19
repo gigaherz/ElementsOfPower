@@ -5,19 +5,21 @@ import dev.gigaherz.elementsofpower.items.MagicContainerItem;
 import dev.gigaherz.elementsofpower.items.MagicOrbItem;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 
 public class ContainerChargeRecipe extends CustomRecipe
 {
-    public ContainerChargeRecipe(ResourceLocation idIn)
+    public ContainerChargeRecipe(ResourceLocation resourceLocation, CraftingBookCategory craftingBookCategory)
     {
-        super(idIn);
+        super(resourceLocation, craftingBookCategory);
     }
 
     private interface ProcessAction
@@ -77,7 +79,7 @@ public class ContainerChargeRecipe extends CustomRecipe
     }
 
     @Override
-    public ItemStack assemble(CraftingContainer inv)
+    public ItemStack assemble(CraftingContainer inv, RegistryAccess registryAccess)
     {
         return processRecipe(inv, (stack, item, capacity, contained, charge, newContained) -> {
             var output = stack.copy();

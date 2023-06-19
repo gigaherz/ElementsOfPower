@@ -89,7 +89,7 @@ public class AnalyzedFilteringIngredient extends Ingredient
         @Override
         public AnalyzedFilteringIngredient parse(JsonObject json)
         {
-            Ingredient inner = CraftingHelper.getIngredient(GsonHelper.getAsJsonObject(json, "inner"));
+            Ingredient inner = CraftingHelper.getIngredient(GsonHelper.getAsJsonObject(json, "inner"), false);
             return new AnalyzedFilteringIngredient(inner);
         }
 

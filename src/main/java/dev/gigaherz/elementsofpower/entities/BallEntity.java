@@ -9,6 +9,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -64,7 +65,7 @@ public class BallEntity extends ThrowableProjectile implements IEntityAdditional
     @Override
     protected void onHit(HitResult pos)
     {
-        if (!this.level.isClientSide)
+        if (!this.level().isClientSide)
         {
             if (getSpellcast() != null)
                 spellcast.onImpact(pos, random);
@@ -95,14 +96,14 @@ public class BallEntity extends ThrowableProjectile implements IEntityAdditional
             CompoundTag tag = getEntityData().get(SEQ);
             if (tag.contains("sequence", Tag.TAG_LIST) && tag.contains("caster", Tag.TAG_INT))
             {
-                Player e = (Player) this.level.getEntity(tag.getInt("caster"));
+                Player e = (Player) this.level().getEntity(tag.getInt("caster"));
                 if (e != null)
                 {
                     ListTag sequence = tag.getList("sequence", Tag.TAG_STRING);
                     Spellcast ccast = SpellManager.makeSpell(sequence);
                     if (ccast != null)
                     {
-                        spellcast = ccast.init(level, e);
+                        spellcast = ccast.init(level(), e);
                     }
                 }
             }
@@ -110,8 +111,9 @@ public class BallEntity extends ThrowableProjectile implements IEntityAdditional
         return spellcast;
     }
 
+
     @Override
-    public Packet<?> getAddEntityPacket()
+    public Packet<ClientGamePacketListener> getAddEntityPacket()
     {
         return NetworkHooks.getEntitySpawningPacket(this);
     }

@@ -1,7 +1,7 @@
 package dev.gigaherz.elementsofpower.client.renderers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import dev.gigaherz.elementsofpower.essentializer.EssentializerBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -11,8 +11,10 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.util.Lazy;
+import org.joml.Vector3f;
 
 public class EssentializerTileEntityRender implements BlockEntityRenderer<EssentializerBlockEntity>
 {
@@ -47,11 +49,11 @@ public class EssentializerTileEntityRender implements BlockEntityRenderer<Essent
             matrixStack.pushPose();
 
             float angle3 = angle2 + 90 * i;
-            matrixStack.mulPose(Vector3f.YP.rotationDegrees(angle3));
+            matrixStack.mulPose(Axis.YP.rotationDegrees(angle3));
             matrixStack.translate(0.6, 0, 0);
-            matrixStack.mulPose(Vector3f.ZP.rotationDegrees(-45));
+            matrixStack.mulPose(Axis.ZP.rotationDegrees(-45));
 
-            matrixStack.mulPose(Vector3f.YP.rotationDegrees(angle1));
+            matrixStack.mulPose(Axis.YP.rotationDegrees(angle1));
 
             corner_handle.get().render(matrixStack, bufferIn, RenderType.entityTranslucent(texture), combinedLightIn, 0xFFFFFFFF);
 
@@ -89,13 +91,13 @@ public class EssentializerTileEntityRender implements BlockEntityRenderer<Essent
 
             matrixStack.translate(0.5, 0.45 + bob2, 0.5);
 
-            matrixStack.mulPose(Vector3f.YP.rotationDegrees(angle3));
+            matrixStack.mulPose(Axis.YP.rotationDegrees(angle3));
 
             float scale = 0.45f;
             matrixStack.scale(scale, scale, scale);
 
             Minecraft mc = Minecraft.getInstance();
-            mc.getItemRenderer().renderStatic(stack, ItemTransforms.TransformType.GROUND, combinedLightIn, combinedOverlayIn, matrixStack, bufferIn, 0);
+            mc.getItemRenderer().renderStatic(stack, ItemDisplayContext.GROUND, combinedLightIn, combinedOverlayIn, matrixStack, bufferIn, te.getLevel(), 0);
 
             matrixStack.popPose();
         }

@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -37,7 +38,6 @@ public class StackRenderingHelper
         if (!stack.isEmpty())
         {
             BakedModel bakedmodel = itemRenderer.getModel(stack, null, Minecraft.getInstance().player, 0);
-            itemRenderer.blitOffset += 50.0F;
 
             try
             {
@@ -55,7 +55,6 @@ public class StackRenderingHelper
                 throw new ReportedException(crashreport);
             }
 
-            itemRenderer.blitOffset -= 50.0F;
         }
     }
 
@@ -68,7 +67,7 @@ public class StackRenderingHelper
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         PoseStack posestack = RenderSystem.getModelViewStack();
         posestack.pushPose();
-        posestack.translate((double) x, (double) y, (double) (100.0F + itemRenderer.blitOffset));
+        posestack.translate((double) x, (double) y, (double)100.0F);
         posestack.translate(8.0D, 8.0D, 0.0D);
         posestack.scale(1.0F, -1.0F, 1.0F);
         posestack.scale(16.0F, 16.0F, 16.0F);
@@ -90,7 +89,7 @@ public class StackRenderingHelper
             Lighting.setupForFlatItems();
         }
 
-        itemRenderer.render(p_115128_, ItemTransforms.TransformType.GUI, false, posestack1, colorMultiply, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, model);
+        itemRenderer.render(p_115128_, ItemDisplayContext.GUI, false, posestack1, colorMultiply, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, model);
         multibuffersource$buffersource.endBatch();
         RenderSystem.enableDepthTest();
         if (flag)

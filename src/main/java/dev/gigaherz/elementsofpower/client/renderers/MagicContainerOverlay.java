@@ -16,7 +16,7 @@ import dev.gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.ItemModelShaper;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -37,7 +37,7 @@ import net.minecraftforge.fml.common.Mod;
 import java.util.List;
 
 @Mod.EventBusSubscriber(value= Dist.CLIENT, modid= ElementsOfPowerMod.MODID, bus= Mod.EventBusSubscriber.Bus.MOD)
-public class MagicContainerOverlay extends GuiComponent implements IGuiOverlay
+public class MagicContainerOverlay implements IGuiOverlay
 {
     public static final int ELEMENTS = 8;
     public static final int SPACING = 28;
@@ -51,7 +51,7 @@ public class MagicContainerOverlay extends GuiComponent implements IGuiOverlay
     }
 
     @Override
-    public void render(ForgeGui gui, PoseStack matrixStack, float partialTicks, int width, int height)
+    public void render(ForgeGui gui, GuiGraphics graphics, float partialTicks, int width, int height)
     {
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer player = mc.player;
@@ -86,10 +86,11 @@ public class MagicContainerOverlay extends GuiComponent implements IGuiOverlay
             int rescaledWidth = (int) (mc.getWindow().getGuiScaledWidth() / rescale);
             int rescaledHeight = (int) (mc.getWindow().getGuiScaledHeight() / rescale);
 
-            matrixStack.pushPose();
+            var poseStack = graphics.pose();
+            poseStack.pushPose();
             RenderSystem.depthMask(false);
 
-            matrixStack.scale(rescale, rescale, 1);
+            poseStack.scale(rescale, rescale, 1);
 
             ItemModelShaper mesher = mc.getItemRenderer().getItemModelShaper();
             TextureManager renderEngine = mc.textureManager;
@@ -108,11 +109,11 @@ public class MagicContainerOverlay extends GuiComponent implements IGuiOverlay
 
                 ItemStack stack = new ItemStack(Element.values[i].getOrb());
 
-                StackRenderingHelper.renderItemStack(mc.getItemRenderer(), matrixStack, stack, xPos - 8, yTop, 0, alpha);
+                StackRenderingHelper.renderItemStack(mc.getItemRenderer(), poseStack, stack, xPos - 8, yTop, 0, alpha);
 
                 float e = contained.get(i);
                 String formatted = Float.isInfinite(e) ? "\u221E" : EssentializerScreen.formatQuantityWithSuffix(e);
-                drawCenteredString(matrixStack, font, formatted, xPos, yTop + 16 + 2, 0xFFC0C0C0);
+                graphics.drawCenteredString(font, formatted, xPos, yTop + 16 + 2, 0xFFC0C0C0);
             }
 
             yTop += 16 + 2 + lineSpacing;
@@ -125,7 +126,7 @@ public class MagicContainerOverlay extends GuiComponent implements IGuiOverlay
 
                     float e = reservoir.get(i);
                     String formatted = String.format("(%s)", Float.isInfinite(e) ? "\u221E" : EssentializerScreen.formatQuantityWithSuffix(e));
-                    drawCenteredString(matrixStack, font, formatted, xPos, yTop, 0xFFC0C0C0);
+                    graphics.drawCenteredString(font, formatted, xPos, yTop, 0xFFC0C0C0);
                 }
 
                 yTop += lineSpacing;
@@ -151,7 +152,7 @@ public class MagicContainerOverlay extends GuiComponent implements IGuiOverlay
                         Element e = savedSequence.get(i);
                         ItemStack stack = new ItemStack(e.getOrb());
 
-                        StackRenderingHelper.renderItemStack(mc.getItemRenderer(), matrixStack, stack, xPos - 8, yPos, 0, 0xFFFFFFFF);
+                        StackRenderingHelper.renderItemStack(mc.getItemRenderer(), poseStack, stack, xPos - 8, yPos, 0, 0xFFFFFFFF);
                     }
 
                     Spellcast temp = SpellManager.makeSpell(savedSequence);
@@ -167,7 +168,7 @@ public class MagicContainerOverlay extends GuiComponent implements IGuiOverlay
 
                             float e = -cost.get(i);
                             String formatted = Float.isInfinite(e) ? "\u221E" : EssentializerScreen.formatQuantityWithSuffix(e);
-                            drawCenteredString(matrixStack, font, formatted, xPos, yTop, 0xFFC0C0C0);
+                            graphics.drawCenteredString(font, formatted, xPos, yTop, 0xFFC0C0C0);
                         }
 
                         yTop += lineSpacing;
@@ -190,7 +191,7 @@ public class MagicContainerOverlay extends GuiComponent implements IGuiOverlay
                     Element e = sequence.get(i);
                     ItemStack stack = new ItemStack(e.getOrb());
 
-                    StackRenderingHelper.renderItemStack(mc.getItemRenderer(), matrixStack, stack, xPos - 8, yPos, 0, 0xFFFFFFFF);
+                    StackRenderingHelper.renderItemStack(mc.getItemRenderer(), poseStack, stack, xPos - 8, yPos, 0, 0xFFFFFFFF);
                 }
 
                 Spellcast temp = SpellManager.makeSpell(sequence);
@@ -206,7 +207,7 @@ public class MagicContainerOverlay extends GuiComponent implements IGuiOverlay
 
                         float e = -cost.get(i);
                         String formatted = Float.isInfinite(e) ? "\u221E" : MagicTooltips.PRETTY_NUMBER_FORMATTER.format(e);
-                        drawCenteredString(matrixStack, font, formatted, xPos, yTop, 0xFFC0C0C0);
+                        graphics.drawCenteredString(font, formatted, xPos, yTop, 0xFFC0C0C0);
                     }
 
                     yTop += lineSpacing;
@@ -220,13 +221,13 @@ public class MagicContainerOverlay extends GuiComponent implements IGuiOverlay
                 if (WandUseManager.instance.handInUse != null)
                 {
                     KeyMapping key = WandUseManager.instance.spellKeys[i];
-                    drawCenteredString(matrixStack, font, Component.translatable("text.elementsofpower.magic.key", key.getTranslatedKeyMessage()), xPos, yTop, 0xFFC0C0C0);
+                    graphics.drawCenteredString(font, Component.translatable("text.elementsofpower.magic.key", key.getTranslatedKeyMessage()), xPos, yTop, 0xFFC0C0C0);
                 }
             }
 
             RenderSystem.depthMask(true);
 
-            matrixStack.popPose();
+            poseStack.popPose();
 
             RenderSystem.disableBlend();
         });

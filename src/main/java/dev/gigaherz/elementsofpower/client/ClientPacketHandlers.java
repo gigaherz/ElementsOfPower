@@ -29,7 +29,7 @@ public class ClientPacketHandlers
             Spellcast ccast = SpellManager.makeSpell(seq);
             if (ccast != null)
             {
-                InitializedSpellcast spellcast = ccast.init(player.level, player);
+                InitializedSpellcast spellcast = ccast.init(player.level(), player);
                 spellcast.readFromNBT(message.spellcast);
                 SpellcastEntityData.get(player).ifPresent(data -> data.onSync(message.changeMode, spellcast));
             }

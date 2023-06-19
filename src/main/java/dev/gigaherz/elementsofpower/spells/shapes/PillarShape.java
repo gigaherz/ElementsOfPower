@@ -27,17 +27,17 @@ public class PillarShape extends SpellShape
     }
 
     private boolean createSpellEntity(LivingEntity caster, double posX, double posZ, double minY, double maxY, float yaw, int delayTicks) {
-        BlockPos blockpos = new BlockPos(posX, maxY, posZ);
+        BlockPos blockpos = BlockPos.containing(posX, maxY, posZ);
         boolean flag = false;
         double d0 = 0.0D;
 
         do {
             BlockPos blockpos1 = blockpos.below();
-            BlockState blockstate = caster.level.getBlockState(blockpos1);
-            if (blockstate.isFaceSturdy(caster.level, blockpos1, Direction.UP)) {
-                if (!caster.level.isEmptyBlock(blockpos)) {
-                    BlockState blockstate1 = caster.level.getBlockState(blockpos);
-                    VoxelShape voxelshape = blockstate1.getCollisionShape(caster.level, blockpos);
+            BlockState blockstate = caster.level().getBlockState(blockpos1);
+            if (blockstate.isFaceSturdy(caster.level(), blockpos1, Direction.UP)) {
+                if (!caster.level().isEmptyBlock(blockpos)) {
+                    BlockState blockstate1 = caster.level().getBlockState(blockpos);
+                    VoxelShape voxelshape = blockstate1.getCollisionShape(caster.level(), blockpos);
                     if (!voxelshape.isEmpty()) {
                         d0 = voxelshape.max(Direction.Axis.Y);
                     }
@@ -51,7 +51,7 @@ public class PillarShape extends SpellShape
         } while(blockpos.getY() >= Mth.floor(minY) - 1);
 
         if (flag) {
-            return caster.level.addFreshEntity(new EvokerFangs(caster.level, posX, (double)blockpos.getY() + d0, posZ, yaw, delayTicks, caster));
+            return caster.level().addFreshEntity(new EvokerFangs(caster.level(), posX, (double)blockpos.getY() + d0, posZ, yaw, delayTicks, caster));
         }
 
         return false;
@@ -60,7 +60,7 @@ public class PillarShape extends SpellShape
     @Override
     public InitializedSpellcast castSpell(ItemStack stack, Player player, Spellcast cast)
     {
-        InitializedSpellcast spellcast = cast.init(player.level, player);
+        InitializedSpellcast spellcast = cast.init(player.level(), player);
 
         var first = 1.5f;
         var interval = 1.0f + cast.getRadiating()/4.0f;
@@ -116,7 +116,7 @@ public class PillarShape extends SpellShape
             }
             else
             {
-                bp = new BlockPos(mop.getLocation());
+                bp = BlockPos.containing(mop.getLocation());
                 vec = mop.getLocation();
                 dir = new Vec3(0, 0, 0);
             }

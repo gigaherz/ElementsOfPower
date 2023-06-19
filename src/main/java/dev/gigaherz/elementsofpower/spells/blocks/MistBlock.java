@@ -102,11 +102,4 @@ public class MistBlock extends Block
 
         world.scheduleTick(pos, this, rand.nextInt(10));
     }
-
-    @Deprecated
-    @Override
-    public PushReaction getPistonPushReaction(BlockState state)
-    {
-        return PushReaction.IGNORE;
-    }
 }

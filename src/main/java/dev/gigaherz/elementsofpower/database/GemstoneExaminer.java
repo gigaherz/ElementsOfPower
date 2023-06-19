@@ -6,10 +6,13 @@ import dev.gigaherz.elementsofpower.gemstones.Gemstone;
 import dev.gigaherz.elementsofpower.gemstones.GemstoneItem;
 import dev.gigaherz.elementsofpower.gemstones.Quality;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Map;
 import java.util.Random;
@@ -53,8 +56,8 @@ public class GemstoneExaminer
                 return stack;
         }
 
-        var rk = Registry.ITEM.getResourceKey(item);
-        var h = rk.flatMap(Registry.ITEM::getHolder);
+        var rk = ForgeRegistries.ITEMS.getResourceKey(item);
+        var h = rk.flatMap(ForgeRegistries.ITEMS::getHolder);
         return h.flatMap(holder ->
                 GEMS.entrySet().stream()
                 .filter(kv -> holder.is(kv.getValue()))
@@ -79,7 +82,7 @@ public class GemstoneExaminer
     }
 
     private static TagKey<Item> bind(String p_203855_) {
-        return TagKey.create(Registry.ITEM_REGISTRY, new ResourceLocation(p_203855_));
+        return TagKey.create(Registries.ITEM, new ResourceLocation(p_203855_));
     }
 
 }

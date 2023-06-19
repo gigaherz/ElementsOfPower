@@ -173,7 +173,7 @@ public class WindEffect extends SpellEffect
                 cast.world.setBlockAndUpdate(blockPos, Blocks.AIR.defaultBlockState());
             }
         }
-        else if (!currentState.getMaterial().blocksMotion() && !currentState.getMaterial().isLiquid())
+        else if (!currentState.blocksMotion() && !currentState.liquid())
         {
             dropBlockAsItem(cast.world, blockPos, currentState);
             cast.world.setBlockAndUpdate(blockPos, Blocks.AIR.defaultBlockState());

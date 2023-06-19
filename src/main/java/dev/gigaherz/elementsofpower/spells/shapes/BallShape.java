@@ -26,9 +26,9 @@ public class BallShape extends SpellShape
     @Override
     public InitializedSpellcast castSpell(ItemStack stack, Player player, Spellcast cast)
     {
-        InitializedSpellcast spellcast = cast.init(player.level, player);
+        InitializedSpellcast spellcast = cast.init(player.level(), player);
 
-        Level world = player.level;
+        Level world = player.level();
         BallEntity entity = new BallEntity(world, player, spellcast);
 
         entity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 2.5F, 1.0F);
@@ -70,7 +70,7 @@ public class BallShape extends SpellShape
             }
             else
             {
-                bp = new BlockPos(mop.getLocation());
+                bp = BlockPos.containing(mop.getLocation());
                 vec = mop.getLocation();
                 dir = new Vec3(0, 0, 0);
             }

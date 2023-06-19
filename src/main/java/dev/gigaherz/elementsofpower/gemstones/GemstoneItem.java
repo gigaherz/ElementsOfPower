@@ -4,7 +4,6 @@ import dev.gigaherz.elementsofpower.items.MagicContainerItem;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import dev.gigaherz.elementsofpower.spells.Element;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -18,6 +17,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class GemstoneItem extends MagicContainerItem
 {
@@ -56,18 +56,14 @@ public class GemstoneItem extends MagicContainerItem
         return getGemstone() == Gemstone.CREATIVITE;
     }
 
-    @Override
-    public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> items)
+    public void addToTab(Consumer<ItemStack> output)
     {
-        if (this.allowedIn(group))
+        // Unexamined
+        output.accept(new ItemStack(this));
+        // Qualities
+        for (Quality q : Quality.values)
         {
-            // Unexamined
-            items.add(new ItemStack(this));
-            // Qualities
-            for (Quality q : Quality.values)
-            {
-                items.add(setQuality(new ItemStack(this), q));
-            }
+            output.accept(setQuality(new ItemStack(this), q));
         }
     }
 

@@ -69,7 +69,7 @@ public class SpellcastEntityData implements INBTSerializable<CompoundTag>
                 Spellcast ccast = SpellManager.makeSpell(seq);
                 if (ccast != null)
                 {
-                    currentCasting = ccast.init(player.level, player);
+                    currentCasting = ccast.init(player.level(), player);
                     currentCasting.readFromNBT(cast);
                 }
             }
@@ -82,7 +82,7 @@ public class SpellcastEntityData implements INBTSerializable<CompoundTag>
         interrupt();
 
         currentCasting = spell;
-        currentCasting.init(player.level, player);
+        currentCasting.init(player.level(), player);
 
         sync(SynchronizeSpellcastState.ChangeMode.BEGIN);
     }
@@ -110,7 +110,7 @@ public class SpellcastEntityData implements INBTSerializable<CompoundTag>
 
     private void sync(SynchronizeSpellcastState.ChangeMode mode)
     {
-        if (currentCasting != null && !player.level.isClientSide)
+        if (currentCasting != null && !player.level().isClientSide)
         {
             ElementsOfPowerMod.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player),
                     new SynchronizeSpellcastState(mode, currentCasting));
@@ -133,7 +133,7 @@ public class SpellcastEntityData implements INBTSerializable<CompoundTag>
         else
         {
             ItemStack newItem = player.getInventory().getSelected();
-            if (!ItemStack.isSame(currentItem, newItem))
+            if (!ItemStack.isSameItem(currentItem, newItem))
             {
                 shouldCancel = true;
             }

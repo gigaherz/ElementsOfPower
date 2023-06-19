@@ -117,11 +117,4 @@ public class DustBlock extends Block
     {
         builder.add(DENSITY);
     }
-
-    @Deprecated
-    @Override
-    public PushReaction getPistonPushReaction(BlockState state)
-    {
-        return PushReaction.IGNORE;
-    }
 }

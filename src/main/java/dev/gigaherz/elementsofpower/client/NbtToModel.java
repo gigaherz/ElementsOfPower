@@ -41,22 +41,20 @@ public class NbtToModel implements IUnbakedGeometry<NbtToModel>
     }
 
     @Override
-    public BakedModel bake(IGeometryBakingContext owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ItemOverrides overrides, ResourceLocation modelLocation)
+    public BakedModel bake(IGeometryBakingContext owner, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ItemOverrides overrides, ResourceLocation modelLocation)
     {
         return new Baked(
                 spriteGetter.apply(owner.getMaterial("particle")),
-                owner.useBlockLight(), bakery, bakery::getModel, spriteGetter, key,
-                Maps.transformEntries(modelMap, (k, v) -> v.bake(bakery, v, spriteGetter, modelTransform, new ResourceLocation(modelLocation.getNamespace(), modelLocation.getPath() + "/" + k), owner.useBlockLight()))
+                owner.useBlockLight(), baker, baker::getModel, spriteGetter, key,
+                Maps.transformEntries(modelMap, (k, v) -> v.bake(baker, v, spriteGetter, modelTransform, new ResourceLocation(modelLocation.getNamespace(), modelLocation.getPath() + "/" + k), owner.useBlockLight()))
         );
     }
 
     @Override
-    public Collection<Material> getMaterials(IGeometryBakingContext owner, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
+    public void resolveParents(Function<ResourceLocation, UnbakedModel> modelGetter, IGeometryBakingContext context)
     {
-        Set<Material> materials = new HashSet<>();
         for (BlockModel model : modelMap.values())
-        {materials.addAll(model.getMaterials(modelGetter, missingTextureErrors));}
-        return materials;
+            model.resolveParents(modelGetter);
     }
 
     public static class Baked implements BakedModel
@@ -65,12 +63,12 @@ public class NbtToModel implements IUnbakedGeometry<NbtToModel>
         private final TextureAtlasSprite particle;
         private final ItemOverrides overrides;
 
-        public Baked(TextureAtlasSprite particle, boolean isSideLit, ModelBakery bakery, Function<ResourceLocation, UnbakedModel> modelGetter, Function<Material, TextureAtlasSprite> textureGetter,
+        public Baked(TextureAtlasSprite particle, boolean isSideLit, ModelBaker baker, Function<ResourceLocation, UnbakedModel> modelGetter, Function<Material, TextureAtlasSprite> textureGetter,
                      String key, Map<String, BakedModel> modelMap)
         {
             this.isSideLit = isSideLit;
             this.particle = particle;
-            this.overrides = new ItemOverrides(bakery, null, modelGetter, textureGetter, Collections.emptyList())
+            this.overrides = new ItemOverrides(baker, null, Collections.emptyList(), textureGetter)
             {
                 final String nbtKey = key;
                 final Map<String, BakedModel> models = modelMap;

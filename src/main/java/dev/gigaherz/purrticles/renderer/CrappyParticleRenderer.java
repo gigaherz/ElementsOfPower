@@ -4,16 +4,16 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
 import dev.gigaherz.purrticles.ParticleModule;
 import dev.gigaherz.purrticles.ParticleSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraftforge.client.event.RenderLevelLastEvent;
+import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.common.MinecraftForge;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
 
 import java.util.List;
 import java.util.function.Function;
@@ -28,8 +28,11 @@ public class CrappyParticleRenderer
         MinecraftForge.EVENT_BUS.addListener(this::renderEvent);
     }
 
-    private void renderEvent(RenderLevelLastEvent event)
+    private void renderEvent(RenderLevelStageEvent event)
     {
+        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES)
+            return;
+
         float partialTicks = Minecraft.getInstance().getFrameTime();
         MultiBufferSource.BufferSource buffers = Minecraft.getInstance().renderBuffers().bufferSource();
         PoseStack stack = event.getPoseStack();

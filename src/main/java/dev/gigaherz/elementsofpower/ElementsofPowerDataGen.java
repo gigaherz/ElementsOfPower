@@ -12,23 +12,31 @@ import dev.gigaherz.elementsofpower.database.GemstoneExaminer;
 import dev.gigaherz.elementsofpower.database.StockConversions;
 import dev.gigaherz.elementsofpower.gemstones.AnalyzedFilteringIngredient;
 import dev.gigaherz.elementsofpower.gemstones.Gemstone;
+import dev.gigaherz.elementsofpower.gemstones.GemstoneItem;
 import dev.gigaherz.elementsofpower.integration.aequivaleo.AequivaleoPlugin;
 import dev.gigaherz.elementsofpower.spells.Element;
 import dev.gigaherz.elementsofpower.spells.blocks.CushionBlock;
 import dev.gigaherz.elementsofpower.spells.blocks.DustBlock;
 import dev.gigaherz.elementsofpower.spells.blocks.LightBlock;
 import dev.gigaherz.elementsofpower.spells.blocks.MistBlock;
+import net.minecraft.Util;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
-import net.minecraft.data.loot.BlockLoot;
+import net.minecraft.data.PackOutput;
+import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.data.recipes.*;
-import net.minecraft.data.tags.BlockTagsProvider;
+import net.minecraft.data.registries.VanillaRegistries;
+import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
 import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.*;
+import net.minecraft.world.flag.FeatureFlagSet;
+import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -39,7 +47,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.LootTables;
 import net.minecraft.world.level.storage.loot.ValidationContext;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
@@ -49,12 +56,14 @@ import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.common.data.BlockTagsProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -69,11 +78,11 @@ class ElementsofPowerDataGen
         DataGenerator gen = event.getGenerator();
         ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
 
-        gen.addProvider(event.includeServer(), new Recipes(gen));
-        gen.addProvider(event.includeServer(), new LootGen(gen));
+        gen.addProvider(event.includeServer(), new Recipes(gen.getPackOutput()));
+        gen.addProvider(event.includeServer(), LootGen.create(gen.getPackOutput()));
 
-        BlockTagGens blockTags = new BlockTagGens(gen, existingFileHelper);
-        ItemTagGens itemTags = new ItemTagGens(gen, blockTags, existingFileHelper);
+        BlockTagGens blockTags = new BlockTagGens(gen.getPackOutput(), existingFileHelper);
+        ItemTagGens itemTags = new ItemTagGens(gen.getPackOutput(), existingFileHelper);
         gen.addProvider(event.includeServer(), blockTags);
         gen.addProvider(event.includeServer(), itemTags);
 
@@ -82,7 +91,7 @@ class ElementsofPowerDataGen
             gen.addProvider(event.includeServer(), new AequivaleoGens(gen, itemTags));
         }
 
-        gen.addProvider(event.includeClient(), new BlockStates(gen, existingFileHelper));
+        gen.addProvider(event.includeClient(), new BlockStates(gen.getPackOutput(), existingFileHelper));
     }
 
     private static class AequivaleoGens extends ForcedInformationProvider
@@ -107,7 +116,10 @@ class ElementsofPowerDataGen
 
                 Set<Object> gameObjects = Sets.newHashSet(item);
                 NonNullList<ItemStack> stacks = NonNullList.create();
-                item.fillItemCategory(CreativeModeTab.TAB_SEARCH, stacks);
+                if (item instanceof GemstoneItem gem)
+                    gem.addToTab(stacks::add);
+                else
+                    stacks.add(new ItemStack(item));
                 gameObjects.addAll(stacks);
                 save(specFor(gameObjects).withCompounds(compoundRefs));
             });
@@ -136,11 +148,12 @@ class ElementsofPowerDataGen
         }
     }
 
-    private static class ItemTagGens extends ItemTagsProvider implements DataProvider
+    private static class ItemTagGens extends IntrinsicHolderTagsProvider<Item>
     {
-        public ItemTagGens(DataGenerator gen, BlockTagsProvider blockTags, ExistingFileHelper existingFileHelper)
+        public ItemTagGens(PackOutput packOutput, ExistingFileHelper existingFileHelper)
         {
-            super(gen, blockTags, ElementsOfPowerMod.MODID, existingFileHelper);
+            super(packOutput, Registries.ITEM, CompletableFuture.supplyAsync(VanillaRegistries::createLookup, Util.backgroundExecutor()),
+                    (p_255627_) -> p_255627_.builtInRegistryHolder().key(), ElementsOfPowerMod.MODID, existingFileHelper);
         }
 
         @Nullable
@@ -150,7 +163,7 @@ class ElementsofPowerDataGen
         }
 
         @Override
-        protected void addTags()
+        protected void addTags(HolderLookup.Provider lookup)
         {
             GemstoneExaminer.GEMS.forEach((gem, tag) -> {
             });
@@ -192,15 +205,16 @@ class ElementsofPowerDataGen
         }
     }
 
-    private static class BlockTagGens extends BlockTagsProvider implements DataProvider
+    private static class BlockTagGens extends IntrinsicHolderTagsProvider<Block>
     {
-        public BlockTagGens(DataGenerator gen, ExistingFileHelper existingFileHelper)
+        public BlockTagGens(PackOutput packOutput, ExistingFileHelper existingFileHelper)
         {
-            super(gen, ElementsOfPowerMod.MODID, existingFileHelper);
+            super(packOutput, Registries.BLOCK, CompletableFuture.supplyAsync(VanillaRegistries::createLookup, Util.backgroundExecutor()),
+                    (p_255627_) -> p_255627_.builtInRegistryHolder().key(), ElementsOfPowerMod.MODID, existingFileHelper);
         }
 
         @Override
-        protected void addTags()
+        protected void addTags(HolderLookup.Provider lookup)
         {
             this.tag(CocoonFeature.REPLACEABLE_TAG)
                     .add(Blocks.SAND, Blocks.RED_SAND, Blocks.DIRT, Blocks.NETHERRACK);
@@ -246,45 +260,31 @@ class ElementsofPowerDataGen
         }
     }
 
-    private static class LootGen extends LootTableProvider implements DataProvider
+    private static class LootGen
     {
-        public LootGen(DataGenerator gen)
+        public static LootTableProvider create(PackOutput gen)
         {
-            super(gen);
+            return new LootTableProvider(gen, Set.of(), List.of(
+                    new LootTableProvider.SubProviderEntry(LootGen.BlockTables::new, LootContextParamSets.BLOCK)
+                    //new LootTableProvider.SubProviderEntry(LootGen.ChestTables::new, LootContextParamSets.CHEST)
+            ));
         }
 
-        private final List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootContextParamSet>> tables = ImmutableList.of(
-                Pair.of(BlockTables::new, LootContextParamSets.BLOCK)
-                //Pair.of(FishingLootTables::new, LootParameterSets.FISHING),
-                //Pair.of(ChestLootTables::new, LootParameterSets.CHEST),
-                //Pair.of(EntityLootTables::new, LootParameterSets.ENTITY),
-                //Pair.of(GiftLootTables::new, LootParameterSets.GIFT)
-        );
-
-        @Override
-        protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootContextParamSet>> getTables()
+        public static class BlockTables extends BlockLootSubProvider
         {
-            return tables;
-        }
+            protected BlockTables()
+            {
+                super(Set.of(), FeatureFlags.REGISTRY.allFlags());
+            }
 
-        @Override
-        protected void validate(Map<ResourceLocation, LootTable> map, ValidationContext validationtracker)
-        {
-            map.forEach((p_218436_2_, p_218436_3_) -> {
-                LootTables.validate(validationtracker, p_218436_2_, p_218436_3_);
-            });
-        }
-
-        public static class BlockTables extends BlockLoot
-        {
             @Override
-            protected void addTables()
+            protected void generate()
             {
                 this.dropSelf(ElementsOfPowerBlocks.ESSENTIALIZER.get());
 
                 Element.stream_without_balance().forEach(e -> {
                     if (e != Element.BALANCE && e.getCocoon() != null)
-                        this.add(e.getCocoon(), BlockTables::dropWithOrbs);
+                        this.add(e.getCocoon(), this::dropWithOrbs);
                 });
 
                 Gemstone.stream().forEach(g -> {
@@ -300,7 +300,7 @@ class ElementsofPowerDataGen
                 });
             }
 
-            protected static LootTable.Builder dropWithOrbs(Block block)
+            protected LootTable.Builder dropWithOrbs(Block block)
             {
                 LootTable.Builder builder = LootTable.lootTable();
                 for (Element e : Element.values_without_balance)
@@ -329,7 +329,7 @@ class ElementsofPowerDataGen
 
     private static class BlockStates extends BlockStateProvider
     {
-        public BlockStates(DataGenerator gen, ExistingFileHelper existingFileHelper)
+        public BlockStates(PackOutput gen, ExistingFileHelper existingFileHelper)
         {
             super(gen, ElementsOfPowerMod.MODID, existingFileHelper);
         }
@@ -366,15 +366,15 @@ class ElementsofPowerDataGen
 
     private static class Recipes extends RecipeProvider
     {
-        public Recipes(DataGenerator gen)
+        public Recipes(PackOutput gen)
         {
             super(gen);
         }
 
         @Override
-        protected void buildCraftingRecipes(Consumer<FinishedRecipe> consumer)
+        protected void buildRecipes(Consumer<FinishedRecipe> consumer)
         {
-            ShapedRecipeBuilder.shaped(ElementsOfPowerItems.ANALYZER.get())
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ElementsOfPowerItems.ANALYZER.get())
                     .pattern("glg")
                     .pattern("i  ")
                     .pattern("psp")
@@ -386,7 +386,7 @@ class ElementsofPowerDataGen
                     .unlockedBy("has_gold", has(Items.GOLD_INGOT))
                     .save(consumer);
 
-            ShapedRecipeBuilder.shaped(ElementsOfPowerItems.ESSENTIALIZER.get())
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ElementsOfPowerItems.ESSENTIALIZER.get())
                     .pattern("IQI")
                     .pattern("ONO")
                     .pattern("IOI")
@@ -397,7 +397,7 @@ class ElementsofPowerDataGen
                     .unlockedBy("has_star", has(Items.NETHER_STAR))
                     .save(consumer);
 
-            ShapedRecipeBuilder.shaped(ElementsOfPowerItems.WAND.get())
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ElementsOfPowerItems.WAND.get())
                     .pattern(" G")
                     .pattern("S ")
                     .define('G', Items.GOLD_INGOT)
@@ -405,7 +405,7 @@ class ElementsofPowerDataGen
                     .unlockedBy("has_gold", has(Items.GOLD_INGOT))
                     .save(consumer);
 
-            ShapedRecipeBuilder.shaped(ElementsOfPowerItems.STAFF.get())
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ElementsOfPowerItems.STAFF.get())
                     .pattern(" GW")
                     .pattern(" SG")
                     .pattern("S  ")
@@ -415,7 +415,7 @@ class ElementsofPowerDataGen
                     .unlockedBy("has_wand", has(ElementsOfPowerItems.WAND.get()))
                     .save(consumer);
 
-            ShapedRecipeBuilder.shaped(ElementsOfPowerItems.RING.get())
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ElementsOfPowerItems.RING.get())
                     .pattern(" GG")
                     .pattern("G G")
                     .pattern(" G ")
@@ -423,7 +423,7 @@ class ElementsofPowerDataGen
                     .unlockedBy("has_gold", has(Items.GOLD_INGOT))
                     .save(consumer);
 
-            ShapedRecipeBuilder.shaped(ElementsOfPowerItems.NECKLACE.get())
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ElementsOfPowerItems.NECKLACE.get())
                     .pattern("GGG")
                     .pattern("G G")
                     .pattern(" G ")
@@ -431,7 +431,7 @@ class ElementsofPowerDataGen
                     .unlockedBy("has_gold", has(Items.GOLD_INGOT))
                     .save(consumer);
 
-            ShapedRecipeBuilder.shaped(ElementsOfPowerItems.HEADBAND.get())
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ElementsOfPowerItems.HEADBAND.get())
                     .pattern(" G ")
                     .pattern("G G")
                     .pattern("GGG")
@@ -448,13 +448,13 @@ class ElementsofPowerDataGen
                 {
                     TagKey<Item> tag = itemTag(new ResourceLocation("elementsofpower", gem.getSerializedName() + "_ores").toString());
                     Item[] oreItems = gem.getOres().stream().map(Block::asItem).toArray(Item[]::new);
-                    SimpleCookingRecipeBuilder.smelting(Ingredient.of(oreItems), gem, 1.0F, 200)
+                    SimpleCookingRecipeBuilder.smelting(Ingredient.of(oreItems), RecipeCategory.MISC, gem, 1.0F, 200)
                             .unlockedBy("has_ore", has(tag))
                             .save(consumer, ElementsOfPowerMod.location("smelting/" + gem.getSerializedName()));
                 }
                 if (gem.generateCustomBlock())
                 {
-                    ShapedRecipeBuilder.shaped(gem.getBlock())
+                    ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gem.getBlock())
                             .pattern("ggg")
                             .pattern("ggg")
                             .pattern("ggg")
@@ -462,7 +462,7 @@ class ElementsofPowerDataGen
                             .unlockedBy("has_item", has(gem.getItem()))
                             .save(consumer);
 
-                    ShapelessRecipeBuilder.shapeless(gem.getItem(), 9)
+                    ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, gem.getItem(), 9)
                             .requires(Ingredient.of(gem.getBlock()))
                             .unlockedBy("has_item", has(gem.getItem()))
                             .save(consumer, ElementsOfPowerMod.location(gem.getSerializedName() + "_from_block"));
@@ -472,10 +472,10 @@ class ElementsofPowerDataGen
     }
 
     private static TagKey<Item> itemTag(String p_203855_) {
-        return TagKey.create(Registry.ITEM_REGISTRY, new ResourceLocation(p_203855_));
+        return TagKey.create(Registries.ITEM, new ResourceLocation(p_203855_));
     }
 
     private static TagKey<Block> blockTag(String p_203847_) {
-        return TagKey.create(Registry.BLOCK_REGISTRY, new ResourceLocation(p_203847_));
+        return TagKey.create(Registries.BLOCK, new ResourceLocation(p_203847_));
     }
 }

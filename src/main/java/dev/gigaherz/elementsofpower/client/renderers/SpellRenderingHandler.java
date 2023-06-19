@@ -18,7 +18,7 @@ import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RenderLevelLastEvent;
+import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -38,8 +38,11 @@ public class SpellRenderingHandler
     }
 
     @SubscribeEvent
-    public static void renderFirstPerson(RenderLevelLastEvent event)
+    public static void renderFirstPerson(RenderLevelStageEvent event)
     {
+        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_ENTITIES)
+            return;
+
         Player player = Minecraft.getInstance().player;
         if (player == null)
             return;

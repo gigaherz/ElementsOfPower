@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
     "g": {
       "tag": "forge:glass_panes"
@@ -24,5 +25,6 @@
   ],
   "result": {
     "item": "elementsofpower:analyzer"
-  }
+  },
+  "show_notification": true
 }

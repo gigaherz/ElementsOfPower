@@ -45,7 +45,7 @@ public class FlameEffect extends SpellEffect
     {
         float damage = (entity instanceof Blaze) ? 3 + cast.getDamageForce() : cast.getDamageForce();
 
-        entity.hurt(DamageSource.thrown(cast.getProjectile(), cast.player), damage);
+        entity.hurt(entity.damageSources().thrown(cast.getProjectile(), cast.player), damage);
         entity.setSecondsOnFire(cast.getDamageForce());
     }
 
@@ -87,7 +87,7 @@ public class FlameEffect extends SpellEffect
 
             double lv = Math.max(0, cast.getDamageForce() - ll);
 
-            boolean canAttack = e.hurt(DamageSource.fireball(ef, cast.player), 5.0F);
+            boolean canAttack = e.hurt(e.damageSources().fireball(ef, cast.player), 5.0F);
 
             if (canAttack)
             {

@@ -29,8 +29,7 @@ public class AnalyzerItem extends Item
         {
             ItemStack stack2 = inv.items.get(i);
             if (!inv.items.get(i).isEmpty()
-                    && stack.getItem() == stack2.getItem()
-                    && ItemStack.tagMatches(stack, stack2))
+                    && ItemStack.isSameItemSameTags(stack, stack2))
             {
                 return i;
             }

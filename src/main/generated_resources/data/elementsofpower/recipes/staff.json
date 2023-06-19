@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
     "G": {
       "item": "minecraft:iron_block"
@@ -18,5 +19,6 @@
   ],
   "result": {
     "item": "elementsofpower:staff"
-  }
+  },
+  "show_notification": true
 }

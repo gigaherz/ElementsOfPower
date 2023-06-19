@@ -12,8 +12,9 @@ import dev.gigaherz.elementsofpower.spells.blocks.LightBlock;
 import dev.gigaherz.elementsofpower.spells.blocks.MistBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
+import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.PushReaction;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -23,22 +24,23 @@ public class ElementsOfPowerBlocks
     static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, ElementsOfPowerMod.MODID);
 
     public static final RegistryObject<EssentializerBlock> ESSENTIALIZER = BLOCKS.register("essentializer", () ->
-            new EssentializerBlock(Block.Properties.of(Material.METAL)
+            new EssentializerBlock(Block.Properties.of().mapColor(MapColor.METAL)
             .requiresCorrectToolForDrops().strength(15.0F)
             .sound(SoundType.METAL).lightLevel(b -> 1)));
     public static final RegistryObject<DustBlock> DUST = BLOCKS.register("dust", () ->
-            new DustBlock(Block.Properties.of(ElementsOfPowerBlocks.BlockMaterials.DUST).noLootTable().noCollission().noOcclusion()
+            new DustBlock(Block.Properties.of().forceSolidOff().replaceable().pushReaction(PushReaction.DESTROY).noLootTable().noCollission().noOcclusion()
             .isSuffocating((s, w, p) -> true).isViewBlocking((s, w, p) -> false)
             .strength(0.1F).sound(SoundType.WOOL).dynamicShape()));
     public static final RegistryObject<MistBlock> MIST = BLOCKS.register("mist", () ->
-            new MistBlock(Block.Properties.of(ElementsOfPowerBlocks.BlockMaterials.MIST).noLootTable().noCollission().noOcclusion()
+            new MistBlock(Block.Properties.of().forceSolidOff().replaceable().pushReaction(PushReaction.DESTROY).noLootTable().noCollission().noOcclusion()
             .isSuffocating((s, w, p) -> false).isViewBlocking((s, w, p) -> false)
             .strength(0.1F).sound(SoundType.WOOL).dynamicShape()));
     public static final RegistryObject<LightBlock> LIGHT = BLOCKS.register("light", () ->
-            new LightBlock(Block.Properties.of(ElementsOfPowerBlocks.BlockMaterials.LIGHT).noLootTable().noCollission().noOcclusion()
+            new LightBlock(Block.Properties.of().forceSolidOff().replaceable().pushReaction(PushReaction.DESTROY).noLootTable().noCollission().noOcclusion()
             .isSuffocating((s, w, p) -> false).isViewBlocking((s, w, p) -> false)
             .strength(15.0F).lightLevel(b -> 15).sound(SoundType.METAL)));
-    public static final RegistryObject<CushionBlock> CUSHION = BLOCKS.register("cushion", () -> new CushionBlock(Block.Properties.of(ElementsOfPowerBlocks.BlockMaterials.CUSHION).noLootTable().noCollission().noOcclusion()
+    public static final RegistryObject<CushionBlock> CUSHION = BLOCKS.register("cushion", () ->
+            new CushionBlock(Block.Properties.of().forceSolidOff().replaceable().pushReaction(PushReaction.DESTROY).noLootTable().noCollission().noOcclusion()
             .isSuffocating((s, w, p) -> false).isViewBlocking((s, w, p) -> false)
             .strength(15.0F).sound(SoundType.METAL).dynamicShape()));
 
@@ -46,7 +48,7 @@ public class ElementsOfPowerBlocks
     private static RegistryObject<CocoonBlock> registerCocoon(Element type)
     {
         return BLOCKS.register(type.getName() + "_cocoon", () ->
-                new CocoonBlock(type, Block.Properties.of(Material.STONE).strength(1F)
+                new CocoonBlock(type, Block.Properties.of().mapColor(MapColor.PLANT).strength(1F).pushReaction(PushReaction.DESTROY)
                         .sound(SoundType.WOOD).lightLevel(b -> 11))
         );
     }
@@ -63,7 +65,8 @@ public class ElementsOfPowerBlocks
     private static RegistryObject<GemstoneOreBlock> registerGemstoneOre(Gemstone type)
     {
         return BLOCKS.register(type.getSerializedName() + "_ore", ()->
-                new GemstoneOreBlock(type, Block.Properties.of(Material.STONE)
+                new GemstoneOreBlock(type, Block.Properties.of().mapColor(MapColor.STONE).instrument(NoteBlockInstrument.BASEDRUM)
+                        .sound(SoundType.STONE)
                         .requiresCorrectToolForDrops()
                         .strength(3.0F, 3.0F)
                 )
@@ -73,7 +76,8 @@ public class ElementsOfPowerBlocks
     private static RegistryObject<GemstoneOreBlock> registerDeepslateGemstoneOre(Gemstone type)
     {
         return BLOCKS.register("deepslate_" + type.getSerializedName() + "_ore", ()->
-                new GemstoneOreBlock(type, Block.Properties.of(Material.STONE)
+                new GemstoneOreBlock(type, Block.Properties.of().mapColor(MapColor.DEEPSLATE).instrument(NoteBlockInstrument.BASEDRUM)
+                        .sound(SoundType.DEEPSLATE)
                         .requiresCorrectToolForDrops()
                         .strength(4.5F, 3.0F)
                 )
@@ -97,7 +101,7 @@ public class ElementsOfPowerBlocks
     private static RegistryObject<GemstoneBlock> registerGemstoneBlock(Gemstone type)
     {
         return BLOCKS.register(type.getSerializedName() + "_block", () ->
-                new GemstoneBlock(type, Block.Properties.of(Material.METAL)
+                new GemstoneBlock(type, Block.Properties.of().mapColor(MapColor.METAL)
                         .strength(5F, 6F)
                         .sound(SoundType.METAL)
                         .requiresCorrectToolForDrops()
@@ -112,11 +116,4 @@ public class ElementsOfPowerBlocks
     public static final RegistryObject<GemstoneBlock> SERENDIBITE_BLOCK = registerGemstoneBlock(Gemstone.SERENDIBITE);
     public static final RegistryObject<GemstoneBlock> ELBAITE_BLOCK = registerGemstoneBlock(Gemstone.ELBAITE);
 
-    public static class BlockMaterials
-    {
-        public static Material DUST = (new Material.Builder(MaterialColor.COLOR_BLACK)).notSolidBlocking().nonSolid().replaceable().destroyOnPush().build();
-        public static Material MIST = (new Material.Builder(MaterialColor.COLOR_BLACK)).noCollider().notSolidBlocking().nonSolid().replaceable().destroyOnPush().build();
-        public static Material LIGHT = (new Material.Builder(MaterialColor.COLOR_BLACK)).noCollider().notSolidBlocking().nonSolid().replaceable().destroyOnPush().build();
-        public static Material CUSHION = (new Material.Builder(MaterialColor.COLOR_BLACK)).noCollider().notSolidBlocking().nonSolid().replaceable().destroyOnPush().build();
-    }
 }

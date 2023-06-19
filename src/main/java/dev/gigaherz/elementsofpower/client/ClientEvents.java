@@ -26,13 +26,4 @@ public class ClientEvents
             }
         });
     }
-
-    @SubscribeEvent
-    public static void onTextureStitchEvent(TextureStitchEvent.Pre event)
-    {
-        event.addSprite(ElementsOfPowerMod.location("block/cone"));
-        event.addSprite(ElementsOfPowerMod.location("gui/ring_slot_background"));
-        event.addSprite(ElementsOfPowerMod.location("gui/necklace_slot_background"));
-        event.addSprite(ElementsOfPowerMod.location("gui/headband_slot_background"));
-    }
 }

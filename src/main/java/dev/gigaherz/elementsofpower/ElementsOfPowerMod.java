@@ -1,7 +1,7 @@
 package dev.gigaherz.elementsofpower;
 
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
+import dev.gigaherz.elementsofpower.analyzer.AnalyzerItem;
 import dev.gigaherz.elementsofpower.analyzer.menu.AnalyzerMenu;
 import dev.gigaherz.elementsofpower.analyzer.menu.AnalyzerScreen;
 import dev.gigaherz.elementsofpower.capabilities.MagicContainerCapability;
@@ -18,7 +18,12 @@ import dev.gigaherz.elementsofpower.essentializer.menu.EssentializerMenu;
 import dev.gigaherz.elementsofpower.essentializer.menu.EssentializerScreen;
 import dev.gigaherz.elementsofpower.gemstones.AnalyzedFilteringIngredient;
 import dev.gigaherz.elementsofpower.gemstones.Gemstone;
+import dev.gigaherz.elementsofpower.gemstones.GemstoneItem;
 import dev.gigaherz.elementsofpower.gemstones.Quality;
+import dev.gigaherz.elementsofpower.items.BaubleItem;
+import dev.gigaherz.elementsofpower.items.MagicOrbItem;
+import dev.gigaherz.elementsofpower.items.StaffItem;
+import dev.gigaherz.elementsofpower.items.WandItem;
 import dev.gigaherz.elementsofpower.network.*;
 import dev.gigaherz.elementsofpower.recipes.ContainerChargeRecipe;
 import dev.gigaherz.elementsofpower.recipes.GemstoneChangeRecipe;
@@ -29,22 +34,27 @@ import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.features.FeatureUtils;
 import net.minecraft.data.worldgen.features.OreFeatures;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.flag.FeatureFlagSet;
+import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.SimpleRecipeSerializer;
+import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -95,22 +105,21 @@ public class ElementsOfPowerMod
 {
     public static final String MODID = "elementsofpower";
 
-    private static Holder<ConfiguredFeature<NoneFeatureConfiguration, ?>> CONFIGURED_COCOON_FEATURE;
-    private static Holder<PlacedFeature> PLACED_COCOON_FEATURE;
-
     public static ResourceLocation location(String location)
     {
         return new ResourceLocation(MODID, location);
     }
 
-    private static final DeferredRegister<LootItemFunctionType> LOOT_FUNCTION_TYPES = DeferredRegister.create(Registry.LOOT_FUNCTION_REGISTRY, MODID);
+    private static final DeferredRegister<LootItemFunctionType> LOOT_FUNCTION_TYPES = DeferredRegister.create(Registries.LOOT_FUNCTION_TYPE, MODID);
     private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, MODID);
     private static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, MODID);
     private static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(ForgeRegistries.MENU_TYPES, MODID);
     private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, MODID);
     private static final DeferredRegister<Feature<?>> FEATURES = DeferredRegister.create(ForgeRegistries.FEATURES, MODID);
     private static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, MODID);
-    private static DeferredRegister<Codec<? extends BiomeModifier>> BIOME_MODIFIER_SERIALIZERS = DeferredRegister.create(ForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS, MODID);
+    private static final DeferredRegister<CreativeModeTab> CREATIVE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
+    private static final DeferredRegister<Codec<? extends BiomeModifier>> BIOME_MODIFIER_SERIALIZERS = DeferredRegister.create(ForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS, MODID);
+    private static final DeferredRegister<PlacementModifierType<?>> PLACEMENT_MODIFIER_TYPES = DeferredRegister.create(Registries.PLACEMENT_MODIFIER_TYPE, MODID);
 
     public static final RegistryObject<EntityType<BallEntity>> SPELL_BALL_ENTITY_TYPE = ENTITY_TYPES.register("spell_ball", () ->
             EntityType.Builder.<BallEntity>of(BallEntity::new, MobCategory.MISC)
@@ -127,17 +136,17 @@ public class ElementsOfPowerMod
     );
 
     public static final RegistryObject<MenuType<EssentializerMenu>> ESSENTIALIZER_MENU = MENU_TYPES.register("essentializer", () ->
-            new MenuType<>(EssentializerMenu::new)
+            new MenuType<>(EssentializerMenu::new, FeatureFlags.DEFAULT_FLAGS)
     );
     public static final RegistryObject<MenuType<AnalyzerMenu>> ANALYZER_MENU = MENU_TYPES.register("analyzer", () ->
             IForgeMenuType.create(AnalyzerMenu::new)
     );
 
-    public static final RegistryObject<SimpleRecipeSerializer<ContainerChargeRecipe>> CONTAINER_CHARGE = RECIPE_SERIALIZERS.register("container_charge", () ->
-            new SimpleRecipeSerializer<>(ContainerChargeRecipe::new)
+    public static final RegistryObject<SimpleCraftingRecipeSerializer<ContainerChargeRecipe>> CONTAINER_CHARGE = RECIPE_SERIALIZERS.register("container_charge", () ->
+            new SimpleCraftingRecipeSerializer<>(ContainerChargeRecipe::new)
     );
-    public static final RegistryObject<SimpleRecipeSerializer<GemstoneChangeRecipe>> GEMSTONE_CHANGE = RECIPE_SERIALIZERS.register("gemstone_change", () ->
-            new SimpleRecipeSerializer<>(GemstoneChangeRecipe::new)
+    public static final RegistryObject<SimpleCraftingRecipeSerializer<GemstoneChangeRecipe>> GEMSTONE_CHANGE = RECIPE_SERIALIZERS.register("gemstone_change", () ->
+            new SimpleCraftingRecipeSerializer<>(GemstoneChangeRecipe::new)
     );
 
     public static final RegistryObject<CocoonFeature> COCOON_FEATURE = FEATURES.register("cocoon", () ->
@@ -153,6 +162,87 @@ public class ElementsOfPowerMod
     public static RegistryObject<Codec<CocoonModifier>> COCOON_MODIFIER_SERIALIZER = BIOME_MODIFIER_SERIALIZERS.register("cocoons", () -> Codec.unit(CocoonModifier::new));
     public static RegistryObject<Codec<GemstoneOreModifier>> GEMSTONE_ORE_MODIFIER_SERIALIZER = BIOME_MODIFIER_SERIALIZERS.register("gemstone_ores", () -> Codec.unit(GemstoneOreModifier::new));
 
+
+    public static final RegistryObject<PlacementModifierType<CocoonPlacement>> COCOON_PLACEMENT = PLACEMENT_MODIFIER_TYPES.register("cocoon_placement", () -> CocoonPlacement::codec);
+
+    public static final RegistryObject<CreativeModeTab> CREATIVE_TAB_MAGIC = CREATIVE_TABS.register("magic", () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP,0)
+            .icon(() -> ElementsOfPowerItems.WAND.get().getStack(Gemstone.DIAMOND, Quality.COMMON))
+            .title(Component.translatable("tab.elementsofpower.magic"))
+            .displayItems((featureFlags, output) -> {
+                output.accept(ElementsOfPowerItems.ESSENTIALIZER.get());
+
+                output.accept(ElementsOfPowerItems.ANALYZER.get());
+                output.accept(ElementsOfPowerItems.WAND.get());
+                output.accept(ElementsOfPowerItems.STAFF.get());
+                output.accept(ElementsOfPowerItems.RING.get());
+                output.accept(ElementsOfPowerItems.HEADBAND.get());
+                output.accept(ElementsOfPowerItems.NECKLACE.get());
+
+                output.accept(ElementsOfPowerItems.FIRE_ORB.get());
+                output.accept(ElementsOfPowerItems.WATER_ORB.get());
+                output.accept(ElementsOfPowerItems.AIR_ORB.get());
+                output.accept(ElementsOfPowerItems.EARTH_ORB.get());
+                output.accept(ElementsOfPowerItems.LIGHT_ORB.get());
+                output.accept(ElementsOfPowerItems.TIME_ORB.get());
+                output.accept(ElementsOfPowerItems.LIFE_ORB.get());
+                output.accept(ElementsOfPowerItems.CHAOS_ORB.get());
+
+                output.accept(ElementsOfPowerItems.FIRE_COCOON.get());
+                output.accept(ElementsOfPowerItems.WATER_COCOON.get());
+                output.accept(ElementsOfPowerItems.AIR_COCOON.get());
+                output.accept(ElementsOfPowerItems.EARTH_COCOON.get());
+                output.accept(ElementsOfPowerItems.LIGHT_COCOON.get());
+                output.accept(ElementsOfPowerItems.TIME_COCOON.get());
+                output.accept(ElementsOfPowerItems.LIFE_COCOON.get());
+                output.accept(ElementsOfPowerItems.CHAOS_COCOON.get());
+
+
+            }).build()
+    );
+
+    public static final RegistryObject<CreativeModeTab> CREATIVE_TAB_GEMSTONES = CREATIVE_TABS.register("gemstones", () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP,0)
+            .icon(() -> new ItemStack(Gemstone.RUBY))
+            .title(Component.translatable("tab.elementsofpower.gemstones"))
+            .displayItems((featureFlags, output) -> {
+
+
+                output.accept(ElementsOfPowerItems.RUBY_ORE.get());
+                output.accept(ElementsOfPowerItems.SAPPHIRE_ORE.get());
+                output.accept(ElementsOfPowerItems.CITRINE_ORE.get());
+                output.accept(ElementsOfPowerItems.AGATE_ORE.get());
+                output.accept(ElementsOfPowerItems.SERENDIBITE_ORE.get());
+                output.accept(ElementsOfPowerItems.ELBAITE_ORE.get());
+                output.accept(ElementsOfPowerItems.DEEPSLATE_RUBY_ORE.get());
+                output.accept(ElementsOfPowerItems.DEEPSLATE_SAPPHIRE_ORE.get());
+                output.accept(ElementsOfPowerItems.DEEPSLATE_CITRINE_ORE.get());
+                output.accept(ElementsOfPowerItems.DEEPSLATE_AGATE_ORE.get());
+                output.accept(ElementsOfPowerItems.DEEPSLATE_SERENDIBITE_ORE.get());
+                output.accept(ElementsOfPowerItems.DEEPSLATE_ELBAITE_ORE.get());
+                output.accept(ElementsOfPowerItems.RUBY_BLOCK.get());
+                output.accept(ElementsOfPowerItems.SAPPHIRE_BLOCK.get());
+                output.accept(ElementsOfPowerItems.CITRINE_BLOCK.get());
+                output.accept(ElementsOfPowerItems.AGATE_BLOCK.get());
+                output.accept(ElementsOfPowerItems.SERENDIBITE_BLOCK.get());
+                output.accept(ElementsOfPowerItems.ELBAITE_BLOCK.get());
+
+                ElementsOfPowerItems.RUBY.get().addToTab(output::accept);
+                ElementsOfPowerItems.SAPPHIRE.get().addToTab(output::accept);
+                ElementsOfPowerItems.CITRINE.get().addToTab(output::accept);
+                ElementsOfPowerItems.AGATE.get().addToTab(output::accept);
+                ElementsOfPowerItems.QUARTZ.get().addToTab(output::accept);
+                ElementsOfPowerItems.SERENDIBITE.get().addToTab(output::accept);
+                ElementsOfPowerItems.EMERALD.get().addToTab(output::accept);
+                ElementsOfPowerItems.ELBAITE.get().addToTab(output::accept);
+                ElementsOfPowerItems.DIAMOND.get().addToTab(output::accept);
+                ElementsOfPowerItems.CREATIVITE.get().addToTab(output::accept);
+
+            }).build()
+    );
+
+    //private static Holder<ConfiguredFeature<NoneFeatureConfiguration, ?>> CONFIGURED_COCOON_FEATURE;
+    //private static Holder<PlacedFeature> PLACED_COCOON_FEATURE;
+
+
     public record CocoonModifier() implements BiomeModifier
     {
         public void modify(Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder)
@@ -162,7 +252,7 @@ public class ElementsOfPowerMod
                 if (biome.is(Tags.Biomes.IS_VOID))
                     return;
 
-                builder.getGenerationSettings().addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, ElementsOfPowerMod.PLACED_COCOON_FEATURE);
+                //builder.getGenerationSettings().addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, ElementsOfPowerMod.PLACED_COCOON_FEATURE);
             }
         }
 
@@ -185,11 +275,13 @@ public class ElementsOfPowerMod
                 boolean isNetherBiome = biome.is(BiomeTags.IS_NETHER);
                 if (!isEndBiome && !isNetherBiome)
                 {
+                    /* TODO: holders
                     var values = getBiomeValues(biome);
                     for (var feat : oreFeatures.get().getOrDefault(values, List.of()))
                     {
                         builder.getGenerationSettings().addFeature(GenerationStep.Decoration.UNDERGROUND_ORES, feat);
                     }
+                     */
                 }
             }
         }
@@ -210,24 +302,6 @@ public class ElementsOfPowerMod
 
     public static Logger LOGGER = LogManager.getLogger(MODID);
 
-    public static CreativeModeTab CREATIVE_TAB_MAGIC = new CreativeModeTab("elementsofpower.magic")
-    {
-        @Override
-        public ItemStack makeIcon()
-        {
-            return ElementsOfPowerItems.WAND.get().getStack(Gemstone.DIAMOND, Quality.COMMON);
-        }
-    };
-
-    public static CreativeModeTab CREATIVE_TAB_GEMSTONES = new CreativeModeTab("elementsofpower.gemstones")
-    {
-        @Override
-        public ItemStack makeIcon()
-        {
-            return new ItemStack(Gemstone.RUBY);
-        }
-    };
-
     public ElementsOfPowerMod()
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -242,6 +316,8 @@ public class ElementsOfPowerMod
         FEATURES.register(modEventBus);
         PARTICLE_TYPES.register(modEventBus);
         BIOME_MODIFIER_SERIALIZERS.register(modEventBus);
+        CREATIVE_TABS.register(modEventBus);
+        PLACEMENT_MODIFIER_TYPES.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::registerParticleFactory);
@@ -255,7 +331,7 @@ public class ElementsOfPowerMod
 
     public void registerParticleFactory(RegisterParticleProvidersEvent event)
     {
-        event.register(COLORED_SMOKE_DATA.get(), ColoredSmokeData.Factory::new);
+        event.registerSpriteSet(COLORED_SMOKE_DATA.get(), ColoredSmokeData.Factory::new);
     }
 
     public void modelRegistry(ModelEvent.RegisterGeometryLoaders event)
@@ -295,12 +371,13 @@ public class ElementsOfPowerMod
     {
         event.enqueueWork(() -> {
 
+            /* TODO: datagen
             CONFIGURED_COCOON_FEATURE = FeatureUtils.register("elementsofpower:overworld_cocoon", ElementsOfPowerMod.COCOON_FEATURE.get(), NoneFeatureConfiguration.INSTANCE);
 
             PLACED_COCOON_FEATURE = PlacementUtils.register("elementsofpower:overworld_cocoon", CONFIGURED_COCOON_FEATURE, CocoonPlacement.INSTANCE);
 
             oreFeatures.get();
-
+            */
         });
 
         int messageNumber = 0;
@@ -402,6 +479,7 @@ public class ElementsOfPowerMod
         }
     }
 
+    /* TODO: datagen
     private static Supplier<Map<BiomeValues, List<Holder<PlacedFeature>>>> oreFeatures = Lazy.of(() -> Util.make(new HashMap<>(), map -> {
         for(var heat : BiomeValue.values())
         {
@@ -444,5 +522,7 @@ public class ElementsOfPowerMod
             }
         }
     }));
+
+     */
 }
 

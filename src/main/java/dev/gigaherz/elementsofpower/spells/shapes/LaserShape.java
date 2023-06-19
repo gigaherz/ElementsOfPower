@@ -25,7 +25,7 @@ public class LaserShape extends SpellShape
     @Override
     public InitializedSpellcast castSpell(ItemStack stack, Player player, Spellcast cast)
     {
-        return cast.init(player.level, player);
+        return cast.init(player.level(), player);
     }
 
     @Override
@@ -68,11 +68,11 @@ public class LaserShape extends SpellShape
     private List<BlockPos> getAllBlocksInRay(Vec3 start, Vec3 look, double range)
     {
         List<BlockPos> intersections = Lists.newArrayList();
-        intersections.add(new BlockPos(start.x, start.y, start.z));
+        intersections.add(BlockPos.containing(start.x, start.y, start.z));
         look = look.normalize();
         Vec3 pos = start;
         Vec3 end = start.add(look.x * range, look.y * range, look.z * range);
-        BlockPos block = new BlockPos(start);
+        BlockPos block = BlockPos.containing(start);
         while (true)
         {
             // begin

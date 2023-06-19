@@ -6,6 +6,7 @@ import dev.gigaherz.elementsofpower.magic.MagicGradient;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.TagKey;
@@ -20,13 +21,12 @@ import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.level.material.Material;
 
 import java.util.Objects;
 
 public class CocoonFeature extends Feature<NoneFeatureConfiguration>
 {
-    public static final TagKey<Block> REPLACEABLE_TAG = TagKey.create(Registry.BLOCK_REGISTRY,new ResourceLocation("elementsofpower:can_cocoon_replace"));
+    public static final TagKey<Block> REPLACEABLE_TAG = TagKey.create(Registries.BLOCK,new ResourceLocation("elementsofpower:can_cocoon_replace"));
 
     public static final MagicGradient OVERWORLD = new MagicGradient.Builder()
             .addPoint(0, MagicAmounts.EMPTY.darkness(0.25f))
@@ -114,6 +114,7 @@ public class CocoonFeature extends Feature<NoneFeatureConfiguration>
 
                 am = am.add(gradient.getAt(y / (float) world.getMaxBuildHeight()));
 
+                /* TODO: convert to aqeuivaleo query
                 Material mat = state.getMaterial();
                 if (mat == Material.AIR)
                 {
@@ -227,6 +228,7 @@ public class CocoonFeature extends Feature<NoneFeatureConfiguration>
                 {
                     am = am.darkness(1);
                 }
+                 */
             }
         }
 

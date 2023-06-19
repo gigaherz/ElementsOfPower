@@ -4,19 +4,21 @@ import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.gemstones.GemstoneItem;
 import dev.gigaherz.elementsofpower.items.GemContainerItem;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 
 public class GemstoneChangeRecipe extends CustomRecipe
 {
-    public GemstoneChangeRecipe(ResourceLocation idIn)
+    public GemstoneChangeRecipe(ResourceLocation idIn, CraftingBookCategory category)
     {
-        super(idIn);
+        super(idIn, category);
     }
 
     @Override
@@ -51,7 +53,7 @@ public class GemstoneChangeRecipe extends CustomRecipe
     }
 
     @Override
-    public ItemStack assemble(CraftingContainer inv)
+    public ItemStack assemble(CraftingContainer inv, RegistryAccess registryAccess)
     {
         ItemStack gemContainer = ItemStack.EMPTY;
         ItemStack gem = ItemStack.EMPTY;

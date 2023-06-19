@@ -10,6 +10,7 @@ import dev.gigaherz.elementsofpower.essentializer.EssentializerBlockEntity;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import dev.gigaherz.elementsofpower.spells.Element;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -68,27 +69,26 @@ public class EssentializerScreen extends AbstractContainerScreen<EssentializerMe
     }
 
     @Override
-    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks)
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks)
     {
-        this.renderBackground(matrixStack);
-        super.render(matrixStack, mouseX, mouseY, partialTicks);
-        this.renderTooltip(matrixStack, mouseX, mouseY);
+        this.renderBackground(graphics);
+        super.render(graphics, mouseX, mouseY, partialTicks);
+        this.renderTooltip(graphics, mouseX, mouseY);
     }
 
     @Override
-    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY)
+    protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY)
     {
-        RenderSystem.setShaderTexture(0, GUI_TEXTURE_LOCATION);
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         int x = (width - imageWidth) / 2;
         int y = (height - imageHeight) / 2;
-        this.blit(matrixStack, x, y, 0, 0, imageWidth, imageHeight);
+        graphics.blit(GUI_TEXTURE_LOCATION, x, y, 0, 0, imageWidth, imageHeight);
     }
 
     @Override
-    protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY)
+    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY)
     {
-        super.renderLabels(matrixStack, mouseX, mouseY);
+        super.renderLabels(graphics, mouseX, mouseY);
 
         Objects.requireNonNull(minecraft);
 
@@ -99,7 +99,6 @@ public class EssentializerScreen extends AbstractContainerScreen<EssentializerMe
         MagicAmounts am = menu.getMagicHolder().getRemainingToConvert();
         if (!am.isEmpty())
         {
-            RenderSystem.setShaderTexture(0, GUI_TEXTURE_LOCATION);
             for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
             {
                 float alpha = (float) (0.9 + 0.1 * Math.sin(Math.PI * 8 * am.get(i) / opaqueLevel))
@@ -117,7 +116,7 @@ public class EssentializerScreen extends AbstractContainerScreen<EssentializerMe
                 int sx = TRANSFER_RECTS[i * 6 + 4];
                 int sy = TRANSFER_RECTS[i * 6 + 5];
 
-                this.blit(matrixStack, x0, y0, x1, y1, sx, sy);
+                graphics.blit(GUI_TEXTURE_LOCATION, x0, y0, x1, y1, sx, sy);
             }
         }
 
@@ -136,11 +135,12 @@ public class EssentializerScreen extends AbstractContainerScreen<EssentializerMe
             ItemStack stack = new ItemStack(Element.values[i].getOrb());
 
             //RenderSystem.setShaderColor(1, 1, 1, alpha / 255.0f);
-            StackRenderingHelper.renderItemStack(minecraft.getItemRenderer(), matrixStack, stack, x0, y0, 0, alpha);
+            StackRenderingHelper.renderItemStack(minecraft.getItemRenderer(), graphics.pose(), stack, x0, y0, 0, alpha);
         }
 
-        matrixStack.pushPose();
-        matrixStack.scale(1 / 1.5f, 1 / 1.5f, 1);
+        var poseStack = graphics.pose();
+        poseStack.pushPose();
+        poseStack.scale(1 / 1.5f, 1 / 1.5f, 1);
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
             int x0 = MAGIC_ORBS[i * 2];
@@ -156,11 +156,11 @@ public class EssentializerScreen extends AbstractContainerScreen<EssentializerMe
             float x1 = (x0 + 16) * 1.5f - font.width(formatted);
             float y1 = (y0 + 10.5f) * 1.5f;
 
-            font.drawShadow(matrixStack, formatted, x1, y1, 0xFFFFFFFF);
+            graphics.drawString(font, formatted, x1, y1, 0xFFFFFFFF, true);
         }
-        matrixStack.popPose();
+        poseStack.popPose();
 
-        drawOrbTooltips(matrixStack, mouseX, mouseY);
+        drawOrbTooltips(graphics, mouseX, mouseY);
 
         RenderSystem.depthMask(true);
     }
@@ -177,7 +177,7 @@ public class EssentializerScreen extends AbstractContainerScreen<EssentializerMe
         return MagicTooltips.PRETTY_NUMBER_FORMATTER.format(count) + suffix;
     }
 
-    private void drawOrbTooltips(PoseStack matrixStack, int mx, int my)
+    private void drawOrbTooltips(GuiGraphics graphics, int mx, int my)
     {
         int x0 = (width - imageWidth) / 2;
         int y0 = (height - imageHeight) / 2;
@@ -198,7 +198,7 @@ public class EssentializerScreen extends AbstractContainerScreen<EssentializerMe
             tooltip.add(MagicAmounts.getMagicName(i));
             tooltip.add(Component.literal(MagicTooltips.PRETTY_NUMBER_FORMATTER_2.format(am.get(i)) + " / " + EssentializerBlockEntity.MAX_ESSENTIALIZER_MAGIC).withStyle(ChatFormatting.GRAY));
 
-            renderComponentTooltip(matrixStack, tooltip, mx - x0, my - y0);
+            graphics.renderComponentTooltip(font, tooltip, mx - x0, my - y0);
         }
     }
 }

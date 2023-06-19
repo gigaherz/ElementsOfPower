@@ -25,7 +25,7 @@ public class BeamShape extends SpellShape
     @Override
     public InitializedSpellcast castSpell(ItemStack stack, Player player, Spellcast cast)
     {
-        return cast.init(player.level, player);
+        return cast.init(player.level(), player);
     }
 
     @Override
@@ -87,7 +87,7 @@ public class BeamShape extends SpellShape
             }
             else
             {
-                bp = new BlockPos(trace1.getLocation());
+                bp = BlockPos.containing(trace1.getLocation());
             }
 
             int px = bp.getX();

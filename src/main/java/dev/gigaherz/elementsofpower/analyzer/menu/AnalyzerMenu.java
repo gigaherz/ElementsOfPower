@@ -145,7 +145,7 @@ public class AnalyzerMenu extends AbstractContainerMenu
                 ItemStack itemstack = slot.getItem();
                 int limit = Math.min(slot.getMaxStackSize(stack), stack.getMaxStackSize());
 
-                if (itemstack.getCount() > 0 && itemstack.getItem() == stack.getItem() && ItemStack.tagMatches(stack, itemstack))
+                if (itemstack.getCount() > 0 && ItemStack.isSameItemSameTags(stack, itemstack))
                 {
                     int j = itemstack.getCount() + stack.getCount();
 
@@ -223,7 +223,7 @@ public class AnalyzerMenu extends AbstractContainerMenu
     {
         Slot s = slots.get(0);
         ItemStack stack = s.getItem();
-        if (stack.getCount() > 0 && !player.level.isClientSide)
+        if (stack.getCount() > 0 && !player.level().isClientSide)
         {
             ItemStack stack2 = GemstoneExaminer.identifyQuality(stack);
 
@@ -247,7 +247,7 @@ public class AnalyzerMenu extends AbstractContainerMenu
     {
         super.removed(playerIn);
 
-        if (!player.level.isClientSide)
+        if (!player.level().isClientSide)
         {
             ItemStack itemstack = internalInventory.removeItemNoUpdate(0);
             if (itemstack.getCount() > 0)

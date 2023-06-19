@@ -37,7 +37,7 @@ public class TeleportEffect extends SpellEffect
     {
         if (entity == cast.player)
             return;
-        entity.hurt(DamageSource.thrown(cast.getProjectile(), cast.player), 0.0F);
+        entity.hurt(entity.damageSources().thrown(cast.getProjectile(), cast.player), 0.0F);
     }
 
     @Override
@@ -49,8 +49,8 @@ public class TeleportEffect extends SpellEffect
             {
                 ServerPlayer playerMP = (ServerPlayer) cast.player;
 
-                if (playerMP.connection.getConnection().isConnected()
-                        && playerMP.level == cast.world
+                if (playerMP.connection.connection.isConnected()
+                        && playerMP.level() == cast.world
                         && !playerMP.isSleeping())
                 {
                     if (playerMP.isPassenger())

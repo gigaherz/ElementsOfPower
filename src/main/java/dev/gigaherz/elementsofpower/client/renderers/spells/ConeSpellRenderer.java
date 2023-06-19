@@ -1,14 +1,15 @@
 package dev.gigaherz.elementsofpower.client.renderers.spells;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import dev.gigaherz.elementsofpower.spells.InitializedSpellcast;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 public class ConeSpellRenderer extends SpellRenderer
 {
@@ -57,9 +58,9 @@ public class ConeSpellRenderer extends SpellRenderer
 
             float angle = time * (6 + 3 * (4 - i)) * ((i & 1) == 0 ? 1 : -1);
 
-            Quaternion rot = Vector3f.YP.rotation((float) (Math.PI * 0.5 - beamYaw));
-            rot.mul(Vector3f.XP.rotation((float) -beamPitch));
-            rot.mul(Vector3f.ZP.rotationDegrees(angle));
+            Quaternionf rot = Axis.YP.rotation((float) (Math.PI * 0.5 - beamYaw));
+            rot.mul(Axis.XP.rotation((float) -beamPitch));
+            rot.mul(Axis.ZP.rotationDegrees(angle));
 
             matrixStackIn.pushPose();
             matrixStackIn.translate((float) (offset.x), (float) (offset.y), (float) (offset.z));
