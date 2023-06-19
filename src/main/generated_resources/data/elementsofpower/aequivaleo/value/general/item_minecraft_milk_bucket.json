@@ -1,4 +1,18 @@
 {
+  "compounds": [
+    {
+      "type": "elementsofpower:earth",
+      "amount": 54.0
+    },
+    {
+      "type": "elementsofpower:life",
+      "amount": 2.0
+    },
+    {
+      "type": "elementsofpower:water",
+      "amount": 4.0
+    }
+  ],
   "mode": "ADDITIVE",
   "targets": [
     {
@@ -14,20 +28,6 @@
         "count": 1.0,
         "stack": "{Count:1b,id:\"minecraft:milk_bucket\"}"
       }
-    }
-  ],
-  "compounds": [
-    {
-      "amount": 54.0,
-      "type": "elementsofpower:earth"
-    },
-    {
-      "amount": 2.0,
-      "type": "elementsofpower:life"
-    },
-    {
-      "amount": 4.0,
-      "type": "elementsofpower:water"
     }
   ]
 }

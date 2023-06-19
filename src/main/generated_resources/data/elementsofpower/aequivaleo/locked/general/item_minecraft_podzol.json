@@ -1,4 +1,18 @@
 {
+  "compounds": [
+    {
+      "type": "elementsofpower:death",
+      "amount": 1.0
+    },
+    {
+      "type": "elementsofpower:earth",
+      "amount": 3.0
+    },
+    {
+      "type": "elementsofpower:life",
+      "amount": 1.0
+    }
+  ],
   "mode": "ADDITIVE",
   "targets": [
     {
@@ -14,20 +28,6 @@
         "count": 1.0,
         "stack": "{Count:1b,id:\"minecraft:podzol\"}"
       }
-    }
-  ],
-  "compounds": [
-    {
-      "amount": 1.0,
-      "type": "elementsofpower:chaos"
-    },
-    {
-      "amount": 3.0,
-      "type": "elementsofpower:earth"
-    },
-    {
-      "amount": 1.0,
-      "type": "elementsofpower:life"
     }
   ]
 }

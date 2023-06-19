@@ -11,6 +11,7 @@ import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import dev.gigaherz.elementsofpower.spells.Element;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -23,7 +24,6 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.Random;
 
 public class ApplyOrbSizeFunction extends LootItemConditionalFunction
 {
@@ -44,7 +44,7 @@ public class ApplyOrbSizeFunction extends LootItemConditionalFunction
             return stack;
 
         MagicAmounts am = ((IMagicAmountContainer) te).getContainedMagic();
-        Random rand = context.getRandom();
+        RandomSource rand = context.getRandom();
         ItemStack tool = Objects.requireNonNull(context.getParamOrNull(LootContextParams.TOOL));
 
         float a = 0;
@@ -76,7 +76,7 @@ public class ApplyOrbSizeFunction extends LootItemConditionalFunction
     @Override
     public LootItemFunctionType getType()
     {
-        return ElementsOfPowerMod.APPLY_ORB_SIZE;
+        return ElementsOfPowerMod.APPLY_ORB_SIZE.get();
     }
 
     public static class Builder extends LootItemConditionalFunction.Builder<Builder>

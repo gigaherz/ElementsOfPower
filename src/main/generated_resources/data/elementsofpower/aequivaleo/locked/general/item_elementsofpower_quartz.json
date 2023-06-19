@@ -1,4 +1,14 @@
 {
+  "compounds": [
+    {
+      "type": "elementsofpower:earth",
+      "amount": 1.0
+    },
+    {
+      "type": "elementsofpower:light",
+      "amount": 0.125
+    }
+  ],
   "mode": "ADDITIVE",
   "targets": [
     {
@@ -12,7 +22,7 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:quartz\"}"
+        "stack": "{Count:1b,id:\"elementsofpower:quartz\",tag:{quality:4}}"
       }
     },
     {
@@ -33,13 +43,6 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:quartz\",tag:{quality:4}}"
-      }
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
         "stack": "{Count:1b,id:\"elementsofpower:quartz\",tag:{quality:0}}"
       }
     },
@@ -49,16 +52,13 @@
         "count": 1.0,
         "stack": "{Count:1b,id:\"elementsofpower:quartz\",tag:{quality:2}}"
       }
-    }
-  ],
-  "compounds": [
-    {
-      "amount": 1.0,
-      "type": "elementsofpower:earth"
     },
     {
-      "amount": 0.125,
-      "type": "elementsofpower:light"
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{Count:1b,id:\"elementsofpower:quartz\"}"
+      }
     }
   ]
 }

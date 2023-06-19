@@ -1,4 +1,8 @@
 {
+  "compounds": {
+    "type": "elementsofpower:life",
+    "amount": 4.0
+  },
   "mode": "ADDITIVE",
   "targets": [
     {
@@ -15,9 +19,5 @@
         "stack": "{Count:1b,id:\"minecraft:dark_oak_sapling\"}"
       }
     }
-  ],
-  "compounds": {
-    "amount": 4.0,
-    "type": "elementsofpower:life"
-  }
+  ]
 }

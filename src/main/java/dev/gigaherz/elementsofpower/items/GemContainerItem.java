@@ -7,12 +7,11 @@ import dev.gigaherz.elementsofpower.gemstones.Quality;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import dev.gigaherz.elementsofpower.spells.Element;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.UseAnim;
-import net.minecraft.nbt.Tag;
 
 import javax.annotation.Nullable;
 
@@ -241,9 +240,9 @@ public abstract class GemContainerItem extends MagicContainerItem
 
         Gemstone g = getGemstone(stack);
         if (g == null)
-            return new TranslatableComponent("elementsofpower.gem_container.unbound", baseName);
+            return Component.translatable("elementsofpower.gem_container.unbound", baseName);
 
-        return new TranslatableComponent(g.getContainerTranslationKey(), baseName);
+        return Component.translatable(g.getContainerTranslationKey(), baseName);
     }
 
     @Override
@@ -255,7 +254,7 @@ public abstract class GemContainerItem extends MagicContainerItem
         if (q == null)
             return gemstoneName;
 
-        return new TranslatableComponent(q.getContainerTranslationKey(), gemstoneName);
+        return Component.translatable(q.getContainerTranslationKey(), gemstoneName);
     }
 
     @Override

@@ -41,8 +41,8 @@ public class SphereSpellRenderer extends SpellRenderer
         matrixStackIn.translate((float) (offset.x), (float) (offset.y), (float) (offset.z));
         matrixStackIn.scale(scale, scale, scale);
 
-        modelSphereInside.get().render(bufferIn, getSphereRenderType(cast), matrixStackIn, 0x00F000F0, color);
-        modelSphere.get().render(bufferIn, getSphereRenderType(cast), matrixStackIn, 0x00F000F0, color);
+        modelSphereInside.get().render(matrixStackIn, bufferIn, getSphereRenderType(cast), 0x00F000F0, color);
+        modelSphere.get().render(matrixStackIn, bufferIn, getSphereRenderType(cast), 0x00F000F0, color);
 
         matrixStackIn.popPose();
     }

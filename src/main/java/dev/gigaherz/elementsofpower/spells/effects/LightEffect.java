@@ -78,11 +78,11 @@ public class LightEffect extends SpellEffect
 
         if (currentState.isAir())
         {
-            cast.world.setBlockAndUpdate(blockPos, ElementsOfPowerBlocks.LIGHT.defaultBlockState().setValue(LightBlock.DENSITY, density));
+            cast.world.setBlockAndUpdate(blockPos, ElementsOfPowerBlocks.LIGHT.get().defaultBlockState().setValue(LightBlock.DENSITY, density));
         }
-        else if (block == ElementsOfPowerBlocks.LIGHT)
+        else if (block == ElementsOfPowerBlocks.LIGHT.get())
         {
-            ElementsOfPowerBlocks.LIGHT.resetCooldown(cast.world, blockPos, currentState, density);
+            ElementsOfPowerBlocks.LIGHT.get().resetCooldown(cast.world, blockPos, currentState, density);
         }
     }
 }

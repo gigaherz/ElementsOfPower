@@ -1,4 +1,8 @@
 {
+  "compounds": {
+    "type": "elementsofpower:life",
+    "amount": 8.0
+  },
   "mode": "ADDITIVE",
   "targets": [
     {
@@ -15,9 +19,5 @@
         "stack": "{Count:1b,id:\"elementsofpower:life_orb\"}"
       }
     }
-  ],
-  "compounds": {
-    "amount": 8.0,
-    "type": "elementsofpower:life"
-  }
+  ]
 }

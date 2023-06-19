@@ -1,4 +1,14 @@
 {
+  "compounds": [
+    {
+      "type": "elementsofpower:darkness",
+      "amount": 10.0
+    },
+    {
+      "type": "elementsofpower:earth",
+      "amount": 10.0
+    }
+  ],
   "mode": "ADDITIVE",
   "targets": [
     {
@@ -14,16 +24,6 @@
         "count": 1.0,
         "stack": "{Count:1b,id:\"minecraft:obsidian\"}"
       }
-    }
-  ],
-  "compounds": [
-    {
-      "amount": 10.0,
-      "type": "elementsofpower:darkness"
-    },
-    {
-      "amount": 10.0,
-      "type": "elementsofpower:earth"
     }
   ]
 }

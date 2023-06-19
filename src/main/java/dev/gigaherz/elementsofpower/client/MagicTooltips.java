@@ -9,7 +9,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -45,7 +44,7 @@ public class MagicTooltips
 
         if (item == Items.DIAMOND || item == Items.EMERALD || item == Items.QUARTZ)
         {
-            toolTip.add(1, new TranslatableComponent("text.elementsofpower.gemstone.use").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
+            toolTip.add(1, Component.translatable("text.elementsofpower.gemstone.use").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
         }
 
         Level world = Minecraft.getInstance().level;
@@ -53,10 +52,10 @@ public class MagicTooltips
         if (amounts.isEmpty())
             return;
 
-        toolTip.add(new TranslatableComponent("elementsofpower.magic.converts").withStyle(ChatFormatting.YELLOW));
+        toolTip.add(Component.translatable("elementsofpower.magic.converts").withStyle(ChatFormatting.YELLOW));
         if (!Screen.hasShiftDown())
         {
-            toolTip.add(new TranslatableComponent("elementsofpower.magic.more_info").withStyle(ChatFormatting.GRAY));
+            toolTip.add(Component.translatable("elementsofpower.magic.more_info").withStyle(ChatFormatting.GRAY));
             return;
         }
 
@@ -73,8 +72,8 @@ public class MagicTooltips
             Component magicName = MagicAmounts.getMagicName(i);
 
             MutableComponent magicAmount = stack.getCount() > 1
-                    ? new TranslatableComponent("elementsofpower.magic.amount_stacked", magicName, str, str2)
-                    : new TranslatableComponent("elementsofpower.magic.amount", magicName, str);
+                    ? Component.translatable("elementsofpower.magic.amount_stacked", magicName, str, str2)
+                    : Component.translatable("elementsofpower.magic.amount", magicName, str);
 
             toolTip.add(magicAmount.withStyle(ChatFormatting.GRAY));
         }
@@ -90,10 +89,10 @@ public class MagicTooltips
                 return;
             }
 
-            toolTip.add(new TranslatableComponent("elementsofpower.magic.contains").withStyle(ChatFormatting.YELLOW));
+            toolTip.add(Component.translatable("elementsofpower.magic.contains").withStyle(ChatFormatting.YELLOW));
             if (!Screen.hasShiftDown())
             {
-                toolTip.add(new TranslatableComponent("elementsofpower.magic.more_info").withStyle(ChatFormatting.GRAY));
+                toolTip.add(Component.translatable("elementsofpower.magic.more_info").withStyle(ChatFormatting.GRAY));
                 return;
             }
 
@@ -102,7 +101,7 @@ public class MagicTooltips
                 for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
                 {
                     Component magicName = MagicAmounts.getMagicName(i);
-                    MutableComponent magicAmount = new TranslatableComponent("elementsofpower.magic.amount_infinite", magicName);
+                    MutableComponent magicAmount = Component.translatable("elementsofpower.magic.amount_infinite", magicName);
 
                     toolTip.add(magicAmount.withStyle(ChatFormatting.GRAY));
                 }
@@ -119,7 +118,7 @@ public class MagicTooltips
                     String str = PRETTY_NUMBER_FORMATTER_2.format(amounts.get(i));
 
                     Component magicName = MagicAmounts.getMagicName(i);
-                    MutableComponent magicAmount = new TranslatableComponent("elementsofpower.magic.amount", magicName, str);
+                    MutableComponent magicAmount = Component.translatable("elementsofpower.magic.amount", magicName, str);
 
                     toolTip.add(magicAmount.withStyle(ChatFormatting.GRAY));
                 }

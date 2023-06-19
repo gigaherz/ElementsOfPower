@@ -73,7 +73,7 @@ public class BeamSpellRenderer extends SpellRenderer
                 matrixStackIn.mulPose(rot);
                 matrixStackIn.scale(scale_start, scale_start, scale_start);
 
-                modelSphere.get().render(bufferIn, rt, matrixStackIn, 0x00F000F0, color);
+                modelSphere.get().render(matrixStackIn, bufferIn, rt, 0x00F000F0, color);
 
                 matrixStackIn.popPose();
             }
@@ -84,7 +84,7 @@ public class BeamSpellRenderer extends SpellRenderer
                 matrixStackIn.mulPose(rot);
                 matrixStackIn.scale(scale_beam, scale_beam, (float) distance);
 
-                modelCyl.get().render(bufferIn, rt, matrixStackIn, 0x00F000F0, color);
+                modelCyl.get().render(matrixStackIn, bufferIn, rt, 0x00F000F0, color);
 
                 matrixStackIn.popPose();
             }
@@ -96,7 +96,7 @@ public class BeamSpellRenderer extends SpellRenderer
                 matrixStackIn.mulPose(rot);
                 matrixStackIn.scale(scale_end, scale_end, scale_end);
 
-                modelSphere.get().render(bufferIn, rt, matrixStackIn, 0x00F000F0, color);
+                modelSphere.get().render(matrixStackIn, bufferIn, rt, 0x00F000F0, color);
 
                 matrixStackIn.popPose();
             }

@@ -1,4 +1,18 @@
 {
+  "compounds": [
+    {
+      "type": "elementsofpower:air",
+      "amount": 1.0
+    },
+    {
+      "type": "elementsofpower:earth",
+      "amount": 1.0
+    },
+    {
+      "type": "elementsofpower:life",
+      "amount": 2.0
+    }
+  ],
   "mode": "ADDITIVE",
   "targets": [
     {
@@ -14,20 +28,6 @@
         "count": 1.0,
         "stack": "{Count:1b,id:\"minecraft:apple\"}"
       }
-    }
-  ],
-  "compounds": [
-    {
-      "amount": 1.0,
-      "type": "elementsofpower:air"
-    },
-    {
-      "amount": 1.0,
-      "type": "elementsofpower:earth"
-    },
-    {
-      "amount": 2.0,
-      "type": "elementsofpower:life"
     }
   ]
 }

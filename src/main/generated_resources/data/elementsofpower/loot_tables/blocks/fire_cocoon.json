@@ -2,188 +2,188 @@
   "type": "minecraft:block",
   "pools": [
     {
-      "rolls": 1.0,
       "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
       "entries": [
         {
           "type": "minecraft:item",
           "functions": [
             {
-              "function": "elementsofpower:apply_orb_size",
               "factors": {
                 "fire": 1.0
-              }
+              },
+              "function": "elementsofpower:apply_orb_size"
             }
           ],
           "name": "elementsofpower:fire_orb"
         }
       ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
       "conditions": [
         {
           "condition": "minecraft:survives_explosion"
         }
-      ]
-    },
-    {
-      "rolls": 1.0,
-      "bonus_rolls": 0.0,
+      ],
       "entries": [
         {
           "type": "minecraft:item",
           "functions": [
             {
-              "function": "elementsofpower:apply_orb_size",
               "factors": {
                 "water": 1.0
-              }
+              },
+              "function": "elementsofpower:apply_orb_size"
             }
           ],
           "name": "elementsofpower:water_orb"
         }
       ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
       "conditions": [
         {
           "condition": "minecraft:survives_explosion"
         }
-      ]
-    },
-    {
-      "rolls": 1.0,
-      "bonus_rolls": 0.0,
+      ],
       "entries": [
         {
           "type": "minecraft:item",
           "functions": [
             {
-              "function": "elementsofpower:apply_orb_size",
               "factors": {
                 "air": 1.0
-              }
+              },
+              "function": "elementsofpower:apply_orb_size"
             }
           ],
           "name": "elementsofpower:air_orb"
         }
       ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
       "conditions": [
         {
           "condition": "minecraft:survives_explosion"
         }
-      ]
-    },
-    {
-      "rolls": 1.0,
-      "bonus_rolls": 0.0,
+      ],
       "entries": [
         {
           "type": "minecraft:item",
           "functions": [
             {
-              "function": "elementsofpower:apply_orb_size",
               "factors": {
                 "earth": 1.0
-              }
+              },
+              "function": "elementsofpower:apply_orb_size"
             }
           ],
           "name": "elementsofpower:earth_orb"
         }
       ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
       "conditions": [
         {
           "condition": "minecraft:survives_explosion"
         }
-      ]
-    },
-    {
-      "rolls": 1.0,
-      "bonus_rolls": 0.0,
+      ],
       "entries": [
         {
           "type": "minecraft:item",
           "functions": [
             {
-              "function": "elementsofpower:apply_orb_size",
               "factors": {
                 "light": 1.0
-              }
+              },
+              "function": "elementsofpower:apply_orb_size"
             }
           ],
           "name": "elementsofpower:light_orb"
         }
       ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
       "conditions": [
         {
           "condition": "minecraft:survives_explosion"
-        }
-      ]
-    },
-    {
-      "rolls": 1.0,
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "function": "elementsofpower:apply_orb_size",
-              "factors": {
-                "darkness": 1.0
-              }
-            }
-          ],
-          "name": "elementsofpower:darkness_orb"
         }
       ],
-      "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        }
-      ]
-    },
-    {
-      "rolls": 1.0,
-      "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:item",
           "functions": [
             {
-              "function": "elementsofpower:apply_orb_size",
+              "factors": {
+                "time": 1.0
+              },
+              "function": "elementsofpower:apply_orb_size"
+            }
+          ],
+          "name": "elementsofpower:time_orb"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
               "factors": {
                 "life": 1.0
-              }
+              },
+              "function": "elementsofpower:apply_orb_size"
             }
           ],
           "name": "elementsofpower:life_orb"
         }
       ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
       "conditions": [
         {
           "condition": "minecraft:survives_explosion"
         }
-      ]
-    },
-    {
-      "rolls": 1.0,
-      "bonus_rolls": 0.0,
+      ],
       "entries": [
         {
           "type": "minecraft:item",
           "functions": [
             {
-              "function": "elementsofpower:apply_orb_size",
               "factors": {
-                "death": 1.0
-              }
+                "chaos": 1.0
+              },
+              "function": "elementsofpower:apply_orb_size"
             }
           ],
-          "name": "elementsofpower:death_orb"
+          "name": "elementsofpower:chaos_orb"
         }
       ],
-      "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        }
-      ]
+      "rolls": 1.0
     }
   ]
 }

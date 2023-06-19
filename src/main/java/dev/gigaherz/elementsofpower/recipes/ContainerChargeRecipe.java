@@ -1,5 +1,6 @@
 package dev.gigaherz.elementsofpower.recipes;
 
+import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.items.MagicContainerItem;
 import dev.gigaherz.elementsofpower.items.MagicOrbItem;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
@@ -10,9 +11,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.SimpleRecipeSerializer;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.registries.ObjectHolder;
 
 public class ContainerChargeRecipe extends CustomRecipe
 {
@@ -101,9 +100,7 @@ public class ContainerChargeRecipe extends CustomRecipe
     @Override
     public RecipeSerializer<?> getSerializer()
     {
-        return SERIALIZER;
+        return ElementsOfPowerMod.CONTAINER_CHARGE.get();
     }
 
-    @ObjectHolder("elementsofpower:container_charge")
-    public static SimpleRecipeSerializer<ContainerChargeRecipe> SERIALIZER;
 }

@@ -9,14 +9,14 @@ import dev.gigaherz.elementsofpower.network.UpdateSpellSequence;
 import dev.gigaherz.elementsofpower.spells.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.nbt.Tag;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -88,7 +88,7 @@ public class WandItem extends GemContainerItem
         final Spellcast cast = SpellManager.makeSpell(sequence);
         if (cast == null)
         {
-            player.displayClientMessage(new TranslatableComponent("text.elementsofpower.spell.invalid_sequence"), true);
+            player.displayClientMessage(Component.translatable("text.elementsofpower.spell.invalid_sequence"), true);
             return false;
         }
 
@@ -99,7 +99,7 @@ public class WandItem extends GemContainerItem
 
             if (!magic.isInfinite() && !amounts.hasEnough(cost))
             {
-                player.displayClientMessage(new TranslatableComponent("text.elementsofpower.spell.cost_too_high"), true);
+                player.displayClientMessage(Component.translatable("text.elementsofpower.spell.cost_too_high"), true);
                 return updateSequenceOnWand;
             }
 

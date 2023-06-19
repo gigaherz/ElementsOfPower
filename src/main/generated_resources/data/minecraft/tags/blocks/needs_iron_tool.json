@@ -1,5 +1,4 @@
 {
-  "replace": false,
   "values": [
     "elementsofpower:essentializer",
     "elementsofpower:ruby_block",
@@ -17,8 +16,6 @@
     "elementsofpower:serendibite_block",
     "elementsofpower:serendibite_ore",
     "elementsofpower:deepslate_serendibite_ore",
-    "elementsofpower:amethyst_block",
-    "elementsofpower:amethyst_ore",
     "elementsofpower:elbaite_block",
     "elementsofpower:elbaite_ore",
     "elementsofpower:deepslate_elbaite_ore"

@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[38,)"
+loaderVersion="[41,)"
 license="BSD (3 clause)"
 
 [[mods]]
@@ -19,18 +19,18 @@ A magic mod about the raw power elemental essences
 [[dependencies.elementsofpower]]
     modId="forge"
     mandatory=true
-    versionRange="[38.0.15,)"
+    versionRange="[41.0.94,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.elementsofpower]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.18,1.19)"
+    versionRange="[1.19,1.20)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.elementsofpower]]
     modId="aequivaleo"
     mandatory=true
-    versionRange="[1.18-0.1.77-ALPHA,)"
+    versionRange="[1.19-0.1.99-ALPHA,)"
     ordering="NONE"
     side="BOTH"

@@ -1,9 +1,9 @@
 package dev.gigaherz.elementsofpower.gemstones;
 
 import net.minecraft.util.valueproviders.UniformInt;
-import net.minecraft.world.level.block.OreBlock;
+import net.minecraft.world.level.block.DropExperienceBlock;
 
-public class GemstoneOreBlock extends OreBlock
+public class GemstoneOreBlock extends DropExperienceBlock
 {
     private final Gemstone type;
 

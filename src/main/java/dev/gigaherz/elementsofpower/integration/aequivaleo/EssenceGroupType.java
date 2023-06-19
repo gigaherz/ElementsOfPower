@@ -6,13 +6,20 @@ import com.ldtteam.aequivaleo.api.compound.type.group.ICompoundTypeGroup;
 import com.ldtteam.aequivaleo.api.mediation.IMediationCandidate;
 import com.ldtteam.aequivaleo.api.mediation.IMediationEngine;
 import com.ldtteam.aequivaleo.api.recipe.equivalency.IEquivalencyRecipe;
-import net.minecraftforge.registries.ForgeRegistryEntry;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.Optional;
 import java.util.Set;
 
-public class EssenceGroupType extends ForgeRegistryEntry<ICompoundTypeGroup> implements ICompoundTypeGroup
+public class EssenceGroupType implements ICompoundTypeGroup
 {
+    private final ResourceLocation registryName;
+
+    public EssenceGroupType(ResourceLocation registryName)
+    {
+        this.registryName = registryName;
+    }
+
     @Override
     public IMediationEngine getMediationEngine()
     {
@@ -73,5 +80,11 @@ public class EssenceGroupType extends ForgeRegistryEntry<ICompoundTypeGroup> imp
     public Optional<?> mapEntry(Set<CompoundInstance> instances)
     {
         return AequivaleoPlugin.getMagicAmounts(instances);
+    }
+
+    @Override
+    public ResourceLocation getRegistryName()
+    {
+        return registryName;
     }
 }

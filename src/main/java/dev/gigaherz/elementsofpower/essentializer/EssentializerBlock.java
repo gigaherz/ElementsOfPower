@@ -1,9 +1,11 @@
 package dev.gigaherz.elementsofpower.essentializer;
 
-import dev.gigaherz.elementsofpower.essentializer.menu.EssentializerContainer;
+import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
+import dev.gigaherz.elementsofpower.essentializer.menu.EssentializerMenu;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.SimpleMenuProvider;
@@ -24,7 +26,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.network.NetworkHooks;
 
 import javax.annotation.Nullable;
-import java.util.Random;
 
 public class EssentializerBlock extends BaseEntityBlock
 {
@@ -48,9 +49,9 @@ public class EssentializerBlock extends BaseEntityBlock
         if (worldIn.isClientSide)
             return InteractionResult.SUCCESS;
 
-        NetworkHooks.openGui((ServerPlayer) player, new SimpleMenuProvider((id, playerInventory, playerEntity) ->
-                new EssentializerContainer(id, (EssentializerBlockEntity) tileEntity, playerInventory),
-                new TranslatableComponent("container.elementsofpower.essentializer")), pos);
+        NetworkHooks.openScreen((ServerPlayer) player, new SimpleMenuProvider((id, playerInventory, playerEntity) ->
+                new EssentializerMenu(id, (EssentializerBlockEntity) tileEntity, playerInventory),
+                Component.translatable("container.elementsofpower.essentializer")), pos);
 
         return InteractionResult.SUCCESS;
     }
@@ -88,17 +89,16 @@ public class EssentializerBlock extends BaseEntityBlock
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType)
     {
         return level.isClientSide
-                ? createTickerHelper(blockEntityType, EssentializerBlockEntity.TYPE, EssentializerBlockEntity::doTickClient)
-                : createTickerHelper(blockEntityType, EssentializerBlockEntity.TYPE, EssentializerBlockEntity::doTickServer);
+                ? createTickerHelper(blockEntityType, ElementsOfPowerMod.ESSENTIALIZER_BLOCK_ENTITY.get(), EssentializerBlockEntity::doTickClient)
+                : createTickerHelper(blockEntityType, ElementsOfPowerMod.ESSENTIALIZER_BLOCK_ENTITY.get(), EssentializerBlockEntity::doTickServer);
     }
 
     @Override
-    public void animateTick(BlockState stateIn, Level worldIn, BlockPos pos, Random rand)
+    public void animateTick(BlockState stateIn, Level worldIn, BlockPos pos, RandomSource rand)
     {
         BlockEntity te = worldIn.getBlockEntity(pos);
-        if (te instanceof EssentializerBlockEntity)
+        if (te instanceof EssentializerBlockEntity essentializer)
         {
-            EssentializerBlockEntity essentializer = (EssentializerBlockEntity) te;
             if (!essentializer.remainingToConvert.isEmpty())
             {
                 double x = (double) pos.getX() + 0.5;

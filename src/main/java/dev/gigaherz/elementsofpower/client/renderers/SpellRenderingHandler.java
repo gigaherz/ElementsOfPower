@@ -9,7 +9,6 @@ import dev.gigaherz.elementsofpower.client.renderers.spells.ConeSpellRenderer;
 import dev.gigaherz.elementsofpower.client.renderers.spells.SpellRenderer;
 import dev.gigaherz.elementsofpower.client.renderers.spells.SphereSpellRenderer;
 import dev.gigaherz.elementsofpower.spells.InitializedSpellcast;
-import dev.gigaherz.elementsofpower.spells.SpellManager;
 import dev.gigaherz.elementsofpower.spells.SpellShapes;
 import dev.gigaherz.elementsofpower.spells.SpellcastEntityData;
 import dev.gigaherz.elementsofpower.spells.shapes.SpellShape;
@@ -74,7 +73,7 @@ public class SpellRenderingHandler
     @SubscribeEvent
     public static void playerRenderPost(RenderPlayerEvent.Post event)
     {
-        Player player = event.getPlayer();
+        Player player = event.getEntity();
 
         SpellcastEntityData.get(player).ifPresent(data -> {
             InitializedSpellcast cast = data.getCurrentCasting();

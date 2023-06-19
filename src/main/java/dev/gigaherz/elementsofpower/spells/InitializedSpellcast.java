@@ -5,6 +5,7 @@ import dev.gigaherz.elementsofpower.spells.effects.SpellEffect;
 import dev.gigaherz.elementsofpower.spells.shapes.SpellShape;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.player.Player;
@@ -15,7 +16,6 @@ import net.minecraft.world.phys.*;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 
 public class InitializedSpellcast extends Spellcast
 {
@@ -25,7 +25,7 @@ public class InitializedSpellcast extends Spellcast
     public int remainingInterval;
     public int totalCastTime;
 
-    protected InitializedSpellcast(List<Element> sequence, SpellShape shape, SpellEffect effect, Entity projectile, int power, Random rand, int empowering, int radiating, MagicAmounts spellCost, Level world, Player player)
+    protected InitializedSpellcast(List<Element> sequence, SpellShape shape, SpellEffect effect, Entity projectile, int power, RandomSource rand, int empowering, int radiating, MagicAmounts spellCost, Level world, Player player)
     {
         super(sequence, shape, effect, projectile, power, rand, empowering, radiating, spellCost);
         this.world = world;
@@ -58,7 +58,7 @@ public class InitializedSpellcast extends Spellcast
         return getShape().getScale(this);
     }
 
-    public void onImpact(HitResult mop, Random rand)
+    public void onImpact(HitResult mop, RandomSource rand)
     {
         this.setRandom(rand);
         if (!world.isClientSide)

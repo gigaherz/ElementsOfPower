@@ -1,4 +1,8 @@
 {
+  "compounds": {
+    "type": "elementsofpower:earth",
+    "amount": 9.0
+  },
   "mode": "ADDITIVE",
   "targets": [
     {
@@ -15,9 +19,5 @@
         "stack": "{Count:1b,id:\"elementsofpower:agate_ore\"}"
       }
     }
-  ],
-  "compounds": {
-    "amount": 9.0,
-    "type": "elementsofpower:earth"
-  }
+  ]
 }

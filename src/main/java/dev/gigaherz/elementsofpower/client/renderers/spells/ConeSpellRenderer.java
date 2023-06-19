@@ -67,7 +67,7 @@ public class ConeSpellRenderer extends SpellRenderer
             matrixStackIn.translate(0, 0, offset_z);
             matrixStackIn.scale(scale_xy, scale_xy, scale_z);
 
-            modelCone.get().render(bufferIn, rt, matrixStackIn, 0x00F000F0, color);
+            modelCone.get().render(matrixStackIn, bufferIn, rt, 0x00F000F0, color);
 
             matrixStackIn.popPose();
         }

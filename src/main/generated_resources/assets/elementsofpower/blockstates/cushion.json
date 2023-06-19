@@ -3,6 +3,27 @@
     "density=1": {
       "model": "elementsofpower:block/cushion_1"
     },
+    "density=10": {
+      "model": "elementsofpower:block/cushion_10"
+    },
+    "density=11": {
+      "model": "elementsofpower:block/cushion_11"
+    },
+    "density=12": {
+      "model": "elementsofpower:block/cushion_12"
+    },
+    "density=13": {
+      "model": "elementsofpower:block/cushion_13"
+    },
+    "density=14": {
+      "model": "elementsofpower:block/cushion_14"
+    },
+    "density=15": {
+      "model": "elementsofpower:block/cushion_15"
+    },
+    "density=16": {
+      "model": "elementsofpower:block/cushion_16"
+    },
     "density=2": {
       "model": "elementsofpower:block/cushion_2"
     },
@@ -26,27 +47,6 @@
     },
     "density=9": {
       "model": "elementsofpower:block/cushion_9"
-    },
-    "density=10": {
-      "model": "elementsofpower:block/cushion_10"
-    },
-    "density=11": {
-      "model": "elementsofpower:block/cushion_11"
-    },
-    "density=12": {
-      "model": "elementsofpower:block/cushion_12"
-    },
-    "density=13": {
-      "model": "elementsofpower:block/cushion_13"
-    },
-    "density=14": {
-      "model": "elementsofpower:block/cushion_14"
-    },
-    "density=15": {
-      "model": "elementsofpower:block/cushion_15"
-    },
-    "density=16": {
-      "model": "elementsofpower:block/cushion_16"
     }
   }
 }

@@ -1,5 +1,6 @@
 package dev.gigaherz.elementsofpower.recipes;
 
+import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.gemstones.GemstoneItem;
 import dev.gigaherz.elementsofpower.items.GemContainerItem;
 import net.minecraft.core.NonNullList;
@@ -9,9 +10,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.SimpleRecipeSerializer;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.registries.ObjectHolder;
 
 public class GemstoneChangeRecipe extends CustomRecipe
 {
@@ -129,9 +128,7 @@ public class GemstoneChangeRecipe extends CustomRecipe
     @Override
     public RecipeSerializer<?> getSerializer()
     {
-        return SERIALIZER;
+        return ElementsOfPowerMod.GEMSTONE_CHANGE.get();
     }
 
-    @ObjectHolder("elementsofpower:gemstone_change")
-    public static SimpleRecipeSerializer<GemstoneChangeRecipe> SERIALIZER;
 }

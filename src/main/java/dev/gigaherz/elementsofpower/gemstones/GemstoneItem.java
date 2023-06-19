@@ -6,8 +6,8 @@ import dev.gigaherz.elementsofpower.spells.Element;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
@@ -15,7 +15,6 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraft.nbt.Tag;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -60,7 +59,7 @@ public class GemstoneItem extends MagicContainerItem
     @Override
     public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> items)
     {
-        if (this.allowdedIn(group))
+        if (this.allowedIn(group))
         {
             // Unexamined
             items.add(new ItemStack(this));
@@ -103,7 +102,7 @@ public class GemstoneItem extends MagicContainerItem
         if (q == null)
             return gemstoneName;
 
-        return new TranslatableComponent(q.getTranslationKey(), gemstoneName);
+        return Component.translatable(q.getTranslationKey(), gemstoneName);
     }
 
     @Override
@@ -157,7 +156,7 @@ public class GemstoneItem extends MagicContainerItem
     }
 
     @Override
-    public int getItemStackLimit(ItemStack stack)
+    public int getMaxStackSize(ItemStack stack)
     {
         return getQuality(stack) == null ? 64 : 1;
     }
@@ -167,9 +166,9 @@ public class GemstoneItem extends MagicContainerItem
     public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn)
     {
         if (getQuality(stack) == null)
-            tooltip.add(new TranslatableComponent("text.elementsofpower.gemstone.use").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
+            tooltip.add(Component.translatable("text.elementsofpower.gemstone.use").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
         else
-            tooltip.add(new TranslatableComponent("text.elementsofpower.gemstone.combine").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
+            tooltip.add(Component.translatable("text.elementsofpower.gemstone.combine").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
     }
 
     public ItemStack getStack(Quality quality)

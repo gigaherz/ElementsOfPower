@@ -1,4 +1,8 @@
 {
+  "compounds": {
+    "type": "elementsofpower:earth",
+    "amount": 8.0
+  },
   "mode": "ADDITIVE",
   "targets": [
     {
@@ -15,9 +19,5 @@
         "stack": "{Count:1b,id:\"minecraft:lapis_lazuli\"}"
       }
     }
-  ],
-  "compounds": {
-    "amount": 8.0,
-    "type": "elementsofpower:earth"
-  }
+  ]
 }

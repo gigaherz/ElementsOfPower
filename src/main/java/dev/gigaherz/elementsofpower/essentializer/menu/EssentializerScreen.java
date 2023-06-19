@@ -12,7 +12,6 @@ import dev.gigaherz.elementsofpower.spells.Element;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -20,7 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import java.util.List;
 import java.util.Objects;
 
-public class EssentializerScreen extends AbstractContainerScreen<EssentializerContainer>
+public class EssentializerScreen extends AbstractContainerScreen<EssentializerMenu>
 {
     public static final ResourceLocation GUI_TEXTURE_LOCATION = ElementsOfPowerMod.location("textures/gui/essentializer.png");
 
@@ -60,7 +59,7 @@ public class EssentializerScreen extends AbstractContainerScreen<EssentializerCo
             66 / 255.0f, 0 / 255.0f, 0 / 255.0f, // 420000
     };
 
-    public EssentializerScreen(EssentializerContainer container, Inventory playerInventory, Component title)
+    public EssentializerScreen(EssentializerMenu container, Inventory playerInventory, Component title)
     {
         super(container, playerInventory, title);
         this.player = playerInventory;
@@ -197,7 +196,7 @@ public class EssentializerScreen extends AbstractContainerScreen<EssentializerCo
 
             List<Component> tooltip = Lists.newArrayList();
             tooltip.add(MagicAmounts.getMagicName(i));
-            tooltip.add(new TextComponent(MagicTooltips.PRETTY_NUMBER_FORMATTER_2.format(am.get(i)) + " / " + EssentializerBlockEntity.MAX_ESSENTIALIZER_MAGIC).withStyle(ChatFormatting.GRAY));
+            tooltip.add(Component.literal(MagicTooltips.PRETTY_NUMBER_FORMATTER_2.format(am.get(i)) + " / " + EssentializerBlockEntity.MAX_ESSENTIALIZER_MAGIC).withStyle(ChatFormatting.GRAY));
 
             renderComponentTooltip(matrixStack, tooltip, mx - x0, my - y0);
         }

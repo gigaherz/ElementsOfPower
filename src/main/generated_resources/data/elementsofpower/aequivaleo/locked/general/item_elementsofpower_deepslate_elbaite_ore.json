@@ -1,4 +1,14 @@
 {
+  "compounds": [
+    {
+      "type": "elementsofpower:death",
+      "amount": 1.0
+    },
+    {
+      "type": "elementsofpower:earth",
+      "amount": 8.0
+    }
+  ],
   "mode": "ADDITIVE",
   "targets": [
     {
@@ -14,16 +24,6 @@
         "count": 1.0,
         "stack": "{Count:1b,id:\"elementsofpower:deepslate_elbaite_ore\"}"
       }
-    }
-  ],
-  "compounds": [
-    {
-      "amount": 1.0,
-      "type": "elementsofpower:chaos"
-    },
-    {
-      "amount": 8.0,
-      "type": "elementsofpower:earth"
     }
   ]
 }

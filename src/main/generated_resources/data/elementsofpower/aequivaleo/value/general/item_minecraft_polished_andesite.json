@@ -1,4 +1,8 @@
 {
+  "compounds": {
+    "type": "elementsofpower:earth",
+    "amount": 10.0
+  },
   "mode": "ADDITIVE",
   "targets": [
     {
@@ -15,9 +19,5 @@
         "stack": "{Count:1b,id:\"minecraft:polished_andesite\"}"
       }
     }
-  ],
-  "compounds": {
-    "amount": 10.0,
-    "type": "elementsofpower:earth"
-  }
+  ]
 }

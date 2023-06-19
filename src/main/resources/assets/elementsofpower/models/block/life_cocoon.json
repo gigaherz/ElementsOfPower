@@ -1,23 +1,25 @@
 {
   "parent": "elementsofpower:block/base_cocoon",
-  "loader": "forge:multi-layer",
+  "loader": "forge:composite",
   "textures": {
     "particle": "elementsofpower:block/life_cocoon"
   },
-  "layers": {
+  "children": {
     "solid": {
       "loader": "forge:obj",
       "model": "elementsofpower:models/block/cocoon_base.obj",
       "textures": {
         "default": "elementsofpower:block/life_cocoon"
-      }
+      },
+      "render_type": "solid"
     },
     "translucent": {
       "loader": "forge:obj",
       "model": "elementsofpower:models/block/cocoon_overlay.obj",
       "textures": {
         "overlay": "elementsofpower:block/cocoon_overlay"
-      }
+      },
+      "render_type": "translucent"
     }
   }
 }

@@ -1,4 +1,14 @@
 {
+  "compounds": [
+    {
+      "type": "elementsofpower:darkness",
+      "amount": 0.125
+    },
+    {
+      "type": "elementsofpower:earth",
+      "amount": 1.0
+    }
+  ],
   "mode": "ADDITIVE",
   "targets": [
     {
@@ -19,21 +29,7 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:serendibite\",tag:{quality:2}}"
-      }
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:serendibite\"}"
-      }
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:serendibite\",tag:{quality:1}}"
+        "stack": "{Count:1b,id:\"elementsofpower:serendibite\",tag:{quality:4}}"
       }
     },
     {
@@ -47,18 +43,22 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:serendibite\",tag:{quality:4}}"
+        "stack": "{Count:1b,id:\"elementsofpower:serendibite\"}"
       }
-    }
-  ],
-  "compounds": [
-    {
-      "amount": 0.125,
-      "type": "elementsofpower:darkness"
     },
     {
-      "amount": 1.0,
-      "type": "elementsofpower:earth"
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{Count:1b,id:\"elementsofpower:serendibite\",tag:{quality:2}}"
+      }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{Count:1b,id:\"elementsofpower:serendibite\",tag:{quality:1}}"
+      }
     }
   ]
 }

@@ -1,7 +1,7 @@
 package dev.gigaherz.elementsofpower.client;
 
 import dev.gigaherz.elementsofpower.essentializer.EssentializerBlockEntity;
-import dev.gigaherz.elementsofpower.essentializer.menu.EssentializerContainer;
+import dev.gigaherz.elementsofpower.essentializer.menu.EssentializerMenu;
 import dev.gigaherz.elementsofpower.network.AddVelocityToPlayer;
 import dev.gigaherz.elementsofpower.network.SynchronizeSpellcastState;
 import dev.gigaherz.elementsofpower.network.UpdateEssentializerAmounts;
@@ -12,9 +12,9 @@ import dev.gigaherz.elementsofpower.spells.Spellcast;
 import dev.gigaherz.elementsofpower.spells.SpellcastEntityData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.nbt.Tag;
 
 public class ClientPacketHandlers
 {
@@ -47,9 +47,9 @@ public class ClientPacketHandlers
             {
                 if (message.windowId == player.containerMenu.containerId)
                 {
-                    if ((player.containerMenu instanceof EssentializerContainer))
+                    if ((player.containerMenu instanceof EssentializerMenu))
                     {
-                        ((EssentializerContainer) player.containerMenu).updateAmounts(message.contained, message.remaining);
+                        ((EssentializerMenu) player.containerMenu).updateAmounts(message.contained, message.remaining);
                     }
                 }
             }

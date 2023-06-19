@@ -2,13 +2,14 @@ package dev.gigaherz.elementsofpower.cocoons;
 
 import com.mojang.serialization.Codec;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
+import dev.gigaherz.elementsofpower.magic.MagicGradient;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -16,28 +17,47 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
+import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.Material;
-import net.minecraftforge.registries.ObjectHolder;
 
 import java.util.Objects;
-import java.util.Random;
 
-public class CocoonFeature extends Feature<CocoonFeatureConfig>
+public class CocoonFeature extends Feature<NoneFeatureConfiguration>
 {
-    @ObjectHolder("elementsofpower:cocoon")
-    public static CocoonFeature INSTANCE;
-
     public static final TagKey<Block> REPLACEABLE_TAG = TagKey.create(Registry.BLOCK_REGISTRY,new ResourceLocation("elementsofpower:can_cocoon_replace"));
 
-    public CocoonFeature(Codec<CocoonFeatureConfig> configFactoryIn)
+    public static final MagicGradient OVERWORLD = new MagicGradient.Builder()
+            .addPoint(0, MagicAmounts.EMPTY.darkness(0.25f))
+            .addPoint(1, MagicAmounts.EMPTY.light(0.25f))
+            .addPoint(1, MagicAmounts.EMPTY.light(1))
+            .build();
+
+    public static final MagicGradient THE_NETHER = new MagicGradient.Builder()
+            .addPoint(0, MagicAmounts.EMPTY.fire(0.5f))
+            .addPoint(1, MagicAmounts.EMPTY.fire(0.5f))
+            .addPoint(1, MagicAmounts.EMPTY.darkness(1))
+            .build();
+
+    public static final MagicGradient THE_END = new MagicGradient.Builder()
+            .addPoint(0, MagicAmounts.EMPTY.darkness(0.5f))
+            .addPoint(1, MagicAmounts.EMPTY.darkness(0.5f))
+            .addPoint(1, MagicAmounts.EMPTY.darkness(1))
+            .build();
+
+    public static final MagicGradient DEFAULT = new MagicGradient.Builder()
+            .addPoint(0, MagicAmounts.EMPTY)
+            .addPoint(1, MagicAmounts.EMPTY)
+            .build();
+
+    public CocoonFeature(Codec<NoneFeatureConfiguration> configFactoryIn)
     {
         super(configFactoryIn);
     }
 
     @Override
-    public boolean place(FeaturePlaceContext<CocoonFeatureConfig> context)
+    public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> context)
     {
         var worldIn = context.level();
         var pos = context.origin();
@@ -57,11 +77,21 @@ public class CocoonFeature extends Feature<CocoonFeatureConfig>
         return false;
     }
 
-    private void generateOne(BlockPos pos, Direction f, Random rand, LevelAccessor world, CocoonFeatureConfig config)
+    private void generateOne(BlockPos pos, Direction f, RandomSource rand, LevelAccessor world, NoneFeatureConfiguration config)
     {
         int size = 6 + rand.nextInt(10);
 
         MagicAmounts am = MagicAmounts.EMPTY;
+
+        var biome = world.getBiome(pos);
+
+        var gradient = DEFAULT;
+        if (biome.is(BiomeTags.IS_END))
+            gradient = THE_END;
+        else if (biome.is(BiomeTags.IS_NETHER))
+            gradient = THE_NETHER;
+        else if (biome.is(BiomeTags.IS_OVERWORLD))
+            gradient = OVERWORLD;
 
         while (size-- > 0)
         {
@@ -74,7 +104,7 @@ public class CocoonFeature extends Feature<CocoonFeatureConfig>
             }
             else if (y >= world.getMaxBuildHeight())
             {
-                am = am.add(config.getAt(1.01f));
+                am = am.add(gradient.getAt(1.01f));
             }
             else
             {
@@ -82,7 +112,7 @@ public class CocoonFeature extends Feature<CocoonFeatureConfig>
                 BlockState state = world.getBlockState(pos1);
                 Block b = state.getBlock();
 
-                am = am.add(config.getAt(y / (float) world.getMaxBuildHeight()));
+                am = am.add(gradient.getAt(y / (float) world.getMaxBuildHeight()));
 
                 Material mat = state.getMaterial();
                 if (mat == Material.AIR)

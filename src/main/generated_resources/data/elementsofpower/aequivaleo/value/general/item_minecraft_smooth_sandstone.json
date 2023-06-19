@@ -1,4 +1,14 @@
 {
+  "compounds": [
+    {
+      "type": "elementsofpower:air",
+      "amount": 8.0
+    },
+    {
+      "type": "elementsofpower:earth",
+      "amount": 8.0
+    }
+  ],
   "mode": "ADDITIVE",
   "targets": [
     {
@@ -14,16 +24,6 @@
         "count": 1.0,
         "stack": "{Count:1b,id:\"minecraft:smooth_sandstone\"}"
       }
-    }
-  ],
-  "compounds": [
-    {
-      "amount": 8.0,
-      "type": "elementsofpower:air"
-    },
-    {
-      "amount": 8.0,
-      "type": "elementsofpower:earth"
     }
   ]
 }

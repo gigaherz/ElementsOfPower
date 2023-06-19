@@ -4,6 +4,7 @@ import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import dev.gigaherz.elementsofpower.spells.Element;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -14,7 +15,7 @@ import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.registries.ObjectHolder;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.Locale;
@@ -22,9 +23,6 @@ import java.util.Random;
 
 public class ColoredSmokeData implements ParticleOptions
 {
-    @ObjectHolder("elementsofpower:colored_smoke")
-    public static ParticleType<ColoredSmokeData> TYPE = null;
-
     public static Codec<ColoredSmokeData> CODEC = RecordCodecBuilder
             .create((instance) -> instance.group(
                     Codec.FLOAT.fieldOf("red").forGetter(i -> i.red),
@@ -49,7 +47,7 @@ public class ColoredSmokeData implements ParticleOptions
     @Override
     public ParticleType<?> getType()
     {
-        return TYPE;
+        return ElementsOfPowerMod.COLORED_SMOKE_DATA.get();
     }
 
     @Override
@@ -63,7 +61,7 @@ public class ColoredSmokeData implements ParticleOptions
     @Override
     public String writeToString()
     {
-        return String.format(Locale.ROOT, "%s %.2f %.2f %.2f", this.getType().getRegistryName(), this.red, this.green, this.blue);
+        return String.format(Locale.ROOT, "%s %.2f %.2f %.2f", ForgeRegistries.PARTICLE_TYPES.getKey(this.getType()), this.red, this.green, this.blue);
     }
 
     @Deprecated

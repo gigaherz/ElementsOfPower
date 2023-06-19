@@ -1,4 +1,8 @@
 {
+  "compounds": {
+    "type": "elementsofpower:earth",
+    "amount": 1.125
+  },
   "mode": "ADDITIVE",
   "targets": [
     {
@@ -12,7 +16,7 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:agate\",tag:{quality:4}}"
+        "stack": "{Count:1b,id:\"elementsofpower:agate\",tag:{quality:1}}"
       }
     },
     {
@@ -33,14 +37,7 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:agate\",tag:{quality:1}}"
-      }
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:agate\",tag:{quality:3}}"
+        "stack": "{Count:1b,id:\"elementsofpower:agate\",tag:{quality:4}}"
       }
     },
     {
@@ -49,10 +46,13 @@
         "count": 1.0,
         "stack": "{Count:1b,id:\"elementsofpower:agate\"}"
       }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{Count:1b,id:\"elementsofpower:agate\",tag:{quality:3}}"
+      }
     }
-  ],
-  "compounds": {
-    "amount": 1.125,
-    "type": "elementsofpower:earth"
-  }
+  ]
 }

@@ -1,9 +1,5 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    " G",
-    "S "
-  ],
   "key": {
     "G": {
       "item": "minecraft:gold_ingot"
@@ -12,6 +8,10 @@
       "item": "minecraft:stick"
     }
   },
+  "pattern": [
+    " G",
+    "S "
+  ],
   "result": {
     "item": "elementsofpower:wand"
   }

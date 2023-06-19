@@ -1,5 +1,4 @@
 {
-  "replace": false,
   "values": [
     "#elementsofpower:gems/ruby",
     "#elementsofpower:gems/sapphire",
@@ -8,7 +7,6 @@
     "#elementsofpower:gems/quartz",
     "#elementsofpower:gems/serendibite",
     "#elementsofpower:gems/emerald",
-    "#elementsofpower:gems/amethyst",
     "#elementsofpower:gems/elbaite",
     "#elementsofpower:gems/diamond"
   ]

@@ -1,10 +1,5 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "ggg",
-    "ggg",
-    "ggg"
-  ],
   "key": {
     "g": {
       "type": "elementsofpower:not_analyzed",
@@ -13,6 +8,11 @@
       }
     }
   },
+  "pattern": [
+    "ggg",
+    "ggg",
+    "ggg"
+  ],
   "result": {
     "item": "elementsofpower:elbaite_block"
   }

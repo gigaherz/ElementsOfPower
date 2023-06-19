@@ -1,62 +1,99 @@
 package dev.gigaherz.elementsofpower;
 
 import dev.gigaherz.elementsofpower.analyzer.AnalyzerItem;
+import dev.gigaherz.elementsofpower.gemstones.Gemstone;
 import dev.gigaherz.elementsofpower.gemstones.GemstoneItem;
 import dev.gigaherz.elementsofpower.items.BaubleItem;
 import dev.gigaherz.elementsofpower.items.MagicOrbItem;
 import dev.gigaherz.elementsofpower.items.StaffItem;
 import dev.gigaherz.elementsofpower.items.WandItem;
+import dev.gigaherz.elementsofpower.spells.Element;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.registries.ObjectHolder;
+import net.minecraft.world.level.block.Block;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 
-import javax.annotation.Nonnull;
-
-@ObjectHolder("elementsofpower")
 public class ElementsOfPowerItems
 {
-    @SuppressWarnings("ConstantConditions")
-    @Nonnull
-    private static <T extends Item> T toBeInitialized()
+    static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, ElementsOfPowerMod.MODID);
+
+    private static RegistryObject<BlockItem> registerBlockItem(RegistryObject<? extends Block> block, CreativeModeTab tab)
     {
-        return null;
+        if (!block.getId().getNamespace().equals(ElementsOfPowerMod.MODID))
+            throw new IllegalStateException("Wrong block item registered");
+
+        return ITEMS.register(block.getId().getPath(), () -> new BlockItem(block.get(), new Item.Properties().tab(tab)));
     }
 
-    public static final MagicOrbItem FIRE_ORB = toBeInitialized();
-    public static final MagicOrbItem WATER_ORB = toBeInitialized();
-    public static final MagicOrbItem AIR_ORB = toBeInitialized();
-    public static final MagicOrbItem EARTH_ORB = toBeInitialized();
-    public static final MagicOrbItem LIGHT_ORB = toBeInitialized();
-    public static final MagicOrbItem DARKNESS_ORB = toBeInitialized();
-    public static final MagicOrbItem LIFE_ORB = toBeInitialized();
-    public static final MagicOrbItem DEATH_ORB = toBeInitialized();
+    public static final RegistryObject<BlockItem> ESSENTIALIZER = registerBlockItem(ElementsOfPowerBlocks.ESSENTIALIZER, ElementsOfPowerMod.CREATIVE_TAB_MAGIC);
+    public static final RegistryObject<AnalyzerItem> ANALYZER =     ITEMS.register("analyzer", () -> new AnalyzerItem(new Item.Properties().tab(ElementsOfPowerMod.CREATIVE_TAB_MAGIC).stacksTo(1))        );
+    public static final RegistryObject<WandItem> WAND =     ITEMS.register("wand", () -> new WandItem(new Item.Properties().tab(ElementsOfPowerMod.CREATIVE_TAB_MAGIC).stacksTo(1))        );
+    public static final RegistryObject<StaffItem> STAFF =     ITEMS.register("staff", () -> new StaffItem(new Item.Properties().tab(ElementsOfPowerMod.CREATIVE_TAB_MAGIC).stacksTo(1))        );
+    public static final RegistryObject<BaubleItem> RING =     ITEMS.register("ring", () -> new BaubleItem(new Item.Properties().tab(ElementsOfPowerMod.CREATIVE_TAB_MAGIC).stacksTo(1))        );
+    public static final RegistryObject<BaubleItem> HEADBAND =     ITEMS.register("headband", () -> new BaubleItem(new Item.Properties().tab(ElementsOfPowerMod.CREATIVE_TAB_MAGIC).stacksTo(1))        );
+    public static final RegistryObject<BaubleItem> NECKLACE =     ITEMS.register("necklace", () -> new BaubleItem(new Item.Properties().tab(ElementsOfPowerMod.CREATIVE_TAB_MAGIC).stacksTo(1))        );
 
-    public static final AnalyzerItem ANALYZER = toBeInitialized();
-    public static final BlockItem ESSENTIALIZER = toBeInitialized();
+    private static RegistryObject<GemstoneItem> registerGemstone(Gemstone type)
+    {
+        return ITEMS.register(type.getSerializedName(), () -> new GemstoneItem(type, new Item.Properties().tab(ElementsOfPowerMod.CREATIVE_TAB_GEMSTONES).stacksTo(1)));
+    }
 
-    public static final WandItem WAND = toBeInitialized();
-    public static final StaffItem STAFF = toBeInitialized();
-    public static final BaubleItem RING = toBeInitialized();
-    public static final BaubleItem HEADBAND = toBeInitialized();
-    public static final BaubleItem NECKLACE = toBeInitialized();
+    public static final RegistryObject<GemstoneItem> RUBY = registerGemstone(Gemstone.RUBY);
+    public static final RegistryObject<GemstoneItem> SAPPHIRE = registerGemstone(Gemstone.SAPPHIRE);
+    public static final RegistryObject<GemstoneItem> CITRINE = registerGemstone(Gemstone.CITRINE);
+    public static final RegistryObject<GemstoneItem> AGATE = registerGemstone(Gemstone.AGATE);
+    public static final RegistryObject<GemstoneItem> QUARTZ = registerGemstone(Gemstone.QUARTZ);
+    public static final RegistryObject<GemstoneItem> SERENDIBITE = registerGemstone(Gemstone.SERENDIBITE);
+    public static final RegistryObject<GemstoneItem> EMERALD = registerGemstone(Gemstone.EMERALD);
+    public static final RegistryObject<GemstoneItem> ELBAITE = registerGemstone(Gemstone.ELBAITE);
+    public static final RegistryObject<GemstoneItem> DIAMOND = registerGemstone(Gemstone.DIAMOND);
+    public static final RegistryObject<GemstoneItem> CREATIVITE = registerGemstone(Gemstone.CREATIVITE);
 
-    public static final GemstoneItem RUBY = toBeInitialized();
-    public static final GemstoneItem SAPPHIRE = toBeInitialized();
-    public static final GemstoneItem CITRINE = toBeInitialized();
-    public static final GemstoneItem AGATE = toBeInitialized();
-    public static final GemstoneItem QUARTZ = toBeInitialized();
-    public static final GemstoneItem SERENDIBITE = toBeInitialized();
-    public static final GemstoneItem EMERALD = toBeInitialized();
-    public static final GemstoneItem ELBAITE = toBeInitialized();
-    public static final GemstoneItem DIAMOND = toBeInitialized();
-    public static final GemstoneItem CREATIVITE = toBeInitialized();
+    public static final RegistryObject<BlockItem> RUBY_ORE = registerBlockItem(ElementsOfPowerBlocks.RUBY_ORE, ElementsOfPowerMod.CREATIVE_TAB_GEMSTONES);
+    public static final RegistryObject<BlockItem> SAPPHIRE_ORE = registerBlockItem(ElementsOfPowerBlocks.SAPPHIRE_ORE, ElementsOfPowerMod.CREATIVE_TAB_GEMSTONES);
+    public static final RegistryObject<BlockItem> CITRINE_ORE = registerBlockItem(ElementsOfPowerBlocks.CITRINE_ORE, ElementsOfPowerMod.CREATIVE_TAB_GEMSTONES);
+    public static final RegistryObject<BlockItem> AGATE_ORE = registerBlockItem(ElementsOfPowerBlocks.AGATE_ORE, ElementsOfPowerMod.CREATIVE_TAB_GEMSTONES);
+    public static final RegistryObject<BlockItem> SERENDIBITE_ORE = registerBlockItem(ElementsOfPowerBlocks.SERENDIBITE_ORE, ElementsOfPowerMod.CREATIVE_TAB_GEMSTONES);
+    public static final RegistryObject<BlockItem> ELBAITE_ORE = registerBlockItem(ElementsOfPowerBlocks.ELBAITE_ORE, ElementsOfPowerMod.CREATIVE_TAB_GEMSTONES);
+    public static final RegistryObject<BlockItem> DEEPSLATE_RUBY_ORE = registerBlockItem(ElementsOfPowerBlocks.DEEPSLATE_RUBY_ORE, ElementsOfPowerMod.CREATIVE_TAB_GEMSTONES);
+    public static final RegistryObject<BlockItem> DEEPSLATE_SAPPHIRE_ORE = registerBlockItem(ElementsOfPowerBlocks.DEEPSLATE_SAPPHIRE_ORE, ElementsOfPowerMod.CREATIVE_TAB_GEMSTONES);
+    public static final RegistryObject<BlockItem> DEEPSLATE_CITRINE_ORE = registerBlockItem(ElementsOfPowerBlocks.DEEPSLATE_CITRINE_ORE, ElementsOfPowerMod.CREATIVE_TAB_GEMSTONES);
+    public static final RegistryObject<BlockItem> DEEPSLATE_AGATE_ORE = registerBlockItem(ElementsOfPowerBlocks.DEEPSLATE_AGATE_ORE, ElementsOfPowerMod.CREATIVE_TAB_GEMSTONES);
+    public static final RegistryObject<BlockItem> DEEPSLATE_SERENDIBITE_ORE = registerBlockItem(ElementsOfPowerBlocks.DEEPSLATE_SERENDIBITE_ORE, ElementsOfPowerMod.CREATIVE_TAB_GEMSTONES);
+    public static final RegistryObject<BlockItem> DEEPSLATE_ELBAITE_ORE = registerBlockItem(ElementsOfPowerBlocks.DEEPSLATE_ELBAITE_ORE, ElementsOfPowerMod.CREATIVE_TAB_GEMSTONES);
+    public static final RegistryObject<BlockItem> RUBY_BLOCK = registerBlockItem(ElementsOfPowerBlocks.RUBY_BLOCK, ElementsOfPowerMod.CREATIVE_TAB_GEMSTONES);
+    public static final RegistryObject<BlockItem> SAPPHIRE_BLOCK = registerBlockItem(ElementsOfPowerBlocks.SAPPHIRE_BLOCK, ElementsOfPowerMod.CREATIVE_TAB_GEMSTONES);
+    public static final RegistryObject<BlockItem> CITRINE_BLOCK = registerBlockItem(ElementsOfPowerBlocks.CITRINE_BLOCK, ElementsOfPowerMod.CREATIVE_TAB_GEMSTONES);
+    public static final RegistryObject<BlockItem> AGATE_BLOCK = registerBlockItem(ElementsOfPowerBlocks.AGATE_BLOCK, ElementsOfPowerMod.CREATIVE_TAB_GEMSTONES);
+    public static final RegistryObject<BlockItem> SERENDIBITE_BLOCK = registerBlockItem(ElementsOfPowerBlocks.SERENDIBITE_BLOCK, ElementsOfPowerMod.CREATIVE_TAB_GEMSTONES);
+    public static final RegistryObject<BlockItem> ELBAITE_BLOCK = registerBlockItem(ElementsOfPowerBlocks.ELBAITE_BLOCK, ElementsOfPowerMod.CREATIVE_TAB_GEMSTONES);
 
-    public static final BlockItem FIRE_COCOON = toBeInitialized();
-    public static final BlockItem WATER_COCOON = toBeInitialized();
-    public static final BlockItem AIR_COCOON = toBeInitialized();
-    public static final BlockItem EARTH_COCOON = toBeInitialized();
-    public static final BlockItem LIGHT_COCOON = toBeInitialized();
-    public static final BlockItem DARKNESS_COCOON = toBeInitialized();
-    public static final BlockItem LIFE_COCOON = toBeInitialized();
-    public static final BlockItem DEATH_COCOON = toBeInitialized();
+    private static RegistryObject<MagicOrbItem> registerOrb(Element type)
+    {
+        return ITEMS.register(type.getName() + "_orb", () ->
+                new MagicOrbItem(type, new Item.Properties().tab(ElementsOfPowerMod.CREATIVE_TAB_MAGIC))
+        );
+    }
+
+    public static final RegistryObject<MagicOrbItem> FIRE_ORB = registerOrb(Element.FIRE);
+    public static final RegistryObject<MagicOrbItem> WATER_ORB = registerOrb(Element.WATER);
+    public static final RegistryObject<MagicOrbItem> AIR_ORB = registerOrb(Element.AIR);
+    public static final RegistryObject<MagicOrbItem> EARTH_ORB = registerOrb(Element.EARTH);
+    public static final RegistryObject<MagicOrbItem> LIGHT_ORB = registerOrb(Element.LIGHT);
+    public static final RegistryObject<MagicOrbItem> TIME_ORB = registerOrb(Element.TIME);
+    public static final RegistryObject<MagicOrbItem> LIFE_ORB = registerOrb(Element.LIFE);
+    public static final RegistryObject<MagicOrbItem> CHAOS_ORB = registerOrb(Element.CHAOS);
+
+    public static final RegistryObject<BlockItem> FIRE_COCOON = registerBlockItem(ElementsOfPowerBlocks.FIRE_COCOON, ElementsOfPowerMod.CREATIVE_TAB_MAGIC);
+    public static final RegistryObject<BlockItem> WATER_COCOON = registerBlockItem(ElementsOfPowerBlocks.WATER_COCOON, ElementsOfPowerMod.CREATIVE_TAB_MAGIC);
+    public static final RegistryObject<BlockItem> AIR_COCOON = registerBlockItem(ElementsOfPowerBlocks.AIR_COCOON, ElementsOfPowerMod.CREATIVE_TAB_MAGIC);
+    public static final RegistryObject<BlockItem> EARTH_COCOON = registerBlockItem(ElementsOfPowerBlocks.EARTH_COCOON, ElementsOfPowerMod.CREATIVE_TAB_MAGIC);
+    public static final RegistryObject<BlockItem> LIGHT_COCOON = registerBlockItem(ElementsOfPowerBlocks.LIGHT_COCOON, ElementsOfPowerMod.CREATIVE_TAB_MAGIC);
+    public static final RegistryObject<BlockItem> TIME_COCOON = registerBlockItem(ElementsOfPowerBlocks.TIME_COCOON, ElementsOfPowerMod.CREATIVE_TAB_MAGIC);
+    public static final RegistryObject<BlockItem> LIFE_COCOON = registerBlockItem(ElementsOfPowerBlocks.LIFE_COCOON, ElementsOfPowerMod.CREATIVE_TAB_MAGIC);
+    public static final RegistryObject<BlockItem> CHAOS_COCOON = registerBlockItem(ElementsOfPowerBlocks.CHAOS_COCOON, ElementsOfPowerMod.CREATIVE_TAB_MAGIC);
+
 }

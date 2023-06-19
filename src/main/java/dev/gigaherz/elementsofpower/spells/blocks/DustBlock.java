@@ -3,6 +3,7 @@ package dev.gigaherz.elementsofpower.spells.blocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -11,8 +12,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.material.PushReaction;
-
-import java.util.Random;
 
 public class DustBlock extends Block
 {
@@ -42,21 +41,21 @@ public class DustBlock extends Block
         rescheduleUpdate(worldIn, pos, worldIn.random);
     }
 
-    private void rescheduleUpdate(Level worldIn, BlockPos pos, Random rand)
+    private void rescheduleUpdate(Level worldIn, BlockPos pos, RandomSource rand)
     {
         worldIn.scheduleTick(pos, this, 12 + rand.nextInt(12));
     }
 
     @Deprecated
     @Override
-    public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, Random random)
+    public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random)
     {
         // explicitly don't call super
     }
 
     @Deprecated
     @Override
-    public void tick(BlockState state, ServerLevel worldIn, BlockPos pos, Random rand)
+    public void tick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource rand)
     {
         int density = state.getValue(DENSITY) - 1;
         int maxGive = (int) Math.sqrt(density);

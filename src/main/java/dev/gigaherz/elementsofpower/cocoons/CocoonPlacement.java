@@ -5,6 +5,7 @@ import com.mojang.serialization.DataResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.placement.PlacementContext;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
@@ -12,7 +13,6 @@ import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Stream;
 
 public class CocoonPlacement extends PlacementModifier
@@ -29,7 +29,7 @@ public class CocoonPlacement extends PlacementModifier
     }
 
     @Override
-    public Stream<BlockPos> getPositions(PlacementContext context, Random random, BlockPos pos)
+    public Stream<BlockPos> getPositions(PlacementContext context, RandomSource random, BlockPos pos)
     {
         List<BlockPos> positions = new ArrayList<>();
 
@@ -42,8 +42,9 @@ public class CocoonPlacement extends PlacementModifier
             }
         }
 
-        int sections = Mth.ceil(top / 16.0f) * 16;
-        for (int y = 0; y < sections; y += 16)
+        int bottomSection = context.getMinBuildHeight();
+        int topSection = Mth.ceil(top / 16.0f) * 16;
+        for (int y = bottomSection; y < topSection; y += 16)
         {
             int n = random.nextInt(3);
             for (int i = 0; i < n; i++)

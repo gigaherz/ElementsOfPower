@@ -10,6 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.item.ItemStack;
@@ -19,15 +20,13 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraft.nbt.Tag;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.RangedWrapper;
-import net.minecraftforge.registries.ObjectHolder;
+import net.minecraftforge.network.PacketDistributor;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -36,9 +35,6 @@ public class EssentializerBlockEntity
         extends BlockEntity
         implements IMagicAmountHolder
 {
-    @ObjectHolder("elementsofpower:essentializer")
-    public static BlockEntityType<EssentializerBlockEntity> TYPE;
-
     public static final int MAX_ESSENTIALIZER_MAGIC = 32768;
     public static final float MAX_CONVERT_PER_TICK = 5 / 20.0f;
     public static final float MAX_TRANSFER_PER_TICK = 50 / 20.0f;
@@ -99,7 +95,7 @@ public class EssentializerBlockEntity
 
     public EssentializerBlockEntity(BlockPos pos, BlockState state)
     {
-        super(TYPE, pos, state);
+        super(ElementsOfPowerMod.ESSENTIALIZER_BLOCK_ENTITY.get(), pos, state);
     }
 
     @Override

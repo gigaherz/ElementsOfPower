@@ -1,4 +1,8 @@
 {
+  "compounds": {
+    "type": "elementsofpower:life",
+    "amount": 16.0
+  },
   "mode": "ADDITIVE",
   "targets": [
     {
@@ -15,9 +19,5 @@
         "stack": "{Count:1b,id:\"minecraft:stripped_oak_log\"}"
       }
     }
-  ],
-  "compounds": {
-    "amount": 16.0,
-    "type": "elementsofpower:life"
-  }
+  ]
 }

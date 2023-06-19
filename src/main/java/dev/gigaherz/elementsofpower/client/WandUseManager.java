@@ -15,11 +15,14 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.settings.IKeyConflictContext;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.client.ClientRegistry;
+import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
@@ -27,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Mod.EventBusSubscriber(value= Dist.CLIENT, modid=ElementsOfPowerMod.MODID, bus= Mod.EventBusSubscriber.Bus.MOD)
 public class WandUseManager
 {
     private final static int[] defaultKeys = {
@@ -34,7 +38,9 @@ public class WandUseManager
             GLFW.GLFW_KEY_5, GLFW.GLFW_KEY_6, GLFW.GLFW_KEY_7, GLFW.GLFW_KEY_8
     };
 
-    public static WandUseManager instance;
+    public static WandUseManager instance = new WandUseManager();
+
+    private final Minecraft mc;
 
     public final KeyMapping[] spellKeys = new KeyMapping[8];
     public final boolean[] lastKeyState = new boolean[8];
@@ -46,15 +52,17 @@ public class WandUseManager
     public int itemInUseCount;
     private boolean failedSequence;
 
-    private Minecraft mc;
+    public static void initialize()
+    {
+        MinecraftForge.EVENT_BUS.register(WandUseManager.instance);
+    }
 
-
-    class OnUseContext implements IKeyConflictContext
+    static class OnUseContext implements IKeyConflictContext
     {
         @Override
         public boolean isActive()
         {
-            return handInUse != null;
+            return instance.handInUse != null;
         }
 
         @Override
@@ -64,7 +72,7 @@ public class WandUseManager
         }
     }
 
-    class VanillaHotbarResolverContext implements IKeyConflictContext
+    static class VanillaHotbarResolverContext implements IKeyConflictContext
     {
         public final IKeyConflictContext context;
 
@@ -76,7 +84,7 @@ public class WandUseManager
         @Override
         public boolean isActive()
         {
-            return handInUse == null && (context == null || context.isActive());
+            return instance.handInUse == null && (context == null || context.isActive());
         }
 
         @Override
@@ -87,14 +95,15 @@ public class WandUseManager
         }
     }
 
-    public WandUseManager()
+    private WandUseManager()
     {
-        instance = this;
+        this.mc = Minecraft.getInstance();
     }
 
-    public void initialize()
+    @SubscribeEvent
+    public static void registerKeys(RegisterKeyMappingsEvent event)
     {
-        mc = Minecraft.getInstance();
+        var mc = Minecraft.getInstance();
 
         Options s = mc.options;
 
@@ -118,7 +127,7 @@ public class WandUseManager
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
             String translationKey = "key.elementsofpower.spellkey." + Element.values[i].getName();
-            ClientRegistry.registerKeyBinding(spellKeys[i] =
+            event.register(instance.spellKeys[i] =
                     new KeyMapping(translationKey, new OnUseContext(), InputConstants.Type.KEYSYM, defaultKeys[i], "key.elementsofpower.category"));
 
             s.keyHotbarSlots[i].setKeyConflictContext(new VanillaHotbarResolverContext(s.keyHotbarSlots[i].getKeyConflictContext()));

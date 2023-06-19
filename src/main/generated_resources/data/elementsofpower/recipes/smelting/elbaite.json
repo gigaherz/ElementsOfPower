@@ -1,5 +1,7 @@
 {
   "type": "minecraft:smelting",
+  "cookingtime": 200,
+  "experience": 1.0,
   "ingredient": [
     {
       "item": "elementsofpower:elbaite_ore"
@@ -8,7 +10,5 @@
       "item": "elementsofpower:deepslate_elbaite_ore"
     }
   ],
-  "result": "elementsofpower:elbaite",
-  "experience": 1.0,
-  "cookingtime": 200
+  "result": "elementsofpower:elbaite"
 }

@@ -7,8 +7,6 @@ import dev.gigaherz.elementsofpower.gemstones.GemstoneItem;
 import dev.gigaherz.elementsofpower.gemstones.Quality;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;

@@ -10,8 +10,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import javax.annotation.CheckReturnValue;
@@ -51,7 +51,7 @@ public class MagicAmounts implements INBTSerializable<CompoundTag>
 
     public static MutableComponent getMagicName(int i)
     {
-        return new TranslatableComponent(magicNames[i]);
+        return Component.translatable(magicNames[i]);
     }
 
     private final float[] amounts = new float[ELEMENTS];

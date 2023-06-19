@@ -1,4 +1,14 @@
 {
+  "compounds": [
+    {
+      "type": "elementsofpower:earth",
+      "amount": 4.0
+    },
+    {
+      "type": "elementsofpower:fire",
+      "amount": 4.0
+    }
+  ],
   "mode": "ADDITIVE",
   "targets": [
     {
@@ -14,16 +24,6 @@
         "count": 1.0,
         "stack": "{Count:1b,id:\"minecraft:bricks\"}"
       }
-    }
-  ],
-  "compounds": [
-    {
-      "amount": 4.0,
-      "type": "elementsofpower:earth"
-    },
-    {
-      "amount": 4.0,
-      "type": "elementsofpower:fire"
     }
   ]
 }

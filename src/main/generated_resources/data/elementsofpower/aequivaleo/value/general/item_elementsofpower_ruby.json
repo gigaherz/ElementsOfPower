@@ -1,4 +1,14 @@
 {
+  "compounds": [
+    {
+      "type": "elementsofpower:earth",
+      "amount": 1.0
+    },
+    {
+      "type": "elementsofpower:fire",
+      "amount": 0.125
+    }
+  ],
   "mode": "ADDITIVE",
   "targets": [
     {
@@ -19,14 +29,14 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:ruby\",tag:{quality:2}}"
+        "stack": "{Count:1b,id:\"elementsofpower:ruby\"}"
       }
     },
     {
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:ruby\",tag:{quality:4}}"
+        "stack": "{Count:1b,id:\"elementsofpower:ruby\",tag:{quality:2}}"
       }
     },
     {
@@ -40,7 +50,7 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:ruby\"}"
+        "stack": "{Count:1b,id:\"elementsofpower:ruby\",tag:{quality:4}}"
       }
     },
     {
@@ -49,16 +59,6 @@
         "count": 1.0,
         "stack": "{Count:1b,id:\"elementsofpower:ruby\",tag:{quality:1}}"
       }
-    }
-  ],
-  "compounds": [
-    {
-      "amount": 1.0,
-      "type": "elementsofpower:earth"
-    },
-    {
-      "amount": 0.125,
-      "type": "elementsofpower:fire"
     }
   ]
 }

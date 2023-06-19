@@ -1,0 +1,29 @@
+{
+  "compounds": [
+    {
+      "type": "elementsofpower:darkness",
+      "amount": 8.0
+    },
+    {
+      "type": "elementsofpower:life",
+      "amount": 2.0
+    }
+  ],
+  "mode": "ADDITIVE",
+  "targets": [
+    {
+      "type": "aequivaleo:item",
+      "data": {
+        "count": 1.0,
+        "item": "elementsofpower:time_cocoon"
+      }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{Count:1b,id:\"elementsofpower:time_cocoon\"}"
+      }
+    }
+  ]
+}

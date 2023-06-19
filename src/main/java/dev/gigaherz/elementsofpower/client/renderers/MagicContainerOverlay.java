@@ -2,6 +2,7 @@ package dev.gigaherz.elementsofpower.client.renderers;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.capabilities.MagicContainerCapability;
 import dev.gigaherz.elementsofpower.client.MagicTooltips;
 import dev.gigaherz.elementsofpower.client.StackRenderingHelper;
@@ -21,32 +22,36 @@ import net.minecraft.client.renderer.ItemModelShaper;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.client.gui.ForgeIngameGui;
-import net.minecraftforge.client.gui.IIngameOverlay;
-import net.minecraftforge.client.gui.OverlayRegistry;
-import net.minecraft.nbt.Tag;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
+import net.minecraftforge.client.gui.overlay.ForgeGui;
+import net.minecraftforge.client.gui.overlay.IGuiOverlay;
+import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 
 import java.util.List;
 
-public class MagicContainerOverlay extends GuiComponent implements IIngameOverlay
+@Mod.EventBusSubscriber(value= Dist.CLIENT, modid= ElementsOfPowerMod.MODID, bus= Mod.EventBusSubscriber.Bus.MOD)
+public class MagicContainerOverlay extends GuiComponent implements IGuiOverlay
 {
     public static final int ELEMENTS = 8;
     public static final int SPACING = 28;
     public static final int TOP_MARGIN = 4;
     public static final int SPELL_SPACING = 6;
 
-    public static void init()
+    @SubscribeEvent
+    public static void init(RegisterGuiOverlaysEvent event)
     {
-        OverlayRegistry.registerOverlayAbove(ForgeIngameGui.EXPERIENCE_BAR_ELEMENT, "elementsofpower_magic_overlay", new MagicContainerOverlay());
+        event.registerAbove(VanillaGuiOverlay.EXPERIENCE_BAR.id(), "magic_overlay", new MagicContainerOverlay());
     }
 
     @Override
-    public void render(ForgeIngameGui gui, PoseStack matrixStack, float partialTicks, int width, int height)
+    public void render(ForgeGui gui, PoseStack matrixStack, float partialTicks, int width, int height)
     {
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer player = mc.player;
@@ -215,7 +220,7 @@ public class MagicContainerOverlay extends GuiComponent implements IIngameOverla
                 if (WandUseManager.instance.handInUse != null)
                 {
                     KeyMapping key = WandUseManager.instance.spellKeys[i];
-                    drawCenteredString(matrixStack, font, new TranslatableComponent("text.elementsofpower.magic.key", key.getTranslatedKeyMessage()), xPos, yTop, 0xFFC0C0C0);
+                    drawCenteredString(matrixStack, font, Component.translatable("text.elementsofpower.magic.key", key.getTranslatedKeyMessage()), xPos, yTop, 0xFFC0C0C0);
                 }
             }
 

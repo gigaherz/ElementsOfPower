@@ -16,20 +16,20 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.GsonHelper;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.IModelConfiguration;
-import net.minecraftforge.client.model.IModelLoader;
-import net.minecraftforge.client.model.geometry.IModelGeometry;
+import net.minecraftforge.client.model.geometry.IGeometryBakingContext;
+import net.minecraftforge.client.model.geometry.IGeometryLoader;
+import net.minecraftforge.client.model.geometry.IUnbakedGeometry;
 
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 
-public class NbtToModel implements IModelGeometry<NbtToModel>
+public class NbtToModel implements IUnbakedGeometry<NbtToModel>
 {
     final String key;
     final Map<String, BlockModel> modelMap;
@@ -41,17 +41,17 @@ public class NbtToModel implements IModelGeometry<NbtToModel>
     }
 
     @Override
-    public BakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ItemOverrides overrides, ResourceLocation modelLocation)
+    public BakedModel bake(IGeometryBakingContext owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ItemOverrides overrides, ResourceLocation modelLocation)
     {
         return new Baked(
-                spriteGetter.apply(owner.resolveTexture("particle")),
-                owner.isSideLit(), bakery, owner.getOwnerModel(), bakery::getModel, spriteGetter, key,
-                Maps.transformEntries(modelMap, (k, v) -> v.bake(bakery, v, spriteGetter, modelTransform, new ResourceLocation(modelLocation.getNamespace(), modelLocation.getPath() + "/" + k), owner.isSideLit()))
+                spriteGetter.apply(owner.getMaterial("particle")),
+                owner.useBlockLight(), bakery, bakery::getModel, spriteGetter, key,
+                Maps.transformEntries(modelMap, (k, v) -> v.bake(bakery, v, spriteGetter, modelTransform, new ResourceLocation(modelLocation.getNamespace(), modelLocation.getPath() + "/" + k), owner.useBlockLight()))
         );
     }
 
     @Override
-    public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
+    public Collection<Material> getMaterials(IGeometryBakingContext owner, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
     {
         Set<Material> materials = new HashSet<>();
         for (BlockModel model : modelMap.values())
@@ -65,12 +65,12 @@ public class NbtToModel implements IModelGeometry<NbtToModel>
         private final TextureAtlasSprite particle;
         private final ItemOverrides overrides;
 
-        public Baked(TextureAtlasSprite particle, boolean isSideLit, ModelBakery bakery, UnbakedModel ownerModel, Function<ResourceLocation, UnbakedModel> modelGetter, Function<Material, TextureAtlasSprite> textureGetter,
+        public Baked(TextureAtlasSprite particle, boolean isSideLit, ModelBakery bakery, Function<ResourceLocation, UnbakedModel> modelGetter, Function<Material, TextureAtlasSprite> textureGetter,
                      String key, Map<String, BakedModel> modelMap)
         {
             this.isSideLit = isSideLit;
             this.particle = particle;
-            this.overrides = new ItemOverrides(bakery, ownerModel, modelGetter, textureGetter, Collections.emptyList())
+            this.overrides = new ItemOverrides(bakery, null, modelGetter, textureGetter, Collections.emptyList())
             {
                 final String nbtKey = key;
                 final Map<String, BakedModel> models = modelMap;
@@ -92,9 +92,8 @@ public class NbtToModel implements IModelGeometry<NbtToModel>
             };
         }
 
-        @Deprecated
         @Override
-        public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand)
+        public List<BakedQuad> getQuads(@org.jetbrains.annotations.Nullable BlockState p_235039_, @org.jetbrains.annotations.Nullable Direction p_235040_, RandomSource p_235041_)
         {
             return Collections.emptyList();
         }
@@ -137,18 +136,12 @@ public class NbtToModel implements IModelGeometry<NbtToModel>
         }
     }
 
-    public static class Loader implements IModelLoader<NbtToModel>
+    public static class Loader implements IGeometryLoader<NbtToModel>
     {
         public static final Loader INSTANCE = new Loader();
 
         @Override
-        public void onResourceManagerReload(ResourceManager resourceManager)
-        {
-
-        }
-
-        @Override
-        public NbtToModel read(JsonDeserializationContext deserializationContext, JsonObject modelContents)
+        public NbtToModel read(JsonObject modelContents, JsonDeserializationContext deserializationContext)
         {
             String key = GsonHelper.getAsString(modelContents, "tag");
             JsonObject obj = GsonHelper.getAsJsonObject(modelContents, "values");

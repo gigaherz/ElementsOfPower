@@ -1,4 +1,14 @@
 {
+  "compounds": [
+    {
+      "type": "elementsofpower:death",
+      "amount": 3.0
+    },
+    {
+      "type": "elementsofpower:earth",
+      "amount": 7.0
+    }
+  ],
   "mode": "ADDITIVE",
   "targets": [
     {
@@ -14,16 +24,6 @@
         "count": 1.0,
         "stack": "{Count:1b,id:\"minecraft:diamond_ore\"}"
       }
-    }
-  ],
-  "compounds": [
-    {
-      "amount": 3.0,
-      "type": "elementsofpower:chaos"
-    },
-    {
-      "amount": 7.0,
-      "type": "elementsofpower:earth"
     }
   ]
 }

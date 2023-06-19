@@ -16,6 +16,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+
 import static dev.gigaherz.elementsofpower.ElementsOfPowerBlocks.*;
 
 public enum Gemstone implements StringRepresentable, ItemLike
@@ -33,22 +34,22 @@ public enum Gemstone implements StringRepresentable, ItemLike
             () -> ElementsOfPowerItems.AGATE, false, () -> AGATE_BLOCK, List.of(() -> AGATE_ORE, ()-> DEEPSLATE_AGATE_ORE),
             null, true), // brown
     QUARTZ(Element.LIGHT, "quartz", 0xFFFFFFFF,
-            () -> ElementsOfPowerItems.QUARTZ, true, () -> Blocks.QUARTZ_BLOCK, List.of(() -> Blocks.NETHER_QUARTZ_ORE),
-            () -> Items.QUARTZ, false), // white
+            () -> ElementsOfPowerItems.QUARTZ, true, () -> () -> Blocks.QUARTZ_BLOCK, List.of(() -> () -> Blocks.NETHER_QUARTZ_ORE),
+            () -> () -> Items.QUARTZ, false), // white
     SERENDIBITE(Element.TIME, "serendibite", 0xFF0F0F0F,
             () -> ElementsOfPowerItems.SERENDIBITE, false, () -> SERENDIBITE_BLOCK, List.of(() -> SERENDIBITE_ORE, () -> DEEPSLATE_SERENDIBITE_ORE),
             null, true), // black
     EMERALD(Element.LIFE, "emerald", 0xFF00FF00,
-            () -> ElementsOfPowerItems.EMERALD, true, () -> Blocks.EMERALD_BLOCK, List.of(() -> Blocks.EMERALD_ORE, () -> Blocks.DEEPSLATE_EMERALD_ORE),
-            () -> Items.EMERALD, false), // green
+            () -> ElementsOfPowerItems.EMERALD, true, () -> () -> Blocks.EMERALD_BLOCK, List.of(() -> () ->Blocks.EMERALD_ORE, () -> () ->Blocks.DEEPSLATE_EMERALD_ORE),
+            () -> () -> Items.EMERALD, false), // green
 
     ELBAITE(Element.CHAOS, "elbaite", 0xFFAF00FF,
             () -> ElementsOfPowerItems.ELBAITE, false, () -> ELBAITE_BLOCK, List.of(() -> ELBAITE_ORE, () -> DEEPSLATE_ELBAITE_ORE),
             null, true), // purple
 
     DIAMOND(null, "diamond", 0xFF7FFFCF,
-            () -> ElementsOfPowerItems.DIAMOND, true, () -> Blocks.DIAMOND_BLOCK, List.of(() -> Blocks.DIAMOND_ORE, () -> Blocks.DEEPSLATE_DIAMOND_ORE),
-            () -> Items.DIAMOND, false), // clear
+            () -> ElementsOfPowerItems.DIAMOND, true, () -> () ->Blocks.DIAMOND_BLOCK, List.of(() -> () ->Blocks.DIAMOND_ORE, () -> () ->Blocks.DEEPSLATE_DIAMOND_ORE),
+            () -> () -> Items.DIAMOND, false), // clear
 
     CREATIVITE(null, "creativite", 0xFF000000,
             () -> ElementsOfPowerItems.CREATIVITE, false, null, List.of(),
@@ -69,18 +70,21 @@ public enum Gemstone implements StringRepresentable, ItemLike
     private final boolean generateInWorld;
 
     Gemstone(@Nullable Element element, String name, int tintColor,
-             @Nullable Supplier<GemstoneItem> itemSupplier,
-             boolean isVanilla, @Nullable Supplier<Block> blockSupplier, List<Supplier<Block>> oreSuppliers,
-             @Nullable Supplier<Item> vanillaGemstoneSupplier, boolean generateInWorld)
+             @Nullable Supplier<Supplier<GemstoneItem>> itemSupplier,
+             boolean isVanilla,
+             @Nullable Supplier<Supplier<? extends Block>> blockSupplier,
+             List<Supplier<Supplier<? extends Block>>> oreSuppliers,
+             @Nullable Supplier<Supplier<? extends Item>> vanillaGemstoneSupplier,
+             boolean generateInWorld)
     {
         this.element = element;
         this.name = name;
         this.tintColor = tintColor;
         this.isVanilla = isVanilla;
-        this.blockSupplier = blockSupplier;
-        this.oreSuppliers = oreSuppliers;
-        this.itemSupplier = itemSupplier;
-        this.vanillaGemstoneSupplier = vanillaGemstoneSupplier;
+        this.blockSupplier = blockSupplier != null ? () -> blockSupplier.get().get() : null;
+        this.oreSuppliers = oreSuppliers.stream().<Supplier<Block>>map(s -> () -> s.get().get()).toList();
+        this.itemSupplier = itemSupplier != null ? () -> itemSupplier.get().get() : null;;
+        this.vanillaGemstoneSupplier = vanillaGemstoneSupplier != null ? () -> vanillaGemstoneSupplier.get().get() : null;
         this.generateInWorld = generateInWorld;
     }
 

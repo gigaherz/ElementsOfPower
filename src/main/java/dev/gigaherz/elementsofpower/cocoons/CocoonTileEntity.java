@@ -1,5 +1,6 @@
 package dev.gigaherz.elementsofpower.cocoons;
 
+import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.capabilities.PlayerCombinedMagicContainers;
 import dev.gigaherz.elementsofpower.essentializer.menu.IMagicAmountContainer;
 import dev.gigaherz.elementsofpower.items.MagicOrbItem;
@@ -8,19 +9,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.registries.ObjectHolder;
-
-import java.util.Random;
 
 public class CocoonTileEntity extends BlockEntity implements IMagicAmountContainer
 {
-    @ObjectHolder("elementsofpower:cocoon")
-    public static BlockEntityType<CocoonTileEntity> TYPE;
-
     public MagicAmounts essenceContained = MagicAmounts.EMPTY;
 
     public CocoonTileEntity(BlockEntityType<?> type, BlockPos pos, BlockState state)
@@ -30,7 +26,7 @@ public class CocoonTileEntity extends BlockEntity implements IMagicAmountContain
 
     public CocoonTileEntity(BlockPos pos, BlockState state)
     {
-        super(TYPE, pos, state);
+        super(ElementsOfPowerMod.COCOON_BLOCL_ENTITY.get(), pos, state);
     }
 
     @Override
@@ -73,7 +69,7 @@ public class CocoonTileEntity extends BlockEntity implements IMagicAmountContain
         handleUpdateTag(packet.getTag());
     }
 
-    public void transferToPlayer(Random random, PlayerCombinedMagicContainers cap)
+    public void transferToPlayer(RandomSource random, PlayerCombinedMagicContainers cap)
     {
         MagicAmounts am = essenceContained;
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)

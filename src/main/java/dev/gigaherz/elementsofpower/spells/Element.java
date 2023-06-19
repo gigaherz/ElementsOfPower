@@ -5,6 +5,7 @@ import dev.gigaherz.elementsofpower.ElementsOfPowerItems;
 import dev.gigaherz.elementsofpower.cocoons.CocoonBlock;
 import dev.gigaherz.elementsofpower.items.MagicOrbItem;
 import net.minecraft.world.item.Item;
+import net.minecraftforge.registries.RegistryObject;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -18,10 +19,9 @@ public enum Element
     AIR("air", 3, ShapeType.SPHERE, EffectType.PUSH, () -> ElementsOfPowerBlocks.AIR_COCOON, () -> ElementsOfPowerItems.AIR_COCOON, () -> ElementsOfPowerItems.AIR_ORB, 0xFFffed96),
     EARTH("earth", 2, ShapeType.BALL, EffectType.DUST, () -> ElementsOfPowerBlocks.EARTH_COCOON, () -> ElementsOfPowerItems.EARTH_COCOON, () -> ElementsOfPowerItems.EARTH_ORB, 0xFF7f3300),
     LIGHT("light", 5, ShapeType.BEAM, EffectType.LIGHT, () -> ElementsOfPowerBlocks.LIGHT_COCOON, () -> ElementsOfPowerItems.LIGHT_COCOON, () -> ElementsOfPowerItems.LIGHT_ORB, 0xFFffffff),
-    TIME("darkness", 4, ShapeType.BEAM, EffectType.SLOWNESS, () -> ElementsOfPowerBlocks.DARKNESS_COCOON, () -> ElementsOfPowerItems.DARKNESS_COCOON, () -> ElementsOfPowerItems.DARKNESS_ORB, 0xFF242424),
+    TIME("time", 4, ShapeType.BEAM, EffectType.SLOWNESS, () -> ElementsOfPowerBlocks.TIME_COCOON, () -> ElementsOfPowerItems.TIME_COCOON, () -> ElementsOfPowerItems.TIME_ORB, 0xFF242424),
     LIFE("life", 7, ShapeType.SELF, EffectType.HEALING, () -> ElementsOfPowerBlocks.LIFE_COCOON, () -> ElementsOfPowerItems.LIFE_COCOON, () -> ElementsOfPowerItems.LIFE_ORB, 0xFF1acd7f),
-    // TODO: Rename serialized name
-    CHAOS("death", 6, ShapeType.SINGLE, EffectType.BREAKING, () -> ElementsOfPowerBlocks.DEATH_COCOON, () -> ElementsOfPowerItems.DEATH_COCOON, () -> ElementsOfPowerItems.DEATH_ORB, 0xFF8c1acd),
+    CHAOS("chaos", 6, ShapeType.SINGLE, EffectType.BREAKING, () -> ElementsOfPowerBlocks.CHAOS_COCOON, () -> ElementsOfPowerItems.CHAOS_COCOON, () -> ElementsOfPowerItems.CHAOS_ORB, 0xFF8c1acd),
     BALANCE("balance", 8, ShapeType.NONE, EffectType.NONE, null, null, null, 0xFF7F7F7F);
 
     private final int opposite;
@@ -57,15 +57,18 @@ public enum Element
         return name;
     }
 
-    Element(String name, int opposite, ShapeType shapeType, EffectType initialEffect, @Nullable Supplier<CocoonBlock> blockSupplier, @Nullable Supplier<Item> itemSupplier, @Nullable Supplier<MagicOrbItem> orbSupplier, int color)
+    Element(String name, int opposite, ShapeType shapeType, EffectType initialEffect,
+            @Nullable Supplier<RegistryObject<CocoonBlock>> blockSupplier,
+            @Nullable Supplier<RegistryObject<? extends Item>> itemSupplier,
+            @Nullable Supplier<RegistryObject<MagicOrbItem>> orbSupplier, int color)
     {
         this.opposite = opposite;
         this.shapeType = shapeType;
         this.name = name;
         this.initialEffect = initialEffect;
-        this.blockSupplier = blockSupplier;
-        this.itemSupplier = itemSupplier;
-        this.orbSupplier = orbSupplier;
+        this.blockSupplier = blockSupplier != null ? () -> blockSupplier.get().get() : null;
+        this.itemSupplier = itemSupplier != null ? () -> itemSupplier.get().get() : null;;
+        this.orbSupplier = orbSupplier != null ? () -> orbSupplier.get().get() : null;;
         this.color = color;
     }
 

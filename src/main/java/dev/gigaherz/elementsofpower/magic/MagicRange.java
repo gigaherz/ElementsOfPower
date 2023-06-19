@@ -8,7 +8,7 @@ public class MagicRange
     public static final Codec<MagicRange> CODEC = RecordCodecBuilder
             .create((instance) -> instance.group(
                     MagicAmounts.CODEC.fieldOf("min").forGetter(i -> i.min),
-                    MagicAmounts.CODEC.fieldOf("max").forGetter(ceil -> ceil.max)
+                    MagicAmounts.CODEC.fieldOf("max").forGetter(i -> i.max)
             ).apply(instance, MagicRange::new));
 
     public static MagicRange between(MagicAmounts min, MagicAmounts max)

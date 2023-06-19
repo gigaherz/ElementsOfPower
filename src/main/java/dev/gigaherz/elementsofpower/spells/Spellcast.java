@@ -5,14 +5,13 @@ import dev.gigaherz.elementsofpower.spells.effects.SpellEffect;
 import dev.gigaherz.elementsofpower.spells.shapes.SpellShape;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Random;
 
 public class Spellcast
 {
@@ -30,7 +29,7 @@ public class Spellcast
     @Nullable
     private Entity projectile;
 
-    private Random rand;
+    private RandomSource rand;
 
     public Spellcast(SpellShape shape, SpellEffect effect, int power, List<Element> sequence)
     {
@@ -40,7 +39,7 @@ public class Spellcast
         this.sequence = sequence;
     }
 
-    protected Spellcast(List<Element> sequence, SpellShape shape, SpellEffect effect, Entity projectile, int power, Random rand, int empowering, int radiating, MagicAmounts spellCost)
+    protected Spellcast(List<Element> sequence, SpellShape shape, SpellEffect effect, Entity projectile, int power, RandomSource rand, int empowering, int radiating, MagicAmounts spellCost)
     {
         this.sequence = sequence;
         this.shape = shape;
@@ -128,12 +127,12 @@ public class Spellcast
         return projectile;
     }
 
-    protected Random getRandom()
+    protected RandomSource getRandom()
     {
         return rand;
     }
 
-    protected void setRandom(Random rand)
+    protected void setRandom(RandomSource rand)
     {
         this.rand = rand;
     }

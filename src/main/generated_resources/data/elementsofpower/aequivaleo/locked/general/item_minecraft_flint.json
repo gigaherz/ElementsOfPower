@@ -1,4 +1,8 @@
 {
+  "compounds": {
+    "type": "elementsofpower:earth",
+    "amount": 1.0
+  },
   "mode": "ADDITIVE",
   "targets": [
     {
@@ -15,9 +19,5 @@
         "stack": "{Count:1b,id:\"minecraft:flint\"}"
       }
     }
-  ],
-  "compounds": {
-    "amount": 1.0,
-    "type": "elementsofpower:earth"
-  }
+  ]
 }

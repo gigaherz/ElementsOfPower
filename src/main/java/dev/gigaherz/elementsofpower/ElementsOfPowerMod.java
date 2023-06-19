@@ -1,40 +1,30 @@
 package dev.gigaherz.elementsofpower;
 
-import dev.gigaherz.elementsofpower.analyzer.AnalyzerItem;
-import dev.gigaherz.elementsofpower.analyzer.menu.AnalyzerContainer;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import dev.gigaherz.elementsofpower.analyzer.menu.AnalyzerMenu;
 import dev.gigaherz.elementsofpower.analyzer.menu.AnalyzerScreen;
 import dev.gigaherz.elementsofpower.capabilities.MagicContainerCapability;
 import dev.gigaherz.elementsofpower.capabilities.PlayerCombinedMagicContainers;
 import dev.gigaherz.elementsofpower.client.NbtToModel;
 import dev.gigaherz.elementsofpower.client.WandUseManager;
 import dev.gigaherz.elementsofpower.client.renderers.BallEntityRenderer;
-import dev.gigaherz.elementsofpower.client.renderers.EssenceEntityRenderer;
 import dev.gigaherz.elementsofpower.client.renderers.EssentializerTileEntityRender;
-import dev.gigaherz.elementsofpower.client.renderers.MagicContainerOverlay;
 import dev.gigaherz.elementsofpower.cocoons.*;
 import dev.gigaherz.elementsofpower.entities.BallEntity;
-import dev.gigaherz.elementsofpower.entities.EssenceEntity;
 import dev.gigaherz.elementsofpower.essentializer.ColoredSmokeData;
-import dev.gigaherz.elementsofpower.essentializer.EssentializerBlock;
 import dev.gigaherz.elementsofpower.essentializer.EssentializerBlockEntity;
-import dev.gigaherz.elementsofpower.essentializer.menu.EssentializerContainer;
+import dev.gigaherz.elementsofpower.essentializer.menu.EssentializerMenu;
 import dev.gigaherz.elementsofpower.essentializer.menu.EssentializerScreen;
-import dev.gigaherz.elementsofpower.gemstones.*;
-import dev.gigaherz.elementsofpower.items.BaubleItem;
-import dev.gigaherz.elementsofpower.items.MagicOrbItem;
-import dev.gigaherz.elementsofpower.items.StaffItem;
-import dev.gigaherz.elementsofpower.items.WandItem;
+import dev.gigaherz.elementsofpower.gemstones.AnalyzedFilteringIngredient;
+import dev.gigaherz.elementsofpower.gemstones.Gemstone;
+import dev.gigaherz.elementsofpower.gemstones.Quality;
 import dev.gigaherz.elementsofpower.network.*;
 import dev.gigaherz.elementsofpower.recipes.ContainerChargeRecipe;
 import dev.gigaherz.elementsofpower.recipes.GemstoneChangeRecipe;
 import dev.gigaherz.elementsofpower.spells.Element;
 import dev.gigaherz.elementsofpower.spells.SpellcastEntityData;
-import dev.gigaherz.elementsofpower.spells.blocks.CushionBlock;
-import dev.gigaherz.elementsofpower.spells.blocks.DustBlock;
-import dev.gigaherz.elementsofpower.spells.blocks.LightBlock;
-import dev.gigaherz.elementsofpower.spells.blocks.MistBlock;
 import net.minecraft.Util;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -44,44 +34,40 @@ import net.minecraft.core.particles.ParticleType;
 import net.minecraft.data.worldgen.features.FeatureUtils;
 import net.minecraft.data.worldgen.features.OreFeatures;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BiomeTags;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.SimpleRecipeSerializer;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.VerticalAnchor;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
 import net.minecraft.world.level.levelgen.placement.*;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
-import net.minecraft.world.level.storage.loot.functions.LootItemFunctions;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
-import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.client.event.ModelEvent;
+import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.common.util.Lazy;
-import net.minecraftforge.common.util.NonNullLazy;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
-import net.minecraftforge.event.world.BiomeLoadingEvent;
+import net.minecraftforge.common.world.BiomeModifier;
+import net.minecraftforge.common.world.ModifiableBiomeInfo;
+import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
@@ -93,7 +79,9 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
-import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.theillusivec4.curios.api.SlotTypeMessage;
@@ -107,35 +95,110 @@ public class ElementsOfPowerMod
 {
     public static final String MODID = "elementsofpower";
 
-    public static LootItemFunctionType APPLY_ORB_SIZE;
-
-    public static Holder<ConfiguredFeature<CocoonFeatureConfig, ?>> COCOON_FEATURE_OVERWORLD_C;
-    public static Holder<ConfiguredFeature<CocoonFeatureConfig, ?>> COCOON_FEATURE_NETHER_C;
-    public static Holder<ConfiguredFeature<CocoonFeatureConfig, ?>> COCOON_FEATURE_END_C;
-    public static Holder<PlacedFeature> COCOON_FEATURE_OVERWORLD_P;
-    public static Holder<PlacedFeature> COCOON_FEATURE_NETHER_P;
-    public static Holder<PlacedFeature> COCOON_FEATURE_END_P;
+    private static Holder<ConfiguredFeature<NoneFeatureConfiguration, ?>> CONFIGURED_COCOON_FEATURE;
+    private static Holder<PlacedFeature> PLACED_COCOON_FEATURE;
 
     public static ResourceLocation location(String location)
     {
         return new ResourceLocation(MODID, location);
     }
 
-    public static final MobCategory ESSENCE_CLASSIFICATION = MobCategory.create("EOP_LIVING_ESSENCE", "eop_living_essence", 15, true, false, 32);
+    private static final DeferredRegister<LootItemFunctionType> LOOT_FUNCTION_TYPES = DeferredRegister.create(Registry.LOOT_FUNCTION_REGISTRY, MODID);
+    private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, MODID);
+    private static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, MODID);
+    private static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(ForgeRegistries.MENU_TYPES, MODID);
+    private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, MODID);
+    private static final DeferredRegister<Feature<?>> FEATURES = DeferredRegister.create(ForgeRegistries.FEATURES, MODID);
+    private static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, MODID);
+    private static DeferredRegister<Codec<? extends BiomeModifier>> BIOME_MODIFIER_SERIALIZERS = DeferredRegister.create(ForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS, MODID);
 
-    public static String fixDescription(String description)
-    {
-        return description.endsWith(":NOFML\uFFFDr") ? description.substring(0, description.length() - 8) + "\uFFFDr" : description;
-    }
-
-    // FIXME: Remove once spawn eggs can take a supplier
-    // To be used only during loading.
-    private final NonNullLazy<EntityType<BallEntity>> spellBallInit = NonNullLazy.of(() -> EntityType.Builder.<BallEntity>of(BallEntity::new, MobCategory.MISC)
+    public static final RegistryObject<EntityType<BallEntity>> SPELL_BALL_ENTITY_TYPE = ENTITY_TYPES.register("spell_ball", () ->
+            EntityType.Builder.<BallEntity>of(BallEntity::new, MobCategory.MISC)
             .sized(0.5f, 0.5f)
             .setTrackingRange(80).setUpdateInterval(3).setShouldReceiveVelocityUpdates(true).build(location("spell_ball").toString()));
-    private final NonNullLazy<EntityType<EssenceEntity>> essenceInit = NonNullLazy.of(() -> EntityType.Builder.<EssenceEntity>of(EssenceEntity::new, ESSENCE_CLASSIFICATION)
-            .sized(0.5f, 0.5f)
-            .setTrackingRange(20).setUpdateInterval(5).setShouldReceiveVelocityUpdates(true).build(location("essence").toString()));
+
+    public static final RegistryObject<BlockEntityType<EssentializerBlockEntity>> ESSENTIALIZER_BLOCK_ENTITY = BLOCK_ENTITIES.register("essentializer", () ->
+            BlockEntityType.Builder.of(EssentializerBlockEntity::new, ElementsOfPowerBlocks.ESSENTIALIZER.get()).build(null)
+    );
+    public static final RegistryObject<BlockEntityType<CocoonTileEntity>> COCOON_BLOCL_ENTITY = BLOCK_ENTITIES.register("cocoon", () ->
+            BlockEntityType.Builder.of(CocoonTileEntity::new,
+                    Element.stream_without_balance().map(Element::getCocoon).filter(Objects::nonNull).toArray(Block[]::new)
+            ).build(null)
+    );
+
+    public static final RegistryObject<MenuType<EssentializerMenu>> ESSENTIALIZER_MENU = MENU_TYPES.register("essentializer", () ->
+            new MenuType<>(EssentializerMenu::new)
+    );
+    public static final RegistryObject<MenuType<AnalyzerMenu>> ANALYZER_MENU = MENU_TYPES.register("analyzer", () ->
+            IForgeMenuType.create(AnalyzerMenu::new)
+    );
+
+    public static final RegistryObject<SimpleRecipeSerializer<ContainerChargeRecipe>> CONTAINER_CHARGE = RECIPE_SERIALIZERS.register("container_charge", () ->
+            new SimpleRecipeSerializer<>(ContainerChargeRecipe::new)
+    );
+    public static final RegistryObject<SimpleRecipeSerializer<GemstoneChangeRecipe>> GEMSTONE_CHANGE = RECIPE_SERIALIZERS.register("gemstone_change", () ->
+            new SimpleRecipeSerializer<>(GemstoneChangeRecipe::new)
+    );
+
+    public static final RegistryObject<CocoonFeature> COCOON_FEATURE = FEATURES.register("cocoon", () ->
+            new CocoonFeature(NoneFeatureConfiguration.CODEC)
+    );
+
+    public static final RegistryObject<ParticleType<ColoredSmokeData>> COLORED_SMOKE_DATA = PARTICLE_TYPES.register("colored_smoke", () ->
+            new ColoredSmokeData.Type(false)
+    );
+
+    public static RegistryObject<LootItemFunctionType> APPLY_ORB_SIZE = LOOT_FUNCTION_TYPES.register("apply_orb_size", () -> new LootItemFunctionType(new ApplyOrbSizeFunction.Serializer()));
+
+    public static RegistryObject<Codec<CocoonModifier>> COCOON_MODIFIER_SERIALIZER = BIOME_MODIFIER_SERIALIZERS.register("cocoons", () -> Codec.unit(CocoonModifier::new));
+    public static RegistryObject<Codec<GemstoneOreModifier>> GEMSTONE_ORE_MODIFIER_SERIALIZER = BIOME_MODIFIER_SERIALIZERS.register("gemstone_ores", () -> Codec.unit(GemstoneOreModifier::new));
+
+    public record CocoonModifier() implements BiomeModifier
+    {
+        public void modify(Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder)
+        {
+            if (phase == Phase.ADD)
+            {
+                if (biome.is(Tags.Biomes.IS_VOID))
+                    return;
+
+                builder.getGenerationSettings().addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, ElementsOfPowerMod.PLACED_COCOON_FEATURE);
+            }
+        }
+
+        public Codec<? extends BiomeModifier> codec()
+        {
+            return COCOON_MODIFIER_SERIALIZER.get();
+        }
+    }
+
+    public record GemstoneOreModifier() implements BiomeModifier
+    {
+        public void modify(Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder)
+        {
+            if (phase == Phase.ADD)
+            {
+                if (biome.is(Tags.Biomes.IS_VOID))
+                    return;
+
+                boolean isEndBiome = biome.is(BiomeTags.IS_END);
+                boolean isNetherBiome = biome.is(BiomeTags.IS_NETHER);
+                if (!isEndBiome && !isNetherBiome)
+                {
+                    var values = getBiomeValues(biome);
+                    for (var feat : oreFeatures.get().getOrDefault(values, List.of()))
+                    {
+                        builder.getGenerationSettings().addFeature(GenerationStep.Decoration.UNDERGROUND_ORES, feat);
+                    }
+                }
+            }
+        }
+
+        public Codec<? extends BiomeModifier> codec()
+        {
+            return GEMSTONE_ORE_MODIFIER_SERIALIZER.get();
+        }
+    }
 
     private static final String PROTOCOL_VERSION = "1.0";
     public static SimpleChannel CHANNEL = NetworkRegistry.ChannelBuilder
@@ -147,16 +210,16 @@ public class ElementsOfPowerMod
 
     public static Logger LOGGER = LogManager.getLogger(MODID);
 
-    public static CreativeModeTab tabMagic = new CreativeModeTab("elementsofpower.magic")
+    public static CreativeModeTab CREATIVE_TAB_MAGIC = new CreativeModeTab("elementsofpower.magic")
     {
         @Override
         public ItemStack makeIcon()
         {
-            return ElementsOfPowerItems.WAND.getStack(Gemstone.DIAMOND, Quality.COMMON);
+            return ElementsOfPowerItems.WAND.get().getStack(Gemstone.DIAMOND, Quality.COMMON);
         }
     };
 
-    public static CreativeModeTab tabGemstones = new CreativeModeTab("elementsofpower.gemstones")
+    public static CreativeModeTab CREATIVE_TAB_GEMSTONES = new CreativeModeTab("elementsofpower.gemstones")
     {
         @Override
         public ItemStack makeIcon()
@@ -169,205 +232,35 @@ public class ElementsOfPowerMod
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
-        modEventBus.addGenericListener(Block.class, this::registerBlocks);
-        modEventBus.addGenericListener(Item.class, this::registerItems);
-        modEventBus.addGenericListener(EntityType.class, this::registerEntityTypes);
-        modEventBus.addGenericListener(BlockEntityType.class, this::registerTileEntityTypes);
-        modEventBus.addGenericListener(MenuType.class, this::registerContainerTypes);
-        modEventBus.addGenericListener(RecipeSerializer.class, this::registerRecipeSerializers);
-        modEventBus.addGenericListener(ParticleType.class, this::registerParticleTypes);
-        modEventBus.addGenericListener(Feature.class, this::registerFeature);
+        ElementsOfPowerBlocks.BLOCKS.register(modEventBus);
+        ElementsOfPowerItems.ITEMS.register(modEventBus);
+        LOOT_FUNCTION_TYPES.register(modEventBus);
+        ENTITY_TYPES.register(modEventBus);
+        BLOCK_ENTITIES.register(modEventBus);
+        MENU_TYPES.register(modEventBus);
+        RECIPE_SERIALIZERS.register(modEventBus);
+        FEATURES.register(modEventBus);
+        PARTICLE_TYPES.register(modEventBus);
+        BIOME_MODIFIER_SERIALIZERS.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::registerParticleFactory);
         modEventBus.addListener(this::imcEnqueue);
         modEventBus.addListener(this::gatherData);
         modEventBus.addListener(this::modelRegistry);
-        modEventBus.addListener(this::entityAttributes);
         modEventBus.addListener(this::registerCapabilities);
 
-        MinecraftForge.EVENT_BUS.addListener(this::addStuffToBiomes);
+        //MinecraftForge.EVENT_BUS.addListener(this::addStuffToBiomes);
     }
 
-    public void registerBlocks(RegistryEvent.Register<Block> event)
+    public void registerParticleFactory(RegisterParticleProvidersEvent event)
     {
-        event.getRegistry().registerAll(
-                new EssentializerBlock(Block.Properties.of(Material.METAL)
-                        .requiresCorrectToolForDrops().strength(15.0F)
-                        .sound(SoundType.METAL).lightLevel(b -> 1)).setRegistryName("essentializer"),
-                new DustBlock(Block.Properties.of(ElementsOfPowerBlocks.BlockMaterials.DUST).noDrops().noCollission().noOcclusion()
-                        .isSuffocating((s, w, p) -> true).isViewBlocking((s, w, p) -> false)
-                        .strength(0.1F).sound(SoundType.WOOL).dynamicShape()).setRegistryName("dust"),
-                new MistBlock(Block.Properties.of(ElementsOfPowerBlocks.BlockMaterials.MIST).noDrops().noCollission().noOcclusion()
-                        .isSuffocating((s, w, p) -> false).isViewBlocking((s, w, p) -> false)
-                        .strength(0.1F).sound(SoundType.WOOL).dynamicShape()).setRegistryName("mist"),
-                new LightBlock(Block.Properties.of(ElementsOfPowerBlocks.BlockMaterials.LIGHT).noDrops().noCollission().noOcclusion()
-                        .isSuffocating((s, w, p) -> false).isViewBlocking((s, w, p) -> false)
-                        .strength(15.0F).lightLevel(b -> 15).sound(SoundType.METAL)).setRegistryName("light"),
-                new CushionBlock(Block.Properties.of(ElementsOfPowerBlocks.BlockMaterials.CUSHION).noDrops().noCollission().noOcclusion()
-                        .isSuffocating((s, w, p) -> false).isViewBlocking((s, w, p) -> false)
-                        .strength(15.0F).sound(SoundType.METAL).dynamicShape()).setRegistryName("cushion")
-        );
-        for (Gemstone type : Gemstone.values())
-        {
-            if (type.generateCustomBlock())
-            {
-                event.getRegistry().register(
-                        new GemstoneBlock(type, Block.Properties.of(Material.METAL)
-                                .strength(5F, 6F)
-                                .sound(SoundType.METAL)
-                                .requiresCorrectToolForDrops()
-                        ).setRegistryName(type.getSerializedName() + "_block")
-                );
-            }
-        }
-        for (Gemstone type : Gemstone.values())
-        {
-            if (type.generateCustomOre())
-            {
-                event.getRegistry().registerAll(
-                        new GemstoneOreBlock(type, Block.Properties.of(Material.STONE)
-                                .requiresCorrectToolForDrops()
-                                .strength(3.0F, 3.0F)
-                        ).setRegistryName(type.getSerializedName() + "_ore")
-                );
-            }
-        }
-        for (Gemstone type : Gemstone.values())
-        {
-            if (type.generateCustomOre())
-            {
-                event.getRegistry().registerAll(
-                        new GemstoneOreBlock(type, Block.Properties.of(Material.STONE)
-                                .requiresCorrectToolForDrops()
-                                .strength(4.5F, 3.0F)
-                        ).setRegistryName("deepslate_" + type.getSerializedName() + "_ore")
-                );
-            }
-        }
-        for (Element type : Element.values_without_balance)
-        {
-            event.getRegistry().registerAll(
-                    new CocoonBlock(type, Block.Properties.of(Material.STONE).strength(1F)
-                            .sound(SoundType.WOOD).lightLevel(b -> 11)).setRegistryName(type.getName() + "_cocoon")
-            );
-        }
+        event.register(COLORED_SMOKE_DATA.get(), ColoredSmokeData.Factory::new);
     }
 
-    public void registerItems(RegistryEvent.Register<Item> event)
+    public void modelRegistry(ModelEvent.RegisterGeometryLoaders event)
     {
-        event.getRegistry().registerAll(
-                new BlockItem(ElementsOfPowerBlocks.ESSENTIALIZER, new Item.Properties().tab(tabMagic)).setRegistryName(Objects.requireNonNull(ElementsOfPowerBlocks.ESSENTIALIZER.getRegistryName())),
-
-                new WandItem(new Item.Properties().tab(tabMagic).stacksTo(1)).setRegistryName("wand"),
-                new StaffItem(new Item.Properties().tab(tabMagic).stacksTo(1)).setRegistryName("staff"),
-                new BaubleItem(new Item.Properties().tab(tabMagic).stacksTo(1)).setRegistryName("ring"),
-                new BaubleItem(new Item.Properties().tab(tabMagic).stacksTo(1)).setRegistryName("headband"),
-                new BaubleItem(new Item.Properties().tab(tabMagic).stacksTo(1)).setRegistryName("necklace"),
-                new AnalyzerItem(new Item.Properties().tab(tabMagic).stacksTo(1)).setRegistryName("analyzer"),
-
-                new SpawnEggItem(essenceInit.get(), 0x0000FF, 0xFFFF00, new Item.Properties().tab(tabMagic)).setRegistryName("essence")
-        );
-        for (Gemstone type : Gemstone.values())
-        {
-            event.getRegistry().register(new GemstoneItem(type, new Item.Properties().tab(tabGemstones).stacksTo(1)).setRegistryName(type.getSerializedName()));
-        }
-        for (Gemstone type : Gemstone.values())
-        {
-            if (type.generateCustomBlock())
-                event.getRegistry().register(new BlockItem(type.getBlock(), new Item.Properties().tab(tabMagic)).setRegistryName(type.getSerializedName() + "_block"));
-        }
-        for (Gemstone type : Gemstone.values())
-        {
-            if (type.generateCustomOre())
-            {
-                for(var ore : type.getOres())
-                {
-                    event.getRegistry().register(new BlockItem(ore, new Item.Properties().tab(tabMagic)).setRegistryName(ore.getRegistryName()));
-                }
-            }
-        }
-        for (Element type : Element.values_without_balance)
-        {
-            event.getRegistry().register(
-                    new MagicOrbItem(type, new Item.Properties().tab(tabMagic)).setRegistryName(type.getName() + "_orb")
-            );
-        }
-        for (Element type : Element.values_without_balance)
-        {
-            if (type.getCocoon() != null)
-            {
-                event.getRegistry().register(
-                        new BlockItem(type.getCocoon(), new Item.Properties().tab(tabMagic)).setRegistryName(type.getName() + "_cocoon")
-                );
-            }
-        }
-    }
-
-    public void registerEntityTypes(RegistryEvent.Register<EntityType<?>> event)
-    {
-        event.getRegistry().registerAll(
-                spellBallInit.get().setRegistryName("ball"),
-                essenceInit.get().setRegistryName("essence")
-        );
-    }
-
-    public void registerTileEntityTypes(RegistryEvent.Register<BlockEntityType<?>> event)
-    {
-        event.getRegistry().registerAll(
-                BlockEntityType.Builder.of(EssentializerBlockEntity::new, ElementsOfPowerBlocks.ESSENTIALIZER).build(null).setRegistryName("essentializer"),
-                BlockEntityType.Builder.of(CocoonTileEntity::new,
-                        Element.stream_without_balance().map(Element::getCocoon).filter(Objects::nonNull).toArray(Block[]::new)
-                ).build(null).setRegistryName("cocoon")
-        );
-    }
-
-    public void registerContainerTypes(RegistryEvent.Register<MenuType<?>> event)
-    {
-        event.getRegistry().registerAll(
-                new MenuType<>(EssentializerContainer::new).setRegistryName("essentializer"),
-                IForgeMenuType.create(AnalyzerContainer::new).setRegistryName("analyzer")
-        );
-    }
-
-    public void registerRecipeSerializers(RegistryEvent.Register<RecipeSerializer<?>> event)
-    {
-        event.getRegistry().registerAll(
-                new SimpleRecipeSerializer<>(ContainerChargeRecipe::new).setRegistryName("container_charge"),
-                new SimpleRecipeSerializer<>(GemstoneChangeRecipe::new).setRegistryName("gemstone_change")
-        );
-
-        // FIXME
-        APPLY_ORB_SIZE = LootItemFunctions.register(location("apply_orb_size").toString(), new ApplyOrbSizeFunction.Serializer());
-    }
-
-    public void registerFeature(RegistryEvent.Register<Feature<?>> event)
-    {
-        event.getRegistry().registerAll(
-                new CocoonFeature(CocoonFeatureConfig.CODEC).setRegistryName("cocoon")
-        );
-    }
-
-    public void registerParticleTypes(RegistryEvent.Register<ParticleType<?>> event)
-    {
-        event.getRegistry().registerAll(
-                new ColoredSmokeData.Type(false).setRegistryName("colored_smoke")
-        );
-    }
-
-    public void registerParticleFactory(ParticleFactoryRegisterEvent event)
-    {
-        Minecraft.getInstance().particleEngine.register(ColoredSmokeData.TYPE, ColoredSmokeData.Factory::new);
-    }
-
-    private void entityAttributes(EntityAttributeCreationEvent event)
-    {
-        event.put(EssenceEntity.TYPE, EssenceEntity.prepareAttributes().build());
-    }
-
-    public void modelRegistry(ModelRegistryEvent event)
-    {
-        ModelLoaderRegistry.registerLoader(location("nbt_to_model"), NbtToModel.Loader.INSTANCE);
+        event.register("nbt_to_model", NbtToModel.Loader.INSTANCE);
     }
 
     @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -376,36 +269,25 @@ public class ElementsOfPowerMod
         @SubscribeEvent
         public static void renderers(EntityRenderersEvent.RegisterRenderers event)
         {
-            event.registerEntityRenderer(EssenceEntity.TYPE, EssenceEntityRenderer::new);
-            event.registerEntityRenderer(BallEntity.TYPE, BallEntityRenderer::new);
+            event.registerEntityRenderer(SPELL_BALL_ENTITY_TYPE.get(), BallEntityRenderer::new);
 
-            event.registerBlockEntityRenderer(EssentializerBlockEntity.TYPE, EssentializerTileEntityRender::new);
+            event.registerBlockEntityRenderer(ESSENTIALIZER_BLOCK_ENTITY.get(), EssentializerTileEntityRender::new);
         }
 
         @SubscribeEvent
         public static void clientSetup(FMLClientSetupEvent event)
         {
             event.enqueueWork(() -> {
-                MenuScreens.register(AnalyzerContainer.TYPE, AnalyzerScreen::new);
-                MenuScreens.register(EssentializerContainer.TYPE, EssentializerScreen::new);
+                MenuScreens.register(ANALYZER_MENU.get(), AnalyzerScreen::new);
+                MenuScreens.register(ESSENTIALIZER_MENU.get(), EssentializerScreen::new);
             });
 
-            MagicContainerOverlay.init();
+            ItemBlockRenderTypes.setRenderLayer(ElementsOfPowerBlocks.DUST.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ElementsOfPowerBlocks.MIST.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ElementsOfPowerBlocks.CUSHION.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ElementsOfPowerBlocks.LIGHT.get(), RenderType.translucent());
 
-            ItemBlockRenderTypes.setRenderLayer(ElementsOfPowerBlocks.DUST, RenderType.translucent());
-            ItemBlockRenderTypes.setRenderLayer(ElementsOfPowerBlocks.MIST, RenderType.translucent());
-            ItemBlockRenderTypes.setRenderLayer(ElementsOfPowerBlocks.CUSHION, RenderType.translucent());
-            ItemBlockRenderTypes.setRenderLayer(ElementsOfPowerBlocks.LIGHT, RenderType.translucent());
-            Element.stream_without_balance().forEach(e -> {
-                if (e.getCocoon() != null)
-                {
-                    ItemBlockRenderTypes.setRenderLayer(e.getCocoon(), layer -> layer == RenderType.translucent() || layer == RenderType.solid());
-                }
-            });
-
-            MinecraftForge.EVENT_BUS.register(new WandUseManager());
-
-            WandUseManager.instance.initialize();
+            WandUseManager.initialize();
         }
     }
 
@@ -413,23 +295,20 @@ public class ElementsOfPowerMod
     {
         event.enqueueWork(() -> {
 
-            COCOON_FEATURE_OVERWORLD_C = FeatureUtils.register("elementsofpower:overworld_cocoon", CocoonFeature.INSTANCE, CocoonFeatureConfig.OVERWORLD);
-            COCOON_FEATURE_NETHER_C = FeatureUtils.register("elementsofpower:overworld_cocoon", CocoonFeature.INSTANCE, CocoonFeatureConfig.THE_NETHER);
-            COCOON_FEATURE_END_C = FeatureUtils.register("elementsofpower:overworld_cocoon", CocoonFeature.INSTANCE, CocoonFeatureConfig.THE_END);
+            CONFIGURED_COCOON_FEATURE = FeatureUtils.register("elementsofpower:overworld_cocoon", ElementsOfPowerMod.COCOON_FEATURE.get(), NoneFeatureConfiguration.INSTANCE);
 
-            COCOON_FEATURE_OVERWORLD_P = PlacementUtils.register("elementsofpower:overworld_cocoon", COCOON_FEATURE_OVERWORLD_C, CocoonPlacement.INSTANCE);
-            COCOON_FEATURE_NETHER_P = PlacementUtils.register("elementsofpower:nether_cocoon", COCOON_FEATURE_OVERWORLD_C, CocoonPlacement.INSTANCE);
-            COCOON_FEATURE_END_P = PlacementUtils.register("elementsofpower:end_cocoon", COCOON_FEATURE_OVERWORLD_C, CocoonPlacement.INSTANCE);
+            PLACED_COCOON_FEATURE = PlacementUtils.register("elementsofpower:overworld_cocoon", CONFIGURED_COCOON_FEATURE, CocoonPlacement.INSTANCE);
+
             oreFeatures.get();
 
         });
 
         int messageNumber = 0;
-        CHANNEL.messageBuilder(UpdateSpellSequence.class, messageNumber++, NetworkDirection.PLAY_TO_SERVER).encoder(UpdateSpellSequence::encode).decoder(UpdateSpellSequence::new).consumer(UpdateSpellSequence::handle).add();
-        CHANNEL.messageBuilder(SynchronizeSpellcastState.class, messageNumber++, NetworkDirection.PLAY_TO_CLIENT).encoder(SynchronizeSpellcastState::encode).decoder(SynchronizeSpellcastState::new).consumer(SynchronizeSpellcastState::handle).add();
-        CHANNEL.messageBuilder(UpdateEssentializerAmounts.class, messageNumber++, NetworkDirection.PLAY_TO_CLIENT).encoder(UpdateEssentializerAmounts::encode).decoder(UpdateEssentializerAmounts::new).consumer(UpdateEssentializerAmounts::handle).add();
-        CHANNEL.messageBuilder(UpdateEssentializerTile.class, messageNumber++, NetworkDirection.PLAY_TO_CLIENT).encoder(UpdateEssentializerTile::encode).decoder(UpdateEssentializerTile::new).consumer(UpdateEssentializerTile::handle).add();
-        CHANNEL.messageBuilder(AddVelocityToPlayer.class, messageNumber++, NetworkDirection.PLAY_TO_CLIENT).encoder(AddVelocityToPlayer::encode).decoder(AddVelocityToPlayer::new).consumer(AddVelocityToPlayer::handle).add();
+        CHANNEL.messageBuilder(UpdateSpellSequence.class, messageNumber++, NetworkDirection.PLAY_TO_SERVER).encoder(UpdateSpellSequence::encode).decoder(UpdateSpellSequence::new).consumerNetworkThread(UpdateSpellSequence::handle).add();
+        CHANNEL.messageBuilder(SynchronizeSpellcastState.class, messageNumber++, NetworkDirection.PLAY_TO_CLIENT).encoder(SynchronizeSpellcastState::encode).decoder(SynchronizeSpellcastState::new).consumerNetworkThread(SynchronizeSpellcastState::handle).add();
+        CHANNEL.messageBuilder(UpdateEssentializerAmounts.class, messageNumber++, NetworkDirection.PLAY_TO_CLIENT).encoder(UpdateEssentializerAmounts::encode).decoder(UpdateEssentializerAmounts::new).consumerNetworkThread(UpdateEssentializerAmounts::handle).add();
+        CHANNEL.messageBuilder(UpdateEssentializerTile.class, messageNumber++, NetworkDirection.PLAY_TO_CLIENT).encoder(UpdateEssentializerTile::encode).decoder(UpdateEssentializerTile::new).consumerNetworkThread(UpdateEssentializerTile::handle).add();
+        CHANNEL.messageBuilder(AddVelocityToPlayer.class, messageNumber++, NetworkDirection.PLAY_TO_CLIENT).encoder(AddVelocityToPlayer::encode).decoder(AddVelocityToPlayer::new).consumerNetworkThread(AddVelocityToPlayer::handle).add();
         LOGGER.debug("Final message number: " + messageNumber);
 
         SpellcastEntityData.register();
@@ -457,51 +336,23 @@ public class ElementsOfPowerMod
         ElementsofPowerDataGen.gatherData(event);
     }
 
-    private void addStuffToBiomes(BiomeLoadingEvent event)
-    {
-        ResourceKey<Biome> biome = ResourceKey.create(Registry.BIOME_REGISTRY, event.getName());
-        if (!BiomeDictionary.hasType(biome, BiomeDictionary.Type.VOID))
-        {
-            boolean isEndBiome = BiomeDictionary.hasType(biome, BiomeDictionary.Type.END);
-            boolean isNetherBiome = BiomeDictionary.hasType(biome, BiomeDictionary.Type.NETHER);
-            if (!isEndBiome && !isNetherBiome)
-            {
-                var values = getBiomeValues(biome);
-                for(var feat : oreFeatures.get().getOrDefault(values, List.of()))
-                {
-                    event.getGeneration().addFeature(GenerationStep.Decoration.UNDERGROUND_ORES, feat);
-                }
-            }
-
-            Holder<PlacedFeature> feat;
-            if (isNetherBiome)
-                feat = COCOON_FEATURE_NETHER_P;
-            else if (isEndBiome)
-                feat = COCOON_FEATURE_END_P;
-            else
-                feat = COCOON_FEATURE_OVERWORLD_P;
-
-            event.getGeneration().addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, feat);
-        }
-    }
-
-    private BiomeValues getBiomeValues(ResourceKey<Biome> biome)
+    private static BiomeValues getBiomeValues(Holder<Biome> biome)
     {
         var heat = BiomeValue.NEUTRAL;
         var humidity = BiomeValue.NEUTRAL;
         var life = BiomeValue.NEUTRAL;
 
-        if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.HOT))
+        if (biome.is(Tags.Biomes.IS_HOT))
             heat = BiomeValue.FOR;
-        if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.COLD))
+        if (biome.is(Tags.Biomes.IS_COLD))
             heat = BiomeValue.AGAINST;
-        if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.WET))
+        if (biome.is(Tags.Biomes.IS_WET))
             humidity = BiomeValue.FOR;
-        if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.DRY))
+        if (biome.is(Tags.Biomes.IS_DRY))
             humidity = BiomeValue.AGAINST;
-        if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.DENSE))
+        if (biome.is(Tags.Biomes.IS_DENSE))
             life = BiomeValue.FOR;
-        if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.SPARSE))
+        if (biome.is(Tags.Biomes.IS_SPARSE))
             life = BiomeValue.AGAINST;
 
         return new BiomeValues(heat, humidity, life);

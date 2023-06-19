@@ -18,12 +18,12 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
-public class AnalyzerScreen extends AbstractContainerScreen<AnalyzerContainer>
+public class AnalyzerScreen extends AbstractContainerScreen<AnalyzerMenu>
 {
 
     public static final ResourceLocation GUI_TEXTURE_LOCATION = ElementsOfPowerMod.location("textures/gui/analyzer.png");
 
-    public AnalyzerScreen(AnalyzerContainer container, Inventory playerInventory, Component title)
+    public AnalyzerScreen(AnalyzerMenu container, Inventory playerInventory, Component title)
     {
         super(container, playerInventory, title);
         imageHeight = 176;

@@ -2,7 +2,7 @@
   "parent": "block/block",
   "loader": "forge:obj",
   "model": "elementsofpower:models/block/essentializer.obj",
-  "detectCullableFaces": true,
+  "automatic_culling": true,
   "textures": {
     "particle": "elementsofpower:block/side_obsidian"
   }

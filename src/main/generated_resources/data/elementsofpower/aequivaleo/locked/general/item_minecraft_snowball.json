@@ -1,4 +1,14 @@
 {
+  "compounds": [
+    {
+      "type": "elementsofpower:air",
+      "amount": 1.0
+    },
+    {
+      "type": "elementsofpower:water",
+      "amount": 1.0
+    }
+  ],
   "mode": "ADDITIVE",
   "targets": [
     {
@@ -14,16 +24,6 @@
         "count": 1.0,
         "stack": "{Count:1b,id:\"minecraft:snowball\"}"
       }
-    }
-  ],
-  "compounds": [
-    {
-      "amount": 1.0,
-      "type": "elementsofpower:air"
-    },
-    {
-      "amount": 1.0,
-      "type": "elementsofpower:water"
     }
   ]
 }

@@ -5,6 +5,7 @@ import dev.gigaherz.elementsofpower.network.SynchronizeSpellcastState;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -12,7 +13,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.*;
-import net.minecraft.nbt.Tag;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -238,7 +238,7 @@ public class SpellcastEntityData implements INBTSerializable<CompoundTag>
         @SubscribeEvent
         public void playerTickEvent(LivingEvent.LivingJumpEvent e)
         {
-            LivingEntity entity = e.getEntityLiving();
+            LivingEntity entity = e.getEntity();
             if (entity instanceof Player)
             {
                 SpellcastEntityData.get((Player) entity).ifPresent(SpellcastEntityData::interrupt);

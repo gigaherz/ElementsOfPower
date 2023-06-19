@@ -1,4 +1,8 @@
 {
+  "compounds": {
+    "type": "elementsofpower:life",
+    "amount": 2.0
+  },
   "mode": "ADDITIVE",
   "targets": [
     {
@@ -15,9 +19,5 @@
         "stack": "{Count:1b,id:\"minecraft:sunflower\"}"
       }
     }
-  ],
-  "compounds": {
-    "amount": 2.0,
-    "type": "elementsofpower:life"
-  }
+  ]
 }

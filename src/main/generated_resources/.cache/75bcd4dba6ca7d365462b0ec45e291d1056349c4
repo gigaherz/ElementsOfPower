@@ -1,0 +1,18 @@
+// 1.19.2	2022-08-14T15:32:52.9585182	Tags for minecraft:block
+47178c247d72698fa7d1565f88d280a2e0dd551f data/elementsofpower/tags/blocks/can_cocoon_replace.json
+18a4c465d4ef7985562ff337d1f15eef480b157d data/forge/tags/blocks/ores.json
+c94257e05fd20feb732fb5edde618af4d7789919 data/forge/tags/blocks/ores/agate.json
+f0450553984a380135b2ca6de36656ed288bf021 data/forge/tags/blocks/ores/citrine.json
+cd4c771f2b2336f70e3e35d102b1310a1198907b data/forge/tags/blocks/ores/elbaite.json
+70753a31547383531e05792b26cd400d4a214be5 data/forge/tags/blocks/ores/ruby.json
+31bd2b5231f55f62fdc7e4f09934dcb5e26cf710 data/forge/tags/blocks/ores/sapphire.json
+024ddb8501a38baeae55eefb513ef144c404fd5a data/forge/tags/blocks/ores/serendibite.json
+07c7fad4d2618432480200abf7108055d519a0a4 data/forge/tags/blocks/storage_blocks.json
+5e56906ac8ef0cb5fccd3bed1617c30a76dee6f5 data/forge/tags/blocks/storage_blocks/agate.json
+cdee53a5377584391939f9e144a2b2af155936da data/forge/tags/blocks/storage_blocks/citrine.json
+31fe47b8aeb1c9cc3a32be7ca0caf5e0eb8e59a1 data/forge/tags/blocks/storage_blocks/elbaite.json
+0767ebbb27a105be6da75a33fae77191bf2c12cd data/forge/tags/blocks/storage_blocks/ruby.json
+54fd53510787df03f276750e814b231f5f4ce7dd data/forge/tags/blocks/storage_blocks/sapphire.json
+3b67c870cc6c268fbb4167e1cfeb697ae817fcef data/forge/tags/blocks/storage_blocks/serendibite.json
+1761339174d027c9ec1008e1304b0d418c6e71e2 data/minecraft/tags/blocks/mineable/pickaxe.json
+1761339174d027c9ec1008e1304b0d418c6e71e2 data/minecraft/tags/blocks/needs_iron_tool.json

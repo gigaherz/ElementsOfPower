@@ -1,4 +1,14 @@
 {
+  "compounds": [
+    {
+      "type": "elementsofpower:air",
+      "amount": 0.125
+    },
+    {
+      "type": "elementsofpower:earth",
+      "amount": 1.0
+    }
+  ],
   "mode": "ADDITIVE",
   "targets": [
     {
@@ -6,20 +16,6 @@
       "data": {
         "count": 1.0,
         "item": "elementsofpower:citrine"
-      }
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:citrine\"}"
-      }
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:citrine\",tag:{quality:1}}"
       }
     },
     {
@@ -40,7 +36,7 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:citrine\",tag:{quality:4}}"
+        "stack": "{Count:1b,id:\"elementsofpower:citrine\"}"
       }
     },
     {
@@ -49,16 +45,20 @@
         "count": 1.0,
         "stack": "{Count:1b,id:\"elementsofpower:citrine\",tag:{quality:2}}"
       }
-    }
-  ],
-  "compounds": [
-    {
-      "amount": 0.125,
-      "type": "elementsofpower:air"
     },
     {
-      "amount": 1.0,
-      "type": "elementsofpower:earth"
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{Count:1b,id:\"elementsofpower:citrine\",tag:{quality:4}}"
+      }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{Count:1b,id:\"elementsofpower:citrine\",tag:{quality:1}}"
+      }
     }
   ]
 }

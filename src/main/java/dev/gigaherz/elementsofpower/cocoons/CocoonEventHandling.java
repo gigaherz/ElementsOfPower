@@ -138,10 +138,10 @@ public class CocoonEventHandling
             });
         }
 
-        private static void worldTick(TickEvent.WorldTickEvent event)
+        private static void worldTick(TickEvent.LevelTickEvent event)
         {
             if (event.phase == TickEvent.Phase.END)
-                event.world.getCapability(PENDING_TRACKER).ifPresent(PendingTracker::processCocoons);
+                event.level.getCapability(PENDING_TRACKER).ifPresent(PendingTracker::processCocoons);
         }
 
         public void addCocoon(CocoonTileEntity te)

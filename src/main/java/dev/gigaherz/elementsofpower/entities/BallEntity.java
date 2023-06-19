@@ -1,10 +1,12 @@
 package dev.gigaherz.elementsofpower.entities;
 
+import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.spells.InitializedSpellcast;
 import dev.gigaherz.elementsofpower.spells.SpellManager;
 import dev.gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -16,25 +18,20 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
-import net.minecraft.nbt.Tag;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import net.minecraftforge.network.NetworkHooks;
-import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nullable;
 
 public class BallEntity extends ThrowableProjectile implements IEntityAdditionalSpawnData
 {
-    @ObjectHolder("elementsofpower:ball")
-    public static EntityType<BallEntity> TYPE;
-
     InitializedSpellcast spellcast;
 
     private static final EntityDataAccessor<CompoundTag> SEQ = SynchedEntityData.defineId(BallEntity.class, EntityDataSerializers.COMPOUND_TAG);
 
     public BallEntity(Level worldIn, LivingEntity thrower, InitializedSpellcast spellcast)
     {
-        super(TYPE, thrower, worldIn);
+        super(ElementsOfPowerMod.SPELL_BALL_ENTITY_TYPE.get(), thrower, worldIn);
 
         this.spellcast = spellcast;
         spellcast.setProjectile(this);

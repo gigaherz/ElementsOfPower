@@ -1,4 +1,14 @@
 {
+  "compounds": [
+    {
+      "type": "elementsofpower:life",
+      "amount": 2.0
+    },
+    {
+      "type": "elementsofpower:water",
+      "amount": 1.0
+    }
+  ],
   "mode": "ADDITIVE",
   "targets": [
     {
@@ -14,16 +24,6 @@
         "count": 1.0,
         "stack": "{Count:1b,id:\"minecraft:sponge\"}"
       }
-    }
-  ],
-  "compounds": [
-    {
-      "amount": 2.0,
-      "type": "elementsofpower:life"
-    },
-    {
-      "amount": 1.0,
-      "type": "elementsofpower:water"
     }
   ]
 }

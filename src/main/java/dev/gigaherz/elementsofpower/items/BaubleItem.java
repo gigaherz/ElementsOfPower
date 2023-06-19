@@ -9,8 +9,8 @@ import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -21,7 +21,6 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraft.nbt.Tag;
 import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nullable;
@@ -163,13 +162,13 @@ public class BaubleItem extends GemContainerItem
         switch (getTransferMode(stack))
         {
             case ACTIVE:
-                playerIn.displayClientMessage(new TranslatableComponent("text.elementsofpower.bauble.active"), true);
+                playerIn.displayClientMessage(Component.translatable("text.elementsofpower.bauble.active"), true);
                 break;
             case PASSIVE:
-                playerIn.displayClientMessage(new TranslatableComponent("text.elementsofpower.bauble.passive"), true);
+                playerIn.displayClientMessage(Component.translatable("text.elementsofpower.bauble.passive"), true);
                 break;
             case DISABLED:
-                playerIn.displayClientMessage(new TranslatableComponent("text.elementsofpower.bauble.disabled"), true);
+                playerIn.displayClientMessage(Component.translatable("text.elementsofpower.bauble.disabled"), true);
                 break;
         }
 
@@ -185,16 +184,16 @@ public class BaubleItem extends GemContainerItem
         switch (getTransferMode(stack))
         {
             case ACTIVE:
-                tooltip.add(new TranslatableComponent("text.elementsofpower.bauble.active").withStyle(ChatFormatting.BOLD, ChatFormatting.WHITE));
+                tooltip.add(Component.translatable("text.elementsofpower.bauble.active").withStyle(ChatFormatting.BOLD, ChatFormatting.WHITE));
                 break;
             case PASSIVE:
-                tooltip.add(new TranslatableComponent("text.elementsofpower.bauble.passive").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+                tooltip.add(Component.translatable("text.elementsofpower.bauble.passive").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
                 break;
             case DISABLED:
-                tooltip.add(new TranslatableComponent("text.elementsofpower.bauble.disabled").withStyle(ChatFormatting.ITALIC, ChatFormatting.DARK_RED));
+                tooltip.add(Component.translatable("text.elementsofpower.bauble.disabled").withStyle(ChatFormatting.ITALIC, ChatFormatting.DARK_RED));
                 break;
         }
-        tooltip.add(new TranslatableComponent("text.elementsofpower.bauble.toggle").withStyle(ChatFormatting.ITALIC, ChatFormatting.DARK_GRAY));
+        tooltip.add(Component.translatable("text.elementsofpower.bauble.toggle").withStyle(ChatFormatting.ITALIC, ChatFormatting.DARK_GRAY));
     }
 
     public static TransferMode getTransferMode(ItemStack stack)

@@ -51,7 +51,7 @@ repositories {
     mavenLocal()
 }
 
-version = "0.14.2-alpha"
+version = "0.15.0-alpha"
 group = "dev.gigaherz.elementsofpower" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "ElementsOfPower-UNKNOWN"
 
@@ -66,7 +66,7 @@ sourceSets {
 }
 
 minecraft {
-    mappings channel: 'official', version: '1.18.2'
+    mappings channel: 'official', version: '1.19.2'
     //mappings channel: 'parchment', version: '2021.12.13-nightly-SNAPSHOT-1.18.1'
 
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
@@ -128,21 +128,23 @@ minecraft {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.18.2-40.1.0'
+    minecraft 'net.minecraftforge:forge:1.19.2-43.0.0'
 
-    compileOnly fg.deobf("mezz.jei:jei-1.18.2:9.7.0.193:api")
-    runtimeOnly fg.deobf("mezz.jei:jei-1.18.2:9.7.0.193")
+    compileOnly fg.deobf("mezz.jei:jei-1.19.1-common-api:11.2.0.243")
+    runtimeOnly fg.deobf("mezz.jei:jei-1.19.1-common:11.2.0.243")
+    compileOnly fg.deobf("mezz.jei:jei-1.19.1-forge-api:11.2.0.243")
+    runtimeOnly fg.deobf("mezz.jei:jei-1.19.1-forge:11.2.0.243")
 
-    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.18.2-5.0.7.0")
-    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.18.2-5.0.7.0")
+    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.19.1-5.1.0.5")
+    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.19.1-5.1.0.5")
 
-    compileOnly fg.deobf("com.ldtteam:aequivaleo:1.18.2-0.1.93-ALPHA:api")
-    //compileOnly fg.deobf("com.ldtteam:aequivaleo:1.18.2-0.1.93-ALPHA:vanilla-api")
-    runtimeOnly fg.deobf("com.ldtteam:aequivaleo:1.18.2-0.1.93-ALPHA:universal")
+    compileOnly fg.deobf("com.ldtteam:aequivaleo:1.19-0.1.99-ALPHA:api")
+    //compileOnly fg.deobf("com.ldtteam:aequivaleo:1.19-0.1.99-ALPHA:vanilla-api")
+    runtimeOnly fg.deobf("com.ldtteam:aequivaleo:1.19-0.1.99-ALPHA:universal")
 
     //runtimeOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:1.16-3.1.4-22")
 
-    implementation fg.deobf("dev.gigaherz.guidebook:Guidebook-1.18.2:3.4.0")
+    implementation fg.deobf("dev.gigaherz.guidebook:Guidebook-1.19.1:3.6.1")
 
     //runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:1.16.2-47")
     //runtimeOnly fg.deobf("deps:Botania-1.16.3:409")

@@ -1,10 +1,5 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    " GW",
-    " SG",
-    "S  "
-  ],
   "key": {
     "G": {
       "item": "minecraft:iron_block"
@@ -16,6 +11,11 @@
       "item": "elementsofpower:wand"
     }
   },
+  "pattern": [
+    " GW",
+    " SG",
+    "S  "
+  ],
   "result": {
     "item": "elementsofpower:staff"
   }

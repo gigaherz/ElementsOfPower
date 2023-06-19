@@ -1,7 +1,7 @@
 package dev.gigaherz.elementsofpower.analyzer;
 
-import dev.gigaherz.elementsofpower.analyzer.menu.AnalyzerContainer;
-import net.minecraft.network.chat.TranslatableComponent;
+import dev.gigaherz.elementsofpower.analyzer.menu.AnalyzerMenu;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -42,8 +42,8 @@ public class AnalyzerItem extends Item
     private void openGui(ServerPlayer playerIn, ItemStack heldItem)
     {
         int slot = getSlotIndex(playerIn.getInventory(), heldItem);
-        NetworkHooks.openGui(playerIn, new SimpleMenuProvider((id, playerInventory, player) -> new AnalyzerContainer(id, playerInventory, slot),
-                        new TranslatableComponent("container.elementsofpower.analyzer")),
+        NetworkHooks.openScreen(playerIn, new SimpleMenuProvider((id, playerInventory, player) -> new AnalyzerMenu(id, playerInventory, slot),
+                        Component.translatable("container.elementsofpower.analyzer")),
                 (packetBuffer) -> packetBuffer.writeInt(slot));
     }
 
