@@ -1,0 +1,38 @@
+{
+  "type": "forge:add_features",
+  "biomes": {
+    "type": "forge:and",
+    "values": [
+      {
+        "type": "forge:or",
+        "values": [
+          "#minecraft:is_overworld"
+        ]
+      },
+      {
+        "type": "forge:or",
+        "values": [
+          "#forge:is_hot/overworld"
+        ]
+      },
+      {
+        "type": "forge:or",
+        "values": [
+          "#forge:is_dry/overworld"
+        ]
+      },
+      {
+        "type": "forge:not",
+        "value": {
+          "type": "forge:or",
+          "values": [
+            "#forge:is_dense/overworld",
+            "#forge:is_sparse/overworld"
+          ]
+        }
+      }
+    ]
+  },
+  "features": "elementsofpower:citrine_ore_for_against_neutral",
+  "step": "underground_ores"
+}

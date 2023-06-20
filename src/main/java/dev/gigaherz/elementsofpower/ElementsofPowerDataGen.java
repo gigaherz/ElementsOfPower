@@ -1,13 +1,14 @@
 package dev.gigaherz.elementsofpower;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.ldtteam.aequivaleo.api.compound.CompoundInstance;
 import com.ldtteam.aequivaleo.api.compound.information.datagen.ForcedInformationProvider;
 import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Lifecycle;
 import dev.gigaherz.elementsofpower.cocoons.ApplyOrbSizeFunction;
 import dev.gigaherz.elementsofpower.cocoons.CocoonFeature;
+import dev.gigaherz.elementsofpower.cocoons.CocoonPlacement;
 import dev.gigaherz.elementsofpower.database.GemstoneExaminer;
 import dev.gigaherz.elementsofpower.database.StockConversions;
 import dev.gigaherz.elementsofpower.gemstones.AnalyzedFilteringIngredient;
@@ -20,54 +21,60 @@ import dev.gigaherz.elementsofpower.spells.blocks.DustBlock;
 import dev.gigaherz.elementsofpower.spells.blocks.LightBlock;
 import dev.gigaherz.elementsofpower.spells.blocks.MistBlock;
 import net.minecraft.Util;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.NonNullList;
-import net.minecraft.core.Registry;
+import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.data.recipes.*;
 import net.minecraft.data.registries.VanillaRegistries;
 import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
-import net.minecraft.data.tags.ItemTagsProvider;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.*;
-import net.minecraft.world.flag.FeatureFlagSet;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.flag.FeatureFlags;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.levelgen.GenerationStep;
+import net.minecraft.world.level.levelgen.VerticalAnchor;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
+import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
+import net.minecraft.world.level.levelgen.placement.*;
+import net.minecraft.world.level.levelgen.structure.templatesystem.RuleTest;
+import net.minecraft.world.level.levelgen.structure.templatesystem.TagMatchTest;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.ValidationContext;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.data.BlockTagsProvider;
+import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.common.world.ForgeBiomeModifiers;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.holdersets.AndHolderSet;
+import net.minecraftforge.registries.holdersets.NotHolderSet;
+import net.minecraftforge.registries.holdersets.OrHolderSet;
 
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -92,6 +99,8 @@ class ElementsofPowerDataGen
         }
 
         gen.addProvider(event.includeClient(), new BlockStates(gen.getPackOutput(), existingFileHelper));
+
+        gen.addProvider(event.includeServer(), new RegistryProvider(gen.getPackOutput(), event.getLookupProvider()));
     }
 
     private static class AequivaleoGens extends ForcedInformationProvider
@@ -469,6 +478,236 @@ class ElementsofPowerDataGen
                 }
             }
         }
+    }
+
+
+    public static class RegistryProvider extends DatapackBuiltinEntriesProvider
+    {
+
+        public RegistryProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider)
+        {
+            super(output, lookupProvider, BUILDER, Set.of(ElementsOfPowerMod.MODID));
+        }
+
+        @Override
+        public String getName() {
+            return "Datapack registries";
+        }
+
+        public enum BiomeValue implements StringRepresentable
+        {
+            NEUTRAL("neutral", 1),
+            FOR("for", 2),
+            AGAINST("against", 0);
+
+            private final String name;
+            private final int value;
+
+            BiomeValue(String name, int value)
+            {
+                this.name = name;
+                this.value = value;
+            }
+
+            public int value()
+            {
+                return value;
+            }
+
+            @Override
+            public String getSerializedName()
+            {
+                return name;
+            }
+        }
+
+        public record BiomeValues(BiomeValue heat, BiomeValue humidity, BiomeValue life)
+        {
+            private int getBiomeBonus(@Nullable Element e)
+            {
+                if (e == null)
+                    return 1;
+                return switch (e)
+                        {
+                            case FIRE -> heat.value();
+                            case WATER -> humidity.value();
+                            case LIFE -> life.value();
+                            case CHAOS -> 2 - life.value();
+                            default -> 1;
+                        };
+            }
+        }
+
+        private static final RuleTest STONE_ORE_REPLACEABLES = new TagMatchTest(BlockTags.STONE_ORE_REPLACEABLES);
+        private static final RuleTest DEEPSLATE_ORE_REPLACEABLES = new TagMatchTest(BlockTags.DEEPSLATE_ORE_REPLACEABLES);
+        private static final ResourceKey<ConfiguredFeature<?, ?>> CONFIGURED_COCOON = ResourceKey.create(Registries.CONFIGURED_FEATURE, ElementsOfPowerMod.location("overworld_cocoon"));
+        private static final ResourceKey<PlacedFeature> PLACED_COCOON = ResourceKey.create(Registries.PLACED_FEATURE, ElementsOfPowerMod.location("overworld_cocoon"));
+        private static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()
+                .add(Registries.CONFIGURED_FEATURE, context -> {
+                    context.register(CONFIGURED_COCOON, new ConfiguredFeature<>(ElementsOfPowerMod.COCOON_FEATURE.get(), NoneFeatureConfiguration.INSTANCE));
+                    for (var heat : BiomeValue.values())
+                    {
+                        for (var humidity : BiomeValue.values())
+                        {
+                            for (var life : BiomeValue.values())
+                            {
+                                var name = heat.getSerializedName() + "_" + humidity.getSerializedName() + "_" + life.getSerializedName();
+                                var values = new BiomeValues(heat, humidity, life);
+                                for (Gemstone g : Gemstone.values)
+                                {
+                                    if (g.generateInWorld())
+                                    {
+                                        var ores = g.getOres();
+                                        var stone_ore = ores.get(0);
+                                        var deepslate_ore = ores.size() >= 2 ? ores.get(1) : null;
+
+                                        List<OreConfiguration.TargetBlockState> targets = new ArrayList<>();
+
+                                        targets.add(OreConfiguration.target(STONE_ORE_REPLACEABLES, stone_ore.defaultBlockState()));
+
+                                        if (deepslate_ore != null)
+                                            targets.add(OreConfiguration.target(DEEPSLATE_ORE_REPLACEABLES, deepslate_ore.defaultBlockState()));
+
+                                        int numPerVein = 3 + values.getBiomeBonus(g.getElement());
+                                        var name2 = g.getSerializedName() + "_ore_" + name;
+                                        var key = ResourceKey.create(Registries.CONFIGURED_FEATURE, ElementsOfPowerMod.location(name2));
+                                        context.register(key, new ConfiguredFeature<>(Feature.ORE, new OreConfiguration(targets, numPerVein, 0.0f)));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                })
+                .add(Registries.PLACED_FEATURE, context -> {
+                    var configuredFeatureRegistry = context.lookup(Registries.CONFIGURED_FEATURE);
+                    context.register(PLACED_COCOON, new PlacedFeature(configuredFeatureRegistry.get(CONFIGURED_COCOON).orElseThrow(), List.of(CocoonPlacement.INSTANCE)));
+                    for (var heat : BiomeValue.values())
+                    {
+                        for (var humidity : BiomeValue.values())
+                        {
+                            for (var life : BiomeValue.values())
+                            {
+                                var name = heat.getSerializedName() + "_" + humidity.getSerializedName() + "_" + life.getSerializedName();
+                                for (Gemstone g : Gemstone.values)
+                                {
+                                    if (g.generateInWorld())
+                                    {
+                                        var name2 = g.getSerializedName() + "_ore_" + name;
+                                        var key = ResourceKey.create(Registries.CONFIGURED_FEATURE, ElementsOfPowerMod.location(name2));
+                                        var key2 = ResourceKey.create(Registries.PLACED_FEATURE, ElementsOfPowerMod.location(name2));
+                                        var configured = configuredFeatureRegistry.get(key).orElseThrow();
+                                        context.register(key2, new PlacedFeature(configured, List.of(
+                                                CountPlacement.of(16),
+                                                InSquarePlacement.spread(),
+                                                HeightRangePlacement.triangle(VerticalAnchor.aboveBottom(-80), VerticalAnchor.aboveBottom(80)),
+                                                BiomeFilter.biome())));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                })
+                .add(ForgeRegistries.Keys.BIOME_MODIFIERS, context -> {
+                    var biomes = context.lookup(Registries.BIOME);
+                    var placedFeatures = context.lookup(Registries.PLACED_FEATURE);
+
+                    var biomes0 = new HolderLookup.RegistryLookup<Biome>() {
+
+                        @Override
+                        public Optional<Holder.Reference<Biome>> get(ResourceKey<Biome> pResourceKey)
+                        {
+                            return biomes.get(pResourceKey);
+                        }
+
+                        @Override
+                        public Optional<HolderSet.Named<Biome>> get(TagKey<Biome> pTagKey)
+                        {
+                            return biomes.get(pTagKey);
+                        }
+
+                        @Override
+                        public Stream<Holder.Reference<Biome>> listElements()
+                        {
+                            return Stream.empty();
+                        }
+
+                        @Override
+                        public Stream<HolderSet.Named<Biome>> listTags()
+                        {
+                            return Stream.empty();
+                        }
+
+                        @Override
+                        public ResourceKey<? extends Registry<? extends Biome>> key()
+                        {
+                            return Registries.BIOME;
+                        }
+
+                        @Override
+                        public boolean canSerializeIn(HolderOwner<Biome> pOwner)
+                        {
+                            return true;
+                        }
+
+                        @Override
+                        public Lifecycle registryLifecycle()
+                        {
+                            return Lifecycle.stable();
+                        }
+                    };
+
+                    final HolderSet.Named<Biome> isOverworld = biomes.get(BiomeTags.IS_OVERWORLD).orElseThrow();
+                    final HolderSet.Named<Biome> isHot = biomes.get(Tags.Biomes.IS_HOT_OVERWORLD).orElseThrow();
+                    final HolderSet.Named<Biome> isCold = biomes.get(Tags.Biomes.IS_COLD_OVERWORLD).orElseThrow();
+                    final HolderSet.Named<Biome> isWet = biomes.get(Tags.Biomes.IS_WET_OVERWORLD).orElseThrow();
+                    final HolderSet.Named<Biome> isDry = biomes.get(Tags.Biomes.IS_DRY_OVERWORLD).orElseThrow();
+                    final HolderSet.Named<Biome> isDense = biomes.get(Tags.Biomes.IS_DENSE_OVERWORLD).orElseThrow();
+                    final HolderSet.Named<Biome> isSparse = biomes.get(Tags.Biomes.IS_SPARSE_OVERWORLD).orElseThrow();
+                    for (var heat : BiomeValue.values())
+                    {
+                        for (var humidity : BiomeValue.values())
+                        {
+                            for (var life : BiomeValue.values())
+                            {
+                                var name = heat.getSerializedName() + "_" + humidity.getSerializedName() + "_" + life.getSerializedName();
+                                for (Gemstone g : Gemstone.values)
+                                {
+                                    if (g.generateInWorld())
+                                    {
+                                        var name2 = g.getSerializedName() + "_ore_" + name;
+                                        var key2 = ResourceKey.create(Registries.PLACED_FEATURE, ElementsOfPowerMod.location(name2));
+                                        var placed = placedFeatures.get(key2).orElseThrow();
+                                        var key = ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS, ElementsOfPowerMod.location(name2));
+
+                                        HolderSet<Biome> heatHolderSet = switch (heat)
+                                                {
+                                                    case FOR -> isHot;
+                                                    case AGAINST -> isCold;
+                                                    default -> new NotHolderSet<>(biomes0, new OrHolderSet<>(List.of(isHot, isCold)));
+                                                };
+                                        HolderSet<Biome> humidityHolderSet = switch (humidity)
+                                                {
+                                                    case FOR -> isWet;
+                                                    case AGAINST -> isDry;
+                                                    default -> new NotHolderSet<>(biomes0, new OrHolderSet<>(List.of(isWet, isDry)));
+                                                };
+                                        HolderSet<Biome> lifeHolderSet = switch (life)
+                                                {
+                                                    case FOR -> isDense;
+                                                    case AGAINST -> isSparse;
+                                                    default -> new NotHolderSet<>(biomes0, new OrHolderSet<>(List.of(isDense, isSparse)));
+                                                };
+                                        context.register(key, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
+                                                new AndHolderSet<>(List.of(isOverworld, heatHolderSet, humidityHolderSet, lifeHolderSet)),
+                                                HolderSet.direct(placed),
+                                                GenerationStep.Decoration.UNDERGROUND_ORES
+                                        ));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
     }
 
     private static TagKey<Item> itemTag(String p_203855_) {

@@ -30,7 +30,7 @@ public class StaffItem extends WandItem
         return am.multiply(0.5f);
     }
 
-    // TODO: Enable when the animatio nsystem supports rotating OBJ parts
+    // TODO: Enable when the animation system supports rotating OBJ parts
     /*@Override
     public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt)
     {

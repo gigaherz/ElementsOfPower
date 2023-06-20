@@ -59,8 +59,8 @@
     "block.elementsofpower.amethyst_block": "Block of Amethyst",
     "block.elementsofpower.elbaite_block": "Block of Elbaite",
 
-    "itemGroup.elementsofpower.magic": "Elements Of Power Gear & Elements",
-    "itemGroup.elementsofpower.gemstones": "Elements Of Power Gemstones",
+    "tab.elementsofpower.magic": "Elements Of Power Gear & Elements",
+    "tab.elementsofpower.gemstones": "Elements Of Power Gemstones",
 
     "item.elementsofpower.Essence": "Spawn Living Essence",
     "entity.elementsofpower.Essence": "Living Essence",

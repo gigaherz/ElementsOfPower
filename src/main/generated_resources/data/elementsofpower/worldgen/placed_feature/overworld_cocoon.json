@@ -1,0 +1,9 @@
+{
+  "feature": "elementsofpower:overworld_cocoon",
+  "placement": [
+    {
+      "type": "elementsofpower:cocoon_placement",
+      "value": 1
+    }
+  ]
+}

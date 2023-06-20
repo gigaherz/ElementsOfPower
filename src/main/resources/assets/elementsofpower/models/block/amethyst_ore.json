@@ -1,4 +1,0 @@
-{
-  "parent": "elementsofpower:block/ore_base_stone",
-  "textures": { "all1": "elementsofpower:block/ore_amethyst" }
-}

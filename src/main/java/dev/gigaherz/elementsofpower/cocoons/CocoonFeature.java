@@ -1,6 +1,7 @@
 package dev.gigaherz.elementsofpower.cocoons;
 
 import com.mojang.serialization.Codec;
+import dev.gigaherz.elementsofpower.integration.aequivaleo.AequivaleoPlugin;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import dev.gigaherz.elementsofpower.magic.MagicGradient;
 import net.minecraft.core.BlockPos;
@@ -114,7 +115,7 @@ public class CocoonFeature extends Feature<NoneFeatureConfiguration>
 
                 am = am.add(gradient.getAt(y / (float) world.getMaxBuildHeight()));
 
-                /* TODO: convert to aqeuivaleo query
+                /* TODO: convert to aqeuivaleo query?
                 Material mat = state.getMaterial();
                 if (mat == Material.AIR)
                 {

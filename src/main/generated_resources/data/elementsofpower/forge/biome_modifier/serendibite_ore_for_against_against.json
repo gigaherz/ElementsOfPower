@@ -1,0 +1,14 @@
+{
+  "type": "forge:add_features",
+  "biomes": {
+    "type": "forge:and",
+    "values": [
+      "#minecraft:is_overworld",
+      "#forge:is_hot/overworld",
+      "#forge:is_dry/overworld",
+      "#forge:is_sparse/overworld"
+    ]
+  },
+  "features": "elementsofpower:serendibite_ore_for_against_against",
+  "step": "underground_ores"
+}

@@ -1,7 +1,6 @@
 package dev.gigaherz.elementsofpower;
 
 import com.mojang.serialization.Codec;
-import dev.gigaherz.elementsofpower.analyzer.AnalyzerItem;
 import dev.gigaherz.elementsofpower.analyzer.menu.AnalyzerMenu;
 import dev.gigaherz.elementsofpower.analyzer.menu.AnalyzerScreen;
 import dev.gigaherz.elementsofpower.capabilities.MagicContainerCapability;
@@ -18,65 +17,43 @@ import dev.gigaherz.elementsofpower.essentializer.menu.EssentializerMenu;
 import dev.gigaherz.elementsofpower.essentializer.menu.EssentializerScreen;
 import dev.gigaherz.elementsofpower.gemstones.AnalyzedFilteringIngredient;
 import dev.gigaherz.elementsofpower.gemstones.Gemstone;
-import dev.gigaherz.elementsofpower.gemstones.GemstoneItem;
 import dev.gigaherz.elementsofpower.gemstones.Quality;
-import dev.gigaherz.elementsofpower.items.BaubleItem;
-import dev.gigaherz.elementsofpower.items.MagicOrbItem;
-import dev.gigaherz.elementsofpower.items.StaffItem;
-import dev.gigaherz.elementsofpower.items.WandItem;
 import dev.gigaherz.elementsofpower.network.*;
 import dev.gigaherz.elementsofpower.recipes.ContainerChargeRecipe;
 import dev.gigaherz.elementsofpower.recipes.GemstoneChangeRecipe;
 import dev.gigaherz.elementsofpower.spells.Element;
 import dev.gigaherz.elementsofpower.spells.SpellcastEntityData;
-import net.minecraft.Util;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.features.FeatureUtils;
-import net.minecraft.data.worldgen.features.OreFeatures;
-import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BiomeTags;
-import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;
-import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.levelgen.GenerationStep;
-import net.minecraft.world.level.levelgen.VerticalAnchor;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
-import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
 import net.minecraft.world.level.levelgen.placement.*;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
-import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.extensions.IForgeMenuType;
-import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.common.world.BiomeModifier;
-import net.minecraftforge.common.world.ModifiableBiomeInfo;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -96,9 +73,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.theillusivec4.curios.api.SlotTypeMessage;
 
-import javax.annotation.Nullable;
 import java.util.*;
-import java.util.function.Supplier;
 
 @Mod(ElementsOfPowerMod.MODID)
 public class ElementsOfPowerMod
@@ -118,7 +93,6 @@ public class ElementsOfPowerMod
     private static final DeferredRegister<Feature<?>> FEATURES = DeferredRegister.create(ForgeRegistries.FEATURES, MODID);
     private static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, MODID);
     private static final DeferredRegister<CreativeModeTab> CREATIVE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
-    private static final DeferredRegister<Codec<? extends BiomeModifier>> BIOME_MODIFIER_SERIALIZERS = DeferredRegister.create(ForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS, MODID);
     private static final DeferredRegister<PlacementModifierType<?>> PLACEMENT_MODIFIER_TYPES = DeferredRegister.create(Registries.PLACEMENT_MODIFIER_TYPE, MODID);
 
     public static final RegistryObject<EntityType<BallEntity>> SPELL_BALL_ENTITY_TYPE = ENTITY_TYPES.register("spell_ball", () ->
@@ -159,15 +133,12 @@ public class ElementsOfPowerMod
 
     public static RegistryObject<LootItemFunctionType> APPLY_ORB_SIZE = LOOT_FUNCTION_TYPES.register("apply_orb_size", () -> new LootItemFunctionType(new ApplyOrbSizeFunction.Serializer()));
 
-    public static RegistryObject<Codec<CocoonModifier>> COCOON_MODIFIER_SERIALIZER = BIOME_MODIFIER_SERIALIZERS.register("cocoons", () -> Codec.unit(CocoonModifier::new));
-    public static RegistryObject<Codec<GemstoneOreModifier>> GEMSTONE_ORE_MODIFIER_SERIALIZER = BIOME_MODIFIER_SERIALIZERS.register("gemstone_ores", () -> Codec.unit(GemstoneOreModifier::new));
-
-
     public static final RegistryObject<PlacementModifierType<CocoonPlacement>> COCOON_PLACEMENT = PLACEMENT_MODIFIER_TYPES.register("cocoon_placement", () -> CocoonPlacement::codec);
 
     public static final RegistryObject<CreativeModeTab> CREATIVE_TAB_MAGIC = CREATIVE_TABS.register("magic", () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP,0)
             .icon(() -> ElementsOfPowerItems.WAND.get().getStack(Gemstone.DIAMOND, Quality.COMMON))
             .title(Component.translatable("tab.elementsofpower.magic"))
+            .withTabsBefore(CreativeModeTabs.SPAWN_EGGS)
             .displayItems((featureFlags, output) -> {
                 output.accept(ElementsOfPowerItems.ESSENTIALIZER.get());
 
@@ -203,6 +174,7 @@ public class ElementsOfPowerMod
     public static final RegistryObject<CreativeModeTab> CREATIVE_TAB_GEMSTONES = CREATIVE_TABS.register("gemstones", () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP,0)
             .icon(() -> new ItemStack(Gemstone.RUBY))
             .title(Component.translatable("tab.elementsofpower.gemstones"))
+            .withTabsBefore(CreativeModeTabs.SPAWN_EGGS, CREATIVE_TAB_MAGIC.getKey())
             .displayItems((featureFlags, output) -> {
 
 
@@ -239,59 +211,6 @@ public class ElementsOfPowerMod
             }).build()
     );
 
-    //private static Holder<ConfiguredFeature<NoneFeatureConfiguration, ?>> CONFIGURED_COCOON_FEATURE;
-    //private static Holder<PlacedFeature> PLACED_COCOON_FEATURE;
-
-
-    public record CocoonModifier() implements BiomeModifier
-    {
-        public void modify(Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder)
-        {
-            if (phase == Phase.ADD)
-            {
-                if (biome.is(Tags.Biomes.IS_VOID))
-                    return;
-
-                //builder.getGenerationSettings().addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, ElementsOfPowerMod.PLACED_COCOON_FEATURE);
-            }
-        }
-
-        public Codec<? extends BiomeModifier> codec()
-        {
-            return COCOON_MODIFIER_SERIALIZER.get();
-        }
-    }
-
-    public record GemstoneOreModifier() implements BiomeModifier
-    {
-        public void modify(Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder)
-        {
-            if (phase == Phase.ADD)
-            {
-                if (biome.is(Tags.Biomes.IS_VOID))
-                    return;
-
-                boolean isEndBiome = biome.is(BiomeTags.IS_END);
-                boolean isNetherBiome = biome.is(BiomeTags.IS_NETHER);
-                if (!isEndBiome && !isNetherBiome)
-                {
-                    /* TODO: holders
-                    var values = getBiomeValues(biome);
-                    for (var feat : oreFeatures.get().getOrDefault(values, List.of()))
-                    {
-                        builder.getGenerationSettings().addFeature(GenerationStep.Decoration.UNDERGROUND_ORES, feat);
-                    }
-                     */
-                }
-            }
-        }
-
-        public Codec<? extends BiomeModifier> codec()
-        {
-            return GEMSTONE_ORE_MODIFIER_SERIALIZER.get();
-        }
-    }
-
     private static final String PROTOCOL_VERSION = "1.0";
     public static SimpleChannel CHANNEL = NetworkRegistry.ChannelBuilder
             .named(location("general"))
@@ -315,7 +234,6 @@ public class ElementsOfPowerMod
         RECIPE_SERIALIZERS.register(modEventBus);
         FEATURES.register(modEventBus);
         PARTICLE_TYPES.register(modEventBus);
-        BIOME_MODIFIER_SERIALIZERS.register(modEventBus);
         CREATIVE_TABS.register(modEventBus);
         PLACEMENT_MODIFIER_TYPES.register(modEventBus);
 
@@ -369,17 +287,6 @@ public class ElementsOfPowerMod
 
     private void commonSetup(FMLCommonSetupEvent event)
     {
-        event.enqueueWork(() -> {
-
-            /* TODO: datagen
-            CONFIGURED_COCOON_FEATURE = FeatureUtils.register("elementsofpower:overworld_cocoon", ElementsOfPowerMod.COCOON_FEATURE.get(), NoneFeatureConfiguration.INSTANCE);
-
-            PLACED_COCOON_FEATURE = PlacementUtils.register("elementsofpower:overworld_cocoon", CONFIGURED_COCOON_FEATURE, CocoonPlacement.INSTANCE);
-
-            oreFeatures.get();
-            */
-        });
-
         int messageNumber = 0;
         CHANNEL.messageBuilder(UpdateSpellSequence.class, messageNumber++, NetworkDirection.PLAY_TO_SERVER).encoder(UpdateSpellSequence::encode).decoder(UpdateSpellSequence::new).consumerNetworkThread(UpdateSpellSequence::handle).add();
         CHANNEL.messageBuilder(SynchronizeSpellcastState.class, messageNumber++, NetworkDirection.PLAY_TO_CLIENT).encoder(SynchronizeSpellcastState::encode).decoder(SynchronizeSpellcastState::new).consumerNetworkThread(SynchronizeSpellcastState::handle).add();
@@ -413,116 +320,5 @@ public class ElementsOfPowerMod
         ElementsofPowerDataGen.gatherData(event);
     }
 
-    private static BiomeValues getBiomeValues(Holder<Biome> biome)
-    {
-        var heat = BiomeValue.NEUTRAL;
-        var humidity = BiomeValue.NEUTRAL;
-        var life = BiomeValue.NEUTRAL;
-
-        if (biome.is(Tags.Biomes.IS_HOT))
-            heat = BiomeValue.FOR;
-        if (biome.is(Tags.Biomes.IS_COLD))
-            heat = BiomeValue.AGAINST;
-        if (biome.is(Tags.Biomes.IS_WET))
-            humidity = BiomeValue.FOR;
-        if (biome.is(Tags.Biomes.IS_DRY))
-            humidity = BiomeValue.AGAINST;
-        if (biome.is(Tags.Biomes.IS_DENSE))
-            life = BiomeValue.FOR;
-        if (biome.is(Tags.Biomes.IS_SPARSE))
-            life = BiomeValue.AGAINST;
-
-        return new BiomeValues(heat, humidity, life);
-    }
-
-    public enum BiomeValue implements StringRepresentable
-    {
-        NEUTRAL("neutral", 1),
-        FOR("for", 2),
-        AGAINST("against", 0);
-
-        private final String name;
-        private final int value;
-
-        BiomeValue(String name, int value)
-        {
-            this.name = name;
-            this.value = value;
-        }
-
-        public int value()
-        {
-            return value;
-        }
-
-        @Override
-        public String getSerializedName()
-        {
-            return name;
-        }
-    }
-
-    public static record BiomeValues(BiomeValue heat, BiomeValue humidity, BiomeValue life)
-    {
-        private int getBiomeBonus(@Nullable Element e)
-        {
-            if (e == null)
-                return 1;
-            return switch (e)
-            {
-                case FIRE -> heat.value();
-                case WATER -> humidity.value();
-                case LIFE -> life.value();
-                case CHAOS -> 2 - life.value();
-                default -> 1;
-            };
-        }
-    }
-
-    /* TODO: datagen
-    private static Supplier<Map<BiomeValues, List<Holder<PlacedFeature>>>> oreFeatures = Lazy.of(() -> Util.make(new HashMap<>(), map -> {
-        for(var heat : BiomeValue.values())
-        {
-            for(var humidity : BiomeValue.values())
-            {
-                for(var life : BiomeValue.values())
-                {
-                    var name = heat.getSerializedName() + "_" + humidity.getSerializedName() + "_" + life.getSerializedName();
-                    var values = new BiomeValues(heat, humidity, life);
-                    var list = new ArrayList<Holder<PlacedFeature>>();
-                    for (Gemstone g : Gemstone.values)
-                    {
-                        if (g.generateInWorld())
-                        {
-                            var ores = g.getOres();
-                            var stone_ore = ores.get(0);
-                            var deepslate_ore = ores.size() >= 2 ? ores.get(1) : null;
-
-                            List<OreConfiguration.TargetBlockState> targets = new ArrayList<>();
-
-                            targets.add(OreConfiguration.target(OreFeatures.STONE_ORE_REPLACEABLES, stone_ore.defaultBlockState()));
-
-                            if (deepslate_ore != null)
-                                targets.add(OreConfiguration.target(OreFeatures.DEEPSLATE_ORE_REPLACEABLES, deepslate_ore.defaultBlockState()));
-
-                            int numPerVein = 3 + values.getBiomeBonus(g.getElement());
-                            var name2 = g.getSerializedName() + "_ore_" + name;
-                            var configured = FeatureUtils.register(name2, Feature.ORE, new OreConfiguration(targets, numPerVein, 0.0f));
-                            var placed = PlacementUtils.register(name2, configured,
-                                    CountPlacement.of(16),
-                                    InSquarePlacement.spread(),
-                                    HeightRangePlacement.triangle(VerticalAnchor.aboveBottom(-80), VerticalAnchor.aboveBottom(80)),
-                                    BiomeFilter.biome());
-                            list.add(placed);
-
-                        }
-                    }
-                    map.put(values, list);
-                }
-            }
-        }
-    }));
-
-     */
 }
 

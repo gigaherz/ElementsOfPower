@@ -94,8 +94,6 @@ public class AnalyzerScreen extends AbstractContainerScreen<AnalyzerMenu>
             else
             {
                 graphics.drawString(font, "Item: " + stack.getHoverName(), 32, 18, 0xffffff, false);
-
-                //TODO: font.drawSplitString(matrixStack,"Does not look like a useful gemstone.", 32, 30, 166 - 32, 0xffffff);
                 graphics.drawString(font, "Does not look like a useful gemstone.", 32, 30, 0xffffff, false);
             }
         }

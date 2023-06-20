@@ -1,4 +1,18 @@
 {
-  "parent": "elementsofpower:block/ore_base_deepslate",
-  "textures": { "all1": "elementsofpower:block/ore_serendibite" }
+  "parent": "forge:block/default",
+  "parent": "forge:block/default",
+  "loader": "forge:composite",
+  "children": {
+    "base": {
+      "parent": "block/cube_all",
+      "textures": { "all": "minecraft:block/deepslate" },
+      "render_type": "solid"
+    },
+    "layer": {
+      "parent": "block/cube_all",
+      "textures": { "all": "elementsofpower:block/ore_serendibite" },
+      "render_type": "translucent"
+    }
+  },
+  "textures": { "particle": "minecraft:block/deepslate" }
 }

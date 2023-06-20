@@ -1,0 +1,27 @@
+{
+  "feature": "elementsofpower:serendibite_ore_for_neutral_for",
+  "placement": [
+    {
+      "type": "minecraft:count",
+      "count": 16
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:height_range",
+      "height": {
+        "type": "minecraft:trapezoid",
+        "max_inclusive": {
+          "above_bottom": 80
+        },
+        "min_inclusive": {
+          "above_bottom": -80
+        }
+      }
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}
