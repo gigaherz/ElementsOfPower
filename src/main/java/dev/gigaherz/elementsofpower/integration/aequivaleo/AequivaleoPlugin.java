@@ -47,9 +47,9 @@ public class AequivaleoPlugin implements IAequivaleoPlugin
     public static final RegistryObject<EssenceType> AIR = TYPES.register("air", () -> new EssenceType(Element.AIR, ESSENCE, location("air")));
     public static final RegistryObject<EssenceType> EARTH = TYPES.register("earth", () -> new EssenceType(Element.EARTH, ESSENCE, location("earth")));
     public static final RegistryObject<EssenceType> LIGHT = TYPES.register("light", () -> new EssenceType(Element.LIGHT, ESSENCE, location("light")));
-    public static final RegistryObject<EssenceType> DARKNESS = TYPES.register("darkness", () -> new EssenceType(Element.TIME, ESSENCE, location("darkness")));
+    public static final RegistryObject<EssenceType> TIME = TYPES.register("time", () -> new EssenceType(Element.TIME, ESSENCE, location("time")));
     public static final RegistryObject<EssenceType> LIFE = TYPES.register("life", () -> new EssenceType(Element.LIFE, ESSENCE, location("life")));
-    public static final RegistryObject<EssenceType> CHAOS = TYPES.register("chaos", () -> new EssenceType(Element.CHAOS, ESSENCE, location("death")));
+    public static final RegistryObject<EssenceType> CHAOS = TYPES.register("chaos", () -> new EssenceType(Element.CHAOS, ESSENCE, location("chaos")));
 
     public static final Map<Element, RegistryObject<EssenceType>> BY_ELEMENT = ImmutableMap.<Element, RegistryObject<EssenceType>>builder()
             .put(Element.FIRE, FIRE)
@@ -57,7 +57,7 @@ public class AequivaleoPlugin implements IAequivaleoPlugin
             .put(Element.AIR, AIR)
             .put(Element.EARTH, EARTH)
             .put(Element.LIGHT, LIGHT)
-            .put(Element.TIME, DARKNESS)
+            .put(Element.TIME, TIME)
             .put(Element.LIFE, LIFE)
             .put(Element.CHAOS, CHAOS).build();
 

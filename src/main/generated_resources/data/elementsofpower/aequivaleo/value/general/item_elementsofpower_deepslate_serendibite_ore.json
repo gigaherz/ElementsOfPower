@@ -1,12 +1,12 @@
 {
   "compounds": [
     {
-      "type": "elementsofpower:darkness",
-      "amount": 1.0
-    },
-    {
       "type": "elementsofpower:earth",
       "amount": 8.0
+    },
+    {
+      "type": "elementsofpower:time",
+      "amount": 1.0
     }
   ],
   "mode": "ADDITIVE",

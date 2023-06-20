@@ -5,11 +5,7 @@
       "amount": 64.0
     },
     {
-      "type": "elementsofpower:darkness",
-      "amount": 64.0
-    },
-    {
-      "type": "elementsofpower:death",
+      "type": "elementsofpower:chaos",
       "amount": 64.0
     },
     {
@@ -26,6 +22,10 @@
     },
     {
       "type": "elementsofpower:light",
+      "amount": 64.0
+    },
+    {
+      "type": "elementsofpower:time",
       "amount": 64.0
     },
     {

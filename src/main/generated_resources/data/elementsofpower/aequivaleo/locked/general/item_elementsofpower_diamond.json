@@ -16,21 +16,7 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:diamond\",tag:{quality:4}}"
-      }
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
         "stack": "{Count:1b,id:\"elementsofpower:diamond\",tag:{quality:2}}"
-      }
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:diamond\"}"
       }
     },
     {
@@ -44,7 +30,7 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:diamond\",tag:{quality:1}}"
+        "stack": "{Count:1b,id:\"elementsofpower:diamond\"}"
       }
     },
     {
@@ -52,6 +38,20 @@
       "data": {
         "count": 1.0,
         "stack": "{Count:1b,id:\"elementsofpower:diamond\",tag:{quality:3}}"
+      }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{Count:1b,id:\"elementsofpower:diamond\",tag:{quality:4}}"
+      }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{Count:1b,id:\"elementsofpower:diamond\",tag:{quality:1}}"
       }
     }
   ]

@@ -1,12 +1,12 @@
 {
   "compounds": [
     {
-      "type": "elementsofpower:darkness",
-      "amount": 0.125
-    },
-    {
       "type": "elementsofpower:earth",
       "amount": 1.0
+    },
+    {
+      "type": "elementsofpower:time",
+      "amount": 0.125
     }
   ],
   "mode": "ADDITIVE",
@@ -36,7 +36,7 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:serendibite\",tag:{quality:0}}"
+        "stack": "{Count:1b,id:\"elementsofpower:serendibite\",tag:{quality:3}}"
       }
     },
     {
@@ -57,7 +57,7 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:serendibite\",tag:{quality:3}}"
+        "stack": "{Count:1b,id:\"elementsofpower:serendibite\",tag:{quality:0}}"
       }
     }
   ]
