@@ -22,6 +22,7 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
@@ -55,15 +56,12 @@ public class EssentializerBlockEntity
 
         public boolean isItemValidForSlot(int index, ItemStack stack)
         {
-            switch (index)
-            {
-                case 0:
-                    return AequivaleoPlugin.getEssences(level, stack, false).isPresent();
-                case 1:
-                case 2:
-                    return MagicContainerCapability.hasContainer(stack);
-            }
-            return false;
+            return switch (index)
+                    {
+                        case 0 -> ModList.get().isLoaded("aequivaleo") && AequivaleoPlugin.getEssences(level, stack, false).isPresent();
+                        case 1, 2 -> MagicContainerCapability.hasContainer(stack);
+                        default -> false;
+                    };
         }
 
         @Nonnull
@@ -254,7 +252,7 @@ public class EssentializerBlockEntity
             return false;
         }
 
-        MagicAmounts contained = AequivaleoPlugin.getEssences(level, input, false).orElse(MagicAmounts.EMPTY);
+        MagicAmounts contained = ModList.get().isLoaded("aequivaleo") ? AequivaleoPlugin.getEssences(level, input, false).orElse(MagicAmounts.EMPTY) : MagicAmounts.EMPTY;
 
         if (contained.isEmpty())
             return false;

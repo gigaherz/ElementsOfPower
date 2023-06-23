@@ -12,6 +12,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.network.PacketDistributor;
@@ -69,7 +70,7 @@ public class EssentializerMenu
         this.magicHolder = magicHolder;
         this.player = playerInventory.player;
 
-        addSlot(new MagicSourceSlot(AequivaleoPlugin.get(playerInventory.player.level()), inv, 0, 80, 44));
+        addSlot(new MagicSourceSlot(playerInventory.player.level(), inv, 0, 80, 44));
         addSlot(new MagicContainerInputSlot(inv, 1, 8, 56));
         addSlot(new MagicContainerOutputSlot(inv, 2, 152, 56));
 
@@ -150,7 +151,7 @@ public class EssentializerMenu
         if (slotIndex >= 3)
         {
             boolean itemIsContainer = MagicContainerCapability.hasContainer(stack);
-            boolean itemHasEssence = AequivaleoPlugin.getEssences(player.level(), stack, false).isPresent();
+            boolean itemHasEssence = ModList.get().isLoaded("aequivaleo") && AequivaleoPlugin.getEssences(player.level(), stack, false).isPresent();
 
             if (itemIsContainer)
             {

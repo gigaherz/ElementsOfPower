@@ -30,7 +30,7 @@ A magic mod about the raw power elemental essences
     side="BOTH"
 [[dependencies.elementsofpower]]
     modId="aequivaleo"
-    mandatory=true
+    mandatory=false
     versionRange="[1.20-0.1.107-ALPHA,)"
     ordering="NONE"
     side="BOTH"

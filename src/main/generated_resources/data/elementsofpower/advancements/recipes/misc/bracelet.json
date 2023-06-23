@@ -15,7 +15,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "elementsofpower:headband"
+        "recipe": "elementsofpower:bracelet"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -28,7 +28,7 @@
   ],
   "rewards": {
     "recipes": [
-      "elementsofpower:headband"
+      "elementsofpower:bracelet"
     ]
   },
   "sends_telemetry_event": false

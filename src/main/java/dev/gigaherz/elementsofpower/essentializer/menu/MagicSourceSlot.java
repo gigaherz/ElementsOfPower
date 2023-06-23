@@ -3,23 +3,25 @@ package dev.gigaherz.elementsofpower.essentializer.menu;
 import com.ldtteam.aequivaleo.api.results.IEquivalencyResults;
 import dev.gigaherz.elementsofpower.integration.aequivaleo.AequivaleoPlugin;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
 public class MagicSourceSlot extends SlotItemHandler
 {
-    private final IEquivalencyResults magicDatabase;
+    private final Level level;
 
-    public MagicSourceSlot(IEquivalencyResults magicDatabase, IItemHandler inventory, int par2, int par3, int par4)
+    public MagicSourceSlot(Level level, IItemHandler inventory, int par2, int par3, int par4)
     {
         super(inventory, par2, par3, par4);
-        this.magicDatabase = magicDatabase;
+        this.level = level;
     }
 
     @Override
     public boolean mayPlace(ItemStack stack)
     {
-        return stack == null || AequivaleoPlugin.getEssences(magicDatabase, stack, false).isPresent();
+        return stack == null || (ModList.get().isLoaded("aequivaleo") && AequivaleoPlugin.getEssences(level, stack, false).isPresent());
     }
 
     @Override

@@ -4,15 +4,15 @@
   "tag":"gemstone",
   "values": {
     "":  { "parent":"elementsofpower:item/ring_base" },
-    "ruby":  { "parent":"elementsofpower:item/ring_base", "textures": { "gem": "elementsofpower:block/block_ruby" } },
-    "sapphire":   { "parent":"elementsofpower:item/ring_base", "textures": { "gem": "elementsofpower:block/block_sapphire" } },
-    "citrine": { "parent":"elementsofpower:item/ring_base", "textures": { "gem": "elementsofpower:block/block_citrine" } },
-    "agate": { "parent":"elementsofpower:item/ring_base", "textures": { "gem": "elementsofpower:block/block_agate" } },
-    "quartz": { "parent":"elementsofpower:item/ring_base", "textures": { "gem": "minecraft:block/quartz_block_bottom" } },
-    "serendibite":  { "parent":"elementsofpower:item/ring_base", "textures": { "gem": "elementsofpower:block/block_serendibite" } },
-    "emerald":  { "parent":"elementsofpower:item/ring_base", "textures": { "gem": "minecraft:block/emerald_block" } },
-    "amethyst": { "parent":"elementsofpower:item/ring_base", "textures": { "gem": "elementsofpower:block/block_amethyst" } },
-    "diamond": { "parent":"elementsofpower:item/ring_base", "textures": { "gem": "minecraft:block/diamond_block" } },
-    "creativite": { "parent":"elementsofpower:item/ring_base", "textures": { "gem": "minecraft:block/bedrock" } }
+    "ruby":  { "parent":"elementsofpower:item/ring_base", "textures": { "layer1": "elementsofpower:item/ruby_ring" } },
+    "sapphire":   { "parent":"elementsofpower:item/ring_base", "textures": { "layer1": "elementsofpower:item/sapphire_ring" } },
+    "citrine": { "parent":"elementsofpower:item/ring_base", "textures": { "layer1": "elementsofpower:item/citrine_ring" } },
+    "agate": { "parent":"elementsofpower:item/ring_base", "textures": { "layer1": "elementsofpower:item/agate_ring" } },
+    "quartz": { "parent":"elementsofpower:item/ring_base", "textures": { "layer1": "elementsofpower:item/quartz_ring" } },
+    "serendibite":  { "parent":"elementsofpower:item/ring_base", "textures": { "layer1": "elementsofpower:item/serendibite_ring" } },
+    "emerald":  { "parent":"elementsofpower:item/ring_base", "textures": { "layer1": "elementsofpower:item/emerald_ring" } },
+    "amethyst": { "parent":"elementsofpower:item/ring_base", "textures": { "layer1": "elementsofpower:item/amethyst_ring" } },
+    "diamond": { "parent":"elementsofpower:item/ring_base", "textures": { "layer1": "elementsofpower:item/diamond_ring" } },
+    "creativite": { "parent":"elementsofpower:item/ring_base", "textures": { "layer1": "elementsofpower:item/creativite_ring" } }
   }
 }

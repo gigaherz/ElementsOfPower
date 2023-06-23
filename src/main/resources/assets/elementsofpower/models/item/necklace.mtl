@@ -1,6 +1,0 @@
-# Rhino
-newmtl Gem
-map_Kd #gem
-
-newmtl Ring
-map_Kd minecraft:block/gold_block

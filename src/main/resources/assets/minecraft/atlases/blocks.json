@@ -1,6 +1,7 @@
 {
-  event.addSprite(ElementsOfPowerMod.location("block/cone"));
-  event.addSprite(ElementsOfPowerMod.location("gui/ring_slot_background"));
-  event.addSprite(ElementsOfPowerMod.location("gui/necklace_slot_background"));
-  event.addSprite(ElementsOfPowerMod.location("gui/headband_slot_background"));
+  "sources": [
+    {"type": "single", "resource": "elementsofpower:gui/ring_slot_background" },
+    {"type": "single", "resource": "elementsofpower:gui/necklace_slot_background" },
+    {"type": "single", "resource": "elementsofpower:gui/headband_slot_background" }
+  ]
 }

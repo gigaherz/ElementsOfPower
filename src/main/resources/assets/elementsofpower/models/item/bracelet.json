@@ -1,0 +1,18 @@
+{
+  "parent": "forge:item/default",
+  "loader": "elementsofpower:nbt_to_model",
+  "tag":"gemstone",
+  "values": {
+    "":  { "parent":"elementsofpower:item/bracelet_base" },
+    "ruby":  { "parent":"elementsofpower:item/bracelet_base", "textures": { "layer1": "elementsofpower:item/ruby_bracelet" } },
+    "sapphire":   { "parent":"elementsofpower:item/bracelet_base", "textures": { "layer1": "elementsofpower:item/sapphire_bracelet" } },
+    "citrine": { "parent":"elementsofpower:item/bracelet_base", "textures": { "layer1": "elementsofpower:item/citrine_bracelet" } },
+    "agate": { "parent":"elementsofpower:item/bracelet_base", "textures": { "layer1": "elementsofpower:item/agate_bracelet" } },
+    "quartz": { "parent":"elementsofpower:item/bracelet_base", "textures": { "layer1": "elementsofpower:item/quartz_bracelet" } },
+    "serendibite":  { "parent":"elementsofpower:item/bracelet_base", "textures": { "layer1": "elementsofpower:item/serendibite_bracelet" } },
+    "emerald":  { "parent":"elementsofpower:item/bracelet_base", "textures": { "layer1": "elementsofpower:item/emerald_bracelet" } },
+    "amethyst": { "parent":"elementsofpower:item/bracelet_base", "textures": { "layer1": "elementsofpower:item/amethyst_bracelet" } },
+    "diamond": { "parent":"elementsofpower:item/bracelet_base", "textures": { "layer1": "elementsofpower:item/diamond_bracelet" } },
+    "creativite": { "parent":"elementsofpower:item/bracelet_base", "textures": { "layer1": "elementsofpower:item/creativite_bracelet" } }
+  }
+}

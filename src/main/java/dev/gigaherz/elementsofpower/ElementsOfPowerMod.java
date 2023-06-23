@@ -1,6 +1,5 @@
 package dev.gigaherz.elementsofpower;
 
-import com.mojang.serialization.Codec;
 import dev.gigaherz.elementsofpower.analyzer.menu.AnalyzerMenu;
 import dev.gigaherz.elementsofpower.analyzer.menu.AnalyzerScreen;
 import dev.gigaherz.elementsofpower.capabilities.MagicContainerCapability;
@@ -27,7 +26,6 @@ import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.particles.ParticleType;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -53,7 +51,6 @@ import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.extensions.IForgeMenuType;
-import net.minecraftforge.common.world.BiomeModifier;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -146,7 +143,7 @@ public class ElementsOfPowerMod
                 output.accept(ElementsOfPowerItems.WAND.get());
                 output.accept(ElementsOfPowerItems.STAFF.get());
                 output.accept(ElementsOfPowerItems.RING.get());
-                output.accept(ElementsOfPowerItems.HEADBAND.get());
+                output.accept(ElementsOfPowerItems.BRACELET.get());
                 output.accept(ElementsOfPowerItems.NECKLACE.get());
 
                 output.accept(ElementsOfPowerItems.FIRE_ORB.get());

@@ -43,11 +43,36 @@ public class NbtToModel implements IUnbakedGeometry<NbtToModel>
     @Override
     public BakedModel bake(IGeometryBakingContext owner, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ItemOverrides overrides, ResourceLocation modelLocation)
     {
-        return new Baked(
-                spriteGetter.apply(owner.getMaterial("particle")),
-                owner.useBlockLight(), baker, baker::getModel, spriteGetter, key,
-                Maps.transformEntries(modelMap, (k, v) -> v.bake(baker, v, spriteGetter, modelTransform, new ResourceLocation(modelLocation.getNamespace(), modelLocation.getPath() + "/" + k), owner.useBlockLight()))
-        );
+        var particle = spriteGetter.apply(owner.getMaterial("particle"));
+        var bakedMap = new HashMap<>(Maps.transformEntries(modelMap, (k, v) ->
+                v.bake(baker, v, spriteGetter, modelTransform, new ResourceLocation(modelLocation.getNamespace(), modelLocation.getPath() + "/" + k), owner.useBlockLight())));
+
+        var overrides1 = new ItemOverrides(baker, null, Collections.emptyList(), spriteGetter)
+        {
+            final String nbtKey = key;
+            final Map<String, BakedModel> models = bakedMap;
+
+            @Nullable
+            @Override
+            public BakedModel resolve(BakedModel originalModel, ItemStack stack, @Nullable ClientLevel world, @Nullable LivingEntity entity, int p_173469_)
+            {
+                var result = overrides.resolve(originalModel, stack, world, entity, p_173469_);
+                if (result != originalModel)
+                    return result;
+
+                CompoundTag tag = stack.getTag();
+                Tag tagValue = (tag != null) ? tag.get(nbtKey) : null;
+
+                String value = tagValue != null ? tagValue.getAsString() : null;
+                if (value == null)
+                {
+                    value = "";
+                }
+                return models.getOrDefault(value, null);
+            }
+        };
+
+        return new Baked(particle, owner.useBlockLight(), overrides1);
     }
 
     @Override
@@ -63,31 +88,11 @@ public class NbtToModel implements IUnbakedGeometry<NbtToModel>
         private final TextureAtlasSprite particle;
         private final ItemOverrides overrides;
 
-        public Baked(TextureAtlasSprite particle, boolean isSideLit, ModelBaker baker, Function<ResourceLocation, UnbakedModel> modelGetter, Function<Material, TextureAtlasSprite> textureGetter,
-                     String key, Map<String, BakedModel> modelMap)
+        public Baked(TextureAtlasSprite particle, boolean isSideLit, ItemOverrides overrides)
         {
             this.isSideLit = isSideLit;
             this.particle = particle;
-            this.overrides = new ItemOverrides(baker, null, Collections.emptyList(), textureGetter)
-            {
-                final String nbtKey = key;
-                final Map<String, BakedModel> models = modelMap;
-
-                @Nullable
-                @Override
-                public BakedModel resolve(BakedModel originalModel, ItemStack stack, @Nullable ClientLevel world, @Nullable LivingEntity entity, int p_173469_)
-                {
-                    CompoundTag tag = stack.getTag();
-                    Tag tagValue = (tag != null) ? tag.get(nbtKey) : null;
-
-                    String value = tagValue != null ? tagValue.getAsString() : null;
-                    if (value == null)
-                    {
-                        value = "";
-                    }
-                    return models.getOrDefault(value, null);
-                }
-            };
+            this.overrides = overrides;
         }
 
         @Override

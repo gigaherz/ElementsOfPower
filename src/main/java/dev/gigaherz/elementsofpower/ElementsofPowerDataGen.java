@@ -1,5 +1,6 @@
 package dev.gigaherz.elementsofpower;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.ldtteam.aequivaleo.api.compound.CompoundInstance;
@@ -22,6 +23,7 @@ import dev.gigaherz.elementsofpower.spells.blocks.LightBlock;
 import dev.gigaherz.elementsofpower.spells.blocks.MistBlock;
 import net.minecraft.Util;
 import net.minecraft.core.*;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
@@ -65,6 +67,7 @@ import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.world.ForgeBiomeModifiers;
 import net.minecraftforge.data.event.GatherDataEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.holdersets.AndHolderSet;
 import net.minecraftforge.registries.holdersets.NotHolderSet;
@@ -93,7 +96,7 @@ class ElementsofPowerDataGen
         gen.addProvider(event.includeServer(), blockTags);
         gen.addProvider(event.includeServer(), itemTags);
 
-        if ("true".equals(System.getProperty("elementsofpower.doAequivaleoDatagen", "true")))
+        if ("true".equals(System.getProperty("elementsofpower.doAequivaleoDatagen", "true")) && ModList.get().isLoaded("aequivaleo"))
         {
             gen.addProvider(event.includeServer(), new AequivaleoGens(gen, itemTags));
         }
@@ -123,23 +126,34 @@ class ElementsofPowerDataGen
                         .map(p -> new CompoundInstance(AequivaleoPlugin.BY_ELEMENT.get(p.getFirst()).get(), (double) p.getSecond()))
                         .collect(Collectors.toList());
 
-                Set<Object> gameObjects = Sets.newHashSet(item);
-                NonNullList<ItemStack> stacks = NonNullList.create();
+                List<Object> gameObjects = Lists.newArrayList();
                 if (item instanceof GemstoneItem gem)
-                    gem.addToTab(stacks::add);
+                {
+                    gameObjects.add(item);
+                    gem.addToTab(gameObjects::add);
+                }
                 else
-                    stacks.add(new ItemStack(item));
-                gameObjects.addAll(stacks);
+                {
+                    gameObjects.add(item);
+                    gameObjects.add(item.getDefaultInstance());
+                }
                 save(specFor(gameObjects).withCompounds(compoundRefs));
             });
         }
 
         private List<Item> getItemsFromTag(ResourceLocation rl, List<Item> fallback)
         {
-            TagBuilder tag = itemTags.getTagByName(rl);
-            if (tag == null)
+            TagBuilder tagbuilder = itemTags.getTagByName(rl);
+            if (tagbuilder == null)
+            {
+                var tag = BuiltInRegistries.ITEM.getTag(TagKey.create(Registries.ITEM, rl));
+                if (tag.isPresent())
+                {
+                    return tag.get().stream().map(Holder::get).toList();
+                }
                 return fallback;
-            return tag.build().stream().flatMap(this::getItemsFromTag).collect(Collectors.toList());
+            }
+            return tagbuilder.build().stream().flatMap(this::getItemsFromTag).collect(Collectors.toList());
         }
 
         private Stream<Item> getItemsFromTag(TagEntry entry)
@@ -440,7 +454,7 @@ class ElementsofPowerDataGen
                     .unlockedBy("has_gold", has(Items.GOLD_INGOT))
                     .save(consumer);
 
-            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ElementsOfPowerItems.HEADBAND.get())
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ElementsOfPowerItems.BRACELET.get())
                     .pattern(" G ")
                     .pattern("G G")
                     .pattern("GGG")

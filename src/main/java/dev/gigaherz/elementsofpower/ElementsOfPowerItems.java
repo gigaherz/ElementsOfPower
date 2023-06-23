@@ -32,7 +32,7 @@ public class ElementsOfPowerItems
     public static final RegistryObject<WandItem> WAND = ITEMS.register("wand", () -> new WandItem(new Item.Properties().stacksTo(1))        );
     public static final RegistryObject<StaffItem> STAFF = ITEMS.register("staff", () -> new StaffItem(new Item.Properties().stacksTo(1))        );
     public static final RegistryObject<BaubleItem> RING = ITEMS.register("ring", () -> new BaubleItem(new Item.Properties().stacksTo(1))        );
-    public static final RegistryObject<BaubleItem> HEADBAND = ITEMS.register("headband", () -> new BaubleItem(new Item.Properties().stacksTo(1))        );
+    public static final RegistryObject<BaubleItem> BRACELET = ITEMS.register("bracelet", () -> new BaubleItem(new Item.Properties().stacksTo(1))        );
     public static final RegistryObject<BaubleItem> NECKLACE = ITEMS.register("necklace", () -> new BaubleItem(new Item.Properties().stacksTo(1))        );
 
     private static RegistryObject<GemstoneItem> registerGemstone(Gemstone type)

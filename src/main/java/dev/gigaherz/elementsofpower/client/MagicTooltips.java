@@ -16,6 +16,7 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 
 import java.text.DecimalFormat;
@@ -48,7 +49,7 @@ public class MagicTooltips
         }
 
         Level world = Minecraft.getInstance().level;
-        MagicAmounts amounts = AequivaleoPlugin.getEssences(world, stack, false).orElse(MagicAmounts.EMPTY);
+        MagicAmounts amounts = ModList.get().isLoaded("aequivaleo") ? AequivaleoPlugin.getEssences(world, stack, false).orElse(MagicAmounts.EMPTY) : MagicAmounts.EMPTY;
         if (amounts.isEmpty())
             return;
 
