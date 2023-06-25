@@ -149,4 +149,11 @@ record Hsva(int h, int s, int v, int a)
 
         return FastColor.ARGB32.color(a, r, g, b);
     }
+
+    public Hsla toHsla()
+    {
+        var l = v * (255-s/2) / 255;
+        var sl = (l==0 || l==255) ? 0 : ((v-l) * 255 / Math.min(l,255-l));
+        return new Hsla(h,sl,l,a);
+    }
 }

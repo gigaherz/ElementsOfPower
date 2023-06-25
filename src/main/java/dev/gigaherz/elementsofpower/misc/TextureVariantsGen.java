@@ -46,14 +46,14 @@ public abstract class TextureVariantsGen implements DataProvider
             NativeImage referencePaletteTexture = loadTexture(referencePaletteFile);
             NativeImage targetPaletteTexture = loadTexture(targetPaletteFile);
 
-            Hsva[] referencePalette = extractPalette(referencePaletteTexture);
-            Hsva[] targetPalette = extractPalette(targetPaletteTexture);
+            Hsla[] referencePalette = extractPalette(referencePaletteTexture);
+            Hsla[] targetPalette = extractPalette(targetPaletteTexture);
 
             int targetMax = targetPalette.length - 1;
             int refMax = referencePalette.length - 1;
 
             return inputTexture.mappedCopy(color -> {
-                var original = Hsva.fromRgb(color);
+                var original = Hsla.fromRgb(color);
 
                 if (original.a() == 0)
                 {
@@ -61,14 +61,14 @@ public abstract class TextureVariantsGen implements DataProvider
                 }
 
                 // find closest value
-                Hsva closest = null;
+                Hsla closest = null;
                 int nClosest = -1;
                 int vClosest = Integer.MAX_VALUE;
                 for (int j = 0; j < referencePalette.length; j++)
                 {
                     var candidate = referencePalette[j];
 
-                    var vDistance =  Math.abs(original.v() - candidate.v()) * 20 + Math.abs(original.s() - candidate.s());
+                    var vDistance =  Math.abs(original.l() - candidate.l());
                     if (closest == null || vDistance < vClosest)
                     {
                         closest = candidate;
@@ -82,9 +82,9 @@ public abstract class TextureVariantsGen implements DataProvider
         });
     }
 
-    protected Hsva[] extractPalette(NativeImage inputTexture)
+    protected Hsla[] extractPalette(NativeImage inputTexture)
     {
-        return Arrays.stream(inputTexture.getPixelsRGBA()).mapToObj(Hsva::fromRgb).filter(c -> c.a() > 0).distinct().sorted(Comparator.comparingInt(Hsva::a).thenComparingInt(Hsva::v)).toArray(Hsva[]::new);
+        return Arrays.stream(inputTexture.getPixelsRGBA()).mapToObj(Hsla::fromRgb).filter(c -> c.a() > 0).distinct().sorted(Comparator.comparingInt(Hsla::a).thenComparingInt(Hsla::l)).toArray(Hsla[]::new);
     }
 
     protected NativeImage loadTexture(ResourceLocation inputFile)
