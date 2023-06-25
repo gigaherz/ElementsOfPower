@@ -5,8 +5,6 @@ import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.gemstones.Gemstone;
 import dev.gigaherz.elementsofpower.gemstones.GemstoneItem;
 import dev.gigaherz.elementsofpower.gemstones.Quality;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -25,9 +23,9 @@ public class GemstoneExaminer
     public static final TagKey<Item> GEM_CITRINE = bind(ElementsOfPowerMod.location("gems/citrine").toString());
     public static final TagKey<Item> GEM_AGATE = bind(ElementsOfPowerMod.location("gems/agate").toString());
     public static final TagKey<Item> GEM_QUARTZ = bind(ElementsOfPowerMod.location("gems/quartz").toString());
-    public static final TagKey<Item> GEM_SERENDIBITE = bind(ElementsOfPowerMod.location("gems/serendibite").toString());
+    public static final TagKey<Item> GEM_ONYX = bind(ElementsOfPowerMod.location("gems/onyx").toString());
     public static final TagKey<Item> GEM_EMERALD = bind(ElementsOfPowerMod.location("gems/emerald").toString());
-    public static final TagKey<Item> GEM_ELBAITE = bind(ElementsOfPowerMod.location("gems/elbaite").toString());
+    public static final TagKey<Item> GEM_rubellite = bind(ElementsOfPowerMod.location("gems/rubellite").toString());
     public static final TagKey<Item> GEM_DIAMOND = bind(ElementsOfPowerMod.location("gems/diamond").toString());
 
     public static final Map<Gemstone, TagKey<Item>> GEMS = ImmutableMap.<Gemstone, TagKey<Item>>builder()
@@ -36,9 +34,9 @@ public class GemstoneExaminer
             .put(Gemstone.CITRINE, GEM_CITRINE)
             .put(Gemstone.AGATE, GEM_AGATE)
             .put(Gemstone.QUARTZ, GEM_QUARTZ)
-            .put(Gemstone.SERENDIBITE, GEM_SERENDIBITE)
+            .put(Gemstone.ONYX, GEM_ONYX)
             .put(Gemstone.EMERALD, GEM_EMERALD)
-            .put(Gemstone.ELBAITE, GEM_ELBAITE)
+            .put(Gemstone.RUBELLITE, GEM_rubellite)
             .put(Gemstone.DIAMOND, GEM_DIAMOND)
             .build();
 

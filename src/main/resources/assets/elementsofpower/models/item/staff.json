@@ -9,10 +9,10 @@
     "citrine": { "parent":"elementsofpower:item/staff_base", "textures": { "gem": "elementsofpower:block/block_citrine" } },
     "agate": { "parent":"elementsofpower:item/staff_base", "textures": { "gem": "elementsofpower:block/block_agate" } },
     "quartz": { "parent":"elementsofpower:item/staff_base", "textures": { "gem": "minecraft:block/quartz_block_bottom" } },
-    "serendibite":  { "parent":"elementsofpower:item/staff_base", "textures": { "gem": "elementsofpower:block/block_serendibite" } },
+    "onyx":  { "parent":"elementsofpower:item/staff_base", "textures": { "gem": "elementsofpower:block/block_onyx" } },
     "emerald":  { "parent":"elementsofpower:item/staff_base", "textures": { "gem": "minecraft:block/emerald_block" } },
-    "amethyst": { "parent":"elementsofpower:item/staff_base", "textures": { "gem": "elementsofpower:block/block_amethyst" } },
-    "elbaite": { "parent":"elementsofpower:item/staff_base", "textures": { "gem": "elementsofpower:block/block_amethyst" } },
+    "rubellite": { "parent":"elementsofpower:item/staff_base", "textures": { "gem": "elementsofpower:block/block_rubellite" } },
+    "rubellite": { "parent":"elementsofpower:item/staff_base", "textures": { "gem": "elementsofpower:block/block_rubellite" } },
     "diamond": { "parent":"elementsofpower:item/staff_base", "textures": { "gem": "minecraft:block/diamond_block" } },
     "creativite": { "parent":"elementsofpower:item/staff_base", "textures": { "gem": "minecraft:block/bedrock" } }
   }

@@ -1,0 +1,29 @@
+{
+  "compounds": [
+    {
+      "type": "elementsofpower:chaos",
+      "amount": 1.0
+    },
+    {
+      "type": "elementsofpower:earth",
+      "amount": 8.0
+    }
+  ],
+  "mode": "ADDITIVE",
+  "targets": [
+    {
+      "type": "aequivaleo:item",
+      "data": {
+        "count": 1.0,
+        "item": "elementsofpower:rubellite_ore"
+      }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{Count:1b,id:\"elementsofpower:rubellite_ore\"}"
+      }
+    }
+  ]
+}

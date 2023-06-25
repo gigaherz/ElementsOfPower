@@ -8,7 +8,7 @@
     "item.elementsofpower.guidebook": "Book of Elements",
 
     "item.elementsofpower.ring": "Ring",
-    "item.elementsofpower.headband": "Headband",
+    "item.elementsofpower.bracelet": "Bracelet",
     "item.elementsofpower.necklace": "Necklace",
     "item.elementsofpower.wand": "Wand",
     "item.elementsofpower.staff": "Staff",
@@ -18,9 +18,9 @@
     "item.elementsofpower.citrine_spelldust": "Citrine Spelldust",
     "item.elementsofpower.agate_spelldust": "Agate Spelldust",
     "item.elementsofpower.quartz_spelldust": "Quartz Spelldust",
-    "item.elementsofpower.serendibite_spelldust": "Serendibite Spelldust",
+    "item.elementsofpower.onyx_spelldust": "Onyx Spelldust",
     "item.elementsofpower.emerald_spelldust": "Emerald Spelldust",
-    "item.elementsofpower.amethyst_spelldust": "Amethyst Spelldust",
+    "item.elementsofpower.rubellite_spelldust": "rubellite Spelldust",
     "item.elementsofpower.diamond_spelldust": "Diamond Spelldust",
 
     "item.elementsofpower.ruby": "Ruby",
@@ -28,10 +28,9 @@
     "item.elementsofpower.citrine": "Citrine",
     "item.elementsofpower.agate": "Agate",
     "item.elementsofpower.quartz": "Quartz",
-    "item.elementsofpower.serendibite": "Serendibite",
+    "item.elementsofpower.onyx": "Onyx",
     "item.elementsofpower.emerald": "Emerald",
-    "item.elementsofpower.amethyst": "Amethyst",
-    "item.elementsofpower.elbaite": "Elbaite",
+    "item.elementsofpower.rubellite": "Rubellite",
     "item.elementsofpower.diamond": "Diamond",
     "item.elementsofpower.creativite": "Creativite",
 
@@ -39,25 +38,22 @@
     "block.elementsofpower.sapphire_ore": "Sapphire Ore",
     "block.elementsofpower.citrine_ore": "Citrine Ore",
     "block.elementsofpower.agate_ore": "Agate Ore",
-    "block.elementsofpower.serendibite_ore": "Serendibite Ore",
-    "block.elementsofpower.amethyst_ore": "Amethyst Ore",
-    "block.elementsofpower.elbaite_ore": "Elbaite Ore",
+    "block.elementsofpower.onyx_ore": "Onyx Ore",
+    "block.elementsofpower.rubellite_ore": "Rubellite Ore",
 
     "block.elementsofpower.deepslate_ruby_ore": "Deepslate Ruby Ore",
     "block.elementsofpower.deepslate_sapphire_ore": "Deepslate Sapphire Ore",
     "block.elementsofpower.deepslate_citrine_ore": "Deepslate Citrine Ore",
     "block.elementsofpower.deepslate_agate_ore": "Deepslate Agate Ore",
-    "block.elementsofpower.deepslate_serendibite_ore": "Deepslate Serendibite Ore",
-    "block.elementsofpower.deepslate_amethyst_ore": "Deepslate Amethyst Ore",
-    "block.elementsofpower.deepslate_elbaite_ore": "Deepslate Elbaite Ore",
+    "block.elementsofpower.deepslate_onyx_ore": "Deepslate Onyx Ore",
+    "block.elementsofpower.deepslate_rubellite_ore": "Deepslate Rubellite Ore",
 
     "block.elementsofpower.ruby_block": "Block of Ruby",
     "block.elementsofpower.sapphire_block": "Block of Sapphire",
     "block.elementsofpower.citrine_block": "Block of Citrine",
     "block.elementsofpower.agate_block": "Block of Agate",
-    "block.elementsofpower.serendibite_block": "Block of Serendibite",
-    "block.elementsofpower.amethyst_block": "Block of Amethyst",
-    "block.elementsofpower.elbaite_block": "Block of Elbaite",
+    "block.elementsofpower.onyx_block": "Block of Onyx",
+    "block.elementsofpower.rubellite_block": "Block of Rubellite",
 
     "tab.elementsofpower.magic": "Elements Of Power Gear & Elements",
     "tab.elementsofpower.gemstones": "Elements Of Power Gemstones",
@@ -77,9 +73,8 @@
     "elementsofpower.gem_container.sapphire": "Sapphire %s",
     "elementsofpower.gem_container.citrine": "Citrine %s",
     "elementsofpower.gem_container.agate": "Agate %s",
-    "elementsofpower.gem_container.serendibite": "Serendibite %s",
-    "elementsofpower.gem_container.amethyst": "Amethyst %s",
-    "elementsofpower.gem_container.elbaite": "Elbaite %s",
+    "elementsofpower.gem_container.onyx": "Onyx %s",
+    "elementsofpower.gem_container.rubellite": "Rubellite %s",
     "elementsofpower.gem_container.emerald": "Emerald %s",
     "elementsofpower.gem_container.quartz": "Quartz %s",
     "elementsofpower.gem_container.diamond": "Diamond %s",
@@ -177,5 +172,5 @@
 
     "text.elementsofpower.magic.key": "(%s)",
 
-    "curios.identifier.headband": "Headband"
+    "curios.identifier.bracelet": "Bracelet"
 }

@@ -9,9 +9,9 @@
     "citrine": { "parent":"elementsofpower:item/ring_base", "textures": { "layer1": "elementsofpower:item/citrine_ring" } },
     "agate": { "parent":"elementsofpower:item/ring_base", "textures": { "layer1": "elementsofpower:item/agate_ring" } },
     "quartz": { "parent":"elementsofpower:item/ring_base", "textures": { "layer1": "elementsofpower:item/quartz_ring" } },
-    "serendibite":  { "parent":"elementsofpower:item/ring_base", "textures": { "layer1": "elementsofpower:item/serendibite_ring" } },
+    "onyx":  { "parent":"elementsofpower:item/ring_base", "textures": { "layer1": "elementsofpower:item/onyx_ring" } },
     "emerald":  { "parent":"elementsofpower:item/ring_base", "textures": { "layer1": "elementsofpower:item/emerald_ring" } },
-    "amethyst": { "parent":"elementsofpower:item/ring_base", "textures": { "layer1": "elementsofpower:item/amethyst_ring" } },
+    "rubellite": { "parent":"elementsofpower:item/ring_base", "textures": { "layer1": "elementsofpower:item/rubellite_ring" } },
     "diamond": { "parent":"elementsofpower:item/ring_base", "textures": { "layer1": "elementsofpower:item/diamond_ring" } },
     "creativite": { "parent":"elementsofpower:item/ring_base", "textures": { "layer1": "elementsofpower:item/creativite_ring" } }
   }

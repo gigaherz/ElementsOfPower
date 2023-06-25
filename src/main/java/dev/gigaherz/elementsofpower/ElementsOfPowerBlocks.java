@@ -88,14 +88,14 @@ public class ElementsOfPowerBlocks
     public static final RegistryObject<GemstoneOreBlock> SAPPHIRE_ORE = registerGemstoneOre(Gemstone.SAPPHIRE);
     public static final RegistryObject<GemstoneOreBlock> CITRINE_ORE = registerGemstoneOre(Gemstone.CITRINE);
     public static final RegistryObject<GemstoneOreBlock> AGATE_ORE = registerGemstoneOre(Gemstone.AGATE);
-    public static final RegistryObject<GemstoneOreBlock> SERENDIBITE_ORE = registerGemstoneOre(Gemstone.SERENDIBITE);
-    public static final RegistryObject<GemstoneOreBlock> ELBAITE_ORE = registerGemstoneOre(Gemstone.ELBAITE);
+    public static final RegistryObject<GemstoneOreBlock> ONYX_ORE = registerGemstoneOre(Gemstone.ONYX);
+    public static final RegistryObject<GemstoneOreBlock> RUBELLITE_ORE = registerGemstoneOre(Gemstone.RUBELLITE);
     public static final RegistryObject<GemstoneOreBlock> DEEPSLATE_RUBY_ORE = registerDeepslateGemstoneOre(Gemstone.RUBY);
     public static final RegistryObject<GemstoneOreBlock> DEEPSLATE_SAPPHIRE_ORE = registerDeepslateGemstoneOre(Gemstone.SAPPHIRE);
     public static final RegistryObject<GemstoneOreBlock> DEEPSLATE_CITRINE_ORE = registerDeepslateGemstoneOre(Gemstone.CITRINE);
     public static final RegistryObject<GemstoneOreBlock> DEEPSLATE_AGATE_ORE = registerDeepslateGemstoneOre(Gemstone.AGATE);
-    public static final RegistryObject<GemstoneOreBlock> DEEPSLATE_SERENDIBITE_ORE = registerDeepslateGemstoneOre(Gemstone.SERENDIBITE);
-    public static final RegistryObject<GemstoneOreBlock> DEEPSLATE_ELBAITE_ORE = registerDeepslateGemstoneOre(Gemstone.ELBAITE);
+    public static final RegistryObject<GemstoneOreBlock> DEEPSLATE_ONYX_ORE = registerDeepslateGemstoneOre(Gemstone.ONYX);
+    public static final RegistryObject<GemstoneOreBlock> DEEPSLATE_RUBELLITE_ORE = registerDeepslateGemstoneOre(Gemstone.RUBELLITE);
 
 
     private static RegistryObject<GemstoneBlock> registerGemstoneBlock(Gemstone type)
@@ -113,7 +113,7 @@ public class ElementsOfPowerBlocks
     public static final RegistryObject<GemstoneBlock> SAPPHIRE_BLOCK = registerGemstoneBlock(Gemstone.SAPPHIRE);
     public static final RegistryObject<GemstoneBlock> CITRINE_BLOCK = registerGemstoneBlock(Gemstone.CITRINE);
     public static final RegistryObject<GemstoneBlock> AGATE_BLOCK = registerGemstoneBlock(Gemstone.AGATE);
-    public static final RegistryObject<GemstoneBlock> SERENDIBITE_BLOCK = registerGemstoneBlock(Gemstone.SERENDIBITE);
-    public static final RegistryObject<GemstoneBlock> ELBAITE_BLOCK = registerGemstoneBlock(Gemstone.ELBAITE);
+    public static final RegistryObject<GemstoneBlock> ONYX_BLOCK = registerGemstoneBlock(Gemstone.ONYX);
+    public static final RegistryObject<GemstoneBlock> rubellite_BLOCK = registerGemstoneBlock(Gemstone.RUBELLITE);
 
 }

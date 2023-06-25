@@ -1,0 +1,17 @@
+{
+  "parent": "forge:block/default",
+  "loader": "forge:composite",
+  "children": {
+    "base": {
+      "parent": "block/cube_all",
+      "textures": { "all": "minecraft:block/stone" },
+      "render_type": "solid"
+    },
+    "layer": {
+      "parent": "block/cube_all",
+      "textures": { "all": "elementsofpower:block/ore_onyx" },
+      "render_type": "translucent"
+    }
+  },
+  "textures": { "particle": "minecraft:block/stone" }
+}

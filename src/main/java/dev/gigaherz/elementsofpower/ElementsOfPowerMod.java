@@ -179,32 +179,31 @@ public class ElementsOfPowerMod
                 output.accept(ElementsOfPowerItems.SAPPHIRE_ORE.get());
                 output.accept(ElementsOfPowerItems.CITRINE_ORE.get());
                 output.accept(ElementsOfPowerItems.AGATE_ORE.get());
-                output.accept(ElementsOfPowerItems.SERENDIBITE_ORE.get());
-                output.accept(ElementsOfPowerItems.ELBAITE_ORE.get());
+                output.accept(ElementsOfPowerItems.ONYX_ORE.get());
+                output.accept(ElementsOfPowerItems.rubellite_ORE.get());
                 output.accept(ElementsOfPowerItems.DEEPSLATE_RUBY_ORE.get());
                 output.accept(ElementsOfPowerItems.DEEPSLATE_SAPPHIRE_ORE.get());
                 output.accept(ElementsOfPowerItems.DEEPSLATE_CITRINE_ORE.get());
                 output.accept(ElementsOfPowerItems.DEEPSLATE_AGATE_ORE.get());
-                output.accept(ElementsOfPowerItems.DEEPSLATE_SERENDIBITE_ORE.get());
-                output.accept(ElementsOfPowerItems.DEEPSLATE_ELBAITE_ORE.get());
+                output.accept(ElementsOfPowerItems.DEEPSLATE_ONYX_ORE.get());
+                output.accept(ElementsOfPowerItems.DEEPSLATE_rubellite_ORE.get());
                 output.accept(ElementsOfPowerItems.RUBY_BLOCK.get());
                 output.accept(ElementsOfPowerItems.SAPPHIRE_BLOCK.get());
                 output.accept(ElementsOfPowerItems.CITRINE_BLOCK.get());
                 output.accept(ElementsOfPowerItems.AGATE_BLOCK.get());
-                output.accept(ElementsOfPowerItems.SERENDIBITE_BLOCK.get());
-                output.accept(ElementsOfPowerItems.ELBAITE_BLOCK.get());
+                output.accept(ElementsOfPowerItems.ONYX_BLOCK.get());
+                output.accept(ElementsOfPowerItems.rubellite_BLOCK.get());
 
                 ElementsOfPowerItems.RUBY.get().addToTab(output::accept);
                 ElementsOfPowerItems.SAPPHIRE.get().addToTab(output::accept);
                 ElementsOfPowerItems.CITRINE.get().addToTab(output::accept);
                 ElementsOfPowerItems.AGATE.get().addToTab(output::accept);
                 ElementsOfPowerItems.QUARTZ.get().addToTab(output::accept);
-                ElementsOfPowerItems.SERENDIBITE.get().addToTab(output::accept);
+                ElementsOfPowerItems.ONYX.get().addToTab(output::accept);
                 ElementsOfPowerItems.EMERALD.get().addToTab(output::accept);
-                ElementsOfPowerItems.ELBAITE.get().addToTab(output::accept);
+                ElementsOfPowerItems.RUBELLITE.get().addToTab(output::accept);
                 ElementsOfPowerItems.DIAMOND.get().addToTab(output::accept);
                 ElementsOfPowerItems.CREATIVITE.get().addToTab(output::accept);
-
             }).build()
     );
 
@@ -236,7 +235,6 @@ public class ElementsOfPowerMod
 
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::registerParticleFactory);
-        modEventBus.addListener(this::imcEnqueue);
         modEventBus.addListener(this::gatherData);
         modEventBus.addListener(this::modelRegistry);
         modEventBus.addListener(this::registerCapabilities);
@@ -303,13 +301,6 @@ public class ElementsOfPowerMod
         MagicContainerCapability.register(event);
         PlayerCombinedMagicContainers.register(event);
         CocoonEventHandling.enable(event);
-    }
-
-    private void imcEnqueue(InterModEnqueueEvent event)
-    {
-        InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> new SlotTypeMessage.Builder("headband").icon(location("gui/headband_slot_background")).size(1).build());
-        InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> new SlotTypeMessage.Builder("necklace").icon(location("gui/necklace_slot_background")).size(1).build());
-        InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> new SlotTypeMessage.Builder("ring").size(2).build());
     }
 
     public void gatherData(GatherDataEvent event)

@@ -45,9 +45,9 @@ public class ElementsOfPowerItems
     public static final RegistryObject<GemstoneItem> CITRINE = registerGemstone(Gemstone.CITRINE);
     public static final RegistryObject<GemstoneItem> AGATE = registerGemstone(Gemstone.AGATE);
     public static final RegistryObject<GemstoneItem> QUARTZ = registerGemstone(Gemstone.QUARTZ);
-    public static final RegistryObject<GemstoneItem> SERENDIBITE = registerGemstone(Gemstone.SERENDIBITE);
+    public static final RegistryObject<GemstoneItem> ONYX = registerGemstone(Gemstone.ONYX);
     public static final RegistryObject<GemstoneItem> EMERALD = registerGemstone(Gemstone.EMERALD);
-    public static final RegistryObject<GemstoneItem> ELBAITE = registerGemstone(Gemstone.ELBAITE);
+    public static final RegistryObject<GemstoneItem> RUBELLITE = registerGemstone(Gemstone.RUBELLITE);
     public static final RegistryObject<GemstoneItem> DIAMOND = registerGemstone(Gemstone.DIAMOND);
     public static final RegistryObject<GemstoneItem> CREATIVITE = registerGemstone(Gemstone.CREATIVITE);
 
@@ -55,20 +55,20 @@ public class ElementsOfPowerItems
     public static final RegistryObject<BlockItem> SAPPHIRE_ORE = registerBlockItem(ElementsOfPowerBlocks.SAPPHIRE_ORE);
     public static final RegistryObject<BlockItem> CITRINE_ORE = registerBlockItem(ElementsOfPowerBlocks.CITRINE_ORE);
     public static final RegistryObject<BlockItem> AGATE_ORE = registerBlockItem(ElementsOfPowerBlocks.AGATE_ORE);
-    public static final RegistryObject<BlockItem> SERENDIBITE_ORE = registerBlockItem(ElementsOfPowerBlocks.SERENDIBITE_ORE);
-    public static final RegistryObject<BlockItem> ELBAITE_ORE = registerBlockItem(ElementsOfPowerBlocks.ELBAITE_ORE);
+    public static final RegistryObject<BlockItem> ONYX_ORE = registerBlockItem(ElementsOfPowerBlocks.ONYX_ORE);
+    public static final RegistryObject<BlockItem> rubellite_ORE = registerBlockItem(ElementsOfPowerBlocks.RUBELLITE_ORE);
     public static final RegistryObject<BlockItem> DEEPSLATE_RUBY_ORE = registerBlockItem(ElementsOfPowerBlocks.DEEPSLATE_RUBY_ORE);
     public static final RegistryObject<BlockItem> DEEPSLATE_SAPPHIRE_ORE = registerBlockItem(ElementsOfPowerBlocks.DEEPSLATE_SAPPHIRE_ORE);
     public static final RegistryObject<BlockItem> DEEPSLATE_CITRINE_ORE = registerBlockItem(ElementsOfPowerBlocks.DEEPSLATE_CITRINE_ORE);
     public static final RegistryObject<BlockItem> DEEPSLATE_AGATE_ORE = registerBlockItem(ElementsOfPowerBlocks.DEEPSLATE_AGATE_ORE);
-    public static final RegistryObject<BlockItem> DEEPSLATE_SERENDIBITE_ORE = registerBlockItem(ElementsOfPowerBlocks.DEEPSLATE_SERENDIBITE_ORE);
-    public static final RegistryObject<BlockItem> DEEPSLATE_ELBAITE_ORE = registerBlockItem(ElementsOfPowerBlocks.DEEPSLATE_ELBAITE_ORE);
+    public static final RegistryObject<BlockItem> DEEPSLATE_ONYX_ORE = registerBlockItem(ElementsOfPowerBlocks.DEEPSLATE_ONYX_ORE);
+    public static final RegistryObject<BlockItem> DEEPSLATE_rubellite_ORE = registerBlockItem(ElementsOfPowerBlocks.DEEPSLATE_RUBELLITE_ORE);
     public static final RegistryObject<BlockItem> RUBY_BLOCK = registerBlockItem(ElementsOfPowerBlocks.RUBY_BLOCK);
     public static final RegistryObject<BlockItem> SAPPHIRE_BLOCK = registerBlockItem(ElementsOfPowerBlocks.SAPPHIRE_BLOCK);
     public static final RegistryObject<BlockItem> CITRINE_BLOCK = registerBlockItem(ElementsOfPowerBlocks.CITRINE_BLOCK);
     public static final RegistryObject<BlockItem> AGATE_BLOCK = registerBlockItem(ElementsOfPowerBlocks.AGATE_BLOCK);
-    public static final RegistryObject<BlockItem> SERENDIBITE_BLOCK = registerBlockItem(ElementsOfPowerBlocks.SERENDIBITE_BLOCK);
-    public static final RegistryObject<BlockItem> ELBAITE_BLOCK = registerBlockItem(ElementsOfPowerBlocks.ELBAITE_BLOCK);
+    public static final RegistryObject<BlockItem> ONYX_BLOCK = registerBlockItem(ElementsOfPowerBlocks.ONYX_BLOCK);
+    public static final RegistryObject<BlockItem> rubellite_BLOCK = registerBlockItem(ElementsOfPowerBlocks.rubellite_BLOCK);
 
     private static RegistryObject<MagicOrbItem> registerOrb(Element type)
     {

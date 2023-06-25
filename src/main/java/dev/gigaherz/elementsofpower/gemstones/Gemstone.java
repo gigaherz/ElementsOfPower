@@ -36,15 +36,15 @@ public enum Gemstone implements StringRepresentable, ItemLike
     QUARTZ(Element.LIGHT, "quartz", 0xFFFFFFFF,
             () -> ElementsOfPowerItems.QUARTZ, true, () -> () -> Blocks.QUARTZ_BLOCK, List.of(() -> () -> Blocks.NETHER_QUARTZ_ORE),
             () -> () -> Items.QUARTZ, false), // white
-    SERENDIBITE(Element.TIME, "serendibite", 0xFF0F0F0F,
-            () -> ElementsOfPowerItems.SERENDIBITE, false, () -> SERENDIBITE_BLOCK, List.of(() -> SERENDIBITE_ORE, () -> DEEPSLATE_SERENDIBITE_ORE),
+    ONYX(Element.TIME, "onyx", 0xFF0F0F0F,
+            () -> ElementsOfPowerItems.ONYX, false, () -> ONYX_BLOCK, List.of(() -> ONYX_ORE, () -> DEEPSLATE_ONYX_ORE),
             null, true), // black
     EMERALD(Element.LIFE, "emerald", 0xFF00FF00,
             () -> ElementsOfPowerItems.EMERALD, true, () -> () -> Blocks.EMERALD_BLOCK, List.of(() -> () ->Blocks.EMERALD_ORE, () -> () ->Blocks.DEEPSLATE_EMERALD_ORE),
             () -> () -> Items.EMERALD, false), // green
 
-    ELBAITE(Element.CHAOS, "elbaite", 0xFFAF00FF,
-            () -> ElementsOfPowerItems.ELBAITE, false, () -> ELBAITE_BLOCK, List.of(() -> ELBAITE_ORE, () -> DEEPSLATE_ELBAITE_ORE),
+    RUBELLITE(Element.CHAOS, "rubellite", 0xFFAF00FF,
+            () -> ElementsOfPowerItems.RUBELLITE, false, () -> rubellite_BLOCK, List.of(() -> RUBELLITE_ORE, () -> DEEPSLATE_RUBELLITE_ORE),
             null, true), // purple
 
     DIAMOND(null, "diamond", 0xFF7FFFCF,

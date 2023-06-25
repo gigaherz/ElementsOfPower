@@ -1,0 +1,14 @@
+{
+  "type": "forge:add_features",
+  "biomes": {
+    "type": "forge:and",
+    "values": [
+      "#minecraft:is_overworld",
+      "#forge:is_cold/overworld",
+      "#forge:is_wet/overworld",
+      "#forge:is_sparse/overworld"
+    ]
+  },
+  "features": "elementsofpower:rubellite_ore_against_for_against",
+  "step": "underground_ores"
+}

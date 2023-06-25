@@ -13,11 +13,11 @@
     "elementsofpower:agate_block",
     "elementsofpower:agate_ore",
     "elementsofpower:deepslate_agate_ore",
-    "elementsofpower:serendibite_block",
-    "elementsofpower:serendibite_ore",
-    "elementsofpower:deepslate_serendibite_ore",
-    "elementsofpower:elbaite_block",
-    "elementsofpower:elbaite_ore",
-    "elementsofpower:deepslate_elbaite_ore"
+    "elementsofpower:onyx_block",
+    "elementsofpower:onyx_ore",
+    "elementsofpower:deepslate_onyx_ore",
+    "elementsofpower:rubellite_block",
+    "elementsofpower:rubellite_ore",
+    "elementsofpower:deepslate_rubellite_ore"
   ]
 }

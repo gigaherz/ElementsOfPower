@@ -9,9 +9,9 @@
     "citrine": { "parent":"elementsofpower:item/bracelet_base", "textures": { "layer1": "elementsofpower:item/citrine_bracelet" } },
     "agate": { "parent":"elementsofpower:item/bracelet_base", "textures": { "layer1": "elementsofpower:item/agate_bracelet" } },
     "quartz": { "parent":"elementsofpower:item/bracelet_base", "textures": { "layer1": "elementsofpower:item/quartz_bracelet" } },
-    "serendibite":  { "parent":"elementsofpower:item/bracelet_base", "textures": { "layer1": "elementsofpower:item/serendibite_bracelet" } },
+    "onyx":  { "parent":"elementsofpower:item/bracelet_base", "textures": { "layer1": "elementsofpower:item/onyx_bracelet" } },
     "emerald":  { "parent":"elementsofpower:item/bracelet_base", "textures": { "layer1": "elementsofpower:item/emerald_bracelet" } },
-    "amethyst": { "parent":"elementsofpower:item/bracelet_base", "textures": { "layer1": "elementsofpower:item/amethyst_bracelet" } },
+    "rubellite": { "parent":"elementsofpower:item/bracelet_base", "textures": { "layer1": "elementsofpower:item/rubellite_bracelet" } },
     "diamond": { "parent":"elementsofpower:item/bracelet_base", "textures": { "layer1": "elementsofpower:item/diamond_bracelet" } },
     "creativite": { "parent":"elementsofpower:item/bracelet_base", "textures": { "layer1": "elementsofpower:item/creativite_bracelet" } }
   }

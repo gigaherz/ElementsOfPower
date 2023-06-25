@@ -2,9 +2,9 @@ package dev.gigaherz.elementsofpower;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.ldtteam.aequivaleo.api.compound.CompoundInstance;
 import com.ldtteam.aequivaleo.api.compound.information.datagen.ForcedInformationProvider;
+import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Lifecycle;
 import dev.gigaherz.elementsofpower.cocoons.ApplyOrbSizeFunction;
@@ -16,6 +16,7 @@ import dev.gigaherz.elementsofpower.gemstones.AnalyzedFilteringIngredient;
 import dev.gigaherz.elementsofpower.gemstones.Gemstone;
 import dev.gigaherz.elementsofpower.gemstones.GemstoneItem;
 import dev.gigaherz.elementsofpower.integration.aequivaleo.AequivaleoPlugin;
+import dev.gigaherz.elementsofpower.misc.TextureVariantsGen;
 import dev.gigaherz.elementsofpower.spells.Element;
 import dev.gigaherz.elementsofpower.spells.blocks.CushionBlock;
 import dev.gigaherz.elementsofpower.spells.blocks.DustBlock;
@@ -38,7 +39,6 @@ import net.minecraft.tags.*;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.biome.Biome;
@@ -76,8 +76,10 @@ import net.minecraftforge.registries.holdersets.OrHolderSet;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -96,14 +98,49 @@ class ElementsofPowerDataGen
         gen.addProvider(event.includeServer(), blockTags);
         gen.addProvider(event.includeServer(), itemTags);
 
+        gen.addProvider(event.includeServer(), new RegistryProvider(gen.getPackOutput(), event.getLookupProvider()));
+
         if ("true".equals(System.getProperty("elementsofpower.doAequivaleoDatagen", "true")) && ModList.get().isLoaded("aequivaleo"))
         {
             gen.addProvider(event.includeServer(), new AequivaleoGens(gen, itemTags));
         }
 
-        gen.addProvider(event.includeClient(), new BlockStates(gen.getPackOutput(), existingFileHelper));
+        gen.addProvider(event.includeClient(), new GearTexturesGen(gen.getPackOutput(), existingFileHelper));
 
-        gen.addProvider(event.includeServer(), new RegistryProvider(gen.getPackOutput(), event.getLookupProvider()));
+        gen.addProvider(event.includeClient(), new BlockStates(gen.getPackOutput(), existingFileHelper));
+    }
+
+    private static class GearTexturesGen extends TextureVariantsGen
+    {
+        public GearTexturesGen(PackOutput packOutput, ExistingFileHelper existingFileHelper)
+        {
+            super(packOutput, existingFileHelper, ElementsOfPowerMod.MODID);
+        }
+
+        @Override
+        protected void genTextures(BiConsumer<ResourceLocation, Supplier<NativeImage>> consumer)
+        {
+            for(var gem : Gemstone.values())
+            {
+                if (gem != Gemstone.DIAMOND)
+                {
+                    ResourceLocation targetPaletteFile = Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(gem.getItem()));
+                    targetPaletteFile = new ResourceLocation(gem.isVanilla() ? "minecraft" : targetPaletteFile.getNamespace(), "item/" + targetPaletteFile.getPath());
+                    genPaletteSwap(consumer, "item/"+gem.getSerializedName()+"_necklace",
+                            new ResourceLocation("elementsofpower:item/diamond_necklace"),
+                            new ResourceLocation("minecraft:item/diamond"),
+                            targetPaletteFile);
+                    genPaletteSwap(consumer, "item/"+gem.getSerializedName()+"_ring",
+                            new ResourceLocation("elementsofpower:item/diamond_ring"),
+                            new ResourceLocation("minecraft:item/diamond"),
+                            targetPaletteFile);
+                    genPaletteSwap(consumer, "item/"+gem.getSerializedName()+"_bracelet",
+                            new ResourceLocation("elementsofpower:item/diamond_bracelet"),
+                            new ResourceLocation("minecraft:item/diamond"),
+                            targetPaletteFile);
+                }
+            }
+        }
     }
 
     private static class AequivaleoGens extends ForcedInformationProvider

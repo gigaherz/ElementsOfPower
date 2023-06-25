@@ -29,7 +29,7 @@ When activated by
     * ...
     * Light: Produces light (temporary light block above itself)
 
-Serendibite (Darkness):
+Onyx (Darkness):
 In the absence of light, activates spontaneously.
 When activated by
     * Fire
