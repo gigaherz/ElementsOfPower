@@ -122,10 +122,10 @@ class ElementsofPowerDataGen
         {
             for(var gem : Gemstone.values())
             {
+                ResourceLocation targetPaletteFile = Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(gem.getItem()));
+                targetPaletteFile = new ResourceLocation(gem.isVanilla() ? "minecraft" : targetPaletteFile.getNamespace(), "item/" + targetPaletteFile.getPath());
                 if (gem != Gemstone.DIAMOND)
                 {
-                    ResourceLocation targetPaletteFile = Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(gem.getItem()));
-                    targetPaletteFile = new ResourceLocation(gem.isVanilla() ? "minecraft" : targetPaletteFile.getNamespace(), "item/" + targetPaletteFile.getPath());
                     genPaletteSwap(consumer, "item/"+gem.getSerializedName()+"_necklace",
                             new ResourceLocation("elementsofpower:item/diamond_necklace"),
                             new ResourceLocation("minecraft:item/diamond"),
@@ -137,6 +137,29 @@ class ElementsofPowerDataGen
                     genPaletteSwap(consumer, "item/"+gem.getSerializedName()+"_bracelet",
                             new ResourceLocation("elementsofpower:item/diamond_bracelet"),
                             new ResourceLocation("minecraft:item/diamond"),
+                            targetPaletteFile);
+                    genPaletteSwap(consumer, "item/"+gem.getSerializedName()+"_wand",
+                            new ResourceLocation("elementsofpower:item/diamond_wand"),
+                            new ResourceLocation("minecraft:item/diamond"),
+                            targetPaletteFile);
+                    genPaletteSwap(consumer, "item/"+gem.getSerializedName()+"_staff_tip",
+                            new ResourceLocation("elementsofpower:item/diamond_staff_tip"),
+                            new ResourceLocation("minecraft:item/diamond"),
+                            targetPaletteFile);
+                    genPaletteSwap(consumer, "item/"+gem.getSerializedName()+"_staff_full_tip",
+                            new ResourceLocation("elementsofpower:item/diamond_staff_full_tip"),
+                            new ResourceLocation("minecraft:item/diamond"),
+                            targetPaletteFile);
+                }
+                if (gem != Gemstone.EMERALD)
+                {
+                    genPaletteSwap(consumer, "item/"+gem.getSerializedName()+"_staff_augment",
+                            new ResourceLocation("elementsofpower:item/emerald_staff_augment"),
+                            new ResourceLocation("minecraft:item/emerald"),
+                            targetPaletteFile);
+                    genPaletteSwap(consumer, "item/"+gem.getSerializedName()+"_staff_full_augment",
+                            new ResourceLocation("elementsofpower:item/emerald_staff_full_augment"),
+                            new ResourceLocation("minecraft:item/emerald"),
                             targetPaletteFile);
                 }
             }

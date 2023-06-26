@@ -1,0 +1,18 @@
+{
+  "parent": "item/handheld",
+  "loader": "elementsofpower:nbt_to_model",
+  "tag":"gemstone",
+  "values": {
+    "":  { "parent":"elementsofpower:item/staff_full_base" },
+    "ruby":  { "parent":"elementsofpower:item/staff_full_base", "textures": { "layer2": "elementsofpower:item/ruby_staff_full_tip" } },
+    "sapphire":   { "parent":"elementsofpower:item/staff_full_base", "textures": { "layer2": "elementsofpower:item/sapphire_staff_full_tip" } },
+    "citrine": { "parent":"elementsofpower:item/staff_full_base", "textures": { "layer2": "elementsofpower:item/citrine_staff_full_tip" } },
+    "agate": { "parent":"elementsofpower:item/staff_full_base", "textures": { "layer2": "elementsofpower:item/agate_staff_full_tip" } },
+    "quartz": { "parent":"elementsofpower:item/staff_full_base", "textures": { "layer2": "elementsofpower:item/quartz_staff_full_tip" } },
+    "onyx":  { "parent":"elementsofpower:item/staff_full_base", "textures": { "layer2": "elementsofpower:item/onyx_staff_full_tip" } },
+    "emerald":  { "parent":"elementsofpower:item/staff_full_base", "textures": { "layer2": "elementsofpower:item/emerald_staff_full_tip" } },
+    "rubellite": { "parent":"elementsofpower:item/staff_full_base", "textures": { "layer2": "elementsofpower:item/rubellite_staff_full_tip" } },
+    "diamond": { "parent":"elementsofpower:item/staff_full_base", "textures": { "layer2": "elementsofpower:item/diamond_staff_full_tip" } },
+    "creativite": { "parent":"elementsofpower:item/staff_full_base", "textures": { "layer2": "elementsofpower:item/creativite_staff_full_tip" } }
+  }
+}

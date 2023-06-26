@@ -1,0 +1,18 @@
+{
+  "parent": "forge:item/default",
+  "loader": "elementsofpower:nbt_to_model",
+  "tag":"gemstone",
+  "values": {
+    "":  { "parent":"elementsofpower:item/wand_3d_base" },
+    "ruby":  { "parent":"elementsofpower:item/wand_3d_base", "textures": { "gem": "elementsofpower:block/block_ruby" } },
+    "sapphire":   { "parent":"elementsofpower:item/wand_3d_base", "textures": { "gem": "elementsofpower:block/block_sapphire" } },
+    "citrine": { "parent":"elementsofpower:item/wand_3d_base", "textures": { "gem": "elementsofpower:block/block_citrine" } },
+    "agate": { "parent":"elementsofpower:item/wand_3d_base", "textures": { "gem": "elementsofpower:block/block_agate" } },
+    "quartz": { "parent":"elementsofpower:item/wand_3d_base", "textures": { "gem": "minecraft:block/quartz_block_bottom" } },
+    "onyx":  { "parent":"elementsofpower:item/wand_3d_base", "textures": { "gem": "elementsofpower:block/block_onyx" } },
+    "emerald":  { "parent":"elementsofpower:item/wand_3d_base", "textures": { "gem": "minecraft:block/emerald_block" } },
+    "rubellite": { "parent":"elementsofpower:item/wand_3d_base", "textures": { "gem": "elementsofpower:block/block_rubellite" } },
+    "diamond": { "parent":"elementsofpower:item/wand_3d_base", "textures": { "gem": "minecraft:block/diamond_block" } },
+    "creativite": { "parent":"elementsofpower:item/wand_3d_base", "textures": { "gem": "minecraft:block/bedrock" } }
+  }
+}

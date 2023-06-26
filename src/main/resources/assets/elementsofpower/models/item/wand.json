@@ -1,19 +1,18 @@
 {
-  "parent": "forge:item/default",
+  "parent": "forge:item/default-tool",
   "loader": "elementsofpower:nbt_to_model",
   "tag":"gemstone",
   "values": {
     "":  { "parent":"elementsofpower:item/wand_base" },
-    "ruby":  { "parent":"elementsofpower:item/wand_base", "textures": { "gem": "elementsofpower:block/block_ruby" } },
-    "sapphire":   { "parent":"elementsofpower:item/wand_base", "textures": { "gem": "elementsofpower:block/block_sapphire" } },
-    "citrine": { "parent":"elementsofpower:item/wand_base", "textures": { "gem": "elementsofpower:block/block_citrine" } },
-    "agate": { "parent":"elementsofpower:item/wand_base", "textures": { "gem": "elementsofpower:block/block_agate" } },
-    "quartz": { "parent":"elementsofpower:item/wand_base", "textures": { "gem": "minecraft:block/quartz_block_bottom" } },
-    "onyx":  { "parent":"elementsofpower:item/wand_base", "textures": { "gem": "elementsofpower:block/block_onyx" } },
-    "emerald":  { "parent":"elementsofpower:item/wand_base", "textures": { "gem": "minecraft:block/emerald_block" } },
-    "rubellite": { "parent":"elementsofpower:item/wand_base", "textures": { "gem": "elementsofpower:block/block_rubellite" } },
-    "rubellite": { "parent":"elementsofpower:item/wand_base", "textures": { "gem": "elementsofpower:block/block_rubellite" } },
-    "diamond": { "parent":"elementsofpower:item/wand_base", "textures": { "gem": "minecraft:block/diamond_block" } },
-    "creativite": { "parent":"elementsofpower:item/wand_base", "textures": { "gem": "minecraft:block/bedrock" } }
+    "ruby":  { "parent":"elementsofpower:item/wand_base", "textures": { "layer1": "elementsofpower:item/ruby_wand" } },
+    "sapphire":   { "parent":"elementsofpower:item/wand_base", "textures": { "layer1": "elementsofpower:item/sapphire_wand" } },
+    "citrine": { "parent":"elementsofpower:item/wand_base", "textures": { "layer1": "elementsofpower:item/citrine_wand" } },
+    "agate": { "parent":"elementsofpower:item/wand_base", "textures": { "layer1": "elementsofpower:item/agate_wand" } },
+    "quartz": { "parent":"elementsofpower:item/wand_base", "textures": { "layer1": "elementsofpower:item/quartz_wand" } },
+    "onyx":  { "parent":"elementsofpower:item/wand_base", "textures": { "layer1": "elementsofpower:item/onyx_wand" } },
+    "emerald":  { "parent":"elementsofpower:item/wand_base", "textures": { "layer1": "elementsofpower:item/emerald_wand" } },
+    "rubellite": { "parent":"elementsofpower:item/wand_base", "textures": { "layer1": "elementsofpower:item/rubellite_wand" } },
+    "diamond": { "parent":"elementsofpower:item/wand_base", "textures": { "layer1": "elementsofpower:item/diamond_wand" } },
+    "creativite": { "parent":"elementsofpower:item/wand_base", "textures": { "layer1": "elementsofpower:item/creativite_wand" } }
   }
 }

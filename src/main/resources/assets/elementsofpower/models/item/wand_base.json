@@ -1,12 +1,6 @@
 {
-  "loader": "forge:obj",
-  "model": "elementsofpower:models/item/wand.obj",
+  "parent": "item/handheld",
   "textures": {
-    "gem": "elementsofpower:transparent"
-  },
-  "display": {
-    "gui": {
-      "rotation": [0,0,45]
-    }
+    "layer0": "elementsofpower:item/wand_base"
   }
 }

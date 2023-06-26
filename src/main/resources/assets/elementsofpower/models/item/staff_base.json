@@ -1,14 +1,6 @@
 {
-  "parent": "forge:item/default",
-  "loader": "forge:obj",
-  "model": "elementsofpower:models/item/staff.obj",
+  "parent": "item/handheld",
   "textures": {
-    "gem": "elementsofpower:transparent"
-  },
-  "display": {
-    "gui": {
-      "rotation": [0,0,45],
-      "scale": [0.650,0.650,0.650]
-    }
+    "layer0": "elementsofpower:item/staff_base"
   }
 }

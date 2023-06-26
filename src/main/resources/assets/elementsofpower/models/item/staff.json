@@ -1,19 +1,44 @@
 {
-  "parent": "forge:item/default",
-  "loader": "elementsofpower:nbt_to_model",
-  "tag":"gemstone",
-  "values": {
-    "":  { "parent":"elementsofpower:item/staff_base" },
-    "ruby":  { "parent":"elementsofpower:item/staff_base", "textures": { "gem": "elementsofpower:block/block_ruby" } },
-    "sapphire":   { "parent":"elementsofpower:item/staff_base", "textures": { "gem": "elementsofpower:block/block_sapphire" } },
-    "citrine": { "parent":"elementsofpower:item/staff_base", "textures": { "gem": "elementsofpower:block/block_citrine" } },
-    "agate": { "parent":"elementsofpower:item/staff_base", "textures": { "gem": "elementsofpower:block/block_agate" } },
-    "quartz": { "parent":"elementsofpower:item/staff_base", "textures": { "gem": "minecraft:block/quartz_block_bottom" } },
-    "onyx":  { "parent":"elementsofpower:item/staff_base", "textures": { "gem": "elementsofpower:block/block_onyx" } },
-    "emerald":  { "parent":"elementsofpower:item/staff_base", "textures": { "gem": "minecraft:block/emerald_block" } },
-    "rubellite": { "parent":"elementsofpower:item/staff_base", "textures": { "gem": "elementsofpower:block/block_rubellite" } },
-    "rubellite": { "parent":"elementsofpower:item/staff_base", "textures": { "gem": "elementsofpower:block/block_rubellite" } },
-    "diamond": { "parent":"elementsofpower:item/staff_base", "textures": { "gem": "minecraft:block/diamond_block" } },
-    "creativite": { "parent":"elementsofpower:item/staff_base", "textures": { "gem": "minecraft:block/bedrock" } }
-  }
+  "parent": "forge:item/default-tool",
+  "loader": "elementsofpower:variants",
+  "default": {
+    "parent":"elementsofpower:item/staff_full_base"
+  },
+  "perspectives": {
+    "gui": { "parent": "elementsofpower:item/staff_base" }
+  },
+  "nbt": [
+    {
+      "tag": "augment",
+      "values": {
+        "": { },
+        "ruby": { "textures": { "layer1": "elementsofpower:item/ruby_staff_augment" } },
+        "sapphire": { "textures": { "layer1": "elementsofpower:item/sapphire_staff_augment" } },
+        "citrine": { "textures": { "layer1": "elementsofpower:item/citrine_staff_augment" } },
+        "agate": { "textures": { "layer1": "elementsofpower:item/agate_staff_augment" } },
+        "quartz": { "textures": { "layer1": "elementsofpower:item/quartz_staff_augment" } },
+        "onyx": { "textures": { "layer1": "elementsofpower:item/onyx_staff_augment" } },
+        "emerald": { "textures": { "layer1": "elementsofpower:item/emerald_staff_augment" } },
+        "rubellite": { "textures": { "layer1": "elementsofpower:item/rubellite_staff_augment" } },
+        "diamond": { "textures": { "layer1": "elementsofpower:item/diamond_staff_augment" } },
+        "creativite": { "textures": { "layer1": "elementsofpower:item/creativite_staff_augment" } }
+      }
+    },
+    {
+      "tag": "gemstone",
+      "values": {
+        "": { },
+        "ruby": { "textures": { "layer2": "elementsofpower:item/ruby_staff_tip" } },
+        "sapphire": { "textures": { "layer2": "elementsofpower:item/sapphire_staff_tip" } },
+        "citrine": { "textures": { "layer2": "elementsofpower:item/citrine_staff_tip" } },
+        "agate": { "textures": { "layer2": "elementsofpower:item/agate_staff_tip" } },
+        "quartz": { "textures": { "layer2": "elementsofpower:item/quartz_staff_tip" } },
+        "onyx": { "textures": { "layer2": "elementsofpower:item/onyx_staff_tip" } },
+        "emerald": { "textures": { "layer2": "elementsofpower:item/emerald_staff_tip" } },
+        "rubellite": { "textures": { "layer2": "elementsofpower:item/rubellite_staff_tip" } },
+        "diamond": { "textures": { "layer2": "elementsofpower:item/diamond_staff_tip" } },
+        "creativite": { "textures": { "layer2": "elementsofpower:item/creativite_staff_tip" } }
+      }
+    }
+  ]
 }

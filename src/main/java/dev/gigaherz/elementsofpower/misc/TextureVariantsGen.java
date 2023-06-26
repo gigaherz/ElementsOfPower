@@ -1,7 +1,6 @@
 package dev.gigaherz.elementsofpower.misc;
 
 import com.google.common.hash.Hashing;
-import com.google.common.hash.HashingOutputStream;
 import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.Util;
 import net.minecraft.data.CachedOutput;
@@ -11,10 +10,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -46,8 +43,8 @@ public abstract class TextureVariantsGen implements DataProvider
             NativeImage referencePaletteTexture = loadTexture(referencePaletteFile);
             NativeImage targetPaletteTexture = loadTexture(targetPaletteFile);
 
-            Hsla[] referencePalette = extractPalette(referencePaletteTexture);
-            Hsla[] targetPalette = extractPalette(targetPaletteTexture);
+            PaletteEntry[] referencePalette = extractPalette(referencePaletteTexture);
+            PaletteEntry[] targetPalette = extractPalette(targetPaletteTexture);
 
             int targetMax = targetPalette.length - 1;
             int refMax = referencePalette.length - 1;
@@ -61,7 +58,7 @@ public abstract class TextureVariantsGen implements DataProvider
                 }
 
                 // find closest value
-                Hsla closest = null;
+                PaletteEntry closest = null;
                 int nClosest = -1;
                 int vClosest = Integer.MAX_VALUE;
                 for (int j = 0; j < referencePalette.length; j++)
@@ -77,14 +74,37 @@ public abstract class TextureVariantsGen implements DataProvider
                     }
                 }
 
-                return targetPalette[nClosest * targetMax / refMax].alpha(original.a()).toRgb();
+                return targetPalette[nClosest * targetMax / refMax].alpha(original.a()).color();
             });
         });
     }
 
-    protected Hsla[] extractPalette(NativeImage inputTexture)
+    protected record PaletteEntry(int color, Hsla hsla)
     {
-        return Arrays.stream(inputTexture.getPixelsRGBA()).mapToObj(Hsla::fromRgb).filter(c -> c.a() > 0).distinct().sorted(Comparator.comparingInt(Hsla::a).thenComparingInt(Hsla::l)).toArray(Hsla[]::new);
+        public static PaletteEntry of(int color)
+        {
+            return new PaletteEntry(color, Hsla.fromRgb(color));
+        }
+
+        public PaletteEntry alpha(int newA)
+        {
+            if (newA == a())
+                return this;
+            var newColor = (newA << 24) | (color & 0xFFFFFF);
+            return new PaletteEntry(newColor, hsla.alpha(newA));
+        }
+
+        public int a() { return hsla.a(); }
+        public int l() { return hsla.l(); }
+    }
+
+    protected PaletteEntry[] extractPalette(NativeImage inputTexture)
+    {
+        return Arrays.stream(inputTexture.getPixelsRGBA())
+                .mapToObj(PaletteEntry::of)
+                .filter(c -> c.a() > 0)
+                .distinct()
+                .sorted(Comparator.comparingInt(PaletteEntry::l)).toArray(PaletteEntry[]::new);
     }
 
     protected NativeImage loadTexture(ResourceLocation inputFile)
