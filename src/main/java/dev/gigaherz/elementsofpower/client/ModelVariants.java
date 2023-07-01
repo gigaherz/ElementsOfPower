@@ -25,6 +25,7 @@ import net.minecraftforge.client.model.SeparateTransformsModel;
 import net.minecraftforge.client.model.geometry.IGeometryBakingContext;
 import net.minecraftforge.client.model.geometry.IGeometryLoader;
 import net.minecraftforge.client.model.geometry.IUnbakedGeometry;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -122,17 +123,17 @@ public abstract class ModelVariants implements IUnbakedGeometry<ModelVariants>
                 nbtVariants.add(Pair.of(path, variantMap));
             }
 
-            var defaultModel = (BlockModel)deserializationContext.deserialize(defaultValues, BlockModel.class);
+            var perspectivesModel = getPerspectiveVariants(defaultValues, deserializationContext, perspectives);
 
             var variantsMap = makeVariantsMap(defaultValues, nbtVariants, deserializationContext, perspectives);
 
-            return new NbtVariants(defaultModel, variantsMap);
+            return new NbtVariants(perspectivesModel, variantsMap);
         }
 
         private List<Pair<Predicate<CompoundTag>, PerspectiveVariants>> makeVariantsMap(JsonObject defaultJson, List<Pair<String, Map<String, JsonObject>>> nbtVariants, JsonDeserializationContext deserializationContext, JsonObject perspectives)
         {
             List<Pair<Predicate<CompoundTag>, PerspectiveVariants>> list = new ArrayList<>();
-            makeRecursive(defaultJson, nbtVariants, 0, deserializationContext, perspectives, tag -> true, list);
+            makeRecursive(defaultJson, nbtVariants, 0, deserializationContext, perspectives, new True(), list);
             return list;
         }
 
@@ -142,23 +143,9 @@ public abstract class ModelVariants implements IUnbakedGeometry<ModelVariants>
         {
             if (index == nbtVariants.size())
             {
-                Map<ItemDisplayContext, BlockModel> perspectiveVariants = new HashMap<>();
-                for (ItemDisplayContext transform : ItemDisplayContext.values())
-                {
-                    if (perspectives.has(transform.getSerializedName()))
-                    {
-                        var perspectiveDefaults = GsonHelper.getAsJsonObject(perspectives, transform.getSerializedName());
+                PerspectiveVariants perspectivesModel = getPerspectiveVariants(defaultJson, deserializationContext, perspectives);
 
-                        var combinedJson = combineModel(defaultJson, perspectiveDefaults);
-                        var combinedModel = (BlockModel)deserializationContext.deserialize(combinedJson, BlockModel.class);
-
-                        perspectiveVariants.put(transform, combinedModel);
-                    }
-                }
-
-                var baseModel = (BlockModel)deserializationContext.deserialize(defaultJson, BlockModel.class);
-
-                list.add(Pair.of(predicate, new PerspectiveVariants(baseModel, perspectiveVariants)));
+                list.add(Pair.of(predicate, perspectivesModel));
                 return;
             }
 
@@ -169,12 +156,157 @@ public abstract class ModelVariants implements IUnbakedGeometry<ModelVariants>
 
             for(var e : entryMap.entrySet())
             {
-                var key = e.getKey();
+                var tagValue = e.getKey();
                 var value = e.getValue();
-                var predicate1 = predicate.and(tag -> (key.equals("") && (tag == null ||tag.size() == 0) || (tag != null && Objects.equals(tag.getString(tagName), key))));
+                Predicate<CompoundTag> newPredicate = tagValue.equals("")
+                        ? new TestTagEmpty(tagName)
+                        : new TestTagEquals(tagName, tagValue);
+                var predicate1 = predicate.and(newPredicate);
                 var combinedValue = combineModel(defaultJson, value);
                 makeRecursive(combinedValue, nbtVariants, index+1, deserializationContext, perspectives, predicate1, list);
             }
+        }
+
+        private static class True implements Predicate<@Nullable CompoundTag>
+        {
+
+            private True()
+            {
+            }
+
+            @NotNull
+            @Override
+            public Predicate<CompoundTag> and(@NotNull Predicate<? super CompoundTag> other)
+            {
+                //noinspection unchecked
+                return (Predicate<@Nullable CompoundTag>)other;
+            }
+
+            @Override
+            public boolean test(@Nullable CompoundTag tag)
+            {
+                return true;
+            }
+
+            @Override
+            public String toString()
+            {
+                return "{True}";
+            }
+        }
+
+        private static class And implements Predicate<@Nullable CompoundTag>
+        {
+            private final Predicate<? super CompoundTag> pred1;
+            private final Predicate<? super CompoundTag> pred2;
+
+            private And(Predicate<? super CompoundTag> pred1, Predicate<? super CompoundTag> pred2)
+            {
+                this.pred1 = pred1;
+                this.pred2 = pred2;
+            }
+
+            @NotNull
+            @Override
+            public Predicate<CompoundTag> and(@NotNull Predicate<? super CompoundTag> other)
+            {
+                return new And(this, other);
+            }
+
+            @Override
+            public boolean test(@Nullable CompoundTag tag)
+            {
+                return pred1.test(tag) && pred2.test(tag);
+            }
+
+            @Override
+            public String toString()
+            {
+                return "{" + pred1 + " && " + pred2 + "}";
+            }
+        }
+
+        private static class TestTagEmpty implements Predicate<@Nullable CompoundTag>
+        {
+            private final String tagName;
+
+            private TestTagEmpty(String tagName)
+            {
+                this.tagName = tagName;
+            }
+
+            @NotNull
+            @Override
+            public Predicate<CompoundTag> and(@NotNull Predicate<? super CompoundTag> other)
+            {
+                return new And(this, other);
+            }
+
+            @Override
+            public boolean test(@Nullable CompoundTag tag)
+            {
+                return tag == null || !tag.contains(tagName) || Objects.equals(tag.getString(tagName), "");
+            }
+
+            @Override
+            public String toString()
+            {
+                return "{['"+tagName+"'] is empty}";
+            }
+        }
+
+        private static class TestTagEquals implements Predicate<@Nullable CompoundTag>
+        {
+            private final String tagName;
+            private final String tagValue;
+
+            private TestTagEquals(String tagName, String tagValue)
+            {
+                this.tagName = tagName;
+                this.tagValue = tagValue;
+            }
+
+            @NotNull
+            @Override
+            public Predicate<CompoundTag> and(@NotNull Predicate<? super CompoundTag> other)
+            {
+                return new And(this, other);
+            }
+
+            @Override
+            public boolean test(@Nullable CompoundTag tag)
+            {
+                return tag != null && Objects.equals(tag.getString(tagName), tagValue);
+            }
+
+            @Override
+            public String toString()
+            {
+                return "{['"+tagName+"']=='"+tagValue+"'}";
+            }
+        }
+
+        @NotNull
+        private PerspectiveVariants getPerspectiveVariants(JsonObject defaultJson, JsonDeserializationContext deserializationContext, JsonObject perspectives)
+        {
+            Map<ItemDisplayContext, BlockModel> perspectiveVariants = new HashMap<>();
+            for (ItemDisplayContext transform : ItemDisplayContext.values())
+            {
+                if (perspectives.has(transform.getSerializedName()))
+                {
+                    var perspectiveDefaults = GsonHelper.getAsJsonObject(perspectives, transform.getSerializedName());
+
+                    var combinedJson = combineModel(defaultJson, perspectiveDefaults);
+                    var combinedModel = (BlockModel) deserializationContext.deserialize(combinedJson, BlockModel.class);
+
+                    perspectiveVariants.put(transform, combinedModel);
+                }
+            }
+
+            var baseModel = (BlockModel) deserializationContext.deserialize(defaultJson, BlockModel.class);
+
+            var perspectivesModel = new PerspectiveVariants(baseModel, perspectiveVariants);
+            return perspectivesModel;
         }
 
         private static JsonObject combineModel(JsonObject base, JsonObject layer)
@@ -219,10 +351,10 @@ public abstract class ModelVariants implements IUnbakedGeometry<ModelVariants>
 
         private static class NbtVariants extends ModelVariants
         {
-            private final BlockModel defaultModel;
+            private final PerspectiveVariants defaultModel;
             private final List<Pair<Predicate<CompoundTag>, PerspectiveVariants>> variantsMap;
 
-            public NbtVariants(BlockModel defaultModel, List<Pair<Predicate<CompoundTag>, PerspectiveVariants>> variantsMap)
+            public NbtVariants(PerspectiveVariants defaultModel, List<Pair<Predicate<CompoundTag>, PerspectiveVariants>> variantsMap)
             {
                 super();
                 this.defaultModel = defaultModel;
@@ -235,6 +367,7 @@ public abstract class ModelVariants implements IUnbakedGeometry<ModelVariants>
                 var particle = spriteGetter.apply(context.getMaterial("particle"));
                 final List<Pair<Predicate<CompoundTag>, BakedModel>> models =
                         variantsMap.stream().map(a -> a.mapSecond(model -> model.bake(context, baker, spriteGetter, modelState, ItemOverrides.EMPTY, modelLocation))).toList();
+                var defaultBaked = defaultModel.bake(context, baker, spriteGetter, modelState, overrides, modelLocation);
 
                 var overrides1 = new ItemOverrides()
                 {
@@ -248,7 +381,7 @@ public abstract class ModelVariants implements IUnbakedGeometry<ModelVariants>
                                 return entry.getSecond().getOverrides().resolve(entry.getSecond(), pStack, pLevel, pEntity, pSeed);
                         }
 
-                        return overrides.resolve(pModel, pStack, pLevel, pEntity, pSeed);
+                        return overrides.resolve(defaultBaked, pStack, pLevel, pEntity, pSeed);
                     }
                 };
 
@@ -258,6 +391,7 @@ public abstract class ModelVariants implements IUnbakedGeometry<ModelVariants>
             @Override
             public void resolveParents(Function<ResourceLocation, UnbakedModel> modelGetter, IGeometryBakingContext context)
             {
+                defaultModel.resolveParents(modelGetter, context);
                 variantsMap.forEach(e -> e.getSecond().resolveParents(modelGetter, context));
             }
         }
@@ -291,6 +425,7 @@ public abstract class ModelVariants implements IUnbakedGeometry<ModelVariants>
             @Override
             public void resolveParents(Function<ResourceLocation, UnbakedModel> modelGetter, IGeometryBakingContext context)
             {
+                defaults.resolveParents(modelGetter);
                 perspectiveVariants.values().forEach(e -> e.resolveParents(modelGetter));
             }
         }

@@ -6,6 +6,7 @@ import dev.gigaherz.elementsofpower.capabilities.MagicContainerCapability;
 import dev.gigaherz.elementsofpower.capabilities.PlayerCombinedMagicContainers;
 import dev.gigaherz.elementsofpower.client.ModelVariants;
 import dev.gigaherz.elementsofpower.client.NbtToModel;
+import dev.gigaherz.elementsofpower.client.StaffModel;
 import dev.gigaherz.elementsofpower.client.WandUseManager;
 import dev.gigaherz.elementsofpower.client.renderers.BallEntityRenderer;
 import dev.gigaherz.elementsofpower.client.renderers.EssentializerTileEntityRender;
@@ -251,7 +252,7 @@ public class ElementsOfPowerMod
     public void modelRegistry(ModelEvent.RegisterGeometryLoaders event)
     {
         event.register("nbt_to_model", NbtToModel.Loader.INSTANCE);
-        event.register("variants", ModelVariants.Loader.INSTANCE);
+        event.register("staff_model", StaffModel.Loader.INSTANCE);
     }
 
     @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD)

@@ -2,6 +2,7 @@
   "sources": [
     {"type": "single", "resource": "elementsofpower:gui/ring_slot_background" },
     {"type": "single", "resource": "elementsofpower:gui/necklace_slot_background" },
-    {"type": "single", "resource": "elementsofpower:gui/bracelet_slot_background" }
+    {"type": "single", "resource": "elementsofpower:gui/bracelet_slot_background" },
+    {"type": "single", "resource": "elementsofpower:transparent" }
   ]
 }

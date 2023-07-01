@@ -2,5 +2,32 @@
   "parent": "item/handheld",
   "textures": {
     "layer0": "elementsofpower:item/staff_base"
+  },
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [0, 90, 55],
+      "translation": [0, 4, 2.5],
+      "scale": [0.85, 0.85, 0.85]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [0, -90, -55],
+      "translation": [0, 4, 2.5],
+      "scale": [0.85, 0.85, 0.85]
+    },
+    "firstperson_righthand": {
+      "rotation": [0, -90, 25],
+      "translation": [1.13, 3.2, 1.13],
+      "scale": [0.68, 0.68, 0.68]
+    },
+    "firstperson_lefthand": {
+      "rotation": [0, 90, -25],
+      "translation": [1.13, 3.2, 1.13],
+      "scale": [0.68, 0.68, 0.68]
+    },
+    "head": {
+      "rotation": [0, 0, 45],
+      "translation": [0, 5, -7],
+      "scale": [0.5, 0.5, 0.5]
+    }
   }
 }
