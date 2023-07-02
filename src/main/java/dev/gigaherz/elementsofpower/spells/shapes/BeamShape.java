@@ -43,12 +43,12 @@ public class BeamShape extends SpellShape
         {
             if (mop.getType() == HitResult.Type.ENTITY)
             {
-                cast.getEffect().processDirectHit(cast, ((EntityHitResult) mop).getEntity(), mop.getLocation());
+                cast.getEffect().processDirectHit(cast, ((EntityHitResult) mop).getEntity(), mop.getLocation(), cast.player);
             }
             else if (mop.getType() == HitResult.Type.BLOCK)
             {
                 BlockPos pos = ((BlockHitResult) mop).getBlockPos();
-                BlockState state = cast.world.getBlockState(pos);
+                BlockState state = cast.level.getBlockState(pos);
                 if (cast.getRadiating() > 0)
                 {
                     radiate(cast, mop, cast.getRadiating());
@@ -67,12 +67,12 @@ public class BeamShape extends SpellShape
 
         if (trace1.getType() == HitResult.Type.ENTITY)
         {
-            effect.processDirectHit(cast, ((EntityHitResult) trace1).getEntity(), trace1.getLocation());
+            effect.processDirectHit(cast, ((EntityHitResult) trace1).getEntity(), trace1.getLocation(), cast.player);
         }
 
         effect.spawnBallParticles(cast, trace1);
 
-        if (!effect.processEntitiesAroundBefore(cast, trace1.getLocation()))
+        if (!effect.processEntitiesAroundBefore(cast, trace1.getLocation(), cast.player))
             return;
 
         if (radius > 0 && trace1.getType() == HitResult.Type.BLOCK)
@@ -111,7 +111,7 @@ public class BeamShape extends SpellShape
 
                         Vec3 start = trace1.getLocation().add(Vec3.atCenterOf(facing.getNormal()).scale(0.5));
                         Vec3 end = new Vec3(px + 0.5, py + 0.5, pz + 0.5);
-                        BlockHitResult trace2 = cast.world.clip(new ClipContext(start, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, cast.player));
+                        BlockHitResult trace2 = cast.level.clip(new ClipContext(start, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, cast.player));
                         if (trace2.getType() != HitResult.Type.MISS)
                             if (!trace2.getBlockPos().equals(np))
                                 continue;
@@ -119,7 +119,7 @@ public class BeamShape extends SpellShape
                         float r = (float) Math.sqrt(r2);
 
 
-                        BlockState currentState = cast.world.getBlockState(np);
+                        BlockState currentState = cast.level.getBlockState(np);
 
                         effect.processBlockWithinRadius(cast, np, currentState, r, null);
                     }
@@ -127,6 +127,6 @@ public class BeamShape extends SpellShape
             }
         }
 
-        effect.processEntitiesAroundAfter(cast, trace1.getLocation());
+        effect.processEntitiesAroundAfter(cast, trace1.getLocation(), cast.player);
     }
 }

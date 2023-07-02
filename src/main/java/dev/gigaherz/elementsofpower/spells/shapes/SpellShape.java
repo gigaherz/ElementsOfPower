@@ -2,6 +2,7 @@ package dev.gigaherz.elementsofpower.spells.shapes;
 
 import dev.gigaherz.elementsofpower.spells.InitializedSpellcast;
 import dev.gigaherz.elementsofpower.spells.Spellcast;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.HitResult;
@@ -17,7 +18,7 @@ public abstract class SpellShape
     @Nullable
     public abstract InitializedSpellcast castSpell(ItemStack stack, Player player, Spellcast cast);
 
-    public void onImpact(InitializedSpellcast spellcast, HitResult mop)
+    public void onImpact(InitializedSpellcast spellcast, HitResult mop, Entity directEntity)
     {
     }
 

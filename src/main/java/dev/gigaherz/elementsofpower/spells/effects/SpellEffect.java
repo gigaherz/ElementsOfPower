@@ -25,11 +25,11 @@ public abstract class SpellEffect
         return 0;
     }
 
-    public abstract void processDirectHit(InitializedSpellcast cast, Entity entity, Vec3 hitVec);
+    public abstract void processDirectHit(InitializedSpellcast cast, Entity entity, Vec3 hitVec, Entity directEntity);
 
-    public abstract boolean processEntitiesAroundBefore(InitializedSpellcast cast, Vec3 hitVec);
+    public abstract boolean processEntitiesAroundBefore(InitializedSpellcast cast, Vec3 hitVec, Entity directEntity);
 
-    public abstract void processEntitiesAroundAfter(InitializedSpellcast cast, Vec3 hitVec);
+    public abstract void processEntitiesAroundAfter(InitializedSpellcast cast, Vec3 hitVec, Entity directEntity);
 
     public abstract void spawnBallParticles(InitializedSpellcast cast, HitResult mop);
 
@@ -40,11 +40,11 @@ public abstract class SpellEffect
 
     public abstract void processBlockWithinRadius(InitializedSpellcast cast, BlockPos blockPos, BlockState currentState, float distance, @Nullable HitResult mop);
 
-    protected static void causePotionEffect(InitializedSpellcast cast, LivingEntity e, MobEffect potion, int amplifier, double distance, double durationBase)
+    protected static void causePotionEffect(InitializedSpellcast cast, Entity directEntity, LivingEntity target, MobEffect potion, int amplifier, double distance, double durationBase)
     {
         if (potion.isInstantenous())
         {
-            potion.applyInstantenousEffect(cast.getProjectile(), cast.player, e, amplifier, distance);
+            potion.applyInstantenousEffect(directEntity, cast.player, target, amplifier, distance);
         }
         else
         {
@@ -52,7 +52,7 @@ public abstract class SpellEffect
 
             if (j > 20)
             {
-                e.addEffect(new MobEffectInstance(potion, j, amplifier));
+                target.addEffect(new MobEffectInstance(potion, j, amplifier));
             }
         }
     }

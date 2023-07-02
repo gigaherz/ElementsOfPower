@@ -1,6 +1,7 @@
-package dev.gigaherz.elementsofpower.client.renderers;
+package dev.gigaherz.elementsofpower.client.renderers.entities;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import dev.gigaherz.elementsofpower.client.renderers.ModelHandle;
 import dev.gigaherz.elementsofpower.client.renderers.spells.SpellRenderer;
 import dev.gigaherz.elementsofpower.entities.BallEntity;
 import net.minecraft.client.renderer.MultiBufferSource;

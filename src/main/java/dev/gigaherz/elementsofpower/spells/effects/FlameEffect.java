@@ -3,7 +3,6 @@ package dev.gigaherz.elementsofpower.spells.effects;
 import dev.gigaherz.elementsofpower.spells.InitializedSpellcast;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -41,22 +40,22 @@ public class FlameEffect extends SpellEffect
     }
 
     @Override
-    public void processDirectHit(InitializedSpellcast cast, Entity entity, Vec3 hitVec)
+    public void processDirectHit(InitializedSpellcast cast, Entity entity, Vec3 hitVec, Entity directEntity)
     {
         float damage = (entity instanceof Blaze) ? 3 + cast.getDamageForce() : cast.getDamageForce();
 
-        entity.hurt(entity.damageSources().thrown(cast.getProjectile(), cast.player), damage);
+        entity.hurt(entity.damageSources().thrown(cast.player, cast.player), damage);
         entity.setSecondsOnFire(cast.getDamageForce());
     }
 
     @Override
-    public boolean processEntitiesAroundBefore(InitializedSpellcast cast, Vec3 hitVec)
+    public boolean processEntitiesAroundBefore(InitializedSpellcast cast, Vec3 hitVec, Entity directEntity)
     {
         return true;
     }
 
     @Override
-    public void processEntitiesAroundAfter(InitializedSpellcast cast, Vec3 hitVec)
+    public void processEntitiesAroundAfter(InitializedSpellcast cast, Vec3 hitVec, Entity directEntity)
     {
         AABB aabb = new AABB(
                 hitVec.x - cast.getDamageForce(),
@@ -66,13 +65,13 @@ public class FlameEffect extends SpellEffect
                 hitVec.y + cast.getDamageForce(),
                 hitVec.z + cast.getDamageForce());
 
-        burnEntities(cast, hitVec, cast.world.getEntitiesOfClass(LivingEntity.class, aabb));
-        burnEntities(cast, hitVec, cast.world.getEntitiesOfClass(ItemEntity.class, aabb));
+        burnEntities(cast, hitVec, cast.level.getEntitiesOfClass(LivingEntity.class, aabb));
+        burnEntities(cast, hitVec, cast.level.getEntitiesOfClass(ItemEntity.class, aabb));
     }
 
     private void burnEntities(InitializedSpellcast cast, Vec3 hitVec, List<? extends Entity> living)
     {
-        SmallFireball ef = EntityType.SMALL_FIREBALL.create(cast.world);
+        SmallFireball ef = EntityType.SMALL_FIREBALL.create(cast.level);
 
         for (Entity e : living)
         {
@@ -105,12 +104,12 @@ public class FlameEffect extends SpellEffect
         if (mop != null && mop.getType() == HitResult.Type.BLOCK)
         {
             blockPos = blockPos.relative(((BlockHitResult) mop).getDirection());
-            currentState = cast.world.getBlockState(blockPos);
+            currentState = cast.level.getBlockState(blockPos);
         }
 
         if (currentState.isAir())
         {
-            cast.world.setBlockAndUpdate(blockPos, Blocks.FIRE.defaultBlockState());
+            cast.level.setBlockAndUpdate(blockPos, Blocks.FIRE.defaultBlockState());
         }
     }
 

@@ -37,7 +37,7 @@ public class SphereShape extends SpellShape
 
         Player player = cast.player;
 
-        if (!effect.processEntitiesAroundBefore(cast, player.getEyePosition(1.0f)))
+        if (!effect.processEntitiesAroundBefore(cast, player.getEyePosition(1.0f), cast.player))
             return;
 
         int force = cast.getDamageForce();
@@ -66,7 +66,7 @@ public class SphereShape extends SpellShape
 
                         BlockPos np = new BlockPos(x, y, z);
 
-                        BlockState currentState = cast.world.getBlockState(np);
+                        BlockState currentState = cast.level.getBlockState(np);
 
                         effect.processBlockWithinRadius(cast, np, currentState, r, null);
                     }
@@ -74,6 +74,6 @@ public class SphereShape extends SpellShape
             }
         }
 
-        effect.processEntitiesAroundAfter(cast, player.position());
+        effect.processEntitiesAroundAfter(cast, player.position(), cast.player);
     }
 }

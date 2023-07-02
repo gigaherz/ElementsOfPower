@@ -87,6 +87,8 @@
     "elementsofpower.gem_container.quality.flawless": "Exceptional %s",
     "elementsofpower.gem_container.quality.pure": "Superb %s",
 
+    "elementsofpower.staff.augmented": "%s-augmented %s",
+
     "elementsofpower.magic.contains": "Contains magic:",
     "elementsofpower.magic.converts": "Converts to Essences:",
     "elementsofpower.magic.more_info": "  (Hold SHIFT)",

@@ -1,7 +1,14 @@
 package dev.gigaherz.elementsofpower.items;
 
+import dev.gigaherz.elementsofpower.gemstones.Gemstone;
+import dev.gigaherz.elementsofpower.gemstones.Quality;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+
+import javax.annotation.Nullable;
 
 public class StaffItem extends WandItem
 {
@@ -30,31 +37,65 @@ public class StaffItem extends WandItem
         return am.multiply(0.5f);
     }
 
-    // TODO: Enable when the animation system supports rotating OBJ parts
-    /*@Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt)
+    public Component getAugmentName(ItemStack stack)
     {
-        return new ICapabilityProvider()
+        Component gemstoneName = getGemstoneName(stack);
+
+        Gemstone g = getAugment(stack);
+        if (g == null)
+            return gemstoneName;
+
+        return Component.translatable("elementsofpower.staff.augmented", g.getItem().getDefaultInstance().getHoverName(), gemstoneName);
+    }
+
+    @Override
+    public Component getName(ItemStack stack)
+    {
+        Component augmentName = getAugmentName(stack);
+
+        Quality q = getQuality(stack);
+        if (q == null)
+            return augmentName;
+
+        return Component.translatable(q.getContainerTranslationKey(), augmentName);
+    }
+
+    @Nullable
+    public Gemstone getAugment(ItemStack stack)
+    {
+        CompoundTag tag = stack.getTag();
+        if (tag == null)
+            return null;
+
+        if (tag.contains("augment", Tag.TAG_STRING))
         {
-            private final TimeValues.VariableValue cycleLength = new TimeValues.VariableValue(4);
+            String g = tag.getString("augment");
+            return Gemstone.byName(g);
+        }
 
-            private final IAnimationStateMachine asm = ElementsOfPower.proxy.load(
-                    ElementsOfPower.location("animation/staff.json"),
-                    ImmutableMap.of("cycle_length", cycleLength));
+        return null;
+    }
 
-            public boolean hasCapability(Capability<?> capability, EnumFacing facing)
+    public ItemStack setAugment(ItemStack stack, @Nullable Gemstone gemstone)
+    {
+        CompoundTag tag = stack.getTag();
+        if (gemstone == null)
+        {
+            if (tag != null)
             {
-                return capability == CapabilityAnimation.ANIMATION_CAPABILITY;
+                tag.remove("augment");
+            }
+        }
+        else
+        {
+            if (tag == null)
+            {
+                tag = new CompoundTag();
+                stack.setTag(tag);
             }
 
-            @Nullable
-            public <T> T getCapability(Capability<T> capability, EnumFacing facing)
-            {
-                if(capability == CapabilityAnimation.ANIMATION_CAPABILITY)
-                    return CapabilityAnimation.ANIMATION_CAPABILITY.cast(asm);
-
-                return null;
-            }
-        };
-    }*/
+            tag.putString("augment", gemstone.getSerializedName());
+        }
+        return stack;
+    }
 }

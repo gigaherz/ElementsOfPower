@@ -36,18 +36,18 @@ public class ResurrectionEffect
     }
 
     @Override
-    public void processDirectHit(InitializedSpellcast cast, Entity entity, Vec3 hitVec)
+    public void processDirectHit(InitializedSpellcast cast, Entity entity, Vec3 hitVec, Entity directEntity)
     {
     }
 
     @Override
-    public boolean processEntitiesAroundBefore(InitializedSpellcast cast, Vec3 hitVec)
+    public boolean processEntitiesAroundBefore(InitializedSpellcast cast, Vec3 hitVec, Entity directEntity)
     {
         return false;
     }
 
     @Override
-    public void processEntitiesAroundAfter(InitializedSpellcast cast, Vec3 hitVec)
+    public void processEntitiesAroundAfter(InitializedSpellcast cast, Vec3 hitVec, Entity directEntity)
     {
 
     }
@@ -64,7 +64,7 @@ public class ResurrectionEffect
         // Resurrecting players could be done by
         // sending dimension packet or maybe respawn keeping items
 
-        Level world = cast.world;
+        Level world = cast.level;
 
         BlockState state = world.getBlockState(blockPos);
 

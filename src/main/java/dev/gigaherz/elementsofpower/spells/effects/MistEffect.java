@@ -34,19 +34,19 @@ public class MistEffect extends SpellEffect
     }
 
     @Override
-    public void processDirectHit(InitializedSpellcast cast, Entity entity, Vec3 hitVec)
+    public void processDirectHit(InitializedSpellcast cast, Entity entity, Vec3 hitVec, Entity directEntity)
     {
 
     }
 
     @Override
-    public boolean processEntitiesAroundBefore(InitializedSpellcast cast, Vec3 hitVec)
+    public boolean processEntitiesAroundBefore(InitializedSpellcast cast, Vec3 hitVec, Entity directEntity)
     {
         return true;
     }
 
     @Override
-    public void processEntitiesAroundAfter(InitializedSpellcast cast, Vec3 hitVec)
+    public void processEntitiesAroundAfter(InitializedSpellcast cast, Vec3 hitVec, Entity directEntity)
     {
 
     }
@@ -67,12 +67,12 @@ public class MistEffect extends SpellEffect
         if (mop != null && mop.getType() == HitResult.Type.BLOCK)
         {
             blockPos = blockPos.relative(((BlockHitResult) mop).getDirection());
-            currentState = cast.world.getBlockState(blockPos);
+            currentState = cast.level.getBlockState(blockPos);
         }
 
         if (currentState.isAir())
         {
-            cast.world.setBlockAndUpdate(blockPos, ElementsOfPowerBlocks.MIST.get().defaultBlockState().setValue(MistBlock.DENSITY, 16));
+            cast.level.setBlockAndUpdate(blockPos, ElementsOfPowerBlocks.MIST.get().defaultBlockState().setValue(MistBlock.DENSITY, 16));
         }
     }
 }

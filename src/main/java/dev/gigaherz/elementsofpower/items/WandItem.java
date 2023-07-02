@@ -95,7 +95,7 @@ public class WandItem extends GemContainerItem
         return MagicContainerCapability.getContainer(stack).map(magic -> {
 
             MagicAmounts amounts = magic.getContainedMagic().add(getTotalPlayerReservoir(player));
-            MagicAmounts cost = cast.getSpellCost();
+            MagicAmounts cost = SpellManager.computeCost(cast);
 
             if (!magic.isInfinite() && !amounts.hasEnough(cost))
             {

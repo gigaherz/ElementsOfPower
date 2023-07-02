@@ -43,23 +43,23 @@ public class LavaEffect extends SpellEffect
     @Override
     public int getForceModifier(InitializedSpellcast cast)
     {
-        return cast.world.dimensionType().ultraWarm() ? +1 : 0;
+        return cast.level.dimensionType().ultraWarm() ? +1 : 0;
     }
 
     @Override
-    public void processDirectHit(InitializedSpellcast cast, Entity entity, Vec3 hitVec)
+    public void processDirectHit(InitializedSpellcast cast, Entity entity, Vec3 hitVec, Entity directEntity)
     {
 
     }
 
     @Override
-    public boolean processEntitiesAroundBefore(InitializedSpellcast cast, Vec3 hitVec)
+    public boolean processEntitiesAroundBefore(InitializedSpellcast cast, Vec3 hitVec, Entity directEntity)
     {
         return true;
     }
 
     @Override
-    public void processEntitiesAroundAfter(InitializedSpellcast cast, Vec3 hitVec)
+    public void processEntitiesAroundAfter(InitializedSpellcast cast, Vec3 hitVec, Entity directEntity)
     {
 
     }
@@ -80,18 +80,18 @@ public class LavaEffect extends SpellEffect
         if (mop != null && mop.getType() == HitResult.Type.BLOCK)
         {
             blockPos = blockPos.relative(((BlockHitResult) mop).getDirection());
-            currentState = cast.world.getBlockState(blockPos);
+            currentState = cast.level.getBlockState(blockPos);
         }
 
         if (currentState.isAir())
         {
             if (spawnSourceBlocks)
             {
-                cast.world.setBlockAndUpdate(blockPos, Fluids.LAVA.defaultFluidState().createLegacyBlock());
+                cast.level.setBlockAndUpdate(blockPos, Fluids.LAVA.defaultFluidState().createLegacyBlock());
             }
             else
             {
-                cast.world.setBlockAndUpdate(blockPos, Fluids.FLOWING_LAVA.defaultFluidState().setValue(LavaFluid.LEVEL, 8).createLegacyBlock());
+                cast.level.setBlockAndUpdate(blockPos, Fluids.FLOWING_LAVA.defaultFluidState().setValue(LavaFluid.LEVEL, 8).createLegacyBlock());
             }
         }
     }

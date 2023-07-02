@@ -22,6 +22,6 @@ public class SelfShape extends SpellShape
     @Override
     public void spellTick(InitializedSpellcast cast)
     {
-        cast.getEffect().processDirectHit(cast, cast.player, cast.player.position());
+        cast.getEffect().processDirectHit(cast, cast.player, cast.player.position(), cast.player);
     }
 }

@@ -44,7 +44,7 @@ public class WindEffect extends SpellEffect
     }
 
     @Override
-    public void processDirectHit(InitializedSpellcast cast, Entity entity, Vec3 hitVec)
+    public void processDirectHit(InitializedSpellcast cast, Entity entity, Vec3 hitVec, Entity directEntity)
     {
         int force = cast.getDamageForce();
 
@@ -56,7 +56,7 @@ public class WindEffect extends SpellEffect
     }
 
     @Override
-    public boolean processEntitiesAroundBefore(InitializedSpellcast cast, Vec3 hitVec)
+    public boolean processEntitiesAroundBefore(InitializedSpellcast cast, Vec3 hitVec, Entity directEntity)
     {
         int force = cast.getDamageForce();
 
@@ -68,17 +68,17 @@ public class WindEffect extends SpellEffect
                 hitVec.y + force,
                 hitVec.z + force);
 
-        List<LivingEntity> living = cast.world.getEntitiesOfClass(LivingEntity.class, aabb);
+        List<LivingEntity> living = cast.level.getEntitiesOfClass(LivingEntity.class, aabb);
         pushEntities(cast, force, hitVec, living);
 
-        List<ItemEntity> items = cast.world.getEntitiesOfClass(ItemEntity.class, aabb);
+        List<ItemEntity> items = cast.level.getEntitiesOfClass(ItemEntity.class, aabb);
         pushEntities(cast, force, hitVec, items);
 
         return true;
     }
 
     @Override
-    public void processEntitiesAroundAfter(InitializedSpellcast cast, Vec3 hitVec)
+    public void processEntitiesAroundAfter(InitializedSpellcast cast, Vec3 hitVec, Entity directEntity)
     {
     }
 
@@ -157,26 +157,26 @@ public class WindEffect extends SpellEffect
         if (mop != null && mop.getType() == HitResult.Type.BLOCK)
         {
             blockPos = blockPos.relative(((BlockHitResult) mop).getDirection());
-            currentState = cast.world.getBlockState(blockPos);
+            currentState = cast.level.getBlockState(blockPos);
         }
 
         Block block = currentState.getBlock();
 
         if (block == Blocks.FIRE)
         {
-            cast.world.setBlockAndUpdate(blockPos, Blocks.AIR.defaultBlockState());
+            cast.level.setBlockAndUpdate(blockPos, Blocks.AIR.defaultBlockState());
         }
         else if (block == Blocks.WATER)
         {
-            if (!cast.world.getFluidState(blockPos).isSource())
+            if (!cast.level.getFluidState(blockPos).isSource())
             {
-                cast.world.setBlockAndUpdate(blockPos, Blocks.AIR.defaultBlockState());
+                cast.level.setBlockAndUpdate(blockPos, Blocks.AIR.defaultBlockState());
             }
         }
         else if (!currentState.blocksMotion() && !currentState.liquid())
         {
-            dropBlockAsItem(cast.world, blockPos, currentState);
-            cast.world.setBlockAndUpdate(blockPos, Blocks.AIR.defaultBlockState());
+            dropBlockAsItem(cast.level, blockPos, currentState);
+            cast.level.setBlockAndUpdate(blockPos, Blocks.AIR.defaultBlockState());
         }
     }
 

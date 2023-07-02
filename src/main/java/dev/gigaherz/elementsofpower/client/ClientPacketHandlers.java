@@ -30,7 +30,7 @@ public class ClientPacketHandlers
             if (ccast != null)
             {
                 InitializedSpellcast spellcast = ccast.init(player.level(), player);
-                spellcast.readFromNBT(message.spellcast);
+                spellcast.read(message.spellcast);
                 SpellcastEntityData.get(player).ifPresent(data -> data.onSync(message.changeMode, spellcast));
             }
         });

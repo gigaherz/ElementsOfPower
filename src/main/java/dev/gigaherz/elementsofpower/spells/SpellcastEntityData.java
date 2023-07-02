@@ -51,7 +51,7 @@ public class SpellcastEntityData implements INBTSerializable<CompoundTag>
         if (currentCasting != null)
         {
             CompoundTag cast = new CompoundTag();
-            currentCasting.writeToNBT(cast);
+            currentCasting.write(cast);
             cast.put("sequence", currentCasting.getSequenceNBT());
             compound.put("currentSpell", cast);
         }
@@ -70,7 +70,7 @@ public class SpellcastEntityData implements INBTSerializable<CompoundTag>
                 if (ccast != null)
                 {
                     currentCasting = ccast.init(player.level(), player);
-                    currentCasting.readFromNBT(cast);
+                    currentCasting.read(cast);
                 }
             }
         }

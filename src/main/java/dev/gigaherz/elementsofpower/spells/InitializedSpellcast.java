@@ -1,6 +1,6 @@
 package dev.gigaherz.elementsofpower.spells;
 
-import dev.gigaherz.elementsofpower.magic.MagicAmounts;
+import dev.gigaherz.elementsofpower.entities.BallEntity;
 import dev.gigaherz.elementsofpower.spells.effects.SpellEffect;
 import dev.gigaherz.elementsofpower.spells.shapes.SpellShape;
 import net.minecraft.core.particles.ParticleOptions;
@@ -19,16 +19,18 @@ import java.util.Optional;
 
 public class InitializedSpellcast extends Spellcast
 {
-    public Level world;
+    public Level level;
     public Player player;
     public int remainingCastTime;
     public int remainingInterval;
     public int totalCastTime;
 
-    protected InitializedSpellcast(List<Element> sequence, SpellShape shape, SpellEffect effect, Entity projectile, int power, RandomSource rand, int empowering, int radiating, MagicAmounts spellCost, Level world, Player player)
+    protected RandomSource rand;
+
+    protected InitializedSpellcast(List<Element> sequence, SpellShape shape, SpellEffect effect, int power, int empowering, int radiating, Level level, Player player)
     {
-        super(sequence, shape, effect, projectile, power, rand, empowering, radiating, spellCost);
-        this.world = world;
+        super(sequence, shape, effect, power, empowering, radiating);
+        this.level = level;
         this.player = player;
         if (shape.isInstant())
         {
@@ -41,6 +43,17 @@ public class InitializedSpellcast extends Spellcast
             remainingInterval = effect.getInterval(this);
         }
         totalCastTime = remainingCastTime;
+        this.rand = player.getRandom();
+    }
+
+    public RandomSource getRandom()
+    {
+        return rand;
+    }
+
+    public void setRandom(RandomSource rand)
+    {
+        this.rand = rand;
     }
 
     public int getDamageForce()
@@ -58,35 +71,39 @@ public class InitializedSpellcast extends Spellcast
         return getShape().getScale(this);
     }
 
-    public void onImpact(HitResult mop, RandomSource rand)
+    public void onImpact(HitResult mop, RandomSource rand, Entity directEntity)
     {
         this.setRandom(rand);
-        if (!world.isClientSide)
+        if (!level.isClientSide)
         {
-            getShape().onImpact(this, mop);
+            getShape().onImpact(this, mop, directEntity);
         }
     }
 
-    public void readFromNBT(CompoundTag tagData)
+    public static InitializedSpellcast read(CompoundTag tag, Level level, Player player)
     {
-        remainingCastTime = tagData.getInt("remainingCastTime");
-        remainingInterval = tagData.getInt("remainingInterval");
-        totalCastTime = tagData.getInt("totalCastTime");
+        var spell = Spellcast.read(tag);
+        var initializedSpell = spell.init(level, player);
+        initializedSpell.remainingCastTime = tag.getInt("remainingCastTime");
+        initializedSpell.remainingInterval = tag.getInt("remainingInterval");
+        initializedSpell.totalCastTime = tag.getInt("totalCastTime");
+        return initializedSpell;
     }
 
-    public void writeToNBT(CompoundTag tagData)
+    @Override
+    public void write(CompoundTag tag)
     {
-        tagData.putInt("remainingCastTime", remainingCastTime);
-        tagData.putInt("remainingInterval", remainingInterval);
-        tagData.putInt("totalCastTime", totalCastTime);
-        tagData.put("sequence", getSequenceNBT());
+        super.write(tag);
+        tag.putInt("remainingCastTime", remainingCastTime);
+        tag.putInt("remainingInterval", remainingInterval);
+        tag.putInt("totalCastTime", totalCastTime);
     }
 
     public void update()
     {
         if (getShape().isInstant() && remainingCastTime == totalCastTime)
         {
-            if (!world.isClientSide)
+            if (!level.isClientSide)
             {
                 getShape().spellTick(this);
             }
@@ -102,7 +119,7 @@ public class InitializedSpellcast extends Spellcast
             {
                 remainingInterval = getEffect().getInterval(this);
 
-                if (!world.isClientSide)
+                if (!level.isClientSide)
                 {
                     getShape().spellTick(this);
                 }
@@ -127,7 +144,7 @@ public class InitializedSpellcast extends Spellcast
 
     public void spawnRandomParticle(ParticleOptions type, double x, double y, double z)
     {
-        world.addParticle(type, x, y, z, getRandomForParticle(), getRandomForParticle(), getRandomForParticle());
+        level.addParticle(type, x, y, z, getRandomForParticle(), getRandomForParticle(), getRandomForParticle());
     }
 
     // Butchered from the player getMouseOver()
@@ -150,7 +167,7 @@ public class InitializedSpellcast extends Spellcast
         end = start.add(direction);
 
         Vec3 hitPosition = null;
-        List<Entity> list = world.getEntities(player,
+        List<Entity> list = level.getEntities(player,
                 player.getBoundingBox()
                         .expandTowards(direction.x, direction.y, direction.z)
                         .inflate(1.0, 1.0, 1.0),
@@ -233,7 +250,7 @@ public class InitializedSpellcast extends Spellcast
         end = start.add(look.x * maxDistance, look.y * maxDistance, look.z * maxDistance);
 
         // FIXME
-        BlockHitResult blockTrace = world.clip(new ClipContext(start, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
+        BlockHitResult blockTrace = level.clip(new ClipContext(start, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
 
         HitResult trace = getEntityIntercept(start, look, end, blockTrace);
 

@@ -3,33 +3,31 @@ package dev.gigaherz.elementsofpower.spells;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import dev.gigaherz.elementsofpower.spells.effects.SpellEffect;
 import dev.gigaherz.elementsofpower.spells.shapes.SpellShape;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class Spellcast
 {
-    private final List<Element> sequence;
+    private List<Element> sequence;
 
-    private SpellShape shape;
-    private SpellEffect effect;
+    protected SpellShape shape;
+    protected SpellEffect effect;
 
-    private int power;
-    private int empowering;
-    private int radiating;
-    private int timing;
-    private MagicAmounts spellCost;
-
-    @Nullable
-    private Entity projectile;
-
-    private RandomSource rand;
+    protected int power;
+    protected int empowering;
+    protected int radiating;
+    protected int timing;
 
     public Spellcast(SpellShape shape, SpellEffect effect, int power, List<Element> sequence)
     {
@@ -39,17 +37,52 @@ public class Spellcast
         this.sequence = sequence;
     }
 
-    protected Spellcast(List<Element> sequence, SpellShape shape, SpellEffect effect, Entity projectile, int power, RandomSource rand, int empowering, int radiating, MagicAmounts spellCost)
+    protected Spellcast(List<Element> sequence, SpellShape shape, SpellEffect effect, int power, int empowering, int radiating)
     {
         this.sequence = sequence;
         this.shape = shape;
         this.effect = effect;
-        this.projectile = projectile;
         this.power = power;
-        this.rand = rand;
         this.empowering = empowering;
         this.radiating = radiating;
-        this.spellCost = spellCost;
+    }
+
+    public void write(CompoundTag compound)
+    {
+        compound.put("sequence", getSequenceNBT());
+        compound.putString("shape", SpellShapes.getName(shape));
+        compound.putString("effect", SpellEffects.getName(effect));
+        compound.putInt("power", power);
+        compound.putInt("empowering", empowering);
+        compound.putInt("radiating", radiating);
+    }
+
+    public static Spellcast read(CompoundTag compound)
+    {
+        var sequence = readSequenceNBT(compound.getList("sequence", Tag.TAG_STRING));
+
+        SpellShape shape = SpellShapes.getShape(compound.getString("shape"));
+        SpellEffect effect = SpellEffects.getEffect(compound.getString("effect"));
+        int power = compound.getInt("power");
+        int empowering = compound.getInt("empowering");
+        int radiating = compound.getInt("radiating");
+        return new Spellcast(sequence, shape, effect, power, empowering, radiating);
+    }
+
+    public static List<Element> readSequenceNBT(ListTag sequenceTag)
+    {
+        var list = new ArrayList<Element>();
+        for (int i = 0; i < sequenceTag.size(); i++)
+        {
+            String element = sequenceTag.getString(i);
+            list.add(Element.byName(element));
+        }
+        return list;
+    }
+
+    public InitializedSpellcast init(Level level, Player player)
+    {
+        return new InitializedSpellcast(sequence, shape, effect, power, empowering, radiating, level, player);
     }
 
     public List<Element> getSequence()
@@ -57,14 +90,14 @@ public class Spellcast
         return sequence;
     }
 
-    public void setProjectile(Entity entity)
+    public ListTag getSequenceNBT()
     {
-        projectile = entity;
-    }
-
-    public InitializedSpellcast init(Level world, Player player)
-    {
-        return new InitializedSpellcast(sequence, shape, effect, projectile, power, rand, empowering, radiating, spellCost, world, player);
+        ListTag list = new ListTag();
+        for (Element e : sequence)
+        {
+            list.add(StringTag.valueOf(e.getName()));
+        }
+        return list;
     }
 
     public SpellShape getShape()
@@ -97,44 +130,9 @@ public class Spellcast
         return radiating;
     }
 
-    public MagicAmounts getSpellCost()
-    {
-        return spellCost;
-    }
-
-    public void setSpellCost(MagicAmounts spellCost)
-    {
-        this.spellCost = spellCost;
-    }
-
-    public ListTag getSequenceNBT()
-    {
-        ListTag list = new ListTag();
-        for (Element e : sequence)
-        {
-            list.add(StringTag.valueOf(e.getName()));
-        }
-        return list;
-    }
-
     public int getPower()
     {
         return power;
-    }
-
-    public Entity getProjectile()
-    {
-        return projectile;
-    }
-
-    protected RandomSource getRandom()
-    {
-        return rand;
-    }
-
-    protected void setRandom(RandomSource rand)
-    {
-        this.rand = rand;
     }
 
     public int getTiming()

@@ -3,7 +3,6 @@ package dev.gigaherz.elementsofpower.spells.effects;
 import dev.gigaherz.elementsofpower.spells.InitializedSpellcast;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -33,18 +32,18 @@ public class BlastEffect extends SpellEffect
     }
 
     @Override
-    public void processDirectHit(InitializedSpellcast cast, Entity entity, Vec3 hitVec)
+    public void processDirectHit(InitializedSpellcast cast, Entity entity, Vec3 hitVec, Entity directEntity)
     {
 
     }
 
     @Override
-    public boolean processEntitiesAroundBefore(InitializedSpellcast cast, Vec3 hitVec)
+    public boolean processEntitiesAroundBefore(InitializedSpellcast cast, Vec3 hitVec, Entity directEntity)
     {
-        if (!cast.world.isClientSide)
+        if (!cast.level.isClientSide)
         {
-            boolean doGriefing = cast.world.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
-            cast.world.explode(cast.player, hitVec.x, hitVec.y, hitVec.z,
+            boolean doGriefing = cast.level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
+            cast.level.explode(cast.player, hitVec.x, hitVec.y, hitVec.z,
                     cast.getDamageForce(), doGriefing, doGriefing ? Level.ExplosionInteraction.TNT : Level.ExplosionInteraction.NONE);
         }
 
@@ -52,7 +51,7 @@ public class BlastEffect extends SpellEffect
     }
 
     @Override
-    public void processEntitiesAroundAfter(InitializedSpellcast cast, Vec3 hitVec)
+    public void processEntitiesAroundAfter(InitializedSpellcast cast, Vec3 hitVec, Entity directEntity)
     {
 
     }

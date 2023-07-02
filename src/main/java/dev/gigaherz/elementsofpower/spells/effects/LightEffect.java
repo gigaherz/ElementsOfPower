@@ -36,19 +36,19 @@ public class LightEffect extends SpellEffect
     }
 
     @Override
-    public void processDirectHit(InitializedSpellcast cast, Entity entity, Vec3 hitVec)
+    public void processDirectHit(InitializedSpellcast cast, Entity entity, Vec3 hitVec, Entity directEntity)
     {
 
     }
 
     @Override
-    public boolean processEntitiesAroundBefore(InitializedSpellcast cast, Vec3 hitVec)
+    public boolean processEntitiesAroundBefore(InitializedSpellcast cast, Vec3 hitVec, Entity directEntity)
     {
         return true;
     }
 
     @Override
-    public void processEntitiesAroundAfter(InitializedSpellcast cast, Vec3 hitVec)
+    public void processEntitiesAroundAfter(InitializedSpellcast cast, Vec3 hitVec, Entity directEntity)
     {
 
     }
@@ -69,7 +69,7 @@ public class LightEffect extends SpellEffect
         if (mop != null && mop.getType() == HitResult.Type.BLOCK)
         {
             blockPos = blockPos.relative(((BlockHitResult) mop).getDirection());
-            currentState = cast.world.getBlockState(blockPos);
+            currentState = cast.level.getBlockState(blockPos);
         }
 
         int density = Mth.clamp((int) (16 - 16 * r), 1, 16);
@@ -78,11 +78,11 @@ public class LightEffect extends SpellEffect
 
         if (currentState.isAir())
         {
-            cast.world.setBlockAndUpdate(blockPos, ElementsOfPowerBlocks.LIGHT.get().defaultBlockState().setValue(LightBlock.DENSITY, density));
+            cast.level.setBlockAndUpdate(blockPos, ElementsOfPowerBlocks.LIGHT.get().defaultBlockState().setValue(LightBlock.DENSITY, density));
         }
         else if (block == ElementsOfPowerBlocks.LIGHT.get())
         {
-            ElementsOfPowerBlocks.LIGHT.get().resetCooldown(cast.world, blockPos, currentState, density);
+            ElementsOfPowerBlocks.LIGHT.get().resetCooldown(cast.level, blockPos, currentState, density);
         }
     }
 }

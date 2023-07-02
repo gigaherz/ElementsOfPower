@@ -158,7 +158,7 @@ public class MagicContainerOverlay implements IGuiOverlay
                     Spellcast temp = SpellManager.makeSpell(savedSequence);
                     if (temp != null)
                     {
-                        MagicAmounts cost = temp.getSpellCost();
+                        MagicAmounts cost = SpellManager.computeCost(temp);
                         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
                         {
                             if (Mth.equal(cost.get(i), 0))
@@ -197,7 +197,7 @@ public class MagicContainerOverlay implements IGuiOverlay
                 Spellcast temp = SpellManager.makeSpell(sequence);
                 if (temp != null)
                 {
-                    MagicAmounts cost = temp.getSpellCost();
+                    MagicAmounts cost = SpellManager.computeCost(temp);
                     for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
                     {
                         if (Mth.equal(cost.get(i), 0))

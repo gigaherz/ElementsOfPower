@@ -4,14 +4,15 @@ import dev.gigaherz.elementsofpower.analyzer.menu.AnalyzerMenu;
 import dev.gigaherz.elementsofpower.analyzer.menu.AnalyzerScreen;
 import dev.gigaherz.elementsofpower.capabilities.MagicContainerCapability;
 import dev.gigaherz.elementsofpower.capabilities.PlayerCombinedMagicContainers;
-import dev.gigaherz.elementsofpower.client.ModelVariants;
 import dev.gigaherz.elementsofpower.client.NbtToModel;
 import dev.gigaherz.elementsofpower.client.StaffModel;
 import dev.gigaherz.elementsofpower.client.WandUseManager;
-import dev.gigaherz.elementsofpower.client.renderers.BallEntityRenderer;
+import dev.gigaherz.elementsofpower.client.renderers.entities.BallEntityRenderer;
 import dev.gigaherz.elementsofpower.client.renderers.EssentializerTileEntityRender;
+import dev.gigaherz.elementsofpower.client.renderers.entities.PillarEntityRenderer;
 import dev.gigaherz.elementsofpower.cocoons.*;
 import dev.gigaherz.elementsofpower.entities.BallEntity;
+import dev.gigaherz.elementsofpower.entities.PillarEntity;
 import dev.gigaherz.elementsofpower.essentializer.ColoredSmokeData;
 import dev.gigaherz.elementsofpower.essentializer.EssentializerBlockEntity;
 import dev.gigaherz.elementsofpower.essentializer.menu.EssentializerMenu;
@@ -56,11 +57,9 @@ import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
@@ -70,7 +69,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import top.theillusivec4.curios.api.SlotTypeMessage;
 
 import java.util.*;
 
@@ -94,10 +92,14 @@ public class ElementsOfPowerMod
     private static final DeferredRegister<CreativeModeTab> CREATIVE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
     private static final DeferredRegister<PlacementModifierType<?>> PLACEMENT_MODIFIER_TYPES = DeferredRegister.create(Registries.PLACEMENT_MODIFIER_TYPE, MODID);
 
-    public static final RegistryObject<EntityType<BallEntity>> SPELL_BALL_ENTITY_TYPE = ENTITY_TYPES.register("spell_ball", () ->
+    public static final RegistryObject<EntityType<BallEntity>> BALL_ENTITY_TYPE = ENTITY_TYPES.register("spell_ball", () ->
             EntityType.Builder.<BallEntity>of(BallEntity::new, MobCategory.MISC)
             .sized(0.5f, 0.5f)
             .setTrackingRange(80).setUpdateInterval(3).setShouldReceiveVelocityUpdates(true).build(location("spell_ball").toString()));
+    public static final RegistryObject<EntityType<PillarEntity>> PILLAR_ENTITY_TYPE = ENTITY_TYPES.register("spell_pillar", () ->
+            EntityType.Builder.<PillarEntity>of(PillarEntity::new, MobCategory.MISC)
+                    .sized(0.5f, 0.5f)
+                    .setTrackingRange(80).setUpdateInterval(3).setShouldReceiveVelocityUpdates(true).build(location("spell_pillar").toString()));
 
     public static final RegistryObject<BlockEntityType<EssentializerBlockEntity>> ESSENTIALIZER_BLOCK_ENTITY = BLOCK_ENTITIES.register("essentializer", () ->
             BlockEntityType.Builder.of(EssentializerBlockEntity::new, ElementsOfPowerBlocks.ESSENTIALIZER.get()).build(null)
@@ -261,7 +263,8 @@ public class ElementsOfPowerMod
         @SubscribeEvent
         public static void renderers(EntityRenderersEvent.RegisterRenderers event)
         {
-            event.registerEntityRenderer(SPELL_BALL_ENTITY_TYPE.get(), BallEntityRenderer::new);
+            event.registerEntityRenderer(BALL_ENTITY_TYPE.get(), BallEntityRenderer::new);
+            event.registerEntityRenderer(PILLAR_ENTITY_TYPE.get(), PillarEntityRenderer::new);
 
             event.registerBlockEntityRenderer(ESSENTIALIZER_BLOCK_ENTITY.get(), EssentializerTileEntityRender::new);
         }

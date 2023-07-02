@@ -3,7 +3,6 @@ package dev.gigaherz.elementsofpower.spells.shapes;
 import dev.gigaherz.elementsofpower.spells.InitializedSpellcast;
 import dev.gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -141,7 +140,7 @@ public class ConeShape extends SpellShape
 
         final AABB aabb = getConeBounds(cast);
 
-        List<Entity> entities = cast.world.getEntities(cast.player, aabb, (e) ->
+        List<Entity> entities = cast.level.getEntities(cast.player, aabb, (e) ->
         {
             if (e == null)
                 return false;
@@ -166,7 +165,7 @@ public class ConeShape extends SpellShape
 
         for (Entity e : entities)
         {
-            cast.getEffect().processDirectHit(cast, e, playerPos);
+            cast.getEffect().processDirectHit(cast, e, playerPos, cast.player);
         }
 
         int x0 = (int) Math.floor(aabb.minX);
@@ -186,18 +185,18 @@ public class ConeShape extends SpellShape
                     Vec3 pt = new Vec3(x + 0.5, y + 0.5, z + 0.5);
                     if (isPointInCone(cast, pt))
                     {
-                        BlockHitResult mop = cast.world.clip(new ClipContext(playerPos, pt, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, cast.player));
+                        BlockHitResult mop = cast.level.clip(new ClipContext(playerPos, pt, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, cast.player));
                         if (mop.getType() != HitResult.Type.MISS)
                         {
                             BlockPos pos = mop.getBlockPos();
-                            BlockState state = cast.world.getBlockState(pos);
+                            BlockState state = cast.level.getBlockState(pos);
 
                             cast.getEffect().processBlockWithinRadius(cast, pos, state, (float) pt.distanceTo(playerPos), mop);
                         }
                         else
                         {
                             BlockPos pos = new BlockPos(x, y, z);
-                            BlockState state = cast.world.getBlockState(pos);
+                            BlockState state = cast.level.getBlockState(pos);
                             cast.getEffect().processBlockWithinRadius(cast, pos, state, (float) pt.distanceTo(playerPos), null);
                         }
                     }

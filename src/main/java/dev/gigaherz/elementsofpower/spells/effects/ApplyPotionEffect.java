@@ -44,7 +44,7 @@ public class ApplyPotionEffect extends SpellEffect
         return 8;
     }
 
-    private void applyEffects(InitializedSpellcast cast, Vec3 hitVec, List<? extends LivingEntity> living)
+    private void applyEffects(InitializedSpellcast cast, Vec3 hitVec, List<? extends LivingEntity> living, Entity directSource)
     {
         for (LivingEntity e : living)
         {
@@ -57,38 +57,38 @@ public class ApplyPotionEffect extends SpellEffect
 
             double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-            applyEffects(cast, distance, e);
+            applyEffects(cast, distance, e, directSource);
         }
     }
 
-    private void applyEffects(InitializedSpellcast cast, double distance, LivingEntity e)
+    private void applyEffects(InitializedSpellcast cast, double distance, LivingEntity e, Entity directSource)
     {
         double lv = Math.max(0, cast.getDamageForce() - distance);
 
         int emp = cast.getEmpowering();
 
         if (-emp < lv && instant != null)
-            causePotionEffect(cast, e, instant, 0, (lv + emp) * 0.5, 0.0);
+            causePotionEffect(cast, directSource, e, instant, 0, (lv + emp) * 0.5, 0.0);
 
         if (emp < lv && overTime != null)
-            causePotionEffect(cast, e, overTime, 0, (lv - emp), 100.0);
+            causePotionEffect(cast, directSource, e, overTime, 0, (lv - emp), 100.0);
     }
 
     @Override
-    public void processDirectHit(InitializedSpellcast cast, Entity entity, Vec3 hitVec)
+    public void processDirectHit(InitializedSpellcast cast, Entity entity, Vec3 hitVec, Entity directEntity)
     {
         if (entity instanceof LivingEntity)
-            applyEffects(cast, 0, (LivingEntity) entity);
+            applyEffects(cast, 0, (LivingEntity) entity, cast.player);
     }
 
     @Override
-    public boolean processEntitiesAroundBefore(InitializedSpellcast cast, Vec3 hitVec)
+    public boolean processEntitiesAroundBefore(InitializedSpellcast cast, Vec3 hitVec, Entity directEntity)
     {
         return true;
     }
 
     @Override
-    public void processEntitiesAroundAfter(InitializedSpellcast cast, Vec3 hitVec)
+    public void processEntitiesAroundAfter(InitializedSpellcast cast, Vec3 hitVec, Entity directEntity)
     {
         AABB aabb = new AABB(
                 hitVec.x - cast.getDamageForce(),
@@ -98,8 +98,8 @@ public class ApplyPotionEffect extends SpellEffect
                 hitVec.y + cast.getDamageForce(),
                 hitVec.z + cast.getDamageForce());
 
-        List<LivingEntity> living = cast.world.getEntitiesOfClass(LivingEntity.class, aabb);
-        applyEffects(cast, hitVec, living);
+        List<LivingEntity> living = cast.level.getEntitiesOfClass(LivingEntity.class, aabb);
+        applyEffects(cast, hitVec, living, directEntity);
     }
 
     @Override

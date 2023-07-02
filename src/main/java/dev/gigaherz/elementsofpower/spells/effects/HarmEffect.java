@@ -36,7 +36,7 @@ public class HarmEffect extends SpellEffect
         return 8;
     }
 
-    private void witherEntities(InitializedSpellcast cast, Vec3 hitVec, List<? extends LivingEntity> living)
+    private void witherEntities(InitializedSpellcast cast, Vec3 hitVec, List<? extends LivingEntity> living, Entity directCause)
     {
         for (LivingEntity e : living)
         {
@@ -49,32 +49,32 @@ public class HarmEffect extends SpellEffect
 
             double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-            applyEffectsToEntity(cast, distance, e);
+            applyEffectsToEntity(cast, distance, e, directCause);
         }
     }
 
-    private void applyEffectsToEntity(InitializedSpellcast cast, double distance, LivingEntity e)
+    private void applyEffectsToEntity(InitializedSpellcast cast, double distance, LivingEntity e, Entity directCause)
     {
         double lv = Math.max(0, cast.getDamageForce() - distance);
 
-        causePotionEffect(cast, e, MobEffects.HARM, 0, lv, 0.0);
+        causePotionEffect(cast, directCause, e, MobEffects.HARM, 0, lv, 0.0);
     }
 
     @Override
-    public void processDirectHit(InitializedSpellcast cast, Entity entity, Vec3 hitVec)
+    public void processDirectHit(InitializedSpellcast cast, Entity entity, Vec3 hitVec, Entity directEntity)
     {
         if (entity instanceof LivingEntity)
-            applyEffectsToEntity(cast, 0, (LivingEntity) entity);
+            applyEffectsToEntity(cast, 0, (LivingEntity) entity, cast.player);
     }
 
     @Override
-    public boolean processEntitiesAroundBefore(InitializedSpellcast cast, Vec3 hitVec)
+    public boolean processEntitiesAroundBefore(InitializedSpellcast cast, Vec3 hitVec, Entity directEntity)
     {
         return true;
     }
 
     @Override
-    public void processEntitiesAroundAfter(InitializedSpellcast cast, Vec3 hitVec)
+    public void processEntitiesAroundAfter(InitializedSpellcast cast, Vec3 hitVec, Entity directEntity)
     {
         AABB aabb = new AABB(
                 hitVec.x - cast.getDamageForce(),
@@ -84,8 +84,8 @@ public class HarmEffect extends SpellEffect
                 hitVec.y + cast.getDamageForce(),
                 hitVec.z + cast.getDamageForce());
 
-        List<LivingEntity> living = cast.world.getEntitiesOfClass(LivingEntity.class, aabb);
-        witherEntities(cast, hitVec, living);
+        List<LivingEntity> living = cast.level.getEntitiesOfClass(LivingEntity.class, aabb);
+        witherEntities(cast, hitVec, living, directEntity);
     }
 
     @Override
@@ -102,11 +102,11 @@ public class HarmEffect extends SpellEffect
 
         if (block == Blocks.GRASS_BLOCK)
         {
-            cast.world.setBlockAndUpdate(blockPos, Blocks.DIRT.defaultBlockState());
+            cast.level.setBlockAndUpdate(blockPos, Blocks.DIRT.defaultBlockState());
         }
         else if (block == Blocks.DIRT)
         {
-            cast.world.setBlockAndUpdate(blockPos, Blocks.COARSE_DIRT.defaultBlockState());
+            cast.level.setBlockAndUpdate(blockPos, Blocks.COARSE_DIRT.defaultBlockState());
         }
     }
 }

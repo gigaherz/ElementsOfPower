@@ -6,6 +6,7 @@ import dev.gigaherz.elementsofpower.spells.effects.SpellEffect;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.EvokerFangs;
@@ -18,7 +19,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class PillarShape extends SpellShape
+public class WallShape extends SpellShape
 {
     @Override
     public float getScale(InitializedSpellcast cast)
@@ -86,18 +87,18 @@ public class PillarShape extends SpellShape
     }
 
     @Override
-    public void onImpact(InitializedSpellcast cast, HitResult mop)
+    public void onImpact(InitializedSpellcast cast, HitResult mop, Entity directEntity)
     {
         SpellEffect effect = cast.getEffect();
 
         if (mop.getType() == HitResult.Type.ENTITY)
         {
-            effect.processDirectHit(cast, ((EntityHitResult) mop).getEntity(), mop.getLocation());
+            effect.processDirectHit(cast, ((EntityHitResult) mop).getEntity(), mop.getLocation(), directEntity);
         }
 
         effect.spawnBallParticles(cast, mop);
 
-        if (!effect.processEntitiesAroundBefore(cast, mop.getLocation()))
+        if (!effect.processEntitiesAroundBefore(cast, mop.getLocation(), directEntity))
             return;
 
         int force = cast.getDamageForce();
@@ -142,7 +143,7 @@ public class PillarShape extends SpellShape
 
                         Vec3 start = vec.add(dir.scale(0.5));
                         Vec3 end = new Vec3(px + 0.5, py + 0.5, pz + 0.5);
-                        BlockHitResult mop2 = cast.world.clip(new ClipContext(start, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, cast.player));
+                        BlockHitResult mop2 = cast.level.clip(new ClipContext(start, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, cast.player));
                         if (mop2.getType() != HitResult.Type.MISS)
                             if (!mop2.getBlockPos().equals(np))
                                 continue;
@@ -150,7 +151,7 @@ public class PillarShape extends SpellShape
                         float r = (float) Math.sqrt(r2);
 
 
-                        BlockState currentState = cast.world.getBlockState(np);
+                        BlockState currentState = cast.level.getBlockState(np);
 
                         effect.processBlockWithinRadius(cast, np, currentState, r, null);
                     }
@@ -158,7 +159,7 @@ public class PillarShape extends SpellShape
             }
         }
 
-        effect.processEntitiesAroundAfter(cast, mop.getLocation());
+        effect.processEntitiesAroundAfter(cast, mop.getLocation(), directEntity);
     }
 
     @Override

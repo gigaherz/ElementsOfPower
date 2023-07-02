@@ -26,7 +26,7 @@ public class SynchronizeSpellcastState
     public SynchronizeSpellcastState(ChangeMode mode, InitializedSpellcast cast)
     {
         changeMode = mode;
-        cast.writeToNBT(spellcast);
+        cast.write(spellcast);
         casterID = cast.getCastingPlayer().getId();
     }
 

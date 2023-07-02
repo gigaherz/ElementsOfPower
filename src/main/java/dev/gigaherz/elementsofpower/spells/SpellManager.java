@@ -65,6 +65,27 @@ public class SpellManager
         return b.build(sequence);
     }
 
+    public static MagicAmounts computeCost(Spellcast cast)
+    {
+        MagicAmounts amounts = MagicAmounts.EMPTY;
+
+        var sequence = cast.getSequence();
+        if (sequence.size() > 0)
+        {
+            HashMultiset<Element> multiset = HashMultiset.create();
+            multiset.addAll(sequence);
+
+            float total = (float) Math.ceil(Math.pow(3, sequence.size()) * (1 + 0.6 * multiset.size()));
+
+            for (Multiset.Entry<Element> e : multiset.entrySet())
+            {
+                amounts = amounts.add(e.getElement(), total * e.getCount() / sequence.size());
+            }
+        }
+
+        return amounts;
+    }
+
     private static class SpellBuilder
     {
         private SpellState spellState = SpellState.START;
@@ -109,33 +130,7 @@ public class SpellManager
             if (radiance != 0)
                 cast.setRadiating(empowering);
 
-            cast.setSpellCost(computeCost());
-
             return cast;
-        }
-
-        private MagicAmounts computeCost()
-        {
-            MagicAmounts amounts = MagicAmounts.EMPTY;
-
-            if (sequence.size() > 0)
-            {
-                var power = usageTypes.getOrDefault(ElementUsageType.EMPOWER, 0) + 1;
-                var mix = usageTypes.getOrDefault(ElementUsageType.MIX, 0);
-                var modify = usageTypes.getOrDefault(ElementUsageType.MODIFY, 0);
-
-                HashMultiset<Element> multiset = HashMultiset.create();
-                multiset.addAll(sequence);
-
-                float total = (float) Math.ceil(Math.pow(3, sequence.size()) * (1 + 0.6 * multiset.size()));
-
-                for (Multiset.Entry<Element> e : multiset.entrySet())
-                {
-                    amounts = amounts.add(e.getElement(), total * e.getCount() / sequence.size());
-                }
-            }
-
-            return amounts;
         }
 
         private boolean doTransition(Element e)
@@ -313,7 +308,7 @@ public class SpellManager
                 ShapeType.BALL, SpellShapes.BALL,
                 ShapeType.BEAM, SpellShapes.BEAM,
                 ShapeType.CONE, SpellShapes.CONE,
-                ShapeType.PILLAR, SpellShapes.PILLAR,
+                ShapeType.PILLAR, SpellShapes.WALL,
                 ShapeType.SELF, SpellShapes.SELF,
                 ShapeType.SINGLE, SpellShapes.SINGLE,
                 ShapeType.SPHERE, SpellShapes.SPHERE

@@ -33,12 +33,12 @@ public class SingleShape extends SpellShape
         {
             if (mop.getType() == HitResult.Type.ENTITY)
             {
-                cast.getEffect().processDirectHit(cast, ((EntityHitResult) mop).getEntity(), mop.getLocation());
+                cast.getEffect().processDirectHit(cast, ((EntityHitResult) mop).getEntity(), mop.getLocation(), cast.player);
             }
             else if (mop.getType() == HitResult.Type.BLOCK)
             {
                 BlockPos pos = ((BlockHitResult) mop).getBlockPos();
-                BlockState state = cast.world.getBlockState(pos);
+                BlockState state = cast.level.getBlockState(pos);
                 cast.getEffect().processBlockWithinRadius(cast, pos, state, 0, mop);
             }
         }
