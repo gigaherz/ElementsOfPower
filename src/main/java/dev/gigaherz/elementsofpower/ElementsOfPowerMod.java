@@ -7,6 +7,7 @@ import dev.gigaherz.elementsofpower.capabilities.PlayerCombinedMagicContainers;
 import dev.gigaherz.elementsofpower.client.NbtToModel;
 import dev.gigaherz.elementsofpower.client.StaffModel;
 import dev.gigaherz.elementsofpower.client.WandUseManager;
+import dev.gigaherz.elementsofpower.client.models.PillarModel;
 import dev.gigaherz.elementsofpower.client.renderers.entities.BallEntityRenderer;
 import dev.gigaherz.elementsofpower.client.renderers.EssentializerTileEntityRender;
 import dev.gigaherz.elementsofpower.client.renderers.entities.PillarEntityRenderer;
@@ -95,11 +96,14 @@ public class ElementsOfPowerMod
     public static final RegistryObject<EntityType<BallEntity>> BALL_ENTITY_TYPE = ENTITY_TYPES.register("spell_ball", () ->
             EntityType.Builder.<BallEntity>of(BallEntity::new, MobCategory.MISC)
             .sized(0.5f, 0.5f)
-            .setTrackingRange(80).setUpdateInterval(3).setShouldReceiveVelocityUpdates(true).build(location("spell_ball").toString()));
+            .setTrackingRange(80).setUpdateInterval(3).setShouldReceiveVelocityUpdates(true)
+                    .build(location("spell_ball").toString()));
     public static final RegistryObject<EntityType<PillarEntity>> PILLAR_ENTITY_TYPE = ENTITY_TYPES.register("spell_pillar", () ->
             EntityType.Builder.<PillarEntity>of(PillarEntity::new, MobCategory.MISC)
-                    .sized(0.5f, 0.5f)
-                    .setTrackingRange(80).setUpdateInterval(3).setShouldReceiveVelocityUpdates(true).build(location("spell_pillar").toString()));
+                    .sized(14/16.0f, 31/16.0f).fireImmune()
+                    .setTrackingRange(80).setUpdateInterval(3).setShouldReceiveVelocityUpdates(true)
+                    .setCustomClientFactory((packet,level) -> new PillarEntity(ElementsOfPowerMod.PILLAR_ENTITY_TYPE.get(), level))
+                            .build(location("spell_pillar").toString()));
 
     public static final RegistryObject<BlockEntityType<EssentializerBlockEntity>> ESSENTIALIZER_BLOCK_ENTITY = BLOCK_ENTITIES.register("essentializer", () ->
             BlockEntityType.Builder.of(EssentializerBlockEntity::new, ElementsOfPowerBlocks.ESSENTIALIZER.get()).build(null)
@@ -270,18 +274,33 @@ public class ElementsOfPowerMod
         }
 
         @SubscribeEvent
+        public static void renderers(EntityRenderersEvent.RegisterLayerDefinitions event)
+        {
+            event.registerLayerDefinition(PillarModel.LAYER_LOCATION, PillarModel::createBodyLayer);
+        }
+
+        @SubscribeEvent
         public static void clientSetup(FMLClientSetupEvent event)
         {
             event.enqueueWork(() -> {
                 MenuScreens.register(ANALYZER_MENU.get(), AnalyzerScreen::new);
                 MenuScreens.register(ESSENTIALIZER_MENU.get(), EssentializerScreen::new);
+
+                Gemstone.values.forEach(gem -> {
+                    if (gem.generateCustomOre())
+                    {
+                        for (var ore : gem.getOres())
+                        {
+                            ItemBlockRenderTypes.setRenderLayer(ore, RenderType.translucent());
+                        }
+                    }
+                });
+
+                ItemBlockRenderTypes.setRenderLayer(ElementsOfPowerBlocks.DUST.get(), RenderType.translucent());
+                ItemBlockRenderTypes.setRenderLayer(ElementsOfPowerBlocks.MIST.get(), RenderType.translucent());
+                ItemBlockRenderTypes.setRenderLayer(ElementsOfPowerBlocks.CUSHION.get(), RenderType.translucent());
+                ItemBlockRenderTypes.setRenderLayer(ElementsOfPowerBlocks.LIGHT.get(), RenderType.translucent());
             });
-
-            ItemBlockRenderTypes.setRenderLayer(ElementsOfPowerBlocks.DUST.get(), RenderType.translucent());
-            ItemBlockRenderTypes.setRenderLayer(ElementsOfPowerBlocks.MIST.get(), RenderType.translucent());
-            ItemBlockRenderTypes.setRenderLayer(ElementsOfPowerBlocks.CUSHION.get(), RenderType.translucent());
-            ItemBlockRenderTypes.setRenderLayer(ElementsOfPowerBlocks.LIGHT.get(), RenderType.translucent());
-
             WandUseManager.initialize();
         }
     }

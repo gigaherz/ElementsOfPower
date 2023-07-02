@@ -6,7 +6,7 @@ public enum ShapeType
     SPHERE,
     BALL,
     CONE,
-    PILLAR,
+    WALL,
     BEAM,
     SELF,
     SINGLE

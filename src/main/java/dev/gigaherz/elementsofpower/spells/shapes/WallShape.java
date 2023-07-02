@@ -1,5 +1,6 @@
 package dev.gigaherz.elementsofpower.spells.shapes;
 
+import dev.gigaherz.elementsofpower.entities.PillarEntity;
 import dev.gigaherz.elementsofpower.spells.InitializedSpellcast;
 import dev.gigaherz.elementsofpower.spells.Spellcast;
 import dev.gigaherz.elementsofpower.spells.effects.SpellEffect;
@@ -27,7 +28,8 @@ public class WallShape extends SpellShape
         return 1 + 0.25f * cast.getDamageForce();
     }
 
-    private boolean createSpellEntity(LivingEntity caster, double posX, double posZ, double minY, double maxY, float yaw, int delayTicks) {
+    private boolean createSpellEntity(InitializedSpellcast cast, double posX, double posZ, double minY, double maxY, float yaw, int delayTicks) {
+        var caster = cast.player;
         BlockPos blockpos = BlockPos.containing(posX, maxY, posZ);
         boolean flag = false;
         double d0 = 0.0D;
@@ -52,7 +54,8 @@ public class WallShape extends SpellShape
         } while(blockpos.getY() >= Mth.floor(minY) - 1);
 
         if (flag) {
-            return caster.level().addFreshEntity(new EvokerFangs(caster.level(), posX, (double)blockpos.getY() + d0, posZ, yaw, delayTicks, caster));
+            return caster.level().addFreshEntity(new PillarEntity(caster.level(), caster, cast, posX, (double)blockpos.getY() + d0, posZ, yaw, delayTicks));
+            //return caster.level().addFreshEntity(new EvokerFangs(caster.level(), posX, (double)blockpos.getY() + d0, posZ, yaw, delayTicks, caster));
         }
 
         return false;
@@ -67,9 +70,9 @@ public class WallShape extends SpellShape
         var interval = 1.0f + cast.getRadiating()/4.0f;
 
         var delayFirst = 5;
-        var delayInterval = Math.max(0, 3 - cast.getTiming());
+        var delayInterval = 3; // Math.max(0, 3 - cast.getTiming());
 
-        var yaw = Math.toRadians(player.getYHeadRot() + 90);
+        var yaw = player.getYRot();
 
         double minY = player.getY() - 5;
         double maxY = player.getY() + 1.0D;
@@ -78,10 +81,10 @@ public class WallShape extends SpellShape
         for(int i=0;i<(3 + cast.getPower());i++)
         {
             float distance = first + interval * i;
-            var pX = player.getX() + Math.cos(yaw) * distance;
-            var pZ = player.getZ() + Math.sin(yaw) * distance;
+            var pX = player.getX() + Math.cos(Math.toRadians(yaw + 90)) * distance;
+            var pZ = player.getZ() + Math.sin(Math.toRadians(yaw + 90)) * distance;
 
-            createdAny |= createSpellEntity(player, pX, pZ, minY, maxY, (float)yaw, delayFirst + delayInterval * i);
+            createdAny |= createSpellEntity(spellcast, pX, pZ, minY, maxY, yaw, delayFirst + delayInterval * i);
         }
         return createdAny ? spellcast : null;
     }

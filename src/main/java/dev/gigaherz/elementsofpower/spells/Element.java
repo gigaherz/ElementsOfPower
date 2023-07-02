@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 public enum Element
 {
     FIRE("fire", 1, ShapeType.CONE, EffectType.FLAME, () -> ElementsOfPowerBlocks.FIRE_COCOON, () -> ElementsOfPowerItems.FIRE_COCOON, () -> ElementsOfPowerItems.FIRE_ORB, 0xFFff3e00),
-    WATER("water", 0, ShapeType.PILLAR, EffectType.WATER, () -> ElementsOfPowerBlocks.WATER_COCOON, () -> ElementsOfPowerItems.WATER_COCOON, () -> ElementsOfPowerItems.WATER_ORB, 0xFF005dff),
+    WATER("water", 0, ShapeType.WALL, EffectType.WATER, () -> ElementsOfPowerBlocks.WATER_COCOON, () -> ElementsOfPowerItems.WATER_COCOON, () -> ElementsOfPowerItems.WATER_ORB, 0xFF005dff),
     AIR("air", 3, ShapeType.SPHERE, EffectType.PUSH, () -> ElementsOfPowerBlocks.AIR_COCOON, () -> ElementsOfPowerItems.AIR_COCOON, () -> ElementsOfPowerItems.AIR_ORB, 0xFFffed96),
     EARTH("earth", 2, ShapeType.BALL, EffectType.DUST, () -> ElementsOfPowerBlocks.EARTH_COCOON, () -> ElementsOfPowerItems.EARTH_COCOON, () -> ElementsOfPowerItems.EARTH_ORB, 0xFF7f3300),
     LIGHT("light", 5, ShapeType.BEAM, EffectType.LIGHT, () -> ElementsOfPowerBlocks.LIGHT_COCOON, () -> ElementsOfPowerItems.LIGHT_COCOON, () -> ElementsOfPowerItems.LIGHT_ORB, 0xFFffffff),

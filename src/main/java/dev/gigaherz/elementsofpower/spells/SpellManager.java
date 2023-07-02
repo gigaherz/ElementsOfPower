@@ -308,7 +308,7 @@ public class SpellManager
                 ShapeType.BALL, SpellShapes.BALL,
                 ShapeType.BEAM, SpellShapes.BEAM,
                 ShapeType.CONE, SpellShapes.CONE,
-                ShapeType.PILLAR, SpellShapes.WALL,
+                ShapeType.WALL, SpellShapes.WALL,
                 ShapeType.SELF, SpellShapes.SELF,
                 ShapeType.SINGLE, SpellShapes.SINGLE,
                 ShapeType.SPHERE, SpellShapes.SPHERE
