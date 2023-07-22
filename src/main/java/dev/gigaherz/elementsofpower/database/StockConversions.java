@@ -464,7 +464,7 @@ public class StockConversions
         @Override
         public ItemEssenceEntry darkness(float amount)
         {
-            amounts = amounts.darkness(amount);
+            amounts = amounts.time(amount);
             return this;
         }
 
@@ -478,7 +478,7 @@ public class StockConversions
         @Override
         public ItemEssenceEntry death(float amount)
         {
-            amounts = amounts.death(amount);
+            amounts = amounts.chaos(amount);
             return this;
         }
 

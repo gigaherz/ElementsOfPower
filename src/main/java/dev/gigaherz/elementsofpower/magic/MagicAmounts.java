@@ -24,14 +24,14 @@ public class MagicAmounts implements INBTSerializable<CompoundTag>
 {
     public static final Codec<MagicAmounts> CODEC = RecordCodecBuilder
             .create(instance -> instance.group(
-                    Codec.FLOAT.fieldOf("fire").forGetter(i -> i.get(0)),
-                    Codec.FLOAT.fieldOf("water").forGetter(i -> i.get(1)),
-                    Codec.FLOAT.fieldOf("air").forGetter(i -> i.get(2)),
-                    Codec.FLOAT.fieldOf("earth").forGetter(i -> i.get(3)),
-                    Codec.FLOAT.fieldOf("light").forGetter(i -> i.get(4)),
-                    Codec.FLOAT.fieldOf("darkness").forGetter(i -> i.get(5)),
-                    Codec.FLOAT.fieldOf("life").forGetter(i -> i.get(6)),
-                    Codec.FLOAT.fieldOf("death").forGetter(i -> i.get(7))
+                    Codec.FLOAT.fieldOf("fire").forGetter(MagicAmounts::fire),
+                    Codec.FLOAT.fieldOf("water").forGetter(MagicAmounts::water),
+                    Codec.FLOAT.fieldOf("air").forGetter(MagicAmounts::air),
+                    Codec.FLOAT.fieldOf("earth").forGetter(MagicAmounts::earth),
+                    Codec.FLOAT.fieldOf("light").forGetter(MagicAmounts::light),
+                    Codec.FLOAT.fieldOf("time").forGetter(MagicAmounts::time),
+                    Codec.FLOAT.fieldOf("life").forGetter(MagicAmounts::life),
+                    Codec.FLOAT.fieldOf("chaos").forGetter(MagicAmounts::chaos)
             ).apply(instance, MagicAmounts::new));
 
     public static final MagicAmounts EMPTY = new MagicAmounts();
@@ -44,9 +44,9 @@ public class MagicAmounts implements INBTSerializable<CompoundTag>
             ElementsOfPowerMod.MODID + ".element.air",
             ElementsOfPowerMod.MODID + ".element.earth",
             ElementsOfPowerMod.MODID + ".element.light",
-            ElementsOfPowerMod.MODID + ".element.darkness",
+            ElementsOfPowerMod.MODID + ".element.time",
             ElementsOfPowerMod.MODID + ".element.life",
-            ElementsOfPowerMod.MODID + ".element.death",
+            ElementsOfPowerMod.MODID + ".element.chaos",
     };
 
     public static MutableComponent getMagicName(int i)
@@ -211,6 +211,55 @@ public class MagicAmounts implements INBTSerializable<CompoundTag>
     }
 
     @CheckReturnValue
+    public float fire()
+    {
+        return get(0);
+    }
+
+    @CheckReturnValue
+    public float water()
+    {
+        return get(1);
+    }
+
+    @CheckReturnValue
+    public float air()
+    {
+        return get(2);
+    }
+
+    @CheckReturnValue
+    public float earth()
+    {
+        return get(3);
+    }
+
+    @CheckReturnValue
+    public float light()
+    {
+        return get(4);
+    }
+
+    @CheckReturnValue
+    public float time()
+    {
+        return get(5);
+    }
+
+    @CheckReturnValue
+    public float life()
+    {
+        return get(6);
+    }
+
+    @CheckReturnValue
+    public float chaos()
+    {
+        return get(7);
+    }
+
+
+    @CheckReturnValue
     public MagicAmounts fire(float amount)
     {
         return add(0, amount);
@@ -241,7 +290,7 @@ public class MagicAmounts implements INBTSerializable<CompoundTag>
     }
 
     @CheckReturnValue
-    public MagicAmounts darkness(float amount)
+    public MagicAmounts time(float amount)
     {
         return add(5, amount);
     }
@@ -253,7 +302,7 @@ public class MagicAmounts implements INBTSerializable<CompoundTag>
     }
 
     @CheckReturnValue
-    public MagicAmounts death(float amount)
+    public MagicAmounts chaos(float amount)
     {
         return add(7, amount);
     }

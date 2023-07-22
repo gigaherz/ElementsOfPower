@@ -6,6 +6,9 @@ import dev.gigaherz.elementsofpower.spells.Spellcast;
 import dev.gigaherz.elementsofpower.spells.effects.SpellEffect;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -34,7 +37,8 @@ public class WallShape extends SpellShape
         boolean flag = false;
         double d0 = 0.0D;
 
-        do {
+        do
+        {
             BlockPos blockpos1 = blockpos.below();
             BlockState blockstate = caster.level().getBlockState(blockpos1);
             if (blockstate.isFaceSturdy(caster.level(), blockpos1, Direction.UP)) {
@@ -51,11 +55,14 @@ public class WallShape extends SpellShape
             }
 
             blockpos = blockpos.below();
-        } while(blockpos.getY() >= Mth.floor(minY) - 1);
+        }
+        while(blockpos.getY() >= Mth.floor(minY) - 1);
 
-        if (flag) {
-            return caster.level().addFreshEntity(new PillarEntity(caster.level(), caster, cast, posX, (double)blockpos.getY() + d0, posZ, yaw, delayTicks));
-            //return caster.level().addFreshEntity(new EvokerFangs(caster.level(), posX, (double)blockpos.getY() + d0, posZ, yaw, delayTicks, caster));
+        double posY = blockpos.getY() + d0;
+
+        if (flag)
+        {
+            return caster.level().addFreshEntity(new PillarEntity(caster.level(), caster, cast, posX, posY, posZ, yaw, delayTicks));
         }
 
         return false;

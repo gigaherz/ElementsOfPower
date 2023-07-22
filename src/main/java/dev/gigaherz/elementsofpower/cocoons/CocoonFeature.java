@@ -1,12 +1,10 @@
 package dev.gigaherz.elementsofpower.cocoons;
 
 import com.mojang.serialization.Codec;
-import dev.gigaherz.elementsofpower.integration.aequivaleo.AequivaleoPlugin;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import dev.gigaherz.elementsofpower.magic.MagicGradient;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BiomeTags;
@@ -30,7 +28,7 @@ public class CocoonFeature extends Feature<NoneFeatureConfiguration>
     public static final TagKey<Block> REPLACEABLE_TAG = TagKey.create(Registries.BLOCK,new ResourceLocation("elementsofpower:can_cocoon_replace"));
 
     public static final MagicGradient OVERWORLD = new MagicGradient.Builder()
-            .addPoint(0, MagicAmounts.EMPTY.darkness(0.25f))
+            .addPoint(0, MagicAmounts.EMPTY.time(0.25f))
             .addPoint(1, MagicAmounts.EMPTY.light(0.25f))
             .addPoint(1, MagicAmounts.EMPTY.light(1))
             .build();
@@ -38,13 +36,13 @@ public class CocoonFeature extends Feature<NoneFeatureConfiguration>
     public static final MagicGradient THE_NETHER = new MagicGradient.Builder()
             .addPoint(0, MagicAmounts.EMPTY.fire(0.5f))
             .addPoint(1, MagicAmounts.EMPTY.fire(0.5f))
-            .addPoint(1, MagicAmounts.EMPTY.darkness(1))
+            .addPoint(1, MagicAmounts.EMPTY.time(1))
             .build();
 
     public static final MagicGradient THE_END = new MagicGradient.Builder()
-            .addPoint(0, MagicAmounts.EMPTY.darkness(0.5f))
-            .addPoint(1, MagicAmounts.EMPTY.darkness(0.5f))
-            .addPoint(1, MagicAmounts.EMPTY.darkness(1))
+            .addPoint(0, MagicAmounts.EMPTY.time(0.5f))
+            .addPoint(1, MagicAmounts.EMPTY.time(0.5f))
+            .addPoint(1, MagicAmounts.EMPTY.time(1))
             .build();
 
     public static final MagicGradient DEFAULT = new MagicGradient.Builder()
@@ -101,7 +99,7 @@ public class CocoonFeature extends Feature<NoneFeatureConfiguration>
             int z = pos.getZ() + rand.nextInt(11) - 5;
             if (y < 0)
             {
-                am = am.darkness(1);
+                am = am.time(1);
             }
             else if (y >= world.getMaxBuildHeight())
             {

@@ -2,14 +2,19 @@ package dev.gigaherz.elementsofpower.entities;
 
 import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.spells.InitializedSpellcast;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import net.minecraftforge.network.NetworkHooks;
@@ -58,6 +63,19 @@ public class PillarEntity extends Entity implements IEntityAdditionalSpawnData
         {
             this.setBoundingBox(this.makeBoundingBox());
         }
+
+        if (level().isClientSide && tickCount == delay)
+        {
+            var blockpos = BlockPos.containing(this.position()) ;
+            BlockState blockState = level().getBlockState(blockpos.below());
+            var options = new BlockParticleOption(ParticleTypes.BLOCK, blockState).setPos(blockpos.below());
+            for (int i = 0; i < 50; i++)
+            {
+                float offX = (random.nextFloat() - 0.5f);
+                float offZ = (random.nextFloat() - 0.5f);
+                level().addParticle(options, getX() + offX, getY() + 0.25f, getZ() + offZ, 0.1f * offX, 5, 0.1f * offZ);
+            }
+        }
     }
 
     public int delay()
@@ -86,7 +104,6 @@ public class PillarEntity extends Entity implements IEntityAdditionalSpawnData
     @Override
     protected void defineSynchedData()
     {
-
     }
 
     @Override

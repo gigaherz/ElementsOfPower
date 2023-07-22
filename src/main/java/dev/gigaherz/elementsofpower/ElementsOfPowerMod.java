@@ -58,6 +58,7 @@ import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -246,6 +247,12 @@ public class ElementsOfPowerMod
         modEventBus.addListener(this::gatherData);
         modEventBus.addListener(this::modelRegistry);
         modEventBus.addListener(this::registerCapabilities);
+
+        var annotationData = ModList.get().getModFiles()
+                .stream()
+                .map(file -> file.getFile().getScanResult().getAnnotations())
+                .toList();
+
 
         //MinecraftForge.EVENT_BUS.addListener(this::addStuffToBiomes);
     }
