@@ -285,10 +285,10 @@ public class BaubleItem extends GemContainerItem
                 }
             }
 
-            if (magic.getContainedMagic().lessThan(amounts))
+            if (magic.getContainedMagic().anyLessThan(amounts))
                 magic.setContainedMagic(amounts);
 
-            if (remaining.lessThan(available))
+            if (remaining.anyLessThan(available))
             {
                 if (!thisMagic.isInfinite())
                     thisMagic.setContainedMagic(remaining);

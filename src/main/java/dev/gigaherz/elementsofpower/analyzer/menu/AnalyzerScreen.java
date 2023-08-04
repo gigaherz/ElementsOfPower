@@ -80,15 +80,15 @@ public class AnalyzerScreen extends AbstractContainerScreen<AnalyzerMenu>
                 {
                     graphics.drawString(font, "Effective Capacity:", 32, 50, 0xffffff, false);
                     graphics.drawString(font, String.format("%s, %s, %s, %s",
-                            MagicTooltips.PRETTY_NUMBER_FORMATTER.format(am.get(0)),
-                            MagicTooltips.PRETTY_NUMBER_FORMATTER.format(am.get(1)),
-                            MagicTooltips.PRETTY_NUMBER_FORMATTER.format(am.get(2)),
-                            MagicTooltips.PRETTY_NUMBER_FORMATTER.format(am.get(3))), 40, 60, 0xffffff, false);
+                            MagicTooltips.PRETTY_NUMBER_FORMATTER.format(am.fire()),
+                            MagicTooltips.PRETTY_NUMBER_FORMATTER.format(am.water()),
+                            MagicTooltips.PRETTY_NUMBER_FORMATTER.format(am.air()),
+                            MagicTooltips.PRETTY_NUMBER_FORMATTER.format(am.earth())), 40, 60, 0xffffff, false);
                     graphics.drawString(font, String.format("%s, %s, %s, %s",
-                            MagicTooltips.PRETTY_NUMBER_FORMATTER.format(am.get(4)),
-                            MagicTooltips.PRETTY_NUMBER_FORMATTER.format(am.get(5)),
-                            MagicTooltips.PRETTY_NUMBER_FORMATTER.format(am.get(6)),
-                            MagicTooltips.PRETTY_NUMBER_FORMATTER.format(am.get(7))), 40, 70, 0xffffff, false);
+                            MagicTooltips.PRETTY_NUMBER_FORMATTER.format(am.light()),
+                            MagicTooltips.PRETTY_NUMBER_FORMATTER.format(am.time()),
+                            MagicTooltips.PRETTY_NUMBER_FORMATTER.format(am.life()),
+                            MagicTooltips.PRETTY_NUMBER_FORMATTER.format(am.chaos())), 40, 70, 0xffffff, false);
                 }
             }
             else

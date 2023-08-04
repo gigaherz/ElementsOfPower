@@ -33,7 +33,7 @@ public interface IMagicContainer
         MagicAmounts limits = getCapacity();
         MagicAmounts amounts = getContainedMagic();
 
-        return !amounts.lessThan(limits);
+        return !amounts.anyLessThan(limits);
     }
 
     default MagicAmounts insertMagic(MagicAmounts toInsert, boolean simulate)

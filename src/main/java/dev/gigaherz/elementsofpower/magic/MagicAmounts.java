@@ -4,23 +4,28 @@ import com.google.gson.*;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
-import dev.gigaherz.elementsofpower.client.MagicTooltips;
 import dev.gigaherz.elementsofpower.spells.Element;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraftforge.common.util.INBTSerializable;
 
 import javax.annotation.CheckReturnValue;
 import java.lang.reflect.Type;
 import java.util.Arrays;
-import java.util.stream.IntStream;
+import java.util.Objects;
 import java.util.stream.Stream;
 
-public class MagicAmounts implements INBTSerializable<CompoundTag>
+public record MagicAmounts(
+        float fire,
+        float water,
+        float air,
+        float earth,
+        float light,
+        float time,
+        float life,
+        float chaos
+)
 {
     public static final Codec<MagicAmounts> CODEC = RecordCodecBuilder
             .create(instance -> instance.group(
@@ -35,7 +40,16 @@ public class MagicAmounts implements INBTSerializable<CompoundTag>
             ).apply(instance, MagicAmounts::new));
 
     public static final MagicAmounts EMPTY = new MagicAmounts();
-    public static final MagicAmounts INFINITE = infinite();
+    public static final MagicAmounts INFINITE = new MagicAmounts(
+                Float.POSITIVE_INFINITY,
+                Float.POSITIVE_INFINITY,
+                Float.POSITIVE_INFINITY,
+                Float.POSITIVE_INFINITY,
+                Float.POSITIVE_INFINITY,
+                Float.POSITIVE_INFINITY,
+                Float.POSITIVE_INFINITY,
+                Float.POSITIVE_INFINITY);
+
     public static final int ELEMENTS = 8;
 
     public final static String[] magicNames = {
@@ -54,51 +68,50 @@ public class MagicAmounts implements INBTSerializable<CompoundTag>
         return Component.translatable(magicNames[i]);
     }
 
-    private final float[] amounts = new float[ELEMENTS];
 
     private MagicAmounts()
     {
-    }
-
-    private MagicAmounts(float fire, float water, float air, float earth, float light, float darkness, float life, float death)
-    {
-        amounts[0] = fire;
-        amounts[1] = water;
-        amounts[2] = air;
-        amounts[3] = earth;
-        amounts[4] = light;
-        amounts[5] = darkness;
-        amounts[6] = life;
-        amounts[7] = death;
+        this(0,0,0,0,0,0,0,0);
     }
 
     private MagicAmounts(final MagicAmounts other)
     {
-        System.arraycopy(other.amounts, 0, amounts, 0, ELEMENTS);
+        this(other.fire, other.water, other.air, other.earth, other.light, other.time, other.life, other.chaos);
     }
 
-    public MagicAmounts(CompoundTag tagCompound)
+    public MagicAmounts(CompoundTag tag)
     {
-        deserializeNBT(tagCompound);
+        this(
+            tag.getFloat("fire"),
+            tag.getFloat("water"),
+            tag.getFloat("air"),
+            tag.getFloat("earth"),
+            tag.getFloat("light"),
+            tag.getFloat("darkness"),
+            tag.getFloat("life"),
+            tag.getFloat("death")
+        );
     }
 
     public MagicAmounts(FriendlyByteBuf buf)
     {
-        int numElements = buf.readByte();
-        if (numElements > 0)
-        {
-            for (int i = 0; i < numElements; i++)
-            {
-                int which = buf.readByte();
-                float amount = buf.readFloat();
-                amounts[which] = amount;
-            }
-        }
+        this(buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat());
     }
 
-    public static MagicAmounts ofElement(Element value, float count)
+    public static MagicAmounts ofElement(Element element, float count)
     {
-        return EMPTY.add(value, count);
+        return switch(element)
+        {
+            case FIRE -> EMPTY.fire(count);
+            case WATER -> EMPTY.water(count);
+            case AIR -> EMPTY.air(count);
+            case EARTH -> EMPTY.earth(count);
+            case LIGHT -> EMPTY.light(count);
+            case TIME -> EMPTY.time(count);
+            case LIFE -> EMPTY.life(count);
+            case CHAOS -> EMPTY.chaos(count);
+            default -> throw new RuntimeException("Cannot add " + element + " to MagicAmounts");
+        };
     }
 
     public static MagicAmounts lerp(MagicGradient.GradientPoint pt0, MagicGradient.GradientPoint pt1, float t)
@@ -110,317 +123,178 @@ public class MagicAmounts implements INBTSerializable<CompoundTag>
     public String toString()
     {
         if (isEmpty())
-            return "{Empty}";
+            return "{empty}";
 
-        StringBuilder b = new StringBuilder();
-        boolean first = true;
-        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-        {
-            if (amounts[i] == 0)
-                continue;
-
-            if (first)
-                b.append("{");
-            else
-                b.append(", ");
-
-            String magicName = getMagicName(i).getString();
-            String str = String.format("%s: %f", magicName, amounts[i]);
-            b.append(str);
-
-            first = false;
-        }
-        b.append("}");
-
-        return b.toString();
+        return "{fire: " + fire +
+               ", water: " + water +
+               ", air: " + air +
+               ", earth: " + earth +
+               ", light: " + light +
+               ", time: " + time +
+               ", life: " + life +
+               ", death: " + chaos +
+               "}";
     }
 
     public String toShortString()
     {
         if (isEmpty())
-            return "{Empty}";
+            return "{empty}";
 
-        StringBuilder b = new StringBuilder();
-        boolean first = true;
-        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-        {
-            if (amounts[i] == 0)
-                continue;
-
-            if (first)
-                b.append("{");
-            else
-                b.append(",");
-
-            String str = MagicTooltips.PRETTY_NUMBER_FORMATTER.format(amounts[i]);
-            b.append(str);
-
-            first = false;
-        }
-        b.append("}");
-
-        return b.toString();
+        return "{" + fire +
+                ", " + water +
+                ", " + air +
+                ", " + earth +
+                ", " + light +
+                ", " + time +
+                ", " + life +
+                ", " + chaos +
+                "}";
     }
-
-    public boolean isEmpty()
-    {
-        for (float amount : amounts)
-        {
-            if (amount != 0)
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    public boolean isPositive()
-    {
-        for (float amount : amounts)
-        {
-            if (amount > 0)
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public float getTotalMagic()
-    {
-        float acc = 0;
-
-        for (float amount : amounts)
-        {
-            acc += amount;
-        }
-
-        return acc;
-    }
-
-    public boolean hasEnough(MagicAmounts cost)
-    {
-        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-        {
-            if (amounts[i] < cost.amounts[i])
-                return false;
-        }
-        return true;
-    }
-
-    @CheckReturnValue
-    public float fire()
-    {
-        return get(0);
-    }
-
-    @CheckReturnValue
-    public float water()
-    {
-        return get(1);
-    }
-
-    @CheckReturnValue
-    public float air()
-    {
-        return get(2);
-    }
-
-    @CheckReturnValue
-    public float earth()
-    {
-        return get(3);
-    }
-
-    @CheckReturnValue
-    public float light()
-    {
-        return get(4);
-    }
-
-    @CheckReturnValue
-    public float time()
-    {
-        return get(5);
-    }
-
-    @CheckReturnValue
-    public float life()
-    {
-        return get(6);
-    }
-
-    @CheckReturnValue
-    public float chaos()
-    {
-        return get(7);
-    }
-
 
     @CheckReturnValue
     public MagicAmounts fire(float amount)
     {
-        return add(0, amount);
+        return new MagicAmounts(fire+amount,water,air,earth,light,time,life,chaos);
     }
 
     @CheckReturnValue
     public MagicAmounts water(float amount)
     {
-        return add(1, amount);
+        return new MagicAmounts(fire,water+amount,air,earth,light,time,life,chaos);
     }
 
     @CheckReturnValue
     public MagicAmounts air(float amount)
     {
-        return add(2, amount);
+        return new MagicAmounts(fire,water,air+amount,earth,light,time,life,chaos);
     }
 
     @CheckReturnValue
     public MagicAmounts earth(float amount)
     {
-        return add(3, amount);
+        return new MagicAmounts(fire,water,air,earth+amount,light,time,life,chaos);
     }
 
     @CheckReturnValue
     public MagicAmounts light(float amount)
     {
-        return add(4, amount);
+        return new MagicAmounts(fire,water,air,earth,light+amount,time,life,chaos);
     }
 
     @CheckReturnValue
     public MagicAmounts time(float amount)
     {
-        return add(5, amount);
+        return new MagicAmounts(fire,water,air,earth,light,time+amount,life,chaos);
     }
 
     @CheckReturnValue
     public MagicAmounts life(float amount)
     {
-        return add(6, amount);
+        return new MagicAmounts(fire,water,air,earth,light,time,life+amount,chaos);
     }
 
     @CheckReturnValue
     public MagicAmounts chaos(float amount)
     {
-        return add(7, amount);
-    }
-
-    @CheckReturnValue
-    public MagicAmounts add(Element element, float amount)
-    {
-        return add(element.ordinal(), amount);
-    }
-
-    @CheckReturnValue
-    public MagicAmounts add(int i, float amount)
-    {
-        if (Math.abs(amount) < 0.00001f)
-            return this;
-        return with(i, amounts[i] + amount);
-    }
-
-    @CheckReturnValue
-    public MagicAmounts with(int i, float amount)
-    {
-        if (Math.abs(amount - amounts[i]) < 0.00001f)
-            return this;
-        MagicAmounts n = copy();
-        n.amounts[i] = amount;
-        return n;
+        return new MagicAmounts(fire,water,air,earth,light,time,life,chaos+amount);
     }
 
     @CheckReturnValue
     public MagicAmounts all(float amount)
     {
-        MagicAmounts n = copy();
-        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-        {
-            n.amounts[i] += amount;
-        }
-        return n;
+        return new MagicAmounts(
+                fire+amount,
+                water+amount,
+                air+amount,
+                earth+amount,
+                light+amount,
+                time+amount,
+                life+amount,
+                chaos+amount);
     }
 
     @CheckReturnValue
     public MagicAmounts add(MagicAmounts other)
     {
-        MagicAmounts n = copy();
-        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-        {
-            n.amounts[i] += other.amounts[i];
-        }
-        return n;
+        return new MagicAmounts(
+                fire+other.fire,
+                water+other.water,
+                air+other.air,
+                earth+other.earth,
+                light+other.light,
+                time+other.time,
+                life+other.life,
+                chaos+other.chaos);
     }
 
     @CheckReturnValue
-    public MagicAmounts subtract(MagicAmounts cost)
+    public MagicAmounts subtract(MagicAmounts other)
     {
-        MagicAmounts n = copy();
-        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-        {
-            n.amounts[i] -= cost.amounts[i];
-        }
-        return n;
+        return new MagicAmounts(
+                fire-other.fire,
+                water-other.water,
+                air-other.air,
+                earth-other.earth,
+                light-other.light,
+                time-other.time,
+                life-other.life,
+                chaos-other.chaos);
     }
 
     @CheckReturnValue
     public MagicAmounts multiply(float scale)
     {
-        MagicAmounts n = copy();
-        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-        {
-            n.amounts[i] *= scale;
-        }
-        return n;
-    }
-
-    @CheckReturnValue
-    public MagicAmounts multiply(double scale)
-    {
-        MagicAmounts n = copy();
-        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-        {
-            n.amounts[i] *= scale;
-        }
-        return n;
-    }
-
-    @CheckReturnValue
-    public static MagicAmounts infinite()
-    {
-        MagicAmounts n = new MagicAmounts();
-        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-        {
-            n.amounts[i] = Float.POSITIVE_INFINITY;
-        }
-        return n;
+        return new MagicAmounts(
+                fire*scale,
+                water*scale,
+                air*scale,
+                earth*scale,
+                light*scale,
+                time*scale,
+                life*scale,
+                chaos*scale);
     }
 
     @CheckReturnValue
     public boolean isInfinite()
     {
-        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-        {
-            if (Float.isInfinite(amounts[i]))
-                return true;
-        }
+        if (Float.isInfinite(fire)) return true;
+        if (Float.isInfinite(water)) return true;
+        if (Float.isInfinite(air)) return true;
+        if (Float.isInfinite(earth)) return true;
+        if (Float.isInfinite(light)) return true;
+        if (Float.isInfinite(time)) return true;
+        if (Float.isInfinite(life)) return true;
+        if (Float.isInfinite(chaos)) return true;
         return false;
     }
 
     public static MagicAmounts min(MagicAmounts a, MagicAmounts b)
     {
-        MagicAmounts n = new MagicAmounts();
-        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-        {
-            n.amounts[i] = Math.min(a.amounts[i], b.amounts[i]);
-        }
-        return n;
+        return new MagicAmounts(
+                Math.min(a.fire,b.fire),
+                Math.min(a.water,b.water),
+                Math.min(a.air,b.air),
+                Math.min(a.earth,b.earth),
+                Math.min(a.light,b.light),
+                Math.min(a.time,b.time),
+                Math.min(a.life,b.life),
+                Math.min(a.chaos,b.chaos));
     }
 
     public static int compare(MagicAmounts a, MagicAmounts b)
     {
-        return Float.compare(a.getTotalMagic(), b.getTotalMagic());
+        int tmp;
+        if ((tmp = Float.compare(a.fire,b.fire)) != 0) return tmp;
+        if ((tmp = Float.compare(a.water,b.water)) != 0) return tmp;
+        if ((tmp = Float.compare(a.air,b.air)) != 0) return tmp;
+        if ((tmp = Float.compare(a.earth,b.earth)) != 0) return tmp;
+        if ((tmp = Float.compare(a.light,b.light)) != 0) return tmp;
+        if ((tmp = Float.compare(a.time,b.time)) != 0) return tmp;
+        if ((tmp = Float.compare(a.life,b.life)) != 0) return tmp;
+        if ((tmp = Float.compare(a.chaos,b.chaos)) != 0) return tmp;
+        return 0;
     }
 
     @CheckReturnValue
@@ -431,12 +305,103 @@ public class MagicAmounts implements INBTSerializable<CompoundTag>
 
     public float get(Element element)
     {
-        return amounts[element.ordinal()];
+        return switch(element)
+        {
+            case FIRE -> fire;
+            case WATER -> water;
+            case AIR -> air;
+            case EARTH -> earth;
+            case LIGHT -> light;
+            case TIME -> time;
+            case LIFE -> life;
+            case CHAOS -> chaos;
+            default -> 0;
+        };
+    }
+
+    public float get(int element)
+    {
+        return switch(element)
+        {
+            case 0 -> fire;
+            case 1 -> water;
+            case 2 -> air;
+            case 3 -> earth;
+            case 4 -> light;
+            case 5 -> time;
+            case 6 -> life;
+            case 7 -> chaos;
+            default -> 0;
+        };
+    }
+
+    public MagicAmounts add(Element element, float value)
+    {
+        return switch(element)
+        {
+            case FIRE -> fire(value);
+            case WATER -> water(value);
+            case AIR -> air(value);
+            case EARTH -> earth(value);
+            case LIGHT -> light(value);
+            case TIME -> time(value);
+            case LIFE -> life(value);
+            case CHAOS -> chaos(value);
+            default -> this;
+        };
+    }
+
+    public MagicAmounts add(int element, float value)
+    {
+        return switch(element)
+        {
+            case 0 -> fire(value);
+            case 1 -> water(value);
+            case 2 -> air(value);
+            case 3 -> earth(value);
+            case 4 -> light(value);
+            case 5 -> time(value);
+            case 6 -> life(value);
+            case 7 -> chaos(value);
+            default -> this;
+        };
+    }
+
+    public MagicAmounts with(Element element, float value)
+    {
+        return switch(element)
+        {
+            case FIRE -> new MagicAmounts(value,water,air,earth,light,time,life,chaos);
+            case WATER -> new MagicAmounts(fire,value,air,earth,light,time,life,chaos);
+            case AIR -> new MagicAmounts(fire,water,value,earth,light,time,life,chaos);
+            case EARTH -> new MagicAmounts(fire,water,air,value,light,time,life,chaos);
+            case LIGHT -> new MagicAmounts(fire,water,air,earth,value,time,life,chaos);
+            case TIME -> new MagicAmounts(fire,water,air,earth,light,value,life,chaos);
+            case LIFE -> new MagicAmounts(fire,water,air,earth,light,time,value,chaos);
+            case CHAOS -> new MagicAmounts(fire,water,air,earth,light,time,life,value);
+            default -> this;
+        };
+    }
+
+    public MagicAmounts with(int element, float value)
+    {
+        return switch(element)
+        {
+            case 0 -> new MagicAmounts(value,water,air,earth,light,time,life,chaos);
+            case 1 -> new MagicAmounts(fire,value,air,earth,light,time,life,chaos);
+            case 2 -> new MagicAmounts(fire,water,value,earth,light,time,life,chaos);
+            case 3 -> new MagicAmounts(fire,water,air,value,light,time,life,chaos);
+            case 4 -> new MagicAmounts(fire,water,air,earth,value,time,life,chaos);
+            case 5 -> new MagicAmounts(fire,water,air,earth,light,value,life,chaos);
+            case 6 -> new MagicAmounts(fire,water,air,earth,light,time,value,chaos);
+            case 7 -> new MagicAmounts(fire,water,air,earth,light,time,life,value);
+            default -> this;
+        };
     }
 
     public Stream<Float> stream()
     {
-        return IntStream.range(0, amounts.length).mapToObj(i -> amounts[i]);
+        return Stream.of(fire, water, air, earth, light, time, life, chaos);
     }
 
     public static boolean isNullOrEmpty(MagicAmounts value)
@@ -444,126 +409,149 @@ public class MagicAmounts implements INBTSerializable<CompoundTag>
         return value == null || value.isEmpty();
     }
 
-    @Override
     public CompoundTag serializeNBT()
     {
         CompoundTag nbt = new CompoundTag();
-        ListTag itemList = new ListTag();
-
-        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-        {
-            CompoundTag tag = new CompoundTag();
-            tag.putByte("Type", (byte) i);
-            tag.putFloat("Count", amounts[i]);
-            itemList.add(tag);
-        }
-
-        nbt.put("Essences", itemList);
+        nbt.putFloat("fire", fire);
+        nbt.putFloat("water", water);
+        nbt.putFloat("air", air);
+        nbt.putFloat("earth", earth);
+        nbt.putFloat("light", light);
+        nbt.putFloat("time", time);
+        nbt.putFloat("life", life);
+        nbt.putFloat("chaos", chaos);
         return nbt;
-    }
-
-    @Override
-    public void deserializeNBT(CompoundTag nbt)
-    {
-        ListTag tagList = nbt.getList("Essences", Tag.TAG_COMPOUND);
-
-        for (int i = 0; i < tagList.size(); i++)
-        {
-            CompoundTag tag = (CompoundTag) tagList.get(i);
-            byte slot = tag.getByte("Type");
-
-            if (slot >= 0 && slot < 8)
-            {
-                amounts[slot] = tag.getFloat("Count");
-            }
-        }
     }
 
     public Element getDominantElement()
     {
-        float domAmount = 0;
-        int dominant = MagicAmounts.ELEMENTS;
+        Element dominant = Element.BALANCE;
+        float value = 0;
 
-        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-        {
-            if (amounts[i] > domAmount)
-            {
-                domAmount = amounts[i];
-                dominant = i;
-            }
-        }
+        if (fire > value) { dominant = Element.FIRE; value=fire; }
+        if (water > value) { dominant = Element.WATER; value=water; }
+        if (air > value) { dominant = Element.AIR; value=air; }
+        if (earth > value) { dominant = Element.EARTH; value=earth; }
+        if (light > value) { dominant = Element.LIGHT; value=light; }
+        if (time > value) { dominant = Element.TIME; value=time; }
+        if (life > value) { dominant = Element.LIFE; value=life; }
+        if (chaos > value) { dominant = Element.CHAOS; value=chaos; }
 
-        return Element.values[dominant];
+        return dominant;
     }
 
     public void writeTo(FriendlyByteBuf buf)
     {
-        int count = 0;
-        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-        {
-            if (amounts[i] > 0) count++;
-        }
-
-        buf.writeByte(count);
-
-        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-        {
-            if (amounts[i] > 0)
-            {
-                buf.writeByte(i);
-                buf.writeFloat(amounts[i]);
-            }
-        }
+        buf.writeFloat(fire);
+        buf.writeFloat(water);
+        buf.writeFloat(air);
+        buf.writeFloat(earth);
+        buf.writeFloat(light);
+        buf.writeFloat(time);
+        buf.writeFloat(life);
+        buf.writeFloat(chaos);
     }
 
-    public float get(int i)
+    public boolean isEmpty()
     {
-        if (i < 0 || i >= ELEMENTS)
-            throw new IndexOutOfBoundsException();
-        return amounts[i];
+        if (fire!=0) return false;
+        if (water!=0) return false;
+        if (air!=0) return false;
+        if (earth!=0) return false;
+        if (light!=0) return false;
+        if (time!=0) return false;
+        if (life!=0) return false;
+        if (chaos!=0) return false;
+        return true;
+    }
+
+    public boolean isPositive()
+    {
+        if (fire>0) return true;
+        if (water>0) return true;
+        if (air>0) return true;
+        if (earth>0) return true;
+        if (light>0) return true;
+        if (time>0) return true;
+        if (life>0) return true;
+        if (chaos>0) return true;
+        return false;
+    }
+
+    public float getTotalMagic()
+    {
+        return fire
+                + water
+                + air
+                + earth
+                + light
+                + time
+                + life
+                + chaos;
     }
 
     public boolean lessEqual(MagicAmounts other)
     {
-        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-        {
-            if (amounts[i] > other.amounts[i])
-                return false;
-        }
-
+        if (fire>=other.fire) return false;
+        if (water>=other.water) return false;
+        if (air>=other.air) return false;
+        if (earth>=other.earth) return false;
+        if (light>=other.light) return false;
+        if (time>=other.time) return false;
+        if (life>=other.life) return false;
+        if (chaos>=other.chaos) return false;
         return true;
     }
 
-    public boolean lessThan(MagicAmounts other)
+    public boolean anyLessThan(MagicAmounts other)
     {
-        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-        {
-            if (amounts[i] < other.amounts[i])
-                return true;
-        }
-
+        if (fire<other.fire) return true;
+        if (water<other.water) return true;
+        if (air<other.air) return true;
+        if (earth<other.earth) return true;
+        if (light<other.light) return true;
+        if (time<other.time) return true;
+        if (life<other.life) return true;
+        if (chaos<other.chaos) return true;
         return false;
     }
 
     public boolean allLessThan(MagicAmounts other)
     {
-        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-        {
-            if (amounts[i] >= other.amounts[i])
-                return false;
-        }
+        if (fire>other.fire) return false;
+        if (water>other.water) return false;
+        if (air>other.air) return false;
+        if (earth>other.earth) return false;
+        if (light>other.light) return false;
+        if (time>other.time) return false;
+        if (life>other.life) return false;
+        if (chaos>other.chaos) return false;
+        return true;
+    }
 
+    public boolean greaterEqual(MagicAmounts other)
+    {
+        if (fire<=other.fire) return false;
+        if (water<=other.water) return false;
+        if (air<=other.air) return false;
+        if (earth<=other.earth) return false;
+        if (light<=other.light) return false;
+        if (time<=other.time) return false;
+        if (life<=other.life) return false;
+        if (chaos<=other.chaos) return false;
         return true;
     }
 
     public boolean equals(MagicAmounts other)
     {
-        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-        {
-            if (amounts[i] != other.amounts[i])
-                return false;
-        }
-
+        if (fire!=other.fire) return false;
+        if (water!=other.water) return false;
+        if (air!=other.air) return false;
+        if (earth!=other.earth) return false;
+        if (light!=other.light) return false;
+        if (time!=other.time) return false;
+        if (life!=other.life) return false;
+        if (chaos!=other.chaos) return false;
         return true;
     }
 
@@ -576,7 +564,7 @@ public class MagicAmounts implements INBTSerializable<CompoundTag>
     @Override
     public int hashCode()
     {
-        return Arrays.hashCode(amounts);
+        return Objects.hash(fire, water, air, earth, light, time, life, chaos);
     }
 
     public static Accumulator builder()
@@ -590,18 +578,26 @@ public class MagicAmounts implements INBTSerializable<CompoundTag>
 
         public void add(MagicAmounts value)
         {
-            for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-            {
-                amounts[i] += value.amounts[i];
-            }
+            amounts[0] += value.fire;
+            amounts[1] += value.water;
+            amounts[2] += value.air;
+            amounts[3] += value.earth;
+            amounts[4] += value.light;
+            amounts[5] += value.time;
+            amounts[6] += value.life;
+            amounts[7] += value.chaos;
         }
 
         public void subtract(MagicAmounts value)
         {
-            for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-            {
-                amounts[i] -= value.amounts[i];
-            }
+            amounts[0] -= value.fire;
+            amounts[1] -= value.water;
+            amounts[2] -= value.air;
+            amounts[3] -= value.earth;
+            amounts[4] -= value.light;
+            amounts[5] -= value.time;
+            amounts[6] -= value.life;
+            amounts[7] -= value.chaos;
         }
 
         public void add(Accumulator value)
@@ -614,37 +610,16 @@ public class MagicAmounts implements INBTSerializable<CompoundTag>
 
         public MagicAmounts toAmounts()
         {
-            MagicAmounts am = new MagicAmounts();
-            System.arraycopy(amounts, 0, am.amounts, 0, MagicAmounts.ELEMENTS);
-            return am;
-        }
-    }
-
-    public static class Serializer
-            implements JsonSerializer<MagicAmounts>,
-            JsonDeserializer<MagicAmounts>
-    {
-        @Override
-        public JsonElement serialize(MagicAmounts src, Type typeOfSrc, JsonSerializationContext context)
-        {
-            JsonArray array = new JsonArray();
-            for (float a : src.amounts)
-            {
-                array.add(new JsonPrimitive(a));
-            }
-            return array;
-        }
-
-        @Override
-        public MagicAmounts deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException
-        {
-            MagicAmounts amounts = new MagicAmounts();
-            JsonArray array = json.getAsJsonArray();
-            for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-            {
-                amounts.amounts[i] = array.get(i).getAsInt();
-            }
-            return amounts;
+            return new MagicAmounts(
+                    amounts[0],
+                    amounts[1],
+                    amounts[2],
+                    amounts[3],
+                    amounts[4],
+                    amounts[5],
+                    amounts[6],
+                    amounts[7]
+            );
         }
     }
 }

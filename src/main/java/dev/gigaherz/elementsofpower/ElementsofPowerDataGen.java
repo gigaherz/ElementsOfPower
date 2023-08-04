@@ -730,6 +730,14 @@ class ElementsofPowerDataGen
                         }
                     };
 
+                    final HolderSet.Named<Biome> isVoid = biomes.get(Tags.Biomes.IS_VOID).orElseThrow();
+                    context.register(ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS, ElementsOfPowerMod.location("cocoon")),
+                            new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
+                            new NotHolderSet<>(biomes0, isVoid),
+                            HolderSet.direct(placedFeatures.get(PLACED_COCOON).orElseThrow()),
+                            GenerationStep.Decoration.UNDERGROUND_DECORATION
+                    ));
+
                     final HolderSet.Named<Biome> isOverworld = biomes.get(BiomeTags.IS_OVERWORLD).orElseThrow();
                     final HolderSet.Named<Biome> isHot = biomes.get(Tags.Biomes.IS_HOT_OVERWORLD).orElseThrow();
                     final HolderSet.Named<Biome> isCold = biomes.get(Tags.Biomes.IS_COLD_OVERWORLD).orElseThrow();

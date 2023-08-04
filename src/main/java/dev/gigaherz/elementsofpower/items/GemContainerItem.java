@@ -49,7 +49,7 @@ public abstract class GemContainerItem extends MagicContainerItem
 
         Element e = g.getElement();
         if (e == null)
-            magic = magic.all(magic.get(0) * 0.1f);
+            magic = magic.all(magic.fire() * 0.1f);
         else
             magic = magic.add(g.getElement(), magic.get(g.getElement()) * 0.25f);
 

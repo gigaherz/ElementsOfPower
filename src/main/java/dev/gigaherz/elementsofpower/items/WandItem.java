@@ -97,7 +97,7 @@ public class WandItem extends GemContainerItem
             MagicAmounts amounts = magic.getContainedMagic().add(getTotalPlayerReservoir(player));
             MagicAmounts cost = SpellManager.computeCost(cast);
 
-            if (!magic.isInfinite() && !amounts.hasEnough(cost))
+            if (!magic.isInfinite() && !amounts.greaterEqual(cost))
             {
                 player.displayClientMessage(Component.translatable("text.elementsofpower.spell.cost_too_high"), true);
                 return updateSequenceOnWand;
