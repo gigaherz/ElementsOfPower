@@ -1,5 +1,7 @@
 package dev.gigaherz.elementsofpower;
 
+import dev.gigaherz.elementsofpower.analyzer.AnalyzerBlock;
+import dev.gigaherz.elementsofpower.analyzer.AnalyzerItem;
 import dev.gigaherz.elementsofpower.cocoons.CocoonBlock;
 import dev.gigaherz.elementsofpower.essentializer.EssentializerBlock;
 import dev.gigaherz.elementsofpower.gemstones.Gemstone;
@@ -10,8 +12,10 @@ import dev.gigaherz.elementsofpower.spells.blocks.CushionBlock;
 import dev.gigaherz.elementsofpower.spells.blocks.DustBlock;
 import dev.gigaherz.elementsofpower.spells.blocks.LightBlock;
 import dev.gigaherz.elementsofpower.spells.blocks.MistBlock;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
@@ -27,6 +31,10 @@ public class ElementsOfPowerBlocks
             new EssentializerBlock(Block.Properties.of().mapColor(MapColor.METAL)
             .requiresCorrectToolForDrops().strength(15.0F)
             .sound(SoundType.METAL).lightLevel(b -> 1)));
+
+    public static final RegistryObject<AnalyzerBlock> ANALYZER = BLOCKS.register("analyzer", () ->
+            new AnalyzerBlock(BlockBehaviour.Properties.of().pushReaction(PushReaction.DESTROY).mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(2.0f)));
+
     public static final RegistryObject<DustBlock> DUST = BLOCKS.register("dust", () ->
             new DustBlock(Block.Properties.of().forceSolidOff().replaceable().pushReaction(PushReaction.DESTROY).noLootTable().noCollission().noOcclusion()
             .isSuffocating((s, w, p) -> true).isViewBlocking((s, w, p) -> false)

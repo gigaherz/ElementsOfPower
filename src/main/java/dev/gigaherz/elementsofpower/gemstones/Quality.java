@@ -6,11 +6,11 @@ import javax.annotation.Nullable;
 
 public enum Quality
 {
-    ROUGH(0, Rarity.COMMON, 0.9f, "elementsofpower.gemstone.quality.rough", "elementsofpower.gem_container.quality.rough"),
-    COMMON(1, Rarity.COMMON, 1.0f, "elementsofpower.gemstone.quality.common", "elementsofpower.gem_container.quality.common"),
-    SMOOTH(2, Rarity.UNCOMMON, 1.25f, "elementsofpower.gemstone.quality.smooth", "elementsofpower.gem_container.quality.smooth"),
-    FLAWLESS(3, Rarity.RARE, 1.5f, "elementsofpower.gemstone.quality.flawless", "elementsofpower.gem_container.quality.flawless"),
-    PURE(4, Rarity.EPIC, 2.0f, "elementsofpower.gemstone.quality.pure", "elementsofpower.gem_container.quality.pure");
+    ROUGH(0, Rarity.COMMON, 0.9f, "text.elementsofpower.gemstone.quality.rough", "text.elementsofpower.gem_container.quality.rough"),
+    COMMON(1, Rarity.COMMON, 1.0f, "text.elementsofpower.gemstone.quality.common", "text.elementsofpower.gem_container.quality.common"),
+    SMOOTH(2, Rarity.UNCOMMON, 1.25f, "text.elementsofpower.gemstone.quality.smooth", "text.elementsofpower.gem_container.quality.smooth"),
+    FLAWLESS(3, Rarity.RARE, 1.5f, "text.elementsofpower.gemstone.quality.flawless", "text.elementsofpower.gem_container.quality.flawless"),
+    PURE(4, Rarity.EPIC, 2.0f, "text.elementsofpower.gemstone.quality.pure", "text.elementsofpower.gem_container.quality.pure");
 
     public static final Quality[] values = values();
 

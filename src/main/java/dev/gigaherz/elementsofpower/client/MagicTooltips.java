@@ -53,10 +53,10 @@ public class MagicTooltips
         if (amounts.isEmpty())
             return;
 
-        toolTip.add(Component.translatable("elementsofpower.magic.converts").withStyle(ChatFormatting.YELLOW));
+        toolTip.add(Component.translatable("text.elementsofpower.magic.converts").withStyle(ChatFormatting.YELLOW));
         if (!Screen.hasShiftDown())
         {
-            toolTip.add(Component.translatable("elementsofpower.magic.more_info").withStyle(ChatFormatting.GRAY));
+            toolTip.add(Component.translatable("text.elementsofpower.magic.more_info").withStyle(ChatFormatting.GRAY));
             return;
         }
 
@@ -73,8 +73,8 @@ public class MagicTooltips
             Component magicName = MagicAmounts.getMagicName(i);
 
             MutableComponent magicAmount = stack.getCount() > 1
-                    ? Component.translatable("elementsofpower.magic.amount_stacked", magicName, str, str2)
-                    : Component.translatable("elementsofpower.magic.amount", magicName, str);
+                    ? Component.translatable("text.elementsofpower.magic.amount_stacked", magicName, str, str2)
+                    : Component.translatable("text.elementsofpower.magic.amount", magicName, str);
 
             toolTip.add(magicAmount.withStyle(ChatFormatting.GRAY));
         }
@@ -90,10 +90,10 @@ public class MagicTooltips
                 return;
             }
 
-            toolTip.add(Component.translatable("elementsofpower.magic.contains").withStyle(ChatFormatting.YELLOW));
+            toolTip.add(Component.translatable("text.elementsofpower.magic.contains").withStyle(ChatFormatting.YELLOW));
             if (!Screen.hasShiftDown())
             {
-                toolTip.add(Component.translatable("elementsofpower.magic.more_info").withStyle(ChatFormatting.GRAY));
+                toolTip.add(Component.translatable("text.elementsofpower.magic.more_info").withStyle(ChatFormatting.GRAY));
                 return;
             }
 
@@ -102,7 +102,7 @@ public class MagicTooltips
                 for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
                 {
                     Component magicName = MagicAmounts.getMagicName(i);
-                    MutableComponent magicAmount = Component.translatable("elementsofpower.magic.amount_infinite", magicName);
+                    MutableComponent magicAmount = Component.translatable("text.elementsofpower.magic.amount_infinite", magicName);
 
                     toolTip.add(magicAmount.withStyle(ChatFormatting.GRAY));
                 }
@@ -119,7 +119,7 @@ public class MagicTooltips
                     String str = PRETTY_NUMBER_FORMATTER_2.format(amounts.get(i));
 
                     Component magicName = MagicAmounts.getMagicName(i);
-                    MutableComponent magicAmount = Component.translatable("elementsofpower.magic.amount", magicName, str);
+                    MutableComponent magicAmount = Component.translatable("text.elementsofpower.magic.amount", magicName, str);
 
                     toolTip.add(magicAmount.withStyle(ChatFormatting.GRAY));
                 }

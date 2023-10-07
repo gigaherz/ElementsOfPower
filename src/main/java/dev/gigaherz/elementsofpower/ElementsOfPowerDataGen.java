@@ -22,17 +22,23 @@ import dev.gigaherz.elementsofpower.spells.blocks.CushionBlock;
 import dev.gigaherz.elementsofpower.spells.blocks.DustBlock;
 import dev.gigaherz.elementsofpower.spells.blocks.LightBlock;
 import dev.gigaherz.elementsofpower.spells.blocks.MistBlock;
-import net.minecraft.Util;
+import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.FrameType;
+import net.minecraft.advancements.RequirementsStrategy;
+import net.minecraft.advancements.critereon.InventoryChangeTrigger;
+import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.core.*;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
+import net.minecraft.data.advancements.AdvancementProvider;
+import net.minecraft.data.advancements.AdvancementSubProvider;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.data.recipes.*;
-import net.minecraft.data.registries.VanillaRegistries;
 import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.*;
@@ -41,6 +47,7 @@ import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -65,6 +72,7 @@ import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.common.data.ForgeAdvancementProvider;
 import net.minecraftforge.common.world.ForgeBiomeModifiers;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.fml.ModList;
@@ -72,6 +80,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.holdersets.AndHolderSet;
 import net.minecraftforge.registries.holdersets.NotHolderSet;
 import net.minecraftforge.registries.holdersets.OrHolderSet;
+import top.theillusivec4.curios.common.util.EquipCurioTrigger;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -83,7 +92,9 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-class ElementsofPowerDataGen
+import static dev.gigaherz.elementsofpower.ElementsOfPowerMod.location;
+
+class ElementsOfPowerDataGen
 {
     public static void gatherData(GatherDataEvent event)
     {
@@ -93,8 +104,8 @@ class ElementsofPowerDataGen
         gen.addProvider(event.includeServer(), new Recipes(gen.getPackOutput()));
         gen.addProvider(event.includeServer(), LootGen.create(gen.getPackOutput()));
 
-        BlockTagGens blockTags = new BlockTagGens(gen.getPackOutput(), existingFileHelper);
-        ItemTagGens itemTags = new ItemTagGens(gen.getPackOutput(), existingFileHelper);
+        BlockTagGens blockTags = new BlockTagGens(gen.getPackOutput(), event.getLookupProvider(), existingFileHelper);
+        ItemTagGens itemTags = new ItemTagGens(gen.getPackOutput(), event.getLookupProvider(), existingFileHelper);
         gen.addProvider(event.includeServer(), blockTags);
         gen.addProvider(event.includeServer(), itemTags);
 
@@ -108,6 +119,119 @@ class ElementsofPowerDataGen
         gen.addProvider(event.includeClient(), new GearTexturesGen(gen.getPackOutput(), existingFileHelper));
 
         gen.addProvider(event.includeClient(), new BlockStates(gen.getPackOutput(), existingFileHelper));
+
+        gen.addProvider(event.includeServer(), new ForgeAdvancementProvider(gen.getPackOutput(), event.getLookupProvider(), event.getExistingFileHelper(), List.of(new AdvancementsGen())));
+    }
+
+    private static class AdvancementsGen
+            implements ForgeAdvancementProvider.AdvancementGenerator
+    {
+        private static final ResourceLocation TAB_BACKGROUND = new ResourceLocation("minecraft:textures/block/obsidian.png");
+
+        @Override
+        public void generate(HolderLookup.Provider registries, Consumer<Advancement> saver, ExistingFileHelper existingFileHelper)
+        {
+            var root = Advancement.Builder.advancement()
+                    .display(ElementsOfPowerItems.WAND.get().getStack(Gemstone.RUBY),
+                            Component.translatable("advancement.elementsofpower.root.title"),
+                            Component.translatable("advancement.elementsofpower.root.description"),
+                            TAB_BACKGROUND, FrameType.GOAL, false, false, false)
+                    /* criterions */
+                    /* unlocks */
+                    .addCriterion("dummy", InventoryChangeTrigger.TriggerInstance.hasItems(new ItemLike[0]))
+                    .save(saver, location("root"), existingFileHelper);
+
+            var discover_gems = Advancement.Builder.advancement()
+                    .parent(root)
+                    .display(ElementsOfPowerItems.WAND.get().getStack(Gemstone.RUBY),
+                            Component.translatable("advancement.elementsofpower.discover_gems.title"),
+                            Component.translatable("advancement.elementsofpower.discover_gems.description"),
+                            null, FrameType.GOAL, true, false, false)
+                    .addCriterion("has_gemstone", InventoryChangeTrigger.TriggerInstance.hasItems(ElementsOfPowerItems.RUBY.get(),
+                            ElementsOfPowerItems.SAPPHIRE.get(),
+                            ElementsOfPowerItems.CITRINE.get(),
+                            ElementsOfPowerItems.AGATE.get(),
+                            ElementsOfPowerItems.QUARTZ.get(), Items.DIAMOND,
+                            ElementsOfPowerItems.ONYX.get(),
+                            ElementsOfPowerItems.EMERALD.get(),
+                            ElementsOfPowerItems.RUBELLITE.get(),
+                            ElementsOfPowerItems.DIAMOND.get(), Items.DIAMOND,
+                            ElementsOfPowerItems.CREATIVITE.get()))
+                    .save(saver, location("discover_gems"), existingFileHelper);
+
+            var acquire_wand = Advancement.Builder.advancement()
+                    .parent(discover_gems)
+                    .display(ElementsOfPowerItems.WAND.get().getStack(Gemstone.RUBY),
+                            Component.translatable("advancement.elementsofpower.acquire_wand.title"),
+                            Component.translatable("advancement.elementsofpower.acquire_wand.description"),
+                            null, FrameType.GOAL, true, false, false)
+                    .addCriterion("has_wand", InventoryChangeTrigger.TriggerInstance.hasItems(ElementsOfPowerItems.STAFF.get()))
+                    .save(saver, location("acquire_wand"), existingFileHelper);
+
+            var first_spell = Advancement.Builder.advancement()
+                    .parent(acquire_wand)
+                    .display(ElementsOfPowerItems.WAND.get().getStack(Gemstone.RUBY),
+                            Component.translatable("advancement.elementsofpower.first_spell.title"),
+                            Component.translatable("advancement.elementsofpower.first_spell.description"),
+                            null, FrameType.GOAL, true, false, false)
+                    /* criterions */
+                    /* unlocks */
+                    .save(saver, location("first_spell"), existingFileHelper);
+
+            var acquire_staff = Advancement.Builder.advancement()
+                    .parent(acquire_wand)
+                    .display(ElementsOfPowerItems.WAND.get().getStack(Gemstone.RUBY),
+                            Component.translatable("advancement.elementsofpower.acquire_staff.title"),
+                            Component.translatable("advancement.elementsofpower.acquire_staff.description"),
+                            null, FrameType.GOAL, true, false, false)
+                    .addCriterion("has_staff", InventoryChangeTrigger.TriggerInstance.hasItems(ElementsOfPowerItems.STAFF.get()))
+                    .save(saver, location("acquire_staff"), existingFileHelper);
+
+            var advanced_spell = Advancement.Builder.advancement()
+                    .parent(first_spell)
+                    .display(ElementsOfPowerItems.WAND.get().getStack(Gemstone.RUBY),
+                            Component.translatable("advancement.elementsofpower.advanced_spell.title"),
+                            Component.translatable("advancement.elementsofpower.advanced_spell.description"),
+                            null, FrameType.GOAL, true, false, false)
+                    /* criterions */
+                    /* unlocks */
+                    .save(saver, location("advanced_spell"), existingFileHelper);
+
+            var acquire_trinket = Advancement.Builder.advancement()
+                    .parent(discover_gems)
+                    .display(ElementsOfPowerItems.WAND.get().getStack(Gemstone.RUBY),
+                            Component.translatable("advancement.elementsofpower.acquire_trinket.title"),
+                            Component.translatable("advancement.elementsofpower.acquire_trinket.description"),
+                            null, FrameType.GOAL, true, false, false)
+                    .addCriterion("has_ring", InventoryChangeTrigger.TriggerInstance.hasItems(ElementsOfPowerItems.RING.get()))
+                    .addCriterion("has_necklace", InventoryChangeTrigger.TriggerInstance.hasItems(ElementsOfPowerItems.NECKLACE.get()))
+                    .addCriterion("has_bracelet", InventoryChangeTrigger.TriggerInstance.hasItems(ElementsOfPowerItems.BRACELET.get()))
+                    .requirements(RequirementsStrategy.OR)
+                    .save(saver, location("acquire_trinket"), existingFileHelper);
+
+            var master_spell = Advancement.Builder.advancement()
+                    .parent(advanced_spell)
+                    .display(ElementsOfPowerItems.WAND.get().getStack(Gemstone.RUBY),
+                            Component.translatable("advancement.elementsofpower.master_spell.title"),
+                            Component.translatable("advancement.elementsofpower.master_spell.description"),
+                            null, FrameType.GOAL, true, true, false)
+                    /* criterions */
+                    /* unlocks */
+                    .save(saver, location("master_spell"), existingFileHelper);
+
+            var fully_geared_up = Advancement.Builder.advancement()
+                    .parent(acquire_staff)
+                    .display(ElementsOfPowerItems.WAND.get().getStack(Gemstone.RUBY),
+                            Component.translatable("advancement.elementsofpower.fully_geared_up.title"),
+                            Component.translatable("advancement.elementsofpower.fully_geared_up.description"),
+                            null, FrameType.GOAL, true, true, false)
+                    .addCriterion("has_staff", InventoryChangeTrigger.TriggerInstance.hasItems(ElementsOfPowerItems.STAFF.get()))
+                    .addCriterion("has_ring", InventoryChangeTrigger.TriggerInstance.hasItems(ElementsOfPowerItems.RING.get()))
+                    .addCriterion("has_necklace", InventoryChangeTrigger.TriggerInstance.hasItems(ElementsOfPowerItems.NECKLACE.get()))
+                    .addCriterion("has_bracelet", InventoryChangeTrigger.TriggerInstance.hasItems(ElementsOfPowerItems.BRACELET.get()))
+                    .requirements(RequirementsStrategy.AND)
+                    .save(saver, location("fully_geared_up"), existingFileHelper);
+        }
     }
 
     private static class GearTexturesGen extends TextureVariantsGen
@@ -201,17 +325,14 @@ class ElementsofPowerDataGen
             });
         }
 
+        @SuppressWarnings("deprecation")
         private List<Item> getItemsFromTag(ResourceLocation rl, List<Item> fallback)
         {
             TagBuilder tagbuilder = itemTags.getTagByName(rl);
             if (tagbuilder == null)
             {
                 var tag = BuiltInRegistries.ITEM.getTag(TagKey.create(Registries.ITEM, rl));
-                if (tag.isPresent())
-                {
-                    return tag.get().stream().map(Holder::get).toList();
-                }
-                return fallback;
+                return tag.map(holders -> holders.stream().map(Holder::get).toList()).orElse(fallback);
             }
             return tagbuilder.build().stream().flatMap(this::getItemsFromTag).collect(Collectors.toList());
         }
@@ -233,10 +354,10 @@ class ElementsofPowerDataGen
 
     private static class ItemTagGens extends IntrinsicHolderTagsProvider<Item>
     {
-        public ItemTagGens(PackOutput packOutput, ExistingFileHelper existingFileHelper)
+        @SuppressWarnings("deprecation")
+        public ItemTagGens(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> lookup, ExistingFileHelper existingFileHelper)
         {
-            super(packOutput, Registries.ITEM, CompletableFuture.supplyAsync(VanillaRegistries::createLookup, Util.backgroundExecutor()),
-                    (p_255627_) -> p_255627_.builtInRegistryHolder().key(), ElementsOfPowerMod.MODID, existingFileHelper);
+            super(packOutput, Registries.ITEM, lookup, (item) -> item.builtInRegistryHolder().key(), ElementsOfPowerMod.MODID, existingFileHelper);
         }
 
         @Nullable
@@ -290,10 +411,10 @@ class ElementsofPowerDataGen
 
     private static class BlockTagGens extends IntrinsicHolderTagsProvider<Block>
     {
-        public BlockTagGens(PackOutput packOutput, ExistingFileHelper existingFileHelper)
+        @SuppressWarnings("deprecation")
+        public BlockTagGens(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> lookup, ExistingFileHelper existingFileHelper)
         {
-            super(packOutput, Registries.BLOCK, CompletableFuture.supplyAsync(VanillaRegistries::createLookup, Util.backgroundExecutor()),
-                    (p_255627_) -> p_255627_.builtInRegistryHolder().key(), ElementsOfPowerMod.MODID, existingFileHelper);
+            super(packOutput, Registries.BLOCK, lookup, (block) -> block.builtInRegistryHolder().key(), ElementsOfPowerMod.MODID, existingFileHelper);
         }
 
         @Override
@@ -304,6 +425,8 @@ class ElementsofPowerDataGen
 
             this.tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ElementsOfPowerBlocks.ESSENTIALIZER.get());
             this.tag(BlockTags.NEEDS_IRON_TOOL).add(ElementsOfPowerBlocks.ESSENTIALIZER.get());
+
+            this.tag(BlockTags.MINEABLE_WITH_AXE).add(ElementsOfPowerBlocks.ANALYZER.get());
 
             for (Gemstone type : Gemstone.values())
             {
@@ -364,6 +487,7 @@ class ElementsofPowerDataGen
             protected void generate()
             {
                 this.dropSelf(ElementsOfPowerBlocks.ESSENTIALIZER.get());
+                this.dropSelf(ElementsOfPowerBlocks.ANALYZER.get());
 
                 Element.stream_without_balance().forEach(e -> {
                     if (e != Element.BALANCE && e.getCocoon() != null)
@@ -422,13 +546,13 @@ class ElementsofPowerDataGen
         {
             densityBlock(ElementsOfPowerBlocks.MIST.get(), MistBlock.DENSITY);
             densityBlock(ElementsOfPowerBlocks.DUST.get(), DustBlock.DENSITY);
-            densityBlock(ElementsOfPowerBlocks.LIGHT.get(), LightBlock.DENSITY, (value) -> ElementsOfPowerMod.location("transparent"));
-            densityBlock(ElementsOfPowerBlocks.CUSHION.get(), CushionBlock.DENSITY, (density) -> ElementsOfPowerMod.location("block/dust_" + density));
+            densityBlock(ElementsOfPowerBlocks.LIGHT.get(), LightBlock.DENSITY, (value) -> location("transparent"));
+            densityBlock(ElementsOfPowerBlocks.CUSHION.get(), CushionBlock.DENSITY, (density) -> location("block/dust_" + density));
         }
 
         private void densityBlock(Block block, IntegerProperty densityProperty)
         {
-            densityBlock(block, densityProperty, (density) -> ElementsOfPowerMod.location("block/" + Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(block)).getPath() + "_" + density));
+            densityBlock(block, densityProperty, (density) -> location("block/" + Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(block)).getPath() + "_" + density));
         }
 
         private void densityBlock(Block block, IntegerProperty densityProperty, Function<Integer, ResourceLocation> texMapper)
@@ -436,7 +560,7 @@ class ElementsofPowerDataGen
             Map<Integer, ModelFile> densityModels = Maps.asMap(
                     new HashSet<>(densityProperty.getPossibleValues()),
                     density -> {
-                        return models().cubeAll(ElementsOfPowerMod.location(Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(block)).getPath() + "_" + density).getPath(), texMapper.apply(density));
+                        return models().cubeAll(location(Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(block)).getPath() + "_" + density).getPath(), texMapper.apply(density));
                     });
 
             getVariantBuilder(block)
@@ -522,8 +646,8 @@ class ElementsofPowerDataGen
                     .unlockedBy("has_gold", has(Items.GOLD_INGOT))
                     .save(consumer);
 
-            SpecialRecipeBuilder.special(ElementsOfPowerMod.GEMSTONE_CHANGE.get()).save(consumer, ElementsOfPowerMod.location("gemstone_change").toString());
-            SpecialRecipeBuilder.special(ElementsOfPowerMod.CONTAINER_CHARGE.get()).save(consumer, ElementsOfPowerMod.location("container_charge").toString());
+            SpecialRecipeBuilder.special(ElementsOfPowerMod.GEMSTONE_CHANGE.get()).save(consumer, location("gemstone_change").toString());
+            SpecialRecipeBuilder.special(ElementsOfPowerMod.CONTAINER_CHARGE.get()).save(consumer, location("container_charge").toString());
 
             for (Gemstone gem : Gemstone.values())
             {
@@ -533,7 +657,7 @@ class ElementsofPowerDataGen
                     Item[] oreItems = gem.getOres().stream().map(Block::asItem).toArray(Item[]::new);
                     SimpleCookingRecipeBuilder.smelting(Ingredient.of(oreItems), RecipeCategory.MISC, gem, 1.0F, 200)
                             .unlockedBy("has_ore", has(tag))
-                            .save(consumer, ElementsOfPowerMod.location("smelting/" + gem.getSerializedName()));
+                            .save(consumer, location("smelting/" + gem.getSerializedName()));
                 }
                 if (gem.generateCustomBlock())
                 {
@@ -548,7 +672,7 @@ class ElementsofPowerDataGen
                     ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, gem.getItem(), 9)
                             .requires(Ingredient.of(gem.getBlock()))
                             .unlockedBy("has_item", has(gem.getItem()))
-                            .save(consumer, ElementsOfPowerMod.location(gem.getSerializedName() + "_from_block"));
+                            .save(consumer, location(gem.getSerializedName() + "_from_block"));
                 }
             }
         }
@@ -614,8 +738,8 @@ class ElementsofPowerDataGen
 
         private static final RuleTest STONE_ORE_REPLACEABLES = new TagMatchTest(BlockTags.STONE_ORE_REPLACEABLES);
         private static final RuleTest DEEPSLATE_ORE_REPLACEABLES = new TagMatchTest(BlockTags.DEEPSLATE_ORE_REPLACEABLES);
-        private static final ResourceKey<ConfiguredFeature<?, ?>> CONFIGURED_COCOON = ResourceKey.create(Registries.CONFIGURED_FEATURE, ElementsOfPowerMod.location("overworld_cocoon"));
-        private static final ResourceKey<PlacedFeature> PLACED_COCOON = ResourceKey.create(Registries.PLACED_FEATURE, ElementsOfPowerMod.location("overworld_cocoon"));
+        private static final ResourceKey<ConfiguredFeature<?, ?>> CONFIGURED_COCOON = ResourceKey.create(Registries.CONFIGURED_FEATURE, location("overworld_cocoon"));
+        private static final ResourceKey<PlacedFeature> PLACED_COCOON = ResourceKey.create(Registries.PLACED_FEATURE, location("overworld_cocoon"));
         private static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()
                 .add(Registries.CONFIGURED_FEATURE, context -> {
                     context.register(CONFIGURED_COCOON, new ConfiguredFeature<>(ElementsOfPowerMod.COCOON_FEATURE.get(), NoneFeatureConfiguration.INSTANCE));
@@ -644,7 +768,7 @@ class ElementsofPowerDataGen
 
                                         int numPerVein = 3 + values.getBiomeBonus(g.getElement());
                                         var name2 = g.getSerializedName() + "_ore_" + name;
-                                        var key = ResourceKey.create(Registries.CONFIGURED_FEATURE, ElementsOfPowerMod.location(name2));
+                                        var key = ResourceKey.create(Registries.CONFIGURED_FEATURE, location(name2));
                                         context.register(key, new ConfiguredFeature<>(Feature.ORE, new OreConfiguration(targets, numPerVein, 0.0f)));
                                     }
                                 }
@@ -667,8 +791,8 @@ class ElementsofPowerDataGen
                                     if (g.generateInWorld())
                                     {
                                         var name2 = g.getSerializedName() + "_ore_" + name;
-                                        var key = ResourceKey.create(Registries.CONFIGURED_FEATURE, ElementsOfPowerMod.location(name2));
-                                        var key2 = ResourceKey.create(Registries.PLACED_FEATURE, ElementsOfPowerMod.location(name2));
+                                        var key = ResourceKey.create(Registries.CONFIGURED_FEATURE, location(name2));
+                                        var key2 = ResourceKey.create(Registries.PLACED_FEATURE, location(name2));
                                         var configured = configuredFeatureRegistry.get(key).orElseThrow();
                                         context.register(key2, new PlacedFeature(configured, List.of(
                                                 CountPlacement.of(16),
@@ -731,7 +855,7 @@ class ElementsofPowerDataGen
                     };
 
                     final HolderSet.Named<Biome> isVoid = biomes.get(Tags.Biomes.IS_VOID).orElseThrow();
-                    context.register(ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS, ElementsOfPowerMod.location("cocoon")),
+                    context.register(ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS, location("cocoon")),
                             new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
                             new NotHolderSet<>(biomes0, isVoid),
                             HolderSet.direct(placedFeatures.get(PLACED_COCOON).orElseThrow()),
@@ -757,9 +881,9 @@ class ElementsofPowerDataGen
                                     if (g.generateInWorld())
                                     {
                                         var name2 = g.getSerializedName() + "_ore_" + name;
-                                        var key2 = ResourceKey.create(Registries.PLACED_FEATURE, ElementsOfPowerMod.location(name2));
+                                        var key2 = ResourceKey.create(Registries.PLACED_FEATURE, location(name2));
                                         var placed = placedFeatures.get(key2).orElseThrow();
-                                        var key = ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS, ElementsOfPowerMod.location(name2));
+                                        var key = ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS, location(name2));
 
                                         HolderSet<Biome> heatHolderSet = switch (heat)
                                                 {
@@ -792,11 +916,11 @@ class ElementsofPowerDataGen
                 });
     }
 
-    private static TagKey<Item> itemTag(String p_203855_) {
-        return TagKey.create(Registries.ITEM, new ResourceLocation(p_203855_));
+    private static TagKey<Item> itemTag(String tagName) {
+        return TagKey.create(Registries.ITEM, new ResourceLocation(tagName));
     }
 
-    private static TagKey<Block> blockTag(String p_203847_) {
-        return TagKey.create(Registries.BLOCK, new ResourceLocation(p_203847_));
+    private static TagKey<Block> blockTag(String tagName) {
+        return TagKey.create(Registries.BLOCK, new ResourceLocation(tagName));
     }
 }

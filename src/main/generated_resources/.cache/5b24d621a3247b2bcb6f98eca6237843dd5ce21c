@@ -1,4 +1,4 @@
-// 1.20.1	2023-06-25T15:38:51.4492623	Tags for minecraft:block mod id elementsofpower
+// 1.20.1	2023-08-11T15:27:25.575354	Tags for minecraft:block mod id elementsofpower
 47178c247d72698fa7d1565f88d280a2e0dd551f data/elementsofpower/tags/blocks/can_cocoon_replace.json
 8ba5dedf75a9570db84668f0b565d539cfbffca5 data/forge/tags/blocks/ores.json
 c94257e05fd20feb732fb5edde618af4d7789919 data/forge/tags/blocks/ores/agate.json
@@ -14,5 +14,6 @@ cdee53a5377584391939f9e144a2b2af155936da data/forge/tags/blocks/storage_blocks/c
 57ac3f4d8df87f3d580c42e24a32ddcb07d0fca2 data/forge/tags/blocks/storage_blocks/rubellite.json
 0767ebbb27a105be6da75a33fae77191bf2c12cd data/forge/tags/blocks/storage_blocks/ruby.json
 54fd53510787df03f276750e814b231f5f4ce7dd data/forge/tags/blocks/storage_blocks/sapphire.json
+994cf94beef420425846dd2750f53d3bbd691def data/minecraft/tags/blocks/mineable/axe.json
 783e69a9f10e444f918b0e3f57c7e62435359f55 data/minecraft/tags/blocks/mineable/pickaxe.json
 783e69a9f10e444f918b0e3f57c7e62435359f55 data/minecraft/tags/blocks/needs_iron_tool.json

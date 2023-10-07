@@ -45,7 +45,7 @@ public class StaffItem extends WandItem
         if (g == null)
             return gemstoneName;
 
-        return Component.translatable("elementsofpower.staff.augmented", g.getItem().getDefaultInstance().getHoverName(), gemstoneName);
+        return Component.translatable("text.elementsofpower.staff.augmented", g.getItem().getDefaultInstance().getHoverName(), gemstoneName);
     }
 
     @Override

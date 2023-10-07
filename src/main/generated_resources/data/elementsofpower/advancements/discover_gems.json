@@ -1,0 +1,94 @@
+{
+  "parent": "elementsofpower:root",
+  "criteria": {
+    "has_gemstone": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "elementsofpower:ruby"
+            ]
+          },
+          {
+            "items": [
+              "elementsofpower:sapphire"
+            ]
+          },
+          {
+            "items": [
+              "elementsofpower:citrine"
+            ]
+          },
+          {
+            "items": [
+              "elementsofpower:agate"
+            ]
+          },
+          {
+            "items": [
+              "elementsofpower:quartz"
+            ]
+          },
+          {
+            "items": [
+              "minecraft:diamond"
+            ]
+          },
+          {
+            "items": [
+              "elementsofpower:onyx"
+            ]
+          },
+          {
+            "items": [
+              "elementsofpower:emerald"
+            ]
+          },
+          {
+            "items": [
+              "elementsofpower:rubellite"
+            ]
+          },
+          {
+            "items": [
+              "elementsofpower:diamond"
+            ]
+          },
+          {
+            "items": [
+              "minecraft:diamond"
+            ]
+          },
+          {
+            "items": [
+              "elementsofpower:creativite"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancement.elementsofpower.discover_gems.description"
+    },
+    "frame": "goal",
+    "hidden": false,
+    "icon": {
+      "item": "elementsofpower:wand",
+      "nbt": "{gemstone:\"ruby\"}"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.elementsofpower.discover_gems.title"
+    }
+  },
+  "requirements": [
+    [
+      "has_gemstone"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

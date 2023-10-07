@@ -1,0 +1,22 @@
+{
+  "parent": "elementsofpower:advanced_spell",
+  "criteria": {},
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.elementsofpower.master_spell.description"
+    },
+    "frame": "goal",
+    "hidden": false,
+    "icon": {
+      "item": "elementsofpower:wand",
+      "nbt": "{gemstone:\"ruby\"}"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.elementsofpower.master_spell.title"
+    }
+  },
+  "requirements": [],
+  "sends_telemetry_event": true
+}

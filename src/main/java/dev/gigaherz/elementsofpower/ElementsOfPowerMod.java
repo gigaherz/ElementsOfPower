@@ -154,6 +154,7 @@ public class ElementsOfPowerMod
                 output.accept(ElementsOfPowerItems.RING.get());
                 output.accept(ElementsOfPowerItems.BRACELET.get());
                 output.accept(ElementsOfPowerItems.NECKLACE.get());
+                output.accept(ElementsOfPowerItems.GEM_POUCH.get());
 
                 output.accept(ElementsOfPowerItems.FIRE_ORB.get());
                 output.accept(ElementsOfPowerItems.WATER_ORB.get());
@@ -183,34 +184,39 @@ public class ElementsOfPowerMod
             .withTabsBefore(CreativeModeTabs.SPAWN_EGGS, CREATIVE_TAB_MAGIC.getKey())
             .displayItems((featureFlags, output) -> {
 
-
                 output.accept(ElementsOfPowerItems.RUBY_ORE.get());
-                output.accept(ElementsOfPowerItems.SAPPHIRE_ORE.get());
-                output.accept(ElementsOfPowerItems.CITRINE_ORE.get());
-                output.accept(ElementsOfPowerItems.AGATE_ORE.get());
-                output.accept(ElementsOfPowerItems.ONYX_ORE.get());
-                output.accept(ElementsOfPowerItems.rubellite_ORE.get());
                 output.accept(ElementsOfPowerItems.DEEPSLATE_RUBY_ORE.get());
-                output.accept(ElementsOfPowerItems.DEEPSLATE_SAPPHIRE_ORE.get());
-                output.accept(ElementsOfPowerItems.DEEPSLATE_CITRINE_ORE.get());
-                output.accept(ElementsOfPowerItems.DEEPSLATE_AGATE_ORE.get());
-                output.accept(ElementsOfPowerItems.DEEPSLATE_ONYX_ORE.get());
-                output.accept(ElementsOfPowerItems.DEEPSLATE_rubellite_ORE.get());
                 output.accept(ElementsOfPowerItems.RUBY_BLOCK.get());
-                output.accept(ElementsOfPowerItems.SAPPHIRE_BLOCK.get());
-                output.accept(ElementsOfPowerItems.CITRINE_BLOCK.get());
-                output.accept(ElementsOfPowerItems.AGATE_BLOCK.get());
-                output.accept(ElementsOfPowerItems.ONYX_BLOCK.get());
-                output.accept(ElementsOfPowerItems.rubellite_BLOCK.get());
-
                 ElementsOfPowerItems.RUBY.get().addToTab(output::accept);
+
+
+                output.accept(ElementsOfPowerItems.SAPPHIRE_ORE.get());
+                output.accept(ElementsOfPowerItems.DEEPSLATE_SAPPHIRE_ORE.get());
+                output.accept(ElementsOfPowerItems.SAPPHIRE_BLOCK.get());
                 ElementsOfPowerItems.SAPPHIRE.get().addToTab(output::accept);
+
+                output.accept(ElementsOfPowerItems.CITRINE_ORE.get());
+                output.accept(ElementsOfPowerItems.DEEPSLATE_CITRINE_ORE.get());
+                output.accept(ElementsOfPowerItems.CITRINE_BLOCK.get());
                 ElementsOfPowerItems.CITRINE.get().addToTab(output::accept);
+
+                output.accept(ElementsOfPowerItems.AGATE_ORE.get());
+                output.accept(ElementsOfPowerItems.DEEPSLATE_AGATE_ORE.get());
+                output.accept(ElementsOfPowerItems.AGATE_BLOCK.get());
                 ElementsOfPowerItems.AGATE.get().addToTab(output::accept);
-                ElementsOfPowerItems.QUARTZ.get().addToTab(output::accept);
+
+                output.accept(ElementsOfPowerItems.ONYX_ORE.get());
+                output.accept(ElementsOfPowerItems.DEEPSLATE_ONYX_ORE.get());
+                output.accept(ElementsOfPowerItems.ONYX_BLOCK.get());
                 ElementsOfPowerItems.ONYX.get().addToTab(output::accept);
-                ElementsOfPowerItems.EMERALD.get().addToTab(output::accept);
+
+                output.accept(ElementsOfPowerItems.rubellite_ORE.get());
+                output.accept(ElementsOfPowerItems.DEEPSLATE_rubellite_ORE.get());
+                output.accept(ElementsOfPowerItems.rubellite_BLOCK.get());
                 ElementsOfPowerItems.RUBELLITE.get().addToTab(output::accept);
+
+                ElementsOfPowerItems.QUARTZ.get().addToTab(output::accept);
+                ElementsOfPowerItems.EMERALD.get().addToTab(output::accept);
                 ElementsOfPowerItems.DIAMOND.get().addToTab(output::accept);
                 ElementsOfPowerItems.CREATIVITE.get().addToTab(output::accept);
             }).build()
@@ -243,23 +249,9 @@ public class ElementsOfPowerMod
         PLACEMENT_MODIFIER_TYPES.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
-        modEventBus.addListener(this::registerParticleFactory);
         modEventBus.addListener(this::gatherData);
         modEventBus.addListener(this::modelRegistry);
         modEventBus.addListener(this::registerCapabilities);
-
-        var annotationData = ModList.get().getModFiles()
-                .stream()
-                .map(file -> file.getFile().getScanResult().getAnnotations())
-                .toList();
-
-
-        //MinecraftForge.EVENT_BUS.addListener(this::addStuffToBiomes);
-    }
-
-    public void registerParticleFactory(RegisterParticleProvidersEvent event)
-    {
-        event.registerSpriteSet(COLORED_SMOKE_DATA.get(), ColoredSmokeData.Factory::new);
     }
 
     public void modelRegistry(ModelEvent.RegisterGeometryLoaders event)
@@ -271,6 +263,12 @@ public class ElementsOfPowerMod
     @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class ClientEvents
     {
+        @SubscribeEvent
+        public static void registerParticleFactory(RegisterParticleProvidersEvent event)
+        {
+            event.registerSpriteSet(COLORED_SMOKE_DATA.get(), ColoredSmokeData.Factory::new);
+        }
+
         @SubscribeEvent
         public static void renderers(EntityRenderersEvent.RegisterRenderers event)
         {
@@ -337,7 +335,7 @@ public class ElementsOfPowerMod
 
     public void gatherData(GatherDataEvent event)
     {
-        ElementsofPowerDataGen.gatherData(event);
+        ElementsOfPowerDataGen.gatherData(event);
     }
 
 }

@@ -1,0 +1,39 @@
+{
+  "parent": "elementsofpower:discover_gems",
+  "criteria": {
+    "has_wand": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "elementsofpower:staff"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancement.elementsofpower.acquire_wand.description"
+    },
+    "frame": "goal",
+    "hidden": false,
+    "icon": {
+      "item": "elementsofpower:wand",
+      "nbt": "{gemstone:\"ruby\"}"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.elementsofpower.acquire_wand.title"
+    }
+  },
+  "requirements": [
+    [
+      "has_wand"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

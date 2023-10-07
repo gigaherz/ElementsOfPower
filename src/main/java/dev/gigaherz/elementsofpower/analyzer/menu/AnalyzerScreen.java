@@ -61,11 +61,11 @@ public class AnalyzerScreen extends AbstractContainerScreen<AnalyzerMenu>
             MagicAmounts am = null;
 
             Item item = stack.getItem();
-            if (item instanceof GemstoneItem)
-            {
-                graphics.drawString(font, "Item: Gemstone", 32, 18, 0xffffff, false);
 
-                GemstoneItem gemstone = (GemstoneItem) item;
+            graphics.drawString(font, Component.translatable("text.elementsofpower.analyzer.item", stack.getHoverName()), 32, 18, 0xffffff, false);
+
+            if (item instanceof GemstoneItem gemstone)
+            {
                 gem = gemstone.getGemstone();
                 q = gemstone.getQuality(stack);
 
@@ -74,11 +74,13 @@ public class AnalyzerScreen extends AbstractContainerScreen<AnalyzerMenu>
 
             if (gem != null)
             {
-                graphics.drawString(font, "Gemstone type: " + gem.toString(), 32, 30, 0xffffff, false);
-                graphics.drawString(font, "Quality level: " + (q != null ? q.toString() : "Unknown"), 32, 40, 0xffffff, false);
+                graphics.drawString(font, Component.translatable("text.elementsofpower.analyzer.gem", Component.translatable("item.elementsofpower." + gem.getSerializedName())),
+                        32, 30, 0xffffff, false);
+                graphics.drawString(font, Component.translatable("text.elementsofpower.analyzer.quality", (q != null ? q.toString() : "Unknown")),
+                        32, 40, 0xffffff, false);
                 if (!am.isEmpty())
                 {
-                    graphics.drawString(font, "Effective Capacity:", 32, 50, 0xffffff, false);
+                    graphics.drawString(font, Component.translatable("text.elementsofpower.analyzer.capacity"), 32, 50, 0xffffff, false);
                     graphics.drawString(font, String.format("%s, %s, %s, %s",
                             MagicTooltips.PRETTY_NUMBER_FORMATTER.format(am.fire()),
                             MagicTooltips.PRETTY_NUMBER_FORMATTER.format(am.water()),
@@ -93,8 +95,7 @@ public class AnalyzerScreen extends AbstractContainerScreen<AnalyzerMenu>
             }
             else
             {
-                graphics.drawString(font, "Item: " + stack.getHoverName(), 32, 18, 0xffffff, false);
-                graphics.drawString(font, "Does not look like a useful gemstone.", 32, 30, 0xffffff, false);
+                graphics.drawWordWrap(font, Component.translatable("text.elementsofpower.analyzer.not_a_gemstone"), 32, 30,  134,0xffffff);
             }
         }
     }

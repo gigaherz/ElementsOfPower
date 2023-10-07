@@ -3,10 +3,7 @@ package dev.gigaherz.elementsofpower;
 import dev.gigaherz.elementsofpower.analyzer.AnalyzerItem;
 import dev.gigaherz.elementsofpower.gemstones.Gemstone;
 import dev.gigaherz.elementsofpower.gemstones.GemstoneItem;
-import dev.gigaherz.elementsofpower.items.BaubleItem;
-import dev.gigaherz.elementsofpower.items.MagicOrbItem;
-import dev.gigaherz.elementsofpower.items.StaffItem;
-import dev.gigaherz.elementsofpower.items.WandItem;
+import dev.gigaherz.elementsofpower.items.*;
 import dev.gigaherz.elementsofpower.spells.Element;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -28,12 +25,14 @@ public class ElementsOfPowerItems
     }
 
     public static final RegistryObject<BlockItem> ESSENTIALIZER = registerBlockItem(ElementsOfPowerBlocks.ESSENTIALIZER);
-    public static final RegistryObject<AnalyzerItem> ANALYZER = ITEMS.register("analyzer", () -> new AnalyzerItem(new Item.Properties().stacksTo(1))        );
+    public static final RegistryObject<AnalyzerItem> ANALYZER = ITEMS.register("analyzer", () -> new AnalyzerItem(ElementsOfPowerBlocks.ANALYZER.get(), new Item.Properties().stacksTo(1))        );
     public static final RegistryObject<WandItem> WAND = ITEMS.register("wand", () -> new WandItem(new Item.Properties().stacksTo(1))        );
     public static final RegistryObject<StaffItem> STAFF = ITEMS.register("staff", () -> new StaffItem(new Item.Properties().stacksTo(1))        );
     public static final RegistryObject<BaubleItem> RING = ITEMS.register("ring", () -> new BaubleItem(new Item.Properties().stacksTo(1))        );
     public static final RegistryObject<BaubleItem> BRACELET = ITEMS.register("bracelet", () -> new BaubleItem(new Item.Properties().stacksTo(1))        );
     public static final RegistryObject<BaubleItem> NECKLACE = ITEMS.register("necklace", () -> new BaubleItem(new Item.Properties().stacksTo(1))        );
+
+    public static final RegistryObject<GemPouchItem> GEM_POUCH = ITEMS.register("gem_pouch", () -> new GemPouchItem(new Item.Properties().stacksTo(1))        );
 
     private static RegistryObject<GemstoneItem> registerGemstone(Gemstone type)
     {

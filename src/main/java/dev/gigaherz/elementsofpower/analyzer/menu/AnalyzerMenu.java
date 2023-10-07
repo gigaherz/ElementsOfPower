@@ -3,14 +3,17 @@ package dev.gigaherz.elementsofpower.analyzer.menu;
 import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.database.GemstoneExaminer;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerListener;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.network.NetworkHooks;
 
 public class AnalyzerMenu extends AbstractContainerMenu
 {
@@ -42,6 +45,13 @@ public class AnalyzerMenu extends AbstractContainerMenu
         });
 
         bindPlayerInventory(playerInventory);
+    }
+
+    public static void openAnalyzer(ServerPlayer serverPlayer, int slot)
+    {
+        NetworkHooks.openScreen(serverPlayer, new SimpleMenuProvider((id, playerInventory, player) -> new AnalyzerMenu(id, playerInventory, slot),
+                        Component.translatable("container.elementsofpower.analyzer")),
+                (packetBuffer) -> packetBuffer.writeInt(slot));
     }
 
     protected void bindPlayerInventory(Inventory playerInventory)

@@ -22,6 +22,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.glfw.GLFW;
 
@@ -154,21 +155,24 @@ public class WandUseManager
     @SubscribeEvent
     public void onLivingUseItem(LivingEntityUseItemEvent.Start e)
     {
-        if (activeStack == null)
+        if (e.getEntity() instanceof LocalPlayer player)
         {
-            Player player = Objects.requireNonNull(mc.player);
-            int slotNumber = player.getInventory().selected;
-            ItemStack itemUsing = player.getInventory().getSelected();
-            if (!(itemUsing.getItem() instanceof WandItem))
-                return;
+            if (activeStack == null)
+            {
 
-            InteractionHand hand = handInUse;
+                int slotNumber = player.getInventory().selected;
+                ItemStack itemUsing = player.getInventory().getSelected();
+                if (!(itemUsing.getItem() instanceof WandItem))
+                    return;
 
-            beginHoldingRightButton(slotNumber, hand, itemUsing);
-        }
-        else if (e.getItem().getItem() == activeStack.getItem())
-        {
-            e.setDuration(itemInUseCount);
+                InteractionHand hand = handInUse;
+
+                beginHoldingRightButton(slotNumber, hand, itemUsing);
+            }
+            else if (e.getItem().getItem() == activeStack.getItem())
+            {
+                e.setDuration(itemInUseCount);
+            }
         }
     }
 

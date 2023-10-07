@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "elementsofpower:block/analyzer",
+      "y": 270
+    },
+    "facing=east": {
+      "model": "elementsofpower:block/analyzer",
+      "y": 0
+    },
+    "facing=south": {
+      "model": "elementsofpower:block/analyzer",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "elementsofpower:block/analyzer",
+      "y": 180
+    }
+  }
+}

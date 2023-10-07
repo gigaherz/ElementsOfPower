@@ -1,0 +1,39 @@
+{
+  "parent": "forge:item/default",
+  "loader": "forge:obj",
+  "model": "elementsofpower:models/item/analyzer.obj",
+  "textures":{
+    "particle": "minecraft:block/dark_oak_planks"
+  },
+  "display": {
+    "gui": {
+      "rotation": [30,225,0],
+      "scale": [0.625,0.625,0.625],
+      "translation": [0,1,0]
+    },
+    "firstperson_righthand": {
+      "rotation": [ 0, -130, 0 ],
+      "translation": [ 1.4, 5, 0],
+      "scale": [ 0.48, 0.48, 0.48 ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [ 0, 50, 0 ],
+      "translation": [ 1.4, 5, 0],
+      "scale": [ 0.48, 0.48, 0.48 ]
+    },
+    "thirdperson_righthand": {
+      "rotation": [ 0, 0, 0 ],
+      "translation": [ 0, 3, 1 ],
+      "scale": [ 0.55, 0.55, 0.55 ]
+    },
+    "ground": {
+      "rotation": [ 0, 0, 0 ],
+      "translation": [ 0, 2, 0],
+      "scale":[ 0.5, 0.5, 0.5 ]
+    },
+    "fixed": {
+      "rotation": [ 0, 180, 0 ],
+      "scale": [ 1, 1, 1 ]
+    }
+  }
+}

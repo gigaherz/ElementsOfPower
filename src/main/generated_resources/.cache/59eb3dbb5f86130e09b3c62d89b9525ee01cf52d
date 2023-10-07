@@ -1,7 +1,8 @@
-// 1.20.1	2023-06-25T15:38:51.4512668	Loot Tables
+// 1.20.1	2023-08-11T15:27:25.5793395	Loot Tables
 319685f9ed5bc1d852244b6b964793ce0853f9e6 data/elementsofpower/loot_tables/blocks/agate_block.json
 1332627889a0a88aaa691a07c2fb47025405e938 data/elementsofpower/loot_tables/blocks/agate_ore.json
 0e171b034d815c7386302ea37fee8d52e8fee983 data/elementsofpower/loot_tables/blocks/air_cocoon.json
+e1878abd4e9e9e812c47a0a8d5a1c317471fa78f data/elementsofpower/loot_tables/blocks/analyzer.json
 04af6d1e886dfa53a1ff625657fce6e7177ce68d data/elementsofpower/loot_tables/blocks/chaos_cocoon.json
 07c2804463dbfe662f7d295b7c2c113b615f1003 data/elementsofpower/loot_tables/blocks/citrine_block.json
 b0cc41def7380fa30ff3925a8cc3455885055d1f data/elementsofpower/loot_tables/blocks/citrine_ore.json

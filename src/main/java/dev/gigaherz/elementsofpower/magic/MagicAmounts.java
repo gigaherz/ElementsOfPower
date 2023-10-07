@@ -53,14 +53,14 @@ public record MagicAmounts(
     public static final int ELEMENTS = 8;
 
     public final static String[] magicNames = {
-            ElementsOfPowerMod.MODID + ".element.fire",
-            ElementsOfPowerMod.MODID + ".element.water",
-            ElementsOfPowerMod.MODID + ".element.air",
-            ElementsOfPowerMod.MODID + ".element.earth",
-            ElementsOfPowerMod.MODID + ".element.light",
-            ElementsOfPowerMod.MODID + ".element.time",
-            ElementsOfPowerMod.MODID + ".element.life",
-            ElementsOfPowerMod.MODID + ".element.chaos",
+            "text.elementsofpower.element.fire",
+            "text.elementsofpower.element.water",
+            "text.elementsofpower.element.air",
+            "text.elementsofpower.element.earth",
+            "text.elementsofpower.element.light",
+            "text.elementsofpower.element.time",
+            "text.elementsofpower.element.life",
+            "text.elementsofpower.element.chaos",
     };
 
     public static MutableComponent getMagicName(int i)

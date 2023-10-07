@@ -102,7 +102,7 @@ public enum Gemstone implements StringRepresentable, ItemLike
 
     public String getContainerTranslationKey()
     {
-        return "elementsofpower.gem_container." + name;
+        return "text.elementsofpower.gem_container." + name;
     }
 
     public int getTintColor()

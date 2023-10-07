@@ -240,7 +240,7 @@ public abstract class GemContainerItem extends MagicContainerItem
 
         Gemstone g = getGemstone(stack);
         if (g == null)
-            return Component.translatable("elementsofpower.gem_container.unbound", baseName);
+            return Component.translatable("text.elementsofpower.gem_container.unbound", baseName);
 
         return Component.translatable(g.getContainerTranslationKey(), baseName);
     }
