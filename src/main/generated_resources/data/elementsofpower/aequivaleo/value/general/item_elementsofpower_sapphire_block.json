@@ -1,29 +1,28 @@
 {
-  "compounds": [
-    {
-      "type": "elementsofpower:earth",
-      "amount": 19.0
-    },
+  "compoundInstances": [
     {
       "type": "elementsofpower:water",
       "amount": 1.0
+    },
+    {
+      "type": "elementsofpower:earth",
+      "amount": 19.0
     }
   ],
-  "mode": "ADDITIVE",
-  "targets": [
+  "containers": [
     {
       "type": "aequivaleo:item",
-      "data": {
-        "count": 1.0,
-        "item": "elementsofpower:sapphire_block"
-      }
+      "count": 1.0,
+      "item": "elementsofpower:sapphire_block"
     },
     {
       "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:sapphire_block\"}"
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "elementsofpower:sapphire_block"
       }
     }
-  ]
+  ],
+  "mode": "ADDITIVE"
 }

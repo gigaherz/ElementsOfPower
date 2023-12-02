@@ -1,0 +1,38 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": {
+    "type": "neoforge:and",
+    "values": [
+      {
+        "type": "neoforge:or",
+        "values": [
+          "#minecraft:is_overworld"
+        ]
+      },
+      {
+        "type": "neoforge:or",
+        "values": [
+          "#forge:is_cold/overworld"
+        ]
+      },
+      {
+        "type": "neoforge:or",
+        "values": [
+          "#forge:is_dry/overworld"
+        ]
+      },
+      {
+        "type": "neoforge:not",
+        "value": {
+          "type": "neoforge:or",
+          "values": [
+            "#forge:is_dense/overworld",
+            "#forge:is_sparse/overworld"
+          ]
+        }
+      }
+    ]
+  },
+  "features": "elementsofpower:agate_ore_against_against_neutral",
+  "step": "underground_ores"
+}

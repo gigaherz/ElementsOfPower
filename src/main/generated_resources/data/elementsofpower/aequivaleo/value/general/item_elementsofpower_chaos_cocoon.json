@@ -1,29 +1,28 @@
 {
-  "compounds": [
-    {
-      "type": "elementsofpower:chaos",
-      "amount": 8.0
-    },
+  "compoundInstances": [
     {
       "type": "elementsofpower:life",
       "amount": 2.0
+    },
+    {
+      "type": "elementsofpower:chaos",
+      "amount": 8.0
     }
   ],
-  "mode": "ADDITIVE",
-  "targets": [
+  "containers": [
     {
       "type": "aequivaleo:item",
-      "data": {
-        "count": 1.0,
-        "item": "elementsofpower:chaos_cocoon"
-      }
+      "count": 1.0,
+      "item": "elementsofpower:chaos_cocoon"
     },
     {
       "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:chaos_cocoon\"}"
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "elementsofpower:chaos_cocoon"
       }
     }
-  ]
+  ],
+  "mode": "ADDITIVE"
 }

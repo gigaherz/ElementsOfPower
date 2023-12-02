@@ -1,33 +1,32 @@
 {
-  "compounds": [
+  "compoundInstances": [
     {
       "type": "elementsofpower:air",
       "amount": 2.0
     },
     {
-      "type": "elementsofpower:life",
+      "type": "elementsofpower:light",
       "amount": 2.0
     },
     {
-      "type": "elementsofpower:light",
+      "type": "elementsofpower:life",
       "amount": 2.0
     }
   ],
-  "mode": "ADDITIVE",
-  "targets": [
+  "containers": [
     {
       "type": "aequivaleo:item",
-      "data": {
-        "count": 1.0,
-        "item": "minecraft:egg"
-      }
+      "count": 1.0,
+      "item": "minecraft:egg"
     },
     {
       "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"minecraft:egg\"}"
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "minecraft:egg"
       }
     }
-  ]
+  ],
+  "mode": "ADDITIVE"
 }

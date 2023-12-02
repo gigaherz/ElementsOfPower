@@ -1,5 +1,5 @@
 {
-  "compounds": [
+  "compoundInstances": [
     {
       "type": "elementsofpower:air",
       "amount": 2.0
@@ -9,21 +9,20 @@
       "amount": 2.0
     }
   ],
-  "mode": "ADDITIVE",
-  "targets": [
+  "containers": [
     {
       "type": "aequivaleo:item",
-      "data": {
-        "count": 1.0,
-        "item": "minecraft:red_sand"
-      }
+      "count": 1.0,
+      "item": "minecraft:red_sand"
     },
     {
       "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"minecraft:red_sand\"}"
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "minecraft:red_sand"
       }
     }
-  ]
+  ],
+  "mode": "ADDITIVE"
 }

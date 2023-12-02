@@ -14,7 +14,14 @@
           "functions": [
             {
               "factors": {
-                "fire": 1.0
+                "air": 0.0,
+                "chaos": 0.0,
+                "earth": 0.0,
+                "fire": 1.0,
+                "life": 0.0,
+                "light": 0.0,
+                "time": 0.0,
+                "water": 0.0
               },
               "function": "elementsofpower:apply_orb_size"
             }
@@ -37,6 +44,13 @@
           "functions": [
             {
               "factors": {
+                "air": 0.0,
+                "chaos": 0.0,
+                "earth": 0.0,
+                "fire": 0.0,
+                "life": 0.0,
+                "light": 0.0,
+                "time": 0.0,
                 "water": 1.0
               },
               "function": "elementsofpower:apply_orb_size"
@@ -60,7 +74,14 @@
           "functions": [
             {
               "factors": {
-                "air": 1.0
+                "air": 1.0,
+                "chaos": 0.0,
+                "earth": 0.0,
+                "fire": 0.0,
+                "life": 0.0,
+                "light": 0.0,
+                "time": 0.0,
+                "water": 0.0
               },
               "function": "elementsofpower:apply_orb_size"
             }
@@ -83,7 +104,14 @@
           "functions": [
             {
               "factors": {
-                "earth": 1.0
+                "air": 0.0,
+                "chaos": 0.0,
+                "earth": 1.0,
+                "fire": 0.0,
+                "life": 0.0,
+                "light": 0.0,
+                "time": 0.0,
+                "water": 0.0
               },
               "function": "elementsofpower:apply_orb_size"
             }
@@ -106,7 +134,14 @@
           "functions": [
             {
               "factors": {
-                "light": 1.0
+                "air": 0.0,
+                "chaos": 0.0,
+                "earth": 0.0,
+                "fire": 0.0,
+                "life": 0.0,
+                "light": 1.0,
+                "time": 0.0,
+                "water": 0.0
               },
               "function": "elementsofpower:apply_orb_size"
             }
@@ -129,7 +164,14 @@
           "functions": [
             {
               "factors": {
-                "time": 1.0
+                "air": 0.0,
+                "chaos": 0.0,
+                "earth": 0.0,
+                "fire": 0.0,
+                "life": 0.0,
+                "light": 0.0,
+                "time": 1.0,
+                "water": 0.0
               },
               "function": "elementsofpower:apply_orb_size"
             }
@@ -152,7 +194,14 @@
           "functions": [
             {
               "factors": {
-                "life": 1.0
+                "air": 0.0,
+                "chaos": 0.0,
+                "earth": 0.0,
+                "fire": 0.0,
+                "life": 1.0,
+                "light": 0.0,
+                "time": 0.0,
+                "water": 0.0
               },
               "function": "elementsofpower:apply_orb_size"
             }
@@ -175,7 +224,14 @@
           "functions": [
             {
               "factors": {
-                "chaos": 1.0
+                "air": 0.0,
+                "chaos": 1.0,
+                "earth": 0.0,
+                "fire": 0.0,
+                "life": 0.0,
+                "light": 0.0,
+                "time": 0.0,
+                "water": 0.0
               },
               "function": "elementsofpower:apply_orb_size"
             }

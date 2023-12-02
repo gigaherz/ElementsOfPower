@@ -1,9 +1,5 @@
 {
-  "compounds": [
-    {
-      "type": "elementsofpower:chaos",
-      "amount": 1.0
-    },
+  "compoundInstances": [
     {
       "type": "elementsofpower:earth",
       "amount": 3.0
@@ -11,23 +7,26 @@
     {
       "type": "elementsofpower:life",
       "amount": 1.0
+    },
+    {
+      "type": "elementsofpower:chaos",
+      "amount": 1.0
     }
   ],
-  "mode": "ADDITIVE",
-  "targets": [
+  "containers": [
     {
       "type": "aequivaleo:item",
-      "data": {
-        "count": 1.0,
-        "item": "minecraft:podzol"
-      }
+      "count": 1.0,
+      "item": "minecraft:podzol"
     },
     {
       "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"minecraft:podzol\"}"
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "minecraft:podzol"
       }
     }
-  ]
+  ],
+  "mode": "ADDITIVE"
 }

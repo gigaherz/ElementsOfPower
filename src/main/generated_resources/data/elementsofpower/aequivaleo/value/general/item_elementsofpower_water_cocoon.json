@@ -1,29 +1,28 @@
 {
-  "compounds": [
-    {
-      "type": "elementsofpower:life",
-      "amount": 2.0
-    },
+  "compoundInstances": [
     {
       "type": "elementsofpower:water",
       "amount": 8.0
+    },
+    {
+      "type": "elementsofpower:life",
+      "amount": 2.0
     }
   ],
-  "mode": "ADDITIVE",
-  "targets": [
+  "containers": [
     {
       "type": "aequivaleo:item",
-      "data": {
-        "count": 1.0,
-        "item": "elementsofpower:water_cocoon"
-      }
+      "count": 1.0,
+      "item": "elementsofpower:water_cocoon"
     },
     {
       "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:water_cocoon\"}"
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "elementsofpower:water_cocoon"
       }
     }
-  ]
+  ],
+  "mode": "ADDITIVE"
 }

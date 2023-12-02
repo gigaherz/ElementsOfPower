@@ -1,58 +1,79 @@
 {
-  "compounds": {
-    "type": "elementsofpower:earth",
-    "amount": 1.125
-  },
-  "mode": "ADDITIVE",
-  "targets": [
+  "compoundInstances": [
+    {
+      "type": "elementsofpower:earth",
+      "amount": 1.125
+    }
+  ],
+  "containers": [
     {
       "type": "aequivaleo:item",
-      "data": {
-        "count": 1.0,
-        "item": "elementsofpower:agate"
+      "count": 1.0,
+      "item": "elementsofpower:agate"
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "elementsofpower:agate"
       }
     },
     {
       "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:agate\"}"
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "elementsofpower:agate",
+        "tag": {
+          "quality": 0
+        }
       }
     },
     {
       "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:agate\",tag:{quality:0}}"
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "elementsofpower:agate",
+        "tag": {
+          "quality": 1
+        }
       }
     },
     {
       "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:agate\",tag:{quality:1}}"
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "elementsofpower:agate",
+        "tag": {
+          "quality": 2
+        }
       }
     },
     {
       "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:agate\",tag:{quality:2}}"
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "elementsofpower:agate",
+        "tag": {
+          "quality": 3
+        }
       }
     },
     {
       "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:agate\",tag:{quality:3}}"
-      }
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:agate\",tag:{quality:4}}"
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "elementsofpower:agate",
+        "tag": {
+          "quality": 4
+        }
       }
     }
-  ]
+  ],
+  "mode": "ADDITIVE"
 }

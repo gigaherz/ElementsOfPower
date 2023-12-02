@@ -1,5 +1,5 @@
 {
-  "compounds": [
+  "compoundInstances": [
     {
       "type": "elementsofpower:earth",
       "amount": 1.0
@@ -9,21 +9,20 @@
       "amount": 0.125
     }
   ],
-  "mode": "ADDITIVE",
-  "targets": [
+  "containers": [
     {
       "type": "aequivaleo:item",
-      "data": {
-        "count": 1.0,
-        "item": "minecraft:quartz"
-      }
+      "count": 1.0,
+      "item": "minecraft:quartz"
     },
     {
       "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"minecraft:quartz\"}"
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "minecraft:quartz"
       }
     }
-  ]
+  ],
+  "mode": "ADDITIVE"
 }

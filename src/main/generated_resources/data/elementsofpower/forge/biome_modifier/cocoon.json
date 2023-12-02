@@ -1,9 +1,0 @@
-{
-  "type": "forge:add_features",
-  "biomes": {
-    "type": "forge:not",
-    "value": "#forge:is_void"
-  },
-  "features": "elementsofpower:overworld_cocoon",
-  "step": "underground_decoration"
-}

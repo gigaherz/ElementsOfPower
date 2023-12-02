@@ -1,5 +1,5 @@
 {
-  "compounds": [
+  "compoundInstances": [
     {
       "type": "elementsofpower:air",
       "amount": 1.0
@@ -13,21 +13,20 @@
       "amount": 2.0
     }
   ],
-  "mode": "ADDITIVE",
-  "targets": [
+  "containers": [
     {
       "type": "aequivaleo:item",
-      "data": {
-        "count": 1.0,
-        "item": "minecraft:apple"
-      }
+      "count": 1.0,
+      "item": "minecraft:apple"
     },
     {
       "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"minecraft:apple\"}"
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "minecraft:apple"
       }
     }
-  ]
+  ],
+  "mode": "ADDITIVE"
 }

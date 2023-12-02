@@ -1,64 +1,83 @@
 {
-  "compounds": [
-    {
-      "type": "elementsofpower:earth",
-      "amount": 1.0
-    },
+  "compoundInstances": [
     {
       "type": "elementsofpower:fire",
       "amount": 0.125
+    },
+    {
+      "type": "elementsofpower:earth",
+      "amount": 1.0
     }
   ],
-  "mode": "ADDITIVE",
-  "targets": [
+  "containers": [
     {
       "type": "aequivaleo:item",
-      "data": {
-        "count": 1.0,
-        "item": "elementsofpower:ruby"
+      "count": 1.0,
+      "item": "elementsofpower:ruby"
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "elementsofpower:ruby"
       }
     },
     {
       "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:ruby\"}"
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "elementsofpower:ruby",
+        "tag": {
+          "quality": 0
+        }
       }
     },
     {
       "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:ruby\",tag:{quality:0}}"
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "elementsofpower:ruby",
+        "tag": {
+          "quality": 1
+        }
       }
     },
     {
       "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:ruby\",tag:{quality:1}}"
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "elementsofpower:ruby",
+        "tag": {
+          "quality": 2
+        }
       }
     },
     {
       "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:ruby\",tag:{quality:2}}"
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "elementsofpower:ruby",
+        "tag": {
+          "quality": 3
+        }
       }
     },
     {
       "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:ruby\",tag:{quality:3}}"
-      }
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:ruby\",tag:{quality:4}}"
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "elementsofpower:ruby",
+        "tag": {
+          "quality": 4
+        }
       }
     }
-  ]
+  ],
+  "mode": "ADDITIVE"
 }

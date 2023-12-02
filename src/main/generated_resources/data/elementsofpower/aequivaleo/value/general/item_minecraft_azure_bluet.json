@@ -1,23 +1,24 @@
 {
-  "compounds": {
-    "type": "elementsofpower:life",
-    "amount": 1.0
-  },
-  "mode": "ADDITIVE",
-  "targets": [
+  "compoundInstances": [
+    {
+      "type": "elementsofpower:life",
+      "amount": 1.0
+    }
+  ],
+  "containers": [
     {
       "type": "aequivaleo:item",
-      "data": {
-        "count": 1.0,
-        "item": "minecraft:azure_bluet"
-      }
+      "count": 1.0,
+      "item": "minecraft:azure_bluet"
     },
     {
       "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"minecraft:azure_bluet\"}"
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "minecraft:azure_bluet"
       }
     }
-  ]
+  ],
+  "mode": "ADDITIVE"
 }

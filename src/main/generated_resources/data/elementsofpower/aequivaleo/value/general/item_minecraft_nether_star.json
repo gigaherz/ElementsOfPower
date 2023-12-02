@@ -1,23 +1,19 @@
 {
-  "compounds": [
-    {
-      "type": "elementsofpower:air",
-      "amount": 64.0
-    },
-    {
-      "type": "elementsofpower:chaos",
-      "amount": 64.0
-    },
-    {
-      "type": "elementsofpower:earth",
-      "amount": 64.0
-    },
+  "compoundInstances": [
     {
       "type": "elementsofpower:fire",
       "amount": 64.0
     },
     {
-      "type": "elementsofpower:life",
+      "type": "elementsofpower:water",
+      "amount": 64.0
+    },
+    {
+      "type": "elementsofpower:air",
+      "amount": 64.0
+    },
+    {
+      "type": "elementsofpower:earth",
       "amount": 64.0
     },
     {
@@ -29,25 +25,28 @@
       "amount": 64.0
     },
     {
-      "type": "elementsofpower:water",
+      "type": "elementsofpower:life",
+      "amount": 64.0
+    },
+    {
+      "type": "elementsofpower:chaos",
       "amount": 64.0
     }
   ],
-  "mode": "ADDITIVE",
-  "targets": [
+  "containers": [
     {
       "type": "aequivaleo:item",
-      "data": {
-        "count": 1.0,
-        "item": "minecraft:nether_star"
-      }
+      "count": 1.0,
+      "item": "minecraft:nether_star"
     },
     {
       "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"minecraft:nether_star\"}"
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "minecraft:nether_star"
       }
     }
-  ]
+  ],
+  "mode": "ADDITIVE"
 }

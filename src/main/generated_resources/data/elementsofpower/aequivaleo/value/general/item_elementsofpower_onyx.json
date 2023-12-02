@@ -1,5 +1,5 @@
 {
-  "compounds": [
+  "compoundInstances": [
     {
       "type": "elementsofpower:earth",
       "amount": 1.0
@@ -9,56 +9,75 @@
       "amount": 0.125
     }
   ],
-  "mode": "ADDITIVE",
-  "targets": [
+  "containers": [
     {
       "type": "aequivaleo:item",
-      "data": {
-        "count": 1.0,
-        "item": "elementsofpower:onyx"
+      "count": 1.0,
+      "item": "elementsofpower:onyx"
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "elementsofpower:onyx"
       }
     },
     {
       "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:onyx\"}"
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "elementsofpower:onyx",
+        "tag": {
+          "quality": 0
+        }
       }
     },
     {
       "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:onyx\",tag:{quality:0}}"
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "elementsofpower:onyx",
+        "tag": {
+          "quality": 1
+        }
       }
     },
     {
       "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:onyx\",tag:{quality:1}}"
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "elementsofpower:onyx",
+        "tag": {
+          "quality": 2
+        }
       }
     },
     {
       "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:onyx\",tag:{quality:2}}"
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "elementsofpower:onyx",
+        "tag": {
+          "quality": 3
+        }
       }
     },
     {
       "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:onyx\",tag:{quality:3}}"
-      }
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:onyx\",tag:{quality:4}}"
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "elementsofpower:onyx",
+        "tag": {
+          "quality": 4
+        }
       }
     }
-  ]
+  ],
+  "mode": "ADDITIVE"
 }

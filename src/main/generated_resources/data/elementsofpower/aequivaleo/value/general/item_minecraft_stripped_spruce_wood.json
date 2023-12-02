@@ -1,23 +1,24 @@
 {
-  "compounds": {
-    "type": "elementsofpower:life",
-    "amount": 16.0
-  },
-  "mode": "ADDITIVE",
-  "targets": [
+  "compoundInstances": [
+    {
+      "type": "elementsofpower:life",
+      "amount": 16.0
+    }
+  ],
+  "containers": [
     {
       "type": "aequivaleo:item",
-      "data": {
-        "count": 1.0,
-        "item": "minecraft:stripped_spruce_wood"
-      }
+      "count": 1.0,
+      "item": "minecraft:stripped_spruce_wood"
     },
     {
       "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"minecraft:stripped_spruce_wood\"}"
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "minecraft:stripped_spruce_wood"
       }
     }
-  ]
+  ],
+  "mode": "ADDITIVE"
 }

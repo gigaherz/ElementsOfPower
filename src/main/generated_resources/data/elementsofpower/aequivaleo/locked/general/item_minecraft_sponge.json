@@ -1,29 +1,28 @@
 {
-  "compounds": [
-    {
-      "type": "elementsofpower:life",
-      "amount": 2.0
-    },
+  "compoundInstances": [
     {
       "type": "elementsofpower:water",
       "amount": 1.0
+    },
+    {
+      "type": "elementsofpower:life",
+      "amount": 2.0
     }
   ],
-  "mode": "ADDITIVE",
-  "targets": [
+  "containers": [
     {
       "type": "aequivaleo:item",
-      "data": {
-        "count": 1.0,
-        "item": "minecraft:sponge"
-      }
+      "count": 1.0,
+      "item": "minecraft:sponge"
     },
     {
       "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"minecraft:sponge\"}"
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "minecraft:sponge"
       }
     }
-  ]
+  ],
+  "mode": "ADDITIVE"
 }

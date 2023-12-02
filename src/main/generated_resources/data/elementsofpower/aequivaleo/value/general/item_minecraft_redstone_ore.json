@@ -1,33 +1,32 @@
 {
-  "compounds": [
-    {
-      "type": "elementsofpower:earth",
-      "amount": 5.0
-    },
+  "compoundInstances": [
     {
       "type": "elementsofpower:fire",
       "amount": 3.0
+    },
+    {
+      "type": "elementsofpower:earth",
+      "amount": 5.0
     },
     {
       "type": "elementsofpower:light",
       "amount": 2.0
     }
   ],
-  "mode": "ADDITIVE",
-  "targets": [
+  "containers": [
     {
       "type": "aequivaleo:item",
-      "data": {
-        "count": 1.0,
-        "item": "minecraft:redstone_ore"
-      }
+      "count": 1.0,
+      "item": "minecraft:redstone_ore"
     },
     {
       "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"minecraft:redstone_ore\"}"
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "minecraft:redstone_ore"
       }
     }
-  ]
+  ],
+  "mode": "ADDITIVE"
 }

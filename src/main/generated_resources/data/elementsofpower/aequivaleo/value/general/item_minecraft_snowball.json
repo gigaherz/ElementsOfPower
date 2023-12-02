@@ -1,29 +1,28 @@
 {
-  "compounds": [
-    {
-      "type": "elementsofpower:air",
-      "amount": 1.0
-    },
+  "compoundInstances": [
     {
       "type": "elementsofpower:water",
       "amount": 1.0
+    },
+    {
+      "type": "elementsofpower:air",
+      "amount": 1.0
     }
   ],
-  "mode": "ADDITIVE",
-  "targets": [
+  "containers": [
     {
       "type": "aequivaleo:item",
-      "data": {
-        "count": 1.0,
-        "item": "minecraft:snowball"
-      }
+      "count": 1.0,
+      "item": "minecraft:snowball"
     },
     {
       "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"minecraft:snowball\"}"
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "minecraft:snowball"
       }
     }
-  ]
+  ],
+  "mode": "ADDITIVE"
 }

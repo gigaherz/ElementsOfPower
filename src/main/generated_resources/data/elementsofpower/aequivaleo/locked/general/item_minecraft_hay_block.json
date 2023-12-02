@@ -1,5 +1,5 @@
 {
-  "compounds": [
+  "compoundInstances": [
     {
       "type": "elementsofpower:air",
       "amount": 1.0
@@ -13,21 +13,20 @@
       "amount": 9.0
     }
   ],
-  "mode": "ADDITIVE",
-  "targets": [
+  "containers": [
     {
       "type": "aequivaleo:item",
-      "data": {
-        "count": 1.0,
-        "item": "minecraft:hay_block"
-      }
+      "count": 1.0,
+      "item": "minecraft:hay_block"
     },
     {
       "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"minecraft:hay_block\"}"
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "minecraft:hay_block"
       }
     }
-  ]
+  ],
+  "mode": "ADDITIVE"
 }

@@ -1,29 +1,28 @@
 {
-  "compounds": [
-    {
-      "type": "elementsofpower:chaos",
-      "amount": 2.0
-    },
+  "compoundInstances": [
     {
       "type": "elementsofpower:earth",
       "amount": 2.0
+    },
+    {
+      "type": "elementsofpower:chaos",
+      "amount": 2.0
     }
   ],
-  "mode": "ADDITIVE",
-  "targets": [
+  "containers": [
     {
       "type": "aequivaleo:item",
-      "data": {
-        "count": 1.0,
-        "item": "minecraft:poisonous_potato"
-      }
+      "count": 1.0,
+      "item": "minecraft:poisonous_potato"
     },
     {
       "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"minecraft:poisonous_potato\"}"
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "minecraft:poisonous_potato"
       }
     }
-  ]
+  ],
+  "mode": "ADDITIVE"
 }

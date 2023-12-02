@@ -1,0 +1,14 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": {
+    "type": "neoforge:and",
+    "values": [
+      "#minecraft:is_overworld",
+      "#forge:is_cold/overworld",
+      "#forge:is_dry/overworld",
+      "#forge:is_dense/overworld"
+    ]
+  },
+  "features": "elementsofpower:citrine_ore_against_against_for",
+  "step": "underground_ores"
+}

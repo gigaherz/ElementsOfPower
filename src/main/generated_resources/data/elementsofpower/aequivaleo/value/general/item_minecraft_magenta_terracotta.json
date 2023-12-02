@@ -1,29 +1,28 @@
 {
-  "compounds": [
-    {
-      "type": "elementsofpower:earth",
-      "amount": 5.0
-    },
+  "compoundInstances": [
     {
       "type": "elementsofpower:fire",
       "amount": 1.0
+    },
+    {
+      "type": "elementsofpower:earth",
+      "amount": 5.0
     }
   ],
-  "mode": "ADDITIVE",
-  "targets": [
+  "containers": [
     {
       "type": "aequivaleo:item",
-      "data": {
-        "count": 1.0,
-        "item": "minecraft:magenta_terracotta"
-      }
+      "count": 1.0,
+      "item": "minecraft:magenta_terracotta"
     },
     {
       "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"minecraft:magenta_terracotta\"}"
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "minecraft:magenta_terracotta"
       }
     }
-  ]
+  ],
+  "mode": "ADDITIVE"
 }

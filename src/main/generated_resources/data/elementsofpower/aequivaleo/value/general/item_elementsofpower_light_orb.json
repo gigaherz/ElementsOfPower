@@ -1,23 +1,24 @@
 {
-  "compounds": {
-    "type": "elementsofpower:light",
-    "amount": 8.0
-  },
-  "mode": "ADDITIVE",
-  "targets": [
+  "compoundInstances": [
+    {
+      "type": "elementsofpower:light",
+      "amount": 8.0
+    }
+  ],
+  "containers": [
     {
       "type": "aequivaleo:item",
-      "data": {
-        "count": 1.0,
-        "item": "elementsofpower:light_orb"
-      }
+      "count": 1.0,
+      "item": "elementsofpower:light_orb"
     },
     {
       "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:light_orb\"}"
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "elementsofpower:light_orb"
       }
     }
-  ]
+  ],
+  "mode": "ADDITIVE"
 }

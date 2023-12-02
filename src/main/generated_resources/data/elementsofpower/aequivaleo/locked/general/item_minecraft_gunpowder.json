@@ -1,7 +1,7 @@
 {
-  "compounds": [
+  "compoundInstances": [
     {
-      "type": "elementsofpower:chaos",
+      "type": "elementsofpower:fire",
       "amount": 2.0
     },
     {
@@ -9,25 +9,24 @@
       "amount": 2.0
     },
     {
-      "type": "elementsofpower:fire",
+      "type": "elementsofpower:chaos",
       "amount": 2.0
     }
   ],
-  "mode": "ADDITIVE",
-  "targets": [
+  "containers": [
     {
       "type": "aequivaleo:item",
-      "data": {
-        "count": 1.0,
-        "item": "minecraft:gunpowder"
-      }
+      "count": 1.0,
+      "item": "minecraft:gunpowder"
     },
     {
       "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"minecraft:gunpowder\"}"
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "minecraft:gunpowder"
       }
     }
-  ]
+  ],
+  "mode": "ADDITIVE"
 }

@@ -1,23 +1,24 @@
 {
-  "compounds": {
-    "type": "elementsofpower:life",
-    "amount": 4.0
-  },
-  "mode": "ADDITIVE",
-  "targets": [
+  "compoundInstances": [
+    {
+      "type": "elementsofpower:life",
+      "amount": 4.0
+    }
+  ],
+  "containers": [
     {
       "type": "aequivaleo:item",
-      "data": {
-        "count": 1.0,
-        "item": "minecraft:spruce_leaves"
-      }
+      "count": 1.0,
+      "item": "minecraft:spruce_leaves"
     },
     {
       "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"minecraft:spruce_leaves\"}"
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "minecraft:spruce_leaves"
       }
     }
-  ]
+  ],
+  "mode": "ADDITIVE"
 }

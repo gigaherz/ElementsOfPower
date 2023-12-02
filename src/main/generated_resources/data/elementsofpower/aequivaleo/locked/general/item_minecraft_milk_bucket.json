@@ -1,5 +1,9 @@
 {
-  "compounds": [
+  "compoundInstances": [
+    {
+      "type": "elementsofpower:water",
+      "amount": 4.0
+    },
     {
       "type": "elementsofpower:earth",
       "amount": 54.0
@@ -7,27 +11,22 @@
     {
       "type": "elementsofpower:life",
       "amount": 2.0
-    },
-    {
-      "type": "elementsofpower:water",
-      "amount": 4.0
     }
   ],
-  "mode": "ADDITIVE",
-  "targets": [
+  "containers": [
     {
       "type": "aequivaleo:item",
-      "data": {
-        "count": 1.0,
-        "item": "minecraft:milk_bucket"
-      }
+      "count": 1.0,
+      "item": "minecraft:milk_bucket"
     },
     {
       "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"minecraft:milk_bucket\"}"
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "minecraft:milk_bucket"
       }
     }
-  ]
+  ],
+  "mode": "ADDITIVE"
 }

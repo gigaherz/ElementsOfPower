@@ -1,5 +1,5 @@
 {
-  "compounds": [
+  "compoundInstances": [
     {
       "type": "elementsofpower:earth",
       "amount": 5.0
@@ -9,21 +9,20 @@
       "amount": 5.0
     }
   ],
-  "mode": "ADDITIVE",
-  "targets": [
+  "containers": [
     {
       "type": "aequivaleo:item",
-      "data": {
-        "count": 1.0,
-        "item": "minecraft:blackstone"
-      }
+      "count": 1.0,
+      "item": "minecraft:blackstone"
     },
     {
       "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"minecraft:blackstone\"}"
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "minecraft:blackstone"
       }
     }
-  ]
+  ],
+  "mode": "ADDITIVE"
 }

@@ -1,29 +1,28 @@
 {
-  "compounds": [
-    {
-      "type": "elementsofpower:chaos",
-      "amount": 3.0
-    },
+  "compoundInstances": [
     {
       "type": "elementsofpower:earth",
       "amount": 7.0
+    },
+    {
+      "type": "elementsofpower:chaos",
+      "amount": 3.0
     }
   ],
-  "mode": "ADDITIVE",
-  "targets": [
+  "containers": [
     {
       "type": "aequivaleo:item",
-      "data": {
-        "count": 1.0,
-        "item": "minecraft:ancient_debris"
-      }
+      "count": 1.0,
+      "item": "minecraft:ancient_debris"
     },
     {
       "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"minecraft:ancient_debris\"}"
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "minecraft:ancient_debris"
       }
     }
-  ]
+  ],
+  "mode": "ADDITIVE"
 }

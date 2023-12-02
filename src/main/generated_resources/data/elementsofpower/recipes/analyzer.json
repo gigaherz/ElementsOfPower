@@ -3,7 +3,7 @@
   "category": "misc",
   "key": {
     "g": {
-      "tag": "forge:glass_panes"
+      "tag": "neoforge:glass_panes"
     },
     "i": {
       "item": "minecraft:iron_ingot"

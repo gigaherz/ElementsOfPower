@@ -3,7 +3,7 @@
   "category": "misc",
   "key": {
     "g": {
-      "type": "elementsofpower:not_analyzed",
+      "type": "elementsofpower:analyzed_filtering_ingredient",
       "inner": {
         "item": "elementsofpower:agate"
       }

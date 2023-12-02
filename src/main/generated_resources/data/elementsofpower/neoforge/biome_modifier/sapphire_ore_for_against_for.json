@@ -1,0 +1,14 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": {
+    "type": "neoforge:and",
+    "values": [
+      "#minecraft:is_overworld",
+      "#forge:is_hot/overworld",
+      "#forge:is_dry/overworld",
+      "#forge:is_dense/overworld"
+    ]
+  },
+  "features": "elementsofpower:sapphire_ore_for_against_for",
+  "step": "underground_ores"
+}

@@ -1,29 +1,28 @@
 {
-  "compounds": [
-    {
-      "type": "elementsofpower:chaos",
-      "amount": 1.0
-    },
+  "compoundInstances": [
     {
       "type": "elementsofpower:earth",
       "amount": 8.0
+    },
+    {
+      "type": "elementsofpower:chaos",
+      "amount": 1.0
     }
   ],
-  "mode": "ADDITIVE",
-  "targets": [
+  "containers": [
     {
       "type": "aequivaleo:item",
-      "data": {
-        "count": 1.0,
-        "item": "elementsofpower:deepslate_rubellite_ore"
-      }
+      "count": 1.0,
+      "item": "elementsofpower:deepslate_rubellite_ore"
     },
     {
       "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:deepslate_rubellite_ore\"}"
+      "count": 1.0,
+      "stack": {
+        "Count": 1,
+        "id": "elementsofpower:deepslate_rubellite_ore"
       }
     }
-  ]
+  ],
+  "mode": "ADDITIVE"
 }

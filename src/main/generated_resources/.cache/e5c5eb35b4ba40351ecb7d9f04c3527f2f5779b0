@@ -1,4 +1,4 @@
-// 1.20.1	2023-08-11T19:16:22.5086817	Advancements
+// 1.20.2	2023-11-13T19:11:49.9653968	Advancements
 d4aafb6adae145cf9842c2e75295390f3070b8d3 data/elementsofpower/advancements/acquire_staff.json
 b68198492f43f9cb12c26ad0c17e56088867a477 data/elementsofpower/advancements/acquire_trinket.json
 ea8d3229f7140e50a3ccfdacba5ef582924251f1 data/elementsofpower/advancements/acquire_wand.json
@@ -7,4 +7,4 @@ ea8d3229f7140e50a3ccfdacba5ef582924251f1 data/elementsofpower/advancements/acqui
 968b261251466699d72132fe54df4d0ad205663d data/elementsofpower/advancements/first_spell.json
 3d82d76e6de2fea014b2d0abfcdd566ac44548c3 data/elementsofpower/advancements/fully_geared_up.json
 ddcdbd0379255c3bf484717e3193f813f71443c2 data/elementsofpower/advancements/master_spell.json
-3203510efe14e22b424efbdca1feb16435efeb16 data/elementsofpower/advancements/root.json
+3b355f13734af6032e11df215e028bee3876413f data/elementsofpower/advancements/root.json
