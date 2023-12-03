@@ -5,7 +5,7 @@ import dev.gigaherz.elementsofpower.spells.Element;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.NetworkEvent;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -66,11 +66,11 @@ public class UpdateSpellSequence
         }
     }
 
-    public boolean handle(Supplier<NetworkEvent.Context> context)
+    public boolean handle(NetworkEvent.Context context)
     {
-        context.get().enqueueWork(() ->
+        context.enqueueWork(() ->
         {
-            ServerPlayer player = context.get().getSender();
+            ServerPlayer player = context.getSender();
             ItemStack stack = Objects.requireNonNull(player).getInventory().getItem(slotNumber);
 
             if (stack.getItem() instanceof WandItem)

@@ -14,14 +14,6 @@
       "type": "aequivaleo:item",
       "count": 1.0,
       "item": "minecraft:magenta_terracotta"
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "count": 1.0,
-      "stack": {
-        "Count": 1,
-        "id": "minecraft:magenta_terracotta"
-      }
     }
   ],
   "mode": "ADDITIVE"

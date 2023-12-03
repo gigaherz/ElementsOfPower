@@ -23,17 +23,15 @@ import dev.gigaherz.elementsofpower.spells.blocks.DustBlock;
 import dev.gigaherz.elementsofpower.spells.blocks.LightBlock;
 import dev.gigaherz.elementsofpower.spells.blocks.MistBlock;
 import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.advancements.AdvancementRequirements;
 import net.minecraft.advancements.FrameType;
-import net.minecraft.advancements.RequirementsStrategy;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
-import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.core.*;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.advancements.AdvancementProvider;
-import net.minecraft.data.advancements.AdvancementSubProvider;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.data.recipes.*;
@@ -66,21 +64,20 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
-import net.minecraftforge.client.model.generators.BlockStateProvider;
-import net.minecraftforge.client.model.generators.ConfiguredModel;
-import net.minecraftforge.client.model.generators.ModelFile;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.common.data.ForgeAdvancementProvider;
-import net.minecraftforge.common.world.ForgeBiomeModifiers;
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.holdersets.AndHolderSet;
-import net.minecraftforge.registries.holdersets.NotHolderSet;
-import net.minecraftforge.registries.holdersets.OrHolderSet;
-import top.theillusivec4.curios.common.util.EquipCurioTrigger;
+import net.neoforged.fml.ModList;
+import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
+import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
+import net.neoforged.neoforge.client.model.generators.ModelFile;
+import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.common.data.AdvancementProvider;
+import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.common.world.BiomeModifiers;
+import net.neoforged.neoforge.data.event.GatherDataEvent;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
+import net.neoforged.neoforge.registries.holdersets.AndHolderSet;
+import net.neoforged.neoforge.registries.holdersets.NotHolderSet;
+import net.neoforged.neoforge.registries.holdersets.OrHolderSet;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -101,7 +98,7 @@ class ElementsOfPowerDataGen
         DataGenerator gen = event.getGenerator();
         ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
 
-        gen.addProvider(event.includeServer(), new Recipes(gen.getPackOutput()));
+        gen.addProvider(event.includeServer(), new Recipes(gen.getPackOutput(), event.getLookupProvider()));
         gen.addProvider(event.includeServer(), LootGen.create(gen.getPackOutput()));
 
         BlockTagGens blockTags = new BlockTagGens(gen.getPackOutput(), event.getLookupProvider(), existingFileHelper);
@@ -113,23 +110,24 @@ class ElementsOfPowerDataGen
 
         if ("true".equals(System.getProperty("elementsofpower.doAequivaleoDatagen", "true")) && ModList.get().isLoaded("aequivaleo"))
         {
-            gen.addProvider(event.includeServer(), new AequivaleoGens(gen, itemTags));
+            gen.addProvider(event.includeServer(), new AequivaleoGens(gen, itemTags, event.getLookupProvider()));
         }
 
         gen.addProvider(event.includeClient(), new GearTexturesGen(gen.getPackOutput(), existingFileHelper));
 
         gen.addProvider(event.includeClient(), new BlockStates(gen.getPackOutput(), existingFileHelper));
 
-        gen.addProvider(event.includeServer(), new ForgeAdvancementProvider(gen.getPackOutput(), event.getLookupProvider(), event.getExistingFileHelper(), List.of(new AdvancementsGen())));
+        gen.addProvider(event.includeServer(), new AdvancementProvider(gen.getPackOutput(), event.getLookupProvider(), event.getExistingFileHelper(), List.of(new AdvancementsGen())));
     }
 
     private static class AdvancementsGen
-            implements ForgeAdvancementProvider.AdvancementGenerator
+            implements AdvancementProvider.AdvancementGenerator
     {
         private static final ResourceLocation TAB_BACKGROUND = new ResourceLocation("minecraft:textures/block/obsidian.png");
 
+
         @Override
-        public void generate(HolderLookup.Provider registries, Consumer<Advancement> saver, ExistingFileHelper existingFileHelper)
+        public void generate(HolderLookup.Provider provider, Consumer<AdvancementHolder> saver, ExistingFileHelper existingFileHelper)
         {
             var root = Advancement.Builder.advancement()
                     .display(ElementsOfPowerItems.WAND.get().getStack(Gemstone.RUBY),
@@ -206,7 +204,7 @@ class ElementsOfPowerDataGen
                     .addCriterion("has_ring", InventoryChangeTrigger.TriggerInstance.hasItems(ElementsOfPowerItems.RING.get()))
                     .addCriterion("has_necklace", InventoryChangeTrigger.TriggerInstance.hasItems(ElementsOfPowerItems.NECKLACE.get()))
                     .addCriterion("has_bracelet", InventoryChangeTrigger.TriggerInstance.hasItems(ElementsOfPowerItems.BRACELET.get()))
-                    .requirements(RequirementsStrategy.OR)
+                    .requirements(AdvancementRequirements.Strategy.OR)
                     .save(saver, location("acquire_trinket"), existingFileHelper);
 
             var master_spell = Advancement.Builder.advancement()
@@ -229,7 +227,7 @@ class ElementsOfPowerDataGen
                     .addCriterion("has_ring", InventoryChangeTrigger.TriggerInstance.hasItems(ElementsOfPowerItems.RING.get()))
                     .addCriterion("has_necklace", InventoryChangeTrigger.TriggerInstance.hasItems(ElementsOfPowerItems.NECKLACE.get()))
                     .addCriterion("has_bracelet", InventoryChangeTrigger.TriggerInstance.hasItems(ElementsOfPowerItems.BRACELET.get()))
-                    .requirements(RequirementsStrategy.AND)
+                    .requirements(AdvancementRequirements.Strategy.AND)
                     .save(saver, location("fully_geared_up"), existingFileHelper);
         }
     }
@@ -246,7 +244,7 @@ class ElementsOfPowerDataGen
         {
             for(var gem : Gemstone.values())
             {
-                ResourceLocation targetPaletteFile = Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(gem.getItem()));
+                ResourceLocation targetPaletteFile = Objects.requireNonNull(BuiltInRegistries.ITEM.getKey(gem.getItem()));
                 targetPaletteFile = new ResourceLocation(gem.isVanilla() ? "minecraft" : targetPaletteFile.getNamespace(), "item/" + targetPaletteFile.getPath());
                 if (gem != Gemstone.DIAMOND)
                 {
@@ -294,9 +292,9 @@ class ElementsOfPowerDataGen
     {
         private final ItemTagGens itemTags;
 
-        protected AequivaleoGens(DataGenerator dataGenerator, ItemTagGens itemTags)
+        protected AequivaleoGens(DataGenerator dataGenerator, ItemTagGens itemTags, CompletableFuture<HolderLookup.Provider> holderLookupProvider)
         {
-            super(ElementsOfPowerMod.MODID, dataGenerator);
+            super(ElementsOfPowerMod.MODID, dataGenerator, holderLookupProvider);
             this.itemTags = itemTags;
         }
 
@@ -307,19 +305,19 @@ class ElementsOfPowerDataGen
                 List<CompoundInstance> compoundRefs = Element.stream_without_balance()
                         .map(e -> Pair.of(e, amounts.get(e)))
                         .filter(p -> p.getSecond() > 0)
-                        .map(p -> new CompoundInstance(AequivaleoPlugin.BY_ELEMENT.get(p.getFirst()).get(), (double) p.getSecond()))
+                        .map(p -> new CompoundInstance(AequivaleoPlugin.BY_ELEMENT.get(p.getFirst()).value(), (double) p.getSecond()))
                         .collect(Collectors.toList());
 
                 List<Object> gameObjects = Lists.newArrayList();
-                if (item instanceof GemstoneItem gem)
+                /*if (item instanceof GemstoneItem gem)
                 {
                     gameObjects.add(item);
-                    gem.addToTab(gameObjects::add);
+                    gem.creativeTabStacks(gameObjects::add);
                 }
-                else
+                else*/
                 {
                     gameObjects.add(item);
-                    gameObjects.add(item.getDefaultInstance());
+                    //gameObjects.add(item.getDefaultInstance());
                 }
                 save(specFor(gameObjects).withCompounds(compoundRefs));
             });
@@ -332,7 +330,7 @@ class ElementsOfPowerDataGen
             if (tagbuilder == null)
             {
                 var tag = BuiltInRegistries.ITEM.getTag(TagKey.create(Registries.ITEM, rl));
-                return tag.map(holders -> holders.stream().map(Holder::get).toList()).orElse(fallback);
+                return tag.map(holders -> holders.stream().map(Holder::value).toList()).orElse(fallback);
             }
             return tagbuilder.build().stream().flatMap(this::getItemsFromTag).collect(Collectors.toList());
         }
@@ -347,7 +345,7 @@ class ElementsOfPowerDataGen
             else
             {
                 ResourceLocation itemId = entry.getId();
-                return Stream.of(ForgeRegistries.ITEMS.getValue(itemId));
+                return Stream.of(BuiltInRegistries.ITEM.get(itemId));
             }
         }
     }
@@ -527,8 +525,9 @@ class ElementsOfPowerDataGen
             @Override
             protected Iterable<Block> getKnownBlocks()
             {
-                return ForgeRegistries.BLOCKS.getValues().stream()
-                        .filter(b -> Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(b)).getNamespace().equals(ElementsOfPowerMod.MODID))
+                return BuiltInRegistries.BLOCK.entrySet().stream()
+                        .filter(e -> e.getKey().location().getNamespace().equals(ElementsOfPowerMod.MODID))
+                        .map(Map.Entry::getValue)
                         .collect(Collectors.toList());
             }
         }
@@ -552,7 +551,7 @@ class ElementsOfPowerDataGen
 
         private void densityBlock(Block block, IntegerProperty densityProperty)
         {
-            densityBlock(block, densityProperty, (density) -> location("block/" + Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(block)).getPath() + "_" + density));
+            densityBlock(block, densityProperty, (density) -> location("block/" + Objects.requireNonNull(BuiltInRegistries.BLOCK.getKey(block)).getPath() + "_" + density));
         }
 
         private void densityBlock(Block block, IntegerProperty densityProperty, Function<Integer, ResourceLocation> texMapper)
@@ -560,7 +559,7 @@ class ElementsOfPowerDataGen
             Map<Integer, ModelFile> densityModels = Maps.asMap(
                     new HashSet<>(densityProperty.getPossibleValues()),
                     density -> {
-                        return models().cubeAll(location(Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(block)).getPath() + "_" + density).getPath(), texMapper.apply(density));
+                        return models().cubeAll(location(Objects.requireNonNull(BuiltInRegistries.BLOCK.getKey(block)).getPath() + "_" + density).getPath(), texMapper.apply(density));
                     });
 
             getVariantBuilder(block)
@@ -573,13 +572,13 @@ class ElementsOfPowerDataGen
 
     private static class Recipes extends RecipeProvider
     {
-        public Recipes(PackOutput gen)
+        public Recipes(PackOutput gen, CompletableFuture<HolderLookup.Provider> lookupProvider)
         {
-            super(gen);
+            super(gen, lookupProvider);
         }
 
         @Override
-        protected void buildRecipes(Consumer<FinishedRecipe> consumer)
+        protected void buildRecipes(RecipeOutput recipeOutput)
         {
             ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ElementsOfPowerItems.ANALYZER.get())
                     .pattern("glg")
@@ -591,7 +590,7 @@ class ElementsOfPowerDataGen
                     .define('p', ItemTags.PLANKS)
                     .define('s', ItemTags.WOODEN_SLABS)
                     .unlockedBy("has_gold", has(Items.GOLD_INGOT))
-                    .save(consumer);
+                    .save(recipeOutput);
 
             ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ElementsOfPowerItems.ESSENTIALIZER.get())
                     .pattern("IQI")
@@ -602,7 +601,7 @@ class ElementsOfPowerDataGen
                     .define('Q', GemstoneExaminer.GEMSTONES)
                     .define('N', Items.NETHER_STAR)
                     .unlockedBy("has_star", has(Items.NETHER_STAR))
-                    .save(consumer);
+                    .save(recipeOutput);
 
             ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ElementsOfPowerItems.WAND.get())
                     .pattern(" G")
@@ -610,7 +609,7 @@ class ElementsOfPowerDataGen
                     .define('G', Items.GOLD_INGOT)
                     .define('S', Items.STICK)
                     .unlockedBy("has_gold", has(Items.GOLD_INGOT))
-                    .save(consumer);
+                    .save(recipeOutput);
 
             ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ElementsOfPowerItems.STAFF.get())
                     .pattern(" GW")
@@ -620,7 +619,7 @@ class ElementsOfPowerDataGen
                     .define('S', Items.STICK)
                     .define('W', ElementsOfPowerItems.WAND.get())
                     .unlockedBy("has_wand", has(ElementsOfPowerItems.WAND.get()))
-                    .save(consumer);
+                    .save(recipeOutput);
 
             ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ElementsOfPowerItems.RING.get())
                     .pattern(" GG")
@@ -628,7 +627,7 @@ class ElementsOfPowerDataGen
                     .pattern(" G ")
                     .define('G', Items.GOLD_INGOT)
                     .unlockedBy("has_gold", has(Items.GOLD_INGOT))
-                    .save(consumer);
+                    .save(recipeOutput);
 
             ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ElementsOfPowerItems.NECKLACE.get())
                     .pattern("GGG")
@@ -636,7 +635,7 @@ class ElementsOfPowerDataGen
                     .pattern(" G ")
                     .define('G', Items.GOLD_INGOT)
                     .unlockedBy("has_gold", has(Items.GOLD_INGOT))
-                    .save(consumer);
+                    .save(recipeOutput);
 
             ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ElementsOfPowerItems.BRACELET.get())
                     .pattern(" G ")
@@ -644,10 +643,10 @@ class ElementsOfPowerDataGen
                     .pattern("GGG")
                     .define('G', Items.GOLD_INGOT)
                     .unlockedBy("has_gold", has(Items.GOLD_INGOT))
-                    .save(consumer);
+                    .save(recipeOutput);
 
-            SpecialRecipeBuilder.special(ElementsOfPowerMod.GEMSTONE_CHANGE.get()).save(consumer, location("gemstone_change").toString());
-            SpecialRecipeBuilder.special(ElementsOfPowerMod.CONTAINER_CHARGE.get()).save(consumer, location("container_charge").toString());
+            SpecialRecipeBuilder.special(ElementsOfPowerMod.GEMSTONE_CHANGE.get()).save(recipeOutput, location("gemstone_change").toString());
+            SpecialRecipeBuilder.special(ElementsOfPowerMod.CONTAINER_CHARGE.get()).save(recipeOutput, location("container_charge").toString());
 
             for (Gemstone gem : Gemstone.values())
             {
@@ -657,7 +656,7 @@ class ElementsOfPowerDataGen
                     Item[] oreItems = gem.getOres().stream().map(Block::asItem).toArray(Item[]::new);
                     SimpleCookingRecipeBuilder.smelting(Ingredient.of(oreItems), RecipeCategory.MISC, gem, 1.0F, 200)
                             .unlockedBy("has_ore", has(tag))
-                            .save(consumer, location("smelting/" + gem.getSerializedName()));
+                            .save(recipeOutput, location("smelting/" + gem.getSerializedName()));
                 }
                 if (gem.generateCustomBlock())
                 {
@@ -667,12 +666,12 @@ class ElementsOfPowerDataGen
                             .pattern("ggg")
                             .define('g', AnalyzedFilteringIngredient.wrap(Ingredient.of(gem.getItem())))
                             .unlockedBy("has_item", has(gem.getItem()))
-                            .save(consumer);
+                            .save(recipeOutput);
 
                     ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, gem.getItem(), 9)
                             .requires(Ingredient.of(gem.getBlock()))
                             .unlockedBy("has_item", has(gem.getItem()))
-                            .save(consumer, location(gem.getSerializedName() + "_from_block"));
+                            .save(recipeOutput, location(gem.getSerializedName() + "_from_block"));
                 }
             }
         }
@@ -805,7 +804,7 @@ class ElementsOfPowerDataGen
                         }
                     }
                 })
-                .add(ForgeRegistries.Keys.BIOME_MODIFIERS, context -> {
+                .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, context -> {
                     var biomes = context.lookup(Registries.BIOME);
                     var placedFeatures = context.lookup(Registries.PLACED_FEATURE);
 
@@ -855,8 +854,8 @@ class ElementsOfPowerDataGen
                     };
 
                     final HolderSet.Named<Biome> isVoid = biomes.get(Tags.Biomes.IS_VOID).orElseThrow();
-                    context.register(ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS, location("cocoon")),
-                            new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
+                    context.register(ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS, location("cocoon")),
+                            new BiomeModifiers.AddFeaturesBiomeModifier(
                             new NotHolderSet<>(biomes0, isVoid),
                             HolderSet.direct(placedFeatures.get(PLACED_COCOON).orElseThrow()),
                             GenerationStep.Decoration.UNDERGROUND_DECORATION
@@ -883,7 +882,7 @@ class ElementsOfPowerDataGen
                                         var name2 = g.getSerializedName() + "_ore_" + name;
                                         var key2 = ResourceKey.create(Registries.PLACED_FEATURE, location(name2));
                                         var placed = placedFeatures.get(key2).orElseThrow();
-                                        var key = ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS, location(name2));
+                                        var key = ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS, location(name2));
 
                                         HolderSet<Biome> heatHolderSet = switch (heat)
                                                 {
@@ -903,7 +902,7 @@ class ElementsOfPowerDataGen
                                                     case AGAINST -> isSparse;
                                                     default -> new NotHolderSet<>(biomes0, new OrHolderSet<>(List.of(isDense, isSparse)));
                                                 };
-                                        context.register(key, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
+                                        context.register(key, new BiomeModifiers.AddFeaturesBiomeModifier(
                                                 new AndHolderSet<>(List.of(isOverworld, heatHolderSet, humidityHolderSet, lifeHolderSet)),
                                                 HolderSet.direct(placed),
                                                 GenerationStep.Decoration.UNDERGROUND_ORES

@@ -2,8 +2,8 @@ package dev.gigaherz.elementsofpower.essentializer.menu;
 
 import dev.gigaherz.elementsofpower.capabilities.MagicContainerCapability;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.SlotItemHandler;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.SlotItemHandler;
 
 public class MagicContainerInputSlot extends SlotItemHandler
 {

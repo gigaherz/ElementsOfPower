@@ -1,16 +1,13 @@
 package dev.gigaherz.elementsofpower.gemstones;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import it.unimi.dsi.fastutil.ints.IntList;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraftforge.common.crafting.CraftingHelper;
-import net.minecraftforge.common.crafting.IIngredientSerializer;
+import net.neoforged.neoforge.common.crafting.IngredientType;
 
 import javax.annotation.Nullable;
 import java.util.stream.Stream;
@@ -56,15 +53,6 @@ public class AnalyzedFilteringIngredient extends Ingredient
     }
 
     @Override
-    public JsonElement toJson()
-    {
-        JsonObject object = new JsonObject();
-        object.addProperty("type", ID.toString());
-        object.add("inner", inner.toJson());
-        return object;
-    }
-
-    @Override
     public boolean isEmpty()
     {
         return inner.isEmpty();
@@ -77,33 +65,16 @@ public class AnalyzedFilteringIngredient extends Ingredient
     }
 
     @Override
-    public IIngredientSerializer<? extends Ingredient> getSerializer()
+    public IngredientType<?> getType()
     {
-        return Serializer.INSTANCE;
+        return ElementsOfPowerMod.ANALYZED_FILTERING_INGREDIENT.get();
     }
 
-    public static class Serializer implements IIngredientSerializer<AnalyzedFilteringIngredient>
-    {
-        public static final Serializer INSTANCE = new Serializer();
+    public static Codec<AnalyzedFilteringIngredient> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            Ingredient.CODEC.fieldOf("inner").forGetter(i -> i.inner)
+    ).apply(instance, AnalyzedFilteringIngredient::new));
 
-        @Override
-        public AnalyzedFilteringIngredient parse(JsonObject json)
-        {
-            Ingredient inner = CraftingHelper.getIngredient(GsonHelper.getAsJsonObject(json, "inner"), false);
-            return new AnalyzedFilteringIngredient(inner);
-        }
-
-        @Override
-        public AnalyzedFilteringIngredient parse(FriendlyByteBuf buffer)
-        {
-            Ingredient inner = Ingredient.fromNetwork(buffer);
-            return new AnalyzedFilteringIngredient(inner);
-        }
-
-        @Override
-        public void write(FriendlyByteBuf buffer, AnalyzedFilteringIngredient ingredient)
-        {
-            CraftingHelper.write(buffer, ingredient.inner);
-        }
-    }
+    public static Codec<AnalyzedFilteringIngredient> NON_EMPTY_CODEC= RecordCodecBuilder.create(instance -> instance.group(
+            Ingredient.CODEC_NONEMPTY.fieldOf("inner").forGetter(i -> i.inner)
+    ).apply(instance, AnalyzedFilteringIngredient::new));;
 }

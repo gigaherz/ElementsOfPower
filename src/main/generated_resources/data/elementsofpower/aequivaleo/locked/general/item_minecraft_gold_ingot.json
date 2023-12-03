@@ -10,14 +10,6 @@
       "type": "aequivaleo:item",
       "count": 1.0,
       "item": "minecraft:gold_ingot"
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "count": 1.0,
-      "stack": {
-        "Count": 1,
-        "id": "minecraft:gold_ingot"
-      }
     }
   ],
   "mode": "ADDITIVE"

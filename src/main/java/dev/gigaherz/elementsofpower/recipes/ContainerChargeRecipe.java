@@ -15,11 +15,12 @@ import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 
+
 public class ContainerChargeRecipe extends CustomRecipe
 {
-    public ContainerChargeRecipe(ResourceLocation resourceLocation, CraftingBookCategory craftingBookCategory)
+    public ContainerChargeRecipe(CraftingBookCategory craftingBookCategory)
     {
-        super(resourceLocation, craftingBookCategory);
+        super(craftingBookCategory);
     }
 
     private interface ProcessAction

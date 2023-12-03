@@ -14,69 +14,6 @@
       "type": "aequivaleo:item",
       "count": 1.0,
       "item": "elementsofpower:ruby"
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "count": 1.0,
-      "stack": {
-        "Count": 1,
-        "id": "elementsofpower:ruby"
-      }
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "count": 1.0,
-      "stack": {
-        "Count": 1,
-        "id": "elementsofpower:ruby",
-        "tag": {
-          "quality": 0
-        }
-      }
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "count": 1.0,
-      "stack": {
-        "Count": 1,
-        "id": "elementsofpower:ruby",
-        "tag": {
-          "quality": 1
-        }
-      }
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "count": 1.0,
-      "stack": {
-        "Count": 1,
-        "id": "elementsofpower:ruby",
-        "tag": {
-          "quality": 2
-        }
-      }
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "count": 1.0,
-      "stack": {
-        "Count": 1,
-        "id": "elementsofpower:ruby",
-        "tag": {
-          "quality": 3
-        }
-      }
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "count": 1.0,
-      "stack": {
-        "Count": 1,
-        "id": "elementsofpower:ruby",
-        "tag": {
-          "quality": 4
-        }
-      }
     }
   ],
   "mode": "ADDITIVE"

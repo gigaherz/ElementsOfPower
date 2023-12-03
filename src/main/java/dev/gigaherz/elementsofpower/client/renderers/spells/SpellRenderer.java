@@ -12,7 +12,7 @@ import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.util.NonNullLazy;
+import net.neoforged.neoforge.common.util.NonNullLazy;
 
 import javax.annotation.Nullable;
 
@@ -46,7 +46,7 @@ public abstract class SpellRenderer
 
     public static ResourceLocation getTexture(@Nullable InitializedSpellcast spellcast)
     {
-        String tex = "forge:textures/white.png";
+        String tex = "neoforge:textures/white.png";
 
         if (spellcast != null)
         {

@@ -2,10 +2,12 @@ package dev.gigaherz.elementsofpower.integration.aequivaleo;
 
 import com.ldtteam.aequivaleo.api.compound.CompoundInstance;
 import com.ldtteam.aequivaleo.api.compound.container.ICompoundContainer;
+import com.ldtteam.aequivaleo.api.compound.type.ICompoundType;
 import com.ldtteam.aequivaleo.api.compound.type.group.ICompoundTypeGroup;
 import com.ldtteam.aequivaleo.api.mediation.IMediationCandidate;
 import com.ldtteam.aequivaleo.api.mediation.IMediationEngine;
 import com.ldtteam.aequivaleo.api.recipe.equivalency.IEquivalencyRecipe;
+import com.mojang.serialization.Codec;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.Optional;
@@ -86,5 +88,11 @@ public class EssenceGroupType implements ICompoundTypeGroup
     public ResourceLocation getRegistryName()
     {
         return registryName;
+    }
+
+    @Override
+    public Codec<? extends ICompoundType> getEntryCodec()
+    {
+        return EssenceType.CODEC;
     }
 }

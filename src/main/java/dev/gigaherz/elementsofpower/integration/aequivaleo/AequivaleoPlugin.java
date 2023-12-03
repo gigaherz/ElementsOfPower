@@ -14,13 +14,14 @@ import dev.gigaherz.elementsofpower.gemstones.GemstoneItem;
 import dev.gigaherz.elementsofpower.gemstones.Quality;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import dev.gigaherz.elementsofpower.spells.Element;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.javafmlmod.FMLModContainer;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.fml.ModList;
+import net.neoforged.fml.javafmlmod.FMLModContainer;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -41,17 +42,17 @@ public class AequivaleoPlugin implements IAequivaleoPlugin
     public static final DeferredRegister<ICompoundType> TYPES = DeferredRegister.create(TYPES_REGISTRY, ElementsOfPowerMod.MODID);
     public static final DeferredRegister<ICompoundTypeGroup> TYPE_GROUPS = DeferredRegister.create(TYPE_GROUPS_REGISTRY, ElementsOfPowerMod.MODID);
 
-    public static final RegistryObject<EssenceGroupType> ESSENCE = TYPE_GROUPS.register("essence", () -> new EssenceGroupType(location("essence")));
-    public static final RegistryObject<EssenceType> FIRE = TYPES.register("fire", () -> new EssenceType(Element.FIRE, ESSENCE, location("fire")));
-    public static final RegistryObject<EssenceType> WATER = TYPES.register("water", () -> new EssenceType(Element.WATER, ESSENCE, location("water")));
-    public static final RegistryObject<EssenceType> AIR = TYPES.register("air", () -> new EssenceType(Element.AIR, ESSENCE, location("air")));
-    public static final RegistryObject<EssenceType> EARTH = TYPES.register("earth", () -> new EssenceType(Element.EARTH, ESSENCE, location("earth")));
-    public static final RegistryObject<EssenceType> LIGHT = TYPES.register("light", () -> new EssenceType(Element.LIGHT, ESSENCE, location("light")));
-    public static final RegistryObject<EssenceType> TIME = TYPES.register("time", () -> new EssenceType(Element.TIME, ESSENCE, location("time")));
-    public static final RegistryObject<EssenceType> LIFE = TYPES.register("life", () -> new EssenceType(Element.LIFE, ESSENCE, location("life")));
-    public static final RegistryObject<EssenceType> CHAOS = TYPES.register("chaos", () -> new EssenceType(Element.CHAOS, ESSENCE, location("chaos")));
+    public static final DeferredHolder<ICompoundTypeGroup, EssenceGroupType> ESSENCE = TYPE_GROUPS.register("essence", () -> new EssenceGroupType(location("essence")));
+    public static final DeferredHolder<ICompoundType, EssenceType> FIRE = TYPES.register("fire", () -> new EssenceType(Element.FIRE, ESSENCE));
+    public static final DeferredHolder<ICompoundType, EssenceType> WATER = TYPES.register("water", () -> new EssenceType(Element.WATER, ESSENCE));
+    public static final DeferredHolder<ICompoundType, EssenceType> AIR = TYPES.register("air", () -> new EssenceType(Element.AIR, ESSENCE));
+    public static final DeferredHolder<ICompoundType, EssenceType> EARTH = TYPES.register("earth", () -> new EssenceType(Element.EARTH, ESSENCE));
+    public static final DeferredHolder<ICompoundType, EssenceType> LIGHT = TYPES.register("light", () -> new EssenceType(Element.LIGHT, ESSENCE));
+    public static final DeferredHolder<ICompoundType, EssenceType> TIME = TYPES.register("time", () -> new EssenceType(Element.TIME, ESSENCE));
+    public static final DeferredHolder<ICompoundType, EssenceType> LIFE = TYPES.register("life", () -> new EssenceType(Element.LIFE, ESSENCE));
+    public static final DeferredHolder<ICompoundType, EssenceType> CHAOS = TYPES.register("chaos", () -> new EssenceType(Element.CHAOS, ESSENCE));
 
-    public static final Map<Element, RegistryObject<EssenceType>> BY_ELEMENT = ImmutableMap.<Element, RegistryObject<EssenceType>>builder()
+    public static final Map<Element, Holder<ICompoundType>> BY_ELEMENT = ImmutableMap.<Element, Holder<ICompoundType>>builder()
             .put(Element.FIRE, FIRE)
             .put(Element.WATER, WATER)
             .put(Element.AIR, AIR)

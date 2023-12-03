@@ -608,6 +608,11 @@ public record MagicAmounts(
             }
         }
 
+        public void add(int index, float amount)
+        {
+            amounts[index] += amount;
+        }
+
         public MagicAmounts toAmounts()
         {
             return new MagicAmounts(

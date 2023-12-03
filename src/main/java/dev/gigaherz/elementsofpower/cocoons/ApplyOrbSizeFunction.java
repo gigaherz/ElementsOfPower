@@ -5,10 +5,13 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.essentializer.menu.IMagicAmountContainer;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import dev.gigaherz.elementsofpower.spells.Element;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -17,19 +20,21 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.functions.ApplyBonusCount;
 import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunction;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 public class ApplyOrbSizeFunction extends LootItemConditionalFunction
 {
-    private final float[] factors;
+    private final MagicAmounts factors;
 
-    protected ApplyOrbSizeFunction(LootItemCondition[] conditionsIn, float[] factors)
+    protected ApplyOrbSizeFunction(List<LootItemCondition> conditionsIn, MagicAmounts factors)
     {
         super(conditionsIn);
         this.factors = factors;
@@ -50,7 +55,7 @@ public class ApplyOrbSizeFunction extends LootItemConditionalFunction
         float a = 0;
         for (int i = 0; i < 8; i++)
         {
-            a += am.get(i) * factors[i];
+            a += am.get(i) * factors.get(i);
         }
 
         int whole = (int) Math.floor(a);
@@ -68,9 +73,9 @@ public class ApplyOrbSizeFunction extends LootItemConditionalFunction
         return stack;
     }
 
-    public static Builder builder()
+    public static dev.gigaherz.elementsofpower.cocoons.ApplyOrbSizeFunction.Builder builder()
     {
-        return new Builder();
+        return new dev.gigaherz.elementsofpower.cocoons.ApplyOrbSizeFunction.Builder();
     }
 
     @Override
@@ -79,27 +84,27 @@ public class ApplyOrbSizeFunction extends LootItemConditionalFunction
         return ElementsOfPowerMod.APPLY_ORB_SIZE.get();
     }
 
-    public static class Builder extends LootItemConditionalFunction.Builder<Builder>
+    public static class Builder extends LootItemConditionalFunction.Builder<dev.gigaherz.elementsofpower.cocoons.ApplyOrbSizeFunction.Builder>
     {
-        private final Map<Element, Float> factors = Maps.newHashMap();
+        private final MagicAmounts.Accumulator factors = MagicAmounts.builder();
 
         public Builder()
         {
         }
 
-        public Builder with(Element e)
+        public dev.gigaherz.elementsofpower.cocoons.ApplyOrbSizeFunction.Builder with(Element e)
         {
             return with(e, 1);
         }
 
-        public Builder with(Element e, float factor)
+        public dev.gigaherz.elementsofpower.cocoons.ApplyOrbSizeFunction.Builder with(Element e, float factor)
         {
-            factors.put(e, factor);
+            factors.add(e.ordinal(), factor);
             return this;
         }
 
         @Override
-        protected Builder getThis()
+        protected dev.gigaherz.elementsofpower.cocoons.ApplyOrbSizeFunction.Builder getThis()
         {
             return this;
         }
@@ -107,46 +112,12 @@ public class ApplyOrbSizeFunction extends LootItemConditionalFunction
         @Override
         public ApplyOrbSizeFunction build()
         {
-            float[] values = new float[8];
-            for (Map.Entry<Element, Float> kv : factors.entrySet())
-            {
-                values[kv.getKey().ordinal()] = kv.getValue();
-            }
-            return new ApplyOrbSizeFunction(this.getConditions(), values);
+            return new ApplyOrbSizeFunction(this.getConditions(), factors.toAmounts());
         }
     }
 
-    public static class Serializer extends LootItemConditionalFunction.Serializer<ApplyOrbSizeFunction>
-    {
-        @Override
-        public ApplyOrbSizeFunction deserialize(JsonObject object, JsonDeserializationContext deserializationContext, LootItemCondition[] conditionsIn)
-        {
-            Builder b = builder();
-            JsonObject elements = GsonHelper.getAsJsonObject(object, "factors");
-            for (Map.Entry<String, JsonElement> kv : elements.entrySet())
-            {
-                String elementName = kv.getKey();
-                Element e = Element.byName(elementName);
-                if (e == null)
-                    throw new RuntimeException("Unknown key for property 'elements': '" + elementName + "'");
-                float f = GsonHelper.convertToFloat(kv.getValue(), elementName);
-                b.with(e, f);
-            }
-            return b.build();
-        }
-
-        @Override
-        public void serialize(JsonObject json, ApplyOrbSizeFunction lootFunction, JsonSerializationContext ctx)
-        {
-            super.serialize(json, lootFunction, ctx);
-
-            JsonObject factors = new JsonObject();
-            for (int i = 0; i < 8; i++)
-            {
-                if (!Mth.equal(lootFunction.factors[i], 0))
-                    factors.addProperty(Element.values[i].getName(), lootFunction.factors[i]);
-            }
-            json.add("factors", factors);
-        }
-    }
+    public static final Codec<ApplyOrbSizeFunction> CODEC = RecordCodecBuilder.create((instance) ->
+            commonFields(instance)
+            .and(MagicAmounts.CODEC.fieldOf("factors").forGetter((o) -> o.factors))
+            .apply(instance, ApplyOrbSizeFunction::new));
 }

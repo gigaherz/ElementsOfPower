@@ -14,14 +14,6 @@
       "type": "aequivaleo:item",
       "count": 1.0,
       "item": "elementsofpower:ruby_ore"
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "count": 1.0,
-      "stack": {
-        "Count": 1,
-        "id": "elementsofpower:ruby_ore"
-      }
     }
   ],
   "mode": "ADDITIVE"

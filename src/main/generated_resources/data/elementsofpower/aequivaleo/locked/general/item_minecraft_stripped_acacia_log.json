@@ -10,14 +10,6 @@
       "type": "aequivaleo:item",
       "count": 1.0,
       "item": "minecraft:stripped_acacia_log"
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "count": 1.0,
-      "stack": {
-        "Count": 1,
-        "id": "minecraft:stripped_acacia_log"
-      }
     }
   ],
   "mode": "ADDITIVE"

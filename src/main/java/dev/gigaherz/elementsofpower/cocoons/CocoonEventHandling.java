@@ -1,5 +1,6 @@
 package dev.gigaherz.elementsofpower.cocoons;
 
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
 import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
@@ -15,11 +16,11 @@ import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.*;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.TickEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.common.util.LazyOptional;
+import net.neoforged.neoforge.event.AttachCapabilitiesEvent;
+import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.common.capabilities.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,7 +35,7 @@ public class CocoonEventHandling
     {
         CocoonTracker.registerCap(event);
         PendingTracker.registerCap(event);
-        MinecraftForge.EVENT_BUS.addListener(CocoonEventHandling::playerTick);
+        NeoForge.EVENT_BUS.addListener(CocoonEventHandling::playerTick);
     }
 
     private static void playerTick(TickEvent.PlayerTickEvent ev)
@@ -114,8 +115,8 @@ public class CocoonEventHandling
         public static void registerCap(RegisterCapabilitiesEvent event)
         {
             event.register(PendingTracker.class);
-            MinecraftForge.EVENT_BUS.addListener(PendingTracker::worldTick);
-            MinecraftForge.EVENT_BUS.addGenericListener(Level.class, PendingTracker::attachCapabilities);
+            NeoForge.EVENT_BUS.addListener(PendingTracker::worldTick);
+            NeoForge.EVENT_BUS.addGenericListener(Level.class, PendingTracker::attachCapabilities);
         }
 
         private static void attachCapabilities(AttachCapabilitiesEvent<Level> event)
@@ -190,7 +191,7 @@ public class CocoonEventHandling
         public static void registerCap(RegisterCapabilitiesEvent event)
         {
             event.register(CocoonTracker.class);
-            MinecraftForge.EVENT_BUS.addGenericListener(LevelChunk.class, CocoonTracker::attachCapabilities);
+            NeoForge.EVENT_BUS.addGenericListener(LevelChunk.class, CocoonTracker::attachCapabilities);
         }
 
         private static void attachCapabilities(AttachCapabilitiesEvent<LevelChunk> event)

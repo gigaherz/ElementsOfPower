@@ -2,7 +2,7 @@ package dev.gigaherz.elementsofpower.capabilities;
 
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraftforge.common.util.INBTSerializable;
+import net.neoforged.neoforge.common.util.INBTSerializable;
 
 public abstract class AbstractMagicContainer implements IMagicContainer, INBTSerializable<CompoundTag>
 {

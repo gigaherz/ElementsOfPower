@@ -14,14 +14,6 @@
       "type": "aequivaleo:item",
       "count": 1.0,
       "item": "minecraft:light_gray_terracotta"
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "count": 1.0,
-      "stack": {
-        "Count": 1,
-        "id": "minecraft:light_gray_terracotta"
-      }
     }
   ],
   "mode": "ADDITIVE"

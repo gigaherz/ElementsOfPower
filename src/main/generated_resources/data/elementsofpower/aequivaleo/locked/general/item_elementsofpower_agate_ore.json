@@ -10,14 +10,6 @@
       "type": "aequivaleo:item",
       "count": 1.0,
       "item": "elementsofpower:agate_ore"
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "count": 1.0,
-      "stack": {
-        "Count": 1,
-        "id": "elementsofpower:agate_ore"
-      }
     }
   ],
   "mode": "ADDITIVE"

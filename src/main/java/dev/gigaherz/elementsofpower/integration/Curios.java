@@ -1,9 +1,9 @@
 package dev.gigaherz.elementsofpower.integration;
-
+/*
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.common.util.NonNullLazy;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.items.IItemHandler;
+import net.neoforged.neoforge.common.util.NonNullLazy;
+import net.neoforged.fml.ModList;
+import net.neoforged.neoforge.items.IItemHandler;
 import top.theillusivec4.curios.api.CuriosCapability;
 import top.theillusivec4.curios.api.type.inventory.ICurioStacksHandler;
 
@@ -28,3 +28,4 @@ public class Curios
         }
     }
 }
+*/

@@ -4,7 +4,7 @@ import dev.gigaherz.elementsofpower.client.ClientPacketHandlers;
 import dev.gigaherz.elementsofpower.essentializer.menu.IMagicAmountHolder;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -35,7 +35,7 @@ public class UpdateEssentializerAmounts
         remaining.writeTo(buf);
     }
 
-    public boolean handle(Supplier<NetworkEvent.Context> context)
+    public boolean handle(NetworkEvent.Context context)
     {
         return ClientPacketHandlers.handleRemainingAmountsUpdate(this);
     }

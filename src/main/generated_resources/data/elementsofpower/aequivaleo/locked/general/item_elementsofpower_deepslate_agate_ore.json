@@ -10,14 +10,6 @@
       "type": "aequivaleo:item",
       "count": 1.0,
       "item": "elementsofpower:deepslate_agate_ore"
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "count": 1.0,
-      "stack": {
-        "Count": 1,
-        "id": "elementsofpower:deepslate_agate_ore"
-      }
     }
   ],
   "mode": "ADDITIVE"

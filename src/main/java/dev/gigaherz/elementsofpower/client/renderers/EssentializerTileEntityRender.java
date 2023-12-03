@@ -6,15 +6,13 @@ import dev.gigaherz.elementsofpower.essentializer.EssentializerBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.util.Lazy;
-import org.joml.Vector3f;
+import net.neoforged.neoforge.common.util.Lazy;
 
 public class EssentializerTileEntityRender implements BlockEntityRenderer<EssentializerBlockEntity>
 {

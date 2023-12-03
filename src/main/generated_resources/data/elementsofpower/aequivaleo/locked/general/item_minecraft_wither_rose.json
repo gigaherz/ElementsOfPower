@@ -14,14 +14,6 @@
       "type": "aequivaleo:item",
       "count": 1.0,
       "item": "minecraft:wither_rose"
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "count": 1.0,
-      "stack": {
-        "Count": 1,
-        "id": "minecraft:wither_rose"
-      }
     }
   ],
   "mode": "ADDITIVE"

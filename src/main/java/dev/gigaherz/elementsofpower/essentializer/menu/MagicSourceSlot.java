@@ -1,12 +1,11 @@
 package dev.gigaherz.elementsofpower.essentializer.menu;
 
-import com.ldtteam.aequivaleo.api.results.IEquivalencyResults;
 import dev.gigaherz.elementsofpower.integration.aequivaleo.AequivaleoPlugin;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.SlotItemHandler;
+import net.neoforged.fml.ModList;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.SlotItemHandler;
 
 public class MagicSourceSlot extends SlotItemHandler
 {

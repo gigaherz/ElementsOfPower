@@ -10,14 +10,6 @@
       "type": "aequivaleo:item",
       "count": 1.0,
       "item": "minecraft:stripped_warped_hyphae"
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "count": 1.0,
-      "stack": {
-        "Count": 1,
-        "id": "minecraft:stripped_warped_hyphae"
-      }
     }
   ],
   "mode": "ADDITIVE"

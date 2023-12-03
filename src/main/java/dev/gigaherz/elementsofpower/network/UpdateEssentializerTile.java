@@ -6,7 +6,7 @@ import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -37,7 +37,7 @@ public class UpdateEssentializerTile
         remaining.writeTo(buf);
     }
 
-    public boolean handle(Supplier<NetworkEvent.Context> context)
+    public boolean handle(NetworkEvent.Context context)
     {
         return ClientPacketHandlers.handleEssentializerTileUpdate(this);
     }

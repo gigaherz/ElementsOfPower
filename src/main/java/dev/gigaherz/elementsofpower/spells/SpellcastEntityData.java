@@ -1,5 +1,6 @@
 package dev.gigaherz.elementsofpower.spells;
 
+
 import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.network.SynchronizeSpellcastState;
 import net.minecraft.core.Direction;
@@ -11,15 +12,15 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.*;
-import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.common.util.INBTSerializable;
+import net.neoforged.neoforge.common.util.LazyOptional;
+import net.neoforged.neoforge.event.AttachCapabilitiesEvent;
+import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.event.entity.living.LivingEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.common.capabilities.*;
 
 import javax.annotation.Nullable;
 
@@ -37,7 +38,7 @@ public class SpellcastEntityData implements INBTSerializable<CompoundTag>
 
     public static void register()
     {
-        MinecraftForge.EVENT_BUS.register(new Handler());
+        NeoForge.EVENT_BUS.register(new Handler());
     }
 
     public SpellcastEntityData(Entity entity)

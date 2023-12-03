@@ -16,9 +16,9 @@ import net.minecraft.world.level.Level;
 
 public class GemstoneChangeRecipe extends CustomRecipe
 {
-    public GemstoneChangeRecipe(ResourceLocation idIn, CraftingBookCategory category)
+    public GemstoneChangeRecipe(CraftingBookCategory category)
     {
-        super(idIn, category);
+        super(category);
     }
 
     @Override

@@ -10,8 +10,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraftforge.client.event.RenderLevelStageEvent;
-import net.minecraftforge.common.MinecraftForge;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import net.neoforged.neoforge.common.NeoForge;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 
@@ -25,7 +25,7 @@ public class CrappyParticleRenderer
 
     public CrappyParticleRenderer()
     {
-        MinecraftForge.EVENT_BUS.addListener(this::renderEvent);
+        NeoForge.EVENT_BUS.addListener(this::renderEvent);
     }
 
     private void renderEvent(RenderLevelStageEvent event)

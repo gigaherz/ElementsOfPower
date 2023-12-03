@@ -14,14 +14,6 @@
       "type": "aequivaleo:item",
       "count": 1.0,
       "item": "minecraft:clay"
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "count": 1.0,
-      "stack": {
-        "Count": 1,
-        "id": "minecraft:clay"
-      }
     }
   ],
   "mode": "ADDITIVE"

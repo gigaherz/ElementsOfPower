@@ -30,6 +30,7 @@ import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -48,27 +49,26 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.minecraft.world.level.levelgen.placement.*;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.client.event.ModelEvent;
-import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
-import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
-import net.minecraftforge.common.crafting.CraftingHelper;
-import net.minecraftforge.common.extensions.IForgeMenuType;
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.simple.SimpleChannel;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.ModelEvent;
+import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
+import net.neoforged.neoforge.common.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.common.crafting.IngredientType;
+import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
+import net.neoforged.neoforge.data.event.GatherDataEvent;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.neoforge.network.NetworkRegistry;
+import net.neoforged.neoforge.network.PlayNetworkDirection;
+import net.neoforged.neoforge.network.simple.SimpleChannel;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -85,63 +85,67 @@ public class ElementsOfPowerMod
     }
 
     private static final DeferredRegister<LootItemFunctionType> LOOT_FUNCTION_TYPES = DeferredRegister.create(Registries.LOOT_FUNCTION_TYPE, MODID);
-    private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, MODID);
-    private static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, MODID);
-    private static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(ForgeRegistries.MENU_TYPES, MODID);
-    private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, MODID);
-    private static final DeferredRegister<Feature<?>> FEATURES = DeferredRegister.create(ForgeRegistries.FEATURES, MODID);
-    private static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, MODID);
+    private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, MODID);
+    private static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(BuiltInRegistries.ENTITY_TYPE, MODID);
+    private static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(BuiltInRegistries.MENU, MODID);
+    private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(BuiltInRegistries.RECIPE_SERIALIZER, MODID);
+    private static final DeferredRegister<Feature<?>> FEATURES = DeferredRegister.create(BuiltInRegistries.FEATURE, MODID);
+    private static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES = DeferredRegister.create(BuiltInRegistries.PARTICLE_TYPE, MODID);
     private static final DeferredRegister<CreativeModeTab> CREATIVE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
     private static final DeferredRegister<PlacementModifierType<?>> PLACEMENT_MODIFIER_TYPES = DeferredRegister.create(Registries.PLACEMENT_MODIFIER_TYPE, MODID);
+    private static final DeferredRegister<IngredientType<?>> INGREDIENT_TYPES = DeferredRegister.create(NeoForgeRegistries.INGREDIENT_TYPES, MODID);
 
-    public static final RegistryObject<EntityType<BallEntity>> BALL_ENTITY_TYPE = ENTITY_TYPES.register("spell_ball", () ->
+    public static final DeferredHolder<EntityType<?>, EntityType<BallEntity>> BALL_ENTITY_TYPE = ENTITY_TYPES.register("spell_ball", () ->
             EntityType.Builder.<BallEntity>of(BallEntity::new, MobCategory.MISC)
             .sized(0.5f, 0.5f)
             .setTrackingRange(80).setUpdateInterval(3).setShouldReceiveVelocityUpdates(true)
                     .build(location("spell_ball").toString()));
-    public static final RegistryObject<EntityType<PillarEntity>> PILLAR_ENTITY_TYPE = ENTITY_TYPES.register("spell_pillar", () ->
+    public static final DeferredHolder<EntityType<?>, EntityType<PillarEntity>> PILLAR_ENTITY_TYPE = ENTITY_TYPES.register("spell_pillar", () ->
             EntityType.Builder.<PillarEntity>of(PillarEntity::new, MobCategory.MISC)
                     .sized(14/16.0f, 31/16.0f).fireImmune()
                     .setTrackingRange(80).setUpdateInterval(3).setShouldReceiveVelocityUpdates(true)
                     .setCustomClientFactory((packet,level) -> new PillarEntity(ElementsOfPowerMod.PILLAR_ENTITY_TYPE.get(), level))
                             .build(location("spell_pillar").toString()));
 
-    public static final RegistryObject<BlockEntityType<EssentializerBlockEntity>> ESSENTIALIZER_BLOCK_ENTITY = BLOCK_ENTITIES.register("essentializer", () ->
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<EssentializerBlockEntity>> ESSENTIALIZER_BLOCK_ENTITY = BLOCK_ENTITIES.register("essentializer", () ->
             BlockEntityType.Builder.of(EssentializerBlockEntity::new, ElementsOfPowerBlocks.ESSENTIALIZER.get()).build(null)
     );
-    public static final RegistryObject<BlockEntityType<CocoonTileEntity>> COCOON_BLOCL_ENTITY = BLOCK_ENTITIES.register("cocoon", () ->
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CocoonTileEntity>> COCOON_BLOCL_ENTITY = BLOCK_ENTITIES.register("cocoon", () ->
             BlockEntityType.Builder.of(CocoonTileEntity::new,
                     Element.stream_without_balance().map(Element::getCocoon).filter(Objects::nonNull).toArray(Block[]::new)
             ).build(null)
     );
 
-    public static final RegistryObject<MenuType<EssentializerMenu>> ESSENTIALIZER_MENU = MENU_TYPES.register("essentializer", () ->
+    public static final DeferredHolder<MenuType<?>, MenuType<EssentializerMenu>> ESSENTIALIZER_MENU = MENU_TYPES.register("essentializer", () ->
             new MenuType<>(EssentializerMenu::new, FeatureFlags.DEFAULT_FLAGS)
     );
-    public static final RegistryObject<MenuType<AnalyzerMenu>> ANALYZER_MENU = MENU_TYPES.register("analyzer", () ->
-            IForgeMenuType.create(AnalyzerMenu::new)
+    public static final DeferredHolder<MenuType<?>, MenuType<AnalyzerMenu>> ANALYZER_MENU = MENU_TYPES.register("analyzer", () ->
+            IMenuTypeExtension.create(AnalyzerMenu::new)
     );
 
-    public static final RegistryObject<SimpleCraftingRecipeSerializer<ContainerChargeRecipe>> CONTAINER_CHARGE = RECIPE_SERIALIZERS.register("container_charge", () ->
+    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<ContainerChargeRecipe>> CONTAINER_CHARGE = RECIPE_SERIALIZERS.register("container_charge", () ->
             new SimpleCraftingRecipeSerializer<>(ContainerChargeRecipe::new)
     );
-    public static final RegistryObject<SimpleCraftingRecipeSerializer<GemstoneChangeRecipe>> GEMSTONE_CHANGE = RECIPE_SERIALIZERS.register("gemstone_change", () ->
+    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<GemstoneChangeRecipe>> GEMSTONE_CHANGE = RECIPE_SERIALIZERS.register("gemstone_change", () ->
             new SimpleCraftingRecipeSerializer<>(GemstoneChangeRecipe::new)
     );
 
-    public static final RegistryObject<CocoonFeature> COCOON_FEATURE = FEATURES.register("cocoon", () ->
+    public static final DeferredHolder<Feature<?>, CocoonFeature> COCOON_FEATURE = FEATURES.register("cocoon", () ->
             new CocoonFeature(NoneFeatureConfiguration.CODEC)
     );
 
-    public static final RegistryObject<ParticleType<ColoredSmokeData>> COLORED_SMOKE_DATA = PARTICLE_TYPES.register("colored_smoke", () ->
+    public static final DeferredHolder<ParticleType<?>, ParticleType<ColoredSmokeData>> COLORED_SMOKE_DATA = PARTICLE_TYPES.register("colored_smoke", () ->
             new ColoredSmokeData.Type(false)
     );
 
-    public static RegistryObject<LootItemFunctionType> APPLY_ORB_SIZE = LOOT_FUNCTION_TYPES.register("apply_orb_size", () -> new LootItemFunctionType(new ApplyOrbSizeFunction.Serializer()));
+    public static DeferredHolder<LootItemFunctionType, LootItemFunctionType> APPLY_ORB_SIZE = LOOT_FUNCTION_TYPES.register("apply_orb_size", () -> new LootItemFunctionType(ApplyOrbSizeFunction.CODEC));
 
-    public static final RegistryObject<PlacementModifierType<CocoonPlacement>> COCOON_PLACEMENT = PLACEMENT_MODIFIER_TYPES.register("cocoon_placement", () -> CocoonPlacement::codec);
+    public static final DeferredHolder<PlacementModifierType<?>, PlacementModifierType<CocoonPlacement>> COCOON_PLACEMENT = PLACEMENT_MODIFIER_TYPES.register("cocoon_placement", () -> CocoonPlacement::codec);
 
-    public static final RegistryObject<CreativeModeTab> CREATIVE_TAB_MAGIC = CREATIVE_TABS.register("magic", () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP,0)
+    public static final DeferredHolder<IngredientType<?>, IngredientType<AnalyzedFilteringIngredient>> ANALYZED_FILTERING_INGREDIENT
+            = INGREDIENT_TYPES.register("analyzed_filtering_ingredient", () -> new IngredientType<>(AnalyzedFilteringIngredient.CODEC, AnalyzedFilteringIngredient.NON_EMPTY_CODEC));
+
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> CREATIVE_TAB_MAGIC = CREATIVE_TABS.register("magic", () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP,0)
             .icon(() -> ElementsOfPowerItems.WAND.get().getStack(Gemstone.DIAMOND, Quality.COMMON))
             .title(Component.translatable("tab.elementsofpower.magic"))
             .withTabsBefore(CreativeModeTabs.SPAWN_EGGS)
@@ -178,7 +182,7 @@ public class ElementsOfPowerMod
             }).build()
     );
 
-    public static final RegistryObject<CreativeModeTab> CREATIVE_TAB_GEMSTONES = CREATIVE_TABS.register("gemstones", () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP,0)
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> CREATIVE_TAB_GEMSTONES = CREATIVE_TABS.register("gemstones", () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP,0)
             .icon(() -> new ItemStack(Gemstone.RUBY))
             .title(Component.translatable("tab.elementsofpower.gemstones"))
             .withTabsBefore(CreativeModeTabs.SPAWN_EGGS, CREATIVE_TAB_MAGIC.getKey())
@@ -187,38 +191,38 @@ public class ElementsOfPowerMod
                 output.accept(ElementsOfPowerItems.RUBY_ORE.get());
                 output.accept(ElementsOfPowerItems.DEEPSLATE_RUBY_ORE.get());
                 output.accept(ElementsOfPowerItems.RUBY_BLOCK.get());
-                ElementsOfPowerItems.RUBY.get().addToTab(output::accept);
+                ElementsOfPowerItems.RUBY.get().creativeTabStacks(output::accept);
 
 
                 output.accept(ElementsOfPowerItems.SAPPHIRE_ORE.get());
                 output.accept(ElementsOfPowerItems.DEEPSLATE_SAPPHIRE_ORE.get());
                 output.accept(ElementsOfPowerItems.SAPPHIRE_BLOCK.get());
-                ElementsOfPowerItems.SAPPHIRE.get().addToTab(output::accept);
+                ElementsOfPowerItems.SAPPHIRE.get().creativeTabStacks(output::accept);
 
                 output.accept(ElementsOfPowerItems.CITRINE_ORE.get());
                 output.accept(ElementsOfPowerItems.DEEPSLATE_CITRINE_ORE.get());
                 output.accept(ElementsOfPowerItems.CITRINE_BLOCK.get());
-                ElementsOfPowerItems.CITRINE.get().addToTab(output::accept);
+                ElementsOfPowerItems.CITRINE.get().creativeTabStacks(output::accept);
 
                 output.accept(ElementsOfPowerItems.AGATE_ORE.get());
                 output.accept(ElementsOfPowerItems.DEEPSLATE_AGATE_ORE.get());
                 output.accept(ElementsOfPowerItems.AGATE_BLOCK.get());
-                ElementsOfPowerItems.AGATE.get().addToTab(output::accept);
+                ElementsOfPowerItems.AGATE.get().creativeTabStacks(output::accept);
 
                 output.accept(ElementsOfPowerItems.ONYX_ORE.get());
                 output.accept(ElementsOfPowerItems.DEEPSLATE_ONYX_ORE.get());
                 output.accept(ElementsOfPowerItems.ONYX_BLOCK.get());
-                ElementsOfPowerItems.ONYX.get().addToTab(output::accept);
+                ElementsOfPowerItems.ONYX.get().creativeTabStacks(output::accept);
 
                 output.accept(ElementsOfPowerItems.rubellite_ORE.get());
                 output.accept(ElementsOfPowerItems.DEEPSLATE_rubellite_ORE.get());
                 output.accept(ElementsOfPowerItems.rubellite_BLOCK.get());
-                ElementsOfPowerItems.RUBELLITE.get().addToTab(output::accept);
+                ElementsOfPowerItems.RUBELLITE.get().creativeTabStacks(output::accept);
 
-                ElementsOfPowerItems.QUARTZ.get().addToTab(output::accept);
-                ElementsOfPowerItems.EMERALD.get().addToTab(output::accept);
-                ElementsOfPowerItems.DIAMOND.get().addToTab(output::accept);
-                ElementsOfPowerItems.CREATIVITE.get().addToTab(output::accept);
+                ElementsOfPowerItems.QUARTZ.get().creativeTabStacks(output::accept);
+                ElementsOfPowerItems.EMERALD.get().creativeTabStacks(output::accept);
+                ElementsOfPowerItems.DIAMOND.get().creativeTabStacks(output::accept);
+                ElementsOfPowerItems.CREATIVITE.get().creativeTabStacks(output::accept);
             }).build()
     );
 
@@ -247,6 +251,7 @@ public class ElementsOfPowerMod
         PARTICLE_TYPES.register(modEventBus);
         CREATIVE_TABS.register(modEventBus);
         PLACEMENT_MODIFIER_TYPES.register(modEventBus);
+        INGREDIENT_TYPES.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::gatherData);
@@ -258,6 +263,8 @@ public class ElementsOfPowerMod
     {
         event.register("nbt_to_model", NbtToModel.Loader.INSTANCE);
         event.register("staff_model", StaffModel.Loader.INSTANCE);
+        //event.register(location("nbt_to_model"), NbtToModel.Loader.INSTANCE);
+        //event.register(location("staff_model"), StaffModel.Loader.INSTANCE);
     }
 
     @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -313,17 +320,15 @@ public class ElementsOfPowerMod
     private void commonSetup(FMLCommonSetupEvent event)
     {
         int messageNumber = 0;
-        CHANNEL.messageBuilder(UpdateSpellSequence.class, messageNumber++, NetworkDirection.PLAY_TO_SERVER).encoder(UpdateSpellSequence::encode).decoder(UpdateSpellSequence::new).consumerNetworkThread(UpdateSpellSequence::handle).add();
-        CHANNEL.messageBuilder(SynchronizeSpellcastState.class, messageNumber++, NetworkDirection.PLAY_TO_CLIENT).encoder(SynchronizeSpellcastState::encode).decoder(SynchronizeSpellcastState::new).consumerNetworkThread(SynchronizeSpellcastState::handle).add();
-        CHANNEL.messageBuilder(UpdateEssentializerAmounts.class, messageNumber++, NetworkDirection.PLAY_TO_CLIENT).encoder(UpdateEssentializerAmounts::encode).decoder(UpdateEssentializerAmounts::new).consumerNetworkThread(UpdateEssentializerAmounts::handle).add();
-        CHANNEL.messageBuilder(UpdateEssentializerTile.class, messageNumber++, NetworkDirection.PLAY_TO_CLIENT).encoder(UpdateEssentializerTile::encode).decoder(UpdateEssentializerTile::new).consumerNetworkThread(UpdateEssentializerTile::handle).add();
-        CHANNEL.messageBuilder(AddVelocityToPlayer.class, messageNumber++, NetworkDirection.PLAY_TO_CLIENT).encoder(AddVelocityToPlayer::encode).decoder(AddVelocityToPlayer::new).consumerNetworkThread(AddVelocityToPlayer::handle).add();
+        CHANNEL.messageBuilder(UpdateSpellSequence.class, messageNumber++, PlayNetworkDirection.PLAY_TO_SERVER).encoder(UpdateSpellSequence::encode).decoder(UpdateSpellSequence::new).consumerNetworkThread(UpdateSpellSequence::handle).add();
+        CHANNEL.messageBuilder(SynchronizeSpellcastState.class, messageNumber++, PlayNetworkDirection.PLAY_TO_CLIENT).encoder(SynchronizeSpellcastState::encode).decoder(SynchronizeSpellcastState::new).consumerNetworkThread(SynchronizeSpellcastState::handle).add();
+        CHANNEL.messageBuilder(UpdateEssentializerAmounts.class, messageNumber++, PlayNetworkDirection.PLAY_TO_CLIENT).encoder(UpdateEssentializerAmounts::encode).decoder(UpdateEssentializerAmounts::new).consumerNetworkThread(UpdateEssentializerAmounts::handle).add();
+        CHANNEL.messageBuilder(UpdateEssentializerTile.class, messageNumber++, PlayNetworkDirection.PLAY_TO_CLIENT).encoder(UpdateEssentializerTile::encode).decoder(UpdateEssentializerTile::new).consumerNetworkThread(UpdateEssentializerTile::handle).add();
+        CHANNEL.messageBuilder(AddVelocityToPlayer.class, messageNumber++, PlayNetworkDirection.PLAY_TO_CLIENT).encoder(AddVelocityToPlayer::encode).decoder(AddVelocityToPlayer::new).consumerNetworkThread(AddVelocityToPlayer::handle).add();
         LOGGER.debug("Final message number: " + messageNumber);
 
         SpellcastEntityData.register();
         //DiscoveryHandler.init();
-
-        CraftingHelper.register(AnalyzedFilteringIngredient.ID, AnalyzedFilteringIngredient.Serializer.INSTANCE);
     }
 
     private void registerCapabilities(RegisterCapabilitiesEvent event)

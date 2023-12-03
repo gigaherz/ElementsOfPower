@@ -4,7 +4,7 @@ import dev.gigaherz.elementsofpower.client.ClientPacketHandlers;
 import dev.gigaherz.elementsofpower.spells.InitializedSpellcast;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -44,7 +44,7 @@ public class SynchronizeSpellcastState
         buf.writeNbt(spellcast);
     }
 
-    public boolean handle(Supplier<NetworkEvent.Context> context)
+    public boolean handle(NetworkEvent.Context context)
     {
         return ClientPacketHandlers.handleSpellcastSync(this);
     }

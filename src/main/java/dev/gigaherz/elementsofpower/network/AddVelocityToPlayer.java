@@ -2,7 +2,7 @@ package dev.gigaherz.elementsofpower.network;
 
 import dev.gigaherz.elementsofpower.client.ClientPacketHandlers;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -33,7 +33,7 @@ public class AddVelocityToPlayer
         buf.writeDouble(vz);
     }
 
-    public boolean handle(Supplier<NetworkEvent.Context> context)
+    public boolean handle(NetworkEvent.Context context)
     {
         return ClientPacketHandlers.handleAddVelocityPlayer(this);
     }

@@ -5,10 +5,10 @@ import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.*;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.common.capabilities.*;
+import net.neoforged.neoforge.common.util.LazyOptional;
+import net.neoforged.neoforge.event.AttachCapabilitiesEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -27,7 +27,7 @@ public class PlayerCombinedMagicContainers implements IMagicContainer
     @Override
     public MagicAmounts getCapacity()
     {
-        return player.getCapability(ForgeCapabilities.ITEM_HANDLER).map(items -> {
+        return player.getCapability(Capabilities.ITEM_HANDLER).map(items -> {
             MagicAmounts am = MagicAmounts.EMPTY;
             for (int i = 0; i < items.getSlots(); i++)
             {
@@ -46,7 +46,7 @@ public class PlayerCombinedMagicContainers implements IMagicContainer
     @Override
     public MagicAmounts getContainedMagic()
     {
-        return player.getCapability(ForgeCapabilities.ITEM_HANDLER).map(items -> {
+        return player.getCapability(Capabilities.ITEM_HANDLER).map(items -> {
             MagicAmounts am = MagicAmounts.EMPTY;
             for (int i = 0; i < items.getSlots(); i++)
             {
@@ -65,7 +65,7 @@ public class PlayerCombinedMagicContainers implements IMagicContainer
     public MagicAmounts addMagic(MagicAmounts magicToAdd)
     {
         final MagicAmounts[] refAmounts = new MagicAmounts[]{magicToAdd};
-        return player.getCapability(ForgeCapabilities.ITEM_HANDLER).map(items -> {
+        return player.getCapability(Capabilities.ITEM_HANDLER).map(items -> {
             for (int i = 0; i < items.getSlots(); i++)
             {
                 if (items.getStackInSlot(i).getCapability(MagicContainerCapability.INSTANCE).map(magic -> {
@@ -97,7 +97,7 @@ public class PlayerCombinedMagicContainers implements IMagicContainer
     {
         event.register(PlayerCombinedMagicContainers.class);
 
-        MinecraftForge.EVENT_BUS.addGenericListener(Entity.class, PlayerCombinedMagicContainers::attachCapability);
+        NeoForge.EVENT_BUS.addGenericListener(Entity.class, PlayerCombinedMagicContainers::attachCapability);
     }
 
     private static void attachCapability(AttachCapabilitiesEvent<Entity> event)

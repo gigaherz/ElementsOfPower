@@ -90,7 +90,7 @@ public class StockConversions
 
         essences(Blocks.COBBLESTONE).earth(5);
         essences(Blocks.BLACKSTONE).earth(5).darkness(5);
-        fromTag(tagGetter, "forge:stone",
+        fromTag(tagGetter, "neoforge:stone",
                 Arrays.asList(
                         Items.ANDESITE,
                         Items.DIORITE,

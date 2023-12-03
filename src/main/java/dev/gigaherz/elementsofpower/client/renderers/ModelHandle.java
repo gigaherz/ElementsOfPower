@@ -6,10 +6,10 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.model.geometry.StandaloneGeometryBakingContext;
-import net.minecraftforge.client.model.obj.ObjLoader;
-import net.minecraftforge.client.model.obj.ObjModel;
-import net.minecraftforge.client.model.renderable.CompositeRenderable;
+import net.neoforged.neoforge.client.model.geometry.StandaloneGeometryBakingContext;
+import net.neoforged.neoforge.client.model.obj.ObjLoader;
+import net.neoforged.neoforge.client.model.obj.ObjModel;
+import net.neoforged.neoforge.client.model.renderable.CompositeRenderable;
 
 public class ModelHandle
 {

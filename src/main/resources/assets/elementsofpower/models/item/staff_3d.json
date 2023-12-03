@@ -1,5 +1,5 @@
 {
-  "parent": "forge:item/default",
+  "parent": "neoforge:item/default",
   "loader": "elementsofpower:nbt_to_model",
   "tag":"gemstone",
   "values": {

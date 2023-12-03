@@ -1,12 +1,12 @@
 {
   "parent": "elementsofpower:block/base_cocoon",
-  "loader": "forge:composite",
+  "loader": "neoforge:composite",
   "textures": {
     "particle": "elementsofpower:block/air_cocoon"
   },
   "children": {
     "solid": {
-      "loader": "forge:obj",
+      "loader": "neoforge:obj",
       "model": "elementsofpower:models/block/cocoon_base.obj",
       "textures": {
         "default": "elementsofpower:block/air_cocoon"
@@ -14,7 +14,7 @@
       "render_type": "solid"
     },
     "translucent": {
-      "loader": "forge:obj",
+      "loader": "neoforge:obj",
       "model": "elementsofpower:models/block/cocoon_overlay.obj",
       "textures": {
         "overlay": "elementsofpower:block/cocoon_overlay"

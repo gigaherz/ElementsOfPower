@@ -1,6 +1,6 @@
 {
-  "parent": "forge:item/default",
-  "loader": "forge:obj",
+  "parent": "neoforge:item/default",
+  "loader": "neoforge:obj",
   "model": "elementsofpower:models/item/analyzer.obj",
   "textures":{
     "particle": "minecraft:block/dark_oak_planks"

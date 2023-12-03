@@ -15,15 +15,14 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
-import net.minecraftforge.client.settings.IKeyConflictContext;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.client.settings.IKeyConflictContext;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
@@ -31,7 +30,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@Mod.EventBusSubscriber(value= Dist.CLIENT, modid=ElementsOfPowerMod.MODID, bus= Mod.EventBusSubscriber.Bus.MOD)
 public class WandUseManager
 {
     private final static int[] defaultKeys = {
@@ -55,7 +53,7 @@ public class WandUseManager
 
     public static void initialize()
     {
-        MinecraftForge.EVENT_BUS.register(WandUseManager.instance);
+        NeoForge.EVENT_BUS.register(WandUseManager.instance);
     }
 
     static class OnUseContext implements IKeyConflictContext
@@ -101,12 +99,16 @@ public class WandUseManager
         this.mc = Minecraft.getInstance();
     }
 
-    @SubscribeEvent
-    public static void registerKeys(RegisterKeyMappingsEvent event)
-    {
-        var mc = Minecraft.getInstance();
 
-        Options s = mc.options;
+    @Mod.EventBusSubscriber(value= Dist.CLIENT, modid=ElementsOfPowerMod.MODID, bus= Mod.EventBusSubscriber.Bus.MOD)
+    private static class ModBusEvents
+    {
+        @SubscribeEvent
+        public static void registerKeys(RegisterKeyMappingsEvent event)
+        {
+            var mc = Minecraft.getInstance();
+
+            Options s = mc.options;
 
         /*int l = s.keyBindings.length;
         int[] indices = new int[MagicAmounts.ELEMENTS];
@@ -125,13 +127,14 @@ public class WandUseManager
             }
         }*/
 
-        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-        {
-            String translationKey = "key.elementsofpower.spellkey." + Element.values[i].getName();
-            event.register(instance.spellKeys[i] =
-                    new KeyMapping(translationKey, new OnUseContext(), InputConstants.Type.KEYSYM, defaultKeys[i], "key.elementsofpower.category"));
+            for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+            {
+                String translationKey = "key.elementsofpower.spellkey." + Element.values[i].getName();
+                event.register(instance.spellKeys[i] =
+                        new KeyMapping(translationKey, new OnUseContext(), InputConstants.Type.KEYSYM, defaultKeys[i], "key.elementsofpower.category"));
 
-            s.keyHotbarSlots[i].setKeyConflictContext(new VanillaHotbarResolverContext(s.keyHotbarSlots[i].getKeyConflictContext()));
+                s.keyHotbarSlots[i].setKeyConflictContext(new VanillaHotbarResolverContext(s.keyHotbarSlots[i].getKeyConflictContext()));
+            }
         }
     }
 

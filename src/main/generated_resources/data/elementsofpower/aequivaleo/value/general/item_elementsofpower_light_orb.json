@@ -10,14 +10,6 @@
       "type": "aequivaleo:item",
       "count": 1.0,
       "item": "elementsofpower:light_orb"
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "count": 1.0,
-      "stack": {
-        "Count": 1,
-        "id": "elementsofpower:light_orb"
-      }
     }
   ],
   "mode": "ADDITIVE"

@@ -4,15 +4,18 @@ import dev.gigaherz.elementsofpower.ElementsOfPowerBlocks;
 import dev.gigaherz.elementsofpower.ElementsOfPowerItems;
 import dev.gigaherz.elementsofpower.cocoons.CocoonBlock;
 import dev.gigaherz.elementsofpower.items.MagicOrbItem;
+import net.minecraft.core.Holder;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.registries.RegistryObject;
+import net.minecraft.world.level.block.Block;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-public enum Element
+public enum Element implements StringRepresentable
 {
     FIRE("fire", 1, ShapeType.CONE, EffectType.FLAME, () -> ElementsOfPowerBlocks.FIRE_COCOON, () -> ElementsOfPowerItems.FIRE_COCOON, () -> ElementsOfPowerItems.FIRE_ORB, 0xFFff3e00),
     WATER("water", 0, ShapeType.WALL, EffectType.WATER, () -> ElementsOfPowerBlocks.WATER_COCOON, () -> ElementsOfPowerItems.WATER_COCOON, () -> ElementsOfPowerItems.WATER_ORB, 0xFF005dff),
@@ -57,18 +60,24 @@ public enum Element
         return name;
     }
 
+    @Override
+    public String getSerializedName()
+    {
+        return name;
+    }
+
     Element(String name, int opposite, ShapeType shapeType, EffectType initialEffect,
-            @Nullable Supplier<RegistryObject<CocoonBlock>> blockSupplier,
-            @Nullable Supplier<RegistryObject<? extends Item>> itemSupplier,
-            @Nullable Supplier<RegistryObject<MagicOrbItem>> orbSupplier, int color)
+            @Nullable Supplier<DeferredHolder<Block, CocoonBlock>> blockSupplier,
+            @Nullable Supplier<DeferredHolder<Item, ? extends Item>> itemSupplier,
+            @Nullable Supplier<DeferredHolder<Item, MagicOrbItem>> orbSupplier, int color)
     {
         this.opposite = opposite;
         this.shapeType = shapeType;
         this.name = name;
         this.initialEffect = initialEffect;
-        this.blockSupplier = blockSupplier != null ? () -> blockSupplier.get().get() : null;
-        this.itemSupplier = itemSupplier != null ? () -> itemSupplier.get().get() : null;;
-        this.orbSupplier = orbSupplier != null ? () -> orbSupplier.get().get() : null;;
+        this.blockSupplier = blockSupplier != null ? () -> blockSupplier.get().value() : null;
+        this.itemSupplier = itemSupplier != null ? () -> itemSupplier.get().value() : null;;
+        this.orbSupplier = orbSupplier != null ? () -> orbSupplier.get().value() : null;;
         this.color = color;
     }
 

@@ -1,9 +1,9 @@
 {
-  "type": "forge:conditional",
+  "type": "neoforge:conditional",
   "recipes": [
     {
-      "conditions": [
-        { "type":"forge:mod_loaded", "modid": "gbook"}
+      "neoforge:conditions": [
+        { "type":"neoforge:mod_loaded", "modid": "gbook"}
       ],
       "recipe": {
         "type":"minecraft:crafting_shapeless",

@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.CommonHooks;
 
 import javax.annotation.Nullable;
 
@@ -79,7 +80,7 @@ public class MiningEffect extends SpellEffect
                 ServerPlayer playermp = (ServerPlayer) player;
                 ServerPlayerGameMode mgr = playermp.gameMode;
 
-                int exp = net.minecraftforge.common.ForgeHooks.onBlockBreakEvent(world, mgr.getGameModeForPlayer(), playermp, blockPos);
+                int exp = CommonHooks.onBlockBreakEvent(world, mgr.getGameModeForPlayer(), playermp, blockPos);
                 if (exp != -1)
                 {
                     BlockEntity tileentity = world.getBlockEntity(blockPos);

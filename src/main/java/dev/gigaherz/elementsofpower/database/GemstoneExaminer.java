@@ -5,12 +5,12 @@ import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.gemstones.Gemstone;
 import dev.gigaherz.elementsofpower.gemstones.GemstoneItem;
 import dev.gigaherz.elementsofpower.gemstones.Quality;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Map;
 import java.util.Random;
@@ -54,8 +54,8 @@ public class GemstoneExaminer
                 return stack;
         }
 
-        var rk = ForgeRegistries.ITEMS.getResourceKey(item);
-        var h = rk.flatMap(ForgeRegistries.ITEMS::getHolder);
+        var rk = BuiltInRegistries.ITEM.getResourceKey(item);
+        var h = rk.flatMap(BuiltInRegistries.ITEM::getHolder);
         return h.flatMap(holder ->
                 GEMS.entrySet().stream()
                 .filter(kv -> holder.is(kv.getValue()))

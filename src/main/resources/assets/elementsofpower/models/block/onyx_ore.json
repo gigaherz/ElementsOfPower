@@ -1,6 +1,6 @@
 {
-  "parent": "forge:block/default",
-  "loader": "forge:composite",
+  "parent": "neoforge:block/default",
+  "loader": "neoforge:composite",
   "children": {
     "base": {
       "parent": "block/cube_all",

@@ -154,9 +154,9 @@
     "text.elementsofpower.element.air": "Air",
     "text.elementsofpower.element.earth": "Earth",
     "text.elementsofpower.element.light": "Light",
-    "text.elementsofpower.element.darkness": "Darkness",
+    "text.elementsofpower.element.time": "Time",
     "text.elementsofpower.element.life": "Life",
-    "text.elementsofpower.element.death": "Chaos",
+    "text.elementsofpower.element.chaos": "Chaos",
 
     "item.elementsofpower.analyzer": "Gem Analyzer",
     "container.elementsofpower.analyzer": "Gem Analyzer",

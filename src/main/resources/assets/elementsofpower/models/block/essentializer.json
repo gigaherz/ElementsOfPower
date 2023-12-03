@@ -1,6 +1,6 @@
 {
   "parent": "block/block",
-  "loader": "forge:obj",
+  "loader": "neoforge:obj",
   "model": "elementsofpower:models/block/essentializer.obj",
   "automatic_culling": true,
   "textures": {
