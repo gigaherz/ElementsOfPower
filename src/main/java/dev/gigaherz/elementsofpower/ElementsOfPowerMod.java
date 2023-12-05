@@ -1,5 +1,6 @@
 package dev.gigaherz.elementsofpower;
 
+import com.mojang.datafixers.util.Either;
 import dev.gigaherz.elementsofpower.analyzer.menu.AnalyzerMenu;
 import dev.gigaherz.elementsofpower.analyzer.menu.AnalyzerScreen;
 import dev.gigaherz.elementsofpower.capabilities.MagicContainerCapability;
@@ -73,6 +74,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.*;
+import java.util.function.Function;
 
 @Mod(ElementsOfPowerMod.MODID)
 public class ElementsOfPowerMod
@@ -341,6 +343,14 @@ public class ElementsOfPowerMod
     public void gatherData(GatherDataEvent event)
     {
         ElementsOfPowerDataGen.gatherData(event);
+    }
+
+
+    private void test()
+    {
+        Either<List<String>, String> e = Either.left(List.of("a"));
+
+        List<String> list = e.map(Function.identity(), List::of);
     }
 
 }

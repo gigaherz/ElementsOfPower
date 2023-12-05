@@ -4,6 +4,7 @@ import dev.gigaherz.elementsofpower.capabilities.IMagicContainer;
 import dev.gigaherz.elementsofpower.capabilities.MagicContainerCapability;
 import dev.gigaherz.elementsofpower.gemstones.Gemstone;
 import dev.gigaherz.elementsofpower.gemstones.Quality;
+import dev.gigaherz.elementsofpower.integration.Curios;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.NonNullList;
@@ -117,7 +118,7 @@ public class BaubleItem extends GemContainerItem
     @Nullable
     private static Supplier<ItemStack> findInCurios(ItemStack stack, Player player)
     {
-        return null; // Curios.getCurios(player).map(b -> findInInventory(stack, b)).filter(Objects::nonNull).findFirst().orElse(null);
+        return Curios.getCurios(player).map(b -> findInInventory(stack, b)).filter(Objects::nonNull).findFirst().orElse(null);
     }
 
     private static boolean canReceiveMagic(ItemStack thisStack, ItemStack s)

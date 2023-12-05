@@ -4,7 +4,6 @@ plugins {
     id 'idea'
     id 'maven-publish'
     id 'net.neoforged.gradle.userdev' version '7.0.57'
-    //id 'org.parchmentmc.librarian.forgegradle' version '1.+'
     id 'net.neoforged.gradle.mixin' version '7.0.57'
 }
 
@@ -97,11 +96,12 @@ dependencies {
     //compileOnly fg.deobf("mezz.jei:jei-1.20.1-forge-api:15.2.0.22")
     //runtimeOnly fg.deobf("mezz.jei:jei-1.20.1-forge:15.2.0.22")
 
-    //compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:5.2.0-beta.3+1.20.1")
-    //runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:5.2.0-beta.3+1.20.1")
+    // https://www.curseforge.com/minecraft/mc-mods/curios/files/4921744
+    compileOnly "top.theillusivec4.curios:curios-neoforge:6.1.0+1.20.2"
+    runtimeOnly "top.theillusivec4.curios:curios-neoforge:6.1.0+1.20.2"
 
-    compileOnly "com.ldtteam:aequivaleo:1.20.2-0.1.124-ALPHA:api"
-    runtimeOnly "com.ldtteam:aequivaleo:1.20.2-0.1.124-ALPHA:universal"
+    compileOnly "com.ldtteam:aequivaleo:1.20.2-0.1.126-ALPHA:api"
+    runtimeOnly "com.ldtteam:aequivaleo:1.20.2-0.1.126-ALPHA:universal"
 
     //runtimeOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:1.16-3.1.4-22")
 

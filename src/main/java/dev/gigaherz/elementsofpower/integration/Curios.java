@@ -1,5 +1,5 @@
 package dev.gigaherz.elementsofpower.integration;
-/*
+
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.common.util.NonNullLazy;
 import net.neoforged.fml.ModList;
@@ -28,4 +28,3 @@ public class Curios
         }
     }
 }
-*/

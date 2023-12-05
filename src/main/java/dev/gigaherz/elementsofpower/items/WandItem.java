@@ -3,6 +3,7 @@ package dev.gigaherz.elementsofpower.items;
 import dev.gigaherz.elementsofpower.capabilities.IMagicContainer;
 import dev.gigaherz.elementsofpower.capabilities.MagicContainerCapability;
 import dev.gigaherz.elementsofpower.client.WandUseManager;
+import dev.gigaherz.elementsofpower.integration.Curios;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import dev.gigaherz.elementsofpower.network.UpdateSpellSequence;
 import dev.gigaherz.elementsofpower.spells.*;
@@ -133,12 +134,12 @@ public class WandItem extends GemContainerItem
             accumulateReservoir(accumulator, player.getInventory().getItem(i));
         }
 
-        /*Curios.getCurios(player).forEach(value -> {
+        Curios.getCurios(player).forEach(value -> {
             for (int i = 0; i < value.getSlots(); i++)
             {
                 accumulateReservoir(accumulator, value.getStackInSlot(i));
             }
-        });*/
+        });
 
         return accumulator.toAmounts();
     }
@@ -149,7 +150,7 @@ public class WandItem extends GemContainerItem
         {
             Item item = stack.getItem();
 
-            if (item instanceof BaubleItem && ((BaubleItem) item).getTransferMode(stack) == BaubleItem.TransferMode.PASSIVE)
+            if (item instanceof BaubleItem && BaubleItem.getTransferMode(stack) == BaubleItem.TransferMode.PASSIVE)
             {
                 MagicAmounts contained = MagicContainerCapability.getContainer(stack).map(IMagicContainer::getContainedMagic).orElse(MagicAmounts.EMPTY);
                 accumulator.add(contained);
@@ -168,12 +169,12 @@ public class WandItem extends GemContainerItem
             subtractFromReservoir(accumulator, player.getInventory().getItem(i));
         }
 
-        /*Curios.getCurios(player).forEach(value -> {
+        Curios.getCurios(player).forEach(value -> {
             for (int i = 0; i < value.getSlots(); i++)
             {
                 subtractFromReservoir(accumulator, value.getStackInSlot(i));
             }
-        });*/
+        });
 
         return accumulator.toAmounts();
     }
@@ -184,7 +185,7 @@ public class WandItem extends GemContainerItem
         {
             Item item = stack.getItem();
 
-            if (item instanceof BaubleItem && ((BaubleItem) item).getTransferMode(stack) == BaubleItem.TransferMode.PASSIVE)
+            if (item instanceof BaubleItem && BaubleItem.getTransferMode(stack) == BaubleItem.TransferMode.PASSIVE)
             {
                 MagicContainerCapability.getContainer(stack).ifPresent(magic -> {
 

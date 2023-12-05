@@ -51,7 +51,7 @@ public class EssenceGroupType implements ICompoundTypeGroup
     @Override
     public boolean shouldIncompleteRecipeBeProcessed(IEquivalencyRecipe iEquivalencyRecipe)
     {
-        return false;
+        return true;
     }
 
     @Override
