@@ -128,7 +128,9 @@ public class InitializedSpellcast extends Spellcast
 
         if (remainingCastTime <= 0)
         {
-            SpellcastEntityData.get(player).ifPresent(SpellcastEntityData::end);
+            var data = SpellcastEntityData.get(player);
+            if (data != null)
+                data.end();
         }
     }
 

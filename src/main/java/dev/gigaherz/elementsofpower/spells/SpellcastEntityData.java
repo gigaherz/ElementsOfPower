@@ -3,42 +3,70 @@ package dev.gigaherz.elementsofpower.spells;
 
 import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.network.SynchronizeSpellcastState;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.capabilities.EntityCapability;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.util.INBTSerializable;
-import net.neoforged.neoforge.common.util.LazyOptional;
-import net.neoforged.neoforge.event.AttachCapabilitiesEvent;
 import net.neoforged.neoforge.event.TickEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEvent;
-import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
-import net.neoforged.neoforge.common.capabilities.*;
 
 import javax.annotation.Nullable;
 
+@Mod.EventBusSubscriber(modid=ElementsOfPowerMod.MODID, bus= Mod.EventBusSubscriber.Bus.FORGE)
 public class SpellcastEntityData implements INBTSerializable<CompoundTag>
 {
-    private static final ResourceLocation PROP_KEY = ElementsOfPowerMod.location("spellcast_data");
+    public static EntityCapability<SpellcastEntityData, Void> CAPABILITY = EntityCapability.createVoid(ElementsOfPowerMod.location("spellcast_data"), SpellcastEntityData.class);
+
+    @SubscribeEvent
+    public static void registerCapabilities(RegisterCapabilitiesEvent event)
+    {
+        event.registerEntity(
+                CAPABILITY,
+                EntityType.PLAYER,
+                (entity, context) -> new SpellcastEntityData(entity)
+        );
+    }
+
+    @SubscribeEvent
+    public void playerTickEvent(TickEvent.PlayerTickEvent e)
+    {
+        if (e.phase == TickEvent.Phase.END)
+        {
+            var spellcast = SpellcastEntityData.get(e.player);
+            if (spellcast != null)
+                spellcast.updateSpell();
+        }
+    }
+
+    @SubscribeEvent
+    public void playerTickEvent(LivingEvent.LivingJumpEvent e)
+    {
+        LivingEntity entity = e.getEntity();
+        if (entity instanceof Player)
+        {
+            var spellcast = SpellcastEntityData.get((Player) entity);
+            if (spellcast!= null)
+                spellcast.interrupt();
+        }
+    }
 
     private final Player player;
     private InitializedSpellcast currentCasting;
 
-    public static LazyOptional<SpellcastEntityData> get(Player p)
+    @Nullable
+    public static SpellcastEntityData get(Player p)
     {
-        return p.getCapability(Handler.SPELLCAST, Direction.UP);
-    }
-
-    public static void register()
-    {
-        NeoForge.EVENT_BUS.register(new Handler());
+        return p.getCapability(CAPABILITY);
     }
 
     public SpellcastEntityData(Entity entity)
@@ -182,68 +210,4 @@ public class SpellcastEntityData implements INBTSerializable<CompoundTag>
         return currentCasting;
     }
 
-    public static class Handler
-    {
-        public static Capability<SpellcastEntityData> SPELLCAST = CapabilityManager.get(new CapabilityToken<>() {});
-
-        // FIXME
-        public void registerCapability(RegisterCapabilitiesEvent event)
-        {
-            event.register(SpellcastEntityData.class);
-        }
-
-        @SubscribeEvent
-        public void attachCapabilities(AttachCapabilitiesEvent<Entity> e)
-        {
-            final Entity entity = e.getObject();
-
-            if (entity instanceof Player)
-            {
-                e.addCapability(PROP_KEY, new ICapabilitySerializable<CompoundTag>()
-                {
-                    final SpellcastEntityData cap = new SpellcastEntityData(entity);
-                    final LazyOptional<SpellcastEntityData> capGetter = LazyOptional.of(() -> cap);
-
-                    @Override
-                    public <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction facing)
-                    {
-                        if (capability == SPELLCAST)
-                            return capGetter.cast();
-                        return LazyOptional.empty();
-                    }
-
-                    @Override
-                    public CompoundTag serializeNBT()
-                    {
-                        return cap.serializeNBT();
-                    }
-
-                    @Override
-                    public void deserializeNBT(CompoundTag nbt)
-                    {
-                        cap.deserializeNBT(nbt);
-                    }
-                });
-            }
-        }
-
-        @SubscribeEvent
-        public void playerTickEvent(TickEvent.PlayerTickEvent e)
-        {
-            if (e.phase == TickEvent.Phase.END)
-            {
-                SpellcastEntityData.get(e.player).ifPresent(SpellcastEntityData::updateSpell);
-            }
-        }
-
-        @SubscribeEvent
-        public void playerTickEvent(LivingEvent.LivingJumpEvent e)
-        {
-            LivingEntity entity = e.getEntity();
-            if (entity instanceof Player)
-            {
-                SpellcastEntityData.get((Player) entity).ifPresent(SpellcastEntityData::interrupt);
-            }
-        }
-    }
 }

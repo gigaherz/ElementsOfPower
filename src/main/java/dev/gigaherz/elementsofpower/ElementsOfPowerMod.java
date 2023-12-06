@@ -1,6 +1,5 @@
 package dev.gigaherz.elementsofpower;
 
-import com.mojang.datafixers.util.Either;
 import dev.gigaherz.elementsofpower.analyzer.menu.AnalyzerMenu;
 import dev.gigaherz.elementsofpower.analyzer.menu.AnalyzerScreen;
 import dev.gigaherz.elementsofpower.capabilities.MagicContainerCapability;
@@ -51,10 +50,11 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
 import net.minecraft.world.level.levelgen.placement.*;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.neoforge.attachment.AttachmentType;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
-import net.neoforged.neoforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.crafting.IngredientType;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
@@ -75,6 +75,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 @Mod(ElementsOfPowerMod.MODID)
 public class ElementsOfPowerMod
@@ -96,6 +97,7 @@ public class ElementsOfPowerMod
     private static final DeferredRegister<CreativeModeTab> CREATIVE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
     private static final DeferredRegister<PlacementModifierType<?>> PLACEMENT_MODIFIER_TYPES = DeferredRegister.create(Registries.PLACEMENT_MODIFIER_TYPE, MODID);
     private static final DeferredRegister<IngredientType<?>> INGREDIENT_TYPES = DeferredRegister.create(NeoForgeRegistries.INGREDIENT_TYPES, MODID);
+    public static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES = DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, MODID);
 
     public static final DeferredHolder<EntityType<?>, EntityType<BallEntity>> BALL_ENTITY_TYPE = ENTITY_TYPES.register("spell_ball", () ->
             EntityType.Builder.<BallEntity>of(BallEntity::new, MobCategory.MISC)
@@ -254,17 +256,23 @@ public class ElementsOfPowerMod
         CREATIVE_TABS.register(modEventBus);
         PLACEMENT_MODIFIER_TYPES.register(modEventBus);
         INGREDIENT_TYPES.register(modEventBus);
+        ATTACHMENT_TYPES.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::gatherData);
         modEventBus.addListener(this::modelRegistry);
         modEventBus.addListener(this::registerCapabilities);
     }
+    private void registerCapabilities(RegisterCapabilitiesEvent event)
+    {
+        MagicContainerCapability.registerCapabilities(event);
+        PlayerCombinedMagicContainers.registerCapabilities(event);
+    }
 
     public void modelRegistry(ModelEvent.RegisterGeometryLoaders event)
     {
-        event.register("nbt_to_model", NbtToModel.Loader.INSTANCE);
-        event.register("staff_model", StaffModel.Loader.INSTANCE);
+        event.register(location("nbt_to_model"), NbtToModel.Loader.INSTANCE);
+        event.register(location("staff_model"), StaffModel.Loader.INSTANCE);
         //event.register(location("nbt_to_model"), NbtToModel.Loader.INSTANCE);
         //event.register(location("staff_model"), StaffModel.Loader.INSTANCE);
     }
@@ -328,30 +336,11 @@ public class ElementsOfPowerMod
         CHANNEL.messageBuilder(UpdateEssentializerTile.class, messageNumber++, PlayNetworkDirection.PLAY_TO_CLIENT).encoder(UpdateEssentializerTile::encode).decoder(UpdateEssentializerTile::new).consumerNetworkThread(UpdateEssentializerTile::handle).add();
         CHANNEL.messageBuilder(AddVelocityToPlayer.class, messageNumber++, PlayNetworkDirection.PLAY_TO_CLIENT).encoder(AddVelocityToPlayer::encode).decoder(AddVelocityToPlayer::new).consumerNetworkThread(AddVelocityToPlayer::handle).add();
         LOGGER.debug("Final message number: " + messageNumber);
-
-        SpellcastEntityData.register();
-        //DiscoveryHandler.init();
-    }
-
-    private void registerCapabilities(RegisterCapabilitiesEvent event)
-    {
-        MagicContainerCapability.register(event);
-        PlayerCombinedMagicContainers.register(event);
-        CocoonEventHandling.enable(event);
     }
 
     public void gatherData(GatherDataEvent event)
     {
         ElementsOfPowerDataGen.gatherData(event);
     }
-
-
-    private void test()
-    {
-        Either<List<String>, String> e = Either.left(List.of("a"));
-
-        List<String> list = e.map(Function.identity(), List::of);
-    }
-
 }
 

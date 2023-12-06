@@ -2,6 +2,7 @@ package dev.gigaherz.elementsofpower.essentializer;
 
 import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.capabilities.MagicContainerCapability;
+import dev.gigaherz.elementsofpower.capabilities.PlayerCombinedMagicContainers;
 import dev.gigaherz.elementsofpower.essentializer.menu.IMagicAmountHolder;
 import dev.gigaherz.elementsofpower.integration.aequivaleo.AequivaleoPlugin;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
@@ -13,25 +14,27 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.neoforged.neoforge.common.capabilities.Capabilities;
-import net.neoforged.neoforge.common.capabilities.Capability;
-import net.neoforged.neoforge.common.util.LazyOptional;
+import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.RangedWrapper;
 import net.neoforged.neoforge.network.PacketDistributor;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
+@Mod.EventBusSubscriber(modid=ElementsOfPowerMod.MODID, bus= Mod.EventBusSubscriber.Bus.FORGE)
 public class EssentializerBlockEntity
         extends BlockEntity
         implements IMagicAmountHolder
@@ -39,6 +42,29 @@ public class EssentializerBlockEntity
     public static final int MAX_ESSENTIALIZER_MAGIC = 32768;
     public static final float MAX_CONVERT_PER_TICK = 5 / 20.0f;
     public static final float MAX_TRANSFER_PER_TICK = 50 / 20.0f;
+
+    @SubscribeEvent
+    public static void registerCapabilities(RegisterCapabilitiesEvent event)
+    {
+        event.<IItemHandler, @Nullable Direction, EssentializerBlockEntity>registerBlockEntity(
+                Capabilities.ItemHandler.BLOCK,
+                ElementsOfPowerMod.ESSENTIALIZER_BLOCK_ENTITY.get(),
+                (be, facing) -> {
+                    if (facing == null)
+                        return be.inventory;
+                    switch (facing)
+                    {
+                        case UP:
+                            return be.top;
+                        case DOWN:
+                            return null;
+                        default:
+                            return be.sides;
+                    }
+                }
+        );
+    }
+
 
     public final ItemStackHandler inventory = new ItemStackHandler(3)
     {
@@ -64,9 +90,9 @@ public class EssentializerBlockEntity
                     };
         }
 
-        @Nonnull
+        @NotNull
         @Override
-        public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)
+        public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate)
         {
             if (!isItemValidForSlot(slot, stack))
                 return stack;
@@ -80,10 +106,6 @@ public class EssentializerBlockEntity
     public MagicAmounts containedMagic = MagicAmounts.EMPTY;
     public MagicAmounts remainingToConvert = MagicAmounts.EMPTY;
 
-    private final LazyOptional<IItemHandler> inventoryGetter = LazyOptional.of(() -> inventory);
-    private final LazyOptional<IItemHandler> topGetter = LazyOptional.of(() -> top);
-    private final LazyOptional<IItemHandler> sideGetter = LazyOptional.of(() -> sides);
-
     public float animateTick;
 
     public EssentializerBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state)
@@ -94,25 +116,6 @@ public class EssentializerBlockEntity
     public EssentializerBlockEntity(BlockPos pos, BlockState state)
     {
         super(ElementsOfPowerMod.ESSENTIALIZER_BLOCK_ENTITY.get(), pos, state);
-    }
-
-    @Override
-    public <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction facing)
-    {
-        if (capability == Capabilities.ITEM_HANDLER)
-        {
-            if (facing == null) return inventoryGetter.cast();
-            switch (facing)
-            {
-                case UP:
-                    return topGetter.cast();
-                case DOWN:
-                    return LazyOptional.empty();
-                default:
-                    return sideGetter.cast();
-            }
-        }
-        return super.getCapability(capability, facing);
     }
 
     @Override
@@ -275,8 +278,9 @@ public class EssentializerBlockEntity
     {
         ItemStack input = inventory.getStackInSlot(1);
 
-        return MagicContainerCapability.getContainer(input).map(magic -> {
-
+        var magic = MagicContainerCapability.getContainer(input);
+        if (magic != null)
+        {
             boolean isInfinite = magic.isInfinite();
 
             MagicAmounts contained = magic.getContainedMagic();
@@ -303,7 +307,9 @@ public class EssentializerBlockEntity
 
             inventory.setStackInSlot(1, input);
             return true;
-        }).orElse(false);
+        }
+
+        return false;
     }
 
     private boolean addMagicToOutput(IItemHandlerModifiable inventory)
@@ -315,7 +321,9 @@ public class EssentializerBlockEntity
             return false;
         }
 
-        return MagicContainerCapability.getContainer(output).map(magic -> {
+        var magic = MagicContainerCapability.getContainer(output);
+        if (magic != null)
+        {
             if (magic.isInfinite())
                 return false;
 
@@ -343,7 +351,9 @@ public class EssentializerBlockEntity
 
             magic.setContainedMagic(contained);
             return true;
-        }).orElse(false);
+        }
+
+        return false;
     }
 
     private boolean canAddAll(MagicAmounts magic)

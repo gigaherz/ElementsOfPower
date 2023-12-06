@@ -22,9 +22,12 @@ public class Curios
     {
         public static Stream<IItemHandler> getCurios(Player player)
         {
-            return player.getCapability(CuriosCapability.INVENTORY).map((curios) ->
-                    curios.getCurios().values().stream().<IItemHandler>map(ICurioStacksHandler::getStacks)
-            ).orElse(Stream.empty());
+            var curios = player.getCapability(CuriosCapability.INVENTORY);
+            if (curios != null)
+            {
+                return curios.getCurios().values().stream().<IItemHandler>map(ICurioStacksHandler::getStacks);
+            }
+            return Stream.empty();
         }
     }
 }

@@ -92,7 +92,10 @@ public class WandItem extends GemContainerItem
             return false;
         }
 
-        return MagicContainerCapability.getContainer(stack).map(magic -> {
+        var magic = MagicContainerCapability.getContainer(stack);
+
+        if (magic != null)
+        {
 
             MagicAmounts amounts = magic.getContainedMagic().add(getTotalPlayerReservoir(player));
             MagicAmounts cost = SpellManager.computeCost(cast);
@@ -106,7 +109,9 @@ public class WandItem extends GemContainerItem
             InitializedSpellcast cast2 = cast.getShape().castSpell(stack, player, cast);
             if (cast2 != null)
             {
-                SpellcastEntityData.get(player).ifPresent(data -> data.begin(cast2));
+                var data = SpellcastEntityData.get(player);
+                if (data != null)
+                    data.begin(cast2);
             }
 
             // TODO: Subtract from reservoir if needed
@@ -122,7 +127,9 @@ public class WandItem extends GemContainerItem
 
             //DiscoveryHandler.instance.onSpellcast(player, cast);
             return updateSequenceOnWand;
-        }).orElse(false);
+        }
+
+        return false;
     }
 
     public static MagicAmounts getTotalPlayerReservoir(Player player)
@@ -152,7 +159,8 @@ public class WandItem extends GemContainerItem
 
             if (item instanceof BaubleItem && BaubleItem.getTransferMode(stack) == BaubleItem.TransferMode.PASSIVE)
             {
-                MagicAmounts contained = MagicContainerCapability.getContainer(stack).map(IMagicContainer::getContainedMagic).orElse(MagicAmounts.EMPTY);
+                var magic = MagicContainerCapability.getContainer(stack);
+                MagicAmounts contained = magic != null ? magic.getContainedMagic() : MagicAmounts.EMPTY;
                 accumulator.add(contained);
             }
         }
@@ -187,7 +195,8 @@ public class WandItem extends GemContainerItem
 
             if (item instanceof BaubleItem && BaubleItem.getTransferMode(stack) == BaubleItem.TransferMode.PASSIVE)
             {
-                MagicContainerCapability.getContainer(stack).ifPresent(magic -> {
+                var magic = MagicContainerCapability.getContainer(stack);
+                if (magic != null) {
 
                     MagicAmounts contained = magic.getContainedMagic();
                     MagicAmounts required = accumulator.toAmounts();
@@ -198,7 +207,7 @@ public class WandItem extends GemContainerItem
                         magic.setContainedMagic(remainder);
                         accumulator.subtract(toSubtract);
                     }
-                });
+                }
             }
         }
     }

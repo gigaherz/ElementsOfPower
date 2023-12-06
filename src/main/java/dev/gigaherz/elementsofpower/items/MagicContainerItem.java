@@ -1,77 +1,21 @@
 package dev.gigaherz.elementsofpower.items;
 
+import dev.gigaherz.elementsofpower.ElementsOfPowerItems;
 import dev.gigaherz.elementsofpower.capabilities.IMagicContainer;
 import dev.gigaherz.elementsofpower.capabilities.MagicContainerCapability;
+import dev.gigaherz.elementsofpower.gemstones.Gemstone;
+import dev.gigaherz.elementsofpower.gemstones.GemstoneItem;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.common.capabilities.Capability;
-import net.neoforged.neoforge.common.capabilities.ICapabilityProvider;
-import net.neoforged.neoforge.common.util.LazyOptional;
-import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public abstract class MagicContainerItem extends Item
 {
     public MagicContainerItem(Properties properties)
     {
         super(properties);
-    }
-
-    @Nullable
-    @Override
-    public ICapabilityProvider initCapabilities(ItemStack _stack, @Nullable CompoundTag nbt)
-    {
-        return new ICapabilityProvider()
-        {
-            final ItemStack stack = _stack;
-            final LazyOptional<IMagicContainer> containerGetter = LazyOptional.of(() -> new IMagicContainer()
-            {
-
-                @Override
-                public boolean isInfinite()
-                {
-                    return MagicContainerItem.this.isInfinite(stack);
-                }
-
-                @Override
-                public MagicAmounts getCapacity()
-                {
-                    return MagicContainerItem.this.getCapacity(stack);
-                }
-
-                @Override
-                public void setCapacity(MagicAmounts capacity)
-                {
-                    // do nothing
-                }
-
-                @Override
-                public MagicAmounts getContainedMagic()
-                {
-                    return MagicContainerItem.this.getContainedMagic(stack);
-                }
-
-                @Override
-                public void setContainedMagic(MagicAmounts containedMagic)
-                {
-                    MagicContainerItem.this.setContainedMagic(stack, containedMagic);
-                }
-            });
-
-            @NotNull
-            @Override
-            public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing)
-            {
-                if (capability == MagicContainerCapability.INSTANCE && canContainMagic(stack))
-                    return containerGetter.cast();
-                return LazyOptional.empty();
-            }
-        };
     }
 
     public abstract boolean canContainMagic(ItemStack stack);
@@ -83,12 +27,9 @@ public abstract class MagicContainerItem extends Item
     @Override
     public boolean isFoil(ItemStack stack)
     {
-        return MagicContainerCapability.getContainer(stack).map(magic -> {
-            if (magic.isInfinite())
-                return true;
+        var magic = MagicContainerCapability.getContainer(stack);
 
-            return !magic.getContainedMagic().isEmpty();
-        }).orElse(false);
+        return magic != null && (magic.isInfinite() || !magic.getContainedMagic().isEmpty());
     }
 
     public MagicAmounts getContainedMagic(ItemStack stack)
@@ -108,5 +49,25 @@ public abstract class MagicContainerItem extends Item
         MagicAmounts am = MagicAmounts.min(getCapacity(stack), containedMagic);
         CompoundTag compound = stack.getOrCreateTag();
         compound.put("ContainedMagic", am.serializeNBT());
+    }
+
+    public MagicAmounts addMagic(ItemStack stack, MagicAmounts toAdd)
+    {
+        if (!isInfinite(stack))
+        {
+            MagicAmounts capacity = getCapacity(stack);
+            MagicAmounts contained = getContainedMagic(stack);
+
+            MagicAmounts empty = capacity.subtract(contained);
+
+            if (!empty.isEmpty())
+            {
+                MagicAmounts willAdd = MagicAmounts.min(toAdd, empty);
+                MagicAmounts remaining = toAdd.subtract(willAdd);
+                setContainedMagic(stack, contained.add(willAdd));
+                return remaining;
+            }
+        }
+        return toAdd;
     }
 }

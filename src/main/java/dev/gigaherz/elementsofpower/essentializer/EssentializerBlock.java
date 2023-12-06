@@ -1,5 +1,7 @@
 package dev.gigaherz.elementsofpower.essentializer;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.essentializer.menu.EssentializerMenu;
 import net.minecraft.core.BlockPos;
@@ -14,6 +16,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EnchantmentTableBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -29,10 +32,17 @@ import javax.annotation.Nullable;
 
 public class EssentializerBlock extends BaseEntityBlock
 {
+    public static final MapCodec<EssentializerBlock> CODEC = simpleCodec(EssentializerBlock::new);
 
     public EssentializerBlock(Properties properties)
     {
         super(properties);
+    }
+
+    @Override
+    protected MapCodec<? extends BaseEntityBlock> codec()
+    {
+        return CODEC;
     }
 
     @Override

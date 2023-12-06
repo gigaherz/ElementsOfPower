@@ -69,7 +69,9 @@ public class AnalyzerScreen extends AbstractContainerScreen<AnalyzerMenu>
                 gem = gemstone.getGemstone();
                 q = gemstone.getQuality(stack);
 
-                am = MagicContainerCapability.getContainer(stack).map(IMagicContainer::getCapacity).orElse(MagicAmounts.EMPTY);
+                var magic = MagicContainerCapability.getContainer(stack);
+                if (magic != null)
+                    am = magic.getCapacity();
             }
 
             if (gem != null)

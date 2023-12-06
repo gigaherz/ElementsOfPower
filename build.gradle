@@ -11,7 +11,7 @@ version = "0.16.2-alpha"
 group = "dev.gigaherz.elementsofpower"
 
 base {
-    archivesName = "ElementsOfPower-1.20.2"
+    archivesName = "ElementsOfPower-1.20.3"
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
@@ -89,7 +89,7 @@ runs {
 minecraft.accessTransformers.file rootProject.file('src/main/resources/META-INF/accesstransformer.cfg')
 
 dependencies {
-    implementation 'net.neoforged:neoforge:20.2.86'
+    implementation 'net.neoforged:neoforge:20.3.3-beta'
 
     //compileOnly fg.deobf("mezz.jei:jei-1.20.1-common-api:15.2.0.22")
     //runtimeOnly fg.deobf("mezz.jei:jei-1.20.1-common:15.2.0.22")
@@ -97,8 +97,8 @@ dependencies {
     //runtimeOnly fg.deobf("mezz.jei:jei-1.20.1-forge:15.2.0.22")
 
     // https://www.curseforge.com/minecraft/mc-mods/curios/files/4921744
-    compileOnly "top.theillusivec4.curios:curios-neoforge:6.1.0+1.20.2"
-    runtimeOnly "top.theillusivec4.curios:curios-neoforge:6.1.0+1.20.2"
+    compileOnly "top.theillusivec4.curios:curios-neoforge:7.0.0-beta+1.20.3"
+    runtimeOnly "top.theillusivec4.curios:curios-neoforge:7.0.0-beta+1.20.3"
 
     compileOnly "com.ldtteam:aequivaleo:1.20.2-0.1.126-ALPHA:api"
     runtimeOnly "com.ldtteam:aequivaleo:1.20.2-0.1.126-ALPHA:universal"

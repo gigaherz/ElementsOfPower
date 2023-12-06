@@ -1,38 +1,114 @@
 package dev.gigaherz.elementsofpower.capabilities;
 
+import dev.gigaherz.elementsofpower.ElementsOfPowerItems;
+import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
+import dev.gigaherz.elementsofpower.items.MagicContainerItem;
+import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.common.capabilities.Capability;
-import net.neoforged.neoforge.common.capabilities.CapabilityManager;
-import net.neoforged.neoforge.common.capabilities.CapabilityToken;
-import net.neoforged.neoforge.common.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.common.util.LazyOptional;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.capabilities.ItemCapability;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 
+import javax.annotation.Nullable;
+
+@Mod.EventBusSubscriber(modid=ElementsOfPowerMod.MODID, bus= Mod.EventBusSubscriber.Bus.FORGE)
 public class MagicContainerCapability
 {
-    public static Capability<IMagicContainer> INSTANCE = CapabilityManager.get(new CapabilityToken<>() {});
+    public static ItemCapability<IMagicContainer, Void> CAPABILITY = ItemCapability.createVoid(ElementsOfPowerMod.location("magic_container"), IMagicContainer.class);
 
-    public static void register(RegisterCapabilitiesEvent event)
+    @SubscribeEvent
+    public static void registerCapabilities(RegisterCapabilitiesEvent event)
     {
-        event.register(IMagicContainer.class);
+        event.registerItem(
+                MagicContainerCapability.CAPABILITY,
+                (stack, context) -> new MagicContainerItemImpl(stack),
+                ElementsOfPowerItems.STAFF,
+                ElementsOfPowerItems.WAND,
+                ElementsOfPowerItems.RING,
+                ElementsOfPowerItems.BRACELET,
+                ElementsOfPowerItems.NECKLACE,
+                ElementsOfPowerItems.RUBY,
+                ElementsOfPowerItems.SAPPHIRE,
+                ElementsOfPowerItems.CITRINE,
+                ElementsOfPowerItems.AGATE,
+                ElementsOfPowerItems.QUARTZ,
+                ElementsOfPowerItems.ONYX,
+                ElementsOfPowerItems.EMERALD,
+                ElementsOfPowerItems.RUBELLITE,
+                ElementsOfPowerItems.DIAMOND,
+                ElementsOfPowerItems.CREATIVITE
+        );
     }
 
-    public static LazyOptional<IMagicContainer> getContainer(ItemStack stack)
+    @Nullable
+    public static IMagicContainer getContainer(ItemStack stack)
     {
-        return stack.getCapability(INSTANCE);
+        return stack.getCapability(CAPABILITY);
     }
 
     public static boolean hasContainer(ItemStack stack)
     {
-        return stack.getCapability(INSTANCE).isPresent();
+        return stack.getCapability(CAPABILITY) != null;
     }
 
     public static boolean containsMagic(ItemStack stack)
     {
-        return stack.getCapability(INSTANCE).map(cap -> (cap.isInfinite() || !cap.getContainedMagic().isEmpty())).orElse(false);
+        var cap = stack.getCapability(CAPABILITY);
+        return cap != null && (cap.isInfinite() || !cap.getContainedMagic().isEmpty());
     }
 
     public static boolean isNotFull(ItemStack stack)
     {
-        return stack.getCapability(INSTANCE).map(cap -> !cap.isInfinite() && !cap.isFull() && !cap.getCapacity().isEmpty()).orElse(false);
+        var cap = stack.getCapability(CAPABILITY);
+        return cap != null && !cap.isInfinite() && !cap.isFull() && !cap.getCapacity().isEmpty();
+    }
+
+    private static class MagicContainerItemImpl implements IMagicContainer
+    {
+        final MagicContainerItem thisItem;
+        private final ItemStack stack;
+
+        public MagicContainerItemImpl(ItemStack stack)
+        {
+            this.stack = stack;
+            thisItem = (MagicContainerItem) stack.getItem();
+        }
+
+        @Override
+        public boolean isInfinite()
+        {
+            return thisItem.isInfinite(stack);
+        }
+
+        @Override
+        public MagicAmounts getCapacity()
+        {
+            return thisItem.getCapacity(stack);
+        }
+
+        @Override
+        public void setCapacity(MagicAmounts capacity)
+        {
+            // do nothing
+        }
+
+        @Override
+        public MagicAmounts getContainedMagic()
+        {
+            return thisItem.getContainedMagic(stack);
+        }
+
+        @Override
+        public void setContainedMagic(MagicAmounts containedMagic)
+        {
+            thisItem.setContainedMagic(stack, containedMagic);
+        }
+
+        @Override
+        public MagicAmounts addMagic(MagicAmounts toAdd)
+        {
+            return thisItem.addMagic(stack, toAdd);
+        }
     }
 }

@@ -63,8 +63,9 @@ public class MagicContainerOverlay implements IGuiOverlay
         if (heldItem.getCount() <= 0)
             return;
 
-        MagicContainerCapability.getContainer(heldItem).ifPresent(magic -> {
-
+        var magic = MagicContainerCapability.getContainer(heldItem);
+        if (magic != null)
+        {
             // Contained essences
             MagicAmounts contained = magic.getContainedMagic();
 
@@ -230,6 +231,6 @@ public class MagicContainerOverlay implements IGuiOverlay
             poseStack.popPose();
 
             RenderSystem.disableBlend();
-        });
+        }
     }
 }

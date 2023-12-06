@@ -1,6 +1,7 @@
 package dev.gigaherz.elementsofpower.cocoons;
 
 import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
+import dev.gigaherz.elementsofpower.capabilities.IMagicContainer;
 import dev.gigaherz.elementsofpower.capabilities.PlayerCombinedMagicContainers;
 import dev.gigaherz.elementsofpower.essentializer.menu.IMagicAmountContainer;
 import dev.gigaherz.elementsofpower.items.MagicOrbItem;
@@ -69,7 +70,7 @@ public class CocoonTileEntity extends BlockEntity implements IMagicAmountContain
         handleUpdateTag(packet.getTag());
     }
 
-    public void transferToPlayer(RandomSource random, PlayerCombinedMagicContainers cap)
+    public MagicAmounts transferToPlayer(RandomSource random, IMagicContainer cap)
     {
         MagicAmounts am = essenceContained;
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
@@ -79,8 +80,10 @@ public class CocoonTileEntity extends BlockEntity implements IMagicAmountContain
 
         if (!am.isEmpty())
         {
-            cap.addMagic(am);
+            return cap.addMagic(am);
         }
+
+        return MagicAmounts.EMPTY;
     }
 
     public void addEssences(ItemStack stack)

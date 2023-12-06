@@ -82,8 +82,9 @@ public class MagicTooltips
 
     public static void addContainedTooltip(List<Component> toolTip, ItemStack stack)
     {
-        MagicContainerCapability.getContainer(stack).ifPresent(magic -> {
-
+        var magic = MagicContainerCapability.getContainer(stack);
+        if (magic != null)
+        {
             MagicAmounts amounts = magic.getContainedMagic();
             if (amounts.isEmpty() && !magic.isInfinite())
             {
@@ -124,6 +125,6 @@ public class MagicTooltips
                     toolTip.add(magicAmount.withStyle(ChatFormatting.GRAY));
                 }
             }
-        });
+        }
     }
 }

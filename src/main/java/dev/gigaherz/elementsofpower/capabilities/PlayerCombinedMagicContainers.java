@@ -2,24 +2,32 @@ package dev.gigaherz.elementsofpower.capabilities;
 
 import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
-import net.minecraft.core.Direction;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.common.capabilities.*;
-import net.neoforged.neoforge.common.util.LazyOptional;
-import net.neoforged.neoforge.event.AttachCapabilitiesEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.EntityCapability;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
+@Mod.EventBusSubscriber(modid=ElementsOfPowerMod.MODID, bus= Mod.EventBusSubscriber.Bus.FORGE)
 public class PlayerCombinedMagicContainers implements IMagicContainer
 {
-    public static Capability<PlayerCombinedMagicContainers> CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {});
+    public static EntityCapability<IMagicContainer, Void> CAPABILITY = EntityCapability.createVoid(ElementsOfPowerMod.location("player_combined_magic"), IMagicContainer.class);
 
-    private Player player;
+    @SubscribeEvent
+    public static void registerCapabilities(RegisterCapabilitiesEvent event)
+    {
+        event.registerEntity(
+                PlayerCombinedMagicContainers.CAPABILITY,
+                EntityType.PLAYER,
+                (entity, context) -> new PlayerCombinedMagicContainers(entity)
+        );
+    }
 
-    public void setPlayer(Player player)
+    private final Player player;
+
+    public PlayerCombinedMagicContainers(Player player)
     {
         this.player = player;
     }
@@ -27,14 +35,18 @@ public class PlayerCombinedMagicContainers implements IMagicContainer
     @Override
     public MagicAmounts getCapacity()
     {
-        return player.getCapability(Capabilities.ITEM_HANDLER).map(items -> {
+        var items = player.getCapability(Capabilities.ItemHandler.ENTITY);
+        if (items != null) {
             MagicAmounts am = MagicAmounts.EMPTY;
             for (int i = 0; i < items.getSlots(); i++)
             {
-                am = am.add(items.getStackInSlot(i).getCapability(MagicContainerCapability.INSTANCE).map(IMagicContainer::getCapacity).orElse(MagicAmounts.EMPTY));
+                var magic = items.getStackInSlot(i).getCapability(MagicContainerCapability.CAPABILITY);
+                if (magic != null)
+                    am = am.add(magic.getCapacity());
             }
             return am;
-        }).orElse(MagicAmounts.EMPTY);
+        }
+        return MagicAmounts.EMPTY;
     }
 
     @Override
@@ -46,14 +58,18 @@ public class PlayerCombinedMagicContainers implements IMagicContainer
     @Override
     public MagicAmounts getContainedMagic()
     {
-        return player.getCapability(Capabilities.ITEM_HANDLER).map(items -> {
+        var items = player.getCapability(Capabilities.ItemHandler.ENTITY);
+        if (items != null) {
             MagicAmounts am = MagicAmounts.EMPTY;
             for (int i = 0; i < items.getSlots(); i++)
             {
-                am = am.add(items.getStackInSlot(i).getCapability(MagicContainerCapability.INSTANCE).map(IMagicContainer::getContainedMagic).orElse(MagicAmounts.EMPTY));
+                var magic = items.getStackInSlot(i).getCapability(MagicContainerCapability.CAPABILITY);
+                if (magic != null)
+                    am = am.add(magic.getContainedMagic());
             }
             return am;
-        }).orElse(MagicAmounts.EMPTY);
+        }
+        return MagicAmounts.EMPTY;
     }
 
     @Override
@@ -62,67 +78,24 @@ public class PlayerCombinedMagicContainers implements IMagicContainer
         throw new IllegalStateException("The Combined container can not be directly modified.");
     }
 
+    @Override
     public MagicAmounts addMagic(MagicAmounts magicToAdd)
     {
-        final MagicAmounts[] refAmounts = new MagicAmounts[]{magicToAdd};
-        return player.getCapability(Capabilities.ITEM_HANDLER).map(items -> {
+        var items = player.getCapability(Capabilities.ItemHandler.ENTITY);
+        if (items != null)
+        {
             for (int i = 0; i < items.getSlots(); i++)
             {
-                if (items.getStackInSlot(i).getCapability(MagicContainerCapability.INSTANCE).map(magic -> {
-                    if (!magic.isInfinite())
-                    {
-                        MagicAmounts capacity = magic.getCapacity();
-                        MagicAmounts contained = magic.getContainedMagic();
-
-                        MagicAmounts empty = capacity.subtract(contained);
-
-                        if (!empty.isEmpty())
-                        {
-                            MagicAmounts toAdd = refAmounts[0];
-                            MagicAmounts willAdd = MagicAmounts.min(toAdd, empty);
-                            MagicAmounts remaining = toAdd.subtract(willAdd);
-                            magic.setContainedMagic(contained.add(willAdd));
-                            refAmounts[0] = remaining;
-                        }
-                    }
-                    return refAmounts[0].isEmpty();
-                }).orElse(false))
-                    break;
-            }
-            return refAmounts[0];
-        }).orElse(MagicAmounts.EMPTY);
-    }
-
-    public static void register(RegisterCapabilitiesEvent event)
-    {
-        event.register(PlayerCombinedMagicContainers.class);
-
-        NeoForge.EVENT_BUS.addGenericListener(Entity.class, PlayerCombinedMagicContainers::attachCapability);
-    }
-
-    private static void attachCapability(AttachCapabilitiesEvent<Entity> event)
-    {
-        if (event.getObject() instanceof Player)
-        {
-            event.addCapability(ElementsOfPowerMod.location("player_combined_magic"), new ICapabilityProvider()
-            {
-                final LazyOptional<PlayerCombinedMagicContainers> supplier = LazyOptional.of(() -> {
-                    PlayerCombinedMagicContainers inst = new PlayerCombinedMagicContainers();
-                    inst.setPlayer((Player) event.getObject());
-                    return inst;
-                });
-
-                @Nonnull
-                @Override
-                public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side)
+                var magic = items.getStackInSlot(i).getCapability(MagicContainerCapability.CAPABILITY);
+                if (magic != null)
                 {
-                    if (cap == CAPABILITY)
-                    {
-                        return supplier.cast();
-                    }
-                    return LazyOptional.empty();
+                    magicToAdd = magic.addMagic(magicToAdd);
+                    if (magicToAdd.isEmpty())
+                        break;
                 }
-            });
+            }
+            return magicToAdd;
         }
+        return MagicAmounts.EMPTY;
     }
 }

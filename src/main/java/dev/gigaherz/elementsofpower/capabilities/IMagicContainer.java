@@ -17,6 +17,8 @@ public interface IMagicContainer
 
     void setContainedMagic(MagicAmounts containedMagic);
 
+    MagicAmounts addMagic(MagicAmounts toAdd);
+
     default boolean isEmpty()
     {
         if (isInfinite())

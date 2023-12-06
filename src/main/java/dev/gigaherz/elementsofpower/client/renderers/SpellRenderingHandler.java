@@ -46,7 +46,9 @@ public class SpellRenderingHandler
         Player player = Minecraft.getInstance().player;
         if (player == null)
             return;
-        SpellcastEntityData.get(player).ifPresent(data -> {
+        var data = SpellcastEntityData.get(player);
+        if (data != null)
+        {
             InitializedSpellcast cast = data.getCurrentCasting();
             if (cast == null)
                 return;
@@ -70,7 +72,7 @@ public class SpellRenderingHandler
                 RenderSystem.disableDepthTest();
                 buffers.endBatch();
             }
-        });
+        }
     }
 
     @SubscribeEvent
@@ -78,7 +80,8 @@ public class SpellRenderingHandler
     {
         Player player = event.getEntity();
 
-        SpellcastEntityData.get(player).ifPresent(data -> {
+        var data = SpellcastEntityData.get(player);
+        if (data != null) {
             InitializedSpellcast cast = data.getCurrentCasting();
             if (cast == null)
                 return;
@@ -114,6 +117,6 @@ public class SpellRenderingHandler
                 renderer.render(cast, player, renderManager, partialTicks, stack, event.getMultiBufferSource(), event.getPackedLight(), off);
                 stack.popPose();
             }
-        });
+        }
     }
 }

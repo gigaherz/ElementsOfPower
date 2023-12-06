@@ -17,6 +17,8 @@ import dev.gigaherz.elementsofpower.gemstones.Gemstone;
 import dev.gigaherz.elementsofpower.gemstones.GemstoneItem;
 import dev.gigaherz.elementsofpower.integration.aequivaleo.AequivaleoPlugin;
 import dev.gigaherz.elementsofpower.misc.TextureVariantsGen;
+import dev.gigaherz.elementsofpower.recipes.ContainerChargeRecipe;
+import dev.gigaherz.elementsofpower.recipes.GemstoneChangeRecipe;
 import dev.gigaherz.elementsofpower.spells.Element;
 import dev.gigaherz.elementsofpower.spells.blocks.CushionBlock;
 import dev.gigaherz.elementsofpower.spells.blocks.DustBlock;
@@ -25,7 +27,7 @@ import dev.gigaherz.elementsofpower.spells.blocks.MistBlock;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementRequirements;
-import net.minecraft.advancements.FrameType;
+import net.minecraft.advancements.AdvancementType;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.core.*;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -133,7 +135,7 @@ class ElementsOfPowerDataGen
                     .display(ElementsOfPowerItems.WAND.get().getStack(Gemstone.RUBY),
                             Component.translatable("advancement.elementsofpower.root.title"),
                             Component.translatable("advancement.elementsofpower.root.description"),
-                            TAB_BACKGROUND, FrameType.GOAL, false, false, false)
+                            TAB_BACKGROUND, AdvancementType.GOAL, false, false, false)
                     /* criterions */
                     /* unlocks */
                     .addCriterion("dummy", InventoryChangeTrigger.TriggerInstance.hasItems(new ItemLike[0]))
@@ -144,7 +146,7 @@ class ElementsOfPowerDataGen
                     .display(ElementsOfPowerItems.WAND.get().getStack(Gemstone.RUBY),
                             Component.translatable("advancement.elementsofpower.discover_gems.title"),
                             Component.translatable("advancement.elementsofpower.discover_gems.description"),
-                            null, FrameType.GOAL, true, false, false)
+                            null, AdvancementType.GOAL, true, false, false)
                     .addCriterion("has_gemstone", InventoryChangeTrigger.TriggerInstance.hasItems(ElementsOfPowerItems.RUBY.get(),
                             ElementsOfPowerItems.SAPPHIRE.get(),
                             ElementsOfPowerItems.CITRINE.get(),
@@ -162,7 +164,7 @@ class ElementsOfPowerDataGen
                     .display(ElementsOfPowerItems.WAND.get().getStack(Gemstone.RUBY),
                             Component.translatable("advancement.elementsofpower.acquire_wand.title"),
                             Component.translatable("advancement.elementsofpower.acquire_wand.description"),
-                            null, FrameType.GOAL, true, false, false)
+                            null, AdvancementType.GOAL, true, false, false)
                     .addCriterion("has_wand", InventoryChangeTrigger.TriggerInstance.hasItems(ElementsOfPowerItems.STAFF.get()))
                     .save(saver, location("acquire_wand"), existingFileHelper);
 
@@ -171,7 +173,7 @@ class ElementsOfPowerDataGen
                     .display(ElementsOfPowerItems.WAND.get().getStack(Gemstone.RUBY),
                             Component.translatable("advancement.elementsofpower.first_spell.title"),
                             Component.translatable("advancement.elementsofpower.first_spell.description"),
-                            null, FrameType.GOAL, true, false, false)
+                            null, AdvancementType.GOAL, true, false, false)
                     /* criterions */
                     /* unlocks */
                     .save(saver, location("first_spell"), existingFileHelper);
@@ -181,7 +183,7 @@ class ElementsOfPowerDataGen
                     .display(ElementsOfPowerItems.WAND.get().getStack(Gemstone.RUBY),
                             Component.translatable("advancement.elementsofpower.acquire_staff.title"),
                             Component.translatable("advancement.elementsofpower.acquire_staff.description"),
-                            null, FrameType.GOAL, true, false, false)
+                            null, AdvancementType.GOAL, true, false, false)
                     .addCriterion("has_staff", InventoryChangeTrigger.TriggerInstance.hasItems(ElementsOfPowerItems.STAFF.get()))
                     .save(saver, location("acquire_staff"), existingFileHelper);
 
@@ -190,7 +192,7 @@ class ElementsOfPowerDataGen
                     .display(ElementsOfPowerItems.WAND.get().getStack(Gemstone.RUBY),
                             Component.translatable("advancement.elementsofpower.advanced_spell.title"),
                             Component.translatable("advancement.elementsofpower.advanced_spell.description"),
-                            null, FrameType.GOAL, true, false, false)
+                            null, AdvancementType.GOAL, true, false, false)
                     /* criterions */
                     /* unlocks */
                     .save(saver, location("advanced_spell"), existingFileHelper);
@@ -200,7 +202,7 @@ class ElementsOfPowerDataGen
                     .display(ElementsOfPowerItems.WAND.get().getStack(Gemstone.RUBY),
                             Component.translatable("advancement.elementsofpower.acquire_trinket.title"),
                             Component.translatable("advancement.elementsofpower.acquire_trinket.description"),
-                            null, FrameType.GOAL, true, false, false)
+                            null, AdvancementType.GOAL, true, false, false)
                     .addCriterion("has_ring", InventoryChangeTrigger.TriggerInstance.hasItems(ElementsOfPowerItems.RING.get()))
                     .addCriterion("has_necklace", InventoryChangeTrigger.TriggerInstance.hasItems(ElementsOfPowerItems.NECKLACE.get()))
                     .addCriterion("has_bracelet", InventoryChangeTrigger.TriggerInstance.hasItems(ElementsOfPowerItems.BRACELET.get()))
@@ -212,7 +214,7 @@ class ElementsOfPowerDataGen
                     .display(ElementsOfPowerItems.WAND.get().getStack(Gemstone.RUBY),
                             Component.translatable("advancement.elementsofpower.master_spell.title"),
                             Component.translatable("advancement.elementsofpower.master_spell.description"),
-                            null, FrameType.GOAL, true, true, false)
+                            null, AdvancementType.GOAL, true, true, false)
                     /* criterions */
                     /* unlocks */
                     .save(saver, location("master_spell"), existingFileHelper);
@@ -222,7 +224,7 @@ class ElementsOfPowerDataGen
                     .display(ElementsOfPowerItems.WAND.get().getStack(Gemstone.RUBY),
                             Component.translatable("advancement.elementsofpower.fully_geared_up.title"),
                             Component.translatable("advancement.elementsofpower.fully_geared_up.description"),
-                            null, FrameType.GOAL, true, true, false)
+                            null, AdvancementType.GOAL, true, true, false)
                     .addCriterion("has_staff", InventoryChangeTrigger.TriggerInstance.hasItems(ElementsOfPowerItems.STAFF.get()))
                     .addCriterion("has_ring", InventoryChangeTrigger.TriggerInstance.hasItems(ElementsOfPowerItems.RING.get()))
                     .addCriterion("has_necklace", InventoryChangeTrigger.TriggerInstance.hasItems(ElementsOfPowerItems.NECKLACE.get()))
@@ -645,8 +647,8 @@ class ElementsOfPowerDataGen
                     .unlockedBy("has_gold", has(Items.GOLD_INGOT))
                     .save(recipeOutput);
 
-            SpecialRecipeBuilder.special(ElementsOfPowerMod.GEMSTONE_CHANGE.get()).save(recipeOutput, location("gemstone_change").toString());
-            SpecialRecipeBuilder.special(ElementsOfPowerMod.CONTAINER_CHARGE.get()).save(recipeOutput, location("container_charge").toString());
+            SpecialRecipeBuilder.special(GemstoneChangeRecipe::new).save(recipeOutput, location("gemstone_change").toString());
+            SpecialRecipeBuilder.special(ContainerChargeRecipe::new).save(recipeOutput, location("container_charge").toString());
 
             for (Gemstone gem : Gemstone.values())
             {

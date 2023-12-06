@@ -176,19 +176,23 @@ public abstract class GemContainerItem extends MagicContainerItem
 
         final ItemStack t = q != null ? gem.getItem().setQuality(new ItemStack(gem), q) : new ItemStack(gem);
 
-        return MagicContainerCapability.getContainer(stack).map(magic -> {
-            MagicAmounts am = magic.getContainedMagic();
+        var magic = MagicContainerCapability.getContainer(stack);
+        if (magic == null)
+            return ItemStack.EMPTY;
 
-            if (am.isEmpty())
-                return t;
+        MagicAmounts am = magic.getContainedMagic();
 
-            MagicAmounts am2 = adjustRemovedMagic(am);
+        if (am.isEmpty())
+            return t;
 
-            return MagicContainerCapability.getContainer(t).map(magic2 -> {
-                magic2.setContainedMagic(am2);
-                return t;
-            }).orElse(ItemStack.EMPTY);
-        }).orElse(ItemStack.EMPTY);
+        MagicAmounts am2 = adjustRemovedMagic(am);
+
+        var magic2 = MagicContainerCapability.getContainer(t);
+        if (magic2 == null)
+            return ItemStack.EMPTY;
+
+        magic2.setContainedMagic(am2);
+        return t;
     }
 
     public ItemStack setContainedGemstone(ItemStack stack, ItemStack gemStack)
@@ -204,14 +208,17 @@ public abstract class GemContainerItem extends MagicContainerItem
         Quality q = g.getQuality(gemStack);
         ItemStack result = setQuality(setGemstone(stack, gem), q);
 
-        MagicContainerCapability.getContainer(gemStack).ifPresent(magic3 -> {
+        var magic3 = MagicContainerCapability.getContainer(gemStack);
+        if (magic3 != null)
+        {
             MagicAmounts am2 = magic3.getContainedMagic();
             MagicAmounts am3 = adjustInsertedMagic(am2);
 
-            MagicContainerCapability.getContainer(result).ifPresent(magic4 -> {
+            var magic4 = MagicContainerCapability.getContainer(result);
+            if (magic4 != null) {
                 magic4.setContainedMagic(am3);
-            });
-        });
+            }
+        }
 
         return result;
     }

@@ -131,7 +131,7 @@ public class StockConversions
                 Blocks.BLACK_TERRACOTTA).earth(5).fire(1);
 
         essences(Blocks.TALL_GRASS).earth(2).life(2);
-        essences(Blocks.GRASS).earth(2).life(2);
+        essences(Blocks.SHORT_GRASS).earth(2).life(2);
         essences(Blocks.GRASS_BLOCK).earth(3).life(2);
         essences(Blocks.PODZOL).earth(3).life(1).death(1);
 

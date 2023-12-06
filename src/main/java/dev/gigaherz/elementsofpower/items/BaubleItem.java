@@ -225,7 +225,8 @@ public class BaubleItem extends GemContainerItem
 
     protected void tryTransferToWands(ItemStack thisStack, Player player)
     {
-        MagicContainerCapability.getContainer(thisStack).ifPresent(magic -> {
+        var magic = MagicContainerCapability.getContainer(thisStack);
+        if (magic != null) {
             MagicAmounts available = magic.getContainedMagic();
 
             if (available.isEmpty())
@@ -242,14 +243,15 @@ public class BaubleItem extends GemContainerItem
                 return;
 
             doTransfer(thisStack, magic, available, slotReference);
-        });
+        }
     }
 
     private void doTransfer(ItemStack thisStack, IMagicContainer thisMagic,
                             MagicAmounts available, Supplier<ItemStack> slotReference)
     {
-        ItemStack stack = slotReference.get();
-        MagicContainerCapability.getContainer(stack).ifPresent(magic -> {
+        var stack = slotReference.get();
+        var magic = MagicContainerCapability.getContainer(stack);
+        if (magic != null) {
 
             MagicAmounts limits = magic.getCapacity();
             MagicAmounts amounts = magic.getContainedMagic();
@@ -293,6 +295,6 @@ public class BaubleItem extends GemContainerItem
                 if (!thisMagic.isInfinite())
                     thisMagic.setContainedMagic(remaining);
             }
-        });
+        }
     }
 }

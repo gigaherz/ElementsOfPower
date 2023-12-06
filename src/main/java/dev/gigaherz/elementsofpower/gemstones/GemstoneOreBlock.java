@@ -9,7 +9,7 @@ public class GemstoneOreBlock extends DropExperienceBlock
 
     public GemstoneOreBlock(Gemstone type, Properties properties)
     {
-        super(properties, UniformInt.of(3, 7));
+        super(UniformInt.of(3, 7), properties);
         this.type = type;
     }
 
