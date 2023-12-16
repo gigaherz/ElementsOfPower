@@ -28,6 +28,5 @@
     "recipes": [
       "elementsofpower:smelting/rubellite"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

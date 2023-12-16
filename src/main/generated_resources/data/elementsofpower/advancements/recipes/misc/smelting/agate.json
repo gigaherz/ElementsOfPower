@@ -28,6 +28,5 @@
     "recipes": [
       "elementsofpower:smelting/agate"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

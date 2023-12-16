@@ -3,7 +3,7 @@
   "category": "misc",
   "key": {
     "g": {
-      "tag": "neoforge:glass_panes"
+      "tag": "forge:glass_panes"
     },
     "i": {
       "item": "minecraft:iron_ingot"
@@ -25,6 +25,5 @@
   ],
   "result": {
     "item": "elementsofpower:analyzer"
-  },
-  "show_notification": true
+  }
 }

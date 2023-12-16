@@ -30,6 +30,5 @@
     "recipes": [
       "elementsofpower:analyzer"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

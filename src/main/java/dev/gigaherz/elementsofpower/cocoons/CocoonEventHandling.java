@@ -91,7 +91,7 @@ public class CocoonEventHandling
 
     public static PendingTracker get(ServerLevel level)
     {
-        return (PendingTracker) level.getDataStorage().computeIfAbsent(new SavedData.Factory<SavedData>(PendingTracker::new, PendingTracker::new), PENDING_TRACKER_NAME);
+        return level.getDataStorage().computeIfAbsent(new SavedData.Factory<>(PendingTracker::new, PendingTracker::new), PENDING_TRACKER_NAME);
     }
 
     public static void track(CocoonTileEntity te)

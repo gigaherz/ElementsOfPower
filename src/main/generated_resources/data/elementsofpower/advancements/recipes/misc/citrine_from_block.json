@@ -30,6 +30,5 @@
     "recipes": [
       "elementsofpower:citrine_from_block"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

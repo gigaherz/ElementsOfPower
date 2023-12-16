@@ -44,12 +44,10 @@
       "translate": "advancement.elementsofpower.acquire_trinket.description"
     },
     "frame": "goal",
-    "hidden": false,
     "icon": {
       "item": "elementsofpower:wand",
       "nbt": "{gemstone:\"ruby\"}"
     },
-    "show_toast": true,
     "title": {
       "translate": "advancement.elementsofpower.acquire_trinket.title"
     }

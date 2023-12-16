@@ -30,6 +30,5 @@
     "recipes": [
       "elementsofpower:essentializer"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

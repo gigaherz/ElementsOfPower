@@ -30,6 +30,5 @@
     "recipes": [
       "elementsofpower:bracelet"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

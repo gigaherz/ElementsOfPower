@@ -30,6 +30,5 @@
     "recipes": [
       "elementsofpower:wand"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

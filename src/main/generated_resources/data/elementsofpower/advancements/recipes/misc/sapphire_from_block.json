@@ -30,6 +30,5 @@
     "recipes": [
       "elementsofpower:sapphire_from_block"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

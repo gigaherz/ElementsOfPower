@@ -22,41 +22,48 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 
-@Mod.EventBusSubscriber(modid=ElementsOfPowerMod.MODID, bus= Mod.EventBusSubscriber.Bus.FORGE)
 public class SpellcastEntityData implements INBTSerializable<CompoundTag>
 {
     public static EntityCapability<SpellcastEntityData, Void> CAPABILITY = EntityCapability.createVoid(ElementsOfPowerMod.location("spellcast_data"), SpellcastEntityData.class);
 
-    @SubscribeEvent
-    public static void registerCapabilities(RegisterCapabilitiesEvent event)
+    @Mod.EventBusSubscriber(modid=ElementsOfPowerMod.MODID, bus= Mod.EventBusSubscriber.Bus.MOD)
+    public static class ModBusEvents
     {
-        event.registerEntity(
-                CAPABILITY,
-                EntityType.PLAYER,
-                (entity, context) -> new SpellcastEntityData(entity)
-        );
-    }
-
-    @SubscribeEvent
-    public void playerTickEvent(TickEvent.PlayerTickEvent e)
-    {
-        if (e.phase == TickEvent.Phase.END)
+        @SubscribeEvent
+        public static void registerCapabilities (RegisterCapabilitiesEvent event)
         {
-            var spellcast = SpellcastEntityData.get(e.player);
-            if (spellcast != null)
-                spellcast.updateSpell();
+            event.registerEntity(
+                    CAPABILITY,
+                    EntityType.PLAYER,
+                    (entity, context) -> new SpellcastEntityData(entity)
+            );
         }
     }
 
-    @SubscribeEvent
-    public void playerTickEvent(LivingEvent.LivingJumpEvent e)
+    @Mod.EventBusSubscriber(modid=ElementsOfPowerMod.MODID, bus= Mod.EventBusSubscriber.Bus.FORGE)
+    public static class ForgeBusEvents
     {
-        LivingEntity entity = e.getEntity();
-        if (entity instanceof Player)
+        @SubscribeEvent
+        public static void playerTickEvent(TickEvent.PlayerTickEvent e)
         {
-            var spellcast = SpellcastEntityData.get((Player) entity);
-            if (spellcast!= null)
-                spellcast.interrupt();
+            if (e.phase == TickEvent.Phase.END)
+            {
+                var spellcast = SpellcastEntityData.get(e.player);
+                if (spellcast != null)
+                    spellcast.updateSpell();
+            }
+        }
+
+        @SubscribeEvent
+        public static void playerTickEvent(LivingEvent.LivingJumpEvent e)
+        {
+            LivingEntity entity = e.getEntity();
+            if (entity instanceof Player)
+            {
+                var spellcast = SpellcastEntityData.get((Player) entity);
+                if (spellcast != null)
+                    spellcast.interrupt();
+            }
         }
     }
 

@@ -30,6 +30,5 @@
     "recipes": [
       "elementsofpower:agate_block"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

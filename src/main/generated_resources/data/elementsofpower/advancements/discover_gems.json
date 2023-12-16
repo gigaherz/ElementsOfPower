@@ -75,12 +75,10 @@
       "translate": "advancement.elementsofpower.discover_gems.description"
     },
     "frame": "goal",
-    "hidden": false,
     "icon": {
       "item": "elementsofpower:wand",
       "nbt": "{gemstone:\"ruby\"}"
     },
-    "show_toast": true,
     "title": {
       "translate": "advancement.elementsofpower.discover_gems.title"
     }

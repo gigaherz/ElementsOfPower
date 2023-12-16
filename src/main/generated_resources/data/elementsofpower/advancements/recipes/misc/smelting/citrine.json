@@ -28,6 +28,5 @@
     "recipes": [
       "elementsofpower:smelting/citrine"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

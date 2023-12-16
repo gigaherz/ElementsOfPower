@@ -168,15 +168,15 @@ class ElementsOfPowerDataGen
                     .addCriterion("has_wand", InventoryChangeTrigger.TriggerInstance.hasItems(ElementsOfPowerItems.STAFF.get()))
                     .save(saver, location("acquire_wand"), existingFileHelper);
 
-            var first_spell = Advancement.Builder.advancement()
-                    .parent(acquire_wand)
-                    .display(ElementsOfPowerItems.WAND.get().getStack(Gemstone.RUBY),
-                            Component.translatable("advancement.elementsofpower.first_spell.title"),
-                            Component.translatable("advancement.elementsofpower.first_spell.description"),
-                            null, AdvancementType.GOAL, true, false, false)
-                    /* criterions */
-                    /* unlocks */
-                    .save(saver, location("first_spell"), existingFileHelper);
+            //var first_spell = Advancement.Builder.advancement()
+            //        .parent(acquire_wand)
+            //        .display(ElementsOfPowerItems.WAND.get().getStack(Gemstone.RUBY),
+            //                Component.translatable("advancement.elementsofpower.first_spell.title"),
+            //                Component.translatable("advancement.elementsofpower.first_spell.description"),
+            //                null, AdvancementType.GOAL, true, false, false)
+            //        /* criterions */
+            //        /* unlocks */
+            //        .save(saver, location("first_spell"), existingFileHelper);
 
             var acquire_staff = Advancement.Builder.advancement()
                     .parent(acquire_wand)
@@ -187,15 +187,15 @@ class ElementsOfPowerDataGen
                     .addCriterion("has_staff", InventoryChangeTrigger.TriggerInstance.hasItems(ElementsOfPowerItems.STAFF.get()))
                     .save(saver, location("acquire_staff"), existingFileHelper);
 
-            var advanced_spell = Advancement.Builder.advancement()
-                    .parent(first_spell)
-                    .display(ElementsOfPowerItems.WAND.get().getStack(Gemstone.RUBY),
-                            Component.translatable("advancement.elementsofpower.advanced_spell.title"),
-                            Component.translatable("advancement.elementsofpower.advanced_spell.description"),
-                            null, AdvancementType.GOAL, true, false, false)
-                    /* criterions */
-                    /* unlocks */
-                    .save(saver, location("advanced_spell"), existingFileHelper);
+            //var advanced_spell = Advancement.Builder.advancement()
+            //        .parent(/*first_spell*/acquire_wand)
+            //        .display(ElementsOfPowerItems.WAND.get().getStack(Gemstone.RUBY),
+            //                Component.translatable("advancement.elementsofpower.advanced_spell.title"),
+            //                Component.translatable("advancement.elementsofpower.advanced_spell.description"),
+            //                null, AdvancementType.GOAL, true, false, false)
+            //        /* criterions */
+            //        /* unlocks */
+            //        .save(saver, location("advanced_spell"), existingFileHelper);
 
             var acquire_trinket = Advancement.Builder.advancement()
                     .parent(discover_gems)
@@ -209,15 +209,15 @@ class ElementsOfPowerDataGen
                     .requirements(AdvancementRequirements.Strategy.OR)
                     .save(saver, location("acquire_trinket"), existingFileHelper);
 
-            var master_spell = Advancement.Builder.advancement()
-                    .parent(advanced_spell)
-                    .display(ElementsOfPowerItems.WAND.get().getStack(Gemstone.RUBY),
-                            Component.translatable("advancement.elementsofpower.master_spell.title"),
-                            Component.translatable("advancement.elementsofpower.master_spell.description"),
-                            null, AdvancementType.GOAL, true, true, false)
-                    /* criterions */
-                    /* unlocks */
-                    .save(saver, location("master_spell"), existingFileHelper);
+            //var master_spell = Advancement.Builder.advancement()
+            //        .parent(advanced_spell)
+            //        .display(ElementsOfPowerItems.WAND.get().getStack(Gemstone.RUBY),
+            //                Component.translatable("advancement.elementsofpower.master_spell.title"),
+            //                Component.translatable("advancement.elementsofpower.master_spell.description"),
+            //                null, AdvancementType.GOAL, true, true, false)
+            //        /* criterions */
+            //        /* unlocks */
+            //        .save(saver, location("master_spell"), existingFileHelper);
 
             var fully_geared_up = Advancement.Builder.advancement()
                     .parent(acquire_staff)

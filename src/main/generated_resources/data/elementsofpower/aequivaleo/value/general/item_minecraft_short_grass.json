@@ -13,7 +13,7 @@
     {
       "type": "aequivaleo:item",
       "count": 1.0,
-      "item": "minecraft:grass"
+      "item": "minecraft:short_grass"
     }
   ],
   "mode": "ADDITIVE"

@@ -51,17 +51,14 @@
     }
   },
   "display": {
-    "announce_to_chat": true,
     "description": {
       "translate": "advancement.elementsofpower.fully_geared_up.description"
     },
     "frame": "goal",
-    "hidden": false,
     "icon": {
       "item": "elementsofpower:wand",
       "nbt": "{gemstone:\"ruby\"}"
     },
-    "show_toast": true,
     "title": {
       "translate": "advancement.elementsofpower.fully_geared_up.title"
     }
