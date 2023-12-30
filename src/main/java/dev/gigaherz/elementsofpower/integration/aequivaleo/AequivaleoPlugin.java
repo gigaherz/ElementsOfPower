@@ -23,8 +23,8 @@ import net.neoforged.fml.javafmlmod.FMLModContainer;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -62,7 +62,7 @@ public class AequivaleoPlugin implements IAequivaleoPlugin
             .put(Element.LIFE, LIFE)
             .put(Element.CHAOS, CHAOS).build();
 
-    public static IEquivalencyResults get(@Nonnull Level world)
+    public static IEquivalencyResults get(@NotNull Level world)
     {
         return IAequivaleoAPI.getInstance().getEquivalencyResults(world.dimension());
     }
@@ -73,7 +73,7 @@ public class AequivaleoPlugin implements IAequivaleoPlugin
         return getEssences(get(world), stack, wholeStack);
     }
 
-    public static Optional<MagicAmounts> getEssences(@Nonnull IEquivalencyResults cache, ItemStack stack, boolean wholeStack)
+    public static Optional<MagicAmounts> getEssences(@NotNull IEquivalencyResults cache, ItemStack stack, boolean wholeStack)
     {
         Optional<MagicAmounts> am = cache.mappedDataFor(ESSENCE.get(), stack);
         if (wholeStack) am = am.map(amounts -> amounts.multiply(stack.getCount()));

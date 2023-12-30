@@ -1,6 +1,6 @@
 package dev.gigaherz.elementsofpower.spells.effects;
 
-import dev.gigaherz.elementsofpower.spells.InitializedSpellcast;
+import dev.gigaherz.elementsofpower.spells.SpellcastState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -17,63 +17,63 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.CommonHooks;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class MiningEffect extends SpellEffect
 {
     @Override
-    public int getColor(InitializedSpellcast cast)
+    public int getColor(SpellcastState cast)
     {
         return 0;
     }
 
     @Override
-    public int getDuration(InitializedSpellcast cast)
+    public int getDuration(SpellcastState cast)
     {
-        return 40 + 20 * cast.getDamageForce();
+        return 40 + 20 * cast.damageForce();
     }
 
     @Override
-    public int getInterval(InitializedSpellcast cast)
+    public int getInterval(SpellcastState cast)
     {
-        return 10 / cast.getDamageForce();
+        return 10 / cast.damageForce();
     }
 
     @Override
-    public void processDirectHit(InitializedSpellcast cast, Entity entity, Vec3 hitVec, Entity directEntity)
+    public void processDirectHit(SpellcastState cast, Entity entity, Vec3 hitVec, Entity directEntity)
     {
 
     }
 
     @Override
-    public boolean processEntitiesAroundBefore(InitializedSpellcast cast, Vec3 hitVec, Entity directEntity)
+    public boolean processEntitiesAroundBefore(SpellcastState cast, Vec3 hitVec, Entity directEntity)
     {
         return true;
     }
 
     @Override
-    public void processEntitiesAroundAfter(InitializedSpellcast cast, Vec3 hitVec, Entity directEntity)
+    public void processEntitiesAroundAfter(SpellcastState cast, Vec3 hitVec, Entity directEntity)
     {
 
     }
 
     @Override
-    public void spawnBallParticles(InitializedSpellcast cast, HitResult mop)
+    public void spawnBallParticles(SpellcastState cast, HitResult mop)
     {
 
     }
 
     @Override
-    public void processBlockWithinRadius(InitializedSpellcast cast, BlockPos blockPos, BlockState currentState, float r, @Nullable HitResult mop)
+    public void processBlockWithinRadius(SpellcastState cast, BlockPos blockPos, BlockState currentState, float r, @Nullable HitResult mop)
     {
-        Player player = cast.player;
-        Level world = cast.level;
+        Player player = cast.player();
+        Level world = cast.level();
         Block block = currentState.getBlock();
         BlockState state = world.getBlockState(blockPos);
 
         float hardness = state.getDestroySpeed(world, blockPos);
 
-        if (!currentState.isAir() && hardness >= 0 && hardness <= (cast.getDamageForce() / 3.0f))
+        if (!currentState.isAir() && hardness >= 0 && hardness <= (cast.damageForce() / 3.0f))
         {
             if (player instanceof ServerPlayer)
             {
@@ -99,7 +99,7 @@ public class MiningEffect extends SpellEffect
                         if (flag)
                         {
                             block.destroy(world, blockPos, currentState);
-                            block.playerDestroy(world, player, blockPos, currentState, tileentity, cast.getCastingPlayer().getItemInHand(InteractionHand.MAIN_HAND)); // FIXME
+                            block.playerDestroy(world, player, blockPos, currentState, tileentity, cast.player().getItemInHand(InteractionHand.MAIN_HAND)); // FIXME
                         }
 
                         // Drop experiance

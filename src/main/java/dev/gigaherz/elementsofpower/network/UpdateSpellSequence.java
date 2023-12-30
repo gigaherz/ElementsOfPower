@@ -7,11 +7,10 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.NetworkEvent;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Supplier;
 
 public class UpdateSpellSequence
 {
@@ -28,12 +27,14 @@ public class UpdateSpellSequence
 
     public ChangeMode changeMode;
     public List<Element> sequence;
+    private final int useTicks;
 
-    public UpdateSpellSequence(ChangeMode mode, int slotNumber, @Nullable List<Element> sequence)
+    public UpdateSpellSequence(ChangeMode mode, int slotNumber, @Nullable List<Element> sequence, int useTicks)
     {
         changeMode = mode;
         this.sequence = sequence;
         this.slotNumber = slotNumber;
+        this.useTicks = useTicks;
     }
 
     public UpdateSpellSequence(FriendlyByteBuf buf)
@@ -41,6 +42,7 @@ public class UpdateSpellSequence
         int r = buf.readInt();
         changeMode = ChangeMode.values[r];
         slotNumber = buf.readByte();
+        useTicks = buf.readVarInt();
         int count = buf.readVarInt();
         if (count > 0)
         {
@@ -54,6 +56,7 @@ public class UpdateSpellSequence
     {
         buf.writeInt(changeMode.ordinal());
         buf.writeByte(slotNumber);
+        buf.writeVarInt(useTicks);
         if (sequence != null)
         {
             buf.writeVarInt(sequence.size());
@@ -66,7 +69,7 @@ public class UpdateSpellSequence
         }
     }
 
-    public boolean handle(NetworkEvent.Context context)
+    public void handle(NetworkEvent.Context context)
     {
         context.enqueueWork(() ->
         {
@@ -76,10 +79,8 @@ public class UpdateSpellSequence
             if (stack.getItem() instanceof WandItem)
             {
                 WandItem wand = (WandItem) stack.getItem();
-                wand.processSequenceUpdate(this, stack, player);
+                wand.processSequenceUpdate(this, stack, player, useTicks);
             }
         });
-
-        return true;
     }
 }

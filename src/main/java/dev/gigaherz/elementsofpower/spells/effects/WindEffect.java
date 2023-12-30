@@ -2,7 +2,7 @@ package dev.gigaherz.elementsofpower.spells.effects;
 
 import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.network.AddVelocityToPlayer;
-import dev.gigaherz.elementsofpower.spells.InitializedSpellcast;
+import dev.gigaherz.elementsofpower.spells.SpellcastState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
@@ -20,33 +20,33 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class WindEffect extends SpellEffect
 {
     @Override
-    public int getColor(InitializedSpellcast cast)
+    public int getColor(SpellcastState cast)
     {
         return 0xAAFFFF;
     }
 
     @Override
-    public int getDuration(InitializedSpellcast cast)
+    public int getDuration(SpellcastState cast)
     {
         return 20 * 5;
     }
 
     @Override
-    public int getInterval(InitializedSpellcast cast)
+    public int getInterval(SpellcastState cast)
     {
         return 2;
     }
 
     @Override
-    public void processDirectHit(InitializedSpellcast cast, Entity entity, Vec3 hitVec, Entity directEntity)
+    public void processDirectHit(SpellcastState cast, Entity entity, Vec3 hitVec, Entity directEntity)
     {
-        int force = cast.getDamageForce();
+        int force = cast.damageForce();
 
         if ((!(entity instanceof LivingEntity) && !(entity instanceof ItemEntity))
                 || !entity.isAlive())
@@ -56,9 +56,9 @@ public class WindEffect extends SpellEffect
     }
 
     @Override
-    public boolean processEntitiesAroundBefore(InitializedSpellcast cast, Vec3 hitVec, Entity directEntity)
+    public boolean processEntitiesAroundBefore(SpellcastState cast, Vec3 hitVec, Entity directEntity)
     {
-        int force = cast.getDamageForce();
+        int force = cast.damageForce();
 
         AABB aabb = new AABB(
                 hitVec.x - force,
@@ -68,21 +68,21 @@ public class WindEffect extends SpellEffect
                 hitVec.y + force,
                 hitVec.z + force);
 
-        List<LivingEntity> living = cast.level.getEntitiesOfClass(LivingEntity.class, aabb);
+        List<LivingEntity> living = cast.level().getEntitiesOfClass(LivingEntity.class, aabb);
         pushEntities(cast, force, hitVec, living);
 
-        List<ItemEntity> items = cast.level.getEntitiesOfClass(ItemEntity.class, aabb);
+        List<ItemEntity> items = cast.level().getEntitiesOfClass(ItemEntity.class, aabb);
         pushEntities(cast, force, hitVec, items);
 
         return true;
     }
 
     @Override
-    public void processEntitiesAroundAfter(InitializedSpellcast cast, Vec3 hitVec, Entity directEntity)
+    public void processEntitiesAroundAfter(SpellcastState cast, Vec3 hitVec, Entity directEntity)
     {
     }
 
-    private void pushEntities(InitializedSpellcast cast, int force, Vec3 hitVec, List<? extends Entity> entities)
+    private void pushEntities(SpellcastState cast, int force, Vec3 hitVec, List<? extends Entity> entities)
     {
         for (Entity e : entities)
         {
@@ -93,11 +93,11 @@ public class WindEffect extends SpellEffect
         }
     }
 
-    private void applyVelocity(InitializedSpellcast cast, int force, Vec3 hitVec, Entity e, boolean distanceForce)
+    private void applyVelocity(SpellcastState cast, int force, Vec3 hitVec, Entity e, boolean distanceForce)
     {
         double vx = 0, vy = 0, vz = 0;
 
-        if (e == cast.player && !distanceForce)
+        if (e == cast.player() && !distanceForce)
         {
             Vec3 look = e.getLookAngle();
 
@@ -131,15 +131,15 @@ public class WindEffect extends SpellEffect
     }
 
     @Override
-    public void spawnBallParticles(InitializedSpellcast cast, HitResult mop)
+    public void spawnBallParticles(SpellcastState cast, HitResult mop)
     {
         Vec3 hitVec = mop.getLocation();
-        if (cast.getDamageForce() >= 5)
+        if (cast.damageForce() >= 5)
         {
             // FIXME: huge
             cast.spawnRandomParticle(ParticleTypes.EXPLOSION, hitVec.x, hitVec.y, hitVec.z);
         }
-        else if (cast.getDamageForce() >= 2)
+        else if (cast.damageForce() >= 2)
         {
             // FIXME: large
             cast.spawnRandomParticle(ParticleTypes.EXPLOSION, hitVec.x, hitVec.y, hitVec.z);
@@ -152,31 +152,31 @@ public class WindEffect extends SpellEffect
     }
 
     @Override
-    public void processBlockWithinRadius(InitializedSpellcast cast, BlockPos blockPos, BlockState currentState, float r, @Nullable HitResult mop)
+    public void processBlockWithinRadius(SpellcastState cast, BlockPos blockPos, BlockState currentState, float r, @Nullable HitResult mop)
     {
         if (mop != null && mop.getType() == HitResult.Type.BLOCK)
         {
             blockPos = blockPos.relative(((BlockHitResult) mop).getDirection());
-            currentState = cast.level.getBlockState(blockPos);
+            currentState = cast.level().getBlockState(blockPos);
         }
 
         Block block = currentState.getBlock();
 
         if (block == Blocks.FIRE)
         {
-            cast.level.setBlockAndUpdate(blockPos, Blocks.AIR.defaultBlockState());
+            cast.level().setBlockAndUpdate(blockPos, Blocks.AIR.defaultBlockState());
         }
         else if (block == Blocks.WATER)
         {
-            if (!cast.level.getFluidState(blockPos).isSource())
+            if (!cast.level().getFluidState(blockPos).isSource())
             {
-                cast.level.setBlockAndUpdate(blockPos, Blocks.AIR.defaultBlockState());
+                cast.level().setBlockAndUpdate(blockPos, Blocks.AIR.defaultBlockState());
             }
         }
         else if (!currentState.blocksMotion() && !currentState.liquid())
         {
-            dropBlockAsItem(cast.level, blockPos, currentState);
-            cast.level.setBlockAndUpdate(blockPos, Blocks.AIR.defaultBlockState());
+            dropBlockAsItem(cast.level(), blockPos, currentState);
+            cast.level().setBlockAndUpdate(blockPos, Blocks.AIR.defaultBlockState());
         }
     }
 

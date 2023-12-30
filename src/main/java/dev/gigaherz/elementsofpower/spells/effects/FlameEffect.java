@@ -1,6 +1,6 @@
 package dev.gigaherz.elementsofpower.spells.effects;
 
-import dev.gigaherz.elementsofpower.spells.InitializedSpellcast;
+import dev.gigaherz.elementsofpower.spells.SpellcastState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.Entity;
@@ -16,62 +16,62 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class FlameEffect extends SpellEffect
 {
     @Override
-    public int getDuration(InitializedSpellcast cast)
+    public int getDuration(SpellcastState cast)
     {
-        return 20 * cast.getDamageForce();
+        return 20 * cast.damageForce();
     }
 
     @Override
-    public int getInterval(InitializedSpellcast cast)
+    public int getInterval(SpellcastState cast)
     {
         return 4;
     }
 
     @Override
-    public int getColor(InitializedSpellcast cast)
+    public int getColor(SpellcastState cast)
     {
         return 0x0000ff;
     }
 
     @Override
-    public void processDirectHit(InitializedSpellcast cast, Entity entity, Vec3 hitVec, Entity directEntity)
+    public void processDirectHit(SpellcastState cast, Entity entity, Vec3 hitVec, Entity directEntity)
     {
-        float damage = (entity instanceof Blaze) ? 3 + cast.getDamageForce() : cast.getDamageForce();
+        float damage = (entity instanceof Blaze) ? 3 + cast.damageForce() : cast.damageForce();
 
-        entity.hurt(entity.damageSources().thrown(cast.player, cast.player), damage);
-        entity.setSecondsOnFire(cast.getDamageForce());
+        entity.hurt(entity.damageSources().thrown(cast.player(), cast.player()), damage);
+        entity.setSecondsOnFire(cast.damageForce());
     }
 
     @Override
-    public boolean processEntitiesAroundBefore(InitializedSpellcast cast, Vec3 hitVec, Entity directEntity)
+    public boolean processEntitiesAroundBefore(SpellcastState cast, Vec3 hitVec, Entity directEntity)
     {
         return true;
     }
 
     @Override
-    public void processEntitiesAroundAfter(InitializedSpellcast cast, Vec3 hitVec, Entity directEntity)
+    public void processEntitiesAroundAfter(SpellcastState cast, Vec3 hitVec, Entity directEntity)
     {
         AABB aabb = new AABB(
-                hitVec.x - cast.getDamageForce(),
-                hitVec.y - cast.getDamageForce(),
-                hitVec.z - cast.getDamageForce(),
-                hitVec.x + cast.getDamageForce(),
-                hitVec.y + cast.getDamageForce(),
-                hitVec.z + cast.getDamageForce());
+                hitVec.x - cast.damageForce(),
+                hitVec.y - cast.damageForce(),
+                hitVec.z - cast.damageForce(),
+                hitVec.x + cast.damageForce(),
+                hitVec.y + cast.damageForce(),
+                hitVec.z + cast.damageForce());
 
-        burnEntities(cast, hitVec, cast.level.getEntitiesOfClass(LivingEntity.class, aabb));
-        burnEntities(cast, hitVec, cast.level.getEntitiesOfClass(ItemEntity.class, aabb));
+        burnEntities(cast, hitVec, cast.level().getEntitiesOfClass(LivingEntity.class, aabb));
+        burnEntities(cast, hitVec, cast.level().getEntitiesOfClass(ItemEntity.class, aabb));
     }
 
-    private void burnEntities(InitializedSpellcast cast, Vec3 hitVec, List<? extends Entity> living)
+    private void burnEntities(SpellcastState cast, Vec3 hitVec, List<? extends Entity> living)
     {
-        SmallFireball ef = EntityType.SMALL_FIREBALL.create(cast.level);
+        SmallFireball ef = EntityType.SMALL_FIREBALL.create(cast.level());
 
         for (Entity e : living)
         {
@@ -84,9 +84,9 @@ public class FlameEffect extends SpellEffect
 
             double ll = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-            double lv = Math.max(0, cast.getDamageForce() - ll);
+            double lv = Math.max(0, cast.damageForce() - ll);
 
-            boolean canAttack = e.hurt(e.damageSources().fireball(ef, cast.player), 5.0F);
+            boolean canAttack = e.hurt(e.damageSources().fireball(ef, cast.player()), 5.0F);
 
             if (canAttack)
             {
@@ -99,22 +99,22 @@ public class FlameEffect extends SpellEffect
     }
 
     @Override
-    public void processBlockWithinRadius(InitializedSpellcast cast, BlockPos blockPos, BlockState currentState, float r, @Nullable HitResult mop)
+    public void processBlockWithinRadius(SpellcastState cast, BlockPos blockPos, BlockState currentState, float r, @Nullable HitResult mop)
     {
         if (mop != null && mop.getType() == HitResult.Type.BLOCK)
         {
             blockPos = blockPos.relative(((BlockHitResult) mop).getDirection());
-            currentState = cast.level.getBlockState(blockPos);
+            currentState = cast.level().getBlockState(blockPos);
         }
 
         if (currentState.isAir())
         {
-            cast.level.setBlockAndUpdate(blockPos, Blocks.FIRE.defaultBlockState());
+            cast.level().setBlockAndUpdate(blockPos, Blocks.FIRE.defaultBlockState());
         }
     }
 
     @Override
-    public void spawnBallParticles(InitializedSpellcast cast, HitResult mop)
+    public void spawnBallParticles(SpellcastState cast, HitResult mop)
     {
         Vec3 hitVec = mop.getLocation();
         cast.spawnRandomParticle(ParticleTypes.FLAME, hitVec.x, hitVec.y, hitVec.z);

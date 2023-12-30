@@ -1,25 +1,32 @@
 package dev.gigaherz.elementsofpower.items;
 
-import dev.gigaherz.elementsofpower.capabilities.IMagicContainer;
+import com.mojang.blaze3d.vertex.PoseStack;
 import dev.gigaherz.elementsofpower.capabilities.MagicContainerCapability;
 import dev.gigaherz.elementsofpower.client.WandUseManager;
 import dev.gigaherz.elementsofpower.integration.Curios;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import dev.gigaherz.elementsofpower.network.UpdateSpellSequence;
 import dev.gigaherz.elementsofpower.spells.*;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 
-import javax.annotation.Nullable;
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
+import org.jetbrains.annotations.Nullable;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class WandItem extends GemContainerItem
 {
@@ -49,7 +56,7 @@ public class WandItem extends GemContainerItem
         {
             if (worldIn.isClientSide)
             {
-                beginTracking(playerIn, hand);
+                WandUseManager.instance.handInUse = hand;
             }
 
             playerIn.startUsingItem(hand);
@@ -59,23 +66,13 @@ public class WandItem extends GemContainerItem
         return InteractionResultHolder.pass(itemStackIn);
     }
 
-    public static void beginTracking(Player playerIn, InteractionHand hand)
-    {
-        WandUseManager.instance.handInUse = hand;
-    }
-
     public boolean onSpellCommit(ItemStack stack, Player player, @Nullable List<Element> sequence)
     {
         final boolean updateSequenceOnWand;
         if (sequence == null)
         {
             updateSequenceOnWand = false;
-            CompoundTag tag = stack.getTag();
-            if (tag != null)
-            {
-                ListTag seq = tag.getList(WandItem.SPELL_SEQUENCE_TAG, Tag.TAG_STRING);
-                sequence = SpellManager.sequenceFromList(seq);
-            }
+            sequence = getSequence(stack);
         }
         else
         {
@@ -106,12 +103,10 @@ public class WandItem extends GemContainerItem
                 return updateSequenceOnWand;
             }
 
-            InitializedSpellcast cast2 = cast.getShape().castSpell(stack, player, cast);
+            Spellcast cast2 = cast.shape().castSpell(stack, player, cast);
             if (cast2 != null)
             {
-                var data = SpellcastEntityData.get(player);
-                if (data != null)
-                    data.begin(cast2);
+                SpellcastState.get(player).begin(cast2);
             }
 
             // TODO: Subtract from reservoir if needed
@@ -130,6 +125,18 @@ public class WandItem extends GemContainerItem
         }
 
         return false;
+    }
+
+    @Nullable
+    private List<Element> getSequence(ItemStack stack)
+    {
+        CompoundTag tag = stack.getTag();
+        if (tag != null)
+        {
+            ListTag seq = tag.getList(WandItem.SPELL_SEQUENCE_TAG, Tag.TAG_STRING);
+            return  SpellManager.sequenceFromList(seq);
+        }
+        return null;
     }
 
     public static MagicAmounts getTotalPlayerReservoir(Player player)
@@ -212,9 +219,19 @@ public class WandItem extends GemContainerItem
         }
     }
 
-    public void processSequenceUpdate(UpdateSpellSequence message, ItemStack stack, Player player)
+    public float getChargeDuration(ItemStack stack)
     {
-        if (message.changeMode == UpdateSpellSequence.ChangeMode.COMMIT)
+        var seq = getSequence(stack);
+        if (seq != null)
+        {
+            return SpellManager.getChargeDuration(seq);
+        }
+        return 20;
+    }
+
+    public void processSequenceUpdate(UpdateSpellSequence message, ItemStack stack, Player player, int useTicks)
+    {
+        if (message.changeMode == UpdateSpellSequence.ChangeMode.COMMIT && useTicks >= getChargeDuration(stack))
         {
             CompoundTag nbt = stack.getOrCreateTag();
 
@@ -223,5 +240,19 @@ public class WandItem extends GemContainerItem
                 nbt.put(WandItem.SPELL_SEQUENCE_TAG, SpellManager.sequenceToList(message.sequence));
             }
         }
+    }
+
+    @Override
+    public void initializeClient(Consumer<IClientItemExtensions> consumer)
+    {
+        consumer.accept(new IClientItemExtensions()
+        {
+            @Override
+            public boolean applyForgeHandTransform(PoseStack poseStack, LocalPlayer player, HumanoidArm arm, ItemStack itemInHand,
+                                                   float partialTick, float equipProcess, float swingProcess)
+            {
+                return WandUseManager.instance.applyCustomArmTransforms(WandItem.this, poseStack, player, arm, itemInHand, partialTick, equipProcess, swingProcess);
+            }
+        });
     }
 }

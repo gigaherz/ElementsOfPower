@@ -2,19 +2,14 @@ package dev.gigaherz.elementsofpower.client;
 
 import dev.gigaherz.elementsofpower.essentializer.EssentializerBlockEntity;
 import dev.gigaherz.elementsofpower.essentializer.menu.EssentializerMenu;
-import dev.gigaherz.elementsofpower.network.AddVelocityToPlayer;
-import dev.gigaherz.elementsofpower.network.SynchronizeSpellcastState;
-import dev.gigaherz.elementsofpower.network.UpdateEssentializerAmounts;
-import dev.gigaherz.elementsofpower.network.UpdateEssentializerTile;
-import dev.gigaherz.elementsofpower.spells.InitializedSpellcast;
-import dev.gigaherz.elementsofpower.spells.SpellManager;
+import dev.gigaherz.elementsofpower.network.*;
 import dev.gigaherz.elementsofpower.spells.Spellcast;
-import dev.gigaherz.elementsofpower.spells.SpellcastEntityData;
+import dev.gigaherz.elementsofpower.spells.SpellcastState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
+
+import java.util.Objects;
 
 public class ClientPacketHandlers
 {
@@ -23,18 +18,10 @@ public class ClientPacketHandlers
         Minecraft mc = Minecraft.getInstance();
         mc.execute(() ->
         {
-            Level world = mc.level;
-            Player player = (Player) world.getEntity(message.casterID);
-            ListTag seq = message.spellcast.getList("sequence", Tag.TAG_STRING);
-            Spellcast ccast = SpellManager.makeSpell(seq);
-            if (ccast != null)
-            {
-                InitializedSpellcast spellcast = ccast.init(player.level(), player);
-                Spellcast.read(message.spellcast);
-                var data = SpellcastEntityData.get(player);
-                if (data != null)
-                    data.onSync(message.changeMode, spellcast);
-            }
+            Player player = (Player) mc.level.getEntity(message.casterID);
+            Spellcast spellcast = message.spellcast.isEmpty() ? null : Spellcast.read(message.spellcast);
+            SpellcastState.get(player)
+                    .onSync(message.changeMode, spellcast, message.remainingCastTime, message.remainingInterval, message.totalCastTime);
         });
         return true;
     }
@@ -84,5 +71,49 @@ public class ClientPacketHandlers
             mc.player.push(message.vx, message.vy, message.vz);
         });
         return true;
+    }
+
+    public static void handleParticlesInShape(ParticlesInShape packet)
+    {
+        Minecraft mc = Minecraft.getInstance();
+        mc.execute(() -> {
+            var random = mc.level.random;
+            switch (Objects.requireNonNull(packet.areaShape))
+            {
+                case BOX ->
+                {
+                    for (int i = 0; i < packet.count; i++)
+                    {
+                        var options = packet.options;
+                        double posX = packet.centerX + (random.nextDouble()-0.5f) * 2.0f * packet.spreadX;
+                        double posY = packet.centerY + (random.nextDouble()-0.5f) * 2.0f * packet.spreadY;
+                        double posZ = packet.centerZ + (random.nextDouble()-0.5f) * 2.0f * packet.spreadZ;
+                        double velX = Mth.lerp(packet.minVelocityX, packet.maxVelocityX, random.nextDouble());
+                        double velY = Mth.lerp(packet.minVelocityY, packet.maxVelocityY, random.nextDouble());
+                        double velZ = Mth.lerp(packet.minVelocityZ, packet.maxVelocityZ, random.nextDouble());
+                        mc.level.addParticle(options, posX, posY, posZ, velX, velY, velZ);
+                    }
+                }
+                case BOX_UNIFORM ->
+                {
+                    for (int i = 0; i < packet.count; i++)
+                    {
+                        var options = packet.options;
+                        double posX = packet.centerX + signedSqrt((random.nextDouble()-0.5f) * 2.0f) * packet.spreadX;
+                        double posY = packet.centerY + signedSqrt((random.nextDouble()-0.5f) * 2.0f) * packet.spreadY;
+                        double posZ = packet.centerZ + signedSqrt((random.nextDouble()-0.5f) * 2.0f) * packet.spreadZ;
+                        double velX = Mth.lerp(packet.minVelocityX, packet.maxVelocityX, random.nextDouble());
+                        double velY = Mth.lerp(packet.minVelocityY, packet.maxVelocityY, random.nextDouble());
+                        double velZ = Mth.lerp(packet.minVelocityZ, packet.maxVelocityZ, random.nextDouble());
+                        mc.level.addParticle(options, posX, posY, posZ, velX, velY, velZ);
+                    }
+                }
+            }
+        });
+    }
+
+    private static double signedSqrt(double v)
+    {
+        return Math.signum(v) * Math.sqrt(Math.abs(v));
     }
 }

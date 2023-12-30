@@ -46,7 +46,7 @@ public class MagicContainerOverlay implements IGuiOverlay
     @SubscribeEvent
     public static void init(RegisterGuiOverlaysEvent event)
     {
-        event.registerAbove(VanillaGuiOverlay.EXPERIENCE_BAR.id(), "magic_overlay", new MagicContainerOverlay());
+        event.registerAbove(VanillaGuiOverlay.EXPERIENCE_BAR.id(), ElementsOfPowerMod.location("magic_overlay"), new MagicContainerOverlay());
         //event.registerAbove(VanillaGuiOverlay.EXPERIENCE_BAR.id(), ElementsOfPowerMod.location("magic_overlay"), new MagicContainerOverlay());
     }
 

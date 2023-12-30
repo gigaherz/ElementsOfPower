@@ -1,18 +1,9 @@
 package dev.gigaherz.elementsofpower.spells.shapes;
 
-import dev.gigaherz.elementsofpower.spells.InitializedSpellcast;
-import dev.gigaherz.elementsofpower.spells.Spellcast;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
+import dev.gigaherz.elementsofpower.spells.SpellcastState;
 
 public class SelfShape extends SpellShape
 {
-    @Override
-    public InitializedSpellcast castSpell(ItemStack stack, Player player, Spellcast cast)
-    {
-        return cast.init(player.level(), player);
-    }
-
     @Override
     public boolean isInstant()
     {
@@ -20,8 +11,8 @@ public class SelfShape extends SpellShape
     }
 
     @Override
-    public void spellTick(InitializedSpellcast cast)
+    public void spellTick(SpellcastState cast)
     {
-        cast.getEffect().processDirectHit(cast, cast.player, cast.player.position(), cast.player);
+        cast.effect().processDirectHit(cast, cast.player(), cast.player().position(), cast.player());
     }
 }

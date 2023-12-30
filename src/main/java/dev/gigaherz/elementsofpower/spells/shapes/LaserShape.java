@@ -1,11 +1,8 @@
 package dev.gigaherz.elementsofpower.spells.shapes;
 
 import com.google.common.collect.Lists;
-import dev.gigaherz.elementsofpower.spells.InitializedSpellcast;
-import dev.gigaherz.elementsofpower.spells.Spellcast;
+import dev.gigaherz.elementsofpower.spells.SpellcastState;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
@@ -17,15 +14,9 @@ import java.util.List;
 public class LaserShape extends SpellShape
 {
     @Override
-    public float getScale(InitializedSpellcast cast)
+    public float getScale(SpellcastState cast)
     {
-        return 1 + 0.25f * cast.getDamageForce();
-    }
-
-    @Override
-    public InitializedSpellcast castSpell(ItemStack stack, Player player, Spellcast cast)
-    {
-        return cast.init(player.level(), player);
+        return 1 + 0.25f * cast.damageForce();
     }
 
     @Override
@@ -35,7 +26,7 @@ public class LaserShape extends SpellShape
     }
 
     @Override
-    public void spellTick(InitializedSpellcast cast)
+    public void spellTick(SpellcastState cast)
     {
         HitResult mop = cast.getHitPosition();
 
@@ -49,18 +40,18 @@ public class LaserShape extends SpellShape
 
             if (mop.getType() == HitResult.Type.ENTITY)
             {
-                cast.getEffect().processDirectHit(cast, ((EntityHitResult) mop).getEntity(), mop.getLocation(), cast.player);
+                cast.effect().processDirectHit(cast, ((EntityHitResult) mop).getEntity(), mop.getLocation(), cast.player());
             }
             else if (mop.getType() == HitResult.Type.BLOCK)
             {
                 BlockPos pos = ((BlockHitResult) mop).getBlockPos();
-                BlockState state = cast.level.getBlockState(pos);
-                cast.getEffect().processBlockWithinRadius(cast, pos, state, 0, mop);
+                BlockState state = cast.level().getBlockState(pos);
+                cast.effect().processBlockWithinRadius(cast, pos, state, 0, mop);
             }
 
             for (BlockPos pos : intersections)
             {
-                cast.getEffect().processBlockWithinRadius(cast, pos, cast.level.getBlockState(pos), 0, null);
+                cast.effect().processBlockWithinRadius(cast, pos, cast.level().getBlockState(pos), 0, null);
             }
         }
     }

@@ -32,10 +32,6 @@ import static dev.gigaherz.elementsofpower.ElementsOfPowerMod.ATTACHMENT_TYPES;
 @Mod.EventBusSubscriber(modid=ElementsOfPowerMod.MODID,bus= Mod.EventBusSubscriber.Bus.FORGE)
 public class CocoonEventHandling
 {
-    private static final Supplier<AttachmentType<CocoonTracker>> COCOON_TRACKER = ATTACHMENT_TYPES.register(
-            "cocoon_tracker", () -> AttachmentType.builder(CocoonTracker::new).build()
-    );
-
     @SubscribeEvent
     private static void worldTick(TickEvent.LevelTickEvent event)
     {
@@ -72,7 +68,7 @@ public class CocoonEventHandling
                     {
                         LevelChunk c = sw.getChunk(x, z);
 
-                        var tracker = c.getData(COCOON_TRACKER);
+                        var tracker = c.getData(ElementsOfPowerMod.COCOON_TRACKER);
                         for(var te : tracker.getCocoons()) {
                             BlockPos pos = te.getBlockPos();
                             if (player.distanceToSqr(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5) < (8.5 * 8.5)
@@ -151,7 +147,7 @@ public class CocoonEventHandling
                     ChunkAccess chunk = level.getChunk(cpos.x, cpos.z, ChunkStatus.FULL, false);
                     if (chunk instanceof LevelChunk levelChunk)
                     {
-                        var tracker = levelChunk.getData(COCOON_TRACKER);
+                        var tracker = levelChunk.getData(ElementsOfPowerMod.COCOON_TRACKER);
                         action.accept(tracker, te);
                     }
                 }

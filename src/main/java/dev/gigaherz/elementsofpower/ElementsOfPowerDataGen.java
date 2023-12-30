@@ -81,7 +81,7 @@ import net.neoforged.neoforge.registries.holdersets.AndHolderSet;
 import net.neoforged.neoforge.registries.holdersets.NotHolderSet;
 import net.neoforged.neoforge.registries.holdersets.OrHolderSet;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;

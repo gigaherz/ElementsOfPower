@@ -10,7 +10,7 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.EntityCapability;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 
-@Mod.EventBusSubscriber(modid=ElementsOfPowerMod.MODID, bus= Mod.EventBusSubscriber.Bus.FORGE)
+@Mod.EventBusSubscriber(modid=ElementsOfPowerMod.MODID, bus= Mod.EventBusSubscriber.Bus.MOD)
 public class PlayerCombinedMagicContainers implements IMagicContainer
 {
     public static EntityCapability<IMagicContainer, Void> CAPABILITY = EntityCapability.createVoid(ElementsOfPowerMod.location("player_combined_magic"), IMagicContainer.class);

@@ -1,12 +1,13 @@
 package dev.gigaherz.elementsofpower.network;
 
 import dev.gigaherz.elementsofpower.client.ClientPacketHandlers;
-import dev.gigaherz.elementsofpower.spells.InitializedSpellcast;
+import dev.gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.NetworkEvent;
 
-import java.util.function.Supplier;
+import org.jetbrains.annotations.Nullable;
 
 public class SynchronizeSpellcastState
 {
@@ -19,22 +20,31 @@ public class SynchronizeSpellcastState
         public static final ChangeMode values[] = values();
     }
 
-    public int casterID;
-    public ChangeMode changeMode;
-    public CompoundTag spellcast = new CompoundTag();
+    public final ChangeMode changeMode;
+    public final int casterID;
+    public final CompoundTag spellcast;
+    public final int remainingCastTime;
+    public final int remainingInterval;
+    public final int totalCastTime;
 
-    public SynchronizeSpellcastState(ChangeMode mode, InitializedSpellcast cast)
+    public SynchronizeSpellcastState(ChangeMode mode, Player player, @Nullable Spellcast cast, int remainingCastTime, int remainingInterval, int totalCastTime)
     {
-        changeMode = mode;
-        cast.write(spellcast);
-        casterID = cast.getCastingPlayer().getId();
+        this.changeMode = mode;
+        this.casterID = player.getId();
+        this.spellcast = cast != null ? cast.serializeNBT() : new CompoundTag();
+        this.remainingCastTime = remainingCastTime;
+        this.remainingInterval = remainingInterval;
+        this.totalCastTime = totalCastTime;
     }
 
     public SynchronizeSpellcastState(FriendlyByteBuf buf)
     {
-        changeMode = ChangeMode.values[buf.readInt()];
-        casterID = buf.readInt();
-        spellcast = buf.readNbt();
+        this.changeMode = ChangeMode.values[buf.readInt()];
+        this.casterID = buf.readInt();
+        this.spellcast = buf.readNbt();
+        this.remainingCastTime = buf.readVarInt();
+        this.remainingInterval = buf.readVarInt();
+        this.totalCastTime = buf.readVarInt();
     }
 
     public void encode(FriendlyByteBuf buf)
@@ -42,6 +52,9 @@ public class SynchronizeSpellcastState
         buf.writeInt(changeMode.ordinal());
         buf.writeInt(casterID);
         buf.writeNbt(spellcast);
+        buf.writeVarInt(remainingCastTime);
+        buf.writeVarInt(remainingInterval);
+        buf.writeVarInt(totalCastTime);
     }
 
     public boolean handle(NetworkEvent.Context context)

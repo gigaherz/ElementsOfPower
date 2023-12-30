@@ -1,23 +1,15 @@
 package dev.gigaherz.elementsofpower.spells.shapes;
 
-import dev.gigaherz.elementsofpower.spells.InitializedSpellcast;
-import dev.gigaherz.elementsofpower.spells.Spellcast;
+import dev.gigaherz.elementsofpower.spells.SpellcastState;
 import dev.gigaherz.elementsofpower.spells.effects.SpellEffect;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class SphereShape extends SpellShape
 {
-    @Override
-    public InitializedSpellcast castSpell(ItemStack stack, Player player, Spellcast cast)
-    {
-        return cast.init(player.level(), player);
-    }
-
     @Override
     public boolean isInstant()
     {
@@ -25,22 +17,22 @@ public class SphereShape extends SpellShape
     }
 
     @Override
-    public float getScale(InitializedSpellcast spellcast)
+    public float getScale(SpellcastState spellcast)
     {
-        return 1 + spellcast.getDamageForce();
+        return 1 + spellcast.damageForce();
     }
 
     @Override
-    public void spellTick(InitializedSpellcast cast)
+    public void spellTick(SpellcastState cast)
     {
-        SpellEffect effect = cast.getEffect();
+        SpellEffect effect = cast.effect();
 
-        Player player = cast.player;
+        Player player = cast.player();
 
-        if (!effect.processEntitiesAroundBefore(cast, player.getEyePosition(1.0f), cast.player))
+        if (!effect.processEntitiesAroundBefore(cast, player.getEyePosition(1.0f), cast.player()))
             return;
 
-        int force = cast.getDamageForce();
+        int force = cast.damageForce();
         if (force > 0)
         {
             BlockPos bp = player.blockPosition().relative(Direction.UP, Mth.floor(player.getEyeHeight() + 0.25));
@@ -66,7 +58,7 @@ public class SphereShape extends SpellShape
 
                         BlockPos np = new BlockPos(x, y, z);
 
-                        BlockState currentState = cast.level.getBlockState(np);
+                        BlockState currentState = cast.level().getBlockState(np);
 
                         effect.processBlockWithinRadius(cast, np, currentState, r, null);
                     }
@@ -74,6 +66,6 @@ public class SphereShape extends SpellShape
             }
         }
 
-        effect.processEntitiesAroundAfter(cast, player.position(), cast.player);
+        effect.processEntitiesAroundAfter(cast, player.position(), cast.player());
     }
 }

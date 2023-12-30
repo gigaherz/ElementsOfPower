@@ -18,7 +18,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.Locale;
 import java.util.Random;
 

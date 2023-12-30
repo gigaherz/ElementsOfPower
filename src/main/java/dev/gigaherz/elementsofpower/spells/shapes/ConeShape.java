@@ -1,12 +1,10 @@
 package dev.gigaherz.elementsofpower.spells.shapes;
 
-import dev.gigaherz.elementsofpower.spells.InitializedSpellcast;
-import dev.gigaherz.elementsofpower.spells.Spellcast;
+import dev.gigaherz.elementsofpower.spells.SpellcastState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -19,15 +17,9 @@ import java.util.List;
 public class ConeShape extends SpellShape
 {
     @Override
-    public float getScale(InitializedSpellcast cast)
+    public float getScale(SpellcastState cast)
     {
-        return 1 + 0.25f * cast.getDamageForce();
-    }
-
-    @Override
-    public InitializedSpellcast castSpell(ItemStack stack, Player player, Spellcast cast)
-    {
-        return cast.init(player.level(), player);
+        return 1 + 0.25f * cast.damageForce();
     }
 
     @Override
@@ -36,11 +28,11 @@ public class ConeShape extends SpellShape
         return false;
     }
 
-    private AABB getConeBounds(InitializedSpellcast cast)
+    private AABB getConeBounds(SpellcastState cast)
     {
-        Player player = cast.player;
+        Player player = cast.player();
 
-        float length = 4 + cast.getDamageForce() * 0.5f; // cone length
+        float length = 4 + cast.damageForce() * 0.5f; // cone length
         float radius = 2;
         float hyp = (float) Math.sqrt(radius * radius + length * length);
 
@@ -104,11 +96,11 @@ public class ConeShape extends SpellShape
         return Math.min(Math.min(Math.min(Math.min(a, b), c), d), e);
     }
 
-    private boolean isPointInCone(InitializedSpellcast cast, Vec3 point)
+    private boolean isPointInCone(SpellcastState cast, Vec3 point)
     {
-        Player player = cast.player;
+        Player player = cast.player();
 
-        double length = 4 + cast.getDamageForce() * 0.5f; // cone length
+        double length = 4 + cast.damageForce() * 0.5f; // cone length
         double radius = 2;
         double tang = radius / length;
 
@@ -134,13 +126,13 @@ public class ConeShape extends SpellShape
     }
 
     @Override
-    public void spellTick(InitializedSpellcast cast)
+    public void spellTick(SpellcastState cast)
     {
-        Vec3 playerPos = cast.player.getEyePosition(1.0f);
+        Vec3 playerPos = cast.player().getEyePosition(1.0f);
 
         final AABB aabb = getConeBounds(cast);
 
-        List<Entity> entities = cast.level.getEntities(cast.player, aabb, (e) ->
+        List<Entity> entities = cast.level().getEntities(cast.player(), aabb, (e) ->
         {
             if (e == null)
                 return false;
@@ -165,7 +157,7 @@ public class ConeShape extends SpellShape
 
         for (Entity e : entities)
         {
-            cast.getEffect().processDirectHit(cast, e, playerPos, cast.player);
+            cast.effect().processDirectHit(cast, e, playerPos, cast.player());
         }
 
         int x0 = (int) Math.floor(aabb.minX);
@@ -185,19 +177,19 @@ public class ConeShape extends SpellShape
                     Vec3 pt = new Vec3(x + 0.5, y + 0.5, z + 0.5);
                     if (isPointInCone(cast, pt))
                     {
-                        BlockHitResult mop = cast.level.clip(new ClipContext(playerPos, pt, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, cast.player));
+                        BlockHitResult mop = cast.level().clip(new ClipContext(playerPos, pt, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, cast.player()));
                         if (mop.getType() != HitResult.Type.MISS)
                         {
                             BlockPos pos = mop.getBlockPos();
-                            BlockState state = cast.level.getBlockState(pos);
+                            BlockState state = cast.level().getBlockState(pos);
 
-                            cast.getEffect().processBlockWithinRadius(cast, pos, state, (float) pt.distanceTo(playerPos), mop);
+                            cast.effect().processBlockWithinRadius(cast, pos, state, (float) pt.distanceTo(playerPos), mop);
                         }
                         else
                         {
                             BlockPos pos = new BlockPos(x, y, z);
-                            BlockState state = cast.level.getBlockState(pos);
-                            cast.getEffect().processBlockWithinRadius(cast, pos, state, (float) pt.distanceTo(playerPos), null);
+                            BlockState state = cast.level().getBlockState(pos);
+                            cast.effect().processBlockWithinRadius(cast, pos, state, (float) pt.distanceTo(playerPos), null);
                         }
                     }
                 }

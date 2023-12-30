@@ -2,7 +2,7 @@ package dev.gigaherz.elementsofpower.gemstones;
 
 import net.minecraft.world.item.Rarity;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public enum Quality
 {

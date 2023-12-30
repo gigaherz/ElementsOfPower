@@ -1,6 +1,6 @@
 package dev.gigaherz.elementsofpower.spells.effects;
 
-import dev.gigaherz.elementsofpower.spells.InitializedSpellcast;
+import dev.gigaherz.elementsofpower.spells.SpellcastState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.Entity;
@@ -14,48 +14,48 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class FrostEffect extends SpellEffect
 {
     @Override
-    public int getColor(InitializedSpellcast cast)
+    public int getColor(SpellcastState cast)
     {
         return 0xFF8080;
     }
 
     @Override
-    public int getDuration(InitializedSpellcast cast)
+    public int getDuration(SpellcastState cast)
     {
         return 20 * 5;
     }
 
     @Override
-    public int getInterval(InitializedSpellcast cast)
+    public int getInterval(SpellcastState cast)
     {
         return 8;
     }
 
     @Override
-    public void processDirectHit(InitializedSpellcast cast, Entity entity, Vec3 hitVec, Entity directEntity)
+    public void processDirectHit(SpellcastState cast, Entity entity, Vec3 hitVec, Entity directEntity)
     {
 
     }
 
     @Override
-    public boolean processEntitiesAroundBefore(InitializedSpellcast cast, Vec3 hitVec, Entity directEntity)
+    public boolean processEntitiesAroundBefore(SpellcastState cast, Vec3 hitVec, Entity directEntity)
     {
         return true;
     }
 
     @Override
-    public void processEntitiesAroundAfter(InitializedSpellcast cast, Vec3 hitVec, Entity directEntity)
+    public void processEntitiesAroundAfter(SpellcastState cast, Vec3 hitVec, Entity directEntity)
     {
 
     }
 
     @Override
-    public void spawnBallParticles(InitializedSpellcast cast, HitResult mop)
+    public void spawnBallParticles(SpellcastState cast, HitResult mop)
     {
         for (int i = 0; i < 8; ++i)
         {
@@ -65,15 +65,15 @@ public class FrostEffect extends SpellEffect
     }
 
     @Override
-    public void processBlockWithinRadius(InitializedSpellcast cast, BlockPos blockPos, BlockState currentState, float r, @Nullable HitResult mop)
+    public void processBlockWithinRadius(SpellcastState cast, BlockPos blockPos, BlockState currentState, float r, @Nullable HitResult mop)
     {
         if (mop != null && mop.getType() == HitResult.Type.BLOCK)
         {
             blockPos = blockPos.relative(((BlockHitResult) mop).getDirection());
-            currentState = cast.level.getBlockState(blockPos);
+            currentState = cast.level().getBlockState(blockPos);
         }
 
-        Level world = cast.level;
+        Level world = cast.level();
         Block block = currentState.getBlock();
 
         int layers = (int) Math.min(1 - r, 7);

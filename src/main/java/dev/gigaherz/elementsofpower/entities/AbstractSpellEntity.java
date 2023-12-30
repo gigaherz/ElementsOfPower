@@ -1,6 +1,6 @@
 package dev.gigaherz.elementsofpower.entities;
 
-import dev.gigaherz.elementsofpower.spells.InitializedSpellcast;
+import dev.gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.world.entity.Entity;
@@ -11,9 +11,9 @@ import net.neoforged.neoforge.network.NetworkHooks;
 
 public abstract class AbstractSpellEntity extends Entity implements IEntityAdditionalSpawnData
 {
-    InitializedSpellcast spellcast;
+    Spellcast spellcast;
 
-    public AbstractSpellEntity(EntityType<?> entityTypeIn, Level worldIn, InitializedSpellcast spellcast)
+    public AbstractSpellEntity(EntityType<?> entityTypeIn, Level worldIn, Spellcast spellcast)
     {
         super(entityTypeIn, worldIn);
 

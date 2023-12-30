@@ -1,34 +1,31 @@
-package dev.gigaherz.elementsofpower.spells.effects;
+package dev.gigaherz.elementsofpower.spells;
 
-import dev.gigaherz.elementsofpower.spells.SpellcastState;
+import dev.gigaherz.elementsofpower.spells.effects.SpellEffect;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.GameRules;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-
 import org.jetbrains.annotations.Nullable;
 
-public class BlastEffect extends SpellEffect
+public class NoopEffect extends SpellEffect
 {
     @Override
     public int getColor(SpellcastState cast)
     {
-        return 0x000000;
+        return 0xFFFFFFFF;
     }
 
     @Override
     public int getDuration(SpellcastState cast)
     {
-        return 41;
+        return 0;
     }
 
     @Override
     public int getInterval(SpellcastState cast)
     {
-        return 40;
+        return 0;
     }
 
     @Override
@@ -40,13 +37,6 @@ public class BlastEffect extends SpellEffect
     @Override
     public boolean processEntitiesAroundBefore(SpellcastState cast, Vec3 hitVec, Entity directEntity)
     {
-        if (!cast.level().isClientSide)
-        {
-            boolean doGriefing = cast.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
-            cast.level().explode(cast.player(), hitVec.x, hitVec.y, hitVec.z,
-                    cast.damageForce(), doGriefing, doGriefing ? Level.ExplosionInteraction.TNT : Level.ExplosionInteraction.NONE);
-        }
-
         return false;
     }
 
@@ -63,7 +53,7 @@ public class BlastEffect extends SpellEffect
     }
 
     @Override
-    public void processBlockWithinRadius(SpellcastState cast, BlockPos blockPos, BlockState currentState, float r, @Nullable HitResult mop)
+    public void processBlockWithinRadius(SpellcastState cast, BlockPos blockPos, BlockState currentState, float distance, @Nullable HitResult mop)
     {
 
     }

@@ -1,19 +1,14 @@
 package dev.gigaherz.elementsofpower.spells.shapes;
 
 import dev.gigaherz.elementsofpower.entities.PillarEntity;
-import dev.gigaherz.elementsofpower.spells.InitializedSpellcast;
 import dev.gigaherz.elementsofpower.spells.Spellcast;
+import dev.gigaherz.elementsofpower.spells.SpellcastState;
 import dev.gigaherz.elementsofpower.spells.effects.SpellEffect;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.BlockParticleOption;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.EvokerFangs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.state.BlockState;
@@ -27,13 +22,12 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 public class WallShape extends SpellShape
 {
     @Override
-    public float getScale(InitializedSpellcast cast)
+    public float getScale(SpellcastState cast)
     {
-        return 1 + 0.25f * cast.getDamageForce();
+        return 1 + 0.25f * cast.damageForce();
     }
 
-    private boolean createSpellEntity(InitializedSpellcast cast, double posX, double posZ, double minY, double maxY, float yaw, int delayTicks) {
-        var caster = cast.player;
+    private boolean createSpellEntity(Player player, Spellcast cast, double posX, double posZ, double minY, double maxY, float yaw, int delayTicks) {
         BlockPos blockpos = BlockPos.containing(posX, maxY, posZ);
         boolean flag = false;
         double d0 = 0.0D;
@@ -41,11 +35,11 @@ public class WallShape extends SpellShape
         do
         {
             BlockPos blockpos1 = blockpos.below();
-            BlockState blockstate = caster.level().getBlockState(blockpos1);
-            if (blockstate.isFaceSturdy(caster.level(), blockpos1, Direction.UP)) {
-                if (!caster.level().isEmptyBlock(blockpos)) {
-                    BlockState blockstate1 = caster.level().getBlockState(blockpos);
-                    VoxelShape voxelshape = blockstate1.getCollisionShape(caster.level(), blockpos);
+            BlockState blockstate = player.level().getBlockState(blockpos1);
+            if (blockstate.isFaceSturdy(player.level(), blockpos1, Direction.UP)) {
+                if (!player.level().isEmptyBlock(blockpos)) {
+                    BlockState blockstate1 = player.level().getBlockState(blockpos);
+                    VoxelShape voxelshape = blockstate1.getCollisionShape(player.level(), blockpos);
                     if (!voxelshape.isEmpty()) {
                         d0 = voxelshape.max(Direction.Axis.Y);
                     }
@@ -63,19 +57,17 @@ public class WallShape extends SpellShape
 
         if (flag)
         {
-            return caster.level().addFreshEntity(new PillarEntity(caster.level(), caster, cast, posX, posY, posZ, yaw, delayTicks));
+            return player.level().addFreshEntity(new PillarEntity(player.level(), player, cast, posX, posY, posZ, yaw, delayTicks));
         }
 
         return false;
     }
 
     @Override
-    public InitializedSpellcast castSpell(ItemStack stack, Player player, Spellcast cast)
+    public Spellcast castSpell(ItemStack stack, Player player, Spellcast cast)
     {
-        InitializedSpellcast spellcast = cast.init(player.level(), player);
-
         var first = 1.5f;
-        var interval = 1.0f + cast.getRadiating()/4.0f;
+        var interval = 1.0f + cast.radiating() /4.0f;
 
         var delayFirst = 5;
         var delayInterval = 3; // Math.max(0, 3 - cast.getTiming());
@@ -86,21 +78,21 @@ public class WallShape extends SpellShape
         double maxY = player.getY() + 1.0D;
 
         boolean createdAny = false;
-        for(int i=0;i<(3 + cast.getPower());i++)
+        for(int i = 0; i<(3 + cast.power()); i++)
         {
             float distance = first + interval * i;
             var pX = player.getX() + Math.cos(Math.toRadians(yaw + 90)) * distance;
             var pZ = player.getZ() + Math.sin(Math.toRadians(yaw + 90)) * distance;
 
-            createdAny |= createSpellEntity(spellcast, pX, pZ, minY, maxY, yaw, delayFirst + delayInterval * i);
+            createdAny |= createSpellEntity(player, cast, pX, pZ, minY, maxY, yaw, delayFirst + delayInterval * i);
         }
-        return createdAny ? spellcast : null;
+        return createdAny ? cast : null;
     }
 
     @Override
-    public void onImpact(InitializedSpellcast cast, HitResult mop, Entity directEntity)
+    public void onImpact(SpellcastState cast, HitResult mop, Entity directEntity)
     {
-        SpellEffect effect = cast.getEffect();
+        SpellEffect effect = cast.effect();
 
         if (mop.getType() == HitResult.Type.ENTITY)
         {
@@ -112,7 +104,7 @@ public class WallShape extends SpellShape
         if (!effect.processEntitiesAroundBefore(cast, mop.getLocation(), directEntity))
             return;
 
-        int force = cast.getDamageForce();
+        int force = cast.damageForce();
         if (force > 0)
         {
             BlockPos bp;
@@ -154,7 +146,7 @@ public class WallShape extends SpellShape
 
                         Vec3 start = vec.add(dir.scale(0.5));
                         Vec3 end = new Vec3(px + 0.5, py + 0.5, pz + 0.5);
-                        BlockHitResult mop2 = cast.level.clip(new ClipContext(start, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, cast.player));
+                        BlockHitResult mop2 = cast.level().clip(new ClipContext(start, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, cast.player()));
                         if (mop2.getType() != HitResult.Type.MISS)
                             if (!mop2.getBlockPos().equals(np))
                                 continue;
@@ -162,7 +154,7 @@ public class WallShape extends SpellShape
                         float r = (float) Math.sqrt(r2);
 
 
-                        BlockState currentState = cast.level.getBlockState(np);
+                        BlockState currentState = cast.level().getBlockState(np);
 
                         effect.processBlockWithinRadius(cast, np, currentState, r, null);
                     }

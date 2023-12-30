@@ -25,7 +25,7 @@ import dev.gigaherz.elementsofpower.network.*;
 import dev.gigaherz.elementsofpower.recipes.ContainerChargeRecipe;
 import dev.gigaherz.elementsofpower.recipes.GemstoneChangeRecipe;
 import dev.gigaherz.elementsofpower.spells.Element;
-import dev.gigaherz.elementsofpower.spells.SpellcastEntityData;
+import dev.gigaherz.elementsofpower.spells.SpellcastState;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -74,7 +74,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 @Mod(ElementsOfPowerMod.MODID)
@@ -230,6 +229,14 @@ public class ElementsOfPowerMod
             }).build()
     );
 
+    public static final Supplier<AttachmentType<CocoonEventHandling.CocoonTracker>> COCOON_TRACKER = ATTACHMENT_TYPES.register(
+            "cocoon_tracker", () -> AttachmentType.builder(CocoonEventHandling.CocoonTracker::new).build()
+    );
+
+    public static final Supplier<AttachmentType<SpellcastState>> SPELLCAST_STATE = ATTACHMENT_TYPES.register(
+            "spellcast_state", () -> AttachmentType.builder(SpellcastState::new).build()
+    );
+
     private static final String PROTOCOL_VERSION = "1.0";
     public static SimpleChannel CHANNEL = NetworkRegistry.ChannelBuilder
             .named(location("general"))
@@ -335,6 +342,7 @@ public class ElementsOfPowerMod
         CHANNEL.messageBuilder(UpdateEssentializerAmounts.class, messageNumber++, PlayNetworkDirection.PLAY_TO_CLIENT).encoder(UpdateEssentializerAmounts::encode).decoder(UpdateEssentializerAmounts::new).consumerNetworkThread(UpdateEssentializerAmounts::handle).add();
         CHANNEL.messageBuilder(UpdateEssentializerTile.class, messageNumber++, PlayNetworkDirection.PLAY_TO_CLIENT).encoder(UpdateEssentializerTile::encode).decoder(UpdateEssentializerTile::new).consumerNetworkThread(UpdateEssentializerTile::handle).add();
         CHANNEL.messageBuilder(AddVelocityToPlayer.class, messageNumber++, PlayNetworkDirection.PLAY_TO_CLIENT).encoder(AddVelocityToPlayer::encode).decoder(AddVelocityToPlayer::new).consumerNetworkThread(AddVelocityToPlayer::handle).add();
+        CHANNEL.messageBuilder(ParticlesInShape.class, messageNumber++, PlayNetworkDirection.PLAY_TO_CLIENT).encoder(ParticlesInShape::write).decoder(ParticlesInShape::new).consumerNetworkThread(ParticlesInShape::handle).add();
         LOGGER.debug("Final message number: " + messageNumber);
     }
 

@@ -1,6 +1,6 @@
 package dev.gigaherz.elementsofpower.spells.effects;
 
-import dev.gigaherz.elementsofpower.spells.InitializedSpellcast;
+import dev.gigaherz.elementsofpower.spells.SpellcastState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.Entity;
@@ -27,24 +27,24 @@ public class ApplyPotionEffect extends SpellEffect
     }
 
     @Override
-    public int getColor(InitializedSpellcast cast)
+    public int getColor(SpellcastState cast)
     {
         return 0xA0E0FF;
     }
 
     @Override
-    public int getDuration(InitializedSpellcast cast)
+    public int getDuration(SpellcastState cast)
     {
         return 20 * 5;
     }
 
     @Override
-    public int getInterval(InitializedSpellcast cast)
+    public int getInterval(SpellcastState cast)
     {
         return 8;
     }
 
-    private void applyEffects(InitializedSpellcast cast, Vec3 hitVec, List<? extends LivingEntity> living, Entity directSource)
+    private void applyEffects(SpellcastState cast, Vec3 hitVec, List<? extends LivingEntity> living, Entity directSource)
     {
         for (LivingEntity e : living)
         {
@@ -61,11 +61,11 @@ public class ApplyPotionEffect extends SpellEffect
         }
     }
 
-    private void applyEffects(InitializedSpellcast cast, double distance, LivingEntity e, Entity directSource)
+    private void applyEffects(SpellcastState cast, double distance, LivingEntity e, Entity directSource)
     {
-        double lv = Math.max(0, cast.getDamageForce() - distance);
+        double lv = Math.max(0, cast.damageForce() - distance);
 
-        int emp = cast.getEmpowering();
+        int emp = cast.empowering();
 
         if (-emp < lv && instant != null)
             causePotionEffect(cast, directSource, e, instant, 0, (lv + emp) * 0.5, 0.0);
@@ -75,40 +75,42 @@ public class ApplyPotionEffect extends SpellEffect
     }
 
     @Override
-    public void processDirectHit(InitializedSpellcast cast, Entity entity, Vec3 hitVec, Entity directEntity)
+    public void processDirectHit(SpellcastState cast, Entity entity, Vec3 hitVec, Entity directEntity)
     {
         if (entity instanceof LivingEntity)
-            applyEffects(cast, 0, (LivingEntity) entity, cast.player);
+            applyEffects(cast, 0, (LivingEntity) entity, cast.player());
     }
 
     @Override
-    public boolean processEntitiesAroundBefore(InitializedSpellcast cast, Vec3 hitVec, Entity directEntity)
+    public boolean processEntitiesAroundBefore(SpellcastState cast, Vec3 hitVec, Entity directEntity)
     {
         return true;
     }
 
     @Override
-    public void processEntitiesAroundAfter(InitializedSpellcast cast, Vec3 hitVec, Entity directEntity)
+    public void processEntitiesAroundAfter(SpellcastState cast, Vec3 hitVec, Entity directEntity)
     {
-        AABB aabb = new AABB(
-                hitVec.x - cast.getDamageForce(),
-                hitVec.y - cast.getDamageForce(),
-                hitVec.z - cast.getDamageForce(),
-                hitVec.x + cast.getDamageForce(),
-                hitVec.y + cast.getDamageForce(),
-                hitVec.z + cast.getDamageForce());
+        int force = cast.damageForce();
 
-        List<LivingEntity> living = cast.level.getEntitiesOfClass(LivingEntity.class, aabb);
+        AABB aabb = new AABB(
+                hitVec.x - force,
+                hitVec.y - force,
+                hitVec.z - force,
+                hitVec.x + force,
+                hitVec.y + force,
+                hitVec.z + force);
+
+        List<LivingEntity> living = cast.level().getEntitiesOfClass(LivingEntity.class, aabb);
         applyEffects(cast, hitVec, living, directEntity);
     }
 
     @Override
-    public void spawnBallParticles(InitializedSpellcast cast, HitResult mop)
+    public void spawnBallParticles(SpellcastState cast, HitResult mop)
     {
     }
 
     @Override
-    public void processBlockWithinRadius(InitializedSpellcast cast, BlockPos blockPos, BlockState currentState, float distance, @Nullable HitResult mop)
+    public void processBlockWithinRadius(SpellcastState cast, BlockPos blockPos, BlockState currentState, float distance, @Nullable HitResult mop)
     {
 
     }

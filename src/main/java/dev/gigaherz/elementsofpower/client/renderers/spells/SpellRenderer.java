@@ -2,7 +2,8 @@ package dev.gigaherz.elementsofpower.client.renderers.spells;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.gigaherz.elementsofpower.client.renderers.ModelHandle;
-import dev.gigaherz.elementsofpower.spells.InitializedSpellcast;
+import dev.gigaherz.elementsofpower.spells.Spellcast;
+import dev.gigaherz.elementsofpower.spells.SpellcastState;
 import dev.gigaherz.elementsofpower.spells.effects.FlameEffect;
 import dev.gigaherz.elementsofpower.spells.effects.WaterEffect;
 import dev.gigaherz.elementsofpower.spells.effects.WindEffect;
@@ -14,7 +15,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.util.NonNullLazy;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 
 public abstract class SpellRenderer
@@ -24,53 +25,59 @@ public abstract class SpellRenderer
     public static final NonNullLazy<ModelHandle> modelSphereInside = NonNullLazy.of(() -> ModelHandle.of("elementsofpower:models/entity/sphere_inside.obj"));
     public static final NonNullLazy<ModelHandle> modelCyl = NonNullLazy.of(() -> ModelHandle.of("elementsofpower:models/entity/cylinder.obj"));
 
-    public static int getColor(InitializedSpellcast spellcast)
+    public static int getColor(SpellcastState spellcast)
     {
-        int color = spellcast.getColor();
+        int color = spellcast.color();
 
-        if (spellcast.getEffect() instanceof FlameEffect)
+        if (spellcast.effect() instanceof FlameEffect)
         {
             color = 0xFFFFFF;
         }
-        else if (spellcast.getEffect() instanceof WaterEffect)
+        else if (spellcast.effect() instanceof WaterEffect)
         {
             color = 0xFFFFFF;
         }
-        else if (spellcast.getEffect() instanceof WindEffect)
+        else
         {
-            color = 0xFFFFFF;
+            if (spellcast.effect() instanceof WindEffect)
+            {
+                color = 0xFFFFFF;
+            }
         }
 
         return color;
     }
 
-    public static ResourceLocation getTexture(@Nullable InitializedSpellcast spellcast)
+    public static ResourceLocation getTexture(@Nullable SpellcastState spellcast, @Nullable Spellcast entitySpellcast)
     {
         String tex = "neoforge:textures/white.png";
 
         if (spellcast != null)
         {
-            if (spellcast.getEffect() instanceof FlameEffect)
+            if (spellcast.effect() instanceof FlameEffect)
             {
                 tex = "minecraft:textures/block/lava_still.png";
             }
-            else if (spellcast.getEffect() instanceof WaterEffect)
+            else if (spellcast.effect() instanceof WaterEffect)
             {
                 tex = "minecraft:textures/block/water_still.png";
             }
-            else if (spellcast.getEffect() instanceof WindEffect)
+            else
             {
-                tex = "elementsofpower:textures/block/cone.png";
+                if (spellcast.effect() instanceof WindEffect)
+                {
+                    tex = "elementsofpower:textures/block/cone.png";
+                }
             }
         }
 
         return new ResourceLocation(tex);
     }
 
-    public static RenderType getRenderType(InitializedSpellcast spellcast)
+    public static RenderType getRenderType(@Nullable SpellcastState state, @Nullable Spellcast spellcast)
     {
-        return RenderType.entityTranslucent(getTexture(spellcast));
+        return RenderType.entityTranslucent(getTexture(state, spellcast));
     }
 
-    public abstract void render(InitializedSpellcast spellcast, Player player, EntityRenderDispatcher renderManager, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn, Vec3 offset);
+    public abstract void render(SpellcastState state, Player player, EntityRenderDispatcher renderManager, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn, Vec3 offset);
 }

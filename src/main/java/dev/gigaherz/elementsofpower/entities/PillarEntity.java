@@ -1,7 +1,9 @@
 package dev.gigaherz.elementsofpower.entities;
 
 import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
-import dev.gigaherz.elementsofpower.spells.InitializedSpellcast;
+import dev.gigaherz.elementsofpower.network.ParticlesInShape;
+import dev.gigaherz.elementsofpower.spells.Spellcast;
+import dev.gigaherz.elementsofpower.spells.SpellcastState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -11,33 +13,35 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.entity.IEntityAdditionalSpawnData;
 import net.neoforged.neoforge.network.NetworkHooks;
 
-import javax.annotation.Nullable;
+import net.neoforged.neoforge.network.PacketDistributor;
+import org.jetbrains.annotations.Nullable;
 
 public class PillarEntity extends Entity implements IEntityAdditionalSpawnData
 {
     public static final int RAISE_TICKS = 3;
-    private LivingEntity caster;
+    private Player caster;
     private int delay;
     private int duration;
 
     @Nullable
-    private InitializedSpellcast spellcast;
+    private Spellcast spellcast;
 
-    public PillarEntity(Level level, LivingEntity caster, InitializedSpellcast spellcast, double posX, double posY, double posZ, float yaw, int delayTicks)
+    public PillarEntity(Level level, Player caster, Spellcast spellcast, double posX, double posY, double posZ, float yaw, int delayTicks)
     {
         super(ElementsOfPowerMod.PILLAR_ENTITY_TYPE.get(), level);
 
         this.spellcast = spellcast;
         this.caster = caster;
         this.delay = delayTicks;
-        this.duration = Math.max(60, spellcast.totalCastTime);
+        this.duration = Math.max(60, SpellcastState.get(caster).totalCastTime);
         this.setYRot(yaw);
         this.setPos(posX, posY, posZ);
     }
@@ -54,7 +58,17 @@ public class PillarEntity extends Entity implements IEntityAdditionalSpawnData
 
         if (!level().isClientSide && (tickCount - delay) > duration)
         {
-            // TODO: removal particles
+            float height = getHeight();
+
+            ElementsOfPowerMod.CHANNEL.send(PacketDistributor.ALL.noArg(), new ParticlesInShape(
+                    ParticlesInShape.AreaShape.BOX_UNIFORM,
+                    new BlockParticleOption(ParticleTypes.BLOCK, Blocks.DIRT.defaultBlockState()),
+                    150,
+                    getX(), getY() + height * 0.5f, getZ(),
+                    0.5f, height * 0.5f, 0.5f,
+                    0,0,0,
+                    0,0,0
+            ));
             remove(RemovalReason.DISCARDED);
         }
 
@@ -63,19 +77,35 @@ public class PillarEntity extends Entity implements IEntityAdditionalSpawnData
             this.setBoundingBox(this.makeBoundingBox());
         }
 
-        if (level().isClientSide && tickCount == delay)
+        if (level().isClientSide && tickCount > delay && (tickCount-delay) <= RAISE_TICKS)
         {
             var blockpos = BlockPos.containing(this.position()) ;
             BlockState blockState = level().getBlockState(blockpos.below());
-            var options = new BlockParticleOption(ParticleTypes.BLOCK, blockState).setPos(blockpos.below());
+            float height = getHeight();
             for (int i = 0; i < 50; i++)
             {
                 float offX = (random.nextFloat() - 0.5f);
                 float offZ = (random.nextFloat() - 0.5f);
-                level().addParticle(options, getX() + offX, getY() + 0.25f, getZ() + offZ, 0.1f * offX, 5, 0.1f * offZ);
+                float fx = offX < -0.25f ? -0.5f : (offX > 0.25f ? 0.5f : 0.0f);
+                float fz = offZ < -0.25f ? -0.5f : (offZ > 0.25f ? 0.5f : 0.0f);
+                level().addParticle(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.DIRT.defaultBlockState()),
+                        getX() + fx, getY() + 0.25f, getZ() + fz,
+                        1.5f * offX, 5f, 1.5f * offZ);
+            }
+            for (int i = 0; i < 25; i++)
+            {
+                float offX = (random.nextFloat() - 0.5f);
+                float offZ = (random.nextFloat() - 0.5f);
+                float fx = offX < -0.25f ? -0.5f : (offX > 0.25f ? 0.5f : 0.0f);
+                float fz = offZ < -0.25f ? -0.5f : (offZ > 0.25f ? 0.5f : 0.0f);
+                level().addParticle(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.DIRT.defaultBlockState()),
+                        getX() + fx, getY() + height, getZ() + fz,
+                        0.01f * offX, 10f, 0.01f * offZ);
             }
         }
     }
+
+
 
     public int delay()
     {
@@ -84,8 +114,13 @@ public class PillarEntity extends Entity implements IEntityAdditionalSpawnData
 
     @Override
     protected AABB makeBoundingBox() {
-        var height = (32.0f+Math.min((tickCount-delay-RAISE_TICKS)*31/RAISE_TICKS, -1))/16.0f;
+        float height = getHeight();
         return new AABB(position().subtract(7/16.0f,0,7/16.0f), position().add(7/16.0f,height,7/16.0f));
+    }
+
+    private float getHeight()
+    {
+        return (32.0f+Math.min((tickCount-delay-RAISE_TICKS)*31/RAISE_TICKS, -1))/16.0f;
     }
 
     @Override

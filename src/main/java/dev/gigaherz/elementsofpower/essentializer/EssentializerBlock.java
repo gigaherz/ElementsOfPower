@@ -28,7 +28,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.network.NetworkHooks;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class EssentializerBlock extends BaseEntityBlock
 {

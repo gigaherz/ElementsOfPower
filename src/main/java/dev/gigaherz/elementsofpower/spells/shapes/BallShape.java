@@ -1,8 +1,8 @@
 package dev.gigaherz.elementsofpower.spells.shapes;
 
 import dev.gigaherz.elementsofpower.entities.BallEntity;
-import dev.gigaherz.elementsofpower.spells.InitializedSpellcast;
 import dev.gigaherz.elementsofpower.spells.Spellcast;
+import dev.gigaherz.elementsofpower.spells.SpellcastState;
 import dev.gigaherz.elementsofpower.spells.effects.SpellEffect;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
@@ -19,31 +19,29 @@ import net.minecraft.world.phys.Vec3;
 public class BallShape extends SpellShape
 {
     @Override
-    public float getScale(InitializedSpellcast cast)
+    public float getScale(SpellcastState cast)
     {
-        return 1 + 0.25f * cast.getDamageForce();
+        return 1 + 0.25f * cast.damageForce();
     }
 
     @Override
-    public InitializedSpellcast castSpell(ItemStack stack, Player player, Spellcast cast)
+    public Spellcast castSpell(ItemStack stack, Player player, Spellcast cast)
     {
-        InitializedSpellcast spellcast = cast.init(player.level(), player);
-
         Level world = player.level();
-        BallEntity entity = new BallEntity(world, player, spellcast);
+        BallEntity entity = new BallEntity(world, player, cast);
 
         entity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 2.5F, 1.0F);
 
         if (world.addFreshEntity(entity))
-            return spellcast;
+            return cast;
 
         return null;
     }
 
     @Override
-    public void onImpact(InitializedSpellcast cast, HitResult mop, Entity directEntity)
+    public void onImpact(SpellcastState cast, HitResult mop, Entity directEntity)
     {
-        SpellEffect effect = cast.getEffect();
+        SpellEffect effect = cast.effect();
 
         if (mop.getType() == HitResult.Type.ENTITY)
         {
@@ -55,7 +53,7 @@ public class BallShape extends SpellShape
         if (!effect.processEntitiesAroundBefore(cast, mop.getLocation(), directEntity))
             return;
 
-        int force = cast.getDamageForce();
+        int force = cast.damageForce();
         if (force > 0)
         {
             BlockPos bp;
@@ -97,7 +95,7 @@ public class BallShape extends SpellShape
 
                         Vec3 start = vec.add(dir.scale(0.5));
                         Vec3 end = new Vec3(px + 0.5, py + 0.5, pz + 0.5);
-                        BlockHitResult mop2 = cast.level.clip(new ClipContext(start, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, cast.player));
+                        BlockHitResult mop2 = cast.level().clip(new ClipContext(start, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, cast.player()));
                         if (mop2.getType() != HitResult.Type.MISS)
                             if (!mop2.getBlockPos().equals(np))
                                 continue;
@@ -105,7 +103,7 @@ public class BallShape extends SpellShape
                         float r = (float) Math.sqrt(r2);
 
 
-                        BlockState currentState = cast.level.getBlockState(np);
+                        BlockState currentState = cast.level().getBlockState(np);
 
                         effect.processBlockWithinRadius(cast, np, currentState, r, null);
                     }

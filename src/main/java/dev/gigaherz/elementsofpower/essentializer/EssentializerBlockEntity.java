@@ -34,7 +34,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@Mod.EventBusSubscriber(modid=ElementsOfPowerMod.MODID, bus= Mod.EventBusSubscriber.Bus.FORGE)
+@Mod.EventBusSubscriber(modid=ElementsOfPowerMod.MODID, bus= Mod.EventBusSubscriber.Bus.MOD)
 public class EssentializerBlockEntity
         extends BlockEntity
         implements IMagicAmountHolder
@@ -192,11 +192,14 @@ public class EssentializerBlockEntity
     @Override
     public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket packet)
     {
-        super.onDataPacket(net, packet);
-        handleUpdateTag(packet.getTag());
+        var tag = packet.getTag();
+        if (tag != null)
+        {
+            handleUpdateTag(tag);
 
-        BlockState state = level.getBlockState(worldPosition);
-        level.sendBlockUpdated(worldPosition, state, state, 3);
+            BlockState state = level.getBlockState(worldPosition);
+            level.sendBlockUpdated(worldPosition, state, state, 3);
+        }
     }
 
     public void tickServer()

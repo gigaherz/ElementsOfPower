@@ -1,13 +1,13 @@
 package dev.gigaherz.elementsofpower.entities;
 
-import dev.gigaherz.elementsofpower.spells.InitializedSpellcast;
+import dev.gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 
 public abstract class AbstractRisingEntity extends AbstractSpellEntity
 {
-    public AbstractRisingEntity(EntityType<?> entityTypeIn, Level worldIn, InitializedSpellcast spellcast)
+    public AbstractRisingEntity(EntityType<?> entityTypeIn, Level worldIn, Spellcast spellcast)
     {
         super(entityTypeIn, worldIn, spellcast);
     }

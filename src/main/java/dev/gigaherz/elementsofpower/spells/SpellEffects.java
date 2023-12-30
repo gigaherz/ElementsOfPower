@@ -26,6 +26,7 @@ public class SpellEffects
         return effectRegistry.inverse().get(shape);
     }
 
+    public static final SpellEffect NOOP = register("no_effect", new NoopEffect());
     public static final SpellEffect BREAKING = register("breaking", new WitherEffect());
     public static final SpellEffect CUSHION = register("cushion", new CushionEffect());
     public static final SpellEffect DUST = register("dust", new DustEffect());

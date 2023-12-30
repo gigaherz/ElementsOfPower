@@ -2,7 +2,7 @@ package dev.gigaherz.elementsofpower.client.renderers.spells;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import dev.gigaherz.elementsofpower.spells.InitializedSpellcast;
+import dev.gigaherz.elementsofpower.spells.SpellcastState;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
@@ -10,19 +10,18 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
 public class BeamSpellRenderer extends SpellRenderer
 {
     @Override
-    public void render(InitializedSpellcast cast, Player player, EntityRenderDispatcher renderManager, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn, Vec3 offset)
+    public void render(SpellcastState state, Player player, EntityRenderDispatcher renderManager, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn, Vec3 offset)
     {
-        float scale = 0.15f * cast.getScale();
+        float scale = 0.15f * state.scale();
 
-        HitResult mop = cast.getHitPosition(partialTicks);
+        HitResult mop = state.getHitPosition(partialTicks);
 
-        Vec3 start = cast.getStart();
-        Vec3 end = cast.getEnd();
+        Vec3 start = state.getStart();
+        Vec3 end = state.getEnd();
 
         Vec3 beam0 = end.subtract(start);
 
@@ -49,8 +48,8 @@ public class BeamSpellRenderer extends SpellRenderer
 
         float time = (player.tickCount + partialTicks);
 
-        int beam_color = getColor(cast);
-        RenderType rt = getRenderType(cast);
+        int beam_color = getColor(state);
+        RenderType rt = getRenderType(state, state.spellcast());
         for (int i = 0; i <= 4; i++)
         {
             //float tt = (i + (player.ticksExisted % 10 + partialTicks) / 11.0f) / 5.0f;

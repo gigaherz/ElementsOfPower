@@ -2,27 +2,25 @@ package dev.gigaherz.elementsofpower.client.renderers.spells;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import dev.gigaherz.elementsofpower.spells.InitializedSpellcast;
+import dev.gigaherz.elementsofpower.spells.SpellcastState;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
 public class ConeSpellRenderer extends SpellRenderer
 {
     @Override
-    public void render(InitializedSpellcast cast, Player player, EntityRenderDispatcher renderManager, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn, Vec3 offset)
+    public void render(SpellcastState state, Player player, EntityRenderDispatcher renderManager, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn, Vec3 offset)
     {
-        float scale = 2 * cast.getScale();
+        float scale = 2 * state.scale();
 
+        var hit = state.getHitPosition(partialTicks);
 
-        cast.getHitPosition(partialTicks);
-
-        Vec3 start = cast.getStart();
-        Vec3 end = cast.getEnd();
+        Vec3 start = state.getStart();
+        Vec3 end = state.getEnd();
 
         start = start.add(offset);
 
@@ -45,11 +43,11 @@ public class ConeSpellRenderer extends SpellRenderer
         matrixStackIn.pushPose();
 
         int alpha = 80; // 64;
-        int color = (alpha << 24) | getColor(cast);
+        int color = (alpha << 24) | getColor(state);
 
         float time = (player.tickCount + partialTicks);
 
-        RenderType rt = getRenderType(cast);
+        RenderType rt = getRenderType(state, state.spellcast());
         for (int i = 0; i <= 4; i++)
         {
             float scale_xy = scale * (float) Math.pow(0.8, i);

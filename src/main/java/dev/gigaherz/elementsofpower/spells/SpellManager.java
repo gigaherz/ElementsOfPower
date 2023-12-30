@@ -8,8 +8,8 @@ import dev.gigaherz.elementsofpower.spells.shapes.SpellShape;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
@@ -62,14 +62,21 @@ public class SpellManager
         if (sequence.size() == 0)
             return null;
         SpellBuilder b = new SpellBuilder();
-        return b.build(sequence);
+
+        for (Element c : sequence)
+        {
+            if (!b.doTransition(c))
+                return null;
+        }
+
+        return b.build();
     }
 
     public static MagicAmounts computeCost(Spellcast cast)
     {
         MagicAmounts amounts = MagicAmounts.EMPTY;
 
-        var sequence = cast.getSequence();
+        var sequence = cast.sequence();
         if (sequence.size() > 0)
         {
             HashMultiset<Element> multiset = HashMultiset.create();
@@ -84,6 +91,12 @@ public class SpellManager
         }
 
         return amounts;
+    }
+
+    public static int getChargeDuration(List<Element> seq)
+    {
+        // temporary math
+        return seq.size() * 10;
     }
 
     private static class SpellBuilder
@@ -101,14 +114,8 @@ public class SpellManager
         private final EnumMap<ElementUsageType, Integer> usageTypes = new EnumMap<>(ElementUsageType.class);
 
         @Nullable
-        public Spellcast build(List<Element> sequence)
+        public Spellcast build()
         {
-            for (Element c : sequence)
-            {
-                if (!doTransition(c))
-                    return null;
-            }
-
             finalTransition();
 
             if (this.effectType == null)
@@ -122,26 +129,18 @@ public class SpellManager
             if (shape == null)
                 return null;
 
-            Spellcast cast = new Spellcast(shape, effect, primaryPower, sequence);
-
-            if (empowering != 0)
-                cast.setEmpowering(empowering);
-
-            if (radiance != 0)
-                cast.setRadiating(empowering);
-
-            return cast;
+            return new Spellcast(sequence, shape, effect, primaryPower, empowering, radiance, /*timing*/0);
         }
 
         private boolean doTransition(Element e)
         {
-            for (Pair<BiPredicate<SpellBuilder, Element>, BiPredicate<SpellBuilder, Element>> item : transitions.computeIfAbsent(spellState, state -> Lists.newArrayList(
+            for (Transition item : transitions.computeIfAbsent(spellState, state -> Lists.newArrayList(
                     always(makeTransition(logUnimplementedState(), SpellState.INVALID))
             )))
             {
-                if (item.getLeft().test(this, e))
+                if (item.test(this, e))
                 {
-                    return item.getRight().test(this, e);
+                    return item.apply(this, e);
                 }
             }
             ElementsOfPowerMod.LOGGER.error("Spell sequence transition was incomplete");
@@ -313,7 +312,7 @@ public class SpellManager
                 ShapeType.SINGLE, SpellShapes.SINGLE,
                 ShapeType.SPHERE, SpellShapes.SPHERE
         ));
-        private static final EnumMap<SpellState, List<Pair<BiPredicate<SpellBuilder, Element>, BiPredicate<SpellBuilder, Element>>>> transitions = Maps.newEnumMap(SpellState.class);
+        private static final EnumMap<SpellState, List<Transition>> transitions = Maps.newEnumMap(SpellState.class);
 
         static
         {
@@ -334,26 +333,44 @@ public class SpellManager
             );
         }
 
-        @SafeVarargs
-        private static void from(SpellState state, Pair<BiPredicate<SpellBuilder, Element>, BiPredicate<SpellBuilder, Element>> ... edges)
+        private static void from(SpellState state, Transition... edges)
         {
             transitions.put(state, List.of(edges));
         }
 
-        private static Pair<BiPredicate<SpellBuilder, Element>, BiPredicate<SpellBuilder, Element>> when(BiPredicate<SpellBuilder, Element> condition, BiPredicate<SpellBuilder, Element> transition)
+        private static Transition when(BiPredicate<SpellBuilder, Element> condition, TransitionFunction transition)
         {
-            return Pair.of(condition, transition);
+            return new Transition(condition, transition);
         }
 
-        private static Pair<BiPredicate<SpellBuilder, Element>, BiPredicate<SpellBuilder, Element>> always(BiPredicate<SpellBuilder, Element> transition)
+        private static Transition always(TransitionFunction transition)
         {
-            return Pair.of((b, e) -> true, transition);
+            return new Transition((b, e) -> true, transition);
         }
 
-        private static BiPredicate<SpellBuilder, Element> makeTransition(BiPredicate<SpellBuilder, Element> action, SpellState next)
+        public record Transition(BiPredicate<SpellBuilder, Element> condition, TransitionFunction transition)
+        {
+            public boolean test(SpellBuilder builder, Element element)
+            {
+                return condition.test(builder, element);
+            }
+
+            public boolean apply(SpellBuilder builder, Element element)
+            {
+                return transition.apply(builder, element);
+            }
+        }
+
+        @FunctionalInterface
+        public interface TransitionFunction
+        {
+            boolean apply(SpellBuilder builder, Element element);
+        }
+
+        private static TransitionFunction makeTransition(TransitionFunction action, SpellState next)
         {
             return (b, e) -> {
-                if (!action.test(b, e))
+                if (!action.apply(b, e))
                     return false;
 
                 b.transition(e, next);
@@ -361,7 +378,7 @@ public class SpellManager
             };
         }
 
-        private static BiPredicate<SpellBuilder, Element> makeTransition(BiConsumer<SpellBuilder, Element> action, SpellState next)
+        private static TransitionFunction makeTransition(BiConsumer<SpellBuilder, Element> action, SpellState next)
         {
             return (b, e) -> {
                 action.accept(b, e);
@@ -371,7 +388,7 @@ public class SpellManager
             };
         }
 
-        private static BiPredicate<SpellBuilder, Element> makeTransition(Consumer<SpellBuilder> action, SpellState next)
+        private static TransitionFunction makeTransition(Consumer<SpellBuilder> action, SpellState next)
         {
             return (b, e) -> {
                 action.accept(b);
@@ -381,7 +398,7 @@ public class SpellManager
             };
         }
 
-        private static BiPredicate<SpellBuilder, Element> makeTransition(SpellState next)
+        private static TransitionFunction makeTransition(SpellState next)
         {
             return (b, e) -> {
                 b.transition(e, next);
@@ -389,7 +406,7 @@ public class SpellManager
             };
         }
 
-        private static BiPredicate<SpellBuilder, Element> makeOppositeTransition(Consumer<SpellBuilder> action, SpellState next)
+        private static TransitionFunction makeOppositeTransition(Consumer<SpellBuilder> action, SpellState next)
         {
             return (b, e) -> {
                 action.accept(b);
@@ -399,7 +416,7 @@ public class SpellManager
             };
         }
 
-        private static BiPredicate<SpellBuilder, Element> makeOppositeTransition(SpellState next)
+        private static TransitionFunction makeOppositeTransition(SpellState next)
         {
             return (b, e) -> {
                 b.transition(e, next);
@@ -407,7 +424,7 @@ public class SpellManager
             };
         }
 
-        private static BiPredicate<SpellBuilder, Element> logUnimplementedState()
+        private static TransitionFunction logUnimplementedState()
         {
             return (b, e) -> {
                 ElementsOfPowerMod.LOGGER.error("Spell sequence transitioned to invalid state.");

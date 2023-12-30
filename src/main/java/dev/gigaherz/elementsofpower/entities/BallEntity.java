@@ -1,29 +1,37 @@
 package dev.gigaherz.elementsofpower.entities;
 
 import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
-import dev.gigaherz.elementsofpower.spells.InitializedSpellcast;
+import dev.gigaherz.elementsofpower.spells.Spellcast;
+import dev.gigaherz.elementsofpower.spells.SpellcastState;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.neoforge.entity.IEntityAdditionalSpawnData;
 import net.neoforged.neoforge.network.NetworkHooks;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.UUID;
 
 public class BallEntity extends ThrowableProjectile implements IEntityAdditionalSpawnData
 {
-    InitializedSpellcast spellcast;
+    private Player player;
+    private UUID playerUUID;
+    private Spellcast spellcast;
 
-    public BallEntity(Level worldIn, LivingEntity thrower, InitializedSpellcast spellcast)
+
+    public BallEntity(Level worldIn, Player caster, Spellcast spellcast)
     {
-        super(ElementsOfPowerMod.BALL_ENTITY_TYPE.get(), thrower, worldIn);
+        super(ElementsOfPowerMod.BALL_ENTITY_TYPE.get(), caster, worldIn);
 
+        this.playerUUID = caster.getUUID();
+        this.player = caster;
         this.spellcast = spellcast;
     }
 
@@ -31,6 +39,45 @@ public class BallEntity extends ThrowableProjectile implements IEntityAdditional
     {
         super(type, world);
     }
+
+    @Nullable
+    public Player getCaster()
+    {
+        if (playerUUID != null && player == null)
+        {
+            player = level().getPlayerByUUID(playerUUID);
+            if (player == null) // not found, give up
+                playerUUID = null;
+        }
+        return player;
+    }
+
+    public SpellcastState getState()
+    {
+        return SpellcastState.get(getCaster());
+    }
+
+    public float getScale()
+    {
+        if (getSpellcast() != null)
+            return 0.6f * (1 + getState().damageForce());
+        return 0;
+    }
+
+    public int getColor()
+    {
+        if (getSpellcast() != null)
+            return getState().color();
+        return 0xFFFFFFFF;
+    }
+
+    @Nullable
+    public Spellcast getSpellcast()
+    {
+        return spellcast;
+    }
+
+    // Entity impl
 
     @Override
     protected void defineSynchedData()
@@ -48,33 +95,13 @@ public class BallEntity extends ThrowableProjectile implements IEntityAdditional
     {
         if (!this.level().isClientSide)
         {
-            if (getSpellcast() != null)
-                spellcast.onImpact(pos, random, this);
+            SpellcastState state = getState();
+            if (getSpellcast() == state.spellcast())
+                state.onImpact(pos, random, this);
 
             this.remove(RemovalReason.DISCARDED);
         }
     }
-
-    public float getScale()
-    {
-        if (getSpellcast() != null)
-            return 0.6f * (1 + spellcast.getDamageForce());
-        return 0;
-    }
-
-    public int getColor()
-    {
-        if (getSpellcast() != null)
-            return spellcast.getColor();
-        return 0xFFFFFF;
-    }
-
-    @Nullable
-    public InitializedSpellcast getSpellcast()
-    {
-        return spellcast;
-    }
-
 
     @Override
     public Packet<ClientGamePacketListener> getAddEntityPacket()
@@ -86,33 +113,34 @@ public class BallEntity extends ThrowableProjectile implements IEntityAdditional
     protected void addAdditionalSaveData(CompoundTag pCompound)
     {
         super.addAdditionalSaveData(pCompound);
-        CompoundTag spellcastData = new CompoundTag();
-        spellcast.write(spellcastData);
+        var spellcastData = spellcast.serializeNBT();
         pCompound.put("spellcast", spellcastData);
+        pCompound.putUUID("owner", playerUUID);
     }
 
     @Override
     protected void readAdditionalSaveData(CompoundTag pCompound)
     {
         super.readAdditionalSaveData(pCompound);
-        var player = level().getPlayerByUUID(pCompound.getUUID("owner"));
+        playerUUID = pCompound.getUUID("owner");
         var spellcastData = pCompound.getCompound("spellcast");
-        spellcast = InitializedSpellcast.read(spellcastData, level(), player);
+        spellcast = Spellcast.read(spellcastData);
     }
 
     @Override
     public void writeSpawnData(FriendlyByteBuf buffer)
     {
-        CompoundTag spellcastData = new CompoundTag();
-        spellcast.write(spellcastData);
+        var spellcastData = spellcast.serializeNBT();
         buffer.writeNbt(spellcastData);
+        buffer.writeUUID(playerUUID);
     }
 
     @Override
-    public void readSpawnData(FriendlyByteBuf additionalData)
+    public void readSpawnData(FriendlyByteBuf buffer)
     {
-        var spellcastData = additionalData.readNbt();
+        var spellcastData = buffer.readNbt();
         if (spellcastData != null)
-            spellcast.read(spellcastData);
+            spellcast = Spellcast.read(spellcastData);
+        playerUUID = buffer.readUUID();
     }
 }

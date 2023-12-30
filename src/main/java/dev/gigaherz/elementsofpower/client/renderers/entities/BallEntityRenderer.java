@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import dev.gigaherz.elementsofpower.client.renderers.ModelHandle;
 import dev.gigaherz.elementsofpower.client.renderers.spells.SpellRenderer;
 import dev.gigaherz.elementsofpower.entities.BallEntity;
+import dev.gigaherz.elementsofpower.spells.SpellcastState;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -56,6 +57,6 @@ public class BallEntityRenderer extends EntityRenderer<BallEntity>
     @Override
     public ResourceLocation getTextureLocation(BallEntity entity)
     {
-        return SpellRenderer.getTexture(entity.getSpellcast());
+        return SpellRenderer.getTexture(entity.getState(), entity.getSpellcast());
     }
 }

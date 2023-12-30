@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.Blocks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;

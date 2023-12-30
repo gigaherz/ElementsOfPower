@@ -1,6 +1,8 @@
 package dev.gigaherz.elementsofpower.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.items.WandItem;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
@@ -12,7 +14,9 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
@@ -25,7 +29,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import org.lwjgl.glfw.GLFW;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -49,6 +53,7 @@ public class WandUseManager
     public ItemStack activeStack = null;
     public int slotInUse;
     public int itemInUseCount;
+    public int useTicks;
     private boolean failedSequence;
 
     public static void initialize()
@@ -208,11 +213,15 @@ public class WandUseManager
         }
 
         itemInUseCount--;
+        useTicks++;
     }
 
     @SubscribeEvent
-    public void onKeyPress(TickEvent.ClientTickEvent event)
+    public void checkKeys(TickEvent.ClientTickEvent event)
     {
+        if (event.phase != TickEvent.Phase.END)
+            return;
+
         boolean anyChanged = false;
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
@@ -248,28 +257,72 @@ public class WandUseManager
         handInUse = hand;
         itemInUseCount = activeStack.getUseDuration();
         slotInUse = slotNumber;
+        useTicks = 0;
         sequence.clear();
 
-        ElementsOfPowerMod.CHANNEL.sendToServer(new UpdateSpellSequence(UpdateSpellSequence.ChangeMode.BEGIN, slotInUse, null));
+        ElementsOfPowerMod.CHANNEL.sendToServer(new UpdateSpellSequence(UpdateSpellSequence.ChangeMode.BEGIN, slotInUse, null, useTicks));
     }
 
     private void endHoldingRightButton(boolean cancelMagicSetting)
     {
         if (cancelMagicSetting || (failedSequence && sequence.size() == 0))
         {
-            ElementsOfPowerMod.CHANNEL.sendToServer(new UpdateSpellSequence(UpdateSpellSequence.ChangeMode.CANCEL, slotInUse, null));
+            ElementsOfPowerMod.CHANNEL.sendToServer(new UpdateSpellSequence(UpdateSpellSequence.ChangeMode.CANCEL, slotInUse, null, useTicks));
         }
         else
         {
-            ElementsOfPowerMod.CHANNEL.sendToServer(new UpdateSpellSequence(UpdateSpellSequence.ChangeMode.COMMIT, slotInUse, sequence));
+            ElementsOfPowerMod.CHANNEL.sendToServer(new UpdateSpellSequence(UpdateSpellSequence.ChangeMode.COMMIT, slotInUse, sequence, useTicks));
         }
 
         handInUse = null;
         activeStack = null;
         itemInUseCount = 0;
         slotInUse = -1;
+        useTicks = 0;
         sequence.clear();
 
         Objects.requireNonNull(mc.player).stopUsingItem();
+    }
+
+    public boolean applyCustomArmTransforms(
+            WandItem wandItem, PoseStack poseStack, LocalPlayer player, HumanoidArm arm, ItemStack stack,
+            float partialTicks, float equippedProgress, float swingProcess)
+    {
+        boolean flag = player.getUsedItemHand() == InteractionHand.MAIN_HAND;
+        HumanoidArm humanoidarm = flag ? player.getMainArm() : player.getMainArm().getOpposite();
+        if (player.isUsingItem() && player.getUseItemRemainingTicks() > 0 && humanoidarm == arm)
+        {
+            boolean isRightHand = humanoidarm == HumanoidArm.RIGHT;
+            float handFlip = isRightHand ? 1 : -1;
+            poseStack.translate(handFlip * 0.56F, -0.52F + equippedProgress * -0.6F, -0.72F);
+            poseStack.translate(handFlip * -0.2785682F, 0.18344387F, 0.15731531F);
+            poseStack.mulPose(Axis.XP.rotationDegrees(-13.935F));
+            poseStack.mulPose(Axis.YP.rotationDegrees(handFlip * 35.3F));
+            poseStack.mulPose(Axis.ZP.rotationDegrees(handFlip * -9.785F));
+            float animationProgressTicks = (float) stack.getUseDuration() - ((float) this.mc.player.getUseItemRemainingTicks() - partialTicks + 1.0F);
+            float animationProgress = animationProgressTicks / wandItem.getChargeDuration(stack);
+            animationProgress = (animationProgress * animationProgress + animationProgress * 2.0F) / 3.0F;
+
+            if (animationProgress >= 1.0F)
+            {
+                float f15 = Mth.sin((animationProgressTicks - 0.1F) * 1.3F);
+                float f18 = Mth.clamp(animationProgress - 1.0F, 0.1f, 1.0f);
+                float f20 = f15 * f18;
+                poseStack.translate(f20 * 0.0F, f20 * 0.004F, f20 * 0.0F);
+            }
+
+            if (animationProgress > 1.0F)
+            {
+                animationProgress = 1.0F;
+            }
+
+            poseStack.translate(animationProgress * 0.0F, animationProgress * 0.0F, animationProgress * 0.04F);
+            poseStack.scale(1.0F, 1.0F, 1.0F + animationProgress * 0.2F);
+            poseStack.mulPose(Axis.YN.rotationDegrees((float) handFlip * 45.0F));
+
+            return true;
+        }
+
+        return false;
     }
 }

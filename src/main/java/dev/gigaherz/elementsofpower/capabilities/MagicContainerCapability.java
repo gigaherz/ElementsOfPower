@@ -10,9 +10,9 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.capabilities.ItemCapability;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
-@Mod.EventBusSubscriber(modid=ElementsOfPowerMod.MODID, bus= Mod.EventBusSubscriber.Bus.FORGE)
+@Mod.EventBusSubscriber(modid=ElementsOfPowerMod.MODID, bus= Mod.EventBusSubscriber.Bus.MOD)
 public class MagicContainerCapability
 {
     public static ItemCapability<IMagicContainer, Void> CAPABILITY = ItemCapability.createVoid(ElementsOfPowerMod.location("magic_container"), IMagicContainer.class);
@@ -66,7 +66,7 @@ public class MagicContainerCapability
 
     private static class MagicContainerItemImpl implements IMagicContainer
     {
-        final MagicContainerItem thisItem;
+        private final MagicContainerItem thisItem;
         private final ItemStack stack;
 
         public MagicContainerItemImpl(ItemStack stack)
