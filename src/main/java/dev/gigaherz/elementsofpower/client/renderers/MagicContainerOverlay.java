@@ -64,138 +64,100 @@ public class MagicContainerOverlay implements IGuiOverlay
             return;
 
         var magic = MagicContainerCapability.getContainer(heldItem);
-        if (magic != null)
+        if (magic == null)
+            return;
+
+        // Contained essences
+        MagicAmounts contained = magic.getContainedMagic();
+
+        MagicAmounts reservoir = MagicAmounts.EMPTY;
+
+        MagicAmounts amounts = contained;
+        if (heldItem.getItem() instanceof WandItem)
         {
-            // Contained essences
-            MagicAmounts contained = magic.getContainedMagic();
+            reservoir = WandItem.getTotalPlayerReservoir(player);
+            amounts = amounts.add(reservoir);
+        }
 
-            MagicAmounts reservoir = MagicAmounts.EMPTY;
+        if (!magic.isInfinite() && amounts.isEmpty())
+            return;
 
-            MagicAmounts amounts = contained;
-            if (heldItem.getItem() instanceof WandItem)
-            {
-                reservoir = WandItem.getTotalPlayerReservoir(player);
-                amounts = amounts.add(reservoir);
-            }
+        Font font = mc.font;
 
-            if (!magic.isInfinite() && amounts.isEmpty())
-                return;
+        float rescale = 1;
+        int rescaledWidth = (int) (mc.getWindow().getGuiScaledWidth() / rescale);
+        int rescaledHeight = (int) (mc.getWindow().getGuiScaledHeight() / rescale);
 
-            Font font = mc.font;
+        var poseStack = graphics.pose();
+        poseStack.pushPose();
+        RenderSystem.depthMask(false);
 
-            float rescale = 1;
-            int rescaledWidth = (int) (mc.getWindow().getGuiScaledWidth() / rescale);
-            int rescaledHeight = (int) (mc.getWindow().getGuiScaledHeight() / rescale);
+        poseStack.scale(rescale, rescale, 1);
 
-            var poseStack = graphics.pose();
-            poseStack.pushPose();
-            RenderSystem.depthMask(false);
+        ItemModelShaper mesher = mc.getItemRenderer().getItemModelShaper();
+        TextureManager renderEngine = mc.textureManager;
 
-            poseStack.scale(rescale, rescale, 1);
+        final int middle = rescaledWidth / 2;
+        final int xMargin = middle - (ELEMENTS - 1) * SPACING / 2;
 
-            ItemModelShaper mesher = mc.getItemRenderer().getItemModelShaper();
-            TextureManager renderEngine = mc.textureManager;
+        final int lineSpacing = font.lineHeight + 3;
 
-            final int middle = rescaledWidth / 2;
-            final int xMargin = middle - (ELEMENTS - 1) * SPACING / 2;
+        int yTop = TOP_MARGIN;
 
-            final int lineSpacing = font.lineHeight + 3;
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+        {
+            int xPos = xMargin + SPACING * i;
+            int alpha = (amounts.get(i) < 0.001) ? 0x3FFFFFFF : 0xFFFFFFFF;
 
-            int yTop = TOP_MARGIN;
+            ItemStack stack = new ItemStack(Element.values[i].getOrb());
 
+            StackRenderingHelper.renderItemStack(mc.getItemRenderer(), poseStack, stack, xPos - 8, yTop, 0, alpha);
+
+            float e = contained.get(i);
+            String formatted = Float.isInfinite(e) ? "\u221E" : EssentializerScreen.formatQuantityWithSuffix(e);
+            graphics.drawCenteredString(font, formatted, xPos, yTop + 16 + 2, 0xFFC0C0C0);
+        }
+
+        yTop += 16 + 2 + lineSpacing;
+
+        if (!reservoir.isEmpty())
+        {
             for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
             {
                 int xPos = xMargin + SPACING * i;
-                int alpha = (amounts.get(i) < 0.001) ? 0x3FFFFFFF : 0xFFFFFFFF;
 
-                ItemStack stack = new ItemStack(Element.values[i].getOrb());
-
-                StackRenderingHelper.renderItemStack(mc.getItemRenderer(), poseStack, stack, xPos - 8, yTop, 0, alpha);
-
-                float e = contained.get(i);
-                String formatted = Float.isInfinite(e) ? "\u221E" : EssentializerScreen.formatQuantityWithSuffix(e);
-                graphics.drawCenteredString(font, formatted, xPos, yTop + 16 + 2, 0xFFC0C0C0);
+                float e = reservoir.get(i);
+                String formatted = String.format("(%s)", Float.isInfinite(e) ? "\u221E" : EssentializerScreen.formatQuantityWithSuffix(e));
+                graphics.drawCenteredString(font, formatted, xPos, yTop, 0xFFC0C0C0);
             }
 
-            yTop += 16 + 2 + lineSpacing;
+            yTop += lineSpacing;
+        }
 
-            if (!reservoir.isEmpty())
+        CompoundTag nbt = heldItem.getTag();
+        if (nbt != null)
+        {
+            ListTag seq = nbt.getList(WandItem.SPELL_SEQUENCE_TAG, Tag.TAG_STRING);
+            List<Element> savedSequence = SpellManager.sequenceFromList(seq);
+
+            if (savedSequence.size() > 0)
             {
-                for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-                {
-                    int xPos = xMargin + SPACING * i;
-
-                    float e = reservoir.get(i);
-                    String formatted = String.format("(%s)", Float.isInfinite(e) ? "\u221E" : EssentializerScreen.formatQuantityWithSuffix(e));
-                    graphics.drawCenteredString(font, formatted, xPos, yTop, 0xFFC0C0C0);
-                }
-
-                yTop += lineSpacing;
-            }
-
-            CompoundTag nbt = heldItem.getTag();
-            if (nbt != null)
-            {
-                ListTag seq = nbt.getList(WandItem.SPELL_SEQUENCE_TAG, Tag.TAG_STRING);
-                List<Element> savedSequence = SpellManager.sequenceFromList(seq);
-
-                if (savedSequence.size() > 0)
-                {
-                    int intervals = savedSequence.size() - 1;
-                    int xM = middle - intervals * SPELL_SPACING / 2;
-
-                    int yPos = rescaledHeight / 2 - 32;
-
-                    // Saved spell sequence
-                    for (int i = savedSequence.size() - 1; i >= 0; i--)
-                    {
-                        int xPos = xM + SPELL_SPACING * i;
-                        Element e = savedSequence.get(i);
-                        ItemStack stack = new ItemStack(e.getOrb());
-
-                        StackRenderingHelper.renderItemStack(mc.getItemRenderer(), poseStack, stack, xPos - 8, yPos, 0, 0xFFFFFFFF);
-                    }
-
-                    Spellcast temp = SpellManager.makeSpell(savedSequence);
-                    if (temp != null)
-                    {
-                        MagicAmounts cost = SpellManager.computeCost(temp);
-                        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
-                        {
-                            if (Mth.equal(cost.get(i), 0))
-                                continue;
-
-                            int xPos = xMargin + SPACING * i;
-
-                            float e = -cost.get(i);
-                            String formatted = Float.isInfinite(e) ? "\u221E" : EssentializerScreen.formatQuantityWithSuffix(e);
-                            graphics.drawCenteredString(font, formatted, xPos, yTop, 0xFFC0C0C0);
-                        }
-
-                        yTop += lineSpacing;
-                    }
-                }
-            }
-
-            List<Element> sequence = WandUseManager.instance.sequence;
-            if (sequence.size() > 0)
-            {
-                int intervals = sequence.size() - 1;
+                int intervals = savedSequence.size() - 1;
                 int xM = middle - intervals * SPELL_SPACING / 2;
 
-                int yPos = rescaledHeight / 2 + 16;
+                int yPos = rescaledHeight / 2 - 32;
 
-                // New spell sequence
-                for (int i = sequence.size() - 1; i >= 0; i--)
+                // Saved spell sequence
+                for (int i = savedSequence.size() - 1; i >= 0; i--)
                 {
                     int xPos = xM + SPELL_SPACING * i;
-                    Element e = sequence.get(i);
+                    Element e = savedSequence.get(i);
                     ItemStack stack = new ItemStack(e.getOrb());
 
                     StackRenderingHelper.renderItemStack(mc.getItemRenderer(), poseStack, stack, xPos - 8, yPos, 0, 0xFFFFFFFF);
                 }
 
-                Spellcast temp = SpellManager.makeSpell(sequence);
+                Spellcast temp = SpellManager.makeSpell(savedSequence);
                 if (temp != null)
                 {
                     MagicAmounts cost = SpellManager.computeCost(temp);
@@ -207,30 +169,68 @@ public class MagicContainerOverlay implements IGuiOverlay
                         int xPos = xMargin + SPACING * i;
 
                         float e = -cost.get(i);
-                        String formatted = Float.isInfinite(e) ? "\u221E" : MagicTooltips.PRETTY_NUMBER_FORMATTER.format(e);
+                        String formatted = Float.isInfinite(e) ? "\u221E" : EssentializerScreen.formatQuantityWithSuffix(e);
                         graphics.drawCenteredString(font, formatted, xPos, yTop, 0xFFC0C0C0);
                     }
 
                     yTop += lineSpacing;
                 }
             }
+        }
 
-            for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+        List<Element> sequence = WandUseManager.instance.sequence;
+        if (sequence.size() > 0)
+        {
+            int intervals = sequence.size() - 1;
+            int xM = middle - intervals * SPELL_SPACING / 2;
+
+            int yPos = rescaledHeight / 2 + 16;
+
+            // New spell sequence
+            for (int i = sequence.size() - 1; i >= 0; i--)
             {
-                int xPos = xMargin + SPACING * i;
+                int xPos = xM + SPELL_SPACING * i;
+                Element e = sequence.get(i);
+                ItemStack stack = new ItemStack(e.getOrb());
 
-                if (WandUseManager.instance.handInUse != null)
-                {
-                    KeyMapping key = WandUseManager.instance.spellKeys[i];
-                    graphics.drawCenteredString(font, Component.translatable("text.elementsofpower.magic.key", key.getTranslatedKeyMessage()), xPos, yTop, 0xFFC0C0C0);
-                }
+                StackRenderingHelper.renderItemStack(mc.getItemRenderer(), poseStack, stack, xPos - 8, yPos, 0, 0xFFFFFFFF);
             }
 
-            RenderSystem.depthMask(true);
+            Spellcast temp = SpellManager.makeSpell(sequence);
+            if (temp != null)
+            {
+                MagicAmounts cost = SpellManager.computeCost(temp);
+                for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+                {
+                    if (Mth.equal(cost.get(i), 0))
+                        continue;
 
-            poseStack.popPose();
+                    int xPos = xMargin + SPACING * i;
 
-            RenderSystem.disableBlend();
+                    float e = -cost.get(i);
+                    String formatted = Float.isInfinite(e) ? "\u221E" : MagicTooltips.PRETTY_NUMBER_FORMATTER.format(e);
+                    graphics.drawCenteredString(font, formatted, xPos, yTop, 0xFFC0C0C0);
+                }
+
+                yTop += lineSpacing;
+            }
         }
+
+        for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
+        {
+            int xPos = xMargin + SPACING * i;
+
+            if (WandUseManager.instance.handInUse != null)
+            {
+                KeyMapping key = WandUseManager.instance.spellKeys[i];
+                graphics.drawCenteredString(font, Component.translatable("text.elementsofpower.magic.key", key.getTranslatedKeyMessage()), xPos, yTop, 0xFFC0C0C0);
+            }
+        }
+
+        RenderSystem.depthMask(true);
+
+        poseStack.popPose();
+
+        RenderSystem.disableBlend();
     }
 }

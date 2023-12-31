@@ -288,41 +288,41 @@ public class WandUseManager
             WandItem wandItem, PoseStack poseStack, LocalPlayer player, HumanoidArm arm, ItemStack stack,
             float partialTicks, float equippedProgress, float swingProcess)
     {
+        if (stack != activeStack)
+            return false;
+
         boolean flag = player.getUsedItemHand() == InteractionHand.MAIN_HAND;
         HumanoidArm humanoidarm = flag ? player.getMainArm() : player.getMainArm().getOpposite();
-        if (player.isUsingItem() && player.getUseItemRemainingTicks() > 0 && humanoidarm == arm)
+
+        boolean isRightHand = humanoidarm == HumanoidArm.RIGHT;
+        float handFlip = isRightHand ? 1 : -1;
+        poseStack.translate(handFlip * 0.56F, -0.52F + equippedProgress * -0.6F, -0.72F);
+        poseStack.translate(handFlip * -0.2785682F, 0.18344387F, 0.15731531F);
+        poseStack.mulPose(Axis.XP.rotationDegrees(-13.935F));
+        poseStack.mulPose(Axis.YP.rotationDegrees(handFlip * 35.3F));
+        poseStack.mulPose(Axis.ZP.rotationDegrees(handFlip * -9.785F));
+        float animationProgressTicks = useTicks + partialTicks;
+        float limit = sequence.size() > 0 ? SpellManager.getChargeDuration(sequence) : wandItem.getChargeDuration(stack);
+        float animationProgress = animationProgressTicks / limit;
+        animationProgress = (animationProgress * animationProgress + animationProgress * 2.0F) / 3.0F;
+
+        if (animationProgress >= 1.0F)
         {
-            boolean isRightHand = humanoidarm == HumanoidArm.RIGHT;
-            float handFlip = isRightHand ? 1 : -1;
-            poseStack.translate(handFlip * 0.56F, -0.52F + equippedProgress * -0.6F, -0.72F);
-            poseStack.translate(handFlip * -0.2785682F, 0.18344387F, 0.15731531F);
-            poseStack.mulPose(Axis.XP.rotationDegrees(-13.935F));
-            poseStack.mulPose(Axis.YP.rotationDegrees(handFlip * 35.3F));
-            poseStack.mulPose(Axis.ZP.rotationDegrees(handFlip * -9.785F));
-            float animationProgressTicks = (float) stack.getUseDuration() - ((float) this.mc.player.getUseItemRemainingTicks() - partialTicks + 1.0F);
-            float animationProgress = animationProgressTicks / wandItem.getChargeDuration(stack);
-            animationProgress = (animationProgress * animationProgress + animationProgress * 2.0F) / 3.0F;
-
-            if (animationProgress >= 1.0F)
-            {
-                float f15 = Mth.sin((animationProgressTicks - 0.1F) * 1.3F);
-                float f18 = Mth.clamp(animationProgress - 1.0F, 0.1f, 1.0f);
-                float f20 = f15 * f18;
-                poseStack.translate(f20 * 0.0F, f20 * 0.004F, f20 * 0.0F);
-            }
-
-            if (animationProgress > 1.0F)
-            {
-                animationProgress = 1.0F;
-            }
-
-            poseStack.translate(animationProgress * 0.0F, animationProgress * 0.0F, animationProgress * 0.04F);
-            poseStack.scale(1.0F, 1.0F, 1.0F + animationProgress * 0.2F);
-            poseStack.mulPose(Axis.YN.rotationDegrees((float) handFlip * 45.0F));
-
-            return true;
+            float f15 = Mth.sin((animationProgressTicks - 0.1F) * 1.3F);
+            float f18 = Mth.clamp(animationProgress - 1.0F, 0.1f, 1.0f);
+            float f20 = f15 * f18;
+            poseStack.translate(f20 * 0.0F, f20 * 0.004F, f20 * 0.0F);
         }
 
-        return false;
+        if (animationProgress > 1.0F)
+        {
+            animationProgress = 1.0F;
+        }
+
+        poseStack.translate(animationProgress * 0.0F, animationProgress * 0.0F, animationProgress * 0.04F);
+        poseStack.scale(1.0F, 1.0F, 1.0F + animationProgress * 0.2F);
+        poseStack.mulPose(Axis.YN.rotationDegrees((float) handFlip * 45.0F));
+
+        return true;
     }
 }

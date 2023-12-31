@@ -231,7 +231,7 @@ public class WandItem extends GemContainerItem
 
     public void processSequenceUpdate(UpdateSpellSequence message, ItemStack stack, Player player, int useTicks)
     {
-        if (message.changeMode == UpdateSpellSequence.ChangeMode.COMMIT && useTicks >= getChargeDuration(stack))
+        if (message.changeMode == UpdateSpellSequence.ChangeMode.COMMIT && useTicks >= SpellManager.getChargeDuration(message.sequence))
         {
             CompoundTag nbt = stack.getOrCreateTag();
 
