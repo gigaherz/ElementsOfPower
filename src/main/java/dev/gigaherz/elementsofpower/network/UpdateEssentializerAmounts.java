@@ -1,15 +1,18 @@
 package dev.gigaherz.elementsofpower.network;
 
+import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.client.ClientPacketHandlers;
 import dev.gigaherz.elementsofpower.essentializer.menu.IMagicAmountHolder;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
-import java.util.function.Supplier;
-
-public class UpdateEssentializerAmounts
+public class UpdateEssentializerAmounts implements CustomPacketPayload
 {
+    public static final ResourceLocation ID = ElementsOfPowerMod.location("update_essentializer_amounts");
+
     public int windowId;
     public MagicAmounts contained;
     public MagicAmounts remaining;
@@ -28,15 +31,21 @@ public class UpdateEssentializerAmounts
         remaining = new MagicAmounts(buf);
     }
 
-    public void encode(FriendlyByteBuf buf)
+    public void write(FriendlyByteBuf buf)
     {
         buf.writeInt(windowId);
         contained.writeTo(buf);
         remaining.writeTo(buf);
     }
 
-    public boolean handle(NetworkEvent.Context context)
+    @Override
+    public ResourceLocation id()
     {
-        return ClientPacketHandlers.handleRemainingAmountsUpdate(this);
+        return ID;
+    }
+
+    public void handle(PlayPayloadContext context)
+    {
+        ClientPacketHandlers.handleRemainingAmountsUpdate(this);
     }
 }

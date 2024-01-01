@@ -13,7 +13,7 @@ import java.util.Objects;
 
 public class ClientPacketHandlers
 {
-    public static boolean handleSpellcastSync(SynchronizeSpellcastState message)
+    public static void handleSpellcastSync(SynchronizeSpellcastState message)
     {
         Minecraft mc = Minecraft.getInstance();
         mc.execute(() ->
@@ -23,10 +23,9 @@ public class ClientPacketHandlers
             SpellcastState.get(player)
                     .onSync(message.changeMode, spellcast, message.remainingCastTime, message.remainingInterval, message.totalCastTime);
         });
-        return true;
     }
 
-    public static boolean handleRemainingAmountsUpdate(UpdateEssentializerAmounts message)
+    public static void handleRemainingAmountsUpdate(UpdateEssentializerAmounts message)
     {
         Minecraft mc = Minecraft.getInstance();
         mc.execute(() ->
@@ -43,10 +42,9 @@ public class ClientPacketHandlers
                 }
             }
         });
-        return true;
     }
 
-    public static boolean handleEssentializerTileUpdate(UpdateEssentializerTile message)
+    public static void handleEssentializerTileUpdate(UpdateEssentializerTile message)
     {
         Minecraft mc = Minecraft.getInstance();
         mc.execute(() ->
@@ -59,10 +57,9 @@ public class ClientPacketHandlers
                 essentializer.remainingToConvert = message.remaining;
             }
         });
-        return true;
     }
 
-    public static boolean handleAddVelocityPlayer(AddVelocityToPlayer message)
+    public static void handleAddVelocityPlayer(AddVelocityToPlayer message)
     {
         Minecraft mc = Minecraft.getInstance();
         mc.execute(() -> {
@@ -70,7 +67,6 @@ public class ClientPacketHandlers
                 return;
             mc.player.push(message.vx, message.vy, message.vz);
         });
-        return true;
     }
 
     public static void handleParticlesInShape(ParticlesInShape packet)

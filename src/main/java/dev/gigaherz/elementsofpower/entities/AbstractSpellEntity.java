@@ -1,15 +1,12 @@
 package dev.gigaherz.elementsofpower.entities;
 
 import dev.gigaherz.elementsofpower.spells.Spellcast;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.entity.IEntityAdditionalSpawnData;
-import net.neoforged.neoforge.network.NetworkHooks;
+import net.neoforged.neoforge.entity.IEntityWithComplexSpawn;
 
-public abstract class AbstractSpellEntity extends Entity implements IEntityAdditionalSpawnData
+public abstract class AbstractSpellEntity extends Entity implements IEntityWithComplexSpawn
 {
     Spellcast spellcast;
 
@@ -18,11 +15,5 @@ public abstract class AbstractSpellEntity extends Entity implements IEntityAddit
         super(entityTypeIn, worldIn);
 
         this.spellcast = spellcast;
-    }
-
-    @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket()
-    {
-        return NetworkHooks.getEntitySpawningPacket(this);
     }
 }

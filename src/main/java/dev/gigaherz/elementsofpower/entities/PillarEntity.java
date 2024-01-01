@@ -18,13 +18,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.entity.IEntityAdditionalSpawnData;
-import net.neoforged.neoforge.network.NetworkHooks;
 
+import net.neoforged.neoforge.entity.IEntityWithComplexSpawn;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 
-public class PillarEntity extends Entity implements IEntityAdditionalSpawnData
+public class PillarEntity extends Entity implements IEntityWithComplexSpawn
 {
     public static final int RAISE_TICKS = 3;
     private Player caster;
@@ -60,7 +59,7 @@ public class PillarEntity extends Entity implements IEntityAdditionalSpawnData
         {
             float height = getHeight();
 
-            ElementsOfPowerMod.CHANNEL.send(PacketDistributor.ALL.noArg(), new ParticlesInShape(
+            PacketDistributor.TRACKING_ENTITY.with(this).send(new ParticlesInShape(
                     ParticlesInShape.AreaShape.BOX_UNIFORM,
                     new BlockParticleOption(ParticleTypes.BLOCK, Blocks.DIRT.defaultBlockState()),
                     150,
@@ -166,11 +165,5 @@ public class PillarEntity extends Entity implements IEntityAdditionalSpawnData
     {
         duration = buffer.readInt();
         delay = buffer.readInt();
-    }
-
-    @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket()
-    {
-        return NetworkHooks.getEntitySpawningPacket(this);
     }
 }

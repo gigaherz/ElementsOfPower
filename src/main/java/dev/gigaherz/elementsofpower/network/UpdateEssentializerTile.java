@@ -1,17 +1,20 @@
 package dev.gigaherz.elementsofpower.network;
 
+import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.client.ClientPacketHandlers;
 import dev.gigaherz.elementsofpower.essentializer.EssentializerBlockEntity;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
-import java.util.function.Supplier;
-
-public class UpdateEssentializerTile
+public class UpdateEssentializerTile implements CustomPacketPayload
 {
+    public static final ResourceLocation ID = ElementsOfPowerMod.location("update_essentializer_tile");
+
     public BlockPos pos;
     public MagicAmounts remaining;
     public ItemStack activeItem;
@@ -30,15 +33,21 @@ public class UpdateEssentializerTile
         remaining = new MagicAmounts(buf);
     }
 
-    public void encode(FriendlyByteBuf buf)
+    public void write(FriendlyByteBuf buf)
     {
         buf.writeBlockPos(pos);
         buf.writeItem(activeItem);
         remaining.writeTo(buf);
     }
 
-    public boolean handle(NetworkEvent.Context context)
+    @Override
+    public ResourceLocation id()
     {
-        return ClientPacketHandlers.handleEssentializerTileUpdate(this);
+        return ID;
+    }
+
+    public void handle(PlayPayloadContext context)
+    {
+        ClientPacketHandlers.handleEssentializerTileUpdate(this);
     }
 }

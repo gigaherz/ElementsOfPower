@@ -1,19 +1,24 @@
 package dev.gigaherz.elementsofpower.network;
 
+import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.items.WandItem;
 import dev.gigaherz.elementsofpower.spells.Element;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.NetworkEvent;
 
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class UpdateSpellSequence
+public class UpdateSpellSequence implements CustomPacketPayload
 {
+    public static final ResourceLocation ID = ElementsOfPowerMod.location("update_spell_sequence");
+
     public enum ChangeMode
     {
         BEGIN,
@@ -32,7 +37,7 @@ public class UpdateSpellSequence
     public UpdateSpellSequence(ChangeMode mode, int slotNumber, @Nullable List<Element> sequence, int useTicks)
     {
         changeMode = mode;
-        this.sequence = sequence;
+        this.sequence = sequence != null ? List.copyOf(sequence) : null;
         this.slotNumber = slotNumber;
         this.useTicks = useTicks;
     }
@@ -52,7 +57,7 @@ public class UpdateSpellSequence
         }
     }
 
-    public void encode(FriendlyByteBuf buf)
+    public void write(FriendlyByteBuf buf)
     {
         buf.writeInt(changeMode.ordinal());
         buf.writeByte(slotNumber);
@@ -69,16 +74,21 @@ public class UpdateSpellSequence
         }
     }
 
-    public void handle(NetworkEvent.Context context)
+    @Override
+    public ResourceLocation id()
     {
-        context.enqueueWork(() ->
-        {
-            ServerPlayer player = context.getSender();
-            ItemStack stack = Objects.requireNonNull(player).getInventory().getItem(slotNumber);
+        return ID;
+    }
 
-            if (stack.getItem() instanceof WandItem)
+    public void handle(PlayPayloadContext context)
+    {
+        context.workHandler().execute(() ->
+        {
+            Player player = context.player().orElseThrow();
+            ItemStack stack = player.getInventory().getItem(slotNumber);
+
+            if (stack.getItem() instanceof WandItem wand)
             {
-                WandItem wand = (WandItem) stack.getItem();
                 wand.processSequenceUpdate(this, stack, player, useTicks);
             }
         });

@@ -1,16 +1,21 @@
 package dev.gigaherz.elementsofpower.network;
 
+import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.client.ClientPacketHandlers;
 import dev.gigaherz.elementsofpower.spells.Spellcast;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.network.NetworkEvent;
 
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.Nullable;
 
-public class SynchronizeSpellcastState
+public class SynchronizeSpellcastState implements CustomPacketPayload
 {
+    public static final ResourceLocation ID = ElementsOfPowerMod.location("sync_spellcast_state");
+
     public enum ChangeMode
     {
         BEGIN,
@@ -47,7 +52,7 @@ public class SynchronizeSpellcastState
         this.totalCastTime = buf.readVarInt();
     }
 
-    public void encode(FriendlyByteBuf buf)
+    public void write(FriendlyByteBuf buf)
     {
         buf.writeInt(changeMode.ordinal());
         buf.writeInt(casterID);
@@ -57,8 +62,14 @@ public class SynchronizeSpellcastState
         buf.writeVarInt(totalCastTime);
     }
 
-    public boolean handle(NetworkEvent.Context context)
+    @Override
+    public ResourceLocation id()
     {
-        return ClientPacketHandlers.handleSpellcastSync(this);
+        return ID;
+    }
+
+    public void handle(PlayPayloadContext context)
+    {
+        ClientPacketHandlers.handleSpellcastSync(this);
     }
 }

@@ -116,8 +116,7 @@ public class EssentializerMenu
         {
             if (player instanceof ServerPlayer serverPlayer)
             {
-                ElementsOfPowerMod.CHANNEL.send(
-                        PacketDistributor.PLAYER.with(() -> serverPlayer),
+                PacketDistributor.PLAYER.with(serverPlayer).send(
                         new UpdateEssentializerAmounts(containerId, magicHolder));
             }
 

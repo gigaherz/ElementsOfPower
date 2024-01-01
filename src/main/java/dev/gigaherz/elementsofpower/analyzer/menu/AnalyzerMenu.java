@@ -13,7 +13,6 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerListener;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.NetworkHooks;
 
 public class AnalyzerMenu extends AbstractContainerMenu
 {
@@ -49,7 +48,7 @@ public class AnalyzerMenu extends AbstractContainerMenu
 
     public static void openAnalyzer(ServerPlayer serverPlayer, int slot)
     {
-        NetworkHooks.openScreen(serverPlayer, new SimpleMenuProvider((id, playerInventory, player) -> new AnalyzerMenu(id, playerInventory, slot),
+        serverPlayer.openMenu(new SimpleMenuProvider((id, playerInventory, player) -> new AnalyzerMenu(id, playerInventory, slot),
                         Component.translatable("container.elementsofpower.analyzer")),
                 (packetBuffer) -> packetBuffer.writeInt(slot));
     }

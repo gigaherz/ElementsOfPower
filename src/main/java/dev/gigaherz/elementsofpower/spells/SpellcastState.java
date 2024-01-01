@@ -247,7 +247,7 @@ public class SpellcastState implements INBTSerializable<CompoundTag>
     {
         if (spellcast != null && !player.level().isClientSide)
         {
-            ElementsOfPowerMod.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player),
+            PacketDistributor.TRACKING_ENTITY_AND_SELF.with(player).send(
                     new SynchronizeSpellcastState(mode, player, spellcast, remainingCastTime, remainingInterval, totalCastTime));
         }
     }

@@ -3,7 +3,7 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id 'net.neoforged.gradle.userdev' version '7.0.72'
+    id 'net.neoforged.gradle.userdev' version '7.0.76'
 }
 
 version = "0.16.2-alpha"
@@ -92,7 +92,7 @@ runs {
 minecraft.accessTransformers.file rootProject.file('src/main/resources/META-INF/accesstransformer.cfg')
 
 dependencies {
-    implementation 'net.neoforged:neoforge:20.4.60-beta'
+    implementation 'net.neoforged:neoforge:20.4.70-beta'
 
     //compileOnly fg.deobf("mezz.jei:jei-1.20.1-common-api:15.2.0.22")
     //runtimeOnly fg.deobf("mezz.jei:jei-1.20.1-common:15.2.0.22")
@@ -101,10 +101,10 @@ dependencies {
 
     // https://www.curseforge.com/minecraft/mc-mods/curios/files/4921744
     compileOnly "top.theillusivec4.curios:curios-neoforge:7.0.0-beta+1.20.3"
-    runtimeOnly "top.theillusivec4.curios:curios-neoforge:7.0.0-beta+1.20.3"
+    //runtimeOnly "top.theillusivec4.curios:curios-neoforge:7.0.0-beta+1.20.3"
 
     compileOnly "com.ldtteam:aequivaleo:1.20.4-0.1.127-ALPHA:api"
-    runtimeOnly "com.ldtteam:aequivaleo:1.20.4-0.1.127-ALPHA:universal"
+    //runtimeOnly "com.ldtteam:aequivaleo:1.20.4-0.1.127-ALPHA:universal"
 
     //runtimeOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:1.16-3.1.4-22")
 

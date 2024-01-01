@@ -5,21 +5,17 @@ import dev.gigaherz.elementsofpower.spells.Spellcast;
 import dev.gigaherz.elementsofpower.spells.SpellcastState;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
-import net.neoforged.neoforge.entity.IEntityAdditionalSpawnData;
-import net.neoforged.neoforge.network.NetworkHooks;
-
+import net.neoforged.neoforge.entity.IEntityWithComplexSpawn;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public class BallEntity extends ThrowableProjectile implements IEntityAdditionalSpawnData
+public class BallEntity extends ThrowableProjectile implements IEntityWithComplexSpawn
 {
     private Player player;
     private UUID playerUUID;
@@ -101,12 +97,6 @@ public class BallEntity extends ThrowableProjectile implements IEntityAdditional
 
             this.remove(RemovalReason.DISCARDED);
         }
-    }
-
-    @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket()
-    {
-        return NetworkHooks.getEntitySpawningPacket(this);
     }
 
     @Override

@@ -26,7 +26,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.network.NetworkHooks;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -59,7 +58,7 @@ public class EssentializerBlock extends BaseEntityBlock
         if (worldIn.isClientSide)
             return InteractionResult.SUCCESS;
 
-        NetworkHooks.openScreen((ServerPlayer) player, new SimpleMenuProvider((id, playerInventory, playerEntity) ->
+        player.openMenu(new SimpleMenuProvider((id, playerInventory, playerEntity) ->
                 new EssentializerMenu(id, (EssentializerBlockEntity) tileEntity, playerInventory),
                 Component.translatable("container.elementsofpower.essentializer")), pos);
 

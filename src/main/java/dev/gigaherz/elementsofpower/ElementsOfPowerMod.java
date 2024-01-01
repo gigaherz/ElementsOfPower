@@ -62,11 +62,8 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.neoforged.neoforge.network.NetworkRegistry;
-import net.neoforged.neoforge.network.PlayNetworkDirection;
-import net.neoforged.neoforge.network.simple.SimpleChannel;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
+import net.neoforged.neoforge.network.registration.IPayloadRegistrar;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
@@ -107,7 +104,6 @@ public class ElementsOfPowerMod
             EntityType.Builder.<PillarEntity>of(PillarEntity::new, MobCategory.MISC)
                     .sized(14/16.0f, 31/16.0f).fireImmune()
                     .setTrackingRange(80).setUpdateInterval(3).setShouldReceiveVelocityUpdates(true)
-                    .setCustomClientFactory((packet,level) -> new PillarEntity(ElementsOfPowerMod.PILLAR_ENTITY_TYPE.get(), level))
                             .build(location("spell_pillar").toString()));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<EssentializerBlockEntity>> ESSENTIALIZER_BLOCK_ENTITY = BLOCK_ENTITIES.register("essentializer", () ->
@@ -237,20 +233,10 @@ public class ElementsOfPowerMod
             "spellcast_state", () -> AttachmentType.builder(SpellcastState::new).build()
     );
 
-    private static final String PROTOCOL_VERSION = "1.0";
-    public static SimpleChannel CHANNEL = NetworkRegistry.ChannelBuilder
-            .named(location("general"))
-            .clientAcceptedVersions(PROTOCOL_VERSION::equals)
-            .serverAcceptedVersions(PROTOCOL_VERSION::equals)
-            .networkProtocolVersion(() -> PROTOCOL_VERSION)
-            .simpleChannel();
-
     public static Logger LOGGER = LogManager.getLogger(MODID);
 
-    public ElementsOfPowerMod()
+    public ElementsOfPowerMod(IEventBus modEventBus)
     {
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-
         ElementsOfPowerBlocks.BLOCKS.register(modEventBus);
         ElementsOfPowerItems.ITEMS.register(modEventBus);
         LOOT_FUNCTION_TYPES.register(modEventBus);
@@ -280,8 +266,6 @@ public class ElementsOfPowerMod
     {
         event.register(location("nbt_to_model"), NbtToModel.Loader.INSTANCE);
         event.register(location("staff_model"), StaffModel.Loader.INSTANCE);
-        //event.register(location("nbt_to_model"), NbtToModel.Loader.INSTANCE);
-        //event.register(location("staff_model"), StaffModel.Loader.INSTANCE);
     }
 
     @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -334,16 +318,15 @@ public class ElementsOfPowerMod
         }
     }
 
-    private void commonSetup(FMLCommonSetupEvent event)
+    private void commonSetup(RegisterPayloadHandlerEvent event)
     {
-        int messageNumber = 0;
-        CHANNEL.messageBuilder(UpdateSpellSequence.class, messageNumber++, PlayNetworkDirection.PLAY_TO_SERVER).encoder(UpdateSpellSequence::encode).decoder(UpdateSpellSequence::new).consumerNetworkThread(UpdateSpellSequence::handle).add();
-        CHANNEL.messageBuilder(SynchronizeSpellcastState.class, messageNumber++, PlayNetworkDirection.PLAY_TO_CLIENT).encoder(SynchronizeSpellcastState::encode).decoder(SynchronizeSpellcastState::new).consumerNetworkThread(SynchronizeSpellcastState::handle).add();
-        CHANNEL.messageBuilder(UpdateEssentializerAmounts.class, messageNumber++, PlayNetworkDirection.PLAY_TO_CLIENT).encoder(UpdateEssentializerAmounts::encode).decoder(UpdateEssentializerAmounts::new).consumerNetworkThread(UpdateEssentializerAmounts::handle).add();
-        CHANNEL.messageBuilder(UpdateEssentializerTile.class, messageNumber++, PlayNetworkDirection.PLAY_TO_CLIENT).encoder(UpdateEssentializerTile::encode).decoder(UpdateEssentializerTile::new).consumerNetworkThread(UpdateEssentializerTile::handle).add();
-        CHANNEL.messageBuilder(AddVelocityToPlayer.class, messageNumber++, PlayNetworkDirection.PLAY_TO_CLIENT).encoder(AddVelocityToPlayer::encode).decoder(AddVelocityToPlayer::new).consumerNetworkThread(AddVelocityToPlayer::handle).add();
-        CHANNEL.messageBuilder(ParticlesInShape.class, messageNumber++, PlayNetworkDirection.PLAY_TO_CLIENT).encoder(ParticlesInShape::write).decoder(ParticlesInShape::new).consumerNetworkThread(ParticlesInShape::handle).add();
-        LOGGER.debug("Final message number: " + messageNumber);
+        final IPayloadRegistrar registrar = event.registrar(MODID).versioned("1.0");
+        registrar.play(UpdateSpellSequence.ID, UpdateSpellSequence::new, play -> play.server(UpdateSpellSequence::handle));
+        registrar.play(SynchronizeSpellcastState.ID, SynchronizeSpellcastState::new, play -> play.client(SynchronizeSpellcastState::handle));
+        registrar.play(UpdateEssentializerAmounts.ID, UpdateEssentializerAmounts::new, play -> play.client(UpdateEssentializerAmounts::handle));
+        registrar.play(UpdateEssentializerTile.ID, UpdateEssentializerTile::new, play -> play.client(UpdateEssentializerTile::handle));
+        registrar.play(AddVelocityToPlayer.ID, AddVelocityToPlayer::new, play -> play.client(AddVelocityToPlayer::handle));
+        registrar.play(ParticlesInShape.ID, ParticlesInShape::new, play -> play.client(ParticlesInShape::handle));
     }
 
     public void gatherData(GatherDataEvent event)

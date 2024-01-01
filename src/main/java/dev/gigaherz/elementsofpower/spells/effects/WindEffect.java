@@ -124,9 +124,9 @@ public class WindEffect extends SpellEffect
         }
 
         e.push(vx, vy, vz);
-        if (e instanceof ServerPlayer)
+        if (e instanceof ServerPlayer serverPlayer)
         {
-            ElementsOfPowerMod.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) e), new AddVelocityToPlayer(vx, vy, vz));
+            PacketDistributor.PLAYER.with(serverPlayer).send(new AddVelocityToPlayer(vx, vy, vz));
         }
     }
 

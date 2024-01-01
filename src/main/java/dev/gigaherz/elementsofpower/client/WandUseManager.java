@@ -28,6 +28,7 @@ import net.neoforged.neoforge.event.TickEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.lwjgl.glfw.GLFW;
 
 import org.jetbrains.annotations.Nullable;
@@ -267,18 +268,18 @@ public class WandUseManager
         sequence.clear();
         MagicContainerOverlay.instance.runes.clear();
 
-        ElementsOfPowerMod.CHANNEL.sendToServer(new UpdateSpellSequence(UpdateSpellSequence.ChangeMode.BEGIN, slotInUse, null, useTicks));
+        PacketDistributor.SERVER.noArg().send(new UpdateSpellSequence(UpdateSpellSequence.ChangeMode.BEGIN, slotInUse, null, useTicks));
     }
 
     private void endHoldingRightButton(boolean cancelMagicSetting)
     {
         if (cancelMagicSetting || (failedSequence && sequence.size() == 0))
         {
-            ElementsOfPowerMod.CHANNEL.sendToServer(new UpdateSpellSequence(UpdateSpellSequence.ChangeMode.CANCEL, slotInUse, null, useTicks));
+            PacketDistributor.SERVER.noArg().send(new UpdateSpellSequence(UpdateSpellSequence.ChangeMode.CANCEL, slotInUse, null, useTicks));
         }
         else
         {
-            ElementsOfPowerMod.CHANNEL.sendToServer(new UpdateSpellSequence(UpdateSpellSequence.ChangeMode.COMMIT, slotInUse, sequence, useTicks));
+            PacketDistributor.SERVER.noArg().send(new UpdateSpellSequence(UpdateSpellSequence.ChangeMode.COMMIT, slotInUse, sequence, useTicks));
         }
 
         handInUse = null;
