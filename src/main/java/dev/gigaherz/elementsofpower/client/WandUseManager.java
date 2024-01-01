@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
+import dev.gigaherz.elementsofpower.client.renderers.MagicContainerOverlay;
 import dev.gigaherz.elementsofpower.items.WandItem;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import dev.gigaherz.elementsofpower.network.UpdateSpellSequence;
@@ -233,7 +234,12 @@ public class WandUseManager
 
             if (!isPressedNow && lastKeyState[i])
             {
-                sequence.add(Element.values[i]);
+                var element = Element.values[i];
+
+                sequence.add(element);
+
+                MagicContainerOverlay.instance.addRune(element);
+
                 anyChanged = true;
             }
 
@@ -259,6 +265,7 @@ public class WandUseManager
         slotInUse = slotNumber;
         useTicks = 0;
         sequence.clear();
+        MagicContainerOverlay.instance.runes.clear();
 
         ElementsOfPowerMod.CHANNEL.sendToServer(new UpdateSpellSequence(UpdateSpellSequence.ChangeMode.BEGIN, slotInUse, null, useTicks));
     }
@@ -280,6 +287,7 @@ public class WandUseManager
         slotInUse = -1;
         useTicks = 0;
         sequence.clear();
+        //MagicContainerOverlay.instance.runes.clear();
 
         Objects.requireNonNull(mc.player).stopUsingItem();
     }

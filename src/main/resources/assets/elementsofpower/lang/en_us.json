@@ -174,7 +174,7 @@
     "text.elementsofpower.analyzer.not_a_gemstone":  "Does not look like a useful gemstone.",
 
     "text.elementsofpower.spell.invalid_sequence": "The sequence does not result in a valid spell",
-    "text.elementsofpower.spell.cost_too_high": "Not enough elements",
+    "text.elementsofpower.spell.cost_too_high": "Not enough essences",
 
     "text.elementsofpower.bauble.active": "Actively Transferring",
     "text.elementsofpower.bauble.passive": "Passive Reservoir",
