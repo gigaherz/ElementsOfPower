@@ -22,14 +22,7 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:ruby\",tag:{quality:0}}"
-      }
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:ruby\"}"
+        "stack": "{Count:1b,id:\"elementsofpower:ruby\",tag:{quality:3}}"
       }
     },
     {
@@ -43,14 +36,7 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:ruby\",tag:{quality:3}}"
-      }
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:ruby\",tag:{quality:4}}"
+        "stack": "{Count:1b,id:\"elementsofpower:ruby\"}"
       }
     },
     {
@@ -58,6 +44,20 @@
       "data": {
         "count": 1.0,
         "stack": "{Count:1b,id:\"elementsofpower:ruby\",tag:{quality:1}}"
+      }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{Count:1b,id:\"elementsofpower:ruby\",tag:{quality:0}}"
+      }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{Count:1b,id:\"elementsofpower:ruby\",tag:{quality:4}}"
       }
     }
   ]

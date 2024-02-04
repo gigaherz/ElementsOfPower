@@ -12,12 +12,16 @@ import dev.gigaherz.elementsofpower.database.GemstoneExaminer;
 import dev.gigaherz.elementsofpower.database.StockConversions;
 import dev.gigaherz.elementsofpower.gemstones.AnalyzedFilteringIngredient;
 import dev.gigaherz.elementsofpower.gemstones.Gemstone;
+import dev.gigaherz.elementsofpower.gemstones.Quality;
 import dev.gigaherz.elementsofpower.integration.aequivaleo.AequivaleoPlugin;
+import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import dev.gigaherz.elementsofpower.spells.Element;
 import dev.gigaherz.elementsofpower.spells.blocks.CushionBlock;
 import dev.gigaherz.elementsofpower.spells.blocks.DustBlock;
 import dev.gigaherz.elementsofpower.spells.blocks.LightBlock;
 import dev.gigaherz.elementsofpower.spells.blocks.MistBlock;
+import net.minecraft.Util;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
 import net.minecraft.data.DataGenerator;
@@ -36,7 +40,9 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.LootTables;
@@ -61,6 +67,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static com.ibm.icu.impl.ValidIdentifiers.Datatype.x;
 
 class ElementsofPowerDataGen
 {
@@ -243,6 +251,177 @@ class ElementsofPowerDataGen
                     blocksTag.addTag(tag);
                 }
             });
+
+            enum Quantity {
+                VeryLow("very_low"),
+                Low("low"),
+                High("high");
+
+                private final String quantityString;
+
+                Quantity(String quantityString)
+                {
+                    this.quantityString = quantityString;
+                }
+
+                public String getQuantityString()
+                {
+                    return quantityString;
+                }
+
+                public static final Quantity[] values = values();
+            }
+
+            final Map<Element, Map<Quantity, TagAppender<Block>>> tagMap = new HashMap<>();
+            for(var e : Element.values)
+            {
+                if (e == Element.BALANCE) continue;
+                var qMap = new HashMap<Quantity, TagAppender<Block>>();
+                for(var q : Quantity.values)
+                {
+                    var tag = this.tag(TagKey.create(Registry.BLOCK_REGISTRY, ElementsOfPowerMod.location("contained_magic/" + e.getName() + "_" + q.getQuantityString())));
+
+                    qMap.put(q, tag);
+                }
+                tagMap.put(e, qMap);
+            }
+
+            for(var block : ForgeRegistries.BLOCKS)
+            {
+                MagicAmounts am = MagicAmounts.EMPTY;
+
+                Material mat = block.defaultBlockState().getMaterial();
+                if (mat == Material.AIR)
+                {
+                    am = am.air(0.25f);
+                }
+                else if (mat == Material.WATER)
+                {
+                    am = am.water(1.5f);
+                }
+                else if (mat == Material.LAVA)
+                {
+                    am = am.fire(1);
+                    am = am.earth(0.5f);
+                }
+                else if (mat == Material.FIRE)
+                {
+                    am = am.fire(1);
+                    am = am.air(0.5f);
+                }
+                else if (mat == Material.STONE)
+                {
+                    am = am.earth(1);
+                    if (block == Blocks.NETHERRACK)
+                    {
+                        am = am.fire(0.5f);
+                    }
+                    else if (block == Blocks.END_STONE || block == Blocks.END_STONE_BRICKS)
+                    {
+                        am = am.darkness(0.5f);
+                    }
+                }
+                else if (mat == Material.SAND)
+                {
+                    am = am.earth(0.5f);
+                    if (block == Blocks.SOUL_SAND)
+                    {
+                        am = am.death(1);
+                    }
+                    else
+                    {
+                        am = am.air(1);
+                    }
+                }
+                else if (mat == Material.WOOD)
+                {
+                    am = am.life(1);
+                    am = am.earth(0.5f);
+                }
+                else if (mat == Material.LEAVES)
+                {
+                    am = am.life(1);
+                }
+                else if (mat == Material.PLANT)
+                {
+                    am = am.life(1);
+                }
+                else if (mat == Material.CACTUS)
+                {
+                    am = am.life(1);
+                    am = am.earth(0.5f);
+                }
+                else if (mat == Material.GRASS)
+                {
+                    am = am.life(0.5f);
+                    am = am.earth(1);
+                }
+                else if (mat == Material.DIRT)
+                {
+                    am = am.earth(1);
+                    if (block == Blocks.PODZOL)
+                    {
+                        am = am.life(0.5f);
+                    }
+                }
+                else if (mat == Material.METAL)
+                {
+                    am = am.earth(1);
+                }
+                else if (mat == Material.GLASS)
+                {
+                    am = am.earth(0.5f);
+                    am = am.light(0.5f);
+                    am = am.air(0.5f);
+                }
+                else if (mat == Material.BUILDABLE_GLASS)
+                {
+                    am = am.earth(0.5f);
+                    am = am.light(1);
+                }
+                else if (mat == Material.ICE || mat == Material.ICE_SOLID)
+                {
+                    am = am.water(1);
+                    am = am.darkness(0.5f);
+                }
+                else if (mat == Material.TOP_SNOW || mat == Material.SNOW)
+                {
+                    am = am.water(0.5f);
+                    am = am.darkness(0.5f);
+                }
+                else if (mat == Material.CLAY)
+                {
+                    am = am.earth(0.5f);
+                    am = am.water(1);
+                }
+                else if (mat == Material.VEGETABLE)
+                {
+                    am = am.earth(0.5f);
+                    am = am.life(0.25f);
+                }
+                else if (mat == Material.EGG)
+                {
+                    am = am.darkness(1);
+                }
+
+                for(var e : Element.values)
+                {
+                    if (e == Element.BALANCE) continue;
+                    var q = am.get(e);
+                    if (q > 0 && q <= 0.25f)
+                    {
+                        tagMap.get(e).get(Quantity.VeryLow).add(block);
+                    }
+                    else if(q > 0.25f && q <= 0.5f)
+                    {
+                        tagMap.get(e).get(Quantity.Low).add(block);
+                    }
+                    else if(q >= 1.0f)
+                    {
+                        tagMap.get(e).get(Quantity.High).add(block);
+                    }
+                }
+            }
         }
     }
 

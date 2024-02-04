@@ -22,6 +22,20 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
+        "stack": "{Count:1b,id:\"elementsofpower:emerald\"}"
+      }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{Count:1b,id:\"elementsofpower:emerald\",tag:{quality:1}}"
+      }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
         "stack": "{Count:1b,id:\"elementsofpower:emerald\",tag:{quality:4}}"
       }
     },
@@ -36,28 +50,14 @@
       "type": "aequivaleo:itemstack",
       "data": {
         "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:emerald\",tag:{quality:0}}"
-      }
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:emerald\",tag:{quality:1}}"
-      }
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
-        "stack": "{Count:1b,id:\"elementsofpower:emerald\"}"
-      }
-    },
-    {
-      "type": "aequivaleo:itemstack",
-      "data": {
-        "count": 1.0,
         "stack": "{Count:1b,id:\"elementsofpower:emerald\",tag:{quality:3}}"
+      }
+    },
+    {
+      "type": "aequivaleo:itemstack",
+      "data": {
+        "count": 1.0,
+        "stack": "{Count:1b,id:\"elementsofpower:emerald\",tag:{quality:0}}"
       }
     }
   ]

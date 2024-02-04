@@ -1,0 +1,20 @@
+{
+  "values": [
+    "minecraft:water",
+    "minecraft:ice",
+    "minecraft:clay",
+    "minecraft:infested_stone",
+    "minecraft:infested_cobblestone",
+    "minecraft:infested_stone_bricks",
+    "minecraft:infested_mossy_stone_bricks",
+    "minecraft:infested_cracked_stone_bricks",
+    "minecraft:infested_chiseled_stone_bricks",
+    "minecraft:slime_block",
+    "minecraft:packed_ice",
+    "minecraft:frosted_ice",
+    "minecraft:blue_ice",
+    "minecraft:honey_block",
+    "minecraft:honeycomb_block",
+    "minecraft:infested_deepslate"
+  ]
+}

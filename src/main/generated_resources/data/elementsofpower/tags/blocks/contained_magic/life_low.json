@@ -1,0 +1,13 @@
+{
+  "values": [
+    "minecraft:grass_block",
+    "minecraft:podzol",
+    "minecraft:mycelium",
+    "minecraft:hay_block",
+    "minecraft:nether_wart_block",
+    "minecraft:dried_kelp_block",
+    "minecraft:warped_wart_block",
+    "minecraft:shroomlight",
+    "minecraft:target"
+  ]
+}
