@@ -117,7 +117,7 @@ public class StaffModel implements IUnbakedGeometry<StaffModel>
         @Override
         public boolean isGui3d()
         {
-            return true;
+            return false;
         }
 
         @Override

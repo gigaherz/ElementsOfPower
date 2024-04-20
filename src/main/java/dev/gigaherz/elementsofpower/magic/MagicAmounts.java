@@ -28,7 +28,7 @@ public record MagicAmounts(
 )
 {
     public static final Codec<MagicAmounts> CODEC = RecordCodecBuilder
-            .create(instance -> instance.group(
+            .create(builder -> builder.group(
                     Codec.FLOAT.fieldOf("fire").forGetter(MagicAmounts::fire),
                     Codec.FLOAT.fieldOf("water").forGetter(MagicAmounts::water),
                     Codec.FLOAT.fieldOf("air").forGetter(MagicAmounts::air),
@@ -37,7 +37,7 @@ public record MagicAmounts(
                     Codec.FLOAT.fieldOf("time").forGetter(MagicAmounts::time),
                     Codec.FLOAT.fieldOf("life").forGetter(MagicAmounts::life),
                     Codec.FLOAT.fieldOf("chaos").forGetter(MagicAmounts::chaos)
-            ).apply(instance, MagicAmounts::new));
+            ).apply(builder, MagicAmounts::new));
 
     public static final MagicAmounts EMPTY = new MagicAmounts();
     public static final MagicAmounts INFINITE = new MagicAmounts(
@@ -492,14 +492,14 @@ public record MagicAmounts(
 
     public boolean lessEqual(MagicAmounts other)
     {
-        if (fire>=other.fire) return false;
-        if (water>=other.water) return false;
-        if (air>=other.air) return false;
-        if (earth>=other.earth) return false;
-        if (light>=other.light) return false;
-        if (time>=other.time) return false;
-        if (life>=other.life) return false;
-        if (chaos>=other.chaos) return false;
+        if (fire>other.fire) return false;
+        if (water>other.water) return false;
+        if (air>other.air) return false;
+        if (earth>other.earth) return false;
+        if (light>other.light) return false;
+        if (time>other.time) return false;
+        if (life>other.life) return false;
+        if (chaos>other.chaos) return false;
         return true;
     }
 
@@ -531,14 +531,14 @@ public record MagicAmounts(
 
     public boolean greaterEqual(MagicAmounts other)
     {
-        if (fire<=other.fire) return false;
-        if (water<=other.water) return false;
-        if (air<=other.air) return false;
-        if (earth<=other.earth) return false;
-        if (light<=other.light) return false;
-        if (time<=other.time) return false;
-        if (life<=other.life) return false;
-        if (chaos<=other.chaos) return false;
+        if (fire<other.fire) return false;
+        if (water<other.water) return false;
+        if (air<other.air) return false;
+        if (earth<other.earth) return false;
+        if (light<other.light) return false;
+        if (time<other.time) return false;
+        if (life<other.life) return false;
+        if (chaos<other.chaos) return false;
         return true;
     }
 

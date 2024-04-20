@@ -1,7 +1,8 @@
-// 1.20.4	2023-12-11T00:49:42.1466345	Advancements
+// 1.20.4	2024-03-18T23:39:20.6413118	Advancements
 ecadc8317025b0260a5320c3eee045f3144635f2 data/elementsofpower/advancements/acquire_staff.json
 d43e7e42df16f4edc512e09f2be2beba4d6471e3 data/elementsofpower/advancements/acquire_trinket.json
 0224504312862582d2558e7108f0fc4bea2d9911 data/elementsofpower/advancements/acquire_wand.json
 f9806cd3e9b71fdded556daaf0bcaaf03b56ce0e data/elementsofpower/advancements/discover_gems.json
+cd95ada35a122d1c6ddf671f52423c7e2597be2b data/elementsofpower/advancements/first_spell.json
 b09d438aa144742af79823561e5f615c8bec8219 data/elementsofpower/advancements/fully_geared_up.json
 45c24575b8b830ea85dc6cb426bb92d03879bfde data/elementsofpower/advancements/root.json

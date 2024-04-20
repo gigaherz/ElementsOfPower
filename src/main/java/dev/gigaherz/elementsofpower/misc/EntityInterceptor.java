@@ -16,13 +16,11 @@ import java.util.Optional;
 public class EntityInterceptor
 {
     // Butchered from the player getMouseOver()
-    @Nullable
-    public static HitResult getEntityIntercept(Player player, Level level, Vec3 start, Vec3 look, Vec3 end,
-                                               @Nullable HitResult mop)
+    public static HitResult getEntityIntercept(Player player, Level level, Vec3 start, Vec3 look, Vec3 end, HitResult mop)
     {
         double distance = end.distanceTo(start);
 
-        if (mop != null && mop.getType() != HitResult.Type.MISS)
+        if (mop.getType() != HitResult.Type.MISS)
         {
             distance = mop.getLocation().distanceTo(start);
         }

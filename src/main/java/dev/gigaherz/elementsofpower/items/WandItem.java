@@ -1,5 +1,6 @@
 package dev.gigaherz.elementsofpower.items;
 
+import com.google.common.collect.Streams;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.gigaherz.elementsofpower.capabilities.MagicContainerCapability;
 import dev.gigaherz.elementsofpower.client.WandUseManager;
@@ -25,8 +26,15 @@ import net.minecraft.world.level.Level;
 
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import org.jetbrains.annotations.Nullable;
+
+import java.nio.file.Files;
 import java.util.List;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.function.Consumer;
+import java.util.function.ObjIntConsumer;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class WandItem extends GemContainerItem
 {
@@ -66,10 +74,10 @@ public class WandItem extends GemContainerItem
         return InteractionResultHolder.pass(itemStackIn);
     }
 
-    public boolean onSpellCommit(ItemStack stack, Player player, @Nullable List<Element> sequence)
+    public boolean onSpellCommit(ItemStack stack, Player player, @Nullable List<Element> sequence, int useTicks)
     {
         final boolean updateSequenceOnWand;
-        if (sequence == null)
+        if (sequence == null || sequence.size() == 0)
         {
             updateSequenceOnWand = false;
             sequence = getSequence(stack);
@@ -90,45 +98,47 @@ public class WandItem extends GemContainerItem
         }
 
         var magic = MagicContainerCapability.getContainer(stack);
+        if (magic == null)
+            return false;
 
-        if (magic != null)
+        MagicAmounts amounts = magic.getContainedMagic().add(getTotalPlayerReservoir(player));
+        MagicAmounts cost = SpellManager.computeCost(cast);
+
+        if (!magic.isInfinite() && !amounts.greaterEqual(cost))
         {
-
-            MagicAmounts amounts = magic.getContainedMagic().add(getTotalPlayerReservoir(player));
-            MagicAmounts cost = SpellManager.computeCost(cast);
-
-            if (!magic.isInfinite() && !amounts.greaterEqual(cost))
-            {
-                player.displayClientMessage(Component.translatable("text.elementsofpower.spell.cost_too_high"), true);
-                return updateSequenceOnWand;
-            }
-
-            Spellcast cast2 = cast.shape().castSpell(stack, player, cast);
-            if (cast2 != null)
-            {
-                SpellcastState.get(player).begin(cast2);
-            }
-
-            // TODO: Subtract from reservoir if needed
-            if (!magic.isInfinite())
-            {
-                cost = subtractFromReservoir(player, cost);
-                if (!cost.isEmpty())
-                {
-                    amounts = amounts.subtract(cost);
-                    magic.setContainedMagic(amounts);
-                }
-            }
-
-            //DiscoveryHandler.instance.onSpellcast(player, cast);
+            player.displayClientMessage(Component.translatable("text.elementsofpower.spell.cost_too_high"), true);
             return updateSequenceOnWand;
         }
 
-        return false;
+        if (useTicks < SpellManager.getChargeDuration(sequence))
+        {
+            player.displayClientMessage(Component.translatable("text.elementsofpower.spell.not_enough_time"), true);
+            return updateSequenceOnWand;
+        }
+
+        Spellcast cast2 = cast.shape().castSpell(stack, player, cast);
+        if (cast2 != null)
+        {
+            SpellcastState.get(player).begin(cast2);
+        }
+
+        // TODO: Subtract from reservoir if needed
+        if (!magic.isInfinite())
+        {
+            cost = subtractFromReservoir(player, cost);
+            if (!cost.isEmpty())
+            {
+                amounts = amounts.subtract(cost);
+                magic.setContainedMagic(amounts);
+            }
+        }
+
+        //DiscoveryHandler.instance.onSpellcast(player, cast);
+        return updateSequenceOnWand;
     }
 
     @Nullable
-    private List<Element> getSequence(ItemStack stack)
+    public List<Element> getSequence(ItemStack stack)
     {
         CompoundTag tag = stack.getTag();
         if (tag != null)
@@ -219,7 +229,7 @@ public class WandItem extends GemContainerItem
         }
     }
 
-    public float getChargeDuration(ItemStack stack)
+    public int getChargeDuration(ItemStack stack)
     {
         var seq = getSequence(stack);
         if (seq != null)
@@ -231,15 +241,16 @@ public class WandItem extends GemContainerItem
 
     public void processSequenceUpdate(UpdateSpellSequence message, ItemStack stack, Player player, int useTicks)
     {
-        if (message.changeMode == UpdateSpellSequence.ChangeMode.COMMIT && useTicks >= SpellManager.getChargeDuration(message.sequence))
+        if (message.changeMode == UpdateSpellSequence.ChangeMode.COMMIT)
         {
             CompoundTag nbt = stack.getOrCreateTag();
 
-            if (onSpellCommit(stack, player, message.sequence))
+            if (onSpellCommit(stack, player, message.sequence, useTicks))
             {
                 nbt.put(WandItem.SPELL_SEQUENCE_TAG, SpellManager.sequenceToList(message.sequence));
             }
         }
+
     }
 
     @Override

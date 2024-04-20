@@ -1,0 +1,37 @@
+{
+  "parent": "elementsofpower:acquire_wand",
+  "criteria": {
+    "spell_cast": {
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {}
+          }
+        ]
+      },
+      "trigger": "elementsofpower:spellcast"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancement.elementsofpower.first_spell.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "item": "elementsofpower:wand",
+      "nbt": "{gemstone:\"ruby\"}"
+    },
+    "title": {
+      "translate": "advancement.elementsofpower.first_spell.title"
+    }
+  },
+  "requirements": [
+    [
+      "spell_cast"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

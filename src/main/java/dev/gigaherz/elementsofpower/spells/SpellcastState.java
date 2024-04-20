@@ -9,6 +9,7 @@ import dev.gigaherz.elementsofpower.spells.shapes.SpellShape;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -219,6 +220,9 @@ public class SpellcastState implements INBTSerializable<CompoundTag>
         }
         totalCastTime = remainingCastTime;
 
+        if (this.player() instanceof ServerPlayer sp)
+            ElementsOfPowerMod.SPELLCAST_TRIGGER.get().trigger(sp);
+
         sync(SynchronizeSpellcastState.ChangeMode.BEGIN);
     }
 
@@ -372,12 +376,11 @@ public class SpellcastState implements INBTSerializable<CompoundTag>
         Vec3 look = player.getViewVector(partialTicks);
         end = start.add(look.x * maxDistance, look.y * maxDistance, look.z * maxDistance);
 
-        // FIXME
         BlockHitResult blockTrace = player.level().clip(new ClipContext(start, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
 
         HitResult trace = EntityInterceptor.getEntityIntercept(player, player.level(), start, look, end, blockTrace);
 
-        if (trace != null && trace.getType() != HitResult.Type.MISS)
+        if (trace.getType() != HitResult.Type.MISS)
         {
             end = trace.getLocation();
         }

@@ -19,6 +19,7 @@ import java.util.stream.Stream;
 
 import static dev.gigaherz.elementsofpower.ElementsOfPowerBlocks.*;
 
+@Deprecated(forRemoval = true)
 public enum Gemstone implements StringRepresentable, ItemLike
 {
     RUBY(Element.FIRE, "ruby", 0xFFFF0000,

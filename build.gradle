@@ -3,10 +3,10 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id 'net.neoforged.gradle.userdev' version '7.0.76'
+    id 'net.neoforged.gradle.userdev' version '7.0.107'
 }
 
-version = "0.16.2-alpha"
+version = "0.16.3-alpha"
 group = "dev.gigaherz.elementsofpower"
 
 Provider<String> minecraftVersion(Transformer<String, String> mapper) {
@@ -52,7 +52,7 @@ repositories {
         url "https://maven.tterrag.com/"
     }
     flatDir {
-        dirs 'deps'
+        dirs 'debugmods'
     }
     mavenLocal()
 }
@@ -88,11 +88,25 @@ runs {
         programArguments.addAll '--mod', 'elementsofpower', '--all', '--output', file('src/main/generated_resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
     }
 }
+/*
+subsystems {
+    parchment {
+        minecraftVersion="1.20.3"
+        mappingsVersion="2023.12.31"
+    }
+}
+*/
+subsystems {
+    parchment {
+        minecraftVersion="1.20.4"
+        mappingsVersion="2024.02.25"
+    }
+}
 
 minecraft.accessTransformers.file rootProject.file('src/main/resources/META-INF/accesstransformer.cfg')
 
 dependencies {
-    implementation 'net.neoforged:neoforge:20.4.70-beta'
+    implementation 'net.neoforged:neoforge:20.4.232'
 
     //compileOnly fg.deobf("mezz.jei:jei-1.20.1-common-api:15.2.0.22")
     //runtimeOnly fg.deobf("mezz.jei:jei-1.20.1-common:15.2.0.22")
@@ -103,8 +117,8 @@ dependencies {
     compileOnly "top.theillusivec4.curios:curios-neoforge:7.0.0-beta+1.20.3"
     //runtimeOnly "top.theillusivec4.curios:curios-neoforge:7.0.0-beta+1.20.3"
 
-    compileOnly "com.ldtteam:aequivaleo:1.20.4-0.1.127-ALPHA:api"
-    //runtimeOnly "com.ldtteam:aequivaleo:1.20.4-0.1.127-ALPHA:universal"
+    compileOnly "com.ldtteam:aequivaleo:1.20.4-0.1.130-ALPHA:api"
+    runtimeOnly "com.ldtteam:aequivaleo:1.20.4-0.1.130-ALPHA:universal"
 
     //runtimeOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:1.16-3.1.4-22")
 
@@ -112,6 +126,12 @@ dependencies {
 
     //runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:1.16.2-47")
     //runtimeOnly fg.deobf("deps:Botania-1.16.3:409")
+
+    runtimeOnly "deps:trenzalore-neo:4.0.1+mc1.20.4"
+    runtimeOnly "deps:jamd-neo:4.2.2+mc1.20.4"
+
+    runtimeOnly "deps:architectury:11.1.13-neoforge"
+    runtimeOnly "deps:ToolKit-neoforge:84.0.1"
 }
 
 jar {

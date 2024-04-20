@@ -96,7 +96,7 @@ public class SpellManager
     public static int getChargeDuration(List<Element> seq)
     {
         // temporary math
-        return seq.size() * 10;
+        return seq.size() * 10; // keep in sync with MagicContainerOverlay#setRunes
     }
 
     private static class SpellBuilder

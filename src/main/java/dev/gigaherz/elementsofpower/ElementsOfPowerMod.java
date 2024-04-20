@@ -1,5 +1,6 @@
 package dev.gigaherz.elementsofpower;
 
+import dev.gigaherz.elementsofpower.advancements.SpellCastTrigger;
 import dev.gigaherz.elementsofpower.analyzer.menu.AnalyzerMenu;
 import dev.gigaherz.elementsofpower.analyzer.menu.AnalyzerScreen;
 import dev.gigaherz.elementsofpower.capabilities.MagicContainerCapability;
@@ -8,8 +9,8 @@ import dev.gigaherz.elementsofpower.client.NbtToModel;
 import dev.gigaherz.elementsofpower.client.StaffModel;
 import dev.gigaherz.elementsofpower.client.WandUseManager;
 import dev.gigaherz.elementsofpower.client.models.PillarModel;
-import dev.gigaherz.elementsofpower.client.renderers.entities.BallEntityRenderer;
 import dev.gigaherz.elementsofpower.client.renderers.EssentializerTileEntityRender;
+import dev.gigaherz.elementsofpower.client.renderers.entities.BallEntityRenderer;
 import dev.gigaherz.elementsofpower.client.renderers.entities.PillarEntityRenderer;
 import dev.gigaherz.elementsofpower.cocoons.*;
 import dev.gigaherz.elementsofpower.entities.BallEntity;
@@ -20,12 +21,14 @@ import dev.gigaherz.elementsofpower.essentializer.menu.EssentializerMenu;
 import dev.gigaherz.elementsofpower.essentializer.menu.EssentializerScreen;
 import dev.gigaherz.elementsofpower.gemstones.AnalyzedFilteringIngredient;
 import dev.gigaherz.elementsofpower.gemstones.Gemstone;
+import dev.gigaherz.elementsofpower.gemstones.GemstoneOreFeature;
 import dev.gigaherz.elementsofpower.gemstones.Quality;
 import dev.gigaherz.elementsofpower.network.*;
 import dev.gigaherz.elementsofpower.recipes.ContainerChargeRecipe;
 import dev.gigaherz.elementsofpower.recipes.GemstoneChangeRecipe;
 import dev.gigaherz.elementsofpower.spells.Element;
 import dev.gigaherz.elementsofpower.spells.SpellcastState;
+import net.minecraft.advancements.CriterionTrigger;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -40,6 +43,7 @@ import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;
@@ -47,21 +51,22 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
-import net.minecraft.world.level.levelgen.placement.*;
+import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.neoforge.attachment.AttachmentType;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-import net.neoforged.neoforge.client.event.ModelEvent;
-import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
-import net.neoforged.neoforge.common.crafting.IngredientType;
-import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
-import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.attachment.AttachmentType;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.ModelEvent;
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
+import net.neoforged.neoforge.common.crafting.IngredientType;
+import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
+import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
 import net.neoforged.neoforge.network.registration.IPayloadRegistrar;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -70,7 +75,7 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.*;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 @Mod(ElementsOfPowerMod.MODID)
@@ -94,6 +99,7 @@ public class ElementsOfPowerMod
     private static final DeferredRegister<PlacementModifierType<?>> PLACEMENT_MODIFIER_TYPES = DeferredRegister.create(Registries.PLACEMENT_MODIFIER_TYPE, MODID);
     private static final DeferredRegister<IngredientType<?>> INGREDIENT_TYPES = DeferredRegister.create(NeoForgeRegistries.INGREDIENT_TYPES, MODID);
     public static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES = DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, MODID);
+    public static final DeferredRegister<CriterionTrigger<?>> CRITERION_TRIGGERS = DeferredRegister.create(Registries.TRIGGER_TYPE, MODID);
 
     public static final DeferredHolder<EntityType<?>, EntityType<BallEntity>> BALL_ENTITY_TYPE = ENTITY_TYPES.register("spell_ball", () ->
             EntityType.Builder.<BallEntity>of(BallEntity::new, MobCategory.MISC)
@@ -131,6 +137,10 @@ public class ElementsOfPowerMod
 
     public static final DeferredHolder<Feature<?>, CocoonFeature> COCOON_FEATURE = FEATURES.register("cocoon", () ->
             new CocoonFeature(NoneFeatureConfiguration.CODEC)
+    );
+
+    public static final DeferredHolder<Feature<?>, GemstoneOreFeature> GEMSTONE_ORE_FEATURE = FEATURES.register("gemstone_ore", () ->
+            new GemstoneOreFeature(GemstoneOreFeature.Configuration.CODEC)
     );
 
     public static final DeferredHolder<ParticleType<?>, ParticleType<ColoredSmokeData>> COLORED_SMOKE_DATA = PARTICLE_TYPES.register("colored_smoke", () ->
@@ -233,6 +243,10 @@ public class ElementsOfPowerMod
             "spellcast_state", () -> AttachmentType.builder(SpellcastState::new).build()
     );
 
+
+    public static final DeferredHolder<CriterionTrigger<?>, SpellCastTrigger> SPELLCAST_TRIGGER =
+            CRITERION_TRIGGERS.register("spellcast", SpellCastTrigger::new);
+
     public static Logger LOGGER = LogManager.getLogger(MODID);
 
     public ElementsOfPowerMod(IEventBus modEventBus)
@@ -250,11 +264,14 @@ public class ElementsOfPowerMod
         PLACEMENT_MODIFIER_TYPES.register(modEventBus);
         INGREDIENT_TYPES.register(modEventBus);
         ATTACHMENT_TYPES.register(modEventBus);
+        CRITERION_TRIGGERS.register(modEventBus);
 
-        modEventBus.addListener(this::commonSetup);
+        modEventBus.addListener(this::registerPackets);
         modEventBus.addListener(this::gatherData);
         modEventBus.addListener(this::modelRegistry);
         modEventBus.addListener(this::registerCapabilities);
+
+
     }
     private void registerCapabilities(RegisterCapabilitiesEvent event)
     {
@@ -293,12 +310,16 @@ public class ElementsOfPowerMod
         }
 
         @SubscribeEvent
+        public static void menuScreens(RegisterMenuScreensEvent event)
+        {
+            event.register(ANALYZER_MENU.get(), AnalyzerScreen::new);
+            event.register(ESSENTIALIZER_MENU.get(), EssentializerScreen::new);
+        }
+
+        @SubscribeEvent
         public static void clientSetup(FMLClientSetupEvent event)
         {
             event.enqueueWork(() -> {
-                MenuScreens.register(ANALYZER_MENU.get(), AnalyzerScreen::new);
-                MenuScreens.register(ESSENTIALIZER_MENU.get(), EssentializerScreen::new);
-
                 Gemstone.values.forEach(gem -> {
                     if (gem.generateCustomOre())
                     {
@@ -318,7 +339,7 @@ public class ElementsOfPowerMod
         }
     }
 
-    private void commonSetup(RegisterPayloadHandlerEvent event)
+    private void registerPackets(RegisterPayloadHandlerEvent event)
     {
         final IPayloadRegistrar registrar = event.registrar(MODID).versioned("1.0");
         registrar.play(UpdateSpellSequence.ID, UpdateSpellSequence::new, play -> play.server(UpdateSpellSequence::handle));

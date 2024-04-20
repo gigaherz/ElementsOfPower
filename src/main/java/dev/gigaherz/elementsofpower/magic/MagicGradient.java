@@ -3,7 +3,15 @@ package dev.gigaherz.elementsofpower.magic;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.NonNullList;
+import net.minecraft.util.ExtraCodecs;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.ShapedRecipePattern;
+import net.minecraft.world.item.crafting.ShapelessRecipe;
 
 import java.util.List;
 
@@ -11,7 +19,7 @@ public class MagicGradient
 {
     public static final Codec<MagicGradient> CODEC = RecordCodecBuilder
             .create((instance) -> instance.group(
-                    GradientPoint.CODEC.listOf().fieldOf("points").forGetter(i -> ImmutableList.copyOf(i.points))
+                    GradientPoint.CODEC.listOf().fieldOf("points").forGetter(i -> i.points)
             ).apply(instance, MagicGradient::new));
 
     private final List<GradientPoint> points;

@@ -172,12 +172,12 @@ public class WandUseManager
 
                 int slotNumber = player.getInventory().selected;
                 ItemStack itemUsing = player.getInventory().getSelected();
-                if (!(itemUsing.getItem() instanceof WandItem))
+                if (!(itemUsing.getItem() instanceof WandItem wandItem))
                     return;
 
                 InteractionHand hand = handInUse;
 
-                beginHoldingRightButton(slotNumber, hand, itemUsing);
+                beginHoldingRightButton(slotNumber, hand, itemUsing, wandItem);
             }
             else if (e.getItem().getItem() == activeStack.getItem())
             {
@@ -227,15 +227,14 @@ public class WandUseManager
         boolean anyChanged = false;
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
-            boolean isPressedNow = false;
-            if (spellKeys[i].isDown())
-            {
-                isPressedNow = true;
-            }
+            boolean isPressedNow = spellKeys[i].isDown();
 
             if (!isPressedNow && lastKeyState[i])
             {
                 var element = Element.values[i];
+
+                if (sequence.size() == 0)
+                    MagicContainerOverlay.instance.endRunes();
 
                 sequence.add(element);
 
@@ -258,7 +257,7 @@ public class WandUseManager
         }
     }
 
-    private void beginHoldingRightButton(int slotNumber, InteractionHand hand, ItemStack itemUsing)
+    private void beginHoldingRightButton(int slotNumber, InteractionHand hand, ItemStack itemUsing, WandItem wandItem)
     {
         activeStack = itemUsing;
         handInUse = hand;
@@ -266,7 +265,8 @@ public class WandUseManager
         slotInUse = slotNumber;
         useTicks = 0;
         sequence.clear();
-        MagicContainerOverlay.instance.runes.clear();
+        MagicContainerOverlay.instance.setRunes(itemUsing, wandItem);
+
 
         PacketDistributor.SERVER.noArg().send(new UpdateSpellSequence(UpdateSpellSequence.ChangeMode.BEGIN, slotInUse, null, useTicks));
     }
@@ -288,7 +288,7 @@ public class WandUseManager
         slotInUse = -1;
         useTicks = 0;
         sequence.clear();
-        //MagicContainerOverlay.instance.runes.clear();
+        MagicContainerOverlay.instance.endRunes();
 
         Objects.requireNonNull(mc.player).stopUsingItem();
     }

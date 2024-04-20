@@ -175,6 +175,7 @@
 
     "text.elementsofpower.spell.invalid_sequence": "The sequence does not result in a valid spell",
     "text.elementsofpower.spell.cost_too_high": "Not enough essences",
+    "text.elementsofpower.spell.not_enough_time": "Stopped too early",
 
     "text.elementsofpower.bauble.active": "Actively Transferring",
     "text.elementsofpower.bauble.passive": "Passive Reservoir",

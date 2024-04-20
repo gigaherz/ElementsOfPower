@@ -2,6 +2,7 @@
   "parent": "neoforge:item/default-tool",
   "loader": "elementsofpower:nbt_to_model",
   "tag":"gemstone",
+  "gui_light": "front",
   "values": {
     "":  { "parent":"elementsofpower:item/wand_base" },
     "ruby":  { "parent":"elementsofpower:item/wand_base", "textures": { "layer1": "elementsofpower:item/ruby_wand" } },
