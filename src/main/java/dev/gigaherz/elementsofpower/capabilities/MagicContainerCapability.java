@@ -27,17 +27,8 @@ public class MagicContainerCapability
                 ElementsOfPowerItems.WAND,
                 ElementsOfPowerItems.RING,
                 ElementsOfPowerItems.BRACELET,
-                ElementsOfPowerItems.NECKLACE,
-                ElementsOfPowerItems.RUBY,
-                ElementsOfPowerItems.SAPPHIRE,
-                ElementsOfPowerItems.CITRINE,
-                ElementsOfPowerItems.AGATE,
-                ElementsOfPowerItems.QUARTZ,
-                ElementsOfPowerItems.ONYX,
-                ElementsOfPowerItems.EMERALD,
-                ElementsOfPowerItems.RUBELLITE,
-                ElementsOfPowerItems.DIAMOND,
-                ElementsOfPowerItems.CREATIVITE
+                ElementsOfPowerItems.NECKLACE
+
         );
     }
 

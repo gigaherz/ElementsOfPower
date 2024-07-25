@@ -3,9 +3,6 @@ package dev.gigaherz.elementsofpower;
 import dev.gigaherz.elementsofpower.analyzer.AnalyzerBlock;
 import dev.gigaherz.elementsofpower.cocoons.CocoonBlock;
 import dev.gigaherz.elementsofpower.essentializer.EssentializerBlock;
-import dev.gigaherz.elementsofpower.gemstones.Gemstone;
-import dev.gigaherz.elementsofpower.gemstones.GemstoneBlock;
-import dev.gigaherz.elementsofpower.gemstones.GemstoneOreBlock;
 import dev.gigaherz.elementsofpower.spells.Element;
 import dev.gigaherz.elementsofpower.spells.blocks.CushionBlock;
 import dev.gigaherz.elementsofpower.spells.blocks.DustBlock;
@@ -67,59 +64,5 @@ public class ElementsOfPowerBlocks
     public static final DeferredBlock<CocoonBlock> TIME_COCOON = registerCocoon(Element.TIME);
     public static final DeferredBlock<CocoonBlock> LIFE_COCOON = registerCocoon(Element.LIFE);
     public static final DeferredBlock<CocoonBlock> CHAOS_COCOON = registerCocoon(Element.CHAOS);
-
-    private static DeferredBlock<GemstoneOreBlock> registerGemstoneOre(Gemstone type)
-    {
-        return BLOCKS.register(type.getSerializedName() + "_ore", ()->
-                new GemstoneOreBlock(type, Block.Properties.of().mapColor(MapColor.STONE).instrument(NoteBlockInstrument.BASEDRUM)
-                        .sound(SoundType.STONE)
-                        .requiresCorrectToolForDrops()
-                        .strength(3.0F, 3.0F)
-                )
-        );
-    }
-
-    private static DeferredBlock<GemstoneOreBlock> registerDeepslateGemstoneOre(Gemstone type)
-    {
-        return BLOCKS.register("deepslate_" + type.getSerializedName() + "_ore", ()->
-                new GemstoneOreBlock(type, Block.Properties.of().mapColor(MapColor.DEEPSLATE).instrument(NoteBlockInstrument.BASEDRUM)
-                        .sound(SoundType.DEEPSLATE)
-                        .requiresCorrectToolForDrops()
-                        .strength(4.5F, 3.0F)
-                )
-        );
-    }
-
-    public static final DeferredBlock<GemstoneOreBlock> RUBY_ORE = registerGemstoneOre(Gemstone.RUBY);
-    public static final DeferredBlock<GemstoneOreBlock> SAPPHIRE_ORE = registerGemstoneOre(Gemstone.SAPPHIRE);
-    public static final DeferredBlock<GemstoneOreBlock> CITRINE_ORE = registerGemstoneOre(Gemstone.CITRINE);
-    public static final DeferredBlock<GemstoneOreBlock> AGATE_ORE = registerGemstoneOre(Gemstone.AGATE);
-    public static final DeferredBlock<GemstoneOreBlock> ONYX_ORE = registerGemstoneOre(Gemstone.ONYX);
-    public static final DeferredBlock<GemstoneOreBlock> RUBELLITE_ORE = registerGemstoneOre(Gemstone.RUBELLITE);
-    public static final DeferredBlock<GemstoneOreBlock> DEEPSLATE_RUBY_ORE = registerDeepslateGemstoneOre(Gemstone.RUBY);
-    public static final DeferredBlock<GemstoneOreBlock> DEEPSLATE_SAPPHIRE_ORE = registerDeepslateGemstoneOre(Gemstone.SAPPHIRE);
-    public static final DeferredBlock<GemstoneOreBlock> DEEPSLATE_CITRINE_ORE = registerDeepslateGemstoneOre(Gemstone.CITRINE);
-    public static final DeferredBlock<GemstoneOreBlock> DEEPSLATE_AGATE_ORE = registerDeepslateGemstoneOre(Gemstone.AGATE);
-    public static final DeferredBlock<GemstoneOreBlock> DEEPSLATE_ONYX_ORE = registerDeepslateGemstoneOre(Gemstone.ONYX);
-    public static final DeferredBlock<GemstoneOreBlock> DEEPSLATE_RUBELLITE_ORE = registerDeepslateGemstoneOre(Gemstone.RUBELLITE);
-
-
-    private static DeferredBlock<GemstoneBlock> registerGemstoneBlock(Gemstone type)
-    {
-        return BLOCKS.register(type.getSerializedName() + "_block", () ->
-                new GemstoneBlock(type, Block.Properties.of().mapColor(MapColor.METAL)
-                        .strength(5F, 6F)
-                        .sound(SoundType.METAL)
-                        .requiresCorrectToolForDrops()
-                )
-        );
-    }
-
-    public static final DeferredBlock<GemstoneBlock> RUBY_BLOCK = registerGemstoneBlock(Gemstone.RUBY);
-    public static final DeferredBlock<GemstoneBlock> SAPPHIRE_BLOCK = registerGemstoneBlock(Gemstone.SAPPHIRE);
-    public static final DeferredBlock<GemstoneBlock> CITRINE_BLOCK = registerGemstoneBlock(Gemstone.CITRINE);
-    public static final DeferredBlock<GemstoneBlock> AGATE_BLOCK = registerGemstoneBlock(Gemstone.AGATE);
-    public static final DeferredBlock<GemstoneBlock> ONYX_BLOCK = registerGemstoneBlock(Gemstone.ONYX);
-    public static final DeferredBlock<GemstoneBlock> rubellite_BLOCK = registerGemstoneBlock(Gemstone.RUBELLITE);
 
 }

@@ -9,8 +9,6 @@ import com.ldtteam.aequivaleo.api.instanced.IInstancedEquivalencyHandlerRegistry
 import com.ldtteam.aequivaleo.api.plugin.IAequivaleoPlugin;
 import com.ldtteam.aequivaleo.api.results.IEquivalencyResults;
 import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
-import dev.gigaherz.elementsofpower.gemstones.Gemstone;
-import dev.gigaherz.elementsofpower.gemstones.GemstoneItem;
 import dev.gigaherz.elementsofpower.gemstones.Quality;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import dev.gigaherz.elementsofpower.spells.Element;
@@ -99,7 +97,7 @@ public class AequivaleoPlugin implements IAequivaleoPlugin
     public void onCommonSetup()
     {
         IInstancedEquivalencyHandlerRegistry equivalencyHandlerRegistry = IInstancedEquivalencyHandlerRegistry.getInstance();
-        for (Gemstone g : Gemstone.values)
+        /*for (Gemstone g : Gemstone.values)
         {
             GemstoneItem gemstoneItem = g.getItem();
             equivalencyHandlerRegistry.registerHandler(gemstoneItem, (equivalences) -> {
@@ -112,7 +110,7 @@ public class AequivaleoPlugin implements IAequivaleoPlugin
                     equivalences.accept(gemstoneItem.setQuality(new ItemStack(gemstoneItem), q));
                 }
             });
-        }
+        }*/
     }
 
     public static Optional<MagicAmounts> getMagicAmounts(Set<CompoundInstance> results)

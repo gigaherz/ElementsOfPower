@@ -1,7 +1,6 @@
 package dev.gigaherz.elementsofpower.analyzer.menu;
 
 import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
-import dev.gigaherz.elementsofpower.database.GemstoneExaminer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -234,7 +233,7 @@ public class AnalyzerMenu extends AbstractContainerMenu
         ItemStack stack = s.getItem();
         if (stack.getCount() > 0 && !player.level().isClientSide)
         {
-            ItemStack stack2 = GemstoneExaminer.identifyQuality(stack);
+            ItemStack stack2 = stack; // GemstoneExaminer.identifyQuality(stack);
 
             if (!ItemStack.matches(stack, stack2))
             {

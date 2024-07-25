@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
-import dev.gigaherz.elementsofpower.gemstones.Gemstone;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockModel;
@@ -165,8 +164,8 @@ public class StaffModel implements IUnbakedGeometry<StaffModel>
 
             var gems = new ArrayList<String>();
             gems.add("");
-            for(var e : Gemstone.values)
-                gems.add(e.getSerializedName());
+            //for(var e : Gemstone.values)
+            //    gems.add(e.getSerializedName());
 
             Map<Variant, SeparateTransformsModel> variantMap = new HashMap<>();
             for(var main : gems)

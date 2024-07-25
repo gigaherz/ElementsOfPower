@@ -38,9 +38,10 @@ public class AnalyzedFilteringIngredient extends Ingredient
     @Override
     public boolean test(@Nullable ItemStack stack)
     {
-        if (stack != null && stack.getItem() instanceof GemstoneItem)
+        if (stack != null)
         {
-            if (((GemstoneItem) stack.getItem()).getQuality(stack) != null)
+            var gemProperties = GemstoneProperties.getProperties(stack);
+            if (gemProperties == null)
                 return false;
         }
         return inner.test(stack);

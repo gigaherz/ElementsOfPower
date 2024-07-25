@@ -1,6 +1,5 @@
 package dev.gigaherz.elementsofpower.items;
 
-import dev.gigaherz.elementsofpower.gemstones.Gemstone;
 import dev.gigaherz.elementsofpower.gemstones.Quality;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import net.minecraft.nbt.CompoundTag;
@@ -39,13 +38,13 @@ public class StaffItem extends WandItem
 
     public Component getAugmentName(ItemStack stack)
     {
-        Component gemstoneName = getGemstoneName(stack);
+        //Component gemstoneName = getGemstoneName(stack);
 
-        Gemstone g = getAugment(stack);
-        if (g == null)
-            return gemstoneName;
+        //Gemstone g = getAugment(stack);
+        //if (g == null)
+            return Component.literal("none");
 
-        return Component.translatable("text.elementsofpower.staff.augmented", g.getItem().getDefaultInstance().getHoverName(), gemstoneName);
+        //return Component.translatable("text.elementsofpower.staff.augmented", g.getItem().getDefaultInstance().getHoverName(), gemstoneName);
     }
 
     @Override
@@ -60,7 +59,7 @@ public class StaffItem extends WandItem
         return Component.translatable(q.getContainerTranslationKey(), augmentName);
     }
 
-    @Nullable
+    /*@Nullable
     public Gemstone getAugment(ItemStack stack)
     {
         CompoundTag tag = stack.getTag();
@@ -97,5 +96,5 @@ public class StaffItem extends WandItem
             tag.putString("augment", gemstone.getSerializedName());
         }
         return stack;
-    }
+    }*/
 }

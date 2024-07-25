@@ -3,8 +3,6 @@ package dev.gigaherz.elementsofpower.items;
 import dev.gigaherz.elementsofpower.ElementsOfPowerItems;
 import dev.gigaherz.elementsofpower.capabilities.IMagicContainer;
 import dev.gigaherz.elementsofpower.capabilities.MagicContainerCapability;
-import dev.gigaherz.elementsofpower.gemstones.Gemstone;
-import dev.gigaherz.elementsofpower.gemstones.GemstoneItem;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;

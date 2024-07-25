@@ -20,12 +20,9 @@ import dev.gigaherz.elementsofpower.essentializer.EssentializerBlockEntity;
 import dev.gigaherz.elementsofpower.essentializer.menu.EssentializerMenu;
 import dev.gigaherz.elementsofpower.essentializer.menu.EssentializerScreen;
 import dev.gigaherz.elementsofpower.gemstones.AnalyzedFilteringIngredient;
-import dev.gigaherz.elementsofpower.gemstones.Gemstone;
-import dev.gigaherz.elementsofpower.gemstones.GemstoneOreFeature;
 import dev.gigaherz.elementsofpower.gemstones.Quality;
 import dev.gigaherz.elementsofpower.network.*;
 import dev.gigaherz.elementsofpower.recipes.ContainerChargeRecipe;
-import dev.gigaherz.elementsofpower.recipes.GemstoneChangeRecipe;
 import dev.gigaherz.elementsofpower.spells.Element;
 import dev.gigaherz.elementsofpower.spells.SpellcastState;
 import net.minecraft.advancements.CriterionTrigger;
@@ -131,16 +128,9 @@ public class ElementsOfPowerMod
     public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<ContainerChargeRecipe>> CONTAINER_CHARGE = RECIPE_SERIALIZERS.register("container_charge", () ->
             new SimpleCraftingRecipeSerializer<>(ContainerChargeRecipe::new)
     );
-    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<GemstoneChangeRecipe>> GEMSTONE_CHANGE = RECIPE_SERIALIZERS.register("gemstone_change", () ->
-            new SimpleCraftingRecipeSerializer<>(GemstoneChangeRecipe::new)
-    );
 
     public static final DeferredHolder<Feature<?>, CocoonFeature> COCOON_FEATURE = FEATURES.register("cocoon", () ->
             new CocoonFeature(NoneFeatureConfiguration.CODEC)
-    );
-
-    public static final DeferredHolder<Feature<?>, GemstoneOreFeature> GEMSTONE_ORE_FEATURE = FEATURES.register("gemstone_ore", () ->
-            new GemstoneOreFeature(GemstoneOreFeature.Configuration.CODEC)
     );
 
     public static final DeferredHolder<ParticleType<?>, ParticleType<ColoredSmokeData>> COLORED_SMOKE_DATA = PARTICLE_TYPES.register("colored_smoke", () ->
@@ -155,7 +145,7 @@ public class ElementsOfPowerMod
             = INGREDIENT_TYPES.register("analyzed_filtering_ingredient", () -> new IngredientType<>(AnalyzedFilteringIngredient.CODEC, AnalyzedFilteringIngredient.NON_EMPTY_CODEC));
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> CREATIVE_TAB_MAGIC = CREATIVE_TABS.register("magic", () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP,0)
-            .icon(() -> ElementsOfPowerItems.WAND.get().getStack(Gemstone.DIAMOND, Quality.COMMON))
+            .icon(() -> new ItemStack(ElementsOfPowerItems.WAND.get())/*.getStack(Gemstone.DIAMOND, Quality.COMMON)*/)
             .title(Component.translatable("tab.elementsofpower.magic"))
             .withTabsBefore(CreativeModeTabs.SPAWN_EGGS)
             .displayItems((featureFlags, output) -> {
@@ -188,50 +178,6 @@ public class ElementsOfPowerMod
                 output.accept(ElementsOfPowerItems.CHAOS_COCOON.get());
 
 
-            }).build()
-    );
-
-    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> CREATIVE_TAB_GEMSTONES = CREATIVE_TABS.register("gemstones", () -> new CreativeModeTab.Builder(CreativeModeTab.Row.TOP,0)
-            .icon(() -> new ItemStack(Gemstone.RUBY))
-            .title(Component.translatable("tab.elementsofpower.gemstones"))
-            .withTabsBefore(CreativeModeTabs.SPAWN_EGGS, CREATIVE_TAB_MAGIC.getKey())
-            .displayItems((featureFlags, output) -> {
-
-                output.accept(ElementsOfPowerItems.RUBY_ORE.get());
-                output.accept(ElementsOfPowerItems.DEEPSLATE_RUBY_ORE.get());
-                output.accept(ElementsOfPowerItems.RUBY_BLOCK.get());
-                ElementsOfPowerItems.RUBY.get().creativeTabStacks(output::accept);
-
-
-                output.accept(ElementsOfPowerItems.SAPPHIRE_ORE.get());
-                output.accept(ElementsOfPowerItems.DEEPSLATE_SAPPHIRE_ORE.get());
-                output.accept(ElementsOfPowerItems.SAPPHIRE_BLOCK.get());
-                ElementsOfPowerItems.SAPPHIRE.get().creativeTabStacks(output::accept);
-
-                output.accept(ElementsOfPowerItems.CITRINE_ORE.get());
-                output.accept(ElementsOfPowerItems.DEEPSLATE_CITRINE_ORE.get());
-                output.accept(ElementsOfPowerItems.CITRINE_BLOCK.get());
-                ElementsOfPowerItems.CITRINE.get().creativeTabStacks(output::accept);
-
-                output.accept(ElementsOfPowerItems.AGATE_ORE.get());
-                output.accept(ElementsOfPowerItems.DEEPSLATE_AGATE_ORE.get());
-                output.accept(ElementsOfPowerItems.AGATE_BLOCK.get());
-                ElementsOfPowerItems.AGATE.get().creativeTabStacks(output::accept);
-
-                output.accept(ElementsOfPowerItems.ONYX_ORE.get());
-                output.accept(ElementsOfPowerItems.DEEPSLATE_ONYX_ORE.get());
-                output.accept(ElementsOfPowerItems.ONYX_BLOCK.get());
-                ElementsOfPowerItems.ONYX.get().creativeTabStacks(output::accept);
-
-                output.accept(ElementsOfPowerItems.rubellite_ORE.get());
-                output.accept(ElementsOfPowerItems.DEEPSLATE_rubellite_ORE.get());
-                output.accept(ElementsOfPowerItems.rubellite_BLOCK.get());
-                ElementsOfPowerItems.RUBELLITE.get().creativeTabStacks(output::accept);
-
-                ElementsOfPowerItems.QUARTZ.get().creativeTabStacks(output::accept);
-                ElementsOfPowerItems.EMERALD.get().creativeTabStacks(output::accept);
-                ElementsOfPowerItems.DIAMOND.get().creativeTabStacks(output::accept);
-                ElementsOfPowerItems.CREATIVITE.get().creativeTabStacks(output::accept);
             }).build()
     );
 
@@ -320,16 +266,6 @@ public class ElementsOfPowerMod
         public static void clientSetup(FMLClientSetupEvent event)
         {
             event.enqueueWork(() -> {
-                Gemstone.values.forEach(gem -> {
-                    if (gem.generateCustomOre())
-                    {
-                        for (var ore : gem.getOres())
-                        {
-                            ItemBlockRenderTypes.setRenderLayer(ore, RenderType.translucent());
-                        }
-                    }
-                });
-
                 ItemBlockRenderTypes.setRenderLayer(ElementsOfPowerBlocks.DUST.get(), RenderType.translucent());
                 ItemBlockRenderTypes.setRenderLayer(ElementsOfPowerBlocks.MIST.get(), RenderType.translucent());
                 ItemBlockRenderTypes.setRenderLayer(ElementsOfPowerBlocks.CUSHION.get(), RenderType.translucent());

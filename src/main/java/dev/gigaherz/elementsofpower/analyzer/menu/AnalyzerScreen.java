@@ -5,8 +5,6 @@ import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.capabilities.IMagicContainer;
 import dev.gigaherz.elementsofpower.capabilities.MagicContainerCapability;
 import dev.gigaherz.elementsofpower.client.MagicTooltips;
-import dev.gigaherz.elementsofpower.gemstones.Gemstone;
-import dev.gigaherz.elementsofpower.gemstones.GemstoneItem;
 import dev.gigaherz.elementsofpower.gemstones.Quality;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import net.minecraft.client.gui.GuiGraphics;
@@ -56,7 +54,6 @@ public class AnalyzerScreen extends AbstractContainerScreen<AnalyzerMenu>
         ItemStack stack = slotAnalyze.getItem();
         if (stack.getCount() > 0)
         {
-            Gemstone gem = null;
             Quality q = null;
             MagicAmounts am = null;
 
@@ -64,7 +61,7 @@ public class AnalyzerScreen extends AbstractContainerScreen<AnalyzerMenu>
 
             graphics.drawString(font, Component.translatable("text.elementsofpower.analyzer.item", stack.getHoverName()), 32, 18, 0xffffff, false);
 
-            if (item instanceof GemstoneItem gemstone)
+            /*if (item instanceof GemstoneItem gemstone)
             {
                 gem = gemstone.getGemstone();
                 q = gemstone.getQuality(stack);
@@ -95,7 +92,7 @@ public class AnalyzerScreen extends AbstractContainerScreen<AnalyzerMenu>
                             MagicTooltips.PRETTY_NUMBER_FORMATTER.format(am.chaos())), 40, 70, 0xffffff, false);
                 }
             }
-            else
+            else*/
             {
                 graphics.drawWordWrap(font, Component.translatable("text.elementsofpower.analyzer.not_a_gemstone"), 32, 30,  134,0xffffff);
             }

@@ -1,23 +1,12 @@
 package dev.gigaherz.elementsofpower;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.ldtteam.aequivaleo.api.compound.CompoundInstance;
-import com.ldtteam.aequivaleo.api.compound.information.datagen.ForcedInformationProvider;
-import com.mojang.blaze3d.platform.NativeImage;
-import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Lifecycle;
 import dev.gigaherz.elementsofpower.advancements.SpellCastTrigger;
 import dev.gigaherz.elementsofpower.cocoons.ApplyOrbSizeFunction;
 import dev.gigaherz.elementsofpower.cocoons.CocoonFeature;
 import dev.gigaherz.elementsofpower.cocoons.CocoonPlacement;
-import dev.gigaherz.elementsofpower.database.GemstoneExaminer;
-import dev.gigaherz.elementsofpower.database.StockConversions;
-import dev.gigaherz.elementsofpower.gemstones.*;
-import dev.gigaherz.elementsofpower.integration.aequivaleo.AequivaleoPlugin;
-import dev.gigaherz.elementsofpower.misc.TextureVariantsGen;
 import dev.gigaherz.elementsofpower.recipes.ContainerChargeRecipe;
-import dev.gigaherz.elementsofpower.recipes.GemstoneChangeRecipe;
 import dev.gigaherz.elementsofpower.spells.Element;
 import dev.gigaherz.elementsofpower.spells.blocks.CushionBlock;
 import dev.gigaherz.elementsofpower.spells.blocks.DustBlock;
@@ -44,19 +33,14 @@ import net.minecraft.tags.*;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.levelgen.GenerationStep;
-import net.minecraft.world.level.levelgen.VerticalAnchor;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
-import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
-import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
 import net.minecraft.world.level.levelgen.placement.*;
 import net.minecraft.world.level.levelgen.structure.templatesystem.RuleTest;
 import net.minecraft.world.level.levelgen.structure.templatesystem.TagMatchTest;
@@ -76,17 +60,13 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.common.world.BiomeModifiers;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
-import net.neoforged.neoforge.registries.holdersets.AndHolderSet;
 import net.neoforged.neoforge.registries.holdersets.NotHolderSet;
-import net.neoforged.neoforge.registries.holdersets.OrHolderSet;
 
 import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -111,10 +91,10 @@ class ElementsOfPowerDataGen
 
         if ("true".equals(System.getProperty("elementsofpower.doAequivaleoDatagen", "true")) && ModList.get().isLoaded("aequivaleo"))
         {
-            gen.addProvider(event.includeServer(), new AequivaleoGens(gen, itemTags, event.getLookupProvider()));
+            //gen.addProvider(event.includeServer(), new AequivaleoGens(gen, itemTags, event.getLookupProvider()));
         }
 
-        gen.addProvider(event.includeClient(), new GearTexturesGen(gen.getPackOutput(), existingFileHelper));
+        //gen.addProvider(event.includeClient(), new GearTexturesGen(gen.getPackOutput(), existingFileHelper));
 
         gen.addProvider(event.includeClient(), new BlockStates(gen.getPackOutput(), existingFileHelper));
 
@@ -131,7 +111,7 @@ class ElementsOfPowerDataGen
         public void generate(HolderLookup.Provider provider, Consumer<AdvancementHolder> saver, ExistingFileHelper existingFileHelper)
         {
             var root = Advancement.Builder.advancement()
-                    .display(ElementsOfPowerItems.WAND.get().getStack(Gemstone.RUBY),
+                    .display(ElementsOfPowerItems.WAND.get(),
                             Component.translatable("advancement.elementsofpower.root.title"),
                             Component.translatable("advancement.elementsofpower.root.description"),
                             TAB_BACKGROUND, AdvancementType.GOAL, false, false, false)
@@ -140,7 +120,7 @@ class ElementsOfPowerDataGen
                     .addCriterion("dummy", InventoryChangeTrigger.TriggerInstance.hasItems(new ItemLike[0]))
                     .save(saver, location("root"), existingFileHelper);
 
-            var discover_gems = Advancement.Builder.advancement()
+            /*var discover_gems = Advancement.Builder.advancement()
                     .parent(root)
                     .display(ElementsOfPowerItems.WAND.get().getStack(Gemstone.RUBY),
                             Component.translatable("advancement.elementsofpower.discover_gems.title"),
@@ -156,11 +136,11 @@ class ElementsOfPowerDataGen
                             ElementsOfPowerItems.RUBELLITE.get(),
                             ElementsOfPowerItems.DIAMOND.get(), Items.DIAMOND,
                             ElementsOfPowerItems.CREATIVITE.get()))
-                    .save(saver, location("discover_gems"), existingFileHelper);
+                    .save(saver, location("discover_gems"), existingFileHelper);*/
 
             var acquire_wand = Advancement.Builder.advancement()
-                    .parent(discover_gems)
-                    .display(ElementsOfPowerItems.WAND.get().getStack(Gemstone.RUBY),
+                    .parent(root)
+                    .display(ElementsOfPowerItems.WAND.get(),
                             Component.translatable("advancement.elementsofpower.acquire_wand.title"),
                             Component.translatable("advancement.elementsofpower.acquire_wand.description"),
                             null, AdvancementType.GOAL, true, false, false)
@@ -169,7 +149,7 @@ class ElementsOfPowerDataGen
 
             var first_spell = Advancement.Builder.advancement()
                     .parent(acquire_wand)
-                    .display(ElementsOfPowerItems.WAND.get().getStack(Gemstone.RUBY),
+                    .display(ElementsOfPowerItems.WAND.get(),
                             Component.translatable("advancement.elementsofpower.first_spell.title"),
                             Component.translatable("advancement.elementsofpower.first_spell.description"),
                             null, AdvancementType.GOAL, true, false, false)
@@ -179,7 +159,7 @@ class ElementsOfPowerDataGen
 
             var acquire_staff = Advancement.Builder.advancement()
                     .parent(acquire_wand)
-                    .display(ElementsOfPowerItems.WAND.get().getStack(Gemstone.RUBY),
+                    .display(ElementsOfPowerItems.WAND.get(),
                             Component.translatable("advancement.elementsofpower.acquire_staff.title"),
                             Component.translatable("advancement.elementsofpower.acquire_staff.description"),
                             null, AdvancementType.GOAL, true, false, false)
@@ -197,8 +177,8 @@ class ElementsOfPowerDataGen
             //        .save(saver, location("advanced_spell"), existingFileHelper);
 
             var acquire_trinket = Advancement.Builder.advancement()
-                    .parent(discover_gems)
-                    .display(ElementsOfPowerItems.WAND.get().getStack(Gemstone.RUBY),
+                    .parent(root)
+                    .display(ElementsOfPowerItems.WAND.get(),
                             Component.translatable("advancement.elementsofpower.acquire_trinket.title"),
                             Component.translatable("advancement.elementsofpower.acquire_trinket.description"),
                             null, AdvancementType.GOAL, true, false, false)
@@ -220,7 +200,7 @@ class ElementsOfPowerDataGen
 
             var fully_geared_up = Advancement.Builder.advancement()
                     .parent(acquire_staff)
-                    .display(ElementsOfPowerItems.WAND.get().getStack(Gemstone.RUBY),
+                    .display(ElementsOfPowerItems.WAND.get(),
                             Component.translatable("advancement.elementsofpower.fully_geared_up.title"),
                             Component.translatable("advancement.elementsofpower.fully_geared_up.description"),
                             null, AdvancementType.GOAL, true, true, false)
@@ -233,6 +213,7 @@ class ElementsOfPowerDataGen
         }
     }
 
+    /*
     private static class GearTexturesGen extends TextureVariantsGen
     {
         public GearTexturesGen(PackOutput packOutput, ExistingFileHelper existingFileHelper)
@@ -288,7 +269,9 @@ class ElementsOfPowerDataGen
             }
         }
     }
+     */
 
+    /*
     private static class AequivaleoGens extends ForcedInformationProvider
     {
         private final ItemTagGens itemTags;
@@ -310,12 +293,12 @@ class ElementsOfPowerDataGen
                         .collect(Collectors.toList());
 
                 List<Object> gameObjects = Lists.newArrayList();
-                /*if (item instanceof GemstoneItem gem)
-                {
-                    gameObjects.add(item);
-                    gem.creativeTabStacks(gameObjects::add);
-                }
-                else*/
+                //if (item instanceof GemstoneItem gem)
+                //{
+                //    gameObjects.add(item);
+                //    gem.creativeTabStacks(gameObjects::add);
+                //}
+                //else
                 {
                     gameObjects.add(item);
                     //gameObjects.add(item.getDefaultInstance());
@@ -351,6 +334,8 @@ class ElementsOfPowerDataGen
         }
     }
 
+     */
+
     private static class ItemTagGens extends IntrinsicHolderTagsProvider<Item>
     {
         @SuppressWarnings("deprecation")
@@ -368,6 +353,7 @@ class ElementsOfPowerDataGen
         @Override
         protected void addTags(HolderLookup.Provider lookup)
         {
+            /*
             GemstoneExaminer.GEMS.forEach((gem, tag) -> {
             });
 
@@ -405,6 +391,7 @@ class ElementsOfPowerDataGen
                     blocksTag.addTag(tag);
                 }
             });
+             */
         }
     }
 
@@ -427,6 +414,7 @@ class ElementsOfPowerDataGen
 
             this.tag(BlockTags.MINEABLE_WITH_AXE).add(ElementsOfPowerBlocks.ANALYZER.get());
 
+            /*
             for (Gemstone type : Gemstone.values())
             {
                 if (type.generateCustomBlock())
@@ -462,6 +450,8 @@ class ElementsOfPowerDataGen
                     blocksTag.addTag(tag);
                 }
             });
+
+             */
         }
     }
 
@@ -493,17 +483,6 @@ class ElementsOfPowerDataGen
                         this.add(e.getCocoon(), this::dropWithOrbs);
                 });
 
-                Gemstone.stream().forEach(g -> {
-                    if (g.generateCustomBlock())
-                        this.dropSelf(g.getBlock());
-                    if (g.generateCustomOre())
-                    {
-                        for(var ore : g.getOres())
-                        {
-                            this.add(ore, (block) -> createOreDrop(block, g.getItem()));
-                        }
-                    }
-                });
             }
 
             protected LootTable.Builder dropWithOrbs(Block block)
@@ -599,7 +578,7 @@ class ElementsOfPowerDataGen
                     .pattern("IOI")
                     .define('I', Items.IRON_INGOT)
                     .define('O', Items.OBSIDIAN)
-                    .define('Q', GemstoneExaminer.GEMSTONES)
+                    .define('Q', Tags.Items.GEMS) // TODO: Whatever new gemstone I decide to have
                     .define('N', Items.NETHER_STAR)
                     .unlockedBy("has_star", has(Items.NETHER_STAR))
                     .save(recipeOutput);
@@ -646,35 +625,7 @@ class ElementsOfPowerDataGen
                     .unlockedBy("has_gold", has(Items.GOLD_INGOT))
                     .save(recipeOutput);
 
-            SpecialRecipeBuilder.special(GemstoneChangeRecipe::new).save(recipeOutput, location("gemstone_change").toString());
             SpecialRecipeBuilder.special(ContainerChargeRecipe::new).save(recipeOutput, location("container_charge").toString());
-
-            for (Gemstone gem : Gemstone.values())
-            {
-                if (gem.generateCustomOre())
-                {
-                    TagKey<Item> tag = itemTag(new ResourceLocation("elementsofpower", gem.getSerializedName() + "_ores").toString());
-                    Item[] oreItems = gem.getOres().stream().map(Block::asItem).toArray(Item[]::new);
-                    SimpleCookingRecipeBuilder.smelting(Ingredient.of(oreItems), RecipeCategory.MISC, gem, 1.0F, 200)
-                            .unlockedBy("has_ore", has(tag))
-                            .save(recipeOutput, location("smelting/" + gem.getSerializedName()));
-                }
-                if (gem.generateCustomBlock())
-                {
-                    ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gem.getBlock())
-                            .pattern("ggg")
-                            .pattern("ggg")
-                            .pattern("ggg")
-                            .define('g', AnalyzedFilteringIngredient.wrap(Ingredient.of(gem.getItem())))
-                            .unlockedBy("has_item", has(gem.getItem()))
-                            .save(recipeOutput);
-
-                    ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, gem.getItem(), 9)
-                            .requires(Ingredient.of(gem.getBlock()))
-                            .unlockedBy("has_item", has(gem.getItem()))
-                            .save(recipeOutput, location(gem.getSerializedName() + "_from_block"));
-                }
-            }
         }
     }
 
@@ -699,61 +650,10 @@ class ElementsOfPowerDataGen
         private static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()
                 .add(Registries.CONFIGURED_FEATURE, context -> {
                     context.register(CONFIGURED_COCOON, new ConfiguredFeature<>(ElementsOfPowerMod.COCOON_FEATURE.get(), NoneFeatureConfiguration.INSTANCE));
-                    for (Gemstone g : Gemstone.values)
-                    {
-                        if (g.generateInWorld())
-                        {
-                            var name2 = g.getSerializedName() + "_ore";
-                            var key = ResourceKey.create(Registries.CONFIGURED_FEATURE, location(name2));
-                            var map = new HashMap<BiomeValues, OreConfiguration>();
-
-                            for (var heat : BiomeValue.values())
-                            {
-                                for (var humidity : BiomeValue.values())
-                                {
-                                    for (var life : BiomeValue.values())
-                                    {
-                                        var values = new BiomeValues(heat, humidity, life);
-
-                                        var ores = g.getOres();
-                                        var stone_ore = ores.get(0);
-                                        var deepslate_ore = ores.size() >= 2 ? ores.get(1) : null;
-
-                                        List<OreConfiguration.TargetBlockState> targets = new ArrayList<>();
-
-                                        targets.add(OreConfiguration.target(STONE_ORE_REPLACEABLES, stone_ore.defaultBlockState()));
-
-                                        if (deepslate_ore != null)
-                                            targets.add(OreConfiguration.target(DEEPSLATE_ORE_REPLACEABLES, deepslate_ore.defaultBlockState()));
-
-                                        int numPerVein = 3 + values.getBiomeBonus(g.getElement());
-                                        map.put(values, new OreConfiguration(targets, numPerVein, 0.0f));
-                                    }
-                                }
-                            }
-
-                            context.register(key, new ConfiguredFeature<>(ElementsOfPowerMod.GEMSTONE_ORE_FEATURE.get(), new GemstoneOreFeature.Configuration(map)));
-                        }
-                    }
                 })
                 .add(Registries.PLACED_FEATURE, context -> {
                     var configuredFeatureRegistry = context.lookup(Registries.CONFIGURED_FEATURE);
                     context.register(PLACED_COCOON, new PlacedFeature(configuredFeatureRegistry.get(CONFIGURED_COCOON).orElseThrow(), List.of(CocoonPlacement.INSTANCE)));
-                    for (Gemstone g : Gemstone.values)
-                    {
-                        if (g.generateInWorld())
-                        {
-                            var name2 = g.getSerializedName() + "_ore";
-                            var key = ResourceKey.create(Registries.CONFIGURED_FEATURE, location(name2));
-                            var key2 = ResourceKey.create(Registries.PLACED_FEATURE, location(name2));
-                            var configured = configuredFeatureRegistry.get(key).orElseThrow();
-                            context.register(key2, new PlacedFeature(configured, List.of(
-                                    CountPlacement.of(10),
-                                    InSquarePlacement.spread(),
-                                    HeightRangePlacement.triangle(VerticalAnchor.aboveBottom(-80), VerticalAnchor.aboveBottom(80)),
-                                    BiomeFilter.biome())));
-                        }
-                    }
                 })
                 .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, context -> {
                     var biomes = context.lookup(Registries.BIOME);
@@ -811,24 +711,6 @@ class ElementsOfPowerDataGen
                             HolderSet.direct(placedFeatures.get(PLACED_COCOON).orElseThrow()),
                             GenerationStep.Decoration.UNDERGROUND_DECORATION
                     ));
-
-                    final HolderSet.Named<Biome> isOverworld = biomes.get(BiomeTags.IS_OVERWORLD).orElseThrow();
-                    for (Gemstone g : Gemstone.values)
-                    {
-                        if (g.generateInWorld())
-                        {
-                            var name2 = g.getSerializedName() + "_ore";
-                            var key2 = ResourceKey.create(Registries.PLACED_FEATURE, location(name2));
-                            var placed = placedFeatures.get(key2).orElseThrow();
-                            var key = ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS, location(name2));
-
-                            context.register(key, new BiomeModifiers.AddFeaturesBiomeModifier(
-                                    isOverworld,
-                                    HolderSet.direct(placed),
-                                    GenerationStep.Decoration.UNDERGROUND_ORES
-                            ));
-                        }
-                    }
                 });
     }
 

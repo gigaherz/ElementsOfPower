@@ -1,7 +1,6 @@
 package dev.gigaherz.elementsofpower.database;
 
 import com.google.common.collect.Maps;
-import dev.gigaherz.elementsofpower.gemstones.Gemstone;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import dev.gigaherz.elementsofpower.spells.Element;
 import net.minecraft.resources.ResourceLocation;
@@ -34,30 +33,6 @@ public class StockConversions
         {
             essences(e.getOrb()).element(e, 8);
             essences(e.getItem()).element(e, 8).life(2);
-        }
-
-        for (Gemstone e : Gemstone.values)
-        {
-            ItemEssenceCollection gem = essences(e.getTagItems()).earth(1);
-            if (e.getElement() != null)
-                gem.element(e.getElement(), 1 / 8.0f);
-
-            if (e.generateCustomOre())
-            {
-                for(var oreBlock : e.getOres())
-                {
-                    ItemEssenceEntry ore = essences(oreBlock).earth(8);
-                    if (e.getElement() != null)
-                        ore.element(e.getElement(), 1);
-                }
-            }
-
-            if (e.generateCustomBlock())
-            {
-                ItemEssenceEntry block = essences(e.getBlock()).earth(19);
-                if (e.getElement() != null)
-                    block.element(e.getElement(), 1);
-            }
         }
 
         essences(Blocks.CACTUS).life(3);

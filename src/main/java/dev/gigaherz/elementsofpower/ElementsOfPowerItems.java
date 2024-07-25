@@ -1,8 +1,6 @@
 package dev.gigaherz.elementsofpower;
 
 import dev.gigaherz.elementsofpower.analyzer.AnalyzerItem;
-import dev.gigaherz.elementsofpower.gemstones.Gemstone;
-import dev.gigaherz.elementsofpower.gemstones.GemstoneItem;
 import dev.gigaherz.elementsofpower.items.*;
 import dev.gigaherz.elementsofpower.spells.Element;
 import net.minecraft.world.item.BlockItem;
@@ -33,41 +31,6 @@ public class ElementsOfPowerItems
     public static final DeferredItem<BaubleItem> NECKLACE = ITEMS.register("necklace", () -> new BaubleItem(new Item.Properties().stacksTo(1))        );
 
     public static final DeferredItem<GemPouchItem> GEM_POUCH = ITEMS.register("gem_pouch", () -> new GemPouchItem(new Item.Properties().stacksTo(1))        );
-
-    private static DeferredItem<GemstoneItem> registerGemstone(Gemstone type)
-    {
-        return ITEMS.register(type.getSerializedName(), () -> new GemstoneItem(type, new Item.Properties().stacksTo(1)));
-    }
-
-    public static final DeferredItem<GemstoneItem> RUBY = registerGemstone(Gemstone.RUBY);
-    public static final DeferredItem<GemstoneItem> SAPPHIRE = registerGemstone(Gemstone.SAPPHIRE);
-    public static final DeferredItem<GemstoneItem> CITRINE = registerGemstone(Gemstone.CITRINE);
-    public static final DeferredItem<GemstoneItem> AGATE = registerGemstone(Gemstone.AGATE);
-    public static final DeferredItem<GemstoneItem> QUARTZ = registerGemstone(Gemstone.QUARTZ);
-    public static final DeferredItem<GemstoneItem> ONYX = registerGemstone(Gemstone.ONYX);
-    public static final DeferredItem<GemstoneItem> EMERALD = registerGemstone(Gemstone.EMERALD);
-    public static final DeferredItem<GemstoneItem> RUBELLITE = registerGemstone(Gemstone.RUBELLITE);
-    public static final DeferredItem<GemstoneItem> DIAMOND = registerGemstone(Gemstone.DIAMOND);
-    public static final DeferredItem<GemstoneItem> CREATIVITE = registerGemstone(Gemstone.CREATIVITE);
-
-    public static final DeferredItem<BlockItem> RUBY_ORE = registerBlockItem(ElementsOfPowerBlocks.RUBY_ORE);
-    public static final DeferredItem<BlockItem> SAPPHIRE_ORE = registerBlockItem(ElementsOfPowerBlocks.SAPPHIRE_ORE);
-    public static final DeferredItem<BlockItem> CITRINE_ORE = registerBlockItem(ElementsOfPowerBlocks.CITRINE_ORE);
-    public static final DeferredItem<BlockItem> AGATE_ORE = registerBlockItem(ElementsOfPowerBlocks.AGATE_ORE);
-    public static final DeferredItem<BlockItem> ONYX_ORE = registerBlockItem(ElementsOfPowerBlocks.ONYX_ORE);
-    public static final DeferredItem<BlockItem> rubellite_ORE = registerBlockItem(ElementsOfPowerBlocks.RUBELLITE_ORE);
-    public static final DeferredItem<BlockItem> DEEPSLATE_RUBY_ORE = registerBlockItem(ElementsOfPowerBlocks.DEEPSLATE_RUBY_ORE);
-    public static final DeferredItem<BlockItem> DEEPSLATE_SAPPHIRE_ORE = registerBlockItem(ElementsOfPowerBlocks.DEEPSLATE_SAPPHIRE_ORE);
-    public static final DeferredItem<BlockItem> DEEPSLATE_CITRINE_ORE = registerBlockItem(ElementsOfPowerBlocks.DEEPSLATE_CITRINE_ORE);
-    public static final DeferredItem<BlockItem> DEEPSLATE_AGATE_ORE = registerBlockItem(ElementsOfPowerBlocks.DEEPSLATE_AGATE_ORE);
-    public static final DeferredItem<BlockItem> DEEPSLATE_ONYX_ORE = registerBlockItem(ElementsOfPowerBlocks.DEEPSLATE_ONYX_ORE);
-    public static final DeferredItem<BlockItem> DEEPSLATE_rubellite_ORE = registerBlockItem(ElementsOfPowerBlocks.DEEPSLATE_RUBELLITE_ORE);
-    public static final DeferredItem<BlockItem> RUBY_BLOCK = registerBlockItem(ElementsOfPowerBlocks.RUBY_BLOCK);
-    public static final DeferredItem<BlockItem> SAPPHIRE_BLOCK = registerBlockItem(ElementsOfPowerBlocks.SAPPHIRE_BLOCK);
-    public static final DeferredItem<BlockItem> CITRINE_BLOCK = registerBlockItem(ElementsOfPowerBlocks.CITRINE_BLOCK);
-    public static final DeferredItem<BlockItem> AGATE_BLOCK = registerBlockItem(ElementsOfPowerBlocks.AGATE_BLOCK);
-    public static final DeferredItem<BlockItem> ONYX_BLOCK = registerBlockItem(ElementsOfPowerBlocks.ONYX_BLOCK);
-    public static final DeferredItem<BlockItem> rubellite_BLOCK = registerBlockItem(ElementsOfPowerBlocks.rubellite_BLOCK);
 
     private static DeferredItem<MagicOrbItem> registerOrb(Element type)
     {

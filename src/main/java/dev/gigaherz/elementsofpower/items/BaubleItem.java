@@ -2,7 +2,6 @@ package dev.gigaherz.elementsofpower.items;
 
 import dev.gigaherz.elementsofpower.capabilities.IMagicContainer;
 import dev.gigaherz.elementsofpower.capabilities.MagicContainerCapability;
-import dev.gigaherz.elementsofpower.gemstones.Gemstone;
 import dev.gigaherz.elementsofpower.gemstones.Quality;
 import dev.gigaherz.elementsofpower.integration.Curios;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
@@ -261,9 +260,9 @@ public class BaubleItem extends GemContainerItem
 
             MagicAmounts remaining = available;
 
-            Gemstone g = getGemstone(thisStack);
+            //Gemstone g = getGemstone(thisStack);
             Quality q = getQuality(thisStack);
-            if (g != null && q != null)
+            if (/*g != null &&*/ q != null)
             {
                 float maxTransferFrom = TRANSFER_RATES[q.ordinal()];
                 float boost = q.getTransferSpeed();
@@ -272,8 +271,9 @@ public class BaubleItem extends GemContainerItem
                 {
                     float maxTransfer = maxTransferFrom;
 
-                    if ((g == Gemstone.DIAMOND || g == Gemstone.CREATIVITE) || g.ordinal() == i)
+                    /*if ((g == Gemstone.DIAMOND || g == Gemstone.CREATIVITE) || g.ordinal() == i)
                         maxTransfer *= boost;
+                     */
 
                     float transfer = Math.min(maxTransfer, limits.get(i) - amounts.get(i));
                     if (!thisMagic.isInfinite())
