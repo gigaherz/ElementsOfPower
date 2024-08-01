@@ -284,8 +284,7 @@ public class WandUseManager
         Objects.requireNonNull(mc.player).stopUsingItem();
     }
 
-    public boolean applyCustomArmTransforms(
-            WandItem wandItem, PoseStack poseStack, LocalPlayer player, HumanoidArm arm, ItemStack stack,
+    public boolean applyCustomArmTransforms(PoseStack poseStack, LocalPlayer player, HumanoidArm arm, ItemStack stack,
             float partialTicks, float equippedProgress, float swingProcess)
     {
         if (stack != activeStack)
@@ -302,7 +301,7 @@ public class WandUseManager
         poseStack.mulPose(Axis.YP.rotationDegrees(handFlip * 35.3F));
         poseStack.mulPose(Axis.ZP.rotationDegrees(handFlip * -9.785F));
         float animationProgressTicks = useTicks + partialTicks;
-        float limit = sequence.size() > 0 ? SpellManager.getChargeDuration(sequence) : wandItem.getChargeDuration(stack);
+        float limit = sequence.size() > 0 ? SpellManager.getChargeDuration(sequence) : getChargeDuration(stack);
         float animationProgress = animationProgressTicks / limit;
         animationProgress = (animationProgress * animationProgress + animationProgress * 2.0F) / 3.0F;
 
@@ -324,5 +323,18 @@ public class WandUseManager
         poseStack.mulPose(Axis.YN.rotationDegrees((float) handFlip * 45.0F));
 
         return true;
+    }
+
+    public int getChargeDuration(ItemStack stack)
+    {
+        if (stack.getItem() instanceof WandItem wand)
+        {
+            var seq = wand.getSequence(stack);
+            if (seq != null)
+            {
+                return SpellManager.getChargeDuration(seq);
+            }
+        }
+        return 20;
     }
 }

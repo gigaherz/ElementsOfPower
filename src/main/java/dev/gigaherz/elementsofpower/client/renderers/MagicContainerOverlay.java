@@ -241,9 +241,9 @@ public class MagicContainerOverlay implements LayeredDraw.Layer
             {
                 duration = SpellManager.getChargeDuration(WandUseManager.instance.sequence);
             }
-            else if (heldItem.getItem() instanceof WandItem wandItem)
+            else
             {
-                duration = wandItem.getChargeDuration(heldItem);
+                duration = WandUseManager.instance.getChargeDuration(heldItem);
             }
             if (duration > 0 && WandUseManager.instance.useTicks > duration)
             {

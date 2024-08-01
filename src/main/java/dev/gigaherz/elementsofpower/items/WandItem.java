@@ -19,10 +19,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 public class WandItem extends GemContainerItem
 {
@@ -210,16 +210,6 @@ public class WandItem extends GemContainerItem
         }
     }
 
-    public int getChargeDuration(ItemStack stack)
-    {
-        var seq = getSequence(stack);
-        if (seq != null)
-        {
-            return SpellManager.getChargeDuration(seq);
-        }
-        return 20;
-    }
-
     public void processSequenceUpdate(UpdateSpellSequence message, ItemStack stack, Player player, int useTicks)
     {
         if (message.changeMode() == UpdateSpellSequence.ChangeMode.COMMIT)
@@ -230,19 +220,5 @@ public class WandItem extends GemContainerItem
             }
         }
 
-    }
-
-    @Override
-    public void initializeClient(Consumer<IClientItemExtensions> consumer)
-    {
-        consumer.accept(new IClientItemExtensions()
-        {
-            @Override
-            public boolean applyForgeHandTransform(PoseStack poseStack, LocalPlayer player, HumanoidArm arm, ItemStack itemInHand,
-                                                   float partialTick, float equipProcess, float swingProcess)
-            {
-                return WandUseManager.instance.applyCustomArmTransforms(WandItem.this, poseStack, player, arm, itemInHand, partialTick, equipProcess, swingProcess);
-            }
-        });
     }
 }

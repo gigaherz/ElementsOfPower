@@ -1,5 +1,6 @@
 package dev.gigaherz.elementsofpower;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.serialization.Codec;
 import dev.gigaherz.elementsofpower.advancements.SpellCastTrigger;
 import dev.gigaherz.elementsofpower.analyzer.menu.AnalyzerMenu;
@@ -22,13 +23,14 @@ import dev.gigaherz.elementsofpower.essentializer.menu.EssentializerScreen;
 import dev.gigaherz.elementsofpower.gemstones.AnalyzedFilteringIngredient;
 import dev.gigaherz.elementsofpower.gemstones.Quality;
 import dev.gigaherz.elementsofpower.items.TransferMode;
+import dev.gigaherz.elementsofpower.items.WandItem;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import dev.gigaherz.elementsofpower.network.*;
 import dev.gigaherz.elementsofpower.recipes.ContainerChargeRecipe;
 import dev.gigaherz.elementsofpower.spells.Element;
 import dev.gigaherz.elementsofpower.spells.SpellcastState;
 import net.minecraft.advancements.CriterionTrigger;
-import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.component.DataComponentType;
@@ -39,6 +41,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.MenuType;
@@ -63,6 +66,8 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
+import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.common.crafting.IngredientType;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
@@ -73,6 +78,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -291,6 +297,18 @@ public class ElementsOfPowerMod
                 ItemBlockRenderTypes.setRenderLayer(ElementsOfPowerBlocks.LIGHT.get(), RenderType.translucent());
             });
             WandUseManager.initialize();
+        }
+
+        @SubscribeEvent
+        public static void clientExtensions(RegisterClientExtensionsEvent event)
+        {
+            event.registerItem(new IClientItemExtensions() {
+                @Override
+                public boolean applyForgeHandTransform(PoseStack poseStack, LocalPlayer player, HumanoidArm arm, ItemStack itemInHand,
+                                                       float partialTick, float equipProcess, float swingProcess) {
+                    return WandUseManager.instance.applyCustomArmTransforms(poseStack, player, arm, itemInHand, partialTick, equipProcess, swingProcess);
+                }
+            }, ElementsOfPowerItems.WAND.get(), ElementsOfPowerItems.STAFF.get());
         }
     }
 
