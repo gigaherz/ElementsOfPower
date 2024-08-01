@@ -14,7 +14,7 @@ import net.minecraft.world.level.material.PushReaction;
 
 public class MistBlock extends Block
 {
-    public static final IntegerProperty DENSITY = IntegerProperty.create("density", 1, 16);
+    public static final IntegerProperty DENSITY = SpellBlockProperties.DENSITY;
 
     public MistBlock(Properties properties)
     {

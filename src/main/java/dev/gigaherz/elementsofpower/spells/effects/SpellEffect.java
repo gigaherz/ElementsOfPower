@@ -2,6 +2,7 @@ package dev.gigaherz.elementsofpower.spells.effects;
 
 import dev.gigaherz.elementsofpower.spells.SpellcastState;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -40,11 +41,11 @@ public abstract class SpellEffect
 
     public abstract void processBlockWithinRadius(SpellcastState cast, BlockPos blockPos, BlockState currentState, float distance, @Nullable HitResult mop);
 
-    protected static void causePotionEffect(SpellcastState cast, Entity directEntity, LivingEntity target, MobEffect potion, int amplifier, double distance, double durationBase)
+    protected static void causePotionEffect(SpellcastState cast, Entity directEntity, LivingEntity target, Holder<MobEffect> potion, int amplifier, double distance, double durationBase)
     {
-        if (potion.isInstantenous())
+        if (potion.value().isInstantenous())
         {
-            potion.applyInstantenousEffect(directEntity, cast.player(), target, amplifier, distance);
+            potion.value().applyInstantenousEffect(directEntity, cast.player(), target, amplifier, distance);
         }
         else
         {

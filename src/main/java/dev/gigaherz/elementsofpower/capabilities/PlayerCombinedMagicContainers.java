@@ -5,12 +5,13 @@ import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.EntityCapability;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 
-@Mod.EventBusSubscriber(modid=ElementsOfPowerMod.MODID, bus= Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid=ElementsOfPowerMod.MODID, bus= EventBusSubscriber.Bus.MOD)
 public class PlayerCombinedMagicContainers implements IMagicContainer
 {
     public static EntityCapability<IMagicContainer, Void> CAPABILITY = EntityCapability.createVoid(ElementsOfPowerMod.location("player_combined_magic"), IMagicContainer.class);

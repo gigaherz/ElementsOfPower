@@ -13,17 +13,19 @@ import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.util.NonNullLazy;
+import net.neoforged.neoforge.common.util.Lazy;
 
 import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Supplier;
 
 
 public abstract class SpellRenderer
 {
-    public static final NonNullLazy<ModelHandle> modelCone = NonNullLazy.of(() -> ModelHandle.of("elementsofpower:models/entity/cone.obj"));
-    public static final NonNullLazy<ModelHandle> modelSphere = NonNullLazy.of(() -> ModelHandle.of("elementsofpower:models/entity/sphere.obj"));
-    public static final NonNullLazy<ModelHandle> modelSphereInside = NonNullLazy.of(() -> ModelHandle.of("elementsofpower:models/entity/sphere_inside.obj"));
-    public static final NonNullLazy<ModelHandle> modelCyl = NonNullLazy.of(() -> ModelHandle.of("elementsofpower:models/entity/cylinder.obj"));
+    public static final Supplier<ModelHandle> modelCone = Lazy.of(() -> ModelHandle.of("elementsofpower:models/entity/cone.obj"));
+    public static final Supplier<ModelHandle> modelSphere = Lazy.of(() -> ModelHandle.of("elementsofpower:models/entity/sphere.obj"));
+    public static final Supplier<ModelHandle> modelSphereInside = Lazy.of(() -> ModelHandle.of("elementsofpower:models/entity/sphere_inside.obj"));
+    public static final Supplier<ModelHandle> modelCyl = Lazy.of(() -> ModelHandle.of("elementsofpower:models/entity/cylinder.obj"));
 
     public static int getColor(SpellcastState spellcast)
     {
@@ -71,7 +73,7 @@ public abstract class SpellRenderer
             }
         }
 
-        return new ResourceLocation(tex);
+        return ResourceLocation.parse(tex);
     }
 
     public static RenderType getRenderType(@Nullable SpellcastState state, @Nullable Spellcast spellcast)

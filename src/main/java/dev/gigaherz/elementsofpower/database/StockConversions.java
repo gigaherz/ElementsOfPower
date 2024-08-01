@@ -304,7 +304,7 @@ public class StockConversions
     @Nullable
     private static ItemEssenceCollection fromTag(BiFunction<ResourceLocation, List<Item>, List<Item>> tagGetter, String id, @Nullable List<Item> fallback, Function<List<Item>, ItemEssenceCollection> conversion)
     {
-        List<Item> itemsFromTag = tagGetter.apply(new ResourceLocation(id), fallback);
+        List<Item> itemsFromTag = tagGetter.apply(ResourceLocation.parse(id), fallback);
 
         if (itemsFromTag == null) return essences();
 

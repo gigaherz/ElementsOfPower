@@ -1,8 +1,19 @@
 package dev.gigaherz.elementsofpower.gemstones;
 
+import com.mojang.serialization.Codec;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.ByIdMap;
+import net.minecraft.util.ExtraCodecs;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.Rarity;
 
+import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.function.IntFunction;
 
 public enum Quality
 {
@@ -13,6 +24,11 @@ public enum Quality
     PURE(4, Rarity.EPIC, 2.0f, "text.elementsofpower.gemstone.quality.pure", "text.elementsofpower.gem_container.quality.pure");
 
     public static final Quality[] values = values();
+
+
+    public static final IntFunction<Quality> BY_ID = ByIdMap.continuous(i -> i.index, values(), ByIdMap.OutOfBoundsStrategy.ZERO);
+    public static final Codec<Quality> CODEC = Codec.INT.xmap(BY_ID::apply, i -> i.index);
+    public static final StreamCodec<ByteBuf, Quality> STREAM_CODEC = ByteBufCodecs.idMapper(BY_ID, i -> i.index);
 
     private final int index;
     private final String translationKey;

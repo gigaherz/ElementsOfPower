@@ -1,13 +1,18 @@
 package dev.gigaherz.elementsofpower.items;
 
 import dev.gigaherz.elementsofpower.ElementsOfPowerItems;
+import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.capabilities.IMagicContainer;
 import dev.gigaherz.elementsofpower.capabilities.MagicContainerCapability;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.registries.DeferredHolder;
+
+import java.util.Objects;
 
 public abstract class MagicContainerItem extends Item
 {
@@ -34,19 +39,17 @@ public abstract class MagicContainerItem extends Item
     {
         if (isInfinite(stack))
             return MagicAmounts.INFINITE;
-        CompoundTag compound = stack.getTag();
-        if (compound == null || !compound.contains("ContainedMagic"))
-            return MagicAmounts.EMPTY;
-        return new MagicAmounts(compound.getCompound("ContainedMagic"));
+        var amounts = stack.get(ElementsOfPowerMod.CONTAINED_MAGIC);
+        return Objects.requireNonNullElse(amounts, MagicAmounts.EMPTY);
     }
+
 
     public void setContainedMagic(ItemStack stack, MagicAmounts containedMagic)
     {
         if (isInfinite(stack))
             return;
         MagicAmounts am = MagicAmounts.min(getCapacity(stack), containedMagic);
-        CompoundTag compound = stack.getOrCreateTag();
-        compound.put("ContainedMagic", am.serializeNBT());
+        stack.set(ElementsOfPowerMod.CONTAINED_MAGIC, am);
     }
 
     public MagicAmounts addMagic(ItemStack stack, MagicAmounts toAdd)

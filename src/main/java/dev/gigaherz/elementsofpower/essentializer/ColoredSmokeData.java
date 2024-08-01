@@ -3,9 +3,11 @@ package dev.gigaherz.elementsofpower.essentializer;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
+import dev.gigaherz.elementsofpower.network.AddVelocityToPlayer;
 import dev.gigaherz.elementsofpower.spells.Element;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
@@ -16,80 +18,43 @@ import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.RandomSource;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 import org.jetbrains.annotations.Nullable;
 import java.util.Locale;
 import java.util.Random;
 
-public class ColoredSmokeData implements ParticleOptions
+public record ColoredSmokeData(
+        float red,
+        float green,
+        float blue
+) implements ParticleOptions
 {
-    public static Codec<ColoredSmokeData> CODEC = RecordCodecBuilder
-            .create((instance) -> instance.group(
-                    Codec.FLOAT.fieldOf("red").forGetter(i -> i.red),
-                    Codec.FLOAT.fieldOf("green").forGetter(i -> i.green),
-                    Codec.FLOAT.fieldOf("blue").forGetter(i -> i.blue)
+    public static MapCodec<ColoredSmokeData> CODEC = RecordCodecBuilder
+            .mapCodec((instance) -> instance.group(
+                    Codec.FLOAT.fieldOf("red").forGetter(ColoredSmokeData::red),
+                    Codec.FLOAT.fieldOf("green").forGetter(ColoredSmokeData::green),
+                    Codec.FLOAT.fieldOf("blue").forGetter(ColoredSmokeData::blue)
             ).apply(instance, ColoredSmokeData::new));
 
+    public static final StreamCodec<RegistryFriendlyByteBuf, ColoredSmokeData> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.FLOAT, ColoredSmokeData::red,
+            ByteBufCodecs.FLOAT, ColoredSmokeData::green,
+            ByteBufCodecs.FLOAT, ColoredSmokeData::blue,
+            ColoredSmokeData::new
+    );
 
-    private static Random RANDOM = new Random();
-
-    public final float red;
-    public final float green;
-    public final float blue;
-
-    private ColoredSmokeData(float red, float green, float blue)
-    {
-        this.red = red;
-        this.green = green;
-        this.blue = blue;
-    }
+    private static final RandomSource RANDOM = RandomSource.create();
 
     @Override
     public ParticleType<?> getType()
     {
         return ElementsOfPowerMod.COLORED_SMOKE_DATA.get();
     }
-
-    @Override
-    public void writeToNetwork(FriendlyByteBuf buffer)
-    {
-        buffer.writeFloat(red);
-        buffer.writeFloat(green);
-        buffer.writeFloat(blue);
-    }
-
-    @Override
-    public String writeToString()
-    {
-        return String.format(Locale.ROOT, "%s %.2f %.2f %.2f", BuiltInRegistries.PARTICLE_TYPE.getKey(this.getType()), this.red, this.green, this.blue);
-    }
-
-    @Deprecated
-    public static final Deserializer<ColoredSmokeData> DESERIALIZER = new Deserializer<ColoredSmokeData>()
-    {
-        @Override
-        public ColoredSmokeData fromCommand(ParticleType<ColoredSmokeData> particleTypeIn, StringReader reader) throws CommandSyntaxException
-        {
-            reader.expect(' ');
-            float r = (float) reader.readDouble();
-            reader.expect(' ');
-            float g = (float) reader.readDouble();
-            reader.expect(' ');
-            float b = (float) reader.readDouble();
-            return new ColoredSmokeData(r, g, b);
-        }
-
-        @Override
-        public ColoredSmokeData fromNetwork(ParticleType<ColoredSmokeData> particleTypeIn, FriendlyByteBuf buffer)
-        {
-            return new ColoredSmokeData(
-                    buffer.readFloat(),
-                    buffer.readFloat(),
-                    buffer.readFloat()
-            );
-        }
-    };
 
     public static ColoredSmokeData withColor(float red, float green, float blue)
     {
@@ -157,13 +122,19 @@ public class ColoredSmokeData implements ParticleOptions
     {
         public Type(boolean alwaysShow)
         {
-            super(alwaysShow, ColoredSmokeData.DESERIALIZER);
+            super(alwaysShow);
         }
 
         @Override
-        public Codec<ColoredSmokeData> codec()
+        public MapCodec<ColoredSmokeData> codec()
         {
             return CODEC;
+        }
+
+        @Override
+        public StreamCodec<? super RegistryFriendlyByteBuf, ColoredSmokeData> streamCodec()
+        {
+            return STREAM_CODEC;
         }
     }
 }

@@ -4,6 +4,7 @@ import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.items.MagicContainerItem;
 import dev.gigaherz.elementsofpower.items.MagicOrbItem;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
@@ -11,6 +12,7 @@ import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
@@ -28,14 +30,14 @@ public class ContainerChargeRecipe extends CustomRecipe
         ItemStack processStack(ItemStack stack, MagicContainerItem item, MagicAmounts capacity, MagicAmounts contained, MagicAmounts charge, MagicAmounts result);
     }
 
-    private ItemStack processRecipe(CraftingContainer inv, ProcessAction modify)
+    private ItemStack processRecipe(CraftingInput inv, ProcessAction modify)
     {
         ItemStack gemContainer = ItemStack.EMPTY;
         MagicAmounts charge = MagicAmounts.EMPTY;
 
         MagicContainerItem gemContainerItem = null;
 
-        for (int i = 0; i < inv.getContainerSize(); i++)
+        for (int i = 0; i < inv.size(); i++)
         {
             ItemStack current = inv.getItem(i);
             if (current.getCount() <= 0)
@@ -74,13 +76,13 @@ public class ContainerChargeRecipe extends CustomRecipe
     }
 
     @Override
-    public boolean matches(CraftingContainer inv, Level worldIn)
+    public boolean matches(CraftingInput inv, Level worldIn)
     {
         return processRecipe(inv, (stack, item, capacity, contained, charge, newContained) -> stack).getCount() > 0;
     }
 
     @Override
-    public ItemStack assemble(CraftingContainer inv, RegistryAccess registryAccess)
+    public ItemStack assemble(CraftingInput inv, HolderLookup.Provider registryAccess)
     {
         return processRecipe(inv, (stack, item, capacity, contained, charge, newContained) -> {
             var output = stack.copy();
@@ -95,9 +97,10 @@ public class ContainerChargeRecipe extends CustomRecipe
         return (width * height) >= 2;
     }
 
-    public NonNullList<ItemStack> getRemainingItems(CraftingContainer inv)
+    @Override
+    public NonNullList<ItemStack> getRemainingItems(CraftingInput inv)
     {
-        return NonNullList.withSize(inv.getContainerSize(), ItemStack.EMPTY);
+        return NonNullList.withSize(inv.size(), ItemStack.EMPTY);
     }
 
     @Override

@@ -1,19 +1,5 @@
-// 1.20.4	2023-12-11T00:49:42.1216323	Tags for minecraft:block mod id elementsofpower
-47178c247d72698fa7d1565f88d280a2e0dd551f data/elementsofpower/tags/blocks/can_cocoon_replace.json
-8ba5dedf75a9570db84668f0b565d539cfbffca5 data/forge/tags/blocks/ores.json
-c94257e05fd20feb732fb5edde618af4d7789919 data/forge/tags/blocks/ores/agate.json
-f0450553984a380135b2ca6de36656ed288bf021 data/forge/tags/blocks/ores/citrine.json
-18b46ae007ecbf40cd5676a7082d68e0b7923f0a data/forge/tags/blocks/ores/onyx.json
-0835287ec0ab6a268d950c56a8f0c20ebb7a174f data/forge/tags/blocks/ores/rubellite.json
-70753a31547383531e05792b26cd400d4a214be5 data/forge/tags/blocks/ores/ruby.json
-31bd2b5231f55f62fdc7e4f09934dcb5e26cf710 data/forge/tags/blocks/ores/sapphire.json
-4debb076781790e3ed08e581a81ac8ad908f5495 data/forge/tags/blocks/storage_blocks.json
-5e56906ac8ef0cb5fccd3bed1617c30a76dee6f5 data/forge/tags/blocks/storage_blocks/agate.json
-cdee53a5377584391939f9e144a2b2af155936da data/forge/tags/blocks/storage_blocks/citrine.json
-6a7e1cd77a66e4131146486fc01669064eeb889b data/forge/tags/blocks/storage_blocks/onyx.json
-57ac3f4d8df87f3d580c42e24a32ddcb07d0fca2 data/forge/tags/blocks/storage_blocks/rubellite.json
-0767ebbb27a105be6da75a33fae77191bf2c12cd data/forge/tags/blocks/storage_blocks/ruby.json
-54fd53510787df03f276750e814b231f5f4ce7dd data/forge/tags/blocks/storage_blocks/sapphire.json
-994cf94beef420425846dd2750f53d3bbd691def data/minecraft/tags/blocks/mineable/axe.json
-783e69a9f10e444f918b0e3f57c7e62435359f55 data/minecraft/tags/blocks/mineable/pickaxe.json
-783e69a9f10e444f918b0e3f57c7e62435359f55 data/minecraft/tags/blocks/needs_iron_tool.json
+// 1.21	2024-07-29T20:55:19.0700384	Tags for minecraft:block mod id elementsofpower
+47178c247d72698fa7d1565f88d280a2e0dd551f data/elementsofpower/tags/block/can_cocoon_replace.json
+994cf94beef420425846dd2750f53d3bbd691def data/minecraft/tags/block/mineable/axe.json
+8d7300c55ac1ebc55771c54deeb10f1b51ad79e5 data/minecraft/tags/block/mineable/pickaxe.json
+8d7300c55ac1ebc55771c54deeb10f1b51ad79e5 data/minecraft/tags/block/needs_iron_tool.json

@@ -1,6 +1,6 @@
 package dev.gigaherz.elementsofpower.essentializer.menu;
 
-import dev.gigaherz.elementsofpower.integration.aequivaleo.AequivaleoPlugin;
+import dev.gigaherz.elementsofpower.database.EssenceConversionManager;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.fml.ModList;
@@ -20,7 +20,7 @@ public class MagicSourceSlot extends SlotItemHandler
     @Override
     public boolean mayPlace(ItemStack stack)
     {
-        return stack == null || (ModList.get().isLoaded("aequivaleo") && AequivaleoPlugin.getEssences(level, stack, false).isPresent());
+        return stack == null || (ModList.get().isLoaded("aequivaleo") && EssenceConversionManager.getEssences(level, stack, false).isPresent());
     }
 
     @Override

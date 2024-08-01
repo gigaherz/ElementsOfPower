@@ -15,7 +15,7 @@ import net.minecraft.world.level.material.PushReaction;
 
 public class DustBlock extends Block
 {
-    public static final IntegerProperty DENSITY = IntegerProperty.create("density", 1, 16);
+    public static final IntegerProperty DENSITY = SpellBlockProperties.DENSITY;
 
     public DustBlock(Properties properties)
     {

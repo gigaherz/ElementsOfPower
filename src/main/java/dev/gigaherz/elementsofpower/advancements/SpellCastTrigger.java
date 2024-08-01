@@ -30,7 +30,7 @@ public class SpellCastTrigger extends SimpleCriterionTrigger<SpellCastTrigger.Tr
     {
         public static final Codec<SpellCastTrigger.TriggerInstance> CODEC = RecordCodecBuilder.create(
                 instance -> instance.group(
-                                ExtraCodecs.strictOptionalField(EntityPredicate.ADVANCEMENT_CODEC, "player").forGetter(SpellCastTrigger.TriggerInstance::player)
+                                EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(SpellCastTrigger.TriggerInstance::player)
                         )
                         .apply(instance, SpellCastTrigger.TriggerInstance::new)
         );

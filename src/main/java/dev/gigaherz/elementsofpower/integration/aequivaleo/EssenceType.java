@@ -1,5 +1,5 @@
 package dev.gigaherz.elementsofpower.integration.aequivaleo;
-
+/*
 import com.ldtteam.aequivaleo.api.compound.type.ICompoundType;
 import com.ldtteam.aequivaleo.api.compound.type.group.ICompoundTypeGroup;
 import com.mojang.serialization.Codec;
@@ -42,3 +42,4 @@ public class EssenceType implements ICompoundType
             EssenceType::getElement
     );
 }
+*/

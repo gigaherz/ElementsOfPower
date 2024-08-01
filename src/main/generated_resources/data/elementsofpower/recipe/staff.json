@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "item": "minecraft:iron_block"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    },
+    "W": {
+      "item": "elementsofpower:wand"
+    }
+  },
+  "pattern": [
+    " GW",
+    " SG",
+    "S  "
+  ],
+  "result": {
+    "count": 1,
+    "id": "elementsofpower:staff"
+  }
+}

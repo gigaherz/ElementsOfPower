@@ -6,43 +6,42 @@ import com.google.common.collect.Queues;
 import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.capabilities.PlayerCombinedMagicContainers;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.attachment.AttachmentType;
-import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Queue;
 import java.util.function.BiConsumer;
-import java.util.function.Supplier;
 
-import static dev.gigaherz.elementsofpower.ElementsOfPowerMod.ATTACHMENT_TYPES;
 
-@Mod.EventBusSubscriber(modid=ElementsOfPowerMod.MODID,bus= Mod.EventBusSubscriber.Bus.FORGE)
+@EventBusSubscriber(modid=ElementsOfPowerMod.MODID,bus= EventBusSubscriber.Bus.GAME)
 public class CocoonEventHandling
 {
     @SubscribeEvent
-    private static void worldTick(TickEvent.LevelTickEvent event)
+    private static void worldTick(LevelTickEvent.Post event)
     {
-        if (event.phase == TickEvent.Phase.END && event.level instanceof ServerLevel serverLevel)
+        if (event.getLevel() instanceof ServerLevel serverLevel)
             get(serverLevel).processCocoons(serverLevel);
     }
 
     @SubscribeEvent
-    private static void playerTick(TickEvent.PlayerTickEvent ev)
+    private static void playerTick(PlayerTickEvent.Post ev)
     {
-        Player player = ev.player;
+        Player player = ev.getEntity();
         if (player.level().isClientSide || !EntitySelector.NO_SPECTATORS.test(player))
             return;
 
@@ -115,7 +114,7 @@ public class CocoonEventHandling
         {
         }
 
-        public PendingTracker(CompoundTag compoundTag)
+        public PendingTracker(CompoundTag compoundTag, HolderLookup.Provider lookup)
         {
         }
 
@@ -155,9 +154,9 @@ public class CocoonEventHandling
         }
 
         @Override
-        public CompoundTag save(CompoundTag p_77763_)
+        public CompoundTag save(CompoundTag tag, HolderLookup.Provider lookup)
         {
-            return p_77763_;
+            return tag;
         }
     }
 

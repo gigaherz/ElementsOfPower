@@ -10,10 +10,7 @@ import net.minecraft.nbt.StringTag;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
@@ -39,11 +36,16 @@ public class SpellManager
         return seq.stream().map(e -> Element.byName(e.getAsString())).collect(Collectors.toList());
     }
 
-    public static ListTag sequenceToList(List<Element> sequence)
+    public static List<Element> sequenceFromList(List<String> seq)
     {
-        ListTag list = new ListTag();
+        return seq.stream().map(Element::byName).collect(Collectors.toList());
+    }
+
+    public static List<String> sequenceToList(List<Element> sequence)
+    {
+        List<String> list = new ArrayList<>();
         for (Element e : sequence)
-        {list.add(StringTag.valueOf(e.getName()));}
+            list.add(e.getName());
         return list;
     }
 

@@ -1,0 +1,36 @@
+modLoader="javafml"
+loaderVersion="[1,)"
+license="BSD (3 clause)"
+
+[[mods]]
+modId="elementsofpower"
+version="${file.jarVersion}"
+displayName="Elements of Power"
+updateJSONURL="https://raw.githubusercontent.com/gigaherz/ElementsOfPower/master/update.json"
+issueTrackerURL="https://github.com/gigaherz/ElementsOfPower/issues"
+displayURL="https://www.curseforge.com/minecraft/mc-mods/elements-of-power"
+logoFile="logo.png" #optional
+credits="Thanks for this example mod goes to Java"
+authors="Love, Cheese and small house plants"
+description='''
+A magic mod about the raw power elemental essences
+'''
+
+[[dependencies.elementsofpower]]
+    modId="neoforge"
+    type="required"
+    versionRange="[21.0.100,)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.elementsofpower]]
+    modId="minecraft"
+    type="required"
+    versionRange="[1.21,1.22)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.elementsofpower]]
+    modId="aequivaleo"
+    type="optional"
+    versionRange="[1.21,)"
+    ordering="NONE"
+    side="BOTH"

@@ -153,7 +153,7 @@ public class AnalyzerMenu extends AbstractContainerMenu
                 ItemStack itemstack = slot.getItem();
                 int limit = Math.min(slot.getMaxStackSize(stack), stack.getMaxStackSize());
 
-                if (itemstack.getCount() > 0 && ItemStack.isSameItemSameTags(stack, itemstack))
+                if (itemstack.getCount() > 0 && ItemStack.isSameItemSameComponents(stack, itemstack))
                 {
                     int j = itemstack.getCount() + stack.getCount();
 

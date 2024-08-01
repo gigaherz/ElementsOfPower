@@ -17,6 +17,7 @@ import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.event.RenderPlayerEvent;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -24,7 +25,7 @@ import net.neoforged.fml.common.Mod;
 
 import java.util.Map;
 
-@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = ElementsOfPowerMod.MODID)
+@EventBusSubscriber(value = Dist.CLIENT, modid = ElementsOfPowerMod.MODID)
 public class SpellRenderingHandler
 {
     public static final Map<SpellShape, SpellRenderer> rendererRegistry = Maps.newHashMap();
@@ -55,7 +56,7 @@ public class SpellRenderingHandler
         {
             EntityRenderDispatcher renderManager = Minecraft.getInstance().getEntityRenderDispatcher();
 
-            float partialTicks = Minecraft.getInstance().getFrameTime();
+            float partialTicks = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
 
             Vec3 off = player.getUpVector(partialTicks).scale(-0.15);
 

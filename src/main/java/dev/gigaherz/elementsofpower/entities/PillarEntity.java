@@ -9,8 +9,10 @@ import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
@@ -59,7 +61,7 @@ public class PillarEntity extends Entity implements IEntityWithComplexSpawn
         {
             float height = getHeight();
 
-            PacketDistributor.TRACKING_ENTITY.with(this).send(new ParticlesInShape(
+            PacketDistributor.sendToPlayersTrackingEntity(this, new ParticlesInShape(
                     ParticlesInShape.AreaShape.BOX_UNIFORM,
                     new BlockParticleOption(ParticleTypes.BLOCK, Blocks.DIRT.defaultBlockState()),
                     150,
@@ -132,11 +134,10 @@ public class PillarEntity extends Entity implements IEntityWithComplexSpawn
         return this.isAlive();
     }
 
-
-
     @Override
-    protected void defineSynchedData()
+    protected void defineSynchedData(SynchedEntityData.Builder p_326003_)
     {
+
     }
 
     @Override
@@ -153,15 +154,16 @@ public class PillarEntity extends Entity implements IEntityWithComplexSpawn
         pCompound.putInt("delay", delay);
     }
 
+
     @Override
-    public void writeSpawnData(FriendlyByteBuf buffer)
+    public void writeSpawnData(RegistryFriendlyByteBuf buffer)
     {
         buffer.writeInt(duration);
         buffer.writeInt(delay);
     }
 
     @Override
-    public void readSpawnData(FriendlyByteBuf buffer)
+    public void readSpawnData(RegistryFriendlyByteBuf buffer)
     {
         duration = buffer.readInt();
         delay = buffer.readInt();

@@ -3,19 +3,22 @@ package dev.gigaherz.elementsofpower.essentializer;
 import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.capabilities.MagicContainerCapability;
 import dev.gigaherz.elementsofpower.capabilities.PlayerCombinedMagicContainers;
+import dev.gigaherz.elementsofpower.database.EssenceConversionManager;
 import dev.gigaherz.elementsofpower.essentializer.menu.IMagicAmountHolder;
-import dev.gigaherz.elementsofpower.integration.aequivaleo.AequivaleoPlugin;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import dev.gigaherz.elementsofpower.network.UpdateEssentializerTile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -23,6 +26,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
@@ -34,7 +38,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@Mod.EventBusSubscriber(modid=ElementsOfPowerMod.MODID, bus= Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid=ElementsOfPowerMod.MODID, bus= EventBusSubscriber.Bus.MOD)
 public class EssentializerBlockEntity
         extends BlockEntity
         implements IMagicAmountHolder
@@ -84,7 +88,7 @@ public class EssentializerBlockEntity
         {
             return switch (index)
                     {
-                        case 0 -> ModList.get().isLoaded("aequivaleo") && AequivaleoPlugin.getEssences(level, stack, false).isPresent();
+                        case 0 -> ModList.get().isLoaded("aequivaleo") && EssenceConversionManager.getEssences(level, stack, false).isPresent();
                         case 1, 2 -> MagicContainerCapability.hasContainer(stack);
                         default -> false;
                     };
@@ -119,9 +123,9 @@ public class EssentializerBlockEntity
     }
 
     @Override
-    public void load(CompoundTag compound)
+    protected void loadAdditional(CompoundTag compound, HolderLookup.Provider lookup)
     {
-        super.load(compound);
+        super.loadAdditional(compound, lookup);
 
         if (compound.contains("Slots", Tag.TAG_LIST))
         {
@@ -133,23 +137,24 @@ public class EssentializerBlockEntity
 
                 if (slot >= 0 && slot < inventory.getSlots())
                 {
-                    inventory.setStackInSlot(slot, ItemStack.of(itemTags));
+                    inventory.setStackInSlot(slot, ItemStack.parse(lookup, itemTags).orElseGet(() -> ItemStack.EMPTY));
                 }
             }
         }
         else if (compound.contains("Inventory", Tag.TAG_COMPOUND))
         {
-            inventory.deserializeNBT(compound.getCompound("Inventory"));
+            inventory.deserializeNBT(lookup, compound.getCompound("Inventory"));
         }
         containedMagic = readAmountsFromNBT(compound, "Contained");
         remainingToConvert = readAmountsFromNBT(compound, "Remaining");
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag)
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider lookup)
     {
-        super.saveAdditional(tag);
-        tag.put("Slots", inventory.serializeNBT());
+        super.saveAdditional(tag, lookup);
+
+        tag.put("Slots", inventory.serializeNBT(lookup));
         writeAmountsToNBT(tag, "Contained", containedMagic);
         writeAmountsToNBT(tag, "Remaining", remainingToConvert);
     }
@@ -172,15 +177,15 @@ public class EssentializerBlockEntity
     }
 
     @Override
-    public CompoundTag getUpdateTag()
+    public CompoundTag getUpdateTag(HolderLookup.Provider lookup)
     {
-        return saveWithoutMetadata();
+        return saveWithoutMetadata(lookup);
     }
 
     @Override
-    public void handleUpdateTag(CompoundTag tag)
+    public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider lookup)
     {
-        load(tag);
+        loadCustomOnly(tag, lookup);
     }
 
     @Override
@@ -189,13 +194,14 @@ public class EssentializerBlockEntity
         return ClientboundBlockEntityDataPacket.create(this);
     }
 
+
     @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket packet)
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket packet, HolderLookup.Provider lookup)
     {
         var tag = packet.getTag();
         if (tag != null)
         {
-            handleUpdateTag(tag);
+            handleUpdateTag(tag, lookup);
 
             BlockState state = level.getBlockState(worldPosition);
             level.sendBlockUpdated(worldPosition, state, state, 3);
@@ -210,7 +216,8 @@ public class EssentializerBlockEntity
         boolean b3 = addMagicToOutput(inventory);
         if (b0 || b1 || b2 || b3)
         {
-            PacketDistributor.TRACKING_CHUNK.with((LevelChunk) level.getChunk(worldPosition)).send(new UpdateEssentializerTile(this));
+            PacketDistributor.sendToPlayersTrackingChunk((ServerLevel)level, new ChunkPos(worldPosition),
+                    new UpdateEssentializerTile(getBlockPos(), remainingToConvert, getInventory().getStackInSlot(0)));
         }
         if (b1 || b2 || b3)
         {
@@ -256,7 +263,7 @@ public class EssentializerBlockEntity
             return false;
         }
 
-        MagicAmounts contained = ModList.get().isLoaded("aequivaleo") ? AequivaleoPlugin.getEssences(level, input, false).orElse(MagicAmounts.EMPTY) : MagicAmounts.EMPTY;
+        MagicAmounts contained = ModList.get().isLoaded("aequivaleo") ? EssenceConversionManager.getEssences(level, input, false).orElse(MagicAmounts.EMPTY) : MagicAmounts.EMPTY;
 
         if (contained.isEmpty())
             return false;

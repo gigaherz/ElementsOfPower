@@ -18,10 +18,10 @@ public class ClientPacketHandlers
         Minecraft mc = Minecraft.getInstance();
         mc.execute(() ->
         {
-            Player player = (Player) mc.level.getEntity(message.casterID);
-            Spellcast spellcast = message.spellcast.isEmpty() ? null : Spellcast.read(message.spellcast);
+            Player player = (Player) mc.level.getEntity(message.casterID());
+            Spellcast spellcast = message.spellcast().isEmpty() ? null : Spellcast.read(message.spellcast());
             SpellcastState.get(player)
-                    .onSync(message.changeMode, spellcast, message.remainingCastTime, message.remainingInterval, message.totalCastTime);
+                    .onSync(message.changeMode(), spellcast, message.remainingCastTime(), message.remainingInterval(), message.totalCastTime());
         });
     }
 
@@ -31,13 +31,13 @@ public class ClientPacketHandlers
         mc.execute(() ->
         {
             Player player = mc.player;
-            if (message.windowId != -1)
+            if (message.windowId() != -1)
             {
-                if (message.windowId == player.containerMenu.containerId)
+                if (message.windowId() == player.containerMenu.containerId)
                 {
                     if ((player.containerMenu instanceof EssentializerMenu))
                     {
-                        ((EssentializerMenu) player.containerMenu).updateAmounts(message.contained, message.remaining);
+                        ((EssentializerMenu) player.containerMenu).updateAmounts(message.contained(), message.remaining());
                     }
                 }
             }
@@ -51,10 +51,10 @@ public class ClientPacketHandlers
         {
             if (mc.level == null)
                 return;
-            if (mc.level.getBlockEntity(message.pos) instanceof EssentializerBlockEntity essentializer)
+            if (mc.level.getBlockEntity(message.pos()) instanceof EssentializerBlockEntity essentializer)
             {
-                essentializer.getInventory().setStackInSlot(0, message.activeItem);
-                essentializer.remainingToConvert = message.remaining;
+                essentializer.getInventory().setStackInSlot(0, message.activeItem());
+                essentializer.remainingToConvert = message.remaining();
             }
         });
     }
@@ -65,7 +65,7 @@ public class ClientPacketHandlers
         mc.execute(() -> {
             if (mc.player == null)
                 return;
-            mc.player.push(message.vx, message.vy, message.vz);
+            mc.player.push(message.vx(), message.vy(), message.vz());
         });
     }
 
@@ -74,33 +74,33 @@ public class ClientPacketHandlers
         Minecraft mc = Minecraft.getInstance();
         mc.execute(() -> {
             var random = mc.level.random;
-            switch (Objects.requireNonNull(packet.areaShape))
+            switch (Objects.requireNonNull(packet.areaShape()))
             {
                 case BOX ->
                 {
-                    for (int i = 0; i < packet.count; i++)
+                    for (int i = 0; i < packet.count(); i++)
                     {
-                        var options = packet.options;
-                        double posX = packet.centerX + (random.nextDouble()-0.5f) * 2.0f * packet.spreadX;
-                        double posY = packet.centerY + (random.nextDouble()-0.5f) * 2.0f * packet.spreadY;
-                        double posZ = packet.centerZ + (random.nextDouble()-0.5f) * 2.0f * packet.spreadZ;
-                        double velX = Mth.lerp(packet.minVelocityX, packet.maxVelocityX, random.nextDouble());
-                        double velY = Mth.lerp(packet.minVelocityY, packet.maxVelocityY, random.nextDouble());
-                        double velZ = Mth.lerp(packet.minVelocityZ, packet.maxVelocityZ, random.nextDouble());
+                        var options = packet.options();
+                        double posX = packet.centerX() + (random.nextDouble()-0.5f) * 2.0f * packet.spreadX();
+                        double posY = packet.centerY() + (random.nextDouble()-0.5f) * 2.0f * packet.spreadY();
+                        double posZ = packet.centerZ() + (random.nextDouble()-0.5f) * 2.0f * packet.spreadZ();
+                        double velX = Mth.lerp(packet.minVelocityX(), packet.maxVelocityX(), random.nextDouble());
+                        double velY = Mth.lerp(packet.minVelocityY(), packet.maxVelocityY(), random.nextDouble());
+                        double velZ = Mth.lerp(packet.minVelocityZ(), packet.maxVelocityZ(), random.nextDouble());
                         mc.level.addParticle(options, posX, posY, posZ, velX, velY, velZ);
                     }
                 }
                 case BOX_UNIFORM ->
                 {
-                    for (int i = 0; i < packet.count; i++)
+                    for (int i = 0; i < packet.count(); i++)
                     {
-                        var options = packet.options;
-                        double posX = packet.centerX + signedSqrt((random.nextDouble()-0.5f) * 2.0f) * packet.spreadX;
-                        double posY = packet.centerY + signedSqrt((random.nextDouble()-0.5f) * 2.0f) * packet.spreadY;
-                        double posZ = packet.centerZ + signedSqrt((random.nextDouble()-0.5f) * 2.0f) * packet.spreadZ;
-                        double velX = Mth.lerp(packet.minVelocityX, packet.maxVelocityX, random.nextDouble());
-                        double velY = Mth.lerp(packet.minVelocityY, packet.maxVelocityY, random.nextDouble());
-                        double velZ = Mth.lerp(packet.minVelocityZ, packet.maxVelocityZ, random.nextDouble());
+                        var options = packet.options();
+                        double posX = packet.centerX() + signedSqrt((random.nextDouble()-0.5f) * 2.0f) * packet.spreadX();
+                        double posY = packet.centerY() + signedSqrt((random.nextDouble()-0.5f) * 2.0f) * packet.spreadY();
+                        double posZ = packet.centerZ() + signedSqrt((random.nextDouble()-0.5f) * 2.0f) * packet.spreadZ();
+                        double velX = Mth.lerp(packet.minVelocityX(), packet.maxVelocityX(), random.nextDouble());
+                        double velY = Mth.lerp(packet.minVelocityY(), packet.maxVelocityY(), random.nextDouble());
+                        double velZ = Mth.lerp(packet.minVelocityZ(), packet.maxVelocityZ(), random.nextDouble());
                         mc.level.addParticle(options, posX, posY, posZ, velX, velY, velZ);
                     }
                 }

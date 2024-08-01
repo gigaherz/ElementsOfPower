@@ -1,40 +1,26 @@
 package dev.gigaherz.elementsofpower.gemstones;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import it.unimi.dsi.fastutil.ints.IntList;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.neoforged.neoforge.common.crafting.ICustomIngredient;
 import net.neoforged.neoforge.common.crafting.IngredientType;
 
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Arrays;
 import java.util.stream.Stream;
 
-public class AnalyzedFilteringIngredient extends Ingredient
+public record AnalyzedFilteringIngredient(Ingredient inner) implements ICustomIngredient
 {
-    public static final ResourceLocation ID = ElementsOfPowerMod.location("not_analyzed");
-
-    final Ingredient inner;
-
-    protected AnalyzedFilteringIngredient(Ingredient inner)
-    {
-        super(Stream.empty());
-        this.inner = inner;
-    }
-
-    public static Ingredient wrap(Ingredient ingredient)
-    {
-        return new AnalyzedFilteringIngredient(ingredient);
-    }
-
-    @Override
-    public ItemStack[] getItems()
-    {
-        return inner.getItems();
-    }
-
     @Override
     public boolean test(@Nullable ItemStack stack)
     {
@@ -48,15 +34,9 @@ public class AnalyzedFilteringIngredient extends Ingredient
     }
 
     @Override
-    public IntList getStackingIds()
+    public Stream<ItemStack> getItems()
     {
-        return inner.getStackingIds();
-    }
-
-    @Override
-    public boolean isEmpty()
-    {
-        return inner.isEmpty();
+        return Arrays.stream(inner.getItems());
     }
 
     @Override
@@ -71,11 +51,11 @@ public class AnalyzedFilteringIngredient extends Ingredient
         return ElementsOfPowerMod.ANALYZED_FILTERING_INGREDIENT.get();
     }
 
-    public static Codec<AnalyzedFilteringIngredient> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+    public static MapCodec<AnalyzedFilteringIngredient> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Ingredient.CODEC.fieldOf("inner").forGetter(i -> i.inner)
     ).apply(instance, AnalyzedFilteringIngredient::new));
 
-    public static Codec<AnalyzedFilteringIngredient> NON_EMPTY_CODEC= RecordCodecBuilder.create(instance -> instance.group(
-            Ingredient.CODEC_NONEMPTY.fieldOf("inner").forGetter(i -> i.inner)
-    ).apply(instance, AnalyzedFilteringIngredient::new));;
+    public static StreamCodec<RegistryFriendlyByteBuf, AnalyzedFilteringIngredient> STREAM_CODEC = StreamCodec.composite(
+            Ingredient.CONTENTS_STREAM_CODEC, i -> i.inner,
+            AnalyzedFilteringIngredient::new);
 }

@@ -26,7 +26,7 @@ import java.util.Objects;
 
 public class CocoonFeature extends Feature<NoneFeatureConfiguration>
 {
-    public static final TagKey<Block> REPLACEABLE_TAG = TagKey.create(Registries.BLOCK,new ResourceLocation("elementsofpower:can_cocoon_replace"));
+    public static final TagKey<Block> REPLACEABLE_TAG = TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("elementsofpower","can_cocoon_replace"));
 
     public static final MagicGradient OVERWORLD = new MagicGradient.Builder()
             .addPoint(0, MagicAmounts.EMPTY.time(0.25f))

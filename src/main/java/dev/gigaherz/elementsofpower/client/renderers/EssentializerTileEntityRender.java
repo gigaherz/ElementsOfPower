@@ -18,7 +18,7 @@ public class EssentializerTileEntityRender implements BlockEntityRenderer<Essent
 {
     private final Lazy<ModelHandle> corner_handle = Lazy.of(() -> ModelHandle.of("elementsofpower:models/block/essentializer_corner.obj"));
 
-    private final ResourceLocation texture = new ResourceLocation("elementsofpower:textures/block/side_obsidian.png");
+    private final ResourceLocation texture = ResourceLocation.fromNamespaceAndPath("elementsofpower","textures/block/side_obsidian.png");
 
     public EssentializerTileEntityRender(BlockEntityRendererProvider.Context ctx)
     {

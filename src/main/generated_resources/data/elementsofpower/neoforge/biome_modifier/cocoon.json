@@ -2,7 +2,7 @@
   "type": "neoforge:add_features",
   "biomes": {
     "type": "neoforge:not",
-    "value": "#forge:is_void"
+    "value": "#c:is_void"
   },
   "features": "elementsofpower:overworld_cocoon",
   "step": "underground_decoration"

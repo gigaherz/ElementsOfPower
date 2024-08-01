@@ -2,8 +2,8 @@ package dev.gigaherz.elementsofpower.client;
 
 import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.capabilities.MagicContainerCapability;
-import dev.gigaherz.elementsofpower.integration.aequivaleo.AequivaleoPlugin;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
+import dev.gigaherz.elementsofpower.database.EssenceConversionManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -14,6 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
@@ -23,7 +24,7 @@ import java.text.DecimalFormat;
 import java.text.Format;
 import java.util.List;
 
-@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = ElementsOfPowerMod.MODID)
+@EventBusSubscriber(value = Dist.CLIENT, modid = ElementsOfPowerMod.MODID)
 public class MagicTooltips
 {
     public static final Format PRETTY_NUMBER_FORMATTER = new DecimalFormat("#.#");
@@ -49,7 +50,7 @@ public class MagicTooltips
         }
 
         Level world = Minecraft.getInstance().level;
-        MagicAmounts amounts = ModList.get().isLoaded("aequivaleo") ? AequivaleoPlugin.getEssences(world, stack, false).orElse(MagicAmounts.EMPTY) : MagicAmounts.EMPTY;
+        MagicAmounts amounts = ModList.get().isLoaded("aequivaleo") ? EssenceConversionManager.getEssences(world, stack, false).orElse(MagicAmounts.EMPTY) : MagicAmounts.EMPTY;
         if (amounts.isEmpty())
             return;
 

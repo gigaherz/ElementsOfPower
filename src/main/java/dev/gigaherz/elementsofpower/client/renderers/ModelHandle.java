@@ -17,7 +17,7 @@ public class ModelHandle
 
     public static ModelHandle of(String modelLocation)
     {
-        return new ModelHandle(new ResourceLocation(modelLocation));
+        return new ModelHandle(ResourceLocation.parse(modelLocation));
     }
 
     public ModelHandle(ResourceLocation modelLocation)

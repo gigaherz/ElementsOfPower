@@ -51,17 +51,16 @@ public class AnalyzerBlock extends Block
         return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
     }
 
-    @Deprecated
     @Override
-    public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit)
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult)
     {
-        if (pLevel.isClientSide)
+        if (level.isClientSide)
             return InteractionResult.SUCCESS;
 
-        if (pPlayer instanceof FakePlayer)
+        if (player instanceof FakePlayer)
             return InteractionResult.FAIL;
 
-        if (!(pPlayer instanceof ServerPlayer sp))
+        if (!(player instanceof ServerPlayer sp))
             return InteractionResult.FAIL;
 
         AnalyzerMenu.openAnalyzer(sp, -1);

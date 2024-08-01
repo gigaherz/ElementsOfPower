@@ -7,6 +7,7 @@ import dev.gigaherz.elementsofpower.essentializer.menu.IMagicAmountContainer;
 import dev.gigaherz.elementsofpower.items.MagicOrbItem;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -31,30 +32,30 @@ public class CocoonTileEntity extends BlockEntity implements IMagicAmountContain
     }
 
     @Override
-    public void load(CompoundTag compound)
+    protected void loadAdditional(CompoundTag compound, HolderLookup.Provider lookup)
     {
-        super.load(compound);
+        super.loadAdditional(compound, lookup);
         essenceContained = new MagicAmounts(compound.getCompound("Magic"));
     }
 
     @Override
-    protected void saveAdditional(CompoundTag compound)
+    protected void saveAdditional(CompoundTag compound, HolderLookup.Provider lookup)
     {
-        super.saveAdditional(compound);
+        super.saveAdditional(compound, lookup);
 
         compound.put("Magic", essenceContained.serializeNBT());
     }
 
     @Override
-    public CompoundTag getUpdateTag()
+    public CompoundTag getUpdateTag(HolderLookup.Provider lookup)
     {
-        return saveWithoutMetadata();
+        return saveWithoutMetadata(lookup);
     }
 
     @Override
-    public void handleUpdateTag(CompoundTag tag)
+    public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider lookup)
     {
-        load(tag);
+        loadCustomOnly(tag, lookup);
     }
 
     @Override
@@ -64,10 +65,10 @@ public class CocoonTileEntity extends BlockEntity implements IMagicAmountContain
     }
 
     @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket packet)
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket packet, HolderLookup.Provider lookup)
     {
-        super.onDataPacket(net, packet);
-        handleUpdateTag(packet.getTag());
+        super.onDataPacket(net, packet, lookup);
+        handleUpdateTag(packet.getTag(), lookup);
     }
 
     public MagicAmounts transferToPlayer(RandomSource random, IMagicContainer cap)

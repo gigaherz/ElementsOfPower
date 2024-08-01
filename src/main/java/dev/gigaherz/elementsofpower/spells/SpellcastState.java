@@ -6,6 +6,7 @@ import dev.gigaherz.elementsofpower.misc.EntityInterceptor;
 import dev.gigaherz.elementsofpower.network.SynchronizeSpellcastState;
 import dev.gigaherz.elementsofpower.spells.effects.SpellEffect;
 import dev.gigaherz.elementsofpower.spells.shapes.SpellShape;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -21,11 +22,12 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.util.INBTSerializable;
-import net.neoforged.neoforge.event.TickEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,7 +37,7 @@ public class SpellcastState implements INBTSerializable<CompoundTag>
 {
     private static final SpellcastState EMPTY = new SpellcastState();
 
-    @Mod.EventBusSubscriber(modid=ElementsOfPowerMod.MODID, bus= Mod.EventBusSubscriber.Bus.FORGE)
+    @EventBusSubscriber(modid=ElementsOfPowerMod.MODID, bus= EventBusSubscriber.Bus.GAME)
     public static class ForgeBusEvents
     {
         @SubscribeEvent
@@ -46,12 +48,9 @@ public class SpellcastState implements INBTSerializable<CompoundTag>
         }
 
         @SubscribeEvent
-        public static void playerTickEvent(TickEvent.PlayerTickEvent e)
+        public static void playerTickEvent(PlayerTickEvent.Post e)
         {
-            if (e.phase == TickEvent.Phase.END)
-            {
-                SpellcastState.get(e.player).updateSpell();
-            }
+            SpellcastState.get(e.getEntity()).updateSpell();
         }
 
         @SubscribeEvent
@@ -99,7 +98,8 @@ public class SpellcastState implements INBTSerializable<CompoundTag>
         this.rand = player.getRandom();
     }
 
-    public CompoundTag serializeNBT()
+    @Override
+    public CompoundTag serializeNBT(HolderLookup.Provider provider)
     {
         CompoundTag compound = new CompoundTag();
         if (spellcast != null)
@@ -113,7 +113,8 @@ public class SpellcastState implements INBTSerializable<CompoundTag>
         return compound;
     }
 
-    public void deserializeNBT(CompoundTag compound)
+    @Override
+    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag compound)
     {
         if (compound.contains("currentSpell", Tag.TAG_COMPOUND))
         {
@@ -251,8 +252,7 @@ public class SpellcastState implements INBTSerializable<CompoundTag>
     {
         if (spellcast != null && !player.level().isClientSide)
         {
-            PacketDistributor.TRACKING_ENTITY_AND_SELF.with(player).send(
-                    new SynchronizeSpellcastState(mode, player, spellcast, remainingCastTime, remainingInterval, totalCastTime));
+            PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SynchronizeSpellcastState(mode, player.getId(), spellcast.serializeNBT(), remainingCastTime, remainingInterval, totalCastTime));
         }
     }
 

@@ -48,7 +48,7 @@ public class TeleportEffect extends SpellEffect
             {
                 ServerPlayer playerMP = (ServerPlayer) cast.player();
 
-                if (playerMP.connection.connection.isConnected()
+                if (playerMP.connection.getConnection().isConnected()
                         && playerMP.level() == cast.level()
                         && !playerMP.isSleeping())
                 {

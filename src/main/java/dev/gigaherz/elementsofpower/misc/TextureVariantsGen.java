@@ -122,7 +122,7 @@ public abstract class TextureVariantsGen implements DataProvider
 
     protected void genTexture(BiConsumer<ResourceLocation, Supplier<NativeImage>> consumer, String name, Supplier<NativeImage> supplier)
     {
-        consumer.accept(new ResourceLocation(modid, name), supplier);
+        consumer.accept(ResourceLocation.fromNamespaceAndPath(modid, name), supplier);
     }
 
     @Override

@@ -4,11 +4,15 @@ import com.google.gson.*;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
+import dev.gigaherz.elementsofpower.misc.CursedStreamCodec;
 import dev.gigaherz.elementsofpower.spells.Element;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 
 import javax.annotation.CheckReturnValue;
 import java.lang.reflect.Type;
@@ -38,6 +42,18 @@ public record MagicAmounts(
                     Codec.FLOAT.fieldOf("life").forGetter(MagicAmounts::life),
                     Codec.FLOAT.fieldOf("chaos").forGetter(MagicAmounts::chaos)
             ).apply(builder, MagicAmounts::new));
+
+    public static final StreamCodec<ByteBuf, MagicAmounts> STREAM_CODEC = CursedStreamCodec.composite(
+            ByteBufCodecs.FLOAT, MagicAmounts::fire,
+            ByteBufCodecs.FLOAT, MagicAmounts::water,
+            ByteBufCodecs.FLOAT, MagicAmounts::air,
+            ByteBufCodecs.FLOAT, MagicAmounts::earth,
+            ByteBufCodecs.FLOAT, MagicAmounts::light,
+            ByteBufCodecs.FLOAT, MagicAmounts::time,
+            ByteBufCodecs.FLOAT, MagicAmounts::life,
+            ByteBufCodecs.FLOAT, MagicAmounts::chaos,
+            MagicAmounts::new
+    );
 
     public static final MagicAmounts EMPTY = new MagicAmounts();
     public static final MagicAmounts INFINITE = new MagicAmounts(

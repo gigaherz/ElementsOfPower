@@ -16,7 +16,6 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.EnchantmentTableBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -45,9 +44,9 @@ public class EssentializerBlock extends BaseEntityBlock
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult p_225533_6_)
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult)
     {
-        BlockEntity tileEntity = worldIn.getBlockEntity(pos);
+        BlockEntity tileEntity = level.getBlockEntity(pos);
 
         if (!(tileEntity instanceof EssentializerBlockEntity))
             return InteractionResult.FAIL;
@@ -55,7 +54,7 @@ public class EssentializerBlock extends BaseEntityBlock
         if (player.isShiftKeyDown())
             return InteractionResult.PASS;
 
-        if (worldIn.isClientSide)
+        if (level.isClientSide)
             return InteractionResult.SUCCESS;
 
         player.openMenu(new SimpleMenuProvider((id, playerInventory, playerEntity) ->

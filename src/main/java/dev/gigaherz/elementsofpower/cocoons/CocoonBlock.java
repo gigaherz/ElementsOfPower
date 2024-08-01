@@ -6,6 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -97,28 +98,25 @@ public class CocoonBlock extends Block implements SimpleWaterloggedBlock, Entity
         return defaultBlockState().setValue(FACING, context.getClickedFace().getOpposite()).setValue(WATERLOGGED, fluid.getType() == Fluids.WATER);
     }
 
-    @Deprecated
     @Override
-    public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand hand, BlockHitResult rayTraceResult)
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult)
     {
-        ItemStack heldItem = player.getItemInHand(hand);
-
-        if (heldItem.getCount() > 0 && heldItem.getItem() instanceof MagicOrbItem)
+        if (stack.getCount() > 0 && stack.getItem() instanceof MagicOrbItem)
         {
-            BlockEntity te = worldIn.getBlockEntity(pos);
+            BlockEntity te = level.getBlockEntity(pos);
 
             if (!(te instanceof CocoonTileEntity))
-                return InteractionResult.FAIL;
+                return ItemInteractionResult.FAIL;
 
-            ((CocoonTileEntity) te).addEssences(heldItem);
+            ((CocoonTileEntity) te).addEssences(stack);
 
             if (!player.getAbilities().instabuild)
-                heldItem.shrink(1);
+                stack.shrink(1);
 
-            return InteractionResult.SUCCESS;
+            return ItemInteractionResult.SUCCESS;
         }
 
-        return super.use(state, worldIn, pos, player, hand, rayTraceResult);
+        return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
 
     @Deprecated

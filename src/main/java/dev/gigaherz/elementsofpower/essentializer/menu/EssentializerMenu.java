@@ -2,8 +2,8 @@ package dev.gigaherz.elementsofpower.essentializer.menu;
 
 import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.capabilities.MagicContainerCapability;
+import dev.gigaherz.elementsofpower.database.EssenceConversionManager;
 import dev.gigaherz.elementsofpower.essentializer.EssentializerBlockEntity;
-import dev.gigaherz.elementsofpower.integration.aequivaleo.AequivaleoPlugin;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import dev.gigaherz.elementsofpower.network.UpdateEssentializerAmounts;
 import net.minecraft.server.level.ServerPlayer;
@@ -116,8 +116,7 @@ public class EssentializerMenu
         {
             if (player instanceof ServerPlayer serverPlayer)
             {
-                PacketDistributor.PLAYER.with(serverPlayer).send(
-                        new UpdateEssentializerAmounts(containerId, magicHolder));
+                PacketDistributor.sendToPlayer(serverPlayer, new UpdateEssentializerAmounts(containerId, magicHolder));
             }
 
             prevContained = magicHolder.getContainedMagic();
@@ -150,7 +149,7 @@ public class EssentializerMenu
         if (slotIndex >= 3)
         {
             boolean itemIsContainer = MagicContainerCapability.hasContainer(stack);
-            boolean itemHasEssence = ModList.get().isLoaded("aequivaleo") && AequivaleoPlugin.getEssences(player.level(), stack, false).isPresent();
+            boolean itemHasEssence = ModList.get().isLoaded("aequivaleo") && EssenceConversionManager.getEssences(player.level(), stack, false).isPresent();
 
             if (itemIsContainer)
             {

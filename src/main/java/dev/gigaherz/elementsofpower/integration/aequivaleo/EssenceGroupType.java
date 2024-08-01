@@ -1,5 +1,5 @@
 package dev.gigaherz.elementsofpower.integration.aequivaleo;
-
+/*
 import com.ldtteam.aequivaleo.api.compound.CompoundInstance;
 import com.ldtteam.aequivaleo.api.compound.container.ICompoundContainer;
 import com.ldtteam.aequivaleo.api.compound.type.ICompoundType;
@@ -96,3 +96,4 @@ public class EssenceGroupType implements ICompoundTypeGroup
         return EssenceType.CODEC;
     }
 }
+*/

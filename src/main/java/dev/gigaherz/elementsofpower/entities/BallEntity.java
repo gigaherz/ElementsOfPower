@@ -5,6 +5,8 @@ import dev.gigaherz.elementsofpower.spells.Spellcast;
 import dev.gigaherz.elementsofpower.spells.SpellcastState;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
@@ -76,14 +78,15 @@ public class BallEntity extends ThrowableProjectile implements IEntityWithComple
     // Entity impl
 
     @Override
-    protected void defineSynchedData()
+    protected void defineSynchedData(SynchedEntityData.Builder p_326003_)
     {
+
     }
 
     @Override
-    protected float getGravity()
+    protected double getDefaultGravity()
     {
-        return 0.001F;
+        return 0.001;
     }
 
     @Override
@@ -118,7 +121,7 @@ public class BallEntity extends ThrowableProjectile implements IEntityWithComple
     }
 
     @Override
-    public void writeSpawnData(FriendlyByteBuf buffer)
+    public void writeSpawnData(RegistryFriendlyByteBuf buffer)
     {
         var spellcastData = spellcast.serializeNBT();
         buffer.writeNbt(spellcastData);
@@ -126,7 +129,7 @@ public class BallEntity extends ThrowableProjectile implements IEntityWithComple
     }
 
     @Override
-    public void readSpawnData(FriendlyByteBuf buffer)
+    public void readSpawnData(RegistryFriendlyByteBuf buffer)
     {
         var spellcastData = buffer.readNbt();
         if (spellcastData != null)

@@ -24,9 +24,8 @@ public class MagicOrbItem extends Item
         this.element = element;
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn)
+    public void appendHoverText(ItemStack stack, TooltipContext tooltipContext, List<Component> tooltip, TooltipFlag flagIn)
     {
         tooltip.add(Component.translatable("text.elementsofpower.orb.use").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
         tooltip.add(Component.translatable("text.elementsofpower.orb.cocoon").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));

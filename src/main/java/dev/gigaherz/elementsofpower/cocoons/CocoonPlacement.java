@@ -2,6 +2,7 @@ package dev.gigaherz.elementsofpower.cocoons;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.MapCodec;
 import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
@@ -22,11 +23,11 @@ public class CocoonPlacement extends PlacementModifier
 {
     public static final int CONFIG_VERSION=1;
     public static final CocoonPlacement INSTANCE = new CocoonPlacement();
-    public static final Codec<CocoonPlacement> CODEC = Codec.INT.comapFlatMap(
+    public static final MapCodec<CocoonPlacement> CODEC = Codec.INT.comapFlatMap(
             i -> i == CONFIG_VERSION ? DataResult.success(INSTANCE) : DataResult.error(() -> "Uknown CocoonPlacement version " + i),
-            c -> CONFIG_VERSION);
+            c -> CONFIG_VERSION).fieldOf("v");
 
-    public static Codec<CocoonPlacement> codec()
+    public static MapCodec<CocoonPlacement> codec()
     {
         return CODEC;
     }

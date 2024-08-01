@@ -1,10 +1,13 @@
 package dev.gigaherz.elementsofpower.items;
 
+import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.gemstones.Quality;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import dev.gigaherz.elementsofpower.spells.Element;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.UseAnim;
@@ -42,50 +45,24 @@ public abstract class GemContainerItem extends MagicContainerItem
         return magic;
     }
 
-    @Override
-    public Rarity getRarity(ItemStack stack)
-    {
-        Quality q = getQuality(stack);
-        if (q == null)
-            return Rarity.COMMON;
-        return q.getRarity();
-    }
-
     @Nullable
     public Quality getQuality(ItemStack stack)
     {
-        CompoundTag tag = stack.getTag();
-        if (tag == null)
-            return null;
-
-        if (!tag.contains("quality", Tag.TAG_INT))
-            return null;
-
-        int q = tag.getInt("quality");
-        return Quality.byIndex(q);
+        return stack.get(ElementsOfPowerMod.GEMSTONE_QUALITY);
     }
 
     public ItemStack setQuality(ItemStack stack, @Nullable Quality q)
     {
-        CompoundTag tag = stack.getTag();
-
-        if (q == null)
+        if (q!= null)
         {
-            if (tag != null)
-            {
-                tag.remove("quality");
-            }
-            return stack;
+            stack.set(ElementsOfPowerMod.GEMSTONE_QUALITY, q);
+            stack.set(DataComponents.RARITY, q != null ? q.getRarity() : null);
         }
-
-        if (tag == null)
+        else
         {
-            tag = new CompoundTag();
-            stack.setTag(tag);
+            stack.remove(ElementsOfPowerMod.GEMSTONE_QUALITY);
+            stack.remove(DataComponents.RARITY);
         }
-
-        tag.putInt("quality", q.getIndex());
-
         return stack;
     }
 
@@ -107,7 +84,7 @@ public abstract class GemContainerItem extends MagicContainerItem
     }
 
     @Override
-    public int getUseDuration(ItemStack stack)
+    public int getUseDuration(ItemStack stack, LivingEntity user)
     {
         return 72000;
     }

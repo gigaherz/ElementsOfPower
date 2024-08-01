@@ -2,51 +2,38 @@ package dev.gigaherz.elementsofpower.network;
 
 import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.client.ClientPacketHandlers;
-import dev.gigaherz.elementsofpower.essentializer.EssentializerBlockEntity;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-public class UpdateEssentializerTile implements CustomPacketPayload
+public record UpdateEssentializerTile(
+        BlockPos pos,
+        MagicAmounts remaining,
+        ItemStack activeItem
+) implements CustomPacketPayload
 {
     public static final ResourceLocation ID = ElementsOfPowerMod.location("update_essentializer_tile");
+    public static final Type<UpdateEssentializerTile> TYPE = new Type<>(ID);
 
-    public BlockPos pos;
-    public MagicAmounts remaining;
-    public ItemStack activeItem;
-
-    public UpdateEssentializerTile(EssentializerBlockEntity essentializer)
-    {
-        this.pos = essentializer.getBlockPos();
-        this.activeItem = essentializer.getInventory().getStackInSlot(0);
-        this.remaining = essentializer.remainingToConvert;
-    }
-
-    public UpdateEssentializerTile(FriendlyByteBuf buf)
-    {
-        pos = buf.readBlockPos();
-        activeItem = buf.readItem();
-        remaining = new MagicAmounts(buf);
-    }
-
-    public void write(FriendlyByteBuf buf)
-    {
-        buf.writeBlockPos(pos);
-        buf.writeItem(activeItem);
-        remaining.writeTo(buf);
-    }
+    public static final StreamCodec<RegistryFriendlyByteBuf, UpdateEssentializerTile> STREAM_CODEC = StreamCodec.composite(
+            BlockPos.STREAM_CODEC, UpdateEssentializerTile::pos,
+            MagicAmounts.STREAM_CODEC, UpdateEssentializerTile::remaining,
+            ItemStack.STREAM_CODEC, UpdateEssentializerTile::activeItem,
+            UpdateEssentializerTile::new
+    );
 
     @Override
-    public ResourceLocation id()
+    public Type<? extends CustomPacketPayload> type()
     {
-        return ID;
+        return TYPE;
     }
 
-    public void handle(PlayPayloadContext context)
+    public void handle(IPayloadContext context)
     {
         ClientPacketHandlers.handleEssentializerTileUpdate(this);
     }

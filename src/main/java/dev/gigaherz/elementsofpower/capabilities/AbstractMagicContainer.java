@@ -1,8 +1,10 @@
 package dev.gigaherz.elementsofpower.capabilities;
 
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.neoforged.neoforge.common.util.INBTSerializable;
+import org.jetbrains.annotations.UnknownNullability;
 
 public abstract class AbstractMagicContainer implements IMagicContainer, INBTSerializable<CompoundTag>
 {
@@ -21,7 +23,7 @@ public abstract class AbstractMagicContainer implements IMagicContainer, INBTSer
     }
 
     @Override
-    public CompoundTag serializeNBT()
+    public CompoundTag serializeNBT(HolderLookup.Provider provider)
     {
         CompoundTag nbt = new CompoundTag();
         nbt.put("Magic", containedMagic.serializeNBT());
@@ -29,7 +31,7 @@ public abstract class AbstractMagicContainer implements IMagicContainer, INBTSer
     }
 
     @Override
-    public void deserializeNBT(CompoundTag nbt)
+    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt)
     {
         containedMagic = new MagicAmounts(nbt.getCompound("Magic"));
     }

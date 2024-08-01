@@ -1,5 +1,6 @@
 package dev.gigaherz.elementsofpower.items;
 
+import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.capabilities.IMagicContainer;
 import dev.gigaherz.elementsofpower.capabilities.MagicContainerCapability;
 import dev.gigaherz.elementsofpower.gemstones.Quality;
@@ -41,15 +42,6 @@ public class BaubleItem extends GemContainerItem
     static
     {
         assert TRANSFER_RATES.length == Quality.values().length;
-    }
-
-    enum TransferMode
-    {
-        PASSIVE,
-        ACTIVE,
-        DISABLED;
-
-        static TransferMode[] values = values();
     }
 
     public BaubleItem(Properties properties)
@@ -145,18 +137,11 @@ public class BaubleItem extends GemContainerItem
 
         ItemStack stack = playerIn.getItemInHand(handIn);
 
-        CompoundTag tag = stack.getTag();
-        if (tag == null)
-        {
-            tag = new CompoundTag();
-            stack.setTag(tag);
-        }
-
         TransferMode oldValue = getTransferMode(stack);
 
         TransferMode newValue = TransferMode.values[(oldValue.ordinal() + 1) % TransferMode.values.length];
 
-        tag.putByte("Active", (byte) newValue.ordinal());
+        stack.set(ElementsOfPowerMod.TRANSFER_MODE, newValue);
 
         switch (getTransferMode(stack))
         {
@@ -174,11 +159,10 @@ public class BaubleItem extends GemContainerItem
         return InteractionResultHolder.success(stack);
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn)
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flagIn)
     {
-        super.appendHoverText(stack, worldIn, tooltip, flagIn);
+        super.appendHoverText(stack, context, tooltip, flagIn);
 
         switch (getTransferMode(stack))
         {
@@ -200,9 +184,9 @@ public class BaubleItem extends GemContainerItem
         if (!(stack.getItem() instanceof BaubleItem))
             return TransferMode.PASSIVE;
 
-        CompoundTag tag = stack.getTag();
-        if (tag != null && tag.contains("Active", Tag.TAG_BYTE))
-            return TransferMode.values[tag.getByte("Active") % TransferMode.values.length];
+        var mode = stack.get(ElementsOfPowerMod.TRANSFER_MODE);
+        if (mode != null)
+            return mode;
         return TransferMode.PASSIVE;
     }
 

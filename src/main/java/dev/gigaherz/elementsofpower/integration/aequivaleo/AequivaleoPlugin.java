@@ -1,5 +1,5 @@
 package dev.gigaherz.elementsofpower.integration.aequivaleo;
-
+/*
 import com.google.common.collect.ImmutableMap;
 import com.ldtteam.aequivaleo.api.IAequivaleoAPI;
 import com.ldtteam.aequivaleo.api.compound.CompoundInstance;
@@ -97,7 +97,7 @@ public class AequivaleoPlugin implements IAequivaleoPlugin
     public void onCommonSetup()
     {
         IInstancedEquivalencyHandlerRegistry equivalencyHandlerRegistry = IInstancedEquivalencyHandlerRegistry.getInstance();
-        /*for (Gemstone g : Gemstone.values)
+        for (Gemstone g : Gemstone.values)
         {
             GemstoneItem gemstoneItem = g.getItem();
             equivalencyHandlerRegistry.registerHandler(gemstoneItem, (equivalences) -> {
@@ -110,7 +110,7 @@ public class AequivaleoPlugin implements IAequivaleoPlugin
                     equivalences.accept(gemstoneItem.setQuality(new ItemStack(gemstoneItem), q));
                 }
             });
-        }*/
+        }
     }
 
     public static Optional<MagicAmounts> getMagicAmounts(Set<CompoundInstance> results)
@@ -130,3 +130,4 @@ public class AequivaleoPlugin implements IAequivaleoPlugin
         return Optional.of(b.toAmounts());
     }
 }
+*/

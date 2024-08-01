@@ -14,7 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class PillarEntityRenderer extends EntityRenderer<PillarEntity>
 {
-    public static final ResourceLocation TEXTURE_LOCATION = new ResourceLocation("elementsofpower:textures/entity/pillar.png");
+    public static final ResourceLocation TEXTURE_LOCATION = ResourceLocation.fromNamespaceAndPath("elementsofpower","textures/entity/pillar.png");
 
     private final ModelPart pillarModel;
 

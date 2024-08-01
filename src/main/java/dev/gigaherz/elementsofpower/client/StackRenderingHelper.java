@@ -23,13 +23,13 @@ public class StackRenderingHelper
 {
     public static void renderItemStack(ItemRenderer itemRenderer, PoseStack matrixStack, ItemStack stack, float x, float y, float z, int color)
     {
-        PoseStack viewModelPose = RenderSystem.getModelViewStack();
-        viewModelPose.pushPose();
-        viewModelPose.mulPoseMatrix(matrixStack.last().pose());
+        var viewModelPose = RenderSystem.getModelViewStack();
+        viewModelPose.pushMatrix();
+        viewModelPose.mul(matrixStack.last().pose());
         viewModelPose.translate(x, y, z);
         RenderSystem.applyModelViewMatrix();
         renderAndDecorateItem(itemRenderer, stack, 0, 0, color);
-        viewModelPose.popPose();
+        viewModelPose.popMatrix();
         RenderSystem.applyModelViewMatrix();
     }
 
@@ -42,35 +42,33 @@ public class StackRenderingHelper
             try
             {
                 renderGuiItem(itemRenderer, stack, x, y, bakedmodel, color);
+
             }
             catch (Throwable throwable)
             {
                 CrashReport crashreport = CrashReport.forThrowable(throwable, "Rendering item");
                 CrashReportCategory crashreportcategory = crashreport.addCategory("Item being rendered");
                 crashreportcategory.setDetail("Item Type", () -> String.valueOf(stack.getItem()));
-                crashreportcategory.setDetail("Registry Name", () -> String.valueOf(BuiltInRegistries.ITEM.getKey(stack.getItem())));
-                crashreportcategory.setDetail("Item Damage", () -> String.valueOf(stack.getDamageValue()));
-                crashreportcategory.setDetail("Item NBT", () -> String.valueOf(stack.getTag()));
+                crashreportcategory.setDetail("Item Components", () -> String.valueOf(stack.getComponents()));
                 crashreportcategory.setDetail("Item Foil", () -> String.valueOf(stack.hasFoil()));
                 throw new ReportedException(crashreport);
             }
-
         }
     }
 
     public static void renderGuiItem(ItemRenderer itemRenderer, ItemStack p_115128_, int x, int y, BakedModel model, int color)
     {
-        Minecraft.getInstance().textureManager.getTexture(InventoryMenu.BLOCK_ATLAS).setFilter(false, false);
+        Minecraft.getInstance().getTextureManager().getTexture(InventoryMenu.BLOCK_ATLAS).setFilter(false, false);
         RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS);
         RenderSystem.enableBlend();
         RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        PoseStack posestack = RenderSystem.getModelViewStack();
-        posestack.pushPose();
-        posestack.translate((double) x, (double) y, (double)100.0F);
-        posestack.translate(8.0D, 8.0D, 0.0D);
-        posestack.scale(1.0F, -1.0F, 1.0F);
-        posestack.scale(16.0F, 16.0F, 16.0F);
+        var modelViewStack = RenderSystem.getModelViewStack();
+        modelViewStack.pushMatrix();
+        modelViewStack.translate(x, y, 100.0F);
+        modelViewStack.translate(8.0F, 8.0F, 0.0F);
+        modelViewStack.scale(1.0F, -1.0F, 1.0F);
+        modelViewStack.scale(16.0F, 16.0F, 16.0F);
         RenderSystem.applyModelViewMatrix();
         PoseStack posestack1 = new PoseStack();
 
@@ -97,7 +95,7 @@ public class StackRenderingHelper
             Lighting.setupFor3DItems();
         }
 
-        posestack.popPose();
+        modelViewStack.popMatrix();
         RenderSystem.applyModelViewMatrix();
     }
 }

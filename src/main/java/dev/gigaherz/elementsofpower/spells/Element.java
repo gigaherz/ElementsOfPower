@@ -4,10 +4,14 @@ import dev.gigaherz.elementsofpower.ElementsOfPowerBlocks;
 import dev.gigaherz.elementsofpower.ElementsOfPowerItems;
 import dev.gigaherz.elementsofpower.cocoons.CocoonBlock;
 import dev.gigaherz.elementsofpower.items.MagicOrbItem;
+import dev.gigaherz.elementsofpower.network.UpdateSpellSequence;
 import net.minecraft.core.Holder;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 import org.jetbrains.annotations.Nullable;
@@ -26,6 +30,8 @@ public enum Element implements StringRepresentable
     LIFE("life", 7, ShapeType.SELF, EffectType.HEALING, () -> ElementsOfPowerBlocks.LIFE_COCOON, () -> ElementsOfPowerItems.LIFE_COCOON, () -> ElementsOfPowerItems.LIFE_ORB, 0xFF1acd7f),
     CHAOS("chaos", 6, ShapeType.SINGLE, EffectType.BREAKING, () -> ElementsOfPowerBlocks.CHAOS_COCOON, () -> ElementsOfPowerItems.CHAOS_COCOON, () -> ElementsOfPowerItems.CHAOS_ORB, 0xFF8c1acd),
     BALANCE("balance", 8, ShapeType.NONE, EffectType.NONE, null, null, null, 0xFF7F7F7F);
+
+    public static final StreamCodec<FriendlyByteBuf, Element> STREAM_CODEC = NeoForgeStreamCodecs.enumCodec(Element.class);
 
     private final int opposite;
     private final ShapeType shapeType;

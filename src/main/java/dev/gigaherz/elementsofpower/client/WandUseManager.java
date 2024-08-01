@@ -21,13 +21,13 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.settings.IKeyConflictContext;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.TickEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.lwjgl.glfw.GLFW;
 
@@ -107,7 +107,7 @@ public class WandUseManager
     }
 
 
-    @Mod.EventBusSubscriber(value= Dist.CLIENT, modid=ElementsOfPowerMod.MODID, bus= Mod.EventBusSubscriber.Bus.MOD)
+    @EventBusSubscriber(value= Dist.CLIENT, modid=ElementsOfPowerMod.MODID, bus= EventBusSubscriber.Bus.MOD)
     private static class ModBusEvents
     {
         @SubscribeEvent
@@ -146,18 +146,15 @@ public class WandUseManager
     }
 
     @SubscribeEvent
-    public void onRenderTick(TickEvent.RenderTickEvent event)
+    public void onRenderTick(ClientTickEvent.Pre event) // TODO: Verify if this event works
     {
-        if (event.phase == TickEvent.Phase.START)
+        if (handInUse != null)
         {
-            if (handInUse != null)
+            Player player = Objects.requireNonNull(Minecraft.getInstance().player);
+            if (!player.isUsingItem()
+                    || player.getUseItemRemainingTicks() > itemInUseCount)
             {
-                Player player = Objects.requireNonNull(Minecraft.getInstance().player);
-                if (!player.isUsingItem()
-                        || player.getUseItemRemainingTicks() > itemInUseCount)
-                {
-                    player.startUsingItem(handInUse);
-                }
+                player.startUsingItem(handInUse);
             }
         }
     }
@@ -177,7 +174,7 @@ public class WandUseManager
 
                 InteractionHand hand = handInUse;
 
-                beginHoldingRightButton(slotNumber, hand, itemUsing, wandItem);
+                beginHoldingRightButton(player, slotNumber, hand, itemUsing, wandItem);
             }
             else if (e.getItem().getItem() == activeStack.getItem())
             {
@@ -187,11 +184,8 @@ public class WandUseManager
     }
 
     @SubscribeEvent
-    public void onClientTick(TickEvent.ClientTickEvent event)
+    public void onClientTick(ClientTickEvent.Post event)
     {
-        if (event.phase != TickEvent.Phase.END)
-            return;
-
         if (handInUse == null)
             return;
 
@@ -219,11 +213,8 @@ public class WandUseManager
     }
 
     @SubscribeEvent
-    public void checkKeys(TickEvent.ClientTickEvent event)
+    public void checkKeys(ClientTickEvent.Post event)
     {
-        if (event.phase != TickEvent.Phase.END)
-            return;
-
         boolean anyChanged = false;
         for (int i = 0; i < MagicAmounts.ELEMENTS; i++)
         {
@@ -257,29 +248,29 @@ public class WandUseManager
         }
     }
 
-    private void beginHoldingRightButton(int slotNumber, InteractionHand hand, ItemStack itemUsing, WandItem wandItem)
+    private void beginHoldingRightButton(LocalPlayer player, int slotNumber, InteractionHand hand, ItemStack itemUsing, WandItem wandItem)
     {
         activeStack = itemUsing;
         handInUse = hand;
-        itemInUseCount = activeStack.getUseDuration();
+        itemInUseCount = activeStack.getUseDuration(player);
         slotInUse = slotNumber;
         useTicks = 0;
         sequence.clear();
         MagicContainerOverlay.instance.setRunes(itemUsing, wandItem);
 
 
-        PacketDistributor.SERVER.noArg().send(new UpdateSpellSequence(UpdateSpellSequence.ChangeMode.BEGIN, slotInUse, null, useTicks));
+        PacketDistributor.sendToServer(new UpdateSpellSequence(slotInUse, UpdateSpellSequence.ChangeMode.BEGIN, null, useTicks));
     }
 
     private void endHoldingRightButton(boolean cancelMagicSetting)
     {
         if (cancelMagicSetting || (failedSequence && sequence.size() == 0))
         {
-            PacketDistributor.SERVER.noArg().send(new UpdateSpellSequence(UpdateSpellSequence.ChangeMode.CANCEL, slotInUse, null, useTicks));
+            PacketDistributor.sendToServer(new UpdateSpellSequence(slotInUse, UpdateSpellSequence.ChangeMode.CANCEL, null, useTicks));
         }
         else
         {
-            PacketDistributor.SERVER.noArg().send(new UpdateSpellSequence(UpdateSpellSequence.ChangeMode.COMMIT, slotInUse, sequence, useTicks));
+            PacketDistributor.sendToServer(new UpdateSpellSequence(slotInUse, UpdateSpellSequence.ChangeMode.COMMIT, sequence, useTicks));
         }
 
         handInUse = null;

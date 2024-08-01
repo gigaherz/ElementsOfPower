@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "item": "minecraft:gold_ingot"
+    }
+  },
+  "pattern": [
+    " GG",
+    "G G",
+    " G "
+  ],
+  "result": {
+    "count": 1,
+    "id": "elementsofpower:ring"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "parent": "elementsofpower:acquire_wand",
+  "criteria": {
+    "has_staff": {
+      "conditions": {
+        "items": [
+          {
+            "items": "elementsofpower:staff"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancement.elementsofpower.acquire_staff.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "elementsofpower:wand"
+    },
+    "title": {
+      "translate": "advancement.elementsofpower.acquire_staff.title"
+    }
+  },
+  "requirements": [
+    [
+      "has_staff"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -45,7 +45,7 @@ public class FlameEffect extends SpellEffect
         float damage = (entity instanceof Blaze) ? 3 + cast.damageForce() : cast.damageForce();
 
         entity.hurt(entity.damageSources().thrown(cast.player(), cast.player()), damage);
-        entity.setSecondsOnFire(cast.damageForce());
+        entity.setRemainingFireTicks(cast.damageForce());
     }
 
     @Override
@@ -92,7 +92,7 @@ public class FlameEffect extends SpellEffect
             {
                 if (!e.fireImmune())
                 {
-                    e.setSecondsOnFire((int) lv);
+                    e.setRemainingFireTicks((int) lv);
                 }
             }
         }

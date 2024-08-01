@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "N": {
+      "item": "minecraft:nether_star"
+    },
+    "O": {
+      "item": "minecraft:obsidian"
+    },
+    "Q": {
+      "tag": "c:gems"
+    }
+  },
+  "pattern": [
+    "IQI",
+    "ONO",
+    "IOI"
+  ],
+  "result": {
+    "count": 1,
+    "id": "elementsofpower:essentializer"
+  }
+}

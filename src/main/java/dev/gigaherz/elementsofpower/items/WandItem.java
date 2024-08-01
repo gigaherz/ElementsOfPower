@@ -1,40 +1,28 @@
 package dev.gigaherz.elementsofpower.items;
 
-import com.google.common.collect.Streams;
 import com.mojang.blaze3d.vertex.PoseStack;
+import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.capabilities.MagicContainerCapability;
 import dev.gigaherz.elementsofpower.client.WandUseManager;
 import dev.gigaherz.elementsofpower.integration.Curios;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import dev.gigaherz.elementsofpower.network.UpdateSpellSequence;
 import dev.gigaherz.elementsofpower.spells.*;
-import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import org.jetbrains.annotations.Nullable;
 
-import java.nio.file.Files;
 import java.util.List;
-import java.util.Spliterator;
-import java.util.Spliterators;
 import java.util.function.Consumer;
-import java.util.function.ObjIntConsumer;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public class WandItem extends GemContainerItem
 {
@@ -54,9 +42,7 @@ public class WandItem extends GemContainerItem
         {
             if (playerIn.isShiftKeyDown())
             {
-                CompoundTag tag = itemStackIn.getTag();
-                if (tag != null)
-                    tag.remove(WandItem.SPELL_SEQUENCE_TAG);
+                itemStackIn.remove(ElementsOfPowerMod.SPELL_SEQUENCE);
             }
         }
 
@@ -140,13 +126,8 @@ public class WandItem extends GemContainerItem
     @Nullable
     public List<Element> getSequence(ItemStack stack)
     {
-        CompoundTag tag = stack.getTag();
-        if (tag != null)
-        {
-            ListTag seq = tag.getList(WandItem.SPELL_SEQUENCE_TAG, Tag.TAG_STRING);
-            return  SpellManager.sequenceFromList(seq);
-        }
-        return null;
+        var seq = stack.get(ElementsOfPowerMod.SPELL_SEQUENCE);
+        return seq != null ? SpellManager.sequenceFromList(seq) : null;
     }
 
     public static MagicAmounts getTotalPlayerReservoir(Player player)
@@ -174,7 +155,7 @@ public class WandItem extends GemContainerItem
         {
             Item item = stack.getItem();
 
-            if (item instanceof BaubleItem && BaubleItem.getTransferMode(stack) == BaubleItem.TransferMode.PASSIVE)
+            if (item instanceof BaubleItem && BaubleItem.getTransferMode(stack) == TransferMode.PASSIVE)
             {
                 var magic = MagicContainerCapability.getContainer(stack);
                 MagicAmounts contained = magic != null ? magic.getContainedMagic() : MagicAmounts.EMPTY;
@@ -210,7 +191,7 @@ public class WandItem extends GemContainerItem
         {
             Item item = stack.getItem();
 
-            if (item instanceof BaubleItem && BaubleItem.getTransferMode(stack) == BaubleItem.TransferMode.PASSIVE)
+            if (item instanceof BaubleItem && BaubleItem.getTransferMode(stack) == TransferMode.PASSIVE)
             {
                 var magic = MagicContainerCapability.getContainer(stack);
                 if (magic != null) {
@@ -241,13 +222,11 @@ public class WandItem extends GemContainerItem
 
     public void processSequenceUpdate(UpdateSpellSequence message, ItemStack stack, Player player, int useTicks)
     {
-        if (message.changeMode == UpdateSpellSequence.ChangeMode.COMMIT)
+        if (message.changeMode() == UpdateSpellSequence.ChangeMode.COMMIT)
         {
-            CompoundTag nbt = stack.getOrCreateTag();
-
-            if (onSpellCommit(stack, player, message.sequence, useTicks))
+            if (onSpellCommit(stack, player, message.sequence(), useTicks))
             {
-                nbt.put(WandItem.SPELL_SEQUENCE_TAG, SpellManager.sequenceToList(message.sequence));
+                stack.set(ElementsOfPowerMod.SPELL_SEQUENCE, SpellManager.sequenceToList(message.sequence()));
             }
         }
 

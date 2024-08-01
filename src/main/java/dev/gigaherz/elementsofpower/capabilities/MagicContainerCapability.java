@@ -6,13 +6,14 @@ import dev.gigaherz.elementsofpower.items.MagicContainerItem;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.capabilities.ItemCapability;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 
 import org.jetbrains.annotations.Nullable;
 
-@Mod.EventBusSubscriber(modid=ElementsOfPowerMod.MODID, bus= Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid=ElementsOfPowerMod.MODID, bus= EventBusSubscriber.Bus.MOD)
 public class MagicContainerCapability
 {
     public static ItemCapability<IMagicContainer, Void> CAPABILITY = ItemCapability.createVoid(ElementsOfPowerMod.location("magic_container"), IMagicContainer.class);

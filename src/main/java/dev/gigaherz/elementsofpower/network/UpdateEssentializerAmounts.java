@@ -4,47 +4,41 @@ import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.client.ClientPacketHandlers;
 import dev.gigaherz.elementsofpower.essentializer.menu.IMagicAmountHolder;
 import dev.gigaherz.elementsofpower.magic.MagicAmounts;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-public class UpdateEssentializerAmounts implements CustomPacketPayload
+public record UpdateEssentializerAmounts(
+        int windowId,
+        MagicAmounts contained,
+        MagicAmounts remaining
+) implements CustomPacketPayload
 {
     public static final ResourceLocation ID = ElementsOfPowerMod.location("update_essentializer_amounts");
+    public static final Type<UpdateEssentializerAmounts> TYPE = new Type<>(ID);
 
-    public int windowId;
-    public MagicAmounts contained;
-    public MagicAmounts remaining;
+    public static final StreamCodec<RegistryFriendlyByteBuf, UpdateEssentializerAmounts> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.VAR_INT, UpdateEssentializerAmounts::windowId,
+            MagicAmounts.STREAM_CODEC, UpdateEssentializerAmounts::contained,
+            MagicAmounts.STREAM_CODEC, UpdateEssentializerAmounts::remaining,
+            UpdateEssentializerAmounts::new
+    );
 
     public UpdateEssentializerAmounts(int windowId, IMagicAmountHolder essentializer)
     {
-        this.windowId = windowId;
-        this.contained = essentializer.getContainedMagic();
-        this.remaining = essentializer.getRemainingToConvert();
-    }
-
-    public UpdateEssentializerAmounts(FriendlyByteBuf buf)
-    {
-        windowId = buf.readInt();
-        contained = new MagicAmounts(buf);
-        remaining = new MagicAmounts(buf);
-    }
-
-    public void write(FriendlyByteBuf buf)
-    {
-        buf.writeInt(windowId);
-        contained.writeTo(buf);
-        remaining.writeTo(buf);
+        this(windowId, essentializer.getContainedMagic(), essentializer.getRemainingToConvert());
     }
 
     @Override
-    public ResourceLocation id()
+    public Type<? extends CustomPacketPayload> type()
     {
-        return ID;
+        return TYPE;
     }
 
-    public void handle(PlayPayloadContext context)
+    public void handle(IPayloadContext context)
     {
         ClientPacketHandlers.handleRemainingAmountsUpdate(this);
     }

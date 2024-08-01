@@ -40,30 +40,30 @@ public class StaffModel implements IUnbakedGeometry<StaffModel>
     }
 
     @Override
-    public BakedModel bake(IGeometryBakingContext context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation)
+    public BakedModel bake(IGeometryBakingContext context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides)
     {
         var particle = spriteGetter.apply(context.getMaterial("particle"));
-        var bakedMap = Map.copyOf(Maps.transformValues(modelMap, model -> model.bake(context, baker, spriteGetter, modelState, overrides, modelLocation)));
+        var bakedMap = Map.copyOf(Maps.transformValues(modelMap, model -> model.bake(context, baker, spriteGetter, modelState, overrides)));
         var overrides1 = new ItemOverrides()
         {
             @Nullable
             @Override
             public BakedModel resolve(BakedModel pModel, ItemStack pStack, @Nullable ClientLevel pLevel, @Nullable LivingEntity pEntity, int pSeed)
             {
-                var tag = pStack.getTag();
+                //var tag = pStack.getTag();
                 String main;
                 String augment;
 
-                if (tag == null)
+                //if (tag == null)
                 {
                     main = "";
                     augment = "";
                 }
-                else
+                /*TODO: else
                 {
                     main = tag.getString("gemstone");
                     augment = tag.getString("augment");
-                }
+                }*/
 
                 var variant = new Variant(main, augment);
 

@@ -8,10 +8,7 @@ import dev.gigaherz.elementsofpower.cocoons.CocoonFeature;
 import dev.gigaherz.elementsofpower.cocoons.CocoonPlacement;
 import dev.gigaherz.elementsofpower.recipes.ContainerChargeRecipe;
 import dev.gigaherz.elementsofpower.spells.Element;
-import dev.gigaherz.elementsofpower.spells.blocks.CushionBlock;
-import dev.gigaherz.elementsofpower.spells.blocks.DustBlock;
-import dev.gigaherz.elementsofpower.spells.blocks.LightBlock;
-import dev.gigaherz.elementsofpower.spells.blocks.MistBlock;
+import dev.gigaherz.elementsofpower.spells.blocks.*;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementRequirements;
@@ -76,18 +73,19 @@ class ElementsOfPowerDataGen
 {
     public static void gatherData(GatherDataEvent event)
     {
-        DataGenerator gen = event.getGenerator();
-        ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
+        var gen = event.getGenerator();
+        var existingFileHelper = event.getExistingFileHelper();
+        var lookup = event.getLookupProvider();
 
-        gen.addProvider(event.includeServer(), new Recipes(gen.getPackOutput()));
-        gen.addProvider(event.includeServer(), LootGen.create(gen.getPackOutput()));
+        gen.addProvider(event.includeServer(), new Recipes(gen.getPackOutput(), lookup));
+        gen.addProvider(event.includeServer(), LootGen.create(gen.getPackOutput(), lookup));
 
-        BlockTagGens blockTags = new BlockTagGens(gen.getPackOutput(), event.getLookupProvider(), existingFileHelper);
-        ItemTagGens itemTags = new ItemTagGens(gen.getPackOutput(), event.getLookupProvider(), existingFileHelper);
+        BlockTagGens blockTags = new BlockTagGens(gen.getPackOutput(), lookup, existingFileHelper);
+        ItemTagGens itemTags = new ItemTagGens(gen.getPackOutput(), lookup, existingFileHelper);
         gen.addProvider(event.includeServer(), blockTags);
         gen.addProvider(event.includeServer(), itemTags);
 
-        gen.addProvider(event.includeServer(), new RegistryProvider(gen.getPackOutput(), event.getLookupProvider()));
+        gen.addProvider(event.includeServer(), new RegistryProvider(gen.getPackOutput(), lookup));
 
         if ("true".equals(System.getProperty("elementsofpower.doAequivaleoDatagen", "true")) && ModList.get().isLoaded("aequivaleo"))
         {
@@ -98,13 +96,13 @@ class ElementsOfPowerDataGen
 
         gen.addProvider(event.includeClient(), new BlockStates(gen.getPackOutput(), existingFileHelper));
 
-        gen.addProvider(event.includeServer(), new AdvancementProvider(gen.getPackOutput(), event.getLookupProvider(), event.getExistingFileHelper(), List.of(new AdvancementsGen())));
+        gen.addProvider(event.includeServer(), new AdvancementProvider(gen.getPackOutput(), lookup, event.getExistingFileHelper(), List.of(new AdvancementsGen())));
     }
 
     private static class AdvancementsGen
             implements AdvancementProvider.AdvancementGenerator
     {
-        private static final ResourceLocation TAB_BACKGROUND = new ResourceLocation("minecraft:textures/block/obsidian.png");
+        private static final ResourceLocation TAB_BACKGROUND = ResourceLocation.withDefaultNamespace("textures/block/obsidian.png");
 
 
         @Override
@@ -457,19 +455,19 @@ class ElementsOfPowerDataGen
 
     private static class LootGen
     {
-        public static LootTableProvider create(PackOutput gen)
+        public static LootTableProvider create(PackOutput gen, CompletableFuture<HolderLookup.Provider> lookup)
         {
             return new LootTableProvider(gen, Set.of(), List.of(
-                    new LootTableProvider.SubProviderEntry(LootGen.BlockTables::new, LootContextParamSets.BLOCK)
+                    new LootTableProvider.SubProviderEntry(BlockTables::new, LootContextParamSets.BLOCK)
                     //new LootTableProvider.SubProviderEntry(LootGen.ChestTables::new, LootContextParamSets.CHEST)
-            ));
+            ), lookup);
         }
 
         public static class BlockTables extends BlockLootSubProvider
         {
-            protected BlockTables()
+            protected BlockTables(HolderLookup.Provider lookup)
             {
-                super(Set.of(), FeatureFlags.REGISTRY.allFlags());
+                super(Set.of(), FeatureFlags.REGISTRY.allFlags(), lookup);
             }
 
             @Override
@@ -544,7 +542,7 @@ class ElementsOfPowerDataGen
 
             getVariantBuilder(block)
                     .forAllStates(state -> ConfiguredModel.builder()
-                            .modelFile(densityModels.get(state.getValue(MistBlock.DENSITY)))
+                            .modelFile(densityModels.get(state.getValue(SpellBlockProperties.DENSITY)))
                             .build()
                     );
         }
@@ -552,9 +550,9 @@ class ElementsOfPowerDataGen
 
     private static class Recipes extends RecipeProvider
     {
-        public Recipes(PackOutput gen)
+        public Recipes(PackOutput gen, CompletableFuture<HolderLookup.Provider> lookup)
         {
-            super(gen);
+            super(gen, lookup);
         }
 
         @Override
@@ -715,10 +713,10 @@ class ElementsOfPowerDataGen
     }
 
     private static TagKey<Item> itemTag(String tagName) {
-        return TagKey.create(Registries.ITEM, new ResourceLocation(tagName));
+        return TagKey.create(Registries.ITEM, ResourceLocation.parse(tagName));
     }
 
     private static TagKey<Block> blockTag(String tagName) {
-        return TagKey.create(Registries.BLOCK, new ResourceLocation(tagName));
+        return TagKey.create(Registries.BLOCK, ResourceLocation.parse(tagName));
     }
 }

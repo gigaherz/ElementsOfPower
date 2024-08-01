@@ -3,7 +3,7 @@
   "placement": [
     {
       "type": "elementsofpower:cocoon_placement",
-      "value": 1
+      "v": 1
     }
   ]
 }

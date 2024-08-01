@@ -15,9 +15,11 @@ import dev.gigaherz.elementsofpower.magic.MagicAmounts;
 import dev.gigaherz.elementsofpower.spells.Element;
 import dev.gigaherz.elementsofpower.spells.SpellManager;
 import dev.gigaherz.elementsofpower.spells.Spellcast;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
@@ -30,22 +32,21 @@ import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.neoforge.client.event.RegisterGuiOverlaysEvent;
-import net.neoforged.neoforge.client.gui.overlay.ExtendedGui;
-import net.neoforged.neoforge.client.gui.overlay.IGuiOverlay;
-import net.neoforged.neoforge.client.gui.overlay.VanillaGuiOverlay;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
+import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.TickEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Mod.EventBusSubscriber(value= Dist.CLIENT, modid= ElementsOfPowerMod.MODID, bus= Mod.EventBusSubscriber.Bus.MOD)
-public class MagicContainerOverlay implements IGuiOverlay
+@EventBusSubscriber(value= Dist.CLIENT, modid= ElementsOfPowerMod.MODID, bus= EventBusSubscriber.Bus.MOD)
+public class MagicContainerOverlay implements LayeredDraw.Layer
 {
-    public static final ResourceLocation SPELL_ACTIVE = new ResourceLocation("elementsofpower", "textures/gui/spell_active.png");
+    public static final ResourceLocation SPELL_ACTIVE = ResourceLocation.fromNamespaceAndPath("elementsofpower", "textures/gui/spell_active.png");
 
     public static final int ELEMENTS = 8;
     public static final int SPACING = 28;
@@ -55,10 +56,10 @@ public class MagicContainerOverlay implements IGuiOverlay
     public static MagicContainerOverlay instance;
 
     @SubscribeEvent
-    public static void init(RegisterGuiOverlaysEvent event)
+    public static void init(RegisterGuiLayersEvent event)
     {
         instance = new MagicContainerOverlay();
-        event.registerAbove(VanillaGuiOverlay.EXPERIENCE_BAR.id(), ElementsOfPowerMod.location("magic_overlay"), instance);
+        event.registerAbove(VanillaGuiLayers.EXPERIENCE_BAR, ElementsOfPowerMod.location("magic_overlay"), instance);
         //event.registerAbove(VanillaGuiOverlay.EXPERIENCE_BAR.id(), ElementsOfPowerMod.location("magic_overlay"), new MagicContainerOverlay());
         NeoForge.EVENT_BUS.addListener(instance::tick);
     }
@@ -160,7 +161,7 @@ public class MagicContainerOverlay implements IGuiOverlay
     public Rune addRune(Element element)
     {
         var atlas = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS);
-        var sprite = atlas.apply(new ResourceLocation("elementsofpower", "item/orb_"+ element.getName()));
+        var sprite = atlas.apply(ResourceLocation.fromNamespaceAndPath("elementsofpower", "item/orb_"+ element.getName()));
         var rune = new Rune(Minecraft.getInstance().level.getRandom(), sprite);
         guiParticles.add(rune);
         return rune;
@@ -174,7 +175,7 @@ public class MagicContainerOverlay implements IGuiOverlay
         this.mc = Minecraft.getInstance();
     }
 
-    public void tick(TickEvent.ClientTickEvent event)
+    public void tick(ClientTickEvent.Pre event)
     {
         List<IGuiParticle> remove = null;
         for(var rune : guiParticles)
@@ -214,7 +215,7 @@ public class MagicContainerOverlay implements IGuiOverlay
     }
 
     @Override
-    public void render(ExtendedGui gui, GuiGraphics graphics, float partialTicks, int width, int height)
+    public void render(GuiGraphics graphics, DeltaTracker deltaTracker)
     {
         LocalPlayer player = mc.player;
         if (player == null)
@@ -257,7 +258,7 @@ public class MagicContainerOverlay implements IGuiOverlay
 
         for(var rune : guiParticles)
         {
-            rune.render(graphics, partialTicks);
+            rune.render(graphics, deltaTracker.getGameTimeDeltaPartialTick(false));
         }
 
         renderCastingSequence(poseStack);
@@ -306,7 +307,7 @@ public class MagicContainerOverlay implements IGuiOverlay
         {
             List<Element> savedSequence = wandItem.getSequence(heldItem);
 
-            if (savedSequence.size() > 0)
+            if (savedSequence != null && !savedSequence.isEmpty())
             {
                 int scaledWidth = mc.getWindow().getGuiScaledWidth();
                 int scaledHeight = mc.getWindow().getGuiScaledHeight();
@@ -323,9 +324,12 @@ public class MagicContainerOverlay implements IGuiOverlay
                 {
                     int xPos = xM + SPELL_SPACING * i;
                     Element e = savedSequence.get(i);
-                    ItemStack stack = new ItemStack(e.getOrb());
+                    if (e.getOrb() != null)
+                    {
+                        ItemStack stack = new ItemStack(e.getOrb());
 
-                    StackRenderingHelper.renderItemStack(mc.getItemRenderer(), poseStack, stack, xPos - 8, yPos, 0, 0xFFFFFFFF);
+                        StackRenderingHelper.renderItemStack(mc.getItemRenderer(), poseStack, stack, xPos - 8, yPos, 0, 0xFFFFFFFF);
+                    }
                 }
             }
         }

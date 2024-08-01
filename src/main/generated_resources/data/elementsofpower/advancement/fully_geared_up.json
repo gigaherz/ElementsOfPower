@@ -1,0 +1,73 @@
+{
+  "parent": "elementsofpower:acquire_staff",
+  "criteria": {
+    "has_bracelet": {
+      "conditions": {
+        "items": [
+          {
+            "items": "elementsofpower:bracelet"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_necklace": {
+      "conditions": {
+        "items": [
+          {
+            "items": "elementsofpower:necklace"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_ring": {
+      "conditions": {
+        "items": [
+          {
+            "items": "elementsofpower:ring"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_staff": {
+      "conditions": {
+        "items": [
+          {
+            "items": "elementsofpower:staff"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.elementsofpower.fully_geared_up.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "elementsofpower:wand"
+    },
+    "title": {
+      "translate": "advancement.elementsofpower.fully_geared_up.title"
+    }
+  },
+  "requirements": [
+    [
+      "has_staff"
+    ],
+    [
+      "has_ring"
+    ],
+    [
+      "has_necklace"
+    ],
+    [
+      "has_bracelet"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

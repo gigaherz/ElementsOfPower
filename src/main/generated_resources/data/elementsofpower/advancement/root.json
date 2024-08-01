@@ -1,0 +1,29 @@
+{
+  "criteria": {
+    "dummy": {
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "background": "minecraft:textures/block/obsidian.png",
+    "description": {
+      "translate": "advancement.elementsofpower.root.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "elementsofpower:wand"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancement.elementsofpower.root.title"
+    }
+  },
+  "requirements": [
+    [
+      "dummy"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

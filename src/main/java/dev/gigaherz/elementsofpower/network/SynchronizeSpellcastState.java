@@ -3,18 +3,31 @@ package dev.gigaherz.elementsofpower.network;
 import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.client.ClientPacketHandlers;
 import dev.gigaherz.elementsofpower.spells.Spellcast;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.Nullable;
 
-public class SynchronizeSpellcastState implements CustomPacketPayload
+public record SynchronizeSpellcastState(
+        ChangeMode changeMode,
+        int casterID,
+        CompoundTag spellcast,
+        int remainingCastTime,
+        int remainingInterval,
+        int totalCastTime
+) implements CustomPacketPayload
 {
     public static final ResourceLocation ID = ElementsOfPowerMod.location("sync_spellcast_state");
+    public static final Type<SynchronizeSpellcastState> TYPE = new Type<>(ID);
 
     public enum ChangeMode
     {
@@ -22,53 +35,26 @@ public class SynchronizeSpellcastState implements CustomPacketPayload
         END,
         INTERRUPT,
         CANCEL;
-        public static final ChangeMode values[] = values();
+        public static final StreamCodec<FriendlyByteBuf, ChangeMode> STREAM_CODEC = NeoForgeStreamCodecs.enumCodec(ChangeMode.class);
     }
 
-    public final ChangeMode changeMode;
-    public final int casterID;
-    public final CompoundTag spellcast;
-    public final int remainingCastTime;
-    public final int remainingInterval;
-    public final int totalCastTime;
-
-    public SynchronizeSpellcastState(ChangeMode mode, Player player, @Nullable Spellcast cast, int remainingCastTime, int remainingInterval, int totalCastTime)
-    {
-        this.changeMode = mode;
-        this.casterID = player.getId();
-        this.spellcast = cast != null ? cast.serializeNBT() : new CompoundTag();
-        this.remainingCastTime = remainingCastTime;
-        this.remainingInterval = remainingInterval;
-        this.totalCastTime = totalCastTime;
-    }
-
-    public SynchronizeSpellcastState(FriendlyByteBuf buf)
-    {
-        this.changeMode = ChangeMode.values[buf.readInt()];
-        this.casterID = buf.readInt();
-        this.spellcast = buf.readNbt();
-        this.remainingCastTime = buf.readVarInt();
-        this.remainingInterval = buf.readVarInt();
-        this.totalCastTime = buf.readVarInt();
-    }
-
-    public void write(FriendlyByteBuf buf)
-    {
-        buf.writeInt(changeMode.ordinal());
-        buf.writeInt(casterID);
-        buf.writeNbt(spellcast);
-        buf.writeVarInt(remainingCastTime);
-        buf.writeVarInt(remainingInterval);
-        buf.writeVarInt(totalCastTime);
-    }
+    public static final StreamCodec<RegistryFriendlyByteBuf, SynchronizeSpellcastState> STREAM_CODEC = StreamCodec.composite(
+            ChangeMode.STREAM_CODEC, SynchronizeSpellcastState::changeMode,
+            ByteBufCodecs.VAR_INT, SynchronizeSpellcastState::casterID,
+            ByteBufCodecs.COMPOUND_TAG, SynchronizeSpellcastState::spellcast,
+            ByteBufCodecs.VAR_INT, SynchronizeSpellcastState::remainingCastTime,
+            ByteBufCodecs.VAR_INT, SynchronizeSpellcastState::remainingInterval,
+            ByteBufCodecs.VAR_INT, SynchronizeSpellcastState::totalCastTime,
+            SynchronizeSpellcastState::new
+    );
 
     @Override
-    public ResourceLocation id()
+    public Type<? extends CustomPacketPayload> type()
     {
-        return ID;
+        return TYPE;
     }
 
-    public void handle(PlayPayloadContext context)
+    public void handle(IPayloadContext context)
     {
         ClientPacketHandlers.handleSpellcastSync(this);
     }

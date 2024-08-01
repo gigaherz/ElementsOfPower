@@ -2,6 +2,7 @@ package dev.gigaherz.elementsofpower.spells.effects;
 
 import dev.gigaherz.elementsofpower.spells.SpellcastState;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -16,11 +17,11 @@ import java.util.List;
 public class ApplyPotionEffect extends SpellEffect
 {
     @Nullable
-    private final MobEffect instant;
+    private final Holder<MobEffect> instant;
     @Nullable
-    private final MobEffect overTime;
+    private final Holder<MobEffect> overTime;
 
-    public ApplyPotionEffect(@Nullable MobEffect instant, @Nullable MobEffect overTime)
+    public ApplyPotionEffect(@Nullable Holder<MobEffect> instant, @Nullable Holder<MobEffect> overTime)
     {
         this.instant = instant;
         this.overTime = overTime;

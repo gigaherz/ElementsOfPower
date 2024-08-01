@@ -75,19 +75,18 @@ public class MiningEffect extends SpellEffect
 
         if (!currentState.isAir() && hardness >= 0 && hardness <= (cast.damageForce() / 3.0f))
         {
-            if (player instanceof ServerPlayer)
+            if (player instanceof ServerPlayer serverPlayer)
             {
-                ServerPlayer playermp = (ServerPlayer) player;
-                ServerPlayerGameMode mgr = playermp.gameMode;
+                ServerPlayerGameMode spgm = serverPlayer.gameMode;
 
-                int exp = CommonHooks.onBlockBreakEvent(world, mgr.getGameModeForPlayer(), playermp, blockPos);
-                if (exp != -1)
+                var ev = CommonHooks.fireBlockBreak(world, spgm.getGameModeForPlayer(), serverPlayer, blockPos, state);
+                if (!ev.isCanceled())
                 {
                     BlockEntity tileentity = world.getBlockEntity(blockPos);
 
-                    world.levelEvent(playermp, 2001, blockPos, Block.getId(currentState));
+                    world.levelEvent(serverPlayer, 2001, blockPos, Block.getId(currentState));
 
-                    if (mgr.isCreative())
+                    if (spgm.isCreative())
                     {
                         world.setBlockAndUpdate(blockPos, Blocks.AIR.defaultBlockState());
                     }
@@ -100,12 +99,6 @@ public class MiningEffect extends SpellEffect
                         {
                             block.destroy(world, blockPos, currentState);
                             block.playerDestroy(world, player, blockPos, currentState, tileentity, cast.player().getItemInHand(InteractionHand.MAIN_HAND)); // FIXME
-                        }
-
-                        // Drop experiance
-                        if (!mgr.isCreative() && exp > 0)
-                        {
-                            block.popExperience((ServerLevel) world, blockPos, exp);
                         }
                     }
                 }

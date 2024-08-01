@@ -2,47 +2,36 @@ package dev.gigaherz.elementsofpower.network;
 
 import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.client.ClientPacketHandlers;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-public class AddVelocityToPlayer implements CustomPacketPayload
+public record AddVelocityToPlayer(
+        double vx,
+        double vy,
+        double vz
+) implements CustomPacketPayload
 {
     public static final ResourceLocation ID = ElementsOfPowerMod.location("add_velocity_to_player");
+    public static final Type<AddVelocityToPlayer> TYPE = new Type<>(ID);
 
-    public double vx;
-    public double vy;
-    public double vz;
-
-    public AddVelocityToPlayer(double vx, double vy, double vz)
-    {
-        this.vx = vx;
-        this.vy = vy;
-        this.vz = vz;
-    }
-
-    public AddVelocityToPlayer(FriendlyByteBuf buf)
-    {
-        vx = buf.readDouble();
-        vy = buf.readDouble();
-        vz = buf.readDouble();
-    }
-
-    public void write(FriendlyByteBuf buf)
-    {
-        buf.writeDouble(vx);
-        buf.writeDouble(vy);
-        buf.writeDouble(vz);
-    }
+    public static final StreamCodec<RegistryFriendlyByteBuf, AddVelocityToPlayer> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.DOUBLE, AddVelocityToPlayer::vx,
+            ByteBufCodecs.DOUBLE, AddVelocityToPlayer::vy,
+            ByteBufCodecs.DOUBLE, AddVelocityToPlayer::vz,
+            AddVelocityToPlayer::new
+    );
 
     @Override
-    public ResourceLocation id()
+    public Type<? extends CustomPacketPayload> type()
     {
-        return ID;
+        return TYPE;
     }
 
-    public void handle(PlayPayloadContext context)
+    public void handle(IPayloadContext context)
     {
         ClientPacketHandlers.handleAddVelocityPlayer(this);
     }

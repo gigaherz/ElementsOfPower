@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.gigaherz.elementsofpower.ElementsOfPowerMod;
 import dev.gigaherz.elementsofpower.essentializer.menu.IMagicAmountContainer;
@@ -45,10 +46,10 @@ public class ApplyOrbSizeFunction extends LootItemConditionalFunction
     {
         BlockEntity te = context.getParamOrNull(LootContextParams.BLOCK_ENTITY);
 
-        if (!(te instanceof IMagicAmountContainer))
+        if (!(te instanceof IMagicAmountContainer magicContainer))
             return stack;
 
-        MagicAmounts am = ((IMagicAmountContainer) te).getContainedMagic();
+        MagicAmounts am = magicContainer.getContainedMagic();
         RandomSource rand = context.getRandom();
         ItemStack tool = Objects.requireNonNull(context.getParamOrNull(LootContextParams.TOOL));
 
@@ -64,7 +65,7 @@ public class ApplyOrbSizeFunction extends LootItemConditionalFunction
 
         if (whole > 0)
         {
-            int fortune = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, tool);
+            int fortune = EnchantmentHelper.getItemEnchantmentLevel(te.getLevel().holderOrThrow(Enchantments.FORTUNE), tool);
             whole = Math.round((float) Math.pow(rand.nextFloat(), 1 / (fortune + 1.0f)) * whole);
         }
 
@@ -116,7 +117,7 @@ public class ApplyOrbSizeFunction extends LootItemConditionalFunction
         }
     }
 
-    public static final Codec<ApplyOrbSizeFunction> CODEC = RecordCodecBuilder.create((instance) ->
+    public static final MapCodec<ApplyOrbSizeFunction> CODEC = RecordCodecBuilder.mapCodec((instance) ->
             commonFields(instance)
             .and(MagicAmounts.CODEC.fieldOf("factors").forGetter((o) -> o.factors))
             .apply(instance, ApplyOrbSizeFunction::new));

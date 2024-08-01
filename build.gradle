@@ -14,7 +14,7 @@ base {
     archivesName = minecraftVersion.map { "ElementsOfPower-${it}" }
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
@@ -47,6 +47,10 @@ repositories {
     maven { // TOP
         name 'tterrag maven'
         url "https://maven.tterrag.com/"
+    }
+    maven {
+        name = "OctoStudios"
+        url = uri("https://maven.octo-studios.com/releases")
     }
     flatDir {
         dirs 'debugmods'
@@ -88,15 +92,15 @@ runs {
 
 subsystems {
     parchment {
-        minecraftVersion="1.20.4"
-        mappingsVersion="2024.02.25"
+        minecraftVersion="1.21"
+        mappingsVersion="2024.07.07"
     }
 }
 
 minecraft.accessTransformers.file rootProject.file('src/main/resources/META-INF/accesstransformer.cfg')
 
 dependencies {
-    implementation 'net.neoforged:neoforge:20.4.237'
+    implementation 'net.neoforged:neoforge:21.0.133-beta'
 
     //compileOnly fg.deobf("mezz.jei:jei-1.20.1-common-api:15.2.0.22")
     //runtimeOnly fg.deobf("mezz.jei:jei-1.20.1-common:15.2.0.22")
@@ -104,11 +108,11 @@ dependencies {
     //runtimeOnly fg.deobf("mezz.jei:jei-1.20.1-forge:15.2.0.22")
 
     // https://www.curseforge.com/minecraft/mc-mods/curios/files/4921744
-    compileOnly "top.theillusivec4.curios:curios-neoforge:7.0.0-beta+1.20.3"
-    //runtimeOnly "top.theillusivec4.curios:curios-neoforge:7.0.0-beta+1.20.3"
+    compileOnly "top.theillusivec4.curios:curios-neoforge:9.0.5+1.21"
+    runtimeOnly "top.theillusivec4.curios:curios-neoforge:9.0.5+1.21"
 
-    compileOnly "com.ldtteam:aequivaleo:1.20.4-0.1.137-ALPHA:api"
-    runtimeOnly "com.ldtteam:aequivaleo:1.20.4-0.1.137-ALPHA"
+    //compileOnly "com.ldtteam:aequivaleo:1.20.4-0.1.137-ALPHA:api"
+    //runtimeOnly "com.ldtteam:aequivaleo:1.20.4-0.1.137-ALPHA"
 
     //runtimeOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:1.16-3.1.4-22")
 
@@ -117,11 +121,11 @@ dependencies {
     //runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:1.16.2-47")
     //runtimeOnly fg.deobf("deps:Botania-1.16.3:409")
 
-    runtimeOnly "deps:trenzalore-neo:4.0.1+mc1.20.4"
-    runtimeOnly "deps:jamd-neo:4.2.2+mc1.20.4"
+    //runtimeOnly "deps:trenzalore-neo:4.0.1+mc1.20.4"
+    //runtimeOnly "deps:jamd-neo:4.2.2+mc1.20.4"
 
-    runtimeOnly "deps:architectury:11.1.13-neoforge"
-    runtimeOnly "deps:ToolKit-neoforge:84.0.1"
+    //runtimeOnly "deps:architectury:11.1.13-neoforge"
+    //runtimeOnly "deps:ToolKit-neoforge:84.0.1"
 }
 
 jar {

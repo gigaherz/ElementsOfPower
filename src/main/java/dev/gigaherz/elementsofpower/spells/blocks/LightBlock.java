@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 
 public class LightBlock extends Block
 {
-    public static final IntegerProperty DENSITY = IntegerProperty.create("density", 1, 16);
+    public static final IntegerProperty DENSITY = SpellBlockProperties.DENSITY;
 
     public LightBlock(Properties properties)
     {

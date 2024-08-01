@@ -33,7 +33,7 @@ public class CrappyParticleRenderer
         if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES)
             return;
 
-        float partialTicks = Minecraft.getInstance().getFrameTime();
+        float partialTicks = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
         MultiBufferSource.BufferSource buffers = Minecraft.getInstance().renderBuffers().bufferSource();
         PoseStack stack = event.getPoseStack();
 
@@ -89,32 +89,28 @@ public class CrappyParticleRenderer
             stack.translate(xp[i], yp[i], zp[i]);
             stack.scale(scale, scale, scale);
 
-            Matrix4f posMatrix = stack.last().pose();
-            Matrix3f normMatrix = stack.last().normal();
+            PoseStack.Pose pose = stack.last();
+            Matrix4f posMatrix = pose.pose();
 
-            buffer.vertex(posMatrix, 0, 0, 0)
-                    .uv(u0t[i], v0t[i])
-                    .color(rc[i], gc[i], bc[i], ac[i])
-                    .normal(normMatrix, xn[i], yn[i], zn[i])
-                    .endVertex();
+            buffer.addVertex(posMatrix, 0, 0, 0)
+                    .setUv(u0t[i], v0t[i])
+                    .setColor(rc[i], gc[i], bc[i], ac[i])
+                    .setNormal(pose, xn[i], yn[i], zn[i]);
 
-            buffer.vertex(posMatrix, 1, 0, 0)
-                    .uv(u1t[i], v0t[i])
-                    .color(rc[i], gc[i], bc[i], ac[i])
-                    .normal(normMatrix, xn[i], yn[i], zn[i])
-                    .endVertex();
+            buffer.addVertex(posMatrix, 1, 0, 0)
+                    .setUv(u1t[i], v0t[i])
+                    .setColor(rc[i], gc[i], bc[i], ac[i])
+                    .setNormal(pose, xn[i], yn[i], zn[i]);
 
-            buffer.vertex(posMatrix, 1, 1, 0)
-                    .uv(u1t[i], v1t[i])
-                    .color(rc[i], gc[i], bc[i], ac[i])
-                    .normal(normMatrix, xn[i], yn[i], zn[i])
-                    .endVertex();
+            buffer.addVertex(posMatrix, 1, 1, 0)
+                    .setUv(u1t[i], v1t[i])
+                    .setColor(rc[i], gc[i], bc[i], ac[i])
+                    .setNormal(pose, xn[i], yn[i], zn[i]);
 
-            buffer.vertex(posMatrix, 0, 1, 0)
-                    .uv(u0t[i], v1t[i])
-                    .color(rc[i], gc[i], bc[i], ac[i])
-                    .normal(normMatrix, xn[i], yn[i], zn[i])
-                    .endVertex();
+            buffer.addVertex(posMatrix, 0, 1, 0)
+                    .setUv(u0t[i], v1t[i])
+                    .setColor(rc[i], gc[i], bc[i], ac[i])
+                    .setNormal(pose, xn[i], yn[i], zn[i]);
 
             stack.popPose();
         }
