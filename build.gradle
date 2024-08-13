@@ -1,24 +1,18 @@
 plugins {
     id 'java-library'
-    id 'eclipse'
-    id 'idea'
     id 'maven-publish'
-    id 'net.neoforged.gradle.userdev' version '7.0.153'
+    id 'net.neoforged.moddev' version '2.0.9-beta'
 }
 
 version = "0.16.3-alpha"
 group = "dev.gigaherz.elementsofpower"
 
-var  minecraftVersion = project.userDevRuntime.runtimes.map(r -> r.values().first().specification.minecraftVersion)
+var minecraftVersion = project.neoForge.version.map { "1." + (it =~ /^(\d+(?:\.[1-9]\d*|))\./)[0][1] }
 base {
     archivesName = minecraftVersion.map { "ElementsOfPower-${it}" }
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
-
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
-}
 
 repositories {
     maven {
@@ -62,45 +56,49 @@ sourceSets {
     main.resources.srcDirs += 'src/main/generated_resources'
 }
 
-runs {
-    // applies to all the run configs below
-    configureEach {
-        systemProperty 'forge.logging.markers', '' // 'REGISTRIES'
-        systemProperty 'forge.logging.console.level', 'debug'
+neoForge {
+    version = "21.1.8"
 
-        workingDirectory project.file('run')
+    runs {
+        // applies to all the run configs below
+        configureEach {
+            gameDirectory = project.file('run')
+            logLevel = org.slf4j.event.Level.DEBUG
+        }
 
-        modSource project.sourceSets.main
+        client {
+            client()
+        }
+
+        clientNoCache {
+            client()
+
+            systemProperty 'elementsOfPower.disableCaches', 'true'
+        }
+
+        server {
+            server()
+        }
+
+        data {
+            data()
+            programArguments.addAll '--mod', 'elementsofpower', '--all', '--output', file('src/main/generated_resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+        }
     }
 
-    client {
+    mods {
+        thismod {
+            sourceSet(sourceSets.main)
+        }
     }
 
-    client_nocache {
-        configure ("client")
-
-        systemProperty 'elementsOfPower.disableCaches', 'true'
-    }
-
-    server {
-    }
-
-    data {
-        programArguments.addAll '--mod', 'elementsofpower', '--all', '--output', file('src/main/generated_resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
-    }
-}
-
-subsystems {
     parchment {
-        minecraftVersion="1.21"
-        mappingsVersion="2024.07.07"
+        minecraftVersion = "1.21"
+        mappingsVersion = "2024.07.28"
     }
 }
-
-minecraft.accessTransformers.file rootProject.file('src/main/resources/META-INF/accesstransformer.cfg')
 
 dependencies {
-    implementation 'net.neoforged:neoforge:21.0.133-beta'
 
     //compileOnly fg.deobf("mezz.jei:jei-1.20.1-common-api:15.2.0.22")
     //runtimeOnly fg.deobf("mezz.jei:jei-1.20.1-common:15.2.0.22")
@@ -178,5 +176,17 @@ project.afterEvaluate {
                 }
             }
         }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}
+
+// IDEA no longer automatically downloads sources/javadoc jars for dependencies, so we need to explicitly enable the behavior.
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
     }
 }

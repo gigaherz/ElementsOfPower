@@ -122,6 +122,23 @@ public class EssentializerBlockEntity
         super(ElementsOfPowerMod.ESSENTIALIZER_BLOCK_ENTITY.get(), pos, state);
     }
 
+    private MagicAmounts readAmountsFromNBT(CompoundTag tagCompound, String key)
+    {
+        MagicAmounts amounts = MagicAmounts.EMPTY;
+        if (tagCompound.contains(key, Tag.TAG_COMPOUND))
+        {
+            CompoundTag tag = tagCompound.getCompound(key);
+
+            amounts = new MagicAmounts(tag);
+        }
+        return amounts;
+    }
+
+    private void writeAmountsToNBT(CompoundTag tagCompound, String key, MagicAmounts amounts)
+    {
+        tagCompound.put(key, amounts.serializeNBT());
+    }
+
     @Override
     protected void loadAdditional(CompoundTag compound, HolderLookup.Provider lookup)
     {
@@ -159,27 +176,10 @@ public class EssentializerBlockEntity
         writeAmountsToNBT(tag, "Remaining", remainingToConvert);
     }
 
-    private MagicAmounts readAmountsFromNBT(CompoundTag tagCompound, String key)
-    {
-        MagicAmounts amounts = MagicAmounts.EMPTY;
-        if (tagCompound.contains(key, Tag.TAG_COMPOUND))
-        {
-            CompoundTag tag = tagCompound.getCompound(key);
-
-            amounts = new MagicAmounts(tag);
-        }
-        return amounts;
-    }
-
-    private void writeAmountsToNBT(CompoundTag tagCompound, String key, MagicAmounts amounts)
-    {
-        tagCompound.put(key, amounts.serializeNBT());
-    }
-
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider lookup)
     {
-        return saveWithoutMetadata(lookup);
+        return saveCustomOnly(lookup);
     }
 
     @Override
@@ -198,14 +198,11 @@ public class EssentializerBlockEntity
     @Override
     public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket packet, HolderLookup.Provider lookup)
     {
-        var tag = packet.getTag();
-        if (tag != null)
-        {
-            handleUpdateTag(tag, lookup);
+        handleUpdateTag(packet.getTag(), lookup);
 
-            BlockState state = level.getBlockState(worldPosition);
-            level.sendBlockUpdated(worldPosition, state, state, 3);
-        }
+        // Refresh render meshes
+        BlockState state = level.getBlockState(worldPosition);
+        level.sendBlockUpdated(worldPosition, state, state, 3);
     }
 
     public void tickServer()

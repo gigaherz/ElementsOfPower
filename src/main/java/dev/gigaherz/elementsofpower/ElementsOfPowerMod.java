@@ -48,6 +48,7 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.levelgen.feature.Feature;
@@ -57,6 +58,8 @@ import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
@@ -80,6 +83,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.io.IOException;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -219,7 +225,7 @@ public class ElementsOfPowerMod
 
     public static Logger LOGGER = LogManager.getLogger(MODID);
 
-    public ElementsOfPowerMod(IEventBus modEventBus)
+    public ElementsOfPowerMod(ModContainer container, IEventBus modEventBus)
     {
         ElementsOfPowerBlocks.BLOCKS.register(modEventBus);
         ElementsOfPowerItems.ITEMS.register(modEventBus);
@@ -241,8 +247,6 @@ public class ElementsOfPowerMod
         modEventBus.addListener(this::gatherData);
         modEventBus.addListener(this::modelRegistry);
         modEventBus.addListener(this::registerCapabilities);
-
-
     }
     private void registerCapabilities(RegisterCapabilitiesEvent event)
     {

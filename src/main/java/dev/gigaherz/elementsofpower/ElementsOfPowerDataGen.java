@@ -80,8 +80,8 @@ class ElementsOfPowerDataGen
         gen.addProvider(event.includeServer(), new Recipes(gen.getPackOutput(), lookup));
         gen.addProvider(event.includeServer(), LootGen.create(gen.getPackOutput(), lookup));
 
-        BlockTagGens blockTags = new BlockTagGens(gen.getPackOutput(), lookup, existingFileHelper);
-        ItemTagGens itemTags = new ItemTagGens(gen.getPackOutput(), lookup, existingFileHelper);
+        var blockTags = new BlockTagGens(gen.getPackOutput(), lookup, existingFileHelper);
+        var itemTags = new ItemTagGens(gen.getPackOutput(), lookup, existingFileHelper);
         gen.addProvider(event.includeServer(), blockTags);
         gen.addProvider(event.includeServer(), itemTags);
 
@@ -351,6 +351,7 @@ class ElementsOfPowerDataGen
         @Override
         protected void addTags(HolderLookup.Provider lookup)
         {
+
             /*
             GemstoneExaminer.GEMS.forEach((gem, tag) -> {
             });

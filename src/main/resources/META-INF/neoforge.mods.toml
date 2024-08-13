@@ -15,6 +15,8 @@ authors="Love, Cheese and small house plants"
 description='''
 A magic mod about the raw power elemental essences
 '''
+[[accessTransformers]]
+    file="META-INF/accesstransformer.cfg"
 
 [[dependencies.elementsofpower]]
     modId="neoforge"
