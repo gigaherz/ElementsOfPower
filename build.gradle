@@ -7,9 +7,9 @@ plugins {
 version = "0.16.3-alpha"
 group = "dev.gigaherz.elementsofpower"
 
-var minecraftVersion = project.neoForge.version.map { "1." + (it =~ /^(\d+(?:\.[1-9]\d*|))\./)[0][1] }
+var minecraftVersionResolver = project.neoForge.version.map { "1." + (it =~ /^(\d+(?:\.[1-9]\d*|))\./)[0][1] }
 base {
-    archivesName = minecraftVersion.map { "ElementsOfPower-${it}" }
+    archivesName = minecraftVersionResolver.map { "ElementsOfPower-${it}" }
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
