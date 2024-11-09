@@ -74,6 +74,7 @@ public class CocoonFeature extends Feature<NoneFeatureConfiguration>
                 }
             }
         }
+
         return false;
     }
 

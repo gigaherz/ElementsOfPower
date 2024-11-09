@@ -57,13 +57,15 @@ sourceSets {
 }
 
 neoForge {
-    version = "21.1.8"
+    version = "21.1.47"
 
     runs {
         // applies to all the run configs below
         configureEach {
             gameDirectory = project.file('run')
             logLevel = org.slf4j.event.Level.DEBUG
+            jvmArgument "-Dmixin.debug.export=true"
+            jvmArgument "-Dmixin.debug.verbose=true"
         }
 
         client {

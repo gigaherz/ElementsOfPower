@@ -9,12 +9,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
@@ -42,13 +44,6 @@ public class MagicTooltips
 
     private static void addConversionTooltip(List<Component> toolTip, ItemStack stack)
     {
-        Item item = stack.getItem();
-
-        if (item == Items.DIAMOND || item == Items.EMERALD || item == Items.QUARTZ)
-        {
-            toolTip.add(1, Component.translatable("text.elementsofpower.gemstone.use").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
-        }
-
         Level world = Minecraft.getInstance().level;
         MagicAmounts amounts = ModList.get().isLoaded("aequivaleo") ? EssenceConversionManager.getEssences(world, stack, false).orElse(MagicAmounts.EMPTY) : MagicAmounts.EMPTY;
         if (amounts.isEmpty())

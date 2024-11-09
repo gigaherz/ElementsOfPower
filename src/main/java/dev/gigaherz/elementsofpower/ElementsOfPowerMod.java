@@ -50,6 +50,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
@@ -65,6 +66,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.client.ChunkRenderTypeSet;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
@@ -209,8 +211,6 @@ public class ElementsOfPowerMod
                         output.accept(ElementsOfPowerItems.TIME_COCOON.get());
                         output.accept(ElementsOfPowerItems.LIFE_COCOON.get());
                         output.accept(ElementsOfPowerItems.CHAOS_COCOON.get());
-
-
                     }).build());
 
     public static final Supplier<AttachmentType<CocoonEventHandling.CocoonTracker>>
@@ -330,6 +330,19 @@ public class ElementsOfPowerMod
     public void gatherData(GatherDataEvent event)
     {
         ElementsOfPowerDataGen.gatherData(event);
+    }
+
+    private class A {
+        protected void method() {}
+    }
+    private class B extends A {
+    }
+    private class C extends B {
+        @Override
+        protected void method()
+        {
+            super.method();
+        }
     }
 }
 
