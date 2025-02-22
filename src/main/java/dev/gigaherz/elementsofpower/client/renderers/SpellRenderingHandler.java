@@ -60,12 +60,12 @@ public class SpellRenderingHandler
 
             Vec3 off = player.getUpVector(partialTicks).scale(-0.15);
 
+            PoseStack poseStack = event.getPoseStack();
             MultiBufferSource.BufferSource buffers = Minecraft.getInstance().renderBuffers().bufferSource();
-            PoseStack stack = event.getPoseStack();
 
-            stack.pushPose();
-            renderer.render(cast, player, renderManager, partialTicks, stack, buffers, 0x00F000F0, off);
-            stack.popPose();
+            poseStack.pushPose();
+            renderer.render(cast, player, renderManager, partialTicks, poseStack, buffers, 0x00F000F0, off);
+            poseStack.popPose();
 
             RenderSystem.disableDepthTest();
             buffers.endBatch();

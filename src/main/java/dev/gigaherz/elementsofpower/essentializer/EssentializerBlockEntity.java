@@ -56,19 +56,15 @@ public class EssentializerBlockEntity
                 (be, facing) -> {
                     if (facing == null)
                         return be.inventory;
-                    switch (facing)
+                    return switch (facing)
                     {
-                        case UP:
-                            return be.top;
-                        case DOWN:
-                            return null;
-                        default:
-                            return be.sides;
-                    }
+                        case UP -> be.top;
+                        case DOWN -> null;
+                        default -> be.sides;
+                    };
                 }
         );
     }
-
 
     public final ItemStackHandler inventory = new ItemStackHandler(3)
     {

@@ -72,14 +72,14 @@ public class StackRenderingHelper
         RenderSystem.applyModelViewMatrix();
         PoseStack posestack1 = new PoseStack();
 
-        MultiBufferSource.BufferSource multibuffersource$buffersource = Minecraft.getInstance().renderBuffers().bufferSource();
+        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
 
         float r = ((color >> 16) & 0xFF) / 255.0f;
         float g = ((color >> 8) & 0xFF) / 255.0f;
         float b = ((color >> 0) & 0xFF) / 255.0f;
         float a = ((color >> 24) & 0xFF) / 255.0f;
 
-        var colorMultiply = new ColoringBufferSource(r, g, b, a, multibuffersource$buffersource);
+        var colorMultiply = new ColoringBufferSource(r, g, b, a, bufferSource);
 
         boolean flag = !model.usesBlockLight();
         if (flag)
@@ -88,7 +88,7 @@ public class StackRenderingHelper
         }
 
         itemRenderer.render(p_115128_, ItemDisplayContext.GUI, false, posestack1, colorMultiply, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, model);
-        multibuffersource$buffersource.endBatch();
+        bufferSource.endBatch();
         RenderSystem.enableDepthTest();
         if (flag)
         {

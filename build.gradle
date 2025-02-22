@@ -1,7 +1,8 @@
 plugins {
     id 'java-library'
+    id 'idea'
     id 'maven-publish'
-    id 'net.neoforged.moddev' version '2.0.9-beta'
+    id 'net.neoforged.moddev' version '2.0.63-beta'
 }
 
 version = "0.16.3-alpha"
@@ -57,7 +58,7 @@ sourceSets {
 }
 
 neoForge {
-    version = "21.1.47"
+    version = "21.1.121"
 
     runs {
         // applies to all the run configs below
@@ -95,8 +96,8 @@ neoForge {
     }
 
     parchment {
-        minecraftVersion = "1.21"
-        mappingsVersion = "2024.07.28"
+        minecraftVersion = "1.21.1"
+        mappingsVersion = "2024.11.17"
     }
 }
 
